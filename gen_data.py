@@ -199,6 +199,6 @@ def curve2trace(
 
 
 if __name__ == "__main__":
-    # gen_regvoltage("db_voltage.h5")
-    # gen_ivcurve("jogging_10m.iv", "db_curves.h5")
+    gen_regvoltage("db_voltage.h5")
+    gen_ivcurve("jogging_10m.iv", "db_curves.h5")
     curve2trace("db_curves.h5", "db_traces.h5")
