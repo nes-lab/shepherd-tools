@@ -114,6 +114,7 @@ plt.plot(
     label="LUT sampled curve",
     linestyle="None",
     marker="o",
+    alpha=0.3
 )
 plt.legend()
 plt.show()

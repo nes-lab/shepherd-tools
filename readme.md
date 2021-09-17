@@ -9,8 +9,8 @@
       - construct artificial proto-curve and calculate transformation-coefficients for every time-step
       - based on real data (`jogging_10m.iv`)
     - `curve2trace()`
-      - get voltage/current-trace by sending curve through MPPT-Converter or other Optimizer/Tracker (in mppt.py)
-      - can take very long (MPPT seems worst), but output can be limited by "T"
+      - get voltage/current-trace by sending curve through MPPT-Converter or other Optimizer/Tracker (in `mppt.py`)
+      - can take very long (especially MPPT), but output can be limited by `duration` variable
 - `iv_reconstruct.py` shows how the transformation-coefficients work
 - `jogging_10m.iv`
     - 50 Hz measurement with Short-Circuit-Current and two other parameters

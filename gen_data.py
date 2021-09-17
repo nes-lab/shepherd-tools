@@ -9,8 +9,9 @@ from mppt import OpenCircuitTracker
 from mppt import OptimalTracker
 
 
-Fs = 100_000
-T = 30.0
+# config for output-files
+f_sample_Hz = 100_000
+duration_s = 30.0
 
 
 def iv_model(v: float, coeffs: dict):
@@ -63,15 +64,15 @@ def gen_regvoltage(db_path: Path, v_start: float = 3.6, v_end: float = 1.9):
         db.attrs["type"] = "SHEPHERD_REGVOLTAGE"
         data_grp = db.create_group("data")
 
-        timestamps = np.arange(0, int(T * 1e9), int(1 / Fs * 1e9))
+        timestamps = np.arange(0, int(duration_s * 1e9), int(1 / f_sample_Hz * 1e9))
         ds_time = data_grp.create_dataset(
-            "time", (Fs * T,), data=timestamps, dtype="u8"
+            "time", (f_sample_Hz * duration_s,), data=timestamps, dtype="u8"
         )
         ds_time.attrs["unit"] = "ns"
 
-        voltages = np.linspace(v_start * 1e6, v_end * 1e6, int(Fs * T))
+        voltages = np.linspace(v_start * 1e6, v_end * 1e6, int(f_sample_Hz * duration_s))
         ds_voltage = data_grp.create_dataset(
-            "voltage", (Fs * T,), data=voltages, dtype="u4"
+            "voltage", (f_sample_Hz * duration_s,), data=voltages, dtype="u4"
         )
         ds_voltage.attrs["unit"] = "uV"
 
@@ -97,9 +98,9 @@ def gen_ivcurve(
     df_sampled = load_iv_data(curve_recordings)
     fs_iv_data = 50.0
     print(f"Length of IV-Curve is {len(df_sampled) / fs_iv_data} s [{curve_recordings}]")
-    if len(df_sampled) / fs_iv_data > T:
-        print(f"  -> gets trimmed to {T} s")
-        df_sampled = df_sampled.iloc[0:int(T*fs_iv_data)]
+    if len(df_sampled) / fs_iv_data > duration_s:
+        print(f"  -> gets trimmed to {duration_s} s")
+        df_sampled = df_sampled.iloc[0:int(duration_s * fs_iv_data)]
 
     v_proto = np.linspace(0, v_max, pts_per_curve)
     i_proto = iv_model(v_proto, df_sampled.iloc[0])
@@ -138,7 +139,7 @@ def gen_ivcurve(
 
         ds_time = data_grp.create_dataset("time", (len(df_coeffs),), dtype="u8")
         ds_time.attrs["unit"] = f"ns"
-        ds_time[:] = np.arange(0, len(df_coeffs) * 10**9 / Fs, int(10**9 // Fs))
+        ds_time[:] = np.arange(0, len(df_coeffs) * 10 ** 9 / f_sample_Hz, int(10 ** 9 // f_sample_Hz))
 
         ds_trans_coeffs = data_grp.create_dataset(
             "trans_coeffs",
