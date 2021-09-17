@@ -10,7 +10,7 @@ from mppt import OptimalTracker
 
 
 Fs = 100_000
-T = 300.0
+T = 30.0
 
 
 def iv_model(v: float, coeffs: dict):
@@ -96,6 +96,10 @@ def gen_ivcurve(
     """
     df_sampled = load_iv_data(curve_recordings)
     fs_iv_data = 50.0
+    print(f"Length of IV-Curve is {len(df_sampled) / fs_iv_data} s [{curve_recordings}]")
+    if len(df_sampled) / fs_iv_data > T:
+        print(f"  -> gets trimmed to {T} s")
+        df_sampled = df_sampled.iloc[0:int(T*fs_iv_data)]
 
     v_proto = np.linspace(0, v_max, pts_per_curve)
     i_proto = iv_model(v_proto, df_sampled.iloc[0])
@@ -134,7 +138,7 @@ def gen_ivcurve(
 
         ds_time = data_grp.create_dataset("time", (len(df_coeffs),), dtype="u8")
         ds_time.attrs["unit"] = f"ns"
-        ds_time[:] = np.arange(0, 1 / Fs * len(df_coeffs) * 1e9, int(1 / Fs * 1e9))
+        ds_time[:] = np.arange(0, len(df_coeffs) * 10**9 / Fs, int(10**9 // Fs))
 
         ds_trans_coeffs = data_grp.create_dataset(
             "trans_coeffs",
@@ -142,7 +146,7 @@ def gen_ivcurve(
             data=(coeffs_interp - 1.0) * (2 ** 24),
             dtype="i4",
         )
-        ds_trans_coeffs.attrs["unit"] = "2^24"
+        ds_trans_coeffs.attrs["unit"] = "2^24"  # TODO: more correct would be "2^-24"
 
 
 def curve2trace(
