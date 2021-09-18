@@ -74,7 +74,18 @@ def gen_regvoltage(db_path: Path, v_start: float = 3.6, v_end: float = 1.9):
         ds_voltage = data_grp.create_dataset(
             "voltage", (f_sample_Hz * duration_s,), data=voltages, dtype="u4"
         )
-        ds_voltage.attrs["unit"] = "uV"
+        ds_voltage.attrs["unit"] = "V"
+        ds_voltage.attrs["gain"] = 1e-6
+        ds_voltage.attrs["offset"] = 0.0
+
+        currents = np.linspace(100, 2000, int(f_sample_Hz * duration_s))
+        ds_current = data_grp.create_dataset(
+            "current", (f_sample_Hz * duration_s,), data=currents, dtype="u4"
+        )
+        ds_current.attrs["unit"] = "A"
+        ds_current.attrs["gain"] = 1e-6
+        ds_current.attrs["offset"] = 0.0
+
 
 
 def gen_ivcurve(
@@ -128,12 +139,16 @@ def gen_ivcurve(
         ds_proto_voltage = proto_grp.create_dataset(
             "voltage", (1024,), data=v_proto * 1e6, dtype="u4"
         )
-        ds_proto_voltage.attrs["unit"] = "uV"
+        ds_proto_voltage.attrs["unit"] = "V"
+        ds_proto_voltage.attrs["gain"] = 1e-6
+        ds_proto_voltage.attrs["offset"] = 0
 
         ds_proto_current = proto_grp.create_dataset(
             "current", (1024,), data=i_proto * 1e9, dtype="u4"
         )
-        ds_proto_current.attrs["unit"] = "nA"
+        ds_proto_current.attrs["unit"] = "A"
+        ds_proto_current.attrs["gain"] = 1e-9
+        ds_proto_current.attrs["offset"] = 0
 
         data_grp = db.create_group("data")
 
@@ -147,7 +162,9 @@ def gen_ivcurve(
             data=(coeffs_interp - 1.0) * (2 ** 24),
             dtype="i4",
         )
-        ds_trans_coeffs.attrs["unit"] = "2^24"  # TODO: more correct would be "2^-24"
+        ds_trans_coeffs.attrs["unit"] = "n"
+        ds_trans_coeffs.attrs["gain"] = 2**-24
+        ds_trans_coeffs.attrs["offset"] = 1.0
 
 
 def curve2trace(
@@ -170,15 +187,19 @@ def curve2trace(
         v_proto = db_in["proto_curve"]["voltage"][:]
         i_proto = db_in["proto_curve"]["current"][:]
 
-        trans_coeffs = db_in["data"]["trans_coeffs"][:].astype(float) / (2 ** 24) + 1.0
+        #trans_coeffs = db_in["data"]["trans_coeffs"][:].astype(float) / (2 ** 24) + 1.0
+        gain = db_in["data"]["trans_coeffs"].attrs["gain"]
+        offset = db_in["data"]["trans_coeffs"].attrs["offset"]
+        trans_coeffs = db_in["data"]["trans_coeffs"][:].astype(float) * gain + offset
 
         tracker_class = globals()[f"{tracking_algorithm}Tracker"]
-        mpp_tracker = tracker_class(v_proto, i_proto)
+        mpp_tracker = tracker_class(v_proto, i_proto)  # TODO: trackers don't know about gain/offset yet
 
         v_hrvst = np.empty((trans_coeffs.shape[0],))
         i_hrvst = np.empty_like(v_hrvst)
 
         for i in range(trans_coeffs.shape[0]):
+            # TODO: possibly best to convert tracker into lambda and apply it to series
             v_hrvst[i], i_hrvst[i] = mpp_tracker.process(trans_coeffs[i, :])
             if not i % 100000:
                 print(f"{i/trans_coeffs.shape[0]*100:.2f}%")
@@ -195,12 +216,16 @@ def curve2trace(
             ds_voltage = data_grp.create_dataset(
                 "voltage", (len(v_hrvst),), data=v_hrvst, dtype="u4"
             )
-            ds_voltage.attrs["unit"] = "uV"
+            ds_voltage.attrs["unit"] = "V"
+            ds_voltage.attrs["gain"] = 1e-6
+            ds_voltage.attrs["offset"] = 0
 
             ds_current = data_grp.create_dataset(
                 "current", (len(i_hrvst),), data=i_hrvst, dtype="u4"
             )
-            ds_current.attrs["unit"] = "nA"
+            ds_current.attrs["unit"] = "A"
+            ds_current.attrs["gain"] = 1e-9
+            ds_current.attrs["offset"] = 0
 
 
 if __name__ == "__main__":
