@@ -13,6 +13,9 @@ from mppt import OptimalTracker
 f_sample_Hz = 100_000
 duration_s = 30.0
 
+# optimize hdf5-File
+chunk_shape = (10_000,)
+compression_algo = "lzf"
 
 def iv_model(v: float, coeffs: dict):
     """Simple diode based model of a solar panel IV curve.
@@ -66,23 +69,29 @@ def gen_regvoltage(db_path: Path, v_start: float = 3.6, v_end: float = 1.9):
 
         timestamps = np.arange(0, int(duration_s * 1e9), int(1 / f_sample_Hz * 1e9))
         ds_time = data_grp.create_dataset(
-            "time", (f_sample_Hz * duration_s,), data=timestamps, dtype="u8"
+            "time", (f_sample_Hz * duration_s,), data=timestamps, dtype="u8",
+            chunks=chunk_shape, compression=compression_algo,
         )
         ds_time.attrs["unit"] = "ns"
+        ds_time.attrs["description"] = "system time [ns]"
 
         voltages = np.linspace(v_start * 1e6, v_end * 1e6, int(f_sample_Hz * duration_s))
         ds_voltage = data_grp.create_dataset(
-            "voltage", (f_sample_Hz * duration_s,), data=voltages, dtype="u4"
+            "voltage", (f_sample_Hz * duration_s,), data=voltages, dtype="u4",
+            chunks=chunk_shape, compression=compression_algo,
         )
         ds_voltage.attrs["unit"] = "V"
+        ds_voltage.attrs["description"] = "voltage [V] = value * gain + offset"
         ds_voltage.attrs["gain"] = 1e-6
         ds_voltage.attrs["offset"] = 0.0
 
         currents = np.linspace(100, 2000, int(f_sample_Hz * duration_s))
         ds_current = data_grp.create_dataset(
-            "current", (f_sample_Hz * duration_s,), data=currents, dtype="u4"
+            "current", (f_sample_Hz * duration_s,), data=currents, dtype="u4",
+            chunks=chunk_shape, compression=compression_algo,
         )
         ds_current.attrs["unit"] = "A"
+        ds_current.attrs["description"] = "current [A] = value * gain + offset"
         ds_current.attrs["gain"] = 1e-6
         ds_current.attrs["offset"] = 0.0
 
@@ -137,23 +146,31 @@ def gen_ivcurve(
 
         proto_grp = db.create_group("proto_curve")
         ds_proto_voltage = proto_grp.create_dataset(
-            "voltage", (1024,), data=v_proto * 1e6, dtype="u4"
+            "voltage", (1024,), data=v_proto * 1e6, dtype="u4",
+            chunks=True, compression=compression_algo,
         )
         ds_proto_voltage.attrs["unit"] = "V"
+        ds_proto_voltage.attrs["description"] = "voltage [V] = value * gain + offset"
         ds_proto_voltage.attrs["gain"] = 1e-6
         ds_proto_voltage.attrs["offset"] = 0
 
         ds_proto_current = proto_grp.create_dataset(
-            "current", (1024,), data=i_proto * 1e9, dtype="u4"
+            "current", (1024,), data=i_proto * 1e9, dtype="u4",
+            chunks=True, compression=compression_algo,
         )
         ds_proto_current.attrs["unit"] = "A"
+        ds_proto_current.attrs["description"] = "current [A] = value * gain + offset"
         ds_proto_current.attrs["gain"] = 1e-9
         ds_proto_current.attrs["offset"] = 0
 
         data_grp = db.create_group("data")
 
-        ds_time = data_grp.create_dataset("time", (len(df_coeffs),), dtype="u8")
+        ds_time = data_grp.create_dataset(
+            "time", (len(df_coeffs),), dtype="u8",
+            chunks=chunk_shape, compression=compression_algo,
+            )
         ds_time.attrs["unit"] = f"ns"
+        ds_time.attrs["description"] = "system time [ns]"
         ds_time[:] = np.arange(0, len(df_coeffs) * 10 ** 9 / f_sample_Hz, int(10 ** 9 // f_sample_Hz))
 
         ds_trans_coeffs = data_grp.create_dataset(
@@ -161,8 +178,11 @@ def gen_ivcurve(
             coeffs_interp.shape,
             data=(coeffs_interp - 1.0) * (2 ** 24),
             dtype="i4",
+            chunks=(chunk_shape[0], coeffs_interp.shape[1]),
+            compression=compression_algo,
         )
         ds_trans_coeffs.attrs["unit"] = "n"
+        ds_trans_coeffs.attrs["description"] = "coeff [n] = value * gain + offset"
         ds_trans_coeffs.attrs["gain"] = 2**-24
         ds_trans_coeffs.attrs["offset"] = 1.0
 
@@ -187,7 +207,6 @@ def curve2trace(
         v_proto = db_in["proto_curve"]["voltage"][:]
         i_proto = db_in["proto_curve"]["current"][:]
 
-        #trans_coeffs = db_in["data"]["trans_coeffs"][:].astype(float) / (2 ** 24) + 1.0
         gain = db_in["data"]["trans_coeffs"].attrs["gain"]
         offset = db_in["data"]["trans_coeffs"].attrs["offset"]
         trans_coeffs = db_in["data"]["trans_coeffs"][:].astype(float) * gain + offset
@@ -208,22 +227,28 @@ def curve2trace(
             db_out.attrs["type"] = "SHEPHERD_IVTRACE"
             data_grp = db_out.create_group("data")
             ds_time = data_grp.create_dataset(
-                "time", (trans_coeffs.shape[0],), dtype="u8"
+                "time", (trans_coeffs.shape[0],), dtype="u8",
+                chunks=chunk_shape, compression=compression_algo,
             )
             data_grp["time"].attrs["unit"] = "ns"
+            data_grp["time"].attrs["description"] = "system time [ns]"
             ds_time[:] = db_in["data"]["time"][:]
 
             ds_voltage = data_grp.create_dataset(
-                "voltage", (len(v_hrvst),), data=v_hrvst, dtype="u4"
+                "voltage", (len(v_hrvst),), data=v_hrvst, dtype="u4",
+                chunks=chunk_shape, compression=compression_algo,
             )
             ds_voltage.attrs["unit"] = "V"
+            ds_voltage.attrs["description"] = "voltage [V] = value * gain + offset"
             ds_voltage.attrs["gain"] = 1e-6
             ds_voltage.attrs["offset"] = 0
 
             ds_current = data_grp.create_dataset(
-                "current", (len(i_hrvst),), data=i_hrvst, dtype="u4"
+                "current", (len(i_hrvst),), data=i_hrvst, dtype="u4",
+                chunks=chunk_shape, compression=compression_algo,
             )
             ds_current.attrs["unit"] = "A"
+            ds_current.attrs["description"] = "current [A] = value * gain + offset"
             ds_current.attrs["gain"] = 1e-9
             ds_current.attrs["offset"] = 0
 
