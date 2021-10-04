@@ -11,7 +11,7 @@ from mppt import OptimalTracker
 
 # config for output-files
 f_sample_Hz = 100_000
-duration_s = 30.0
+duration_s = 600.0
 
 # optimize hdf5-File
 chunk_shape = (10_000,)
@@ -63,7 +63,7 @@ def gen_regvoltage(db_path: Path, v_start: float = 3.6, v_end: float = 1.9):
         v_start (float): Start voltage at the beginning of the trace
         v_end (float): End voltage at the end of the trace
     """
-    with h5py.File("db_voltage.h5", "w") as db:
+    with h5py.File(db_path, "w") as db:
         db.attrs["type"] = "SHEPHERD_REGVOLTAGE"
         data_grp = db.create_group("data")
 
