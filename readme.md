@@ -5,13 +5,13 @@
 - `gen_data.py` creates hdf-files for every type of database we want to support.
     - `gen_regvoltage()`
       - custom voltage-trace that gets handed to emulator (on/off-patter, constant-voltage, ...)
-    - `gen_ivcurve()`
-      - construct artificial proto-curve and calculate transformation-coefficients for every time-step
+    - `gen_ivcurve()` -> NOT UP TO DATE
+      - ~~construct artificial proto-curve and calculate transformation-coefficients for every time-step~~
       - based on real data (`jogging_10m.iv`)
     - `curve2trace()`
       - get voltage/current-trace by sending curve through MPPT-Converter or other Optimizer/Tracker (in `mppt.py`)
       - can take very long (especially MPPT), but output can be limited by `duration` variable
-- `iv_reconstruct.py` shows how the transformation-coefficients work
+- `iv_reconstruct.py` ~~shows how the transformation-coefficients work~~ -> NOT UP TO DATE
 - `jogging_10m.iv`
     - 50 Hz measurement with Short-Circuit-Current and two other parameters
     - recorded with "IVonne"
