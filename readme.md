@@ -2,6 +2,7 @@
 
 ### Info about Scripts and Files
 
+- `datalib.py` is the lib itself for reading & writing, with several helper-functions
 - `gen_data.py` creates hdf-files for every type of database we want to support.
     - `gen_regvoltage()`
       - custom voltage-trace that gets handed to emulator (on/off-patter, constant-voltage, ...)
