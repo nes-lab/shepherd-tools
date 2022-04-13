@@ -8,6 +8,7 @@ HDF5 files.
 
 """
 import logging
+from logging import NullHandler
 import time
 from typing import NoReturn, Union, Dict
 
@@ -18,8 +19,10 @@ from itertools import product
 from collections import namedtuple
 import yaml
 
-
-logger = logging.getLogger(__name__)
+consoleHandler = logging.StreamHandler()
+logger = logging.getLogger("shepherd")
+logger.addHandler(consoleHandler)
+logger.setLevel(logging.INFO)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str):
@@ -71,9 +74,9 @@ class ShepherdWriter(object):
             mode: str = "harvester",
             calibration_data: dict = general_calibration,
             force_overwrite: bool = False,
-            compression: str = 1,
+            compression=1,
     ):
-        if force_overwrite or not file_path.exists():
+        if force_overwrite or not Path(file_path).exists():
             self.file_path = file_path
             logger.info(f"[ShpWriter] Storing data to   '{self.file_path}'")
         else:
@@ -90,7 +93,7 @@ class ShepherdWriter(object):
 
         self.cal_data = calibration_data
 
-        if compression.lower() in ["gzip", "lzf"] + list(range(1, 10)):
+        if compression in ["gzip", "lzf"] + list(range(1, 10)):
             self.compression_algo = compression
 
     def __enter__(self):
@@ -165,7 +168,7 @@ class ShepherdWriter(object):
 
     def __exit__(self, *exc):
         runtime = round(self.data_grp['time'].shape[0] / self.samplerate_sps, 1)
-        logger.info(f"[ShpWriter] flushing hdf5 file ({runtime} s iv-data")
+        logger.info(f"[ShpWriter] flushing hdf5 file, {runtime} s iv-data")
         self._h5file.flush()
         logger.info("[ShpWriter] closing  hdf5 file")
         self._h5file.close()
@@ -235,13 +238,17 @@ class ShepherdReader(object):
     samplerate_sps: int = 100_000
     sample_interval_ns = int(10 ** 9 // samplerate_sps)
 
-    def __init__(self, file_path: Path):
+    def __init__(self, file_path: Path, write_access: bool = False):
         self.file_path = file_path
+        self.write_access = write_access    # TODO
 
     def __enter__(self):
         self._h5file = h5py.File(self.file_path, "r")
-        if not self.is_valid():
+        if self.is_valid():
+            logger.info("[ShpReader] File was valid and will be available now")
+        else:
             raise ValueError("[ShpReader] File was faulty, will not Open")
+
         self.ds_time = self._h5file["data"]["time"]
         self.ds_voltage = self._h5file["data"]["voltage"]
         self.ds_current = self._h5file["data"]["current"]
@@ -293,6 +300,7 @@ class ShepherdReader(object):
             yield db
 
     def read_buffers_si(self, start: int = 0, end: int = None, verbose: bool = False):
+        # TODO
         pass
 
     def __getitem__(self, key):
@@ -324,51 +332,90 @@ class ShepherdReader(object):
     def is_valid(self) -> bool:
         # hard criteria
         if not "data" in self._h5file.keys():
-            logger.error(f"[ShpReader] root data-group not found")
+            logger.error(f"[ShpReader|validator] root data-group not found")
             return False
         for attr in ["mode"]:
             if not attr in self._h5file.attrs.keys():
-                logger.error(f"[ShpReader] attribute '{attr}' in file not found")
+                logger.error(f"[ShpReader|validator] attribute '{attr}' in file not found")
                 return False
         for attr in ["window_samples"]:
             if not attr in self._h5file["data"].attrs.keys():
-                logger.error(f"[ShpReader] attribute '{attr}' in data-group not found")
+                logger.error(f"[ShpReader|validator] attribute '{attr}' in data-group not found")
                 return False
         for ds in ["time", "current", "voltage"]:
             if not ds in self._h5file["data"].keys():
-                logger.error(f"[ShpReader] dataset '{ds}' not found")
+                logger.error(f"[ShpReader|validator] dataset '{ds}' not found")
                 return False
         for ds, attr in product(["current", "voltage"], ["gain", "offset"]):
             if not attr in self._h5file["data"][ds].attrs.keys():
-                logger.error(f"[ShpReader] attribute '{attr}' in dataset '{ds}' not found")
+                logger.error(f"[ShpReader|validator] attribute '{attr}' in dataset '{ds}' not found")
                 return False
         # soft-criteria: same length and length should be multiple of buffersize:
         ds_time_size = self._h5file["data"]["time"].shape[0]
         for ds in ["current", "voltage"]:
             ds_size = self._h5file["data"][ds].shape[0]
             if ds_time_size != ds_size:
-                logger.error(f"[ShpReader] dataset '{ds}' has different size (={ds_size}), "
+                logger.error(f"[ShpReader|validator] dataset '{ds}' has different size (={ds_size}), "
                              f"compared to time-ds (={ds_time_size})")
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
-            logger.error(f"[ShpReader] datasets are not aligned with buffer-size")
+            logger.error(f"[ShpReader|validator] datasets are not aligned with buffer-size")
         return True
 
-    def get_structure(self):
+    def get_metadata(self, node=None) -> dict:
         # recursive...
-        self._h5file.attrs.keys() # just print in yml-tree
-        self._h5file.keys() # go deeper
-        pass  # TODO
+        if node is None:
+            return {"h5root": self.get_metadata(self._h5file)}
 
+        metadata = {}
+        if isinstance(node, h5py.Dataset):
+            metadata["_dataset_info"] = {
+                "dtype": str(node.dtype),
+                "shape": str(node.shape),
+                "chunks": str(node.chunks),
+                "compression": str(node.compression),
+                "compression_opts": str(node.compression_opts),
+            }
+        for attr in node.attrs.keys():
+            attr_value = node.attrs[attr]
+            if isinstance(attr_value, str):
+                try:
+                    attr_value = yaml.safe_load(attr_value)
+                except yaml.scanner.ScannerError:
+                    pass
+            elif "int" in str(type(attr_value)):
+                attr_value = int(attr_value)
+            else:
+                attr_value = float(attr_value)
+            metadata[attr] = attr_value
+        if isinstance(node, h5py.Group):
+            for item in node.keys():
+                metadata[item] = self.get_metadata(node[item])
+
+        return metadata
+
+    def save_metadata(self, node=None):
+        metadata = self.get_metadata()
+        file_path = Path(self.file_path).absolute()
+        with open(file_path.with_suffix(".yml"), "w") as fd:
+            yaml.safe_dump(metadata, fd, default_flow_style=False, sort_keys=False)
 
 # TODO:
-#   - add plotting
-#   - add resampling
-#   - add give or print file-structure -> to yaml
+#   - plotting
+#   - resampling
+#   - allow changing file, correcting metadata
+#   - check timestamp-timejumps, already chunkwise? try with very big files, 24h
+#   - get data, csv? pandas, numpy
+#   - writer should inherit from reader
 """
 update main-lib
 - attrs.keys()
 - proper validation first
 - update commentary
+- hostname without \n
+- cleaner h5 file if options are not used (uart, sysmonitors)
+- pindescription should be in yaml (and other descriptions for cpu, io, ...)
+- writer: Path(file_path).exists():
+- writer: compression pure
 """
 
