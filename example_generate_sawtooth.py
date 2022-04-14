@@ -3,9 +3,9 @@ import numpy as np
 
 from datalib import ShepherdReader, ShepherdWriter
 
-file_path = Path("./hrv_artificial_ramp.h5")
+file_path = Path("./hrv_artificial_sawtooth.h5")
 
-with ShepherdWriter(file_path, force_overwrite=True) as file:
+with ShepherdWriter(file_path, compression=None) as file:
 
     duration_s = 60
     repetitions = 60 * 24

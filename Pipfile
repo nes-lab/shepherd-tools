@@ -9,11 +9,11 @@ matplotlib = "*"
 h5py = "*"
 pandas = "*"
 scipy = "*"
+yaml = "*"
 
 [dev-packages]
 black = "*"
 pylint = "*"
 
-
 [pipenv]
-allow_prereleases = true
+allow_prereleases = false
