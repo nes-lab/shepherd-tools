@@ -49,10 +49,11 @@ class ShepherdReader(object):
     samplerate_sps: int = 100_000
     sample_interval_ns = int(10 ** 9 // samplerate_sps)
 
-    def __init__(self, file_path: Union[Path, None]):
+    def __init__(self, file_path: Union[Path, None], verbose: bool = True):
         self._skip_read = file_path is None  # for access by writer-class
         if not self._skip_read:
             self.file_path = file_path
+        logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
     def __enter__(self):
         if not self._skip_read:
@@ -225,7 +226,16 @@ class ShepherdReader(object):
             yaml.safe_dump(metadata, fd, default_flow_style=False, sort_keys=False)
 
     def __getitem__(self, key):
-        return self._h5file.attrs.__getitem__(key)
+        """ returns attribute or (if none found) a handle for a group or dataset (if found)
+
+        :param key: attribute, group, dataset
+        :return: value of that key, or handle of object
+        """
+        if key in self._h5file.attrs.keys():
+            return self._h5file.attrs.__getitem__(key)
+        if key in self._h5file.keys():
+            return self._h5file.__getitem__(key)
+        raise KeyError
 
 
 class ShepherdWriter(ShepherdReader):
@@ -261,7 +271,10 @@ class ShepherdWriter(ShepherdReader):
             calibration_data: dict = None,
             modify_existing: bool = False,
             compression: Union[None, str, int] = "default",
+            verbose: bool = True,
     ):
+        super().__init__(file_path=None, verbose=verbose)
+
         file_path = Path(file_path)
         self._modify = modify_existing
 
@@ -289,8 +302,6 @@ class ShepherdWriter(ShepherdReader):
             self.compression_algo = compression
         else:
             self.compression_algo = self.comp_default
-
-        super().__init__(file_path=None)
 
     def __enter__(self):
         """Initializes the structure of the HDF5 file
@@ -422,5 +433,5 @@ class ShepherdWriter(ShepherdReader):
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def __setitem__(self, key, item):
-        """Offer a convenient interface to store any relevant key-value data of H5-file-structure"""
+        """Offer a convenient interface to store any relevant key-value data (attribute) of H5-file-structure"""
         return self._h5file.attrs.__setitem__(key, item)

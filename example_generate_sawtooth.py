@@ -5,7 +5,7 @@ from datalib import ShepherdReader, ShepherdWriter
 
 file_path = Path("./hrv_artificial_sawtooth.h5")
 
-with ShepherdWriter(file_path, compression=None) as file:
+with ShepherdWriter(file_path, compression=1) as file:
 
     duration_s = 60
     repetitions = 60 * 24
@@ -23,10 +23,12 @@ with ShepherdWriter(file_path, compression=None) as file:
 
         file.append_iv_data_si(timestamps, voltages, currents)
 
+    file.save_metadata()
+
 
 with ShepherdReader(file_path) as db:
     print(f"Mode: {db.get_mode()}")
     print(f"Window: {db.get_window_samples()}")
     print(f"Config: {db.get_config()}")
-    db.save_metadata()
+    # db.save_metadata()
 
