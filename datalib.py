@@ -8,6 +8,7 @@ HDF5 files.
 
 """
 import logging
+import math
 from typing import NoReturn, Union, Dict
 
 import numpy as np
@@ -48,6 +49,9 @@ class ShepherdReader(object):
     samples_per_buffer: int = 10_000
     samplerate_sps: int = 100_000
     sample_interval_ns = int(10 ** 9 // samplerate_sps)
+    sample_interval_s: float = (1 / samplerate_sps)
+
+    max_elements: int = 50_000_000  # per iteration
 
     def __init__(self, file_path: Union[Path, None], verbose: bool = True):
         self._skip_read = file_path is None  # for access by writer-class
@@ -237,6 +241,31 @@ class ShepherdReader(object):
             return self._h5file.__getitem__(key)
         raise KeyError
 
+    @staticmethod
+    def raw_to_si(ds: h5py.Dataset, elem_start: int, elem_stop: int) -> h5py.Dataset:
+        # slice (:) would be preferred, but does not work
+        values_si = ds[elem_start:elem_stop] * ds.attrs["gain"] + ds.attrs["offset"]
+        values_si[values_si < 0.0] = 0.0
+        return values_si
+
+    @staticmethod
+    def si_to_raw(ds: h5py.Dataset, elem_start: int, elem_stop: int) -> h5py.Dataset:
+        values_raw = (ds[elem_start:elem_stop] - ds.attrs["offset"]) / ds.attrs["gain"]
+        values_raw[values_raw < 0.0] = 0.0
+        return values_raw
+
+    def calc_energy(self) -> float:
+        iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
+        energy_ws = 0.0
+        # TODO: could be done multi-processed
+        for idx in range(0, iterations):
+            idx_start = idx * self.max_elements
+            idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
+            voltage_v = self.raw_to_si(self.ds_voltage, idx_start, idx_stop)
+            current_a = self.raw_to_si(self.ds_current, idx_start, idx_stop)
+            energy_ws += (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
+        return energy_ws
+
 
 class ShepherdWriter(ShepherdReader):
     """Stores data for Shepherd in HDF5 format
@@ -403,17 +432,17 @@ class ShepherdWriter(ShepherdReader):
             logger.error("[ShpWriter] timestamp-data was not usable")
             return
 
-        length_data_old = self.data_grp["time"].shape[0]
+        length_data_old = self.ds_time.shape[0]
 
         # resize dataset
-        self.data_grp["time"].resize((length_data_old + length_data_new,))
-        self.data_grp["voltage"].resize((length_data_old + length_data_new,))
-        self.data_grp["current"].resize((length_data_old + length_data_new,))
+        self.ds_time.resize((length_data_old + length_data_new,))
+        self.ds_voltage.resize((length_data_old + length_data_new,))
+        self.ds_current.resize((length_data_old + length_data_new,))
 
         # append new data
-        self.data_grp["time"][length_data_old:length_data_new] = timestamp_ns
-        self.data_grp["voltage"][length_data_old:length_data_new] = voltage[:length_data_new]
-        self.data_grp["current"][length_data_old:length_data_new] = current[:length_data_new]
+        self.ds_time[length_data_old:length_data_new] = timestamp_ns
+        self.ds_voltage[length_data_old:length_data_new] = voltage[:length_data_new]
+        self.ds_current[length_data_old:length_data_new] = current[:length_data_new]
 
     def append_iv_data_si(self, timestamp, voltage: np.ndarray, current: np.array) -> NoReturn:
         """ Writes data to file, but converts it to raw-data first
