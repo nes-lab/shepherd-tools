@@ -9,6 +9,7 @@ HDF5 files.
 """
 import logging
 import math
+from datetime import datetime
 from typing import NoReturn, Union, Dict
 
 import numpy as np
@@ -53,21 +54,25 @@ class ShepherdReader(object):
     sample_interval_s: float = (1 / samplerate_sps)
 
     max_elements: int = 50_000_000  # per iteration
+    dev = "ShpReader"
 
     def __init__(self, file_path: Union[Path, None], verbose: bool = True):
         self._skip_read = file_path is None  # for access by writer-class
         if not self._skip_read:
             self.file_path = file_path
         logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        self.runtime_s = None
+        self.file_size = None
+        self.data_rate = None
 
     def __enter__(self):
         if not self._skip_read:
             self._h5file = h5py.File(self.file_path, "r")
 
         if self.is_valid():
-            logger.info("[ShpReader] File was valid and will be available now")
+            logger.info(f"[{self.dev}] File is available now")
         else:
-            raise ValueError("[ShpReader] File was faulty, will not Open")
+            raise ValueError(f"[{self.dev}] File was faulty, will not Open")
 
         self.ds_time = self._h5file["data"]["time"]
         self.ds_voltage = self._h5file["data"]["voltage"]
@@ -76,19 +81,27 @@ class ShepherdReader(object):
             "voltage": {"gain": self.ds_voltage.attrs["gain"], "offset": self.ds_voltage.attrs["offset"]},
             "current": {"gain": self.ds_current.attrs["gain"], "offset": self.ds_current.attrs["offset"]},
         }
+        self.refresh_stats()
 
         if not self._skip_read:
-            runtime = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
             logger.info(
-                f"[ShpReader] Reading data from '{self.file_path}', "
-                f"contains {runtime} s, "
-                f"mode = {self.get_mode()}, "
-                f"window_size = {self.get_window_samples()}")
+                f"[{self.dev}] Reading data from '{self.file_path}'\n"
+                f"\t- contains {self.runtime_s} s"
+                f"\t- mode = {self.get_mode()}"
+                f"\t- window_size = {self.get_window_samples()}"
+                f"\t- size = {round(self.file_size/2**20)} MiB"
+                f"\t- rate = {round(self.data_rate/2**10)} KiB/s")
         return self
 
     def __exit__(self, *exc):
         if not self._skip_read:
             self._h5file.close()
+
+    def refresh_stats(self):
+        self._h5file.flush()
+        self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
+        self.file_size = self.file_path.stat().st_size
+        self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
     def read_buffers_raw(self, start: int = 0, end: int = None):
         """Reads the specified range of buffers from the hdf5 file.
@@ -101,7 +114,7 @@ class ShepherdReader(object):
         """
         if end is None:
             end = int(self._h5file["data"]["time"].shape[0] // self.samples_per_buffer)
-        logger.debug(f"[ShpReader] Reading blocks from {start} to {end} from source-file")
+        logger.debug(f"[{self.dev}] Reading blocks from {start} to {end} from source-file")
 
         for i in range(start, end):
             idx_start = i * self.samples_per_buffer
@@ -143,23 +156,23 @@ class ShepherdReader(object):
     def is_valid(self) -> bool:
         # hard criteria
         if "data" not in self._h5file.keys():
-            logger.error(f"[ShpReader|validator] root data-group not found")
+            logger.error(f"[{self.dev}|validator] root data-group not found")
             return False
         for attr in ["mode"]:
             if attr not in self._h5file.attrs.keys():
-                logger.error(f"[ShpReader|validator] attribute '{attr}' in file not found")
+                logger.error(f"[{self.dev}|validator] attribute '{attr}' in file not found")
                 return False
         for attr in ["window_samples"]:
             if attr not in self._h5file["data"].attrs.keys():
-                logger.error(f"[ShpReader|validator] attribute '{attr}' in data-group not found")
+                logger.error(f"[{self.dev}|validator] attribute '{attr}' in data-group not found")
                 return False
         for ds in ["time", "current", "voltage"]:
             if ds not in self._h5file["data"].keys():
-                logger.error(f"[ShpReader|validator] dataset '{ds}' not found")
+                logger.error(f"[{self.dev}|validator] dataset '{ds}' not found")
                 return False
         for ds, attr in product(["current", "voltage"], ["gain", "offset"]):
             if attr not in self._h5file["data"][ds].attrs.keys():
-                logger.error(f"[ShpReader|validator] attribute '{attr}' in dataset '{ds}' not found")
+                logger.error(f"[{self.dev}|validator] attribute '{attr}' in dataset '{ds}' not found")
                 return False
 
         # soft-criteria:
@@ -168,20 +181,20 @@ class ShepherdReader(object):
         for ds in ["current", "voltage"]:
             ds_size = self._h5file["data"][ds].shape[0]
             if ds_time_size != ds_size:
-                logger.error(f"[ShpReader|validator] dataset '{ds}' has different size (={ds_size}), "
+                logger.error(f"[{self.dev}|validator] dataset '{ds}' has different size (={ds_size}), "
                              f"compared to time-ds (={ds_time_size})")
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
-            logger.error(f"[ShpReader|validator] datasets are not aligned with buffer-size")
+            logger.error(f"[{self.dev}|validator] datasets are not aligned with buffer-size")
         # check compression
         for ds in ["time", "current", "voltage"]:
             comp = self._h5file["data"][ds].compression
             opts = self._h5file["data"][ds].compression_opts
             if comp not in [None, "gzip", "lzf"]:
-                logger.error(f"[ShpReader|validator] unsupported compression found ({comp} != None, lzf, gzip)")
+                logger.error(f"[{self.dev}|validator] unsupported compression found ({comp} != None, lzf, gzip)")
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
-                logger.error(f"[ShpReader|validator] gzip compression is too high ({opts} > 1) for BBone")
+                logger.error(f"[{self.dev}|validator] gzip compression is too high ({opts} > 1) for BBone")
 
         return True
 
@@ -266,6 +279,53 @@ class ShepherdReader(object):
             energy_ws += (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
         return energy_ws
 
+    def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
+        if h5_group["time"].shape[0] < 1:
+            return 0
+        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
+        datasets.remove("time")
+        datasets = ["time"] + datasets
+        suffix = f".{h5_group.name.strip('/')}.csv"
+        separator = separator.strip().ljust(2)
+        header = [h5_group[key].attrs["description"].replace(", ", separator) for key in datasets]
+        header = separator.join(header)
+        with open(self.file_path.with_suffix(suffix), "w") as csv_file:
+            csv_file.write(header + "\n")
+            for idx, time_ns in enumerate(h5_group["time"][:]):
+                timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
+                csv_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"))
+                for key in datasets[1:]:
+                    values = h5_group[key][idx]
+                    if isinstance(values, np.ndarray):
+                        values = separator.join([str(value) for value in values])
+                    csv_file.write(f"{separator}{values}")
+                csv_file.write("\n")
+        return h5_group["time"][:].shape[0]
+
+    def save_log(self, h5_group: h5py.Group) -> int:
+        """ save dataset in group as log, optimal for logged dmesg and exceptions
+
+        :param h5_group:
+        :return:
+        """
+        if h5_group["time"].shape[0] < 1:
+            return 0
+        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
+        datasets.remove("time")
+        suffix = f".{h5_group.name.strip('/')}.log"
+        with open(self.file_path.with_suffix(suffix), "w") as log_file:
+            for idx, time_ns in enumerate(h5_group["time"][:]):
+                timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
+                log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
+                for key in datasets:
+                    try:
+                        message = str(h5_group[key][idx])
+                    except OSError:
+                        message = "[[[ extractor - faulty element ]]]"
+                    log_file.write(f"\t{message}")
+                log_file.write("\n")
+        return h5_group["time"].shape[0]
+
 
 class ShepherdWriter(ShepherdReader):
     """Stores data for Shepherd in HDF5 format
@@ -287,7 +347,7 @@ class ShepherdWriter(ShepherdReader):
     # - gzip: good compression, moderate speed, select level from 1-9, default is 4 -> lower levels seem fine
     #         --> _algo=number instead of "gzip" is read as compression level for gzip
     # -> comparison / benchmarks https://www.h5py.org/lzf/
-    comp_default = None
+    comp_default = 1
     mode_default = "harvester"
     cal_default = general_calibration
 
@@ -303,20 +363,21 @@ class ShepherdWriter(ShepherdReader):
             verbose: bool = True,
     ):
         super().__init__(file_path=None, verbose=verbose)
+        self.dev = "ShpWriter"
 
         file_path = Path(file_path)
         self._modify = modify_existing
 
         if self._modify or not file_path.exists():
             self.file_path = file_path
-            logger.info(f"[ShpWriter] Storing data to   '{self.file_path}'")
+            logger.info(f"[{self.dev}] Storing data to   '{self.file_path}'")
         else:
             base_dir = file_path.resolve().parents[0]
             self.file_path = unique_path(
                 base_dir / file_path.stem, file_path.suffix
             )
             logger.warning(
-                f"[ShpWriter] File {file_path} already exists.. "
+                f"[{self.dev}] File {file_path} already exists.. "
                 f"storing under {self.file_path} instead"
             )
 
@@ -409,10 +470,10 @@ class ShepherdWriter(ShepherdReader):
             self.data_grp.attrs["window_samples"] = data["window_samples"]
 
     def __exit__(self, *exc):
-        runtime = round(self.data_grp['time'].shape[0] / self.samplerate_sps, 1)
-        logger.info(f"[ShpWriter] flushing hdf5 file, {runtime} s iv-data")
-        self._h5file.flush()
-        logger.info("[ShpWriter] closing  hdf5 file")
+        self.refresh_stats()
+        logger.info(f"[{self.dev}] closing hdf5 file, {self.runtime_s} s iv-data, "
+                    f"size = {round(self.file_size/2**20, 3)} MiB, "
+                    f"rate = {round(self.data_rate/2**10)} KiB/s")
         self._h5file.close()
 
     def append_iv_data_raw(self, timestamp_ns, voltage: np.ndarray, current: np.ndarray) -> NoReturn:
@@ -429,7 +490,7 @@ class ShepherdWriter(ShepherdReader):
         if isinstance(timestamp_ns, np.ndarray):
             len_new = min(len_new, timestamp_ns.size)
         else:
-            logger.error("[ShpWriter] timestamp-data was not usable")
+            logger.error(f"[{self.dev}] timestamp-data was not usable")
             return
 
         len_old = self.ds_time.shape[0]
