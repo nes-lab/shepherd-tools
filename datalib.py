@@ -36,6 +36,7 @@ def unique_path(base_path: Union[str, Path], suffix: str):
 general_calibration = {
     "voltage": {"gain": 3 * 1e-9, "offset": 0.0},      # allows 0 - 12 V in 3 nV-Steps
     "current": {"gain": 250 * 1e-12, "offset": 0.0},   # allows 0 - 1 A in 250 pA - Steps
+    "time": {"gain": 1e-9, "offset": 0.0},
 }
 
 
@@ -242,15 +243,14 @@ class ShepherdReader(object):
         raise KeyError
 
     @staticmethod
-    def raw_to_si(ds: h5py.Dataset, elem_start: int, elem_stop: int) -> h5py.Dataset:
-        # slice (:) would be preferred, but does not work
-        values_si = ds[elem_start:elem_stop] * ds.attrs["gain"] + ds.attrs["offset"]
+    def raw_to_si(values_raw: np.array, cal: dict) -> h5py.Dataset:
+        values_si = values_raw * cal["gain"] + cal["offset"]
         values_si[values_si < 0.0] = 0.0
         return values_si
 
     @staticmethod
-    def si_to_raw(ds: h5py.Dataset, elem_start: int, elem_stop: int) -> h5py.Dataset:
-        values_raw = (ds[elem_start:elem_stop] - ds.attrs["offset"]) / ds.attrs["gain"]
+    def si_to_raw(values_si: np.array, cal: dict) -> h5py.Dataset:
+        values_raw = (values_si - cal["offset"]) / cal["gain"]
         values_raw[values_raw < 0.0] = 0.0
         return values_raw
 
@@ -261,8 +261,8 @@ class ShepherdReader(object):
         for idx in range(0, iterations):
             idx_start = idx * self.max_elements
             idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
-            voltage_v = self.raw_to_si(self.ds_voltage, idx_start, idx_stop)
-            current_a = self.raw_to_si(self.ds_current, idx_start, idx_stop)
+            voltage_v = self.raw_to_si(self.ds_voltage[idx_start:idx_stop], self.cal["voltage"])
+            current_a = self.raw_to_si(self.ds_current[idx_start:idx_stop], self.cal["current"])
             energy_ws += (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
         return energy_ws
 
@@ -419,30 +419,30 @@ class ShepherdWriter(ShepherdReader):
         """Writes data to file.
 
         """
-        length_data_new = min(voltage.size, current.size)
+        len_new = min(voltage.size, current.size)
 
         if isinstance(timestamp_ns, float):
             timestamp_ns = int(timestamp_ns)
         if isinstance(timestamp_ns, int):
-            time_series_ns = self.sample_interval_ns * np.arange(length_data_new).astype("u8")
+            time_series_ns = self.sample_interval_ns * np.arange(len_new).astype("u8")
             timestamp_ns = timestamp_ns + time_series_ns
         if isinstance(timestamp_ns, np.ndarray):
-            length_data_new = min(length_data_new, timestamp_ns.size)
+            len_new = min(len_new, timestamp_ns.size)
         else:
             logger.error("[ShpWriter] timestamp-data was not usable")
             return
 
-        length_data_old = self.ds_time.shape[0]
+        len_old = self.ds_time.shape[0]
 
         # resize dataset
-        self.ds_time.resize((length_data_old + length_data_new,))
-        self.ds_voltage.resize((length_data_old + length_data_new,))
-        self.ds_current.resize((length_data_old + length_data_new,))
+        self.ds_time.resize((len_old + len_new,))
+        self.ds_voltage.resize((len_old + len_new,))
+        self.ds_current.resize((len_old + len_new,))
 
         # append new data
-        self.ds_time[length_data_old:length_data_new] = timestamp_ns
-        self.ds_voltage[length_data_old:length_data_new] = voltage[:length_data_new]
-        self.ds_current[length_data_old:length_data_new] = current[:length_data_new]
+        self.ds_time[len_old:len_old + len_new] = timestamp_ns[:len_new]
+        self.ds_voltage[len_old:len_old + len_new] = voltage[:len_new]
+        self.ds_current[len_old:len_old + len_new] = current[:len_new]
 
     def append_iv_data_si(self, timestamp, voltage: np.ndarray, current: np.array) -> NoReturn:
         """ Writes data to file, but converts it to raw-data first
@@ -455,10 +455,10 @@ class ShepherdWriter(ShepherdReader):
         Returns:
 
         """
-        # SI-value [SI-Unit] = raw-value * gain + offset, # TODO: inherit convert-fn from reader
+        # SI-value [SI-Unit] = raw-value * gain + offset,
         timestamp = timestamp * 10**9
-        voltage = (voltage - self.cal["voltage"]["offset"]) / self.cal["voltage"]["gain"]
-        current = (current - self.cal["current"]["offset"]) / self.cal["current"]["gain"]
+        voltage = self.si_to_raw(voltage, self.cal["voltage"])
+        current = self.si_to_raw(current, self.cal["current"])
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def __setitem__(self, key, item):
