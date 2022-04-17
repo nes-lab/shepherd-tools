@@ -19,6 +19,11 @@
     - `append_iv_data_si()`
 - `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
 - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
+- `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
+- `jogging_10m.iv`
+    - 50 Hz measurement with Short-Circuit-Current and two other parameters
+    - recorded with "IVonne"
+
 
 ### Compression & Beaglebone
 
@@ -50,7 +55,7 @@
 - implementations for this lib
   - plotting
   - resampling
-  - check timestamp-timejumps, handle already chunkwise? try with very big files, 24h
+  - check for timestamp-timejumps, handle already chunkwise? try with very big files, 24h
   - get data, csv? pandas, numpy
 - main shepherd-code
   - proper validation first
@@ -59,18 +64,10 @@
 
 ### Old Scripts and Files:
 - `gen_data.py` creates hdf-files for every type of database we want to support.
-    - `gen_regvoltage()`
-      - custom voltage-trace that gets handed to emulator (on/off-patter, constant-voltage, ...)
-    - `gen_ivcurve()` -> NOT UP TO DATE
-      - ~~construct artificial proto-curve and calculate transformation-coefficients for every time-step~~
-      - based on real data (`jogging_10m.iv`)
     - `curve2trace()`
       - get voltage/current-trace by sending curve through MPPT-Converter or other Optimizer/Tracker (in `mppt.py`)
       - can take very long (especially MPPT), but output can be limited by `duration` variable
 - `iv_reconstruct.py` ~~shows how the transformation-coefficients work~~ -> NOT UP TO DATE
-- `jogging_10m.iv`
-    - 50 Hz measurement with Short-Circuit-Current and two other parameters
-    - recorded with "IVonne"
 - `mppt.py` contains converters / trackers for `gen_data`
 - `plot.py`
     - `python plot.py db_traces.h5` plots the content of the hdf

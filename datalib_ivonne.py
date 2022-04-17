@@ -75,38 +75,28 @@ def convert_ivonne_2_ivcurves(recording: Path,
         df_sampled = df_sampled.iloc[0:int(duration_s * fs_iv_data)]
 
     v_proto = np.linspace(0, v_max, pts_per_curve)
-    i_proto = iv_model(v_proto, df_sampled.iloc[0])
 
-    voc_proto = get_voc(df_sampled.iloc[0])
-    isc_proto = get_isc(df_sampled.iloc[0])
+    df_sampled["timestamp"] = pd.TimedeltaIndex(data=df_sampled["time"], unit="s")
+    df_sampled = df_sampled.set_index("timestamp")
 
-    trans_coeffs = np.empty((len(df_sampled), 2))
-    for idx, coeffs in df_sampled.iterrows():
-        trans_coeffs[idx, 0] = get_voc(coeffs) / voc_proto
-        trans_coeffs[idx, 1] = get_isc(coeffs) / isc_proto
-        # TODO: lambda would be much faster, stay in original df
-
-    # Upsample transformation coefficients to 100kHz target frequency
-    ts = np.arange(0, runtime_s, 1 / fs_iv_data)
-    t_idx = pd.TimedeltaIndex(data=ts, unit="s")
-    # TODO: this can be in original df..
-
-    df_coeffs = pd.DataFrame(data=trans_coeffs, index=t_idx)
-    df_coeffs = df_coeffs.resample(f"{ShepherdWriter.sample_interval_ns * pts_per_curve}ns").interpolate(method="cubic")
-    coeffs_interp = df_coeffs.iloc[:, :].values
+    curve_interval_us = round(ShepherdWriter.sample_interval_ns * pts_per_curve / 1000)
+    # warning: .interpolate does crash in debug-mode with typeError
+    df_coeffs = df_sampled.resample(f"{curve_interval_us}us").interpolate(method="cubic")
 
     with ShepherdWriter(shp_output) as db:
 
         db.set_window_samples(pts_per_curve)
 
-        ts_col = np.arange(0, runtime_s, 1 / fs_iv_data)
-        df_sampled["timestamp"] = pd.TimedeltaIndex(data=df_sampled["time"], unit="s")
-        df_sampled = df_sampled.set_index("timestamp")
-        #df_coeffs = pd.DataFrame(data=df_sampled, index=["time"])
-        curve_interval_us = round(ShepherdWriter.sample_interval_ns * pts_per_curve / 1000)
-        df_coeffs = df_sampled.resample(f"{curve_interval_us}us").interpolate(
-            method="cubic")
-
         for idx, coeffs in df_coeffs.iterrows():
             i_proto = iv_model(v_proto, coeffs)
             db.append_iv_data_si(coeffs["time"], v_proto, i_proto)
+            # TODO: this could be a lot faster:
+            #   - use lambdas to generate i_proto
+            #   - convert i_proto with lambdas to raw-values
+            #   - convert v_proto to raw
+            #   - replace append_ fn with custom code here, by:
+            #   - final size of h5-arrays is already known, this speeds up the code!
+            #   - time can be generated and set as a whole
+            #   - v_proto is repetitive, can also be set as a whole
+
+        db.align()

@@ -509,6 +509,16 @@ class ShepherdWriter(ShepherdReader):
         current = self.si_to_raw(current, self.cal["current"])
         self.append_iv_data_raw(timestamp, voltage, current)
 
+    def align(self) -> NoReturn:
+        """ Align datasets with buffer-size of shepherd
+        TODO: make default at exit?
+        """
+        n_buff = self.ds_time.size / self.samples_per_buffer
+        size_new = int(math.floor(n_buff) * self.samples_per_buffer)
+        self.ds_time.resize((size_new,))
+        self.ds_voltage.resize((size_new,))
+        self.ds_current.resize((size_new,))
+
     def __setitem__(self, key, item):
         """Offer a convenient interface to store any relevant key-value data (attribute) of H5-file-structure"""
         return self._h5file.attrs.__setitem__(key, item)
