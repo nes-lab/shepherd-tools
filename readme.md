@@ -17,8 +17,8 @@
     - `embed_config()`
     - `append_iv_data_raw()`
     - `append_iv_data_si()`
-- `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 24h repetition and uses Reader to dump metadata of that file
-- `example_extract_cpu_load.py` is analyzing all files in directory and calculates cpu-load and data-rate
+- `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
+- `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
 
 ### Compression & Beaglebone
 
@@ -26,10 +26,10 @@
   - lzf seems better-suited due to lower load, or if space isn't a constraint: uncompressed (None as argument)
   - note: lzf seems to cause trouble with some third party hdf5-tools
   - compression is a heavy load for the beaglebone, but it got more performant with recent python-versions
-- size-experiment A: 24 h of ramping / sawtooth is the same as 1 h, when data is repetitive (1 minute ramp) 
-  - gzip-1: 35.277 mb
-  - lzf: 75.710 mb
-  - uncompressed: 93.832 mb
+- size-experiment A: 24 h of ramping / sawtooth (data is repetitive with 1 minute ramp) 
+  - gzip-1: 49'646 MiB -> 588 KiB/s
+  - lzf: 106'445 MiB -> 1262 KiB/s
+  - uncompressed: 131'928 MiB -> 1564 KiB/s
 - cpu-load-experiments (input is 24h sawtooth, python 3.10 with most recent libs as of 2022-04)
   - warning: gpio-traffic and other logging-data can cause lots of load
 

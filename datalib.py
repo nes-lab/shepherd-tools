@@ -127,9 +127,6 @@ class ShepherdReader(object):
         # TODO
         pass
 
-    def __getitem__(self, key):
-        return self._h5file.attrs.__getitem__(key)
-
     def get_calibration_data(self) -> dict:
         """Reads calibration data from hdf5 file.
 
@@ -256,13 +253,13 @@ class ShepherdReader(object):
         raise KeyError
 
     @staticmethod
-    def raw_to_si(values_raw: np.array, cal: dict) -> h5py.Dataset:
+    def raw_to_si(values_raw: np.ndarray, cal: dict) -> np.ndarray:
         values_si = values_raw * cal["gain"] + cal["offset"]
         values_si[values_si < 0.0] = 0.0
         return values_si
 
     @staticmethod
-    def si_to_raw(values_si: np.array, cal: dict) -> h5py.Dataset:
+    def si_to_raw(values_si: np.ndarray, cal: dict) -> np.ndarray:
         values_raw = (values_si - cal["offset"]) / cal["gain"]
         values_raw[values_raw < 0.0] = 0.0
         return values_raw
@@ -281,6 +278,7 @@ class ShepherdReader(object):
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
         if h5_group["time"].shape[0] < 1:
+            logger.info(f"[{self.dev}] {h5_group.name} is empty, no csv generated")
             return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
@@ -309,6 +307,7 @@ class ShepherdReader(object):
         :return:
         """
         if h5_group["time"].shape[0] < 1:
+            logger.info(f"[{self.dev}] {h5_group.name} is empty, no log generated")
             return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
@@ -457,18 +456,6 @@ class ShepherdWriter(ShepherdReader):
         super().__enter__()
         return self
 
-    def embed_config(self, data: dict) -> NoReturn:
-        """
-        Important Step to get a self-describing Output-File
-        Note: the size of window_samples-attribute in harvest-data indicates ivcurves as input -> emulator uses virtual-harvester
-
-        :param data: from virtual harvester or converter / source
-        :return: None
-        """
-        self.data_grp.attrs["config"] = yaml.dump(data, default_flow_style=False)
-        if "window_samples" in data:
-            self.data_grp.attrs["window_samples"] = data["window_samples"]
-
     def __exit__(self, *exc):
         self.refresh_stats()
         logger.info(f"[{self.dev}] closing hdf5 file, {self.runtime_s} s iv-data, "
@@ -525,3 +512,19 @@ class ShepherdWriter(ShepherdReader):
     def __setitem__(self, key, item):
         """Offer a convenient interface to store any relevant key-value data (attribute) of H5-file-structure"""
         return self._h5file.attrs.__setitem__(key, item)
+
+    def set_config(self, data: dict) -> NoReturn:
+        """
+        Important Step to get a self-describing Output-File
+        Note: the size of window_samples-attribute in harvest-data indicates ivcurves as input
+        -> emulator uses virtual-harvester
+
+        :param data: from virtual harvester or converter / source
+        :return: None
+        """
+        self.data_grp.attrs["config"] = yaml.dump(data, default_flow_style=False)
+        if "window_samples" in data:
+            self.data_grp.attrs["window_samples"] = data["window_samples"]
+
+    def set_window_samples(self, samples: int = 0) -> NoReturn:
+        self.data_grp.attrs["window_samples"] = samples
