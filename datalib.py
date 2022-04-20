@@ -16,7 +16,10 @@ import numpy as np
 from pathlib import Path
 import h5py
 from itertools import product
+
+import pandas as pd
 import yaml
+from tqdm import trange
 
 consoleHandler = logging.StreamHandler()
 logger = logging.getLogger("shepherd")
@@ -53,7 +56,7 @@ class ShepherdReader(object):
     sample_interval_ns = int(10 ** 9 // samplerate_sps)
     sample_interval_s: float = (1 / samplerate_sps)
 
-    max_elements: int = 50_000_000  # per iteration
+    max_elements: int = 10_000_000  # per iteration (100s, ~ 300 MB RAM use)
     dev = "ShpReader"
 
     def __init__(self, file_path: Union[Path, None], verbose: bool = True):
@@ -67,7 +70,7 @@ class ShepherdReader(object):
 
     def __enter__(self):
         if not self._skip_read:
-            self._h5file = h5py.File(self.file_path, "r")
+            self._h5file = h5py.File(self.file_path, "r", swmr=True)
 
         if self.is_valid():
             logger.info(f"[{self.dev}] File is available now")
@@ -81,7 +84,7 @@ class ShepherdReader(object):
             "voltage": {"gain": self.ds_voltage.attrs["gain"], "offset": self.ds_voltage.attrs["offset"]},
             "current": {"gain": self.ds_current.attrs["gain"], "offset": self.ds_current.attrs["offset"]},
         }
-        self.refresh_stats()
+        self.refresh_file_stats()
 
         if not self._skip_read:
             logger.info(
@@ -97,35 +100,38 @@ class ShepherdReader(object):
         if not self._skip_read:
             self._h5file.close()
 
-    def refresh_stats(self):
+    def refresh_file_stats(self):
         self._h5file.flush()
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
-    def read_buffers_raw(self, start: int = 0, end: int = None):
+    def read_buffers(self, start: int = 0, end: int = None, raw: bool = False):
         """Reads the specified range of buffers from the hdf5 file.
 
         Args:
             :param start: (int): Index of first buffer to be read
             :param end: (int): Index of last buffer to be read
+            :param raw: output original data, not transformed to SI-Units
         Yields:
-            Buffers between start and end
+            Buffers between start and end (tuple with time, voltage, current)
         """
         if end is None:
             end = int(self._h5file["data"]["time"].shape[0] // self.samples_per_buffer)
         logger.debug(f"[{self.dev}] Reading blocks from {start} to {end} from source-file")
+        _raw = raw
 
         for i in range(start, end):
             idx_start = i * self.samples_per_buffer
             idx_end = idx_start + self.samples_per_buffer
-            yield (self.ds_time[idx_start:idx_end],
-                   self.ds_voltage[idx_start:idx_end],
-                   self.ds_current[idx_start:idx_end])
-
-    def read_buffers_si(self, start: int = 0, end: int = None, verbose: bool = False):
-        # TODO
-        pass
+            if _raw:
+                yield (self.ds_time[idx_start:idx_end],
+                       self.ds_voltage[idx_start:idx_end],
+                       self.ds_current[idx_start:idx_end])
+            else:
+                yield (self.ds_time[idx_start:idx_end] * 1e-9,
+                       self.raw_to_si(self.ds_voltage[idx_start:idx_end], self.cal["voltage"]),
+                       self.raw_to_si(self.ds_current[idx_start:idx_end], self.cal["current"]))
 
     def get_calibration_data(self) -> dict:
         """Reads calibration data from hdf5 file.
@@ -150,7 +156,21 @@ class ShepherdReader(object):
             return yaml.safe_load(self._h5file["data"].attrs["config"])
         return {}
 
+    def data_timediffs(self) -> list:
+        """ calculate list of (unique) time-deltas between buffers [s]
+            -> optimized version that only looks at the start of each buffer
+            TODO: consumes ~3 GiB RAM and has no progressbar -> ~ 2min/24h data
+        """
+        ds_time = self._h5file["data"]["time"][0:self._h5file["data"]["time"].shape[0]:1*self.samples_per_buffer]
+        diffs = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
+        diffs = list(np.array(diffs))
+        diffs = [float(i) * 1e-9 for i in diffs]
+        return diffs
+
     def is_valid(self) -> bool:
+        """ checks file for plausibility
+        :return: state of validity
+        """
         # hard criteria
         if "data" not in self._h5file.keys():
             logger.error(f"[{self.dev}|validator] root data-group not found")
@@ -192,7 +212,6 @@ class ShepherdReader(object):
                 logger.error(f"[{self.dev}|validator] unsupported compression found ({comp} != None, lzf, gzip)")
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
                 logger.error(f"[{self.dev}|validator] gzip compression is too high ({opts} > 1) for BBone")
-
         return True
 
     def get_metadata(self, node=None) -> dict:
@@ -202,7 +221,8 @@ class ShepherdReader(object):
         """
         # recursive...
         if node is None:
-            return {"h5root": self.get_metadata(self._h5file)}
+            self.refresh_file_stats()
+            return self.get_metadata(self._h5file)
 
         metadata = {}
         if isinstance(node, h5py.Dataset):
@@ -213,6 +233,10 @@ class ShepherdReader(object):
                 "compression": str(node.compression),
                 "compression_opts": str(node.compression_opts),
             }
+            if "/data/time" == node.name:
+                metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
+            elif "int" in str(node.dtype):
+                metadata["_dataset_info"]["statistics"] = self.ds_statistics(node)
         for attr in node.attrs.keys():
             attr_value = node.attrs[attr]
             if isinstance(attr_value, str):
@@ -226,19 +250,31 @@ class ShepherdReader(object):
                 attr_value = float(attr_value)
             metadata[attr] = attr_value
         if isinstance(node, h5py.Group):
+            if "/data" == node.name:
+                metadata["_group_info"] = {
+                    "energy_Ws": self.energy(),
+                    "runtime_s": round(self.runtime_s, 1),
+                    "data_rate_KiB_s": round(self.data_rate / 2**10),
+                    "file_size_MiB": round(self.file_size / 2**20, 3),
+                    "valid": self.is_valid(),
+                }
             for item in node.keys():
                 metadata[item] = self.get_metadata(node[item])
 
         return metadata
 
-    def save_metadata(self, node=None) -> NoReturn:
+    def save_metadata(self, node=None) -> dict:
         """ get structure of file and dump content to yaml-file with same name as original
         :param node: starting node, leave free to go through whole file
         """
-        metadata = self.get_metadata(node)
-        file_path = Path(self.file_path).absolute()
-        with open(file_path.with_suffix(".yml"), "w") as fd:
+        yml_path = Path(self.file_path).absolute().with_suffix(".yml")
+        if yml_path.exists():
+            logger.info(f"[{self.dev}] {yml_path} already exists, will skip")
+            return {}
+        metadata = self.get_metadata()  # {"h5root": self.get_metadata(self._h5file)}
+        with open(yml_path, "w") as fd:
             yaml.safe_dump(metadata, fd, default_flow_style=False, sort_keys=False)
+        return metadata
 
     def __getitem__(self, key):
         """ returns attribute or (if none found) a handle for a group or dataset (if found)
@@ -264,30 +300,72 @@ class ShepherdReader(object):
         values_raw[values_raw < 0.0] = 0.0
         return values_raw
 
-    def calc_energy(self) -> float:
+    def _energy_calc(self, idx_start: int):
+        idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
+        voltage_v = self.raw_to_si(self.ds_voltage[idx_start:idx_stop], self.cal["voltage"])
+        current_a = self.raw_to_si(self.ds_current[idx_start:idx_stop], self.cal["current"])
+        return (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
+
+    def energy(self) -> float:
+        """ determine the recorded energy of the trace
+        # multiprocessing: https://stackoverflow.com/a/71898911
+        # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool
+        :return: sampled energy in Ws (watt-seconds)
+        """
         iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
-        energy_ws = 0.0
-        # TODO: could be done multi-processed
-        for idx in range(0, iterations):
-            idx_start = idx * self.max_elements
-            idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
-            voltage_v = self.raw_to_si(self.ds_voltage[idx_start:idx_stop], self.cal["voltage"])
-            current_a = self.raw_to_si(self.ds_current[idx_start:idx_stop], self.cal["current"])
-            energy_ws += (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
-        return energy_ws
+        job_iter = trange(0, self.ds_time.shape[0], self.max_elements, desc="energy", leave=False, disable=iterations < 8)
+        energy_ws = [self._energy_calc(i) for i in job_iter]
+        return float(sum(energy_ws))
+
+    @staticmethod
+    def _ds_statistics_calc(ds: np.ndarray) -> dict:
+        return {"mean": np.mean(ds),
+                "min": np.min(ds),
+                "max": np.max(ds),
+                "std": np.std(ds),
+                }
+
+    def ds_statistics(self, ds: h5py.Dataset, cal: dict = None) -> dict:
+        """ some basic stats for a provided dataset
+        :param ds: dataset to evaluate
+        :param cal: calibration (if wanted)
+        :return: dict with entries for mean, min, max, std
+        """
+        if not isinstance(cal, dict):
+            if "gain" in ds.attrs.keys() and "offset" in ds.attrs.keys():
+                cal = {"gain": ds.attrs["gain"], "offset": ds.attrs["offset"], "cal_converted": True}
+            else:
+                cal = {"gain": 1, "offset": 0, "cal_converted": False}
+        else:
+            cal["cal_converted"] = True
+        iterations = math.ceil(ds.shape[0] / self.max_elements)
+        job_iter = trange(0, ds.shape[0], self.max_elements, desc=f"{ds.name}-stats", leave=False, disable=iterations < 8)
+        stats_list = [self._ds_statistics_calc(self.raw_to_si(ds[i:i + self.max_elements], cal)) for i in job_iter]
+        stats_df = pd.DataFrame(stats_list)
+        stats = {
+            "mean": float(stats_df["mean"].mean()),
+            "min": float(stats_df["min"].min()),
+            "max": float(stats_df["max"].max()),
+            "std": float(stats_df["std"].mean()),
+            "cal_converted": cal["cal_converted"]
+        }
+        return stats
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
         if h5_group["time"].shape[0] < 1:
             logger.info(f"[{self.dev}] {h5_group.name} is empty, no csv generated")
             return 0
+        csv_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
+        if csv_path.exists():
+            logger.info(f"[{self.dev}] {csv_path} already exists, will skip")
+            return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
         datasets = ["time"] + datasets
-        suffix = f".{h5_group.name.strip('/')}.csv"
         separator = separator.strip().ljust(2)
         header = [h5_group[key].attrs["description"].replace(", ", separator) for key in datasets]
         header = separator.join(header)
-        with open(self.file_path.with_suffix(suffix), "w") as csv_file:
+        with open(csv_path, "w") as csv_file:
             csv_file.write(header + "\n")
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
@@ -309,10 +387,13 @@ class ShepherdReader(object):
         if h5_group["time"].shape[0] < 1:
             logger.info(f"[{self.dev}] {h5_group.name} is empty, no log generated")
             return 0
+        log_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
+        if log_path.exists():
+            logger.info(f"[{self.dev}] {log_path} already exists, will skip")
+            return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
-        suffix = f".{h5_group.name.strip('/')}.log"
-        with open(self.file_path.with_suffix(suffix), "w") as log_file:
+        with open(log_path, "w") as log_file:
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
                 log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
@@ -457,7 +538,8 @@ class ShepherdWriter(ShepherdReader):
         return self
 
     def __exit__(self, *exc):
-        self.refresh_stats()
+        self.align()
+        self.refresh_file_stats()
         logger.info(f"[{self.dev}] closing hdf5 file, {self.runtime_s} s iv-data, "
                     f"size = {round(self.file_size/2**20, 3)} MiB, "
                     f"rate = {round(self.data_rate/2**10)} KiB/s")
@@ -515,9 +597,11 @@ class ShepherdWriter(ShepherdReader):
         """
         n_buff = self.ds_time.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
-        self.ds_time.resize((size_new,))
-        self.ds_voltage.resize((size_new,))
-        self.ds_current.resize((size_new,))
+        if size_new < self.ds_time.size:
+            logger.info(f"[{self.dev}] aligning with buffer-size, discarding last {self.ds_time.size - size_new} entries")
+            self.ds_time.resize((size_new,))
+            self.ds_voltage.resize((size_new,))
+            self.ds_current.resize((size_new,))
 
     def __setitem__(self, key, item):
         """Offer a convenient interface to store any relevant key-value data (attribute) of H5-file-structure"""

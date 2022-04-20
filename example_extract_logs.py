@@ -6,6 +6,7 @@ from datalib import ShepherdReader
 # script iterates through this directory and analyzes hdf5-files
 # - prints cpu-utilization and data-rate
 # - saves logging-info to files
+# - saves metadata to datasets and the file itself to yml
 
 if __name__ == "__main__":
 
@@ -16,21 +17,29 @@ if __name__ == "__main__":
             continue
 
         with ShepherdReader(fpath, verbose=False) as fh:
-            fh.save_metadata()
-            try:
-                fh.save_csv(fh["sysutil"])
-                fh.save_csv(fh["timesync"])
+            elements = fh.save_metadata()
 
-                fh.save_log(fh["dmesg"])
-                fh.save_log(fh["exceptions"])
-                fh.save_log(fh["uart"])
+            if "sysutil" in elements:
+                fh.save_csv(fh["sysutil"])
 
                 # also generate overall cpu-util
                 ds_cpu = fh["sysutil"]["cpu"]
 
                 print(f"{file} \t-> {fh['mode']}, "
                       f"{ds_cpu.attrs['description']} = {round(ds_cpu[:].mean(), 2)}, "
-                      f"data-rate = {round(fh.data_rate / 2**10)} KiB/s, "
-                      f"energy = {fh.calc_energy()}")
-            except KeyError:
-                continue
+                      f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
+                      )
+            else:
+                print(f"{file} \t-> {fh['mode']}, "
+                      f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
+                      )
+
+            if "timesync" in elements:
+                fh.save_csv(fh["timesync"])
+
+            if "dmesg" in elements:
+                fh.save_log(fh["dmesg"])
+            if "exceptions" in elements:
+                fh.save_log(fh["exceptions"])
+            if "uart" in elements:
+                fh.save_log(fh["uart"])

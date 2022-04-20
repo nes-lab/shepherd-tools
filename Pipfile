@@ -10,6 +10,7 @@ h5py = "*"
 pandas = "*"
 scipy = "*"
 yaml = "*"
+tqdm = "*"
 
 [dev-packages]
 black = "*"

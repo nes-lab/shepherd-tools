@@ -5,6 +5,7 @@ import pandas as pd
 import pickle
 import scipy  # used for interpolation
 from pathlib import Path
+from tqdm import tqdm
 
 from datalib import ShepherdWriter
 
@@ -70,7 +71,7 @@ def convert_ivonne_2_ivcurves(recording: Path,
     df_sampled = load_iv_data(recording)
     runtime_s = len(df_sampled) / fs_iv_data
     print(f"Length of IV-Curve is {runtime_s} s [{recording}]")
-    if isinstance(duration_s, Union[float, int]) and runtime_s > duration_s:
+    if isinstance(duration_s, (float, int)) and runtime_s > duration_s:
         print(f"  -> gets trimmed to {duration_s} s")
         df_sampled = df_sampled.iloc[0:int(duration_s * fs_iv_data)]
 
@@ -87,7 +88,7 @@ def convert_ivonne_2_ivcurves(recording: Path,
 
         db.set_window_samples(pts_per_curve)
 
-        for idx, coeffs in df_coeffs.iterrows():
+        for idx, coeffs in tqdm(df_coeffs.iterrows(), desc="generating ivcurves", total=df_coeffs.shape[0]):
             i_proto = iv_model(v_proto, coeffs)
             db.append_iv_data_si(coeffs["time"], v_proto, i_proto)
             # TODO: this could be a lot faster:
@@ -98,5 +99,3 @@ def convert_ivonne_2_ivcurves(recording: Path,
             #   - final size of h5-arrays is already known, this speeds up the code!
             #   - time can be generated and set as a whole
             #   - v_proto is repetitive, can also be set as a whole
-
-        db.align()

@@ -1,5 +1,6 @@
 from pathlib import Path
 import numpy as np
+from tqdm import trange
 
 from datalib import ShepherdReader, ShepherdWriter
 
@@ -17,10 +18,9 @@ if __name__ == "__main__":
         voltages = np.linspace(3.60, 1.90, int(file.samplerate_sps * duration_s))
         currents = np.linspace(100e-6, 2000e-6, int(file.samplerate_sps * duration_s))
 
-        for idx in range(repetitions):
+        for idx in trange(repetitions, desc="repetitions"):
 
-            timestamp_now_s = idx * duration_s
-            timestamps = timestamp_now_s + timestamp_vector
+            timestamps = idx * duration_s + timestamp_vector
             file.append_iv_data_si(timestamps, voltages, currents)
 
         file.save_metadata()
@@ -29,5 +29,3 @@ if __name__ == "__main__":
         print(f"Mode: {db.get_mode()}")
         print(f"Window: {db.get_window_samples()}")
         print(f"Config: {db.get_config()}")
-        print(f"EnergySum [Ws]: {db.calc_energy()}")
-        # db.save_metadata()
