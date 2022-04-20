@@ -17,6 +17,9 @@ from pathlib import Path
 import h5py
 from itertools import product
 
+from matplotlib import pyplot as plt
+from scipy import signal
+
 import pandas as pd
 import yaml
 from tqdm import trange
@@ -56,7 +59,7 @@ class ShepherdReader(object):
     sample_interval_ns = int(10 ** 9 // samplerate_sps)
     sample_interval_s: float = (1 / samplerate_sps)
 
-    max_elements: int = 10_000_000  # per iteration (100s, ~ 300 MB RAM use)
+    max_elements: int = 100 * samplerate_sps  # per iteration (100s, ~ 300 MB RAM use)
     dev = "ShpReader"
 
     def __init__(self, file_path: Union[Path, None], verbose: bool = True):
@@ -89,10 +92,10 @@ class ShepherdReader(object):
         if not self._skip_read:
             logger.info(
                 f"[{self.dev}] Reading data from '{self.file_path}'\n"
-                f"\t- contains {self.runtime_s} s"
-                f"\t- mode = {self.get_mode()}"
-                f"\t- window_size = {self.get_window_samples()}"
-                f"\t- size = {round(self.file_size/2**20)} MiB"
+                f"\t- runtime {self.runtime_s} s\n"
+                f"\t- mode = {self.get_mode()}\n"
+                f"\t- window_size = {self.get_window_samples()}\n"
+                f"\t- size = {round(self.file_size/2**20)} MiB\n"
                 f"\t- rate = {round(self.data_rate/2**10)} KiB/s")
         return self
 
@@ -159,9 +162,9 @@ class ShepherdReader(object):
     def data_timediffs(self) -> list:
         """ calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
-            TODO: consumes ~3 GiB RAM and has no progressbar -> ~ 2min/24h data
+            TODO: consumes ~6 GiB RAM (24h data) and has no progressbar -> ~ 2min
         """
-        ds_time = self._h5file["data"]["time"][0:self._h5file["data"]["time"].shape[0]:1*self.samples_per_buffer]
+        ds_time = self._h5file["data"]["time"][::1*self.samples_per_buffer]
         diffs = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
         diffs = list(np.array(diffs))
         diffs = [float(i) * 1e-9 for i in diffs]
@@ -344,7 +347,7 @@ class ShepherdReader(object):
         if len(stats_list) < 1:
             return {}
         stats_df = pd.DataFrame(stats_list)
-        stats = {
+        stats = { # TODO: wrong calculation for ndim-datasets with n>1
             "mean": float(stats_df.loc[:, "mean"].mean()),
             "min": float(stats_df.loc[:, "min"].min()),
             "max": float(stats_df.loc[:, "max"].max()),
@@ -407,6 +410,90 @@ class ShepherdReader(object):
                     log_file.write(f"\t{message}")
                 log_file.write("\n")
         return h5_group["time"].shape[0]
+
+    def downsample(self, dataset: h5py.Dataset, start: int, end: int, ds_factor: float = 5, is_time: bool = False):
+        """
+        :param dataset:
+        :param ds_factor:
+        :param is_time:
+        :return:
+        """
+        ds_factor = max(1, math.floor(ds_factor))
+        start = min(dataset.shape[0], round(start))
+        end = min(dataset.shape[0], round(end))
+        data_len = end - start  # TODO: one-off to calculation below
+        iblock_len = min(self.max_elements, data_len)
+        oblock_len = round(iblock_len / ds_factor)
+        iterations = math.ceil(data_len / iblock_len)
+        dest_len = math.floor(data_len / ds_factor)
+        dest_ds = np.empty((dest_len,))
+
+        if not is_time and ds_factor > 1:
+            # 8th order butterworth filter for downsampling
+            # note: cheby1 does not work well for static outputs (2.8V can become 2.0V for buck-converters)
+            flt = signal.iirfilter(
+                N=8,
+                Wn=1 / ds_factor,
+                btype="lowpass",
+                output="sos",
+                ftype="butter",
+            )
+            # filter state
+            z = np.zeros((flt.shape[0], 2))
+
+        slice_len = 0
+        for i in trange(0, iterations, desc=f"downsampling {dataset.name}", leave=False, disable=iterations < 8):
+            slice_ds = dataset[start + i * iblock_len: start + (i + 1) * iblock_len]
+            if not is_time and ds_factor > 1:
+                slice_ds, z = signal.sosfilt(flt, slice_ds, zi=z)
+            slice_ds = slice_ds[::ds_factor]
+            slice_len = min(dest_len - i * oblock_len, oblock_len)
+            dest_ds[i * oblock_len: (i + 1) * oblock_len] = slice_ds[:slice_len]
+        dest_ds.resize((oblock_len*(iterations-1) + slice_len,))
+        return dest_ds
+
+    def plot_to_file(self, start_s: float = None, end_s: float = None):
+        """
+
+        :param start_s:
+        :param end_s:
+        :return:
+        """
+        if not isinstance(start_s, (float, int)):
+            start_s = 0
+        if not isinstance(end_s, (float, int)):
+            end_s = self.runtime_s
+        start_str = f"{start_s:.3f}".replace(".", "s")
+        end_str = f"{end_s:.3f}".replace(".", "s")
+        plot_path = self.file_path.with_suffix(f".{start_str}_to_{end_str}.png")
+        if plot_path.exists():
+            return
+        start_sample = round(start_s * self.samplerate_sps)
+        end_sample = round(end_s * self.samplerate_sps)
+        # goal: downsample-size of self.max_elements
+        sampling_rate = max(round(self.max_elements/(end_s - start_s), 3), 0.001)
+        ds_factor = float(self.samplerate_sps / sampling_rate)
+        data = {
+            "time": self.downsample(self.ds_time, start_sample, end_sample, ds_factor, is_time=True).astype(float) * 1e-9,
+            "voltage": self.raw_to_si(self.downsample(self.ds_voltage, start_sample, end_sample, ds_factor), self.cal["voltage"]),
+            "current": self.raw_to_si(self.downsample(self.ds_current, start_sample, end_sample, ds_factor), self.cal["current"]),
+        }
+        time_zero = float(self.ds_time[0]) * 1e-9
+        fig, axes = plt.subplots(2, 1, sharex=True)
+        fig.suptitle(f"Voltage and current")
+        axes[0].plot(data["time"] - time_zero, data["voltage"])  # add: ,label=active_node
+        axes[1].plot(data["time"] - time_zero, data["current"] * 10**6)
+        active_nodes = ["TheHost"]  # TODO: get hostname
+        axes[0].set_ylabel("voltage [V]")
+        axes[1].set_ylabel(r"current [$\mu$A]")
+        axes[0].legend(loc="lower center", ncol=len(active_nodes))
+        axes[1].set_xlabel("time [s]")
+        fig.set_figwidth(20)  # TODO: make userdef, limit x to start and end
+        fig.set_figheight(10)
+        fig.tight_layout()
+        plt.savefig(plot_path)
+        plt.close(fig)
+        plt.clf()  # TODO: add other nodes
 
 
 class ShepherdWriter(ShepherdReader):

@@ -20,6 +20,7 @@
 - `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
 - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
 - `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
+- `example_plot_traces.py` demos some mpl-plots with various zoom levels
 - `jogging_10m.iv`
     - 50 Hz measurement with Short-Circuit-Current and two other parameters
     - recorded with "IVonne"
@@ -53,14 +54,16 @@
 ### Open Tasks
 
 - implementations for this lib
-  - plotting
-  - resampling
-  - check for timestamp-timejumps, handle already chunkwise? try with very big files, 24h
-  - get data, csv? pandas, numpy
+  - plotting for multi-node
+  - plotting more generalized (power, cpu-util, ..., own directory)
+  - some metadata is wrong (non-scalar datasets)
 - main shepherd-code
   - proper validation first
   - update commentary
   - pin-description should be in yaml (and other descriptions for cpu, io, ...)
+  - datatype-hint in h5-file (ivcurve, ivsample, isc_voc)
+  - hostname for emulation
+  - full and minimal config into h5
 
 ### Old Scripts and Files:
 - `gen_data.py` creates hdf-files for every type of database we want to support.

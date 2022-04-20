@@ -4,9 +4,14 @@ from tqdm import trange
 
 from datalib import ShepherdReader, ShepherdWriter
 
+# script will:
+# - generate a repetitive ramp / sawtooth
+# - save file-metadata to yaml
+# - read file and query some data
+
 if __name__ == "__main__":
 
-    file_path = Path("./hrv_artificial_sawtooth_1h.h5")
+    file_path = Path("./hrv_sawtooth_1h.h5")
 
     with ShepherdWriter(file_path, compression=1) as file:
 
