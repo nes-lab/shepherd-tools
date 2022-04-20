@@ -341,12 +341,14 @@ class ShepherdReader(object):
         iterations = math.ceil(ds.shape[0] / self.max_elements)
         job_iter = trange(0, ds.shape[0], self.max_elements, desc=f"{ds.name}-stats", leave=False, disable=iterations < 8)
         stats_list = [self._ds_statistics_calc(self.raw_to_si(ds[i:i + self.max_elements], cal)) for i in job_iter]
+        if len(stats_list) < 1:
+            return {}
         stats_df = pd.DataFrame(stats_list)
         stats = {
-            "mean": float(stats_df["mean"].mean()),
-            "min": float(stats_df["min"].min()),
-            "max": float(stats_df["max"].max()),
-            "std": float(stats_df["std"].mean()),
+            "mean": float(stats_df.loc[:, "mean"].mean()),
+            "min": float(stats_df.loc[:, "min"].min()),
+            "max": float(stats_df.loc[:, "max"].max()),
+            "std": float(stats_df.loc[:, "std"].mean()),
             "cal_converted": cal["cal_converted"]
         }
         return stats
