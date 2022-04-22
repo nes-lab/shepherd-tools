@@ -1,30 +1,65 @@
 ## Shepherd - Datalib
 
-### Info about Scripts and Files
+### Installation
 
-- `datalib.py` is the lib itself for reading & writing, with several helper-functions
-  - ShepherdReader
-    - `read_buffers_raw()`
-    - ~~`read_buffers_si()`~~ TODO
+manual:
+
+- clone repository
+- navigate shell into directory
+- call `python setup.py install`
+
+via pip (TODO):
+
+`pip3 install shepherd_data`
+
+### Info about the programming interface
+
+basic usage (recommendation):
+
+```
+import shepherd_data as shpd
+
+with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
+    print(f"Mode: {db.get_mode()}")
+    print(f"Window: {db.get_window_samples()}")
+    print(f"Config: {db.get_config()}")
+```
+
+available functionality:
+
+- `Reader()`
+  - file can be checked for plausibility and validity (`is_valid()`)
+  - internal structure of h5file (`get_metadata()` or `save_metadata()` ... to yaml) with lots of additional data
+  - access data and various converters, calculators
+    - `read_buffers()` -> generator that provides one buffer per call, can be configured on first call 
     - `get_calibration_data()`
     - `get_windows_samples()`
     - `get_mode()`
     - `get_config()`
-    - `is_valid()`
-    - `get_metadata()`
-    - `save_metadata()`
-  - ShepherdWriter
-    - `embed_config()`
-    - `append_iv_data_raw()`
-    - `append_iv_data_si()`
-- `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
-- `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
-- `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
-- `example_plot_traces.py` demos some mpl-plots with various zoom levels
-- `jogging_10m.iv`
-    - 50 Hz measurement with Short-Circuit-Current and two other parameters
-    - recorded with "IVonne"
+    - direct access to root h5-structure via `reader['element']`
+    - converters for raw / physical units: `si_to_raw()` & `raw_to_si()`
+    - `energy()` sums up recorded power over time
+  - `downsample()` (if needed) visualize recording (`plot_to_file()`)
+- `Writer()`
+  - inherits all functionality from Reader
+  - `append_iv_data_raw()`
+  - `append_iv_data_si()`
+  - `set_config()`
+  - `set_windows_samples()`
+- IVonne Reader
+  - `convert_2_ivcurves()` converts ivonne-recording into a shepherd ivcurve
+- examples
+  - `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
+  - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
+  - `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
+  - `example_plot_traces.py` demos some mpl-plots with various zoom levels
+  - `jogging_10m.iv`
+      - 50 Hz measurement with Short-Circuit-Current and two other parameters
+      - recorded with "IVonne"
 
+### Info about the cli interface
+
+TODO
 
 ### Compression & Beaglebone
 

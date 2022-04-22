@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from datalib import ShepherdReader
+import shepherd_data as shpd
 
 # script iterates through this directory and analyzes hdf5-files
 # - prints cpu-utilization and data-rate
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         if not fpath.is_file() or ".h5" != fpath.suffix:
             continue
 
-        with ShepherdReader(fpath, verbose=False) as fh:
+        with shpd.Reader(fpath, verbose=False) as fh:
             elements = fh.save_metadata()
 
             if "sysutil" in elements:

@@ -25,7 +25,7 @@ import yaml
 from tqdm import trange
 
 consoleHandler = logging.StreamHandler()
-logger = logging.getLogger("shepherd")
+logger = logging.getLogger("shepherd_data")
 logger.addHandler(consoleHandler)
 logger.setLevel(logging.INFO)
 
@@ -47,11 +47,12 @@ general_calibration = {
 }
 
 
-class ShepherdReader(object):
-    """ Sequentially Reads data from HDF5 file.
+class Reader(object):
+    """ Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
-        file_path (Path): Path of hdf5 file containing IV data
+        file_path: Path of hdf5 file containing shepherd data with iv-samples or iv-curves
+        verbose: more info during usage
     """
 
     samples_per_buffer: int = 10_000
@@ -62,11 +63,12 @@ class ShepherdReader(object):
     max_elements: int = 100 * samplerate_sps  # per iteration (100s, ~ 300 MB RAM use)
     dev = "ShpReader"
 
-    def __init__(self, file_path: Union[Path, None], verbose: bool = True):
+    def __init__(self, file_path: Union[Path, None], verbose: Union[bool, None] = True):
         self._skip_read = file_path is None  # for access by writer-class
         if not self._skip_read:
-            self.file_path = file_path
-        logger.setLevel(logging.INFO if verbose else logging.WARNING)
+            self.file_path = Path(file_path)
+        if verbose is not None:
+            logger.setLevel(logging.INFO if verbose else logging.WARNING)
         self.runtime_s = None
         self.file_size = None
         self.data_rate = None
@@ -110,12 +112,12 @@ class ShepherdReader(object):
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
     def read_buffers(self, start: int = 0, end: int = None, raw: bool = False):
-        """Reads the specified range of buffers from the hdf5 file.
+        """ Generator that reads the specified range of buffers from the hdf5 file. can be configured on first call
 
         Args:
-            :param start: (int): Index of first buffer to be read
-            :param end: (int): Index of last buffer to be read
-            :param raw: output original data, not transformed to SI-Units
+            :param start: (int) Index of first buffer to be read
+            :param end: (int) Index of last buffer to be read
+            :param raw: (bool) output original data, not transformed to SI-Units
         Yields:
             Buffers between start and end (tuple with time, voltage, current)
         """
@@ -496,7 +498,7 @@ class ShepherdReader(object):
         plt.clf()  # TODO: add other nodes
 
 
-class ShepherdWriter(ShepherdReader):
+class Writer(Reader):
     """Stores data for Shepherd in HDF5 format
 
     Args:
@@ -520,7 +522,7 @@ class ShepherdWriter(ShepherdReader):
     mode_default = "harvester"
     cal_default = general_calibration
 
-    chunk_shape = (ShepherdReader.samples_per_buffer,)
+    chunk_shape = (Reader.samples_per_buffer,)
 
     def __init__(
             self,
@@ -529,7 +531,7 @@ class ShepherdWriter(ShepherdReader):
             calibration_data: dict = None,
             modify_existing: bool = False,
             compression: Union[None, str, int] = "default",
-            verbose: bool = True,
+            verbose: Union[bool, None] = True,
     ):
         super().__init__(file_path=None, verbose=verbose)
         self.dev = "ShpWriter"
@@ -546,8 +548,8 @@ class ShepherdWriter(ShepherdReader):
                 base_dir / file_path.stem, file_path.suffix
             )
             logger.warning(
-                f"[{self.dev}] File {file_path} already exists.. "
-                f"storing under {self.file_path} instead"
+                f"[{self.dev}] File {file_path} already exists -> "
+                f"storing under {self.file_path.name} instead"
             )
 
         if self._modify:

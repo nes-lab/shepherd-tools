@@ -2,7 +2,7 @@ from pathlib import Path
 import numpy as np
 from tqdm import trange
 
-from datalib import ShepherdReader, ShepherdWriter
+import shepherd_data as shpd
 
 # script will:
 # - generate a repetitive ramp / sawtooth
@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     file_path = Path("./hrv_sawtooth_1h.h5")
 
-    with ShepherdWriter(file_path, compression=1) as file:
+    with shpd.Writer(file_path, compression=1) as file:
 
         duration_s = 60
         repetitions = 60
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
         file.save_metadata()
 
-    with ShepherdReader(file_path) as db:
+    with shpd.Reader(file_path) as db:
         print(f"Mode: {db.get_mode()}")
         print(f"Window: {db.get_window_samples()}")
         print(f"Config: {db.get_config()}")

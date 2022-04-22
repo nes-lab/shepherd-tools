@@ -1,6 +1,5 @@
 from pathlib import Path
-
-from datalib_ivonne import convert_ivonne_2_ivcurves
+import shepherd_data.ivonne as ivonne
 
 # this script converts a IVonne-Recording to shepherd ivcurves
 # repo contains a recording from ivonne
@@ -12,5 +11,5 @@ if __name__ == "__main__":
     inp_file_path = Path("./jogging_10m.iv")
     out_file_path = Path("./jogging_10m_ivcurves.h5")
 
-    convert_ivonne_2_ivcurves(inp_file_path, out_file_path)
-
+    with ivonne.Reader(inp_file_path) as db:
+        db.convert_2_ivcurves(out_file_path)
