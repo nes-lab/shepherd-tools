@@ -7,7 +7,7 @@ import scipy  # used for interpolation
 from pathlib import Path
 from tqdm import tqdm
 
-from datalib import ShepherdWriter
+from __init__ import ShepherdWriter
 
 
 def iv_model(v: np.ndarray, coeffs: pd.Series):

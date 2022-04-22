@@ -57,6 +57,7 @@
   - plotting for multi-node
   - plotting more generalized (power, cpu-util, ..., own directory)
   - some metadata is wrong (non-scalar datasets)
+  - tests
 - main shepherd-code
   - proper validation first
   - update commentary

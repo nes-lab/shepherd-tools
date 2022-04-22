@@ -1,0 +1,4 @@
+.eggs/
+build/
+dist/
+shepherd.egg-info/
