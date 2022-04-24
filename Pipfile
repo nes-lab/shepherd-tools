@@ -9,7 +9,7 @@ matplotlib = "*"
 h5py = "*"
 pandas = "*"
 scipy = "*"
-yaml = "*"
+pyyaml = "*"
 tqdm = "*"
 
 [dev-packages]

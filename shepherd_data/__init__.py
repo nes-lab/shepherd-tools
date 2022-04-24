@@ -52,7 +52,7 @@ class Reader(object):
 
     Args:
         file_path: Path of hdf5 file containing shepherd data with iv-samples or iv-curves
-        verbose: more info during usage
+        verbose: more info during usage, 'None' skips the setter
     """
 
     samples_per_buffer: int = 10_000
@@ -170,22 +170,25 @@ class Reader(object):
             return self._h5file.attrs["hostname"]
         return "Unknown"
 
+    def _data_timediffs(self, idx_start: int) -> list:
+        ds_time = self._h5file["data"]["time"][idx_start:(idx_start + self.max_elements):self.samples_per_buffer]
+        diffs = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
+        return list(np.array(diffs))
+
     def data_timediffs(self) -> list:
         """ calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
-            TODO: consumes ~6 GiB RAM (24h data) and has no progressbar -> ~ 2min
         """
-        ds_time = self._h5file["data"]["time"][::1*self.samples_per_buffer]
-        diffs = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
-        diffs = list(np.array(diffs))
-        diffs = [float(i) * 1e-9 for i in diffs]
-        return diffs
+        iterations = math.ceil(self._h5file["data"]["time"].shape[0] / self.max_elements)
+        job_iter = trange(0, self._h5file["data"]["time"].shape[0], self.max_elements, desc="timediff", leave=False, disable=iterations < 8)
+        diffs_ll = [self._data_timediffs(i) for i in job_iter]
+        diffs = set([round(float(j) * 1e-9, 3) for i in diffs_ll for j in i])
+        return list(diffs)
 
     def check_timediffs(self) -> bool:
         diffs = self.data_timediffs()
         if len(diffs) > 1:
-            logger.warning(f"[{self.dev}|validator] time-jumps detected in recording (or harmless float-precision-errors), "
-                           f"expected 0.1 s, but got: {diffs}")
+            logger.warning(f"[{self.dev}] Time-jumps detected -> expected 0.1 s steps, but got: {diffs} s")
         return len(diffs) <= 1
 
     def is_valid(self) -> bool:

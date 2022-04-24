@@ -2,17 +2,25 @@
 
 ### Installation
 
-manual:
+#### Manual
 
 - clone repository
 - navigate shell into directory
-- call `python setup.py install`
+- activate and update pipenv (optional) 
+- install module
 
-via pip (TODO):
+```
+pipenv shell
+pipenv update
+
+python setup.py install
+```
+
+#### Via PIP (TODO)
 
 `pip3 install shepherd_data`
 
-### Info about the programming interface
+### Programming Interface
 
 basic usage (recommendation):
 
@@ -57,9 +65,61 @@ available functionality:
       - 50 Hz measurement with Short-Circuit-Current and two other parameters
       - recorded with "IVonne"
 
-### Info about the cli interface
+### CLI-Interface
 
-TODO
+After installing the module the datalib offers some often needed functions: 
+
+#### Validate Recordings
+
+- takes a file or directory as an argument
+
+```
+shepherd-data validate dir_or_file
+
+# examples:
+shepherd-data validate ./
+shepherd-data validate hrv_saw_1h.h5
+```
+
+#### Extract meta-data and sys-logs
+
+- takes a file or directory as an argument
+
+```
+shepherd-data extract dir_or_file
+
+# examples:
+shepherd-data extract ./
+shepherd-data extract hrv_saw_1h.h5
+```
+
+#### Plot IVSamples
+
+- takes a file or directory as an argument
+- can take start- and end-time
+- can take image-width and -height
+TODO: trouble with hrv_iv_1000Hz.h5
+
+```
+shepherd-data plot dir_or_file [-s start_time] [-e end_time] [-w plot_width] [-h plot_height]
+
+# examples:
+shepherd-data plot ./
+shepherd-data plot hrv_saw_1h.h5 -s10 -e20
+```
+
+#### Downsample IVSamples (for later GUI-usage, TODO)
+
+- generates a set of downsamplings (20 kHz to 0.1 Hz in x4 to x5 Steps)
+- takes a file or directory as an argument
+
+```
+shepherd-data downsample dir_or_file
+
+# examples:
+shepherd-data downsample ./
+shepherd-data downsample hrv_saw_1h.h5
+```
 
 ### Compression & Beaglebone
 
@@ -90,6 +150,7 @@ TODO
 
 - implementations for this lib
   - plotting for multi-node
+  - plotting and downsampling for IVCurves
   - plotting more generalized (power, cpu-util, ..., own directory)
   - some metadata is wrong (non-scalar datasets)
   - tests

@@ -7,6 +7,9 @@ import shepherd_data as shpd
 # - prints cpu-utilization and data-rate
 # - saves logging-info to files
 # - saves metadata to datasets and the file itself to yml
+#
+# CLI-Version of this is:
+# shepherd-data extract file_or_dir
 
 if __name__ == "__main__":
 
