@@ -1,4 +1,11 @@
 .eggs/
 build/
 dist/
-shepherd.egg-info/
+shepherd_data.egg-info/
+__pycache__
+
+*.h5
+*.yml
+*.png
+*.csv
+*.log
