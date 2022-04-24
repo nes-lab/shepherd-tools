@@ -30,7 +30,7 @@ logger.addHandler(consoleHandler)
 logger.setLevel(logging.INFO)
 
 
-def unique_path(base_path: Union[str, Path], suffix: str):
+def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
     counter = 0
     while True:
         path = base_path.with_suffix(f".{counter}{suffix}")
@@ -105,28 +105,32 @@ class Reader(object):
         if not self._skip_read:
             self._h5file.close()
 
-    def refresh_file_stats(self):
+    def refresh_file_stats(self) -> NoReturn:
         self._h5file.flush()
+        if self.ds_time.shape[0] > 1:
+            self.sample_interval_ns = int(self.ds_time[1] - self.ds_time[0])
+            self.samplerate_sps = int(10**9 // self.sample_interval_ns)
+            self.sample_interval_s = (1.0 / self.samplerate_sps)
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
-    def read_buffers(self, start: int = 0, end: int = None, raw: bool = False):
+    def read_buffers(self, start_n: int = 0, end_n: int = None, is_raw: bool = False) -> tuple:
         """ Generator that reads the specified range of buffers from the hdf5 file. can be configured on first call
 
         Args:
-            :param start: (int) Index of first buffer to be read
-            :param end: (int) Index of last buffer to be read
-            :param raw: (bool) output original data, not transformed to SI-Units
+            :param start_n: (int) Index of first buffer to be read
+            :param end_n: (int) Index of last buffer to be read
+            :param is_raw: (bool) output original data, not transformed to SI-Units
         Yields:
             Buffers between start and end (tuple with time, voltage, current)
         """
-        if end is None:
-            end = int(self._h5file["data"]["time"].shape[0] // self.samples_per_buffer)
-        logger.debug(f"[{self.dev}] Reading blocks from {start} to {end} from source-file")
-        _raw = raw
+        if end_n is None:
+            end_n = int(self._h5file["data"]["time"].shape[0] // self.samples_per_buffer)
+        logger.debug(f"[{self.dev}] Reading blocks from {start_n} to {end_n} from source-file")
+        _raw = is_raw
 
-        for i in range(start, end):
+        for i in range(start_n, end_n):
             idx_start = i * self.samples_per_buffer
             idx_end = idx_start + self.samples_per_buffer
             if _raw:
@@ -161,6 +165,11 @@ class Reader(object):
             return yaml.safe_load(self._h5file["data"].attrs["config"])
         return {}
 
+    def get_hostname(self) -> str:
+        if "hostname" in self._h5file.attrs.keys():
+            return self._h5file.attrs["hostname"]
+        return "Unknown"
+
     def data_timediffs(self) -> list:
         """ calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
@@ -171,6 +180,13 @@ class Reader(object):
         diffs = list(np.array(diffs))
         diffs = [float(i) * 1e-9 for i in diffs]
         return diffs
+
+    def check_timediffs(self) -> bool:
+        diffs = self.data_timediffs()
+        if len(diffs) > 1:
+            logger.warning(f"[{self.dev}|validator] time-jumps detected in recording (or harmless float-precision-errors), "
+                           f"expected 0.1 s, but got: {diffs}")
+        return len(diffs) <= 1
 
     def is_valid(self) -> bool:
         """ checks file for plausibility
@@ -203,20 +219,20 @@ class Reader(object):
         for ds in ["current", "voltage"]:
             ds_size = self._h5file["data"][ds].shape[0]
             if ds_time_size != ds_size:
-                logger.error(f"[{self.dev}|validator] dataset '{ds}' has different size (={ds_size}), "
-                             f"compared to time-ds (={ds_time_size})")
+                logger.warning(f"[{self.dev}|validator] dataset '{ds}' has different size (={ds_size}), "
+                               f"compared to time-ds (={ds_time_size})")
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
-            logger.error(f"[{self.dev}|validator] datasets are not aligned with buffer-size")
+            logger.warning(f"[{self.dev}|validator] datasets are not aligned with buffer-size")
         # check compression
         for ds in ["time", "current", "voltage"]:
             comp = self._h5file["data"][ds].compression
             opts = self._h5file["data"][ds].compression_opts
             if comp not in [None, "gzip", "lzf"]:
-                logger.error(f"[{self.dev}|validator] unsupported compression found ({comp} != None, lzf, gzip)")
+                logger.warning(f"[{self.dev}|validator] unsupported compression found ({comp} != None, lzf, gzip)")
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
-                logger.error(f"[{self.dev}|validator] gzip compression is too high ({opts} > 1) for BBone")
+                logger.warning(f"[{self.dev}|validator] gzip compression is too high ({opts} > 1) for BBone")
         return True
 
     def get_metadata(self, node=None) -> dict:
@@ -294,18 +310,18 @@ class Reader(object):
         raise KeyError
 
     @staticmethod
-    def raw_to_si(values_raw: np.ndarray, cal: dict) -> np.ndarray:
+    def raw_to_si(values_raw: Union[np.ndarray, float, int], cal: dict) -> Union[np.ndarray, float]:
         values_si = values_raw * cal["gain"] + cal["offset"]
         values_si[values_si < 0.0] = 0.0
         return values_si
 
     @staticmethod
-    def si_to_raw(values_si: np.ndarray, cal: dict) -> np.ndarray:
+    def si_to_raw(values_si: Union[np.ndarray, float], cal: dict) -> Union[np.ndarray, int]:
         values_raw = (values_si - cal["offset"]) / cal["gain"]
         values_raw[values_raw < 0.0] = 0.0
         return values_raw
 
-    def _energy_calc(self, idx_start: int):
+    def _energy_calc(self, idx_start: int) -> float:
         idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
         voltage_v = self.raw_to_si(self.ds_voltage[idx_start:idx_stop], self.cal["voltage"])
         current_a = self.raw_to_si(self.ds_current[idx_start:idx_stop], self.cal["current"])
@@ -413,53 +429,67 @@ class Reader(object):
                 log_file.write("\n")
         return h5_group["time"].shape[0]
 
-    def downsample(self, dataset: h5py.Dataset, start: int, end: int, ds_factor: float = 5, is_time: bool = False):
-        """
-        :param dataset:
+    def downsample(self, data_src: h5py.Dataset, data_dst: Union[None, h5py.Dataset, np.ndarray],
+                   start_n: int = 0, end_n: int = None, ds_factor: float = 5, is_time: bool = False) -> Union[h5py.Dataset, np.ndarray]:
+        """ Warning: only valid for IV-Stream, not IV-Curves
+
+        :param data_src:
+        :param data_dst:
+        :param end_n:
+        :param start_n:
         :param ds_factor:
         :param is_time:
         :return:
         """
         ds_factor = max(1, math.floor(ds_factor))
-        start = min(dataset.shape[0], round(start))
-        end = min(dataset.shape[0], round(end))
-        data_len = end - start  # TODO: one-off to calculation below
+
+        if end_n is None:
+            end_n = data_src.shape[0]
+        else:
+            end_n = min(data_src.shape[0], round(end_n))
+        start_n = min(end_n, round(start_n))
+        data_len = end_n - start_n  # TODO: one-off to calculation below
+        if data_len == 0:
+            logger.warning(f"[{self.dev}] downsampling failed because of data_len = 0")
         iblock_len = min(self.max_elements, data_len)
         oblock_len = round(iblock_len / ds_factor)
         iterations = math.ceil(data_len / iblock_len)
         dest_len = math.floor(data_len / ds_factor)
-        dest_ds = np.empty((dest_len,))
+        if data_dst is None:
+            data_dst = np.empty((dest_len,))
+        elif isinstance(data_dst, (h5py.Dataset, np.ndarray)):
+            data_dst.resize((dest_len,))
 
-        if not is_time and ds_factor > 1:
-            # 8th order butterworth filter for downsampling
-            # note: cheby1 does not work well for static outputs (2.8V can become 2.0V for buck-converters)
-            flt = signal.iirfilter(
-                N=8,
-                Wn=1 / ds_factor,
-                btype="lowpass",
-                output="sos",
-                ftype="butter",
-            )
-            # filter state
-            z = np.zeros((flt.shape[0], 2))
+        # 8th order butterworth filter for downsampling
+        # note: cheby1 does not work well for static outputs (2.8V can become 2.0V for buck-converters)
+        flt = signal.iirfilter(
+            N=8,
+            Wn=1 / ds_factor,
+            btype="lowpass",
+            output="sos",
+            ftype="butter",
+        )
+        # filter state
+        z = np.zeros((flt.shape[0], 2))
 
         slice_len = 0
-        for i in trange(0, iterations, desc=f"downsampling {dataset.name}", leave=False, disable=iterations < 8):
-            slice_ds = dataset[start + i * iblock_len: start + (i + 1) * iblock_len]
+        for i in trange(0, iterations, desc=f"downsampling {data_src.name}", leave=False, disable=iterations < 8):
+            slice_ds = data_src[start_n + i * iblock_len: start_n + (i + 1) * iblock_len]
             if not is_time and ds_factor > 1:
                 slice_ds, z = signal.sosfilt(flt, slice_ds, zi=z)
             slice_ds = slice_ds[::ds_factor]
             slice_len = min(dest_len - i * oblock_len, oblock_len)
-            dest_ds[i * oblock_len: (i + 1) * oblock_len] = slice_ds[:slice_len]
-        dest_ds.resize((oblock_len*(iterations-1) + slice_len,))
-        return dest_ds
+            data_dst[i * oblock_len: (i + 1) * oblock_len] = slice_ds[:slice_len]
+        data_dst.resize((oblock_len*(iterations-1) + slice_len,))
+        return data_dst
 
-    def plot_to_file(self, start_s: float = None, end_s: float = None):
+    def plot_to_file(self, start_s: float = None, end_s: float = None, width: int = 20, height: int = 10) -> NoReturn:
         """
 
         :param start_s:
         :param end_s:
-        :return:
+        :param width:
+        :param height:
         """
         if not isinstance(start_s, (float, int)):
             start_s = 0
@@ -476,26 +506,26 @@ class Reader(object):
         sampling_rate = max(round(self.max_elements/(end_s - start_s), 3), 0.001)
         ds_factor = float(self.samplerate_sps / sampling_rate)
         data = {
-            "time": self.downsample(self.ds_time, start_sample, end_sample, ds_factor, is_time=True).astype(float) * 1e-9,
-            "voltage": self.raw_to_si(self.downsample(self.ds_voltage, start_sample, end_sample, ds_factor), self.cal["voltage"]),
-            "current": self.raw_to_si(self.downsample(self.ds_current, start_sample, end_sample, ds_factor), self.cal["current"]),
+            "time": self.downsample(self.ds_time, None, start_sample, end_sample, ds_factor, is_time=True).astype(float) * 1e-9,
+            "voltage": self.raw_to_si(self.downsample(self.ds_voltage, None, start_sample, end_sample, ds_factor), self.cal["voltage"]),
+            "current": self.raw_to_si(self.downsample(self.ds_current, None, start_sample, end_sample, ds_factor), self.cal["current"]),
         }
         time_zero = float(self.ds_time[0]) * 1e-9
         fig, axes = plt.subplots(2, 1, sharex=True)
         fig.suptitle(f"Voltage and current")
         axes[0].plot(data["time"] - time_zero, data["voltage"])  # add: ,label=active_node
         axes[1].plot(data["time"] - time_zero, data["current"] * 10**6)
-        active_nodes = ["TheHost"]  # TODO: get hostname
+        active_nodes = self.get_hostname()
         axes[0].set_ylabel("voltage [V]")
         axes[1].set_ylabel(r"current [$\mu$A]")
         axes[0].legend(loc="lower center", ncol=len(active_nodes))
         axes[1].set_xlabel("time [s]")
-        fig.set_figwidth(20)  # TODO: make userdef, limit x to start and end
-        fig.set_figheight(10)
+        fig.set_figwidth(width)
+        fig.set_figheight(height)
         fig.tight_layout()
         plt.savefig(plot_path)
         plt.close(fig)
-        plt.clf()  # TODO: add other nodes
+        plt.clf()  # TODO: add other nodes, add power (if wanted)
 
 
 class Writer(Reader):
@@ -629,14 +659,14 @@ class Writer(Reader):
         return self
 
     def __exit__(self, *exc):
-        self.align()
+        self._align()
         self.refresh_file_stats()
         logger.info(f"[{self.dev}] closing hdf5 file, {self.runtime_s} s iv-data, "
                     f"size = {round(self.file_size/2**20, 3)} MiB, "
                     f"rate = {round(self.data_rate/2**10)} KiB/s")
         self._h5file.close()
 
-    def append_iv_data_raw(self, timestamp_ns, voltage: np.ndarray, current: np.ndarray) -> NoReturn:
+    def append_iv_data_raw(self, timestamp_ns: Union[np.ndarray, float, int], voltage: np.ndarray, current: np.ndarray) -> NoReturn:
         """Writes data to file.
 
         """
@@ -665,7 +695,7 @@ class Writer(Reader):
         self.ds_voltage[len_old:len_old + len_new] = voltage[:len_new]
         self.ds_current[len_old:len_old + len_new] = current[:len_new]
 
-    def append_iv_data_si(self, timestamp, voltage: np.ndarray, current: np.array) -> NoReturn:
+    def append_iv_data_si(self, timestamp: Union[np.ndarray, float], voltage: np.ndarray, current: np.array) -> NoReturn:
         """ Writes data to file, but converts it to raw-data first
 
         Args:
@@ -682,9 +712,8 @@ class Writer(Reader):
         current = self.si_to_raw(current, self.cal["current"])
         self.append_iv_data_raw(timestamp, voltage, current)
 
-    def align(self) -> NoReturn:
+    def _align(self) -> NoReturn:
         """ Align datasets with buffer-size of shepherd
-        TODO: make default at exit?
         """
         n_buff = self.ds_time.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
