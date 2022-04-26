@@ -51,7 +51,7 @@ class Reader(object):
     """ Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
-        file_path: Path of hdf5 file containing shepherd data with iv-samples or iv-curves
+        file_path: Path of hdf5 file containing shepherd data with iv-samples, iv-curves or isc&voc
         verbose: more info during usage, 'None' skips the setter
     """
 
@@ -65,9 +65,6 @@ class Reader(object):
 
     mode_type_dict = {"harvester": ["ivsample", "ivcurve", "isc_voc"],
                       "emulator": ["ivsample"]}
-    # ivsamples ... directly usable by shepherd, input for virtual source / converter
-    # ivcurves  ... directly usable by shepherd, input for a virtual harvester (output are ivsamples)
-    # isc_voc   ... are specially for solar-cells and need to be transformed into ivcurves
 
     def __init__(self, file_path: Union[Path, None], verbose: Union[bool, None] = True):
         self._skip_open = file_path is None  # for access by writer-class
@@ -112,6 +109,8 @@ class Reader(object):
             self.h5file.close()
 
     def refresh_file_stats(self) -> NoReturn:
+        """ update internal states, helpful after resampling or other changes in data-group
+        """
         self.h5file.flush()
         if self.ds_time.shape[0] > 1:
             self.sample_interval_ns = int(self.ds_time[1] - self.ds_time[0])
@@ -149,10 +148,9 @@ class Reader(object):
                        self.raw_to_si(self.ds_current[idx_start:idx_end], self.cal["current"]))
 
     def get_calibration_data(self) -> dict:
-        """Reads calibration data from hdf5 file.
+        """Reads calibration-data from hdf5 file.
 
-        Returns:
-            Calibration data as CalibrationData object
+        :return: Calibration data as CalibrationData object
         """
         return self.cal
 
@@ -181,22 +179,29 @@ class Reader(object):
             return self.h5file["data"].attrs["datatype"]
         return ""
 
-    def _data_timediffs(self, idx_start: int) -> list:
-        ds_time = self.h5file["data"]["time"][idx_start:(idx_start + self.max_elements):self.samples_per_buffer]
-        diffs = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
-        return list(np.array(diffs))
-
     def data_timediffs(self) -> list:
         """ calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
+
+        :return: list of (unique) time-deltas between buffers [s]
         """
         iterations = math.ceil(self.h5file["data"]["time"].shape[0] / self.max_elements)
         job_iter = trange(0, self.h5file["data"]["time"].shape[0], self.max_elements, desc="timediff", leave=False, disable=iterations < 8)
-        diffs_ll = [self._data_timediffs(i) for i in job_iter]
+
+        def calc_timediffs(idx_start: int) -> list:
+            ds_time = self.h5file["data"]["time"][idx_start:(idx_start + self.max_elements):self.samples_per_buffer]
+            diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
+            return list(np.array(diffs_np))
+
+        diffs_ll = [calc_timediffs(i) for i in job_iter]
         diffs = set([round(float(j) * 1e-9, 3) for i in diffs_ll for j in i])
         return list(diffs)
 
     def check_timediffs(self) -> bool:
+        """ validate equal time-deltas -> unexpected time-jumps hint at a corrupted file or faulty measurement
+
+        :return: True if OK
+        """
         diffs = self.data_timediffs()
         if len(diffs) > 1:
             logger.warning(f"[{self.dev}] Time-jumps detected -> expected 0.1 s steps, but got: {diffs} s")
@@ -204,6 +209,7 @@ class Reader(object):
 
     def is_valid(self) -> bool:
         """ checks file for plausibility
+
         :return: state of validity
         """
         # hard criteria
@@ -263,11 +269,11 @@ class Reader(object):
 
     def get_metadata(self, node=None, minimal: bool = False) -> dict:
         """ recursive FN to capture the structure of the file
+
         :param node: starting node, leave free to go through whole file
-        :param minimal: just provide a bare tree
-        :return: structure of that node everything inside it
+        :param minimal: just provide a bare tree (much faster)
+        :return: structure of that node with everything inside it
         """
-        # recursive...
         if node is None:
             self.refresh_file_stats()
             return self.get_metadata(self.h5file, minimal=minimal)
@@ -313,7 +319,9 @@ class Reader(object):
 
     def save_metadata(self, node=None) -> dict:
         """ get structure of file and dump content to yaml-file with same name as original
+
         :param node: starting node, leave free to go through whole file
+        :return: structure of that node with everything inside it
         """
         yml_path = Path(self.file_path).absolute().with_suffix(".yml")
         if yml_path.exists():
@@ -338,40 +346,46 @@ class Reader(object):
 
     @staticmethod
     def raw_to_si(values_raw: Union[np.ndarray, float, int], cal: dict) -> Union[np.ndarray, float]:
+        """ Helper to convert between physical units and raw uint values
+
+        :param values_raw: number or numpy array with raw values
+        :param cal: calibration-dict with entries for gain and offset
+        :return: converted number or array
+        """
         values_si = values_raw * cal["gain"] + cal["offset"]
         values_si[values_si < 0.0] = 0.0
         return values_si
 
     @staticmethod
     def si_to_raw(values_si: Union[np.ndarray, float], cal: dict) -> Union[np.ndarray, int]:
+        """ Helper to convert between physical units and raw uint values
+
+        :param values_si: number or numpy array with values in physical units
+        :param cal: calibration-dict with entries for gain and offset
+        :return: converted number or array
+        """
         values_raw = (values_si - cal["offset"]) / cal["gain"]
         values_raw[values_raw < 0.0] = 0.0
         return values_raw
-
-    def _energy_calc(self, idx_start: int) -> float:
-        idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
-        voltage_v = self.raw_to_si(self.ds_voltage[idx_start:idx_stop], self.cal["voltage"])
-        current_a = self.raw_to_si(self.ds_current[idx_start:idx_stop], self.cal["current"])
-        return (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
 
     def energy(self) -> float:
         """ determine the recorded energy of the trace
         # multiprocessing: https://stackoverflow.com/a/71898911
         # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool
+
         :return: sampled energy in Ws (watt-seconds)
         """
         iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
         job_iter = trange(0, self.ds_time.shape[0], self.max_elements, desc="energy", leave=False, disable=iterations < 8)
-        energy_ws = [self._energy_calc(i) for i in job_iter]
-        return float(sum(energy_ws))
 
-    @staticmethod
-    def _ds_statistics_calc(ds: np.ndarray) -> dict:
-        return {"mean": np.mean(ds),
-                "min": np.min(ds),
-                "max": np.max(ds),
-                "std": np.std(ds),
-                }
+        def calc_energy(idx_start: int) -> float:
+            idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
+            voltage_v = self.raw_to_si(self.ds_voltage[idx_start:idx_stop], self.cal["voltage"])
+            current_a = self.raw_to_si(self.ds_current[idx_start:idx_stop], self.cal["current"])
+            return (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
+
+        energy_ws = [calc_energy(i) for i in job_iter]
+        return float(sum(energy_ws))
 
     def ds_statistics(self, ds: h5py.Dataset, cal: dict = None) -> dict:
         """ some basic stats for a provided dataset
@@ -388,7 +402,15 @@ class Reader(object):
             cal["cal_converted"] = True
         iterations = math.ceil(ds.shape[0] / self.max_elements)
         job_iter = trange(0, ds.shape[0], self.max_elements, desc=f"{ds.name}-stats", leave=False, disable=iterations < 8)
-        stats_list = [self._ds_statistics_calc(self.raw_to_si(ds[i:i + self.max_elements], cal)) for i in job_iter]
+
+        def calc_statistics(data: np.ndarray) -> dict:
+            return {"mean": np.mean(data),
+                    "min": np.min(data),
+                    "max": np.max(data),
+                    "std": np.std(data),
+                    }
+
+        stats_list = [calc_statistics(self.raw_to_si(ds[i:i + self.max_elements], cal)) for i in job_iter]
         if len(stats_list) < 1:
             return {}
         stats_df = pd.DataFrame(stats_list)
@@ -402,6 +424,12 @@ class Reader(object):
         return stats
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
+        """ extract numerical data via csv
+
+        :param h5_group: can be external and should probably be downsampled
+        :param separator: used between columns
+        :return: number of processed entries
+        """
         if h5_group["time"].shape[0] < 1:
             logger.warning(f"[{self.dev}] {h5_group.name} is empty, no csv generated")
             return 0
@@ -431,8 +459,8 @@ class Reader(object):
     def save_log(self, h5_group: h5py.Group) -> int:
         """ save dataset in group as log, optimal for logged dmesg and exceptions
 
-        :param h5_group:
-        :return:
+        :param h5_group: can be external
+        :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
             logger.warning(f"[{self.dev}] {h5_group.name} is empty, no log generated")
@@ -460,13 +488,13 @@ class Reader(object):
                    start_n: int = 0, end_n: int = None, ds_factor: float = 5, is_time: bool = False) -> Union[h5py.Dataset, np.ndarray]:
         """ Warning: only valid for IV-Stream, not IV-Curves
 
-        :param data_src:
-        :param data_dst:
-        :param end_n:
-        :param start_n:
-        :param ds_factor:
-        :param is_time:
-        :return:
+        :param data_src: a h5-dataset to digest, can be external
+        :param data_dst: can be a dataset, numpy-array or None (will be created internally then)
+        :param start_n: start-sample
+        :param end_n: ending-sample (not included)
+        :param ds_factor: downsampling-factor
+        :param is_time: time is not really downsamples, but just decimated
+        :return: downsampled h5-dataset or numpy-array
         """
         if self.get_datatype() == "ivcurve":
             logger.error(f"[{self.dev}] Downsampling-Function was not written for IVCurves")
@@ -516,12 +544,12 @@ class Reader(object):
         return data_dst
 
     def plot_to_file(self, start_s: float = None, end_s: float = None, width: int = 20, height: int = 10) -> NoReturn:
-        """
+        """ creates (downsampled) IV-Plots for one Node
 
-        :param start_s:
-        :param end_s:
-        :param width:
-        :param height:
+        :param start_s: time in seconds
+        :param end_s: time in seconds
+        :param width: plot-width
+        :param height: plot-height
         """
         if self.get_datatype() == "ivcurve":
             logger.error(f"[{self.dev}] Plot-Function was not written for IVCurves")
@@ -642,11 +670,10 @@ class Writer(Reader):
 
         HDF5 is hierarchically structured and before writing data, we have to
         setup this structure, i.e. creating the right groups with corresponding
-        data types. We will store 3 types of data in a LogWriter database: The
+        data types. We will store 3 types of data in a database: The
         actual IV samples recorded either from the harvester (during recording)
         or the target (during emulation). Any log messages, that can be used to
-        store relevant events or tag some parts of the recorded data. And lastly
-        the state of the GPIO pins.
+        store relevant events or tag some parts of the recorded data.
 
         """
         if self._modify:
@@ -717,10 +744,10 @@ class Writer(Reader):
         self.h5file.close()
 
     def append_iv_data_raw(self, timestamp_ns: Union[np.ndarray, float, int], voltage: np.ndarray, current: np.ndarray) -> NoReturn:
-        """Writes raw data to file
+        """Writes raw data to database
 
         Args:
-            timestamp_ns: start of buffer or ndarray
+            timestamp_ns: just start of buffer or whole ndarray
             voltage: ndarray as raw uint values
             current: ndarray as raw uint values
         """
@@ -753,7 +780,7 @@ class Writer(Reader):
         """ Writes data (in SI / physical unit) to file, but converts it to raw-data first
 
         Args:
-            timestamp: python timestamp (time.time()) in seconds (si-unit)
+            timestamp: python timestamp (time.time()) in seconds (si-unit) -> just start of buffer or whole ndarray
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
         """
@@ -783,13 +810,9 @@ class Writer(Reader):
         return self.h5file.attrs.__setitem__(key, item)
 
     def set_config(self, data: dict) -> NoReturn:
-        """
-        Important Step to get a self-describing Output-File
-        Note: the size of window_samples-attribute in harvest-data indicates ivcurves as input
-        -> emulator uses virtual-harvester
+        """ Important Step to get a self-describing Output-File
 
         :param data: from virtual harvester or converter / source
-        :return: None
         """
         self.h5file["data"].attrs["config"] = yaml.dump(data, default_flow_style=False)
         if "window_samples" in data:

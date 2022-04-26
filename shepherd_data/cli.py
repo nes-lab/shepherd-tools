@@ -85,7 +85,7 @@ def extract(database, ds_factor, separator):
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
             if ds_file.exists():
                 with Reader(ds_file, verbose=verbose_level > 2) as shpd:
-                    shpd.save_csv(shpw["data"], separator)
+                    shpd.save_csv(shpd["data"], separator)
             else:
                 logger.info(f"Downsampling '{file.name}' by factor x{ds_factor} ...")
                 with Writer(ds_file, mode=shpr.get_mode(), calibration_data=shpr.get_calibration_data(),
@@ -121,22 +121,6 @@ def extract_meta(database, separator):
                 shpr.save_log(shpr["uart"])
 
 
-@cli.command(short_help="Plots IV-trace from file or directory containing shepherd-recordings")
-@click.argument("database", type=click.Path(exists=True, ))
-@click.option("--start", "-s", default=None, type=click.FLOAT, help="Start of plot in seconds, will be 0 if omitted")
-@click.option("--end", "-e", default=None, type=click.FLOAT, help="End of plot in seconds, will be max if omitted")
-@click.option("--width", "-w", default=20, type=click.INT, help="Width-Dimension of resulting plot")
-@click.option("--height", "-h", default=10, type=click.INT, help="Height-Dimension of resulting plot")
-def plot(database, start: float, end: float, width: int, height: int, ):
-    logger.info(f"CLI-options are start = {start} s, end= {end} s, width = {width}, height = {height}")
-    files = path_to_flist(database)
-    for file in files:
-        logger.info(f"Generating plot for '{file.name}' ...")
-        with Reader(file, verbose=verbose_level > 2) as shpr:
-            shpr.plot_to_file(start, end, width, height)
-            # todo: group-plot
-
-
 @cli.command(short_help="Creates an array of downsampling-files from file or directory containing shepherd-recordings")
 @click.argument("database", type=click.Path(exists=True, ))
 @click.option("--ds_factor", "-f", default=None, type=click.FLOAT, help="Downsample-Factor, if one specific value is wanted")
@@ -161,6 +145,22 @@ def downsample(database, ds_factor):
                     shpr.downsample(shpr.ds_time, shpw.ds_time, ds_factor=ds_factor, is_time=True)
                     shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=ds_factor)
                     shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=ds_factor)
+
+
+@cli.command(short_help="Plots IV-trace from file or directory containing shepherd-recordings")
+@click.argument("database", type=click.Path(exists=True, ))
+@click.option("--start", "-s", default=None, type=click.FLOAT, help="Start of plot in seconds, will be 0 if omitted")
+@click.option("--end", "-e", default=None, type=click.FLOAT, help="End of plot in seconds, will be max if omitted")
+@click.option("--width", "-w", default=20, type=click.INT, help="Width-Dimension of resulting plot")
+@click.option("--height", "-h", default=10, type=click.INT, help="Height-Dimension of resulting plot")
+def plot(database, start: float, end: float, width: int, height: int, ):
+    logger.info(f"CLI-options are start = {start} s, end= {end} s, width = {width}, height = {height}")
+    files = path_to_flist(database)
+    for file in files:
+        logger.info(f"Generating plot for '{file.name}' ...")
+        with Reader(file, verbose=verbose_level > 2) as shpr:
+            shpr.plot_to_file(start, end, width, height)
+            # todo: group-plot
 
 
 if __name__ == "__main__":
