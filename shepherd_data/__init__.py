@@ -63,9 +63,15 @@ class Reader(object):
     max_elements: int = 100 * samplerate_sps  # per iteration (100s, ~ 300 MB RAM use)
     dev = "ShpReader"
 
+    mode_type_dict = {"harvester": ["ivsample", "ivcurve", "isc_voc"],
+                      "emulator": ["ivsample"]}
+    # ivsamples ... directly usable by shepherd, input for virtual source / converter
+    # ivcurves  ... directly usable by shepherd, input for a virtual harvester (output are ivsamples)
+    # isc_voc   ... are specially for solar-cells and need to be transformed into ivcurves
+
     def __init__(self, file_path: Union[Path, None], verbose: Union[bool, None] = True):
-        self._skip_read = file_path is None  # for access by writer-class
-        if not self._skip_read:
+        self._skip_open = file_path is None  # for access by writer-class
+        if not self._skip_open:
             self.file_path = Path(file_path)
         if verbose is not None:
             logger.setLevel(logging.INFO if verbose else logging.WARNING)
@@ -74,24 +80,24 @@ class Reader(object):
         self.data_rate = None
 
     def __enter__(self):
-        if not self._skip_read:
-            self._h5file = h5py.File(self.file_path, "r", swmr=True)
+        if not self._skip_open:
+            self.h5file = h5py.File(self.file_path, "r")
 
         if self.is_valid():
             logger.info(f"[{self.dev}] File is available now")
         else:
-            raise ValueError(f"[{self.dev}] File was faulty, will not Open")
+            logger.error(f"[{self.dev}] File is faulty! Will try to open but there might be dragons")
 
-        self.ds_time = self._h5file["data"]["time"]
-        self.ds_voltage = self._h5file["data"]["voltage"]
-        self.ds_current = self._h5file["data"]["current"]
+        self.ds_time = self.h5file["data"]["time"]
+        self.ds_voltage = self.h5file["data"]["voltage"]
+        self.ds_current = self.h5file["data"]["current"]
         self.cal = {
             "voltage": {"gain": self.ds_voltage.attrs["gain"], "offset": self.ds_voltage.attrs["offset"]},
             "current": {"gain": self.ds_current.attrs["gain"], "offset": self.ds_current.attrs["offset"]},
         }
         self.refresh_file_stats()
 
-        if not self._skip_read:
+        if not self._skip_open:
             logger.info(
                 f"[{self.dev}] Reading data from '{self.file_path}'\n"
                 f"\t- runtime {self.runtime_s} s\n"
@@ -102,11 +108,11 @@ class Reader(object):
         return self
 
     def __exit__(self, *exc):
-        if not self._skip_read:
-            self._h5file.close()
+        if not self._skip_open:
+            self.h5file.close()
 
     def refresh_file_stats(self) -> NoReturn:
-        self._h5file.flush()
+        self.h5file.flush()
         if self.ds_time.shape[0] > 1:
             self.sample_interval_ns = int(self.ds_time[1] - self.ds_time[0])
             self.samplerate_sps = int(10**9 // self.sample_interval_ns)
@@ -126,7 +132,7 @@ class Reader(object):
             Buffers between start and end (tuple with time, voltage, current)
         """
         if end_n is None:
-            end_n = int(self._h5file["data"]["time"].shape[0] // self.samples_per_buffer)
+            end_n = int(self.h5file["data"]["time"].shape[0] // self.samples_per_buffer)
         logger.debug(f"[{self.dev}] Reading blocks from {start_n} to {end_n} from source-file")
         _raw = is_raw
 
@@ -151,27 +157,32 @@ class Reader(object):
         return self.cal
 
     def get_window_samples(self) -> int:
-        if "window_samples" in self._h5file["data"].attrs.keys():
-            return self._h5file["data"].attrs["window_samples"]
+        if "window_samples" in self.h5file["data"].attrs.keys():
+            return self.h5file["data"].attrs["window_samples"]
         return 0
 
     def get_mode(self) -> str:
-        if "mode" in self._h5file.attrs.keys():
-            return self._h5file.attrs["mode"]
+        if "mode" in self.h5file.attrs.keys():
+            return self.h5file.attrs["mode"]
         return ""
 
     def get_config(self) -> Dict:
-        if "config" in self._h5file["data"].attrs.keys():
-            return yaml.safe_load(self._h5file["data"].attrs["config"])
+        if "config" in self.h5file["data"].attrs.keys():
+            return yaml.safe_load(self.h5file["data"].attrs["config"])
         return {}
 
     def get_hostname(self) -> str:
-        if "hostname" in self._h5file.attrs.keys():
-            return self._h5file.attrs["hostname"]
-        return "Unknown"
+        if "hostname" in self.h5file.attrs.keys():
+            return self.h5file.attrs["hostname"]
+        return "unknown"
+
+    def get_datatype(self) -> str:
+        if "datatype" in self.h5file["data"].attrs.keys():
+            return self.h5file["data"].attrs["datatype"]
+        return ""
 
     def _data_timediffs(self, idx_start: int) -> list:
-        ds_time = self._h5file["data"]["time"][idx_start:(idx_start + self.max_elements):self.samples_per_buffer]
+        ds_time = self.h5file["data"]["time"][idx_start:(idx_start + self.max_elements):self.samples_per_buffer]
         diffs = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
         return list(np.array(diffs))
 
@@ -179,8 +190,8 @@ class Reader(object):
         """ calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
         """
-        iterations = math.ceil(self._h5file["data"]["time"].shape[0] / self.max_elements)
-        job_iter = trange(0, self._h5file["data"]["time"].shape[0], self.max_elements, desc="timediff", leave=False, disable=iterations < 8)
+        iterations = math.ceil(self.h5file["data"]["time"].shape[0] / self.max_elements)
+        job_iter = trange(0, self.h5file["data"]["time"].shape[0], self.max_elements, desc="timediff", leave=False, disable=iterations < 8)
         diffs_ll = [self._data_timediffs(i) for i in job_iter]
         diffs = set([round(float(j) * 1e-9, 3) for i in diffs_ll for j in i])
         return list(diffs)
@@ -196,31 +207,43 @@ class Reader(object):
         :return: state of validity
         """
         # hard criteria
-        if "data" not in self._h5file.keys():
+        if "data" not in self.h5file.keys():
             logger.error(f"[{self.dev}|validator] root data-group not found")
             return False
         for attr in ["mode"]:
-            if attr not in self._h5file.attrs.keys():
-                logger.error(f"[{self.dev}|validator] attribute '{attr}' in file not found")
+            if attr not in self.h5file.attrs.keys():
+                logger.error(f"[{self.dev}|validator] attribute '{attr}' not found in file")
                 return False
-        for attr in ["window_samples"]:
-            if attr not in self._h5file["data"].attrs.keys():
-                logger.error(f"[{self.dev}|validator] attribute '{attr}' in data-group not found")
+            elif self.h5file.attrs["mode"] not in self.mode_type_dict:
+                logger.error(f"[{self.dev}|validator] unsupported mode '{self.get_mode()}'")
+                return False
+        for attr in ["window_samples", "datatype"]:
+            if attr not in self.h5file["data"].attrs.keys():
+                logger.error(f"[{self.dev}|validator] attribute '{attr}' not found in data-group")
                 return False
         for ds in ["time", "current", "voltage"]:
-            if ds not in self._h5file["data"].keys():
+            if ds not in self.h5file["data"].keys():
                 logger.error(f"[{self.dev}|validator] dataset '{ds}' not found")
                 return False
         for ds, attr in product(["current", "voltage"], ["gain", "offset"]):
-            if attr not in self._h5file["data"][ds].attrs.keys():
-                logger.error(f"[{self.dev}|validator] attribute '{attr}' in dataset '{ds}' not found")
+            if attr not in self.h5file["data"][ds].attrs.keys():
+                logger.error(f"[{self.dev}|validator] attribute '{attr}' not found in dataset '{ds}'")
                 return False
+        if self.get_datatype() not in self.mode_type_dict[self.get_mode()]:
+            logger.error(f"[{self.dev}|validator] unsupported type '{self.get_datatype()}' for mode '{self.get_mode()}'")
+            return False
+
+        if self.get_datatype() == "ivcurve" and self.get_window_samples() < 1:
+            logger.error(f"[{self.dev}] window size / samples is < 1 -> invalid for ivcurves-datatype")
+            return False
 
         # soft-criteria:
+        if self.get_datatype() != "ivcurve" and self.get_window_samples() > 0:
+            logger.warning(f"[{self.dev}] window size / samples is > 0 despite not using the ivcurves-datatype")
         # same length of datasets:
-        ds_time_size = self._h5file["data"]["time"].shape[0]
+        ds_time_size = self.h5file["data"]["time"].shape[0]
         for ds in ["current", "voltage"]:
-            ds_size = self._h5file["data"][ds].shape[0]
+            ds_size = self.h5file["data"][ds].shape[0]
             if ds_time_size != ds_size:
                 logger.warning(f"[{self.dev}|validator] dataset '{ds}' has different size (={ds_size}), "
                                f"compared to time-ds (={ds_time_size})")
@@ -230,26 +253,27 @@ class Reader(object):
             logger.warning(f"[{self.dev}|validator] datasets are not aligned with buffer-size")
         # check compression
         for ds in ["time", "current", "voltage"]:
-            comp = self._h5file["data"][ds].compression
-            opts = self._h5file["data"][ds].compression_opts
+            comp = self.h5file["data"][ds].compression
+            opts = self.h5file["data"][ds].compression_opts
             if comp not in [None, "gzip", "lzf"]:
                 logger.warning(f"[{self.dev}|validator] unsupported compression found ({comp} != None, lzf, gzip)")
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
                 logger.warning(f"[{self.dev}|validator] gzip compression is too high ({opts} > 1) for BBone")
         return True
 
-    def get_metadata(self, node=None) -> dict:
+    def get_metadata(self, node=None, minimal: bool = False) -> dict:
         """ recursive FN to capture the structure of the file
         :param node: starting node, leave free to go through whole file
+        :param minimal: just provide a bare tree
         :return: structure of that node everything inside it
         """
         # recursive...
         if node is None:
             self.refresh_file_stats()
-            return self.get_metadata(self._h5file)
+            return self.get_metadata(self.h5file, minimal=minimal)
 
         metadata = {}
-        if isinstance(node, h5py.Dataset):
+        if isinstance(node, h5py.Dataset) and not minimal:
             metadata["_dataset_info"] = {
                 "dtype": str(node.dtype),
                 "shape": str(node.shape),
@@ -274,7 +298,7 @@ class Reader(object):
                 attr_value = float(attr_value)
             metadata[attr] = attr_value
         if isinstance(node, h5py.Group):
-            if "/data" == node.name:
+            if "/data" == node.name and not minimal:
                 metadata["_group_info"] = {
                     "energy_Ws": self.energy(),
                     "runtime_s": round(self.runtime_s, 1),
@@ -283,7 +307,7 @@ class Reader(object):
                     "valid": self.is_valid(),
                 }
             for item in node.keys():
-                metadata[item] = self.get_metadata(node[item])
+                metadata[item] = self.get_metadata(node[item], minimal=minimal)
 
         return metadata
 
@@ -295,7 +319,7 @@ class Reader(object):
         if yml_path.exists():
             logger.info(f"[{self.dev}] {yml_path} already exists, will skip")
             return {}
-        metadata = self.get_metadata()  # {"h5root": self.get_metadata(self._h5file)}
+        metadata = self.get_metadata()  # {"h5root": self.get_metadata(self.h5file)}
         with open(yml_path, "w") as fd:
             yaml.safe_dump(metadata, fd, default_flow_style=False, sort_keys=False)
         return metadata
@@ -306,10 +330,10 @@ class Reader(object):
         :param key: attribute, group, dataset
         :return: value of that key, or handle of object
         """
-        if key in self._h5file.attrs.keys():
-            return self._h5file.attrs.__getitem__(key)
-        if key in self._h5file.keys():
-            return self._h5file.__getitem__(key)
+        if key in self.h5file.attrs.keys():
+            return self.h5file.attrs.__getitem__(key)
+        if key in self.h5file.keys():
+            return self.h5file.__getitem__(key)
         raise KeyError
 
     @staticmethod
@@ -368,7 +392,7 @@ class Reader(object):
         if len(stats_list) < 1:
             return {}
         stats_df = pd.DataFrame(stats_list)
-        stats = { # TODO: wrong calculation for ndim-datasets with n>1
+        stats = {  # TODO: wrong calculation for ndim-datasets with n>1
             "mean": float(stats_df.loc[:, "mean"].mean()),
             "min": float(stats_df.loc[:, "min"].min()),
             "max": float(stats_df.loc[:, "max"].max()),
@@ -379,11 +403,11 @@ class Reader(object):
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
         if h5_group["time"].shape[0] < 1:
-            logger.info(f"[{self.dev}] {h5_group.name} is empty, no csv generated")
+            logger.warning(f"[{self.dev}] {h5_group.name} is empty, no csv generated")
             return 0
         csv_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
         if csv_path.exists():
-            logger.info(f"[{self.dev}] {csv_path} already exists, will skip")
+            logger.warning(f"[{self.dev}] {csv_path} already exists, will skip")
             return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
@@ -411,11 +435,11 @@ class Reader(object):
         :return:
         """
         if h5_group["time"].shape[0] < 1:
-            logger.info(f"[{self.dev}] {h5_group.name} is empty, no log generated")
+            logger.warning(f"[{self.dev}] {h5_group.name} is empty, no log generated")
             return 0
         log_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
         if log_path.exists():
-            logger.info(f"[{self.dev}] {log_path} already exists, will skip")
+            logger.warning(f"[{self.dev}] {log_path} already exists, will skip")
             return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
@@ -444,6 +468,8 @@ class Reader(object):
         :param is_time:
         :return:
         """
+        if self.get_datatype() == "ivcurve":
+            logger.error(f"[{self.dev}] Downsampling-Function was not written for IVCurves")
         ds_factor = max(1, math.floor(ds_factor))
 
         if end_n is None:
@@ -467,7 +493,7 @@ class Reader(object):
         # note: cheby1 does not work well for static outputs (2.8V can become 2.0V for buck-converters)
         flt = signal.iirfilter(
             N=8,
-            Wn=1 / ds_factor,
+            Wn=1 / max(1.1, ds_factor),
             btype="lowpass",
             output="sos",
             ftype="butter",
@@ -483,7 +509,10 @@ class Reader(object):
             slice_ds = slice_ds[::ds_factor]
             slice_len = min(dest_len - i * oblock_len, oblock_len)
             data_dst[i * oblock_len: (i + 1) * oblock_len] = slice_ds[:slice_len]
-        data_dst.resize((oblock_len*(iterations-1) + slice_len,))
+        if isinstance(data_dst, np.ndarray):
+            data_dst.resize((oblock_len*(iterations-1) + slice_len,), refcheck=False)
+        else:
+            data_dst.resize((oblock_len*(iterations-1) + slice_len,))
         return data_dst
 
     def plot_to_file(self, start_s: float = None, end_s: float = None, width: int = 20, height: int = 10) -> NoReturn:
@@ -494,6 +523,8 @@ class Reader(object):
         :param width:
         :param height:
         """
+        if self.get_datatype() == "ivcurve":
+            logger.error(f"[{self.dev}] Plot-Function was not written for IVCurves")
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
@@ -535,15 +566,16 @@ class Writer(Reader):
     """Stores data for Shepherd in HDF5 format
 
     Args:
-        file_path (Path): Name of the HDF5 file that data will be written to
-
-        mode (str): Indicates if this is data from harvester or emulator
-        calibration_data (CalibrationData): Data is written as raw ADC
+        file_path: (Path) Name of the HDF5 file that data will be written to
+        mode: (str) Indicates if this is data from harvester or emulator
+        datatype: (str) choose type: ivsample (most common), ivcurve or isc_voc
+        window_samples: (int) windows size for the datatype ivcurve
+        calibration_data: (CalibrationData) Data is written as raw ADC
             values. We need calibration data in order to convert to physical
             units later.
-        modify_existing (bool): explicitly enable modifying, another file (unique name) will be created otherwise
-        compression (str): use either None, lzf, gzip or gzips compression level from 1-9
-
+        modify_existing: (bool) explicitly enable modifying, another file (unique name) will be created otherwise
+        compression: (str) use either None, lzf or "1" (gzips compression level)
+        verbose: (bool) provides more info instead of just warnings / errors
     """
 
     # choose lossless compression filter
@@ -553,6 +585,7 @@ class Writer(Reader):
     # -> comparison / benchmarks https://www.h5py.org/lzf/
     comp_default = 1
     mode_default = "harvester"
+    datatype_default = "ivsample"
     cal_default = general_calibration
 
     chunk_shape = (Reader.samples_per_buffer,)
@@ -561,12 +594,15 @@ class Writer(Reader):
             self,
             file_path: Path,
             mode: str = None,
+            datatype: str = None,
+            window_samples: int = None,
             calibration_data: dict = None,
             modify_existing: bool = False,
             compression: Union[None, str, int] = "default",
             verbose: Union[bool, None] = True,
     ):
         super().__init__(file_path=None, verbose=verbose)
+
         self.dev = "ShpWriter"
 
         file_path = Path(file_path)
@@ -588,9 +624,13 @@ class Writer(Reader):
         if self._modify:
             self.mode = mode
             self.cal = calibration_data
+            self.datatype = datatype
+            self.window_samples = window_samples
         else:
             self.mode = self.mode_default if (mode is None) else mode
             self.cal = self.cal_default if (calibration_data is None) else calibration_data
+            self.datatype = self.datatype_default if (datatype is None) else datatype
+            self.window_samples = 0 if (window_samples is None) else window_samples
 
         if compression in [None, "lzf", 1]:  # order of recommendation
             self.compression_algo = compression
@@ -610,12 +650,12 @@ class Writer(Reader):
 
         """
         if self._modify:
-            self._h5file = h5py.File(self.file_path, "r+")
+            self.h5file = h5py.File(self.file_path, "r+")
         else:
-            self._h5file = h5py.File(self.file_path, "w")
+            self.h5file = h5py.File(self.file_path, "w")
 
             # Store voltage and current samples in the data group, both are stored as 4 Byte unsigned int
-            self.data_grp = self._h5file.create_group("data")
+            self.data_grp = self.h5file.create_group("data")
             # the size of window_samples-attribute in harvest-data indicates ivcurves as input
             # -> emulator uses virtual-harvester
             self.data_grp.attrs["window_samples"] = 0  # will be adjusted by .embed_config()
@@ -651,12 +691,18 @@ class Writer(Reader):
             self.data_grp["voltage"].attrs["description"] = "voltage [V] = value * gain + offset"
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
-        if self.mode is not None:
-            self._h5file.attrs["mode"] = self.mode
+        if isinstance(self.mode, str) and self.mode in self.mode_type_dict:
+            self.h5file.attrs["mode"] = self.mode
+
+        if isinstance(self.datatype, str) and self.datatype in self.mode_type_dict[self.get_mode()]:
+            self.h5file["data"].attrs["datatype"] = self.datatype
+
+        if isinstance(self.window_samples, int):
+            self.h5file["data"].attrs["window_samples"] = self.window_samples
 
         if self.cal is not None:
             for channel, parameter in product(["current", "voltage"], ["gain", "offset"]):
-                self.data_grp[channel].attrs[parameter] = self.cal[channel][parameter]
+                self.h5file["data"][channel].attrs[parameter] = self.cal[channel][parameter]
 
         super().__enter__()
         return self
@@ -667,11 +713,16 @@ class Writer(Reader):
         logger.info(f"[{self.dev}] closing hdf5 file, {self.runtime_s} s iv-data, "
                     f"size = {round(self.file_size/2**20, 3)} MiB, "
                     f"rate = {round(self.data_rate/2**10)} KiB/s")
-        self._h5file.close()
+        self.is_valid()
+        self.h5file.close()
 
     def append_iv_data_raw(self, timestamp_ns: Union[np.ndarray, float, int], voltage: np.ndarray, current: np.ndarray) -> NoReturn:
-        """Writes data to file.
+        """Writes raw data to file
 
+        Args:
+            timestamp_ns: start of buffer or ndarray
+            voltage: ndarray as raw uint values
+            current: ndarray as raw uint values
         """
         len_new = min(voltage.size, current.size)
 
@@ -699,15 +750,12 @@ class Writer(Reader):
         self.ds_current[len_old:len_old + len_new] = current[:len_new]
 
     def append_iv_data_si(self, timestamp: Union[np.ndarray, float], voltage: np.ndarray, current: np.array) -> NoReturn:
-        """ Writes data to file, but converts it to raw-data first
+        """ Writes data (in SI / physical unit) to file, but converts it to raw-data first
 
         Args:
             timestamp: python timestamp (time.time()) in seconds (si-unit)
-            voltage: ndarray in si-units
-            current: ndarray in si-units
-
-        Returns:
-
+            voltage: ndarray in physical-unit V
+            current: ndarray in physical-unit A
         """
         # SI-value [SI-Unit] = raw-value * gain + offset,
         timestamp = timestamp * 10**9
@@ -718,9 +766,13 @@ class Writer(Reader):
     def _align(self) -> NoReturn:
         """ Align datasets with buffer-size of shepherd
         """
+        self.refresh_file_stats()
         n_buff = self.ds_time.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
         if size_new < self.ds_time.size:
+            if self.samplerate_sps < 95_000:
+                logger.debug("f[{self.dev}] skipped alignment due to altered samplerate")
+                return
             logger.info(f"[{self.dev}] aligning with buffer-size, discarding last {self.ds_time.size - size_new} entries")
             self.ds_time.resize((size_new,))
             self.ds_voltage.resize((size_new,))
@@ -728,7 +780,7 @@ class Writer(Reader):
 
     def __setitem__(self, key, item):
         """Offer a convenient interface to store any relevant key-value data (attribute) of H5-file-structure"""
-        return self._h5file.attrs.__setitem__(key, item)
+        return self.h5file.attrs.__setitem__(key, item)
 
     def set_config(self, data: dict) -> NoReturn:
         """
@@ -739,9 +791,9 @@ class Writer(Reader):
         :param data: from virtual harvester or converter / source
         :return: None
         """
-        self.data_grp.attrs["config"] = yaml.dump(data, default_flow_style=False)
+        self.h5file["data"].attrs["config"] = yaml.dump(data, default_flow_style=False)
         if "window_samples" in data:
-            self.data_grp.attrs["window_samples"] = data["window_samples"]
+            self.set_window_samples(data["window_samples"])
 
     def set_window_samples(self, samples: int = 0) -> NoReturn:
-        self.data_grp.attrs["window_samples"] = samples
+        self.h5file["data"].attrs["window_samples"] = samples

@@ -10,6 +10,8 @@
 - install module
 
 ```
+cd .\shepherd-datalib
+
 pipenv shell
 pipenv update
 
@@ -22,7 +24,7 @@ python setup.py install
 
 ### Programming Interface
 
-basic usage (recommendation):
+#### Basic Usage (recommendation)
 
 ```
 import shepherd_data as shpd
@@ -33,7 +35,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
     print(f"Config: {db.get_config()}")
 ```
 
-available functionality:
+#### Available Functionality
 
 - `Reader()`
   - file can be checked for plausibility and validity (`is_valid()`)
@@ -57,10 +59,11 @@ available functionality:
 - IVonne Reader
   - `convert_2_ivcurves()` converts ivonne-recording into a shepherd ivcurve
 - examples
-  - `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
-  - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
   - `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
+  - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
+  - `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
   - `example_plot_traces.py` demos some mpl-plots with various zoom levels
+  - `example_repair_recordings.py` makes old recordings from shepherd 1.x fit for v2
   - `jogging_10m.iv`
       - 50 Hz measurement with Short-Circuit-Current and two other parameters
       - recorded with "IVonne"
@@ -81,24 +84,36 @@ shepherd-data validate ./
 shepherd-data validate hrv_saw_1h.h5
 ```
 
+#### Extract IV-Samples to csv
+
+- takes a file or directory as an argument
+- can take down-sample-factor as an argument
+
+```
+shepherd-data extract_data dir_or_file [-f ds_factor] [-s separator_symbol]
+
+# examples:
+shepherd-data extract ./
+shepherd-data extract hrv_saw_1h.h5 -f 1000 -s;
+```
+
 #### Extract meta-data and sys-logs
 
 - takes a file or directory as an argument
 
 ```
-shepherd-data extract dir_or_file
+shepherd-data extract-meta dir_or_file
 
 # examples:
-shepherd-data extract ./
-shepherd-data extract hrv_saw_1h.h5
+shepherd-data extract-meta ./
+shepherd-data extract-meta hrv_saw_1h.h5
 ```
 
 #### Plot IVSamples
 
 - takes a file or directory as an argument
-- can take start- and end-time
-- can take image-width and -height
-TODO: trouble with hrv_iv_1000Hz.h5
+- can take start- and end-time as an argument
+- can take image-width and -height as an argument
 
 ```
 shepherd-data plot dir_or_file [-s start_time] [-e end_time] [-w plot_width] [-h plot_height]
@@ -112,16 +127,28 @@ shepherd-data plot hrv_saw_1h.h5 -s10 -e20
 
 - generates a set of downsamplings (20 kHz to 0.1 Hz in x4 to x5 Steps)
 - takes a file or directory as an argument
+- can take down-sample-factor as an argument
 
 ```
-shepherd-data downsample dir_or_file
+shepherd-data downsample dir_or_file [-f ds_factor]
 
 # examples:
-shepherd-data downsample ./
-shepherd-data downsample hrv_saw_1h.h5
+shepherd-data downsample ./ 
+shepherd-data downsample hrv_saw_1h.h5 -f 1000
 ```
 
-### Compression & Beaglebone
+### Data-Layout and Design choices
+
+#### Modes and Datatypes
+
+- Mode `harvester` recorded a harvesting-source like solar with one of various algorithms
+  - Datatype `ivsample` is directly usable by shepherd, input for virtual source / converter
+  - Datatype `ivcurve` is directly usable by shepherd, input for a virtual harvester (output are ivsamples)
+  - Datatype `isc_voc` is specially for solar-cells and needs to be (at least) transformed into ivcurves
+- Mode `emulator` replayed a harvester-recording through a virtual converter and supplied a target while recording the power-consumption
+  - Datatype `ivsample` is the only output of this mode
+
+#### Compression & Beaglebone
 
 - supported are uncompressed, lzf and gzip with level 1 (order of recommendation)
   - lzf seems better-suited due to lower load, or if space isn't a constraint: uncompressed (None as argument)
@@ -149,20 +176,27 @@ shepherd-data downsample hrv_saw_1h.h5
 ### Open Tasks
 
 - implementations for this lib
+  - generalize up- and down-sampling
+  - generalize converters (currently in IVonne) 
+    - isc&voc <-> ivcurve
+    - ivcurve -> ivsample
   - plotting for multi-node
-  - plotting and downsampling for IVCurves
-  - plotting more generalized (power, cpu-util, ..., own directory)
-  - some metadata is wrong (non-scalar datasets)
-  - tests
+  - plotting and downsampling for IVCurves ()
+  - plotting more generalized (power, cpu-util, ..., whole directory)
+  - some metadata is calculated wrong (non-scalar datasets)
+  - unittests
+  - 
 - main shepherd-code
   - proper validation first
   - update commentary
   - pin-description should be in yaml (and other descriptions for cpu, io, ...)
-  - datatype-hint in h5-file (ivcurve, ivsample, isc_voc)
+  - datatype-hint in h5-file (ivcurve, ivsample, isc_voc), add mechanism to prevent misuse
   - hostname for emulation
   - full and minimal config into h5
+  - use the datalib as a base
 
-### Old Scripts and Files:
+### Old Scripts and Files
+
 - `gen_data.py` creates hdf-files for every type of database we want to support.
     - `curve2trace()`
       - get voltage/current-trace by sending curve through MPPT-Converter or other Optimizer/Tracker (in `mppt.py`)

@@ -31,6 +31,7 @@ if __name__ == "__main__":
         file.save_metadata()
 
     with shpd.Reader(file_path) as db:
-        print(f"Mode: {db.get_mode()}")
-        print(f"Window: {db.get_window_samples()}")
-        print(f"Config: {db.get_config()}")
+        print(f"Mode:     {db.get_mode()}")
+        print(f"Datatype: {db.get_datatype()}")
+        print(f"Window:   {db.get_window_samples()} samples")
+        print(f"Config:   {db.get_config()}")

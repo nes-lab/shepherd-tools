@@ -110,7 +110,7 @@ class Reader(object):
         df_input["timestamp"] = pd.TimedeltaIndex(data=df_input["time"], unit="s")
         df_input = df_input.set_index("timestamp")
 
-        with Writer(shp_output) as db:
+        with Writer(shp_output, datatype="ivcurve") as db:
 
             db.set_window_samples(pts_per_curve)
 

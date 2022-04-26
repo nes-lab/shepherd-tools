@@ -9,7 +9,7 @@ import shepherd_data as shpd
 # - saves metadata to datasets and the file itself to yml
 #
 # CLI-Version of this is:
-# shepherd-data extract file_or_dir
+# shepherd-data extract-meta file_or_dir
 
 if __name__ == "__main__":
 
