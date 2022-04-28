@@ -194,7 +194,7 @@ class Reader(object):
             return list(np.array(diffs_np))
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
-        diffs = set([round(float(j) * 1e-9, 3) for i in diffs_ll for j in i])
+        diffs = set([round(float(j) * 1e-9, 6) for i in diffs_ll for j in i])
         return list(diffs)
 
     def check_timediffs(self) -> bool:
@@ -395,11 +395,11 @@ class Reader(object):
         """
         if not isinstance(cal, dict):
             if "gain" in ds.attrs.keys() and "offset" in ds.attrs.keys():
-                cal = {"gain": ds.attrs["gain"], "offset": ds.attrs["offset"], "cal_converted": True}
+                cal = {"gain": ds.attrs["gain"], "offset": ds.attrs["offset"], "si_converted": True}
             else:
-                cal = {"gain": 1, "offset": 0, "cal_converted": False}
+                cal = {"gain": 1, "offset": 0, "si_converted": False}
         else:
-            cal["cal_converted"] = True
+            cal["si_converted"] = True
         iterations = math.ceil(ds.shape[0] / self.max_elements)
         job_iter = trange(0, ds.shape[0], self.max_elements, desc=f"{ds.name}-stats", leave=False, disable=iterations < 8)
 
@@ -419,7 +419,7 @@ class Reader(object):
             "min": float(stats_df.loc[:, "min"].min()),
             "max": float(stats_df.loc[:, "max"].max()),
             "std": float(stats_df.loc[:, "std"].mean()),
-            "cal_converted": cal["cal_converted"]
+            "si_converted": cal["si_converted"]
         }
         return stats
 
@@ -649,6 +649,16 @@ class Writer(Reader):
                 f"storing under {self.file_path.name} instead"
             )
 
+        if not isinstance(mode, (str, type(None))):
+            raise TypeError(f"[{self.dev}] can not handle type '{type(mode)}' for mode")
+        elif isinstance(mode, str) and mode not in self.mode_type_dict:
+            raise ValueError(f"[{self.dev}] can not handle mode '{mode}'")
+
+        if not isinstance(datatype, (str, type(None))):
+            raise TypeError(f"[{self.dev}] can not handle type '{type(datatype)}' for datatype")
+        elif isinstance(datatype, str) and datatype not in self.mode_type_dict[self.mode_default if (mode is None) else mode]:
+            raise ValueError(f"[{self.dev}] can not handle datatype '{datatype}'")
+
         if self._modify:
             self.mode = mode
             self.cal = calibration_data
@@ -723,6 +733,8 @@ class Writer(Reader):
 
         if isinstance(self.datatype, str) and self.datatype in self.mode_type_dict[self.get_mode()]:
             self.h5file["data"].attrs["datatype"] = self.datatype
+        elif not self._modify:
+            logger.error(f"[{self.dev}] datatype invalid? '{self.datatype}' not written")
 
         if isinstance(self.window_samples, int):
             self.h5file["data"].attrs["window_samples"] = self.window_samples
