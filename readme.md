@@ -58,6 +58,8 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `set_windows_samples()`
 - IVonne Reader
   - `convert_2_ivcurves()` converts ivonne-recording into a shepherd ivcurve
+  - `upsample_2_isc_voc()` TODO: for now a upsampled but unusable version of samples of short-circuit-current and open-circuit-voltage
+  - `convert_2_ivsamples()` already applies a simple harvesting-algo and creates ivsamples
 - examples
   - `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
   - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
@@ -90,7 +92,7 @@ shepherd-data validate hrv_saw_1h.h5
 - can take down-sample-factor as an argument
 
 ```
-shepherd-data extract_data dir_or_file [-f ds_factor] [-s separator_symbol]
+shepherd-data extract dir_or_file [-f ds_factor] [-s separator_symbol]
 
 # examples:
 shepherd-data extract ./
@@ -144,7 +146,7 @@ shepherd-data downsample hrv_saw_1h.h5 -f 1000
 - Mode `harvester` recorded a harvesting-source like solar with one of various algorithms
   - Datatype `ivsample` is directly usable by shepherd, input for virtual source / converter
   - Datatype `ivcurve` is directly usable by shepherd, input for a virtual harvester (output are ivsamples)
-  - Datatype `isc_voc` is specially for solar-cells and needs to be (at least) transformed into ivcurves
+  - Datatype `isc_voc` is specially for solar-cells and needs to be (at least) transformed into ivcurves later
 - Mode `emulator` replayed a harvester-recording through a virtual converter and supplied a target while recording the power-consumption
   - Datatype `ivsample` is the only output of this mode
 
@@ -185,7 +187,6 @@ shepherd-data downsample hrv_saw_1h.h5 -f 1000
   - plotting more generalized (power, cpu-util, ..., whole directory)
   - some metadata is calculated wrong (non-scalar datasets)
   - unittests
-  - 
 - main shepherd-code
   - proper validation first
   - update commentary
@@ -194,6 +195,8 @@ shepherd-data downsample hrv_saw_1h.h5 -f 1000
   - hostname for emulation
   - full and minimal config into h5
   - use the datalib as a base
+  - isc-voc-harvesting
+  - directly process isc-voc -> resample to ivcurve?
 
 ### Old Scripts and Files
 
