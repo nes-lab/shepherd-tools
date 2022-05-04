@@ -24,10 +24,8 @@ import pandas as pd
 import yaml
 from tqdm import trange
 
+logging.basicConfig(format="%(name)s %(levelname)s: %(message)s", level=logging.INFO)
 consoleHandler = logging.StreamHandler()
-logger = logging.getLogger("shepherd_data")
-logger.addHandler(consoleHandler)
-logger.setLevel(logging.INFO)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
@@ -61,17 +59,20 @@ class Reader(object):
     sample_interval_s: float = (1 / samplerate_sps)
 
     max_elements: int = 100 * samplerate_sps  # per iteration (100s, ~ 300 MB RAM use)
-    dev = "ShpReader"
 
     mode_type_dict = {"harvester": ["ivsample", "ivcurve", "isc_voc"],
                       "emulator": ["ivsample"]}
+
+    logger = logging.getLogger("SHPData.Reader")
 
     def __init__(self, file_path: Union[Path, None], verbose: Union[bool, None] = True):
         self._skip_open = file_path is None  # for access by writer-class
         if not self._skip_open:
             self.file_path = Path(file_path)
         if verbose is not None:
-            logger.setLevel(logging.INFO if verbose else logging.WARNING)
+            self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        #self.logger.addHandler(consoleHandler)
+
         self.runtime_s = None
         self.file_size = None
         self.data_rate = None
@@ -81,9 +82,9 @@ class Reader(object):
             self.h5file = h5py.File(self.file_path, "r")
 
         if self.is_valid():
-            logger.info(f"[{self.dev}] File is available now")
+            self.logger.info(f"File is available now")
         else:
-            logger.error(f"[{self.dev}] File is faulty! Will try to open but there might be dragons")
+            self.logger.error(f"File is faulty! Will try to open but there might be dragons")
 
         self.ds_time = self.h5file["data"]["time"]
         self.ds_voltage = self.h5file["data"]["voltage"]
@@ -95,8 +96,8 @@ class Reader(object):
         self.refresh_file_stats()
 
         if not self._skip_open:
-            logger.info(
-                f"[{self.dev}] Reading data from '{self.file_path}'\n"
+            self.logger.info(
+                f"Reading data from '{self.file_path}'\n"
                 f"\t- runtime {self.runtime_s} s\n"
                 f"\t- mode = {self.get_mode()}\n"
                 f"\t- window_size = {self.get_window_samples()}\n"
@@ -132,7 +133,7 @@ class Reader(object):
         """
         if end_n is None:
             end_n = int(self.h5file["data"]["time"].shape[0] // self.samples_per_buffer)
-        logger.debug(f"[{self.dev}] Reading blocks from {start_n} to {end_n} from source-file")
+        self.logger.debug(f"Reading blocks from {start_n} to {end_n} from source-file")
         _raw = is_raw
 
         for i in range(start_n, end_n):
@@ -204,7 +205,7 @@ class Reader(object):
         """
         diffs = self.data_timediffs()
         if len(diffs) > 1:
-            logger.warning(f"[{self.dev}] Time-jumps detected -> expected 0.1 s steps, but got: {diffs} s")
+            self.logger.warning(f"Time-jumps detected -> expected 0.1 s steps, but got: {diffs} s")
         return len(diffs) <= 1
 
     def is_valid(self) -> bool:
@@ -214,57 +215,57 @@ class Reader(object):
         """
         # hard criteria
         if "data" not in self.h5file.keys():
-            logger.error(f"[{self.dev}|validator] root data-group not found")
+            self.logger.error(f"root data-group not found (@Validator)")
             return False
         for attr in ["mode"]:
             if attr not in self.h5file.attrs.keys():
-                logger.error(f"[{self.dev}|validator] attribute '{attr}' not found in file")
+                self.logger.error(f"attribute '{attr}' not found in file (@Validator)")
                 return False
             elif self.h5file.attrs["mode"] not in self.mode_type_dict:
-                logger.error(f"[{self.dev}|validator] unsupported mode '{self.get_mode()}'")
+                self.logger.error(f"unsupported mode '{self.get_mode()}' (@Validator)")
                 return False
         for attr in ["window_samples", "datatype"]:
             if attr not in self.h5file["data"].attrs.keys():
-                logger.error(f"[{self.dev}|validator] attribute '{attr}' not found in data-group")
+                self.logger.error(f"attribute '{attr}' not found in data-group (@Validator)")
                 return False
         for ds in ["time", "current", "voltage"]:
             if ds not in self.h5file["data"].keys():
-                logger.error(f"[{self.dev}|validator] dataset '{ds}' not found")
+                self.logger.error(f"dataset '{ds}' not found (@Validator)")
                 return False
         for ds, attr in product(["current", "voltage"], ["gain", "offset"]):
             if attr not in self.h5file["data"][ds].attrs.keys():
-                logger.error(f"[{self.dev}|validator] attribute '{attr}' not found in dataset '{ds}'")
+                self.logger.error(f"attribute '{attr}' not found in dataset '{ds}' (@Validator)")
                 return False
         if self.get_datatype() not in self.mode_type_dict[self.get_mode()]:
-            logger.error(f"[{self.dev}|validator] unsupported type '{self.get_datatype()}' for mode '{self.get_mode()}'")
+            self.logger.error(f"unsupported type '{self.get_datatype()}' for mode '{self.get_mode()}' (@Validator)")
             return False
 
         if self.get_datatype() == "ivcurve" and self.get_window_samples() < 1:
-            logger.error(f"[{self.dev}] window size / samples is < 1 -> invalid for ivcurves-datatype")
+            self.logger.error(f"window size / samples is < 1 -> invalid for ivcurves-datatype (@Validator)")
             return False
 
         # soft-criteria:
         if self.get_datatype() != "ivcurve" and self.get_window_samples() > 0:
-            logger.warning(f"[{self.dev}] window size / samples is > 0 despite not using the ivcurves-datatype")
+            self.logger.warning(f"window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)")
         # same length of datasets:
         ds_time_size = self.h5file["data"]["time"].shape[0]
         for ds in ["current", "voltage"]:
             ds_size = self.h5file["data"][ds].shape[0]
             if ds_time_size != ds_size:
-                logger.warning(f"[{self.dev}|validator] dataset '{ds}' has different size (={ds_size}), "
-                               f"compared to time-ds (={ds_time_size})")
+                self.logger.warning(f"dataset '{ds}' has different size (={ds_size}), "
+                               f"compared to time-ds (={ds_time_size}) (@Validator)")
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
-            logger.warning(f"[{self.dev}|validator] datasets are not aligned with buffer-size")
+            self.logger.warning(f"datasets are not aligned with buffer-size (@Validator)")
         # check compression
         for ds in ["time", "current", "voltage"]:
             comp = self.h5file["data"][ds].compression
             opts = self.h5file["data"][ds].compression_opts
             if comp not in [None, "gzip", "lzf"]:
-                logger.warning(f"[{self.dev}|validator] unsupported compression found ({comp} != None, lzf, gzip)")
+                self.logger.warning(f"unsupported compression found ({comp} != None, lzf, gzip) (@Validator)")
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
-                logger.warning(f"[{self.dev}|validator] gzip compression is too high ({opts} > 1) for BBone")
+                self.logger.warning(f"gzip compression is too high ({opts} > 1) for BBone (@Validator)")
         return True
 
     def get_metadata(self, node=None, minimal: bool = False) -> dict:
@@ -325,7 +326,7 @@ class Reader(object):
         """
         yml_path = Path(self.file_path).absolute().with_suffix(".yml")
         if yml_path.exists():
-            logger.info(f"[{self.dev}] {yml_path} already exists, will skip")
+            self.logger.info(f"{yml_path} already exists, will skip")
             return {}
         metadata = self.get_metadata()  # {"h5root": self.get_metadata(self.h5file)}
         with open(yml_path, "w") as fd:
@@ -431,11 +432,11 @@ class Reader(object):
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
-            logger.warning(f"[{self.dev}] {h5_group.name} is empty, no csv generated")
+            self.logger.warning(f"{h5_group.name} is empty, no csv generated")
             return 0
         csv_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
         if csv_path.exists():
-            logger.warning(f"[{self.dev}] {csv_path} already exists, will skip")
+            self.logger.warning(f"{csv_path} already exists, will skip")
             return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
@@ -463,11 +464,11 @@ class Reader(object):
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
-            logger.warning(f"[{self.dev}] {h5_group.name} is empty, no log generated")
+            self.logger.warning(f"{h5_group.name} is empty, no log generated")
             return 0
         log_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
         if log_path.exists():
-            logger.warning(f"[{self.dev}] {log_path} already exists, will skip")
+            self.logger.warning(f"{log_path} already exists, will skip")
             return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
         datasets.remove("time")
@@ -487,6 +488,7 @@ class Reader(object):
     def downsample(self, data_src: h5py.Dataset, data_dst: Union[None, h5py.Dataset, np.ndarray],
                    start_n: int = 0, end_n: int = None, ds_factor: float = 5, is_time: bool = False) -> Union[h5py.Dataset, np.ndarray]:
         """ Warning: only valid for IV-Stream, not IV-Curves
+        TODO: switch to resulting sampling_rate
 
         :param data_src: a h5-dataset to digest, can be external
         :param data_dst: can be a dataset, numpy-array or None (will be created internally then)
@@ -497,7 +499,7 @@ class Reader(object):
         :return: downsampled h5-dataset or numpy-array
         """
         if self.get_datatype() == "ivcurve":
-            logger.error(f"[{self.dev}] Downsampling-Function was not written for IVCurves")
+            self.logger.error(f"Downsampling-Function was not written for IVCurves")
         ds_factor = max(1, math.floor(ds_factor))
 
         if end_n is None:
@@ -507,7 +509,7 @@ class Reader(object):
         start_n = min(end_n, round(start_n))
         data_len = end_n - start_n  # TODO: one-off to calculation below
         if data_len == 0:
-            logger.warning(f"[{self.dev}] downsampling failed because of data_len = 0")
+            self.logger.warning(f"downsampling failed because of data_len = 0")
         iblock_len = min(self.max_elements, data_len)
         oblock_len = round(iblock_len / ds_factor)
         iterations = math.ceil(data_len / iblock_len)
@@ -552,14 +554,14 @@ class Reader(object):
         :param height: plot-height
         """
         if self.get_datatype() == "ivcurve":
-            logger.error(f"[{self.dev}] Plot-Function was not written for IVCurves")
+            self.logger.error(f"Plot-Function was not written for IVCurves")
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
             end_s = self.runtime_s
         start_str = f"{start_s:.3f}".replace(".", "s")
         end_str = f"{end_s:.3f}".replace(".", "s")
-        plot_path = self.file_path.with_suffix(f".{start_str}_to_{end_str}.png")
+        plot_path = self.file_path.with_suffix(f".plot_{start_str}_to_{end_str}.png")
         if plot_path.exists():
             return
         start_sample = round(start_s * self.samplerate_sps)
@@ -618,6 +620,8 @@ class Writer(Reader):
 
     chunk_shape = (Reader.samples_per_buffer,)
 
+    logger = logging.getLogger("SHPData.Writer")
+
     def __init__(
             self,
             file_path: Path,
@@ -631,33 +635,35 @@ class Writer(Reader):
     ):
         super().__init__(file_path=None, verbose=verbose)
 
-        self.dev = "ShpWriter"
-
         file_path = Path(file_path)
         self._modify = modify_existing
 
+        if verbose is not None:
+            self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        #self.logger.addHandler(consoleHandler)
+
         if self._modify or not file_path.exists():
             self.file_path = file_path
-            logger.info(f"[{self.dev}] Storing data to   '{self.file_path}'")
+            self.logger.info(f"Storing data to   '{self.file_path}'")
         else:
             base_dir = file_path.resolve().parents[0]
             self.file_path = unique_path(
                 base_dir / file_path.stem, file_path.suffix
             )
-            logger.warning(
-                f"[{self.dev}] File {file_path} already exists -> "
+            self.logger.warning(
+                f"File {file_path} already exists -> "
                 f"storing under {self.file_path.name} instead"
             )
 
         if not isinstance(mode, (str, type(None))):
-            raise TypeError(f"[{self.dev}] can not handle type '{type(mode)}' for mode")
+            raise TypeError(f"can not handle type '{type(mode)}' for mode")
         elif isinstance(mode, str) and mode not in self.mode_type_dict:
-            raise ValueError(f"[{self.dev}] can not handle mode '{mode}'")
+            raise ValueError(f"can not handle mode '{mode}'")
 
         if not isinstance(datatype, (str, type(None))):
-            raise TypeError(f"[{self.dev}] can not handle type '{type(datatype)}' for datatype")
+            raise TypeError(f"can not handle type '{type(datatype)}' for datatype")
         elif isinstance(datatype, str) and datatype not in self.mode_type_dict[self.mode_default if (mode is None) else mode]:
-            raise ValueError(f"[{self.dev}] can not handle datatype '{datatype}'")
+            raise ValueError(f"can not handle datatype '{datatype}'")
 
         if self._modify:
             self.mode = mode
@@ -734,7 +740,7 @@ class Writer(Reader):
         if isinstance(self.datatype, str) and self.datatype in self.mode_type_dict[self.get_mode()]:
             self.h5file["data"].attrs["datatype"] = self.datatype
         elif not self._modify:
-            logger.error(f"[{self.dev}] datatype invalid? '{self.datatype}' not written")
+            self.logger.error(f"datatype invalid? '{self.datatype}' not written")
 
         if isinstance(self.window_samples, int):
             self.h5file["data"].attrs["window_samples"] = self.window_samples
@@ -749,7 +755,7 @@ class Writer(Reader):
     def __exit__(self, *exc):
         self._align()
         self.refresh_file_stats()
-        logger.info(f"[{self.dev}] closing hdf5 file, {self.runtime_s} s iv-data, "
+        self.logger.info(f"closing hdf5 file, {self.runtime_s} s iv-data, "
                     f"size = {round(self.file_size/2**20, 3)} MiB, "
                     f"rate = {round(self.data_rate/2**10)} KiB/s")
         self.is_valid()
@@ -773,7 +779,7 @@ class Writer(Reader):
         if isinstance(timestamp_ns, np.ndarray):
             len_new = min(len_new, timestamp_ns.size)
         else:
-            logger.error(f"[{self.dev}] timestamp-data was not usable")
+            self.logger.error(f"timestamp-data was not usable")
             return
 
         len_old = self.ds_time.shape[0]
@@ -810,9 +816,9 @@ class Writer(Reader):
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
         if size_new < self.ds_time.size:
             if self.samplerate_sps < 95_000:
-                logger.debug("f[{self.dev}] skipped alignment due to altered samplerate")
+                self.logger.debug(f"skipped alignment due to altered samplerate")
                 return
-            logger.info(f"[{self.dev}] aligning with buffer-size, discarding last {self.ds_time.size - size_new} entries")
+            self.logger.info(f"aligning with buffer-size, discarding last {self.ds_time.size - size_new} entries")
             self.ds_time.resize((size_new,))
             self.ds_voltage.resize((size_new,))
             self.ds_current.resize((size_new,))

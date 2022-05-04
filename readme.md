@@ -178,7 +178,10 @@ shepherd-data downsample hrv_saw_1h.h5 -f 1000
 ### Open Tasks
 
 - implementations for this lib
-  - generalize up- and down-sampling
+  - generalize up- and down-sampling, use out_sample_rate instead of ds-factor
+    - https://pypi.org/project/samplerate/
+    - https://stackoverflow.com/questions/29085268/resample-a-numpy-array
+    - scipy.signal.resample, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.decimate.html
   - generalize converters (currently in IVonne) 
     - isc&voc <-> ivcurve
     - ivcurve -> ivsample

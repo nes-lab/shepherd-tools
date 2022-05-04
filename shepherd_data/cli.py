@@ -6,10 +6,12 @@ from pathlib import Path
 
 from shepherd_data import Writer, Reader
 
-consoleHandler = logging.StreamHandler()
-logger = logging.getLogger("shepherd_cli")
-logger.addHandler(consoleHandler)
-verbose_level = 0
+
+logger = logging.getLogger("SHPData.cli")
+#consoleHandler = logging.StreamHandler()
+#logger.addHandler(consoleHandler)
+verbose_level = 2
+
 
 def config_logger(verbose: int):
     if verbose == 0:
@@ -54,9 +56,9 @@ def cli(ctx, verbose: int):
 
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
-@click.argument("database", type=click.Path(exists=True, ))
-def validate(database):
-    files = path_to_flist(database)
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
+def validate(in_data):
+    files = path_to_flist(in_data)
     valid_dir = True
     for file in files:
         logger.info(f"Validating '{file.name}' ...")
@@ -71,22 +73,20 @@ def validate(database):
 
 
 @cli.command(short_help="Extracts recorded IVSamples and stores it to csv")
-@click.argument("database", type=click.Path(exists=True, ))
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option("--ds_factor", "-f", default=1000, type=click.FLOAT, help="Downsample-Factor, if one specific value is wanted")
 @click.option("--separator", "-s", default=";", type=click.STRING, help="Set an individual csv-separator")
-def extract(database, ds_factor, separator):
-    files = path_to_flist(database)
+def extract(in_data, ds_factor, separator):
+    files = path_to_flist(in_data)
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:
         ds_factor = 1000
-        logger.info(f"DS-Factor was invalid was reset to 10000")
+        logger.info(f"DS-Factor was invalid was reset to 1'000")
     for file in files:
         logger.info(f"Extracting IV-Samples from '{file.name}' ...")
         with Reader(file, verbose=verbose_level > 2) as shpr:
+            # will create a downsampled h5-file (if not existing) and then saving to csv
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
-            if ds_file.exists():
-                with Reader(ds_file, verbose=verbose_level > 2) as shpd:
-                    shpd.save_csv(shpd["data"], separator)
-            else:
+            if not ds_file.exists():
                 logger.info(f"Downsampling '{file.name}' by factor x{ds_factor} ...")
                 with Writer(ds_file, mode=shpr.get_mode(), calibration_data=shpr.get_calibration_data(),
                             verbose=verbose_level > 2) as shpw:
@@ -94,15 +94,16 @@ def extract(database, ds_factor, separator):
                     shpr.downsample(shpr.ds_time, shpw.ds_time, ds_factor=ds_factor, is_time=True)
                     shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=ds_factor)
                     shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=ds_factor)
-                    shpw.refresh_file_stats()
-                    shpw.save_csv(shpw["data"], separator)
+
+            with Reader(ds_file, verbose=verbose_level > 2) as shpd:
+                shpd.save_csv(shpd["data"], separator)
 
 
 @cli.command(short_help="Extracts metadata and logs from file or directory containing shepherd-recordings")
-@click.argument("database", type=click.Path(exists=True, ))
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option("--separator", "-s", default=";", type=click.STRING, help="Set an individual csv-separator")
-def extract_meta(database, separator):
-    files = path_to_flist(database)
+def extract_meta(in_data, separator):
+    files = path_to_flist(in_data)
     for file in files:
         logger.info(f"Extracting metadata & logs from '{file.name}' ...")
         with Reader(file, verbose=verbose_level > 2) as shpr:
@@ -122,15 +123,19 @@ def extract_meta(database, separator):
 
 
 @cli.command(short_help="Creates an array of downsampling-files from file or directory containing shepherd-recordings")
-@click.argument("database", type=click.Path(exists=True, ))
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
+# @click.option("--out_data", "-o", type=click.Path(resolve_path=True))
 @click.option("--ds_factor", "-f", default=None, type=click.FLOAT, help="Downsample-Factor, if one specific value is wanted")
-def downsample(database, ds_factor):
+@click.option("--sample-rate", "-r", type=int, help="Alternative Input to determine a downsample-factor (Choose One)")
+def downsample(in_data, ds_factor, sample_rate):
+    if ds_factor is None and sample_rate is not None and sample_rate >= 1:
+        ds_factor = int(Reader.samplerate_sps/sample_rate)
     if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
         ds_list = [ds_factor]
     else:
         ds_list = [5, 25, 100, 500, 2_500, 10_000, 50_000, 250_000, 1_000_000]
 
-    files = path_to_flist(database)
+    files = path_to_flist(in_data)
     for file in files:
         with Reader(file, verbose=verbose_level > 2) as shpr:
             for ds_factor in ds_list:
@@ -148,14 +153,14 @@ def downsample(database, ds_factor):
 
 
 @cli.command(short_help="Plots IV-trace from file or directory containing shepherd-recordings")
-@click.argument("database", type=click.Path(exists=True, ))
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option("--start", "-s", default=None, type=click.FLOAT, help="Start of plot in seconds, will be 0 if omitted")
 @click.option("--end", "-e", default=None, type=click.FLOAT, help="End of plot in seconds, will be max if omitted")
 @click.option("--width", "-w", default=20, type=click.INT, help="Width-Dimension of resulting plot")
 @click.option("--height", "-h", default=10, type=click.INT, help="Height-Dimension of resulting plot")
-def plot(database, start: float, end: float, width: int, height: int, ):
+def plot(in_data, start: float, end: float, width: int, height: int, ):
     logger.info(f"CLI-options are start = {start} s, end= {end} s, width = {width}, height = {height}")
-    files = path_to_flist(database)
+    files = path_to_flist(in_data)
     for file in files:
         logger.info(f"Generating plot for '{file.name}' ...")
         with Reader(file, verbose=verbose_level > 2) as shpr:

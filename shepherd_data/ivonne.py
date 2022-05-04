@@ -8,9 +8,10 @@ import scipy  # used for interpolation
 from pathlib import Path
 from tqdm import tqdm, trange
 
-from shepherd_data import Writer, logger
+from shepherd_data import Writer
 from shepherd_data.mppt import MPPTracker, OpenCircuitTracker, OptimalTracker
 
+consoleHandler = logging.StreamHandler()
 
 def iv_model(v: np.ndarray, coeffs: pd.DataFrame):
     """Simple diode based model of a solar panel IV curve.
@@ -49,11 +50,12 @@ class Reader(object):
     sample_interval_ns = int(10 ** 9 // samplerate_sps)
     sample_interval_s: float = (1 / samplerate_sps)
 
-    dev = "IVonneReader"
+    logger = logging.getLogger("SHPData.IVonne.Reader")
 
     def __init__(self, file_path: Path, samplerate_sps: int = None, verbose: bool = True):
 
-        logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        # self.logger.addHandler(consoleHandler)
         self.file_path = Path(file_path)
         if samplerate_sps is not None:
             self.samplerate_sps = samplerate_sps
@@ -65,8 +67,8 @@ class Reader(object):
         with open(self.file_path, "rb") as f:
             self._df = pickle.load(f)
         self.refresh_file_stats()
-        logger.info(
-            f"[{self.dev}] Reading data from '{self.file_path}'\n"
+        self.logger.info(
+            f"Reading data from '{self.file_path}'\n"
             f"\t- runtime = {self.runtime_s} s\n"
             f"\t- size = {round(self.file_size / 2 ** 10, 3)} KiB\n"
             f"\t- rate = {round(self.data_rate / 2 ** 10, 3)} KiB/s")
@@ -95,13 +97,13 @@ class Reader(object):
         :param duration_s: time to stop in seconds, counted from beginning
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            logger.info(f"  -> gets trimmed to {duration_s} s")
+            self.logger.info(f"  -> gets trimmed to {duration_s} s")
             df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
         else:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            logger.warning(f"[{self.dev}] {shp_output.name} already exists, will skip")
+            self.logger.warning(f"{shp_output.name} already exists, will skip")
             return
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
@@ -161,13 +163,13 @@ class Reader(object):
         :param tracker: VOC or OPT
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            logger.info(f"  -> gets trimmed to {duration_s} s")
+            self.logger.info(f"  -> gets trimmed to {duration_s} s")
             df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
         else:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            logger.warning(f"[{self.dev}] {shp_output.name} already exists, will skip")
+            self.logger.warning(f"{shp_output.name} already exists, will skip")
             return
 
         if tracker is None:
@@ -206,13 +208,13 @@ class Reader(object):
         :param duration_s: time to stop in seconds, counted from beginning
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            logger.info(f"  -> gets trimmed to {duration_s} s")
+            self.logger.info(f"  -> gets trimmed to {duration_s} s")
             df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
         else:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            logger.warning(f"[{self.dev}] {shp_output.name} already exists, will skip")
+            self.logger.warning(f"{shp_output.name} already exists, will skip")
             return
 
         with Writer(shp_output, datatype="isc_voc") as db:
