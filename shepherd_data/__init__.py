@@ -17,6 +17,7 @@ from pathlib import Path
 import h5py
 from itertools import product
 
+import samplerate as samplerate  # TODO:
 from matplotlib import pyplot as plt
 from scipy import signal
 
@@ -71,7 +72,7 @@ class Reader(object):
             self.file_path = Path(file_path)
         if verbose is not None:
             self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
-        #self.logger.addHandler(consoleHandler)
+        # self.logger.addHandler(consoleHandler)
 
         self.runtime_s = None
         self.file_size = None
@@ -195,7 +196,7 @@ class Reader(object):
             return list(np.array(diffs_np))
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
-        diffs = set([round(float(j) * 1e-9, 6) for i in diffs_ll for j in i])
+        diffs = set([round(float(j) * 1e-9 / self.samples_per_buffer, 6) for i in diffs_ll for j in i])
         return list(diffs)
 
     def check_timediffs(self) -> bool:
@@ -253,7 +254,7 @@ class Reader(object):
             ds_size = self.h5file["data"][ds].shape[0]
             if ds_time_size != ds_size:
                 self.logger.warning(f"dataset '{ds}' has different size (={ds_size}), "
-                               f"compared to time-ds (={ds_time_size}) (@Validator)")
+                                    f"compared to time-ds (={ds_time_size}) (@Validator)")
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
@@ -328,7 +329,7 @@ class Reader(object):
         if yml_path.exists():
             self.logger.info(f"{yml_path} already exists, will skip")
             return {}
-        metadata = self.get_metadata()  # {"h5root": self.get_metadata(self.h5file)}
+        metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
         with open(yml_path, "w") as fd:
             yaml.safe_dump(metadata, fd, default_flow_style=False, sort_keys=False)
         return metadata
@@ -488,7 +489,6 @@ class Reader(object):
     def downsample(self, data_src: h5py.Dataset, data_dst: Union[None, h5py.Dataset, np.ndarray],
                    start_n: int = 0, end_n: int = None, ds_factor: float = 5, is_time: bool = False) -> Union[h5py.Dataset, np.ndarray]:
         """ Warning: only valid for IV-Stream, not IV-Curves
-        TODO: switch to resulting sampling_rate
 
         :param data_src: a h5-dataset to digest, can be external
         :param data_dst: can be a dataset, numpy-array or None (will be created internally then)
@@ -543,6 +543,76 @@ class Reader(object):
             data_dst.resize((oblock_len*(iterations-1) + slice_len,), refcheck=False)
         else:
             data_dst.resize((oblock_len*(iterations-1) + slice_len,))
+        return data_dst
+
+    def resample(self, data_src: h5py.Dataset, data_dst: Union[None, h5py.Dataset, np.ndarray],
+                 start_n: int = 0, end_n: int = None, samplerate_dst: float = 1000, is_time: bool = False) -> Union[h5py.Dataset, np.ndarray]:
+        """
+        :param data_src:
+        :param data_dst:
+        :param start_n:
+        :param end_n:
+        :param samplerate_dst:
+        :param is_time:
+        :return:
+        """
+        self.logger.error("Resampling is still under construction - do not use for now!")
+        if self.get_datatype() == "ivcurve":
+            self.logger.error(f"Resampling-Function was not written for IVCurves")
+
+        if end_n is None:
+            end_n = data_src.shape[0]
+        else:
+            end_n = min(data_src.shape[0], round(end_n))
+        start_n = min(end_n, round(start_n))
+        data_len = end_n - start_n
+        if data_len == 0:
+            self.logger.warning(f"resampling failed because of data_len = 0")
+        fs_ratio = samplerate_dst / self.samplerate_sps
+        dest_len = math.floor(data_len * fs_ratio) + 1
+        if fs_ratio <= 1.0:  # down-sampling
+            slice_inp_len = min(self.max_elements, data_len)
+            slice_out_len = round(slice_inp_len * fs_ratio)
+        else:  # up-sampling
+            slice_out_len = min(self.max_elements, data_len * fs_ratio)
+            slice_inp_len = round(slice_out_len / fs_ratio)
+        iterations = math.ceil(data_len / slice_inp_len)
+
+        if data_dst is None:
+            data_dst = np.empty((dest_len,))
+        elif isinstance(data_dst, (h5py.Dataset, np.ndarray)):
+            data_dst.resize((dest_len,))
+
+        slice_inp_now = start_n
+        slice_out_now = 0
+
+        if is_time:
+            for _ in trange(0, iterations, desc=f"resampling {data_src.name}", leave=False, disable=iterations < 8):
+                tmin = data_src[slice_inp_now]
+                slice_inp_now += slice_inp_len
+                tmax = data_src[min(slice_inp_now, data_len - 1)]
+                slice_out_ds = np.arange(tmin, tmax, 1e9 / samplerate_dst)  # will be rounded in h5-dataset
+                slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
+                data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
+                slice_out_now = slice_out_nxt
+        else:
+            resampler = samplerate.Resampler("sinc_medium", channels=1, )  # sinc_best, _medium, _fastest or linear
+            for i in trange(0, iterations, desc=f"resampling {data_src.name}", leave=False, disable=iterations < 8):
+                slice_inp_ds = data_src[slice_inp_now:slice_inp_now + slice_inp_len]
+                slice_inp_now += slice_inp_len
+                slice_out_ds = resampler.process(slice_inp_ds, fs_ratio, i == iterations - 1, verbose=True)
+                # slice_out_ds = resampy.resample(slice_inp_ds, self.samplerate_sps, samplerate_dst, filter="kaiser_fast")
+                slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
+                # print(f"@{i}: got {slice_out_ds.shape[0]}")
+                data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
+                slice_out_now = slice_out_nxt
+            resampler.reset()
+
+        if isinstance(data_dst, np.ndarray):
+            data_dst.resize((slice_out_now,), refcheck=False)
+        else:
+            data_dst.resize((slice_out_now,))
+
         return data_dst
 
     def plot_to_file(self, start_s: float = None, end_s: float = None, width: int = 20, height: int = 10) -> NoReturn:
@@ -640,7 +710,7 @@ class Writer(Reader):
 
         if verbose is not None:
             self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
-        #self.logger.addHandler(consoleHandler)
+        # self.logger.addHandler(consoleHandler)
 
         if self._modify or not file_path.exists():
             self.file_path = file_path
@@ -756,8 +826,8 @@ class Writer(Reader):
         self._align()
         self.refresh_file_stats()
         self.logger.info(f"closing hdf5 file, {self.runtime_s} s iv-data, "
-                    f"size = {round(self.file_size/2**20, 3)} MiB, "
-                    f"rate = {round(self.data_rate/2**10)} KiB/s")
+                         f"size = {round(self.file_size/2**20, 3)} MiB, "
+                         f"rate = {round(self.data_rate/2**10)} KiB/s")
         self.is_valid()
         self.h5file.close()
 
