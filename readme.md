@@ -118,10 +118,10 @@ shepherd-data extract-meta hrv_saw_1h.h5
 - can take image-width and -height as an argument
 
 ```
-shepherd-data plot dir_or_file [-s start_time] [-e end_time] [-w plot_width] [-h plot_height]
+shepherd-data plot dir_or_file [-s start_time] [-e end_time] [-w plot_width] [-h plot_height] [--multiplot]
 
 # examples:
-shepherd-data plot ./
+shepherd-data plot ./ --multiplot
 shepherd-data plot hrv_saw_1h.h5 -s10 -e20
 ```
 

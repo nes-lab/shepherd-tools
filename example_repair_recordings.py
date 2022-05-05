@@ -78,10 +78,18 @@ if __name__ == "__main__":
             # missing window_samples
             if "window_samples" not in fh.h5file["data"].attrs.keys():
                 if datatype == "ivcurve":
-                    print("Window size is missing, but ivcurves are detected -> will not guess!")
+                    print("Window size is missing, but ivcurves are detected -> will not guess! ... and exit without repair")
                     continue
                 print(" -> will set window size = 0")
                 fh.__exit__()
                 with shpd.Writer(fpath, window_samples=0, modify_existing=True) as fw:
                     pass
+                fh.__enter__()
+
+            # missing hostname
+            if "hostname" not in fh.h5file.attrs.keys():
+                print(" -> will set hostname = SheepX")
+                fh.__exit__()
+                with shpd.Writer(fpath, modify_existing=True) as fw:
+                    fw.set_hostname("SheepX")
                 fh.__enter__()

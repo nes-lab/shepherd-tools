@@ -157,14 +157,21 @@ def downsample(in_data, ds_factor, sample_rate):
 @click.option("--end", "-e", default=None, type=click.FLOAT, help="End of plot in seconds, will be max if omitted")
 @click.option("--width", "-w", default=20, type=click.INT, help="Width-Dimension of resulting plot")
 @click.option("--height", "-h", default=10, type=click.INT, help="Height-Dimension of resulting plot")
-def plot(in_data, start: float, end: float, width: int, height: int, ):
+@click.option("--multiplot", "-m", is_flag=True, help="Plot all files (in directory) into one Multiplot")
+def plot(in_data, start: float, end: float, width: int, height: int, multiplot: bool):
     logger.info(f"CLI-options are start = {start} s, end= {end} s, width = {width}, height = {height}")
     files = path_to_flist(in_data)
+    multiplot = multiplot and len(files) > 1
+    data = []
     for file in files:
         logger.info(f"Generating plot for '{file.name}' ...")
         with Reader(file, verbose=verbose_level > 2) as shpr:
-            shpr.plot_to_file(start, end, width, height)
-            # todo: group-plot
+            if multiplot:
+                data.append(shpr.generate_plot_data(start, end, relative_ts=True))
+            else:
+                shpr.plot_to_file(start, end, width, height)
+    if multiplot:
+        Reader.multiplot_to_file(data, in_data, width, height)
 
 
 if __name__ == "__main__":

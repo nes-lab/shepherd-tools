@@ -6,7 +6,7 @@ import shepherd_data as shpd
 # - note: let the generator- and converter-example run before
 #
 # CLI-Version of this is:
-# shepherd-data plot file_or_dir [-s start_time] [-e end_time] [-w plot_width] [-h plot_height]
+# shepherd-data plot file_or_dir [-s start_time] [-e end_time] [-w plot_width] [-h plot_height] [--multiplot]
 
 if __name__ == "__main__":
 
@@ -22,3 +22,16 @@ if __name__ == "__main__":
         db.plot_to_file(0, 1)
         db.plot_to_file(0, .2)
         db.plot_to_file(0.199, 0.201)
+
+    # multiplot
+    files = [Path("./jogging_10m_ivcurves.h5"),
+             Path("./jogging_10m_isc_voc.h5"),
+             Path("./jogging_10m_ivsamples_voc.h5"),
+             Path("./jogging_10m_ivsamples_opt.h5")]
+    data = []
+    for file in files:
+        with shpd.Reader(file, verbose=False) as db:
+            date = db.generate_plot_data(0, 1)
+            date["name"] = file.stem[12:]  # cut away "jogging_10m_"
+            data.append(date)
+    shpd.Reader.multiplot_to_file(data, Path(files[0].stem[:11]))

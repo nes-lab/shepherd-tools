@@ -499,7 +499,7 @@ class Reader(object):
         :return: downsampled h5-dataset or numpy-array
         """
         if self.get_datatype() == "ivcurve":
-            self.logger.error(f"Downsampling-Function was not written for IVCurves")
+            self.logger.warning(f"Downsampling-Function was not written for IVCurves")
         ds_factor = max(1, math.floor(ds_factor))
 
         if end_n is None:
@@ -558,7 +558,7 @@ class Reader(object):
         """
         self.logger.error("Resampling is still under construction - do not use for now!")
         if self.get_datatype() == "ivcurve":
-            self.logger.error(f"Resampling-Function was not written for IVCurves")
+            self.logger.warning(f"Resampling-Function was not written for IVCurves")
 
         if end_n is None:
             end_n = data_src.shape[0]
@@ -615,51 +615,108 @@ class Reader(object):
 
         return data_dst
 
-    def plot_to_file(self, start_s: float = None, end_s: float = None, width: int = 20, height: int = 10) -> NoReturn:
-        """ creates (downsampled) IV-Plots for one Node
+    def generate_plot_data(self, start_s: float = None, end_s: float = None, relative_ts: bool = True) -> Dict:
+        """ provides down-sampled iv-data that can be feed into plot_to_file()
 
-        :param start_s: time in seconds
-        :param end_s: time in seconds
-        :param width: plot-width
-        :param height: plot-height
+        :param start_s: time in seconds, relative to start of recording
+        :param end_s: time in seconds, relative to start of recording
+        :param relative_ts: treat
+        :return: down-sampled size of ~ self.max_elements
         """
         if self.get_datatype() == "ivcurve":
-            self.logger.error(f"Plot-Function was not written for IVCurves")
+            self.logger.warning(f"Plot-Function was not written for IVCurves")
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
             end_s = self.runtime_s
-        start_str = f"{start_s:.3f}".replace(".", "s")
-        end_str = f"{end_s:.3f}".replace(".", "s")
-        plot_path = self.file_path.with_suffix(f".plot_{start_str}_to_{end_str}.png")
-        if plot_path.exists():
-            return
         start_sample = round(start_s * self.samplerate_sps)
         end_sample = round(end_s * self.samplerate_sps)
-        # goal: downsample-size of self.max_elements
-        sampling_rate = max(round(self.max_elements/(end_s - start_s), 3), 0.001)
-        ds_factor = float(self.samplerate_sps / sampling_rate)
+        samplerate_dst = max(round(self.max_elements/(end_s - start_s), 3), 0.001)
+        ds_factor = float(self.samplerate_sps / samplerate_dst)
         data = {
+            "name": self.get_hostname(),
             "time": self.downsample(self.ds_time, None, start_sample, end_sample, ds_factor, is_time=True).astype(float) * 1e-9,
             "voltage": self.raw_to_si(self.downsample(self.ds_voltage, None, start_sample, end_sample, ds_factor), self.cal["voltage"]),
             "current": self.raw_to_si(self.downsample(self.ds_current, None, start_sample, end_sample, ds_factor), self.cal["current"]),
+            "start_s": start_s,
+            "end_s": end_s,
         }
-        time_zero = float(self.ds_time[0]) * 1e-9
-        fig, axes = plt.subplots(2, 1, sharex=True)
+        if relative_ts:
+            data["time"] = data["time"] - self.ds_time[0] * 1e-9
+        return data
+
+    @staticmethod
+    def assemble_plot(data: Union[dict, list], width: int = 20, height: int = 10) -> plt.Figure:
+        """
+        TODO: add power (if wanted)
+
+        :param data: plottable / down-sampled iv-data with some meta-data -> created with generate_plot_data()
+        :param width: plot-width
+        :param height: plot-height
+        :return:
+        """
+        if isinstance(data, dict):
+            data = [data]
+        fig, axes = plt.subplots(2, 1, sharex="all")
         fig.suptitle(f"Voltage and current")
-        axes[0].plot(data["time"] - time_zero, data["voltage"])  # add: ,label=active_node
-        axes[1].plot(data["time"] - time_zero, data["current"] * 10**6)
-        active_nodes = self.get_hostname()
+        for date in data:
+            axes[0].plot(date["time"], date["voltage"], label=date["name"])
+            axes[1].plot(date["time"], date["current"] * 10**6, label=date["name"])
         axes[0].set_ylabel("voltage [V]")
         axes[1].set_ylabel(r"current [$\mu$A]")
-        axes[0].legend(loc="lower center", ncol=len(active_nodes))
+        if len(data) > 1:
+            axes[0].legend(loc="lower center", ncol=len(data))
         axes[1].set_xlabel("time [s]")
         fig.set_figwidth(width)
         fig.set_figheight(height)
         fig.tight_layout()
+        return fig
+
+    def plot_to_file(self,
+                     start_s: float = None, end_s: float = None,
+                     width: int = 20, height: int = 10) -> NoReturn:
+        """ creates (down-sampled) IV-Plot
+            -> omitting start- and end-time will use the whole duration
+
+        :param start_s: time in seconds, relative to start of recording, optional
+        :param end_s: time in seconds, relative to start of recording, optional
+        :param width: plot-width
+        :param height: plot-height
+        """
+        data = [self.generate_plot_data(start_s, end_s)]
+
+        start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
+        end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
+        plot_path = self.file_path.absolute().with_suffix(f".plot_{start_str}_to_{end_str}.png")
+        if plot_path.exists():
+            return
+
+        fig = self.assemble_plot(data, width, height)
         plt.savefig(plot_path)
         plt.close(fig)
-        plt.clf()  # TODO: add other nodes, add power (if wanted)
+        plt.clf()
+
+    @staticmethod
+    def multiplot_to_file(data: Union[list],
+                          plot_path: Path,
+                          width: int = 20, height: int = 10) -> NoReturn:
+        """ creates (down-sampled) IV-Multi-Plot
+
+        :param data: plottable / down-sampled iv-data with some meta-data -> created with generate_plot_data()
+        :param plot_path: optional
+        :param width: plot-width
+        :param height: plot-height
+        """
+        start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
+        end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
+        plot_path = plot_path.absolute().with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
+        if plot_path.exists():
+            return
+
+        fig = Reader.assemble_plot(data, width, height)
+        plt.savefig(plot_path)
+        plt.close(fig)
+        plt.clf()
 
 
 class Writer(Reader):
@@ -908,3 +965,6 @@ class Writer(Reader):
 
     def set_window_samples(self, samples: int = 0) -> NoReturn:
         self.h5file["data"].attrs["window_samples"] = samples
+
+    def set_hostname(self, name: str) -> NoReturn:
+        self.h5file.attrs["hostname"] = name
