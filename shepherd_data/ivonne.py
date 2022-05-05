@@ -13,6 +13,7 @@ from shepherd_data.mppt import MPPTracker, OpenCircuitTracker, OptimalTracker
 
 consoleHandler = logging.StreamHandler()
 
+
 def iv_model(v: np.ndarray, coeffs: pd.DataFrame):
     """Simple diode based model of a solar panel IV curve.
 

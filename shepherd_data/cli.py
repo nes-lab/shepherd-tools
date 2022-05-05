@@ -1,6 +1,5 @@
 import os
 import click
-import time
 import logging
 from pathlib import Path
 
@@ -8,8 +7,8 @@ from shepherd_data import Writer, Reader
 
 
 logger = logging.getLogger("SHPData.cli")
-#consoleHandler = logging.StreamHandler()
-#logger.addHandler(consoleHandler)
+# consoleHandler = logging.StreamHandler()
+# logger.addHandler(consoleHandler)
 verbose_level = 2
 
 
