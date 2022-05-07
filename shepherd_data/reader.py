@@ -136,7 +136,7 @@ class Reader:
             Buffers between start and end (tuple with time, voltage, current)
         """
         if end_n is None:
-            end_n = int(self.h5file["data"]["time"].shape[0] // self.samples_per_buffer)
+            end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)
         self.logger.debug(
             "Reading blocks from %s to %s from source-file", start_n, end_n
         )
@@ -203,7 +203,7 @@ class Reader:
 
         :return: list of (unique) time-deltas between buffers [s]
         """
-        iterations = math.ceil(self.h5file["data"]["time"].shape[0] / self.max_elements)
+        iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
         job_iter = trange(
             0,
             self.h5file["data"]["time"].shape[0],
@@ -214,7 +214,7 @@ class Reader:
         )
 
         def calc_timediffs(idx_start: int) -> list:
-            ds_time = self.h5file["data"]["time"][
+            ds_time = self.ds_time[
                 idx_start : (idx_start + self.max_elements) : self.samples_per_buffer
             ]
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
@@ -294,7 +294,7 @@ class Reader:
                 "window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)"
             )
         # same length of datasets:
-        ds_time_size = self.h5file["data"]["time"].shape[0]
+        ds_time_size = self.ds_time.shape[0]
         for dset in ["current", "voltage"]:
             ds_size = self.h5file["data"][dset].shape[0]
             if ds_time_size != ds_size:

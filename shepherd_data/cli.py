@@ -57,6 +57,8 @@ def cli(ctx, verbose: int):
     Returns:
     """
     config_logger(verbose)
+    if not ctx.invoked_subcommand:
+        click.echo("Please specify a command")
 
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
@@ -266,4 +268,7 @@ def plot(in_data, start: float, end: float, width: int, height: int, multiplot: 
 
 
 if __name__ == "__main__":
-    cli()
+    import sys
+    print('This File should not be executed like this ...')
+    print('Python Version: {}'.format(sys.version))
+    print('Click Version: {}'.format(click.__version__))
