@@ -121,6 +121,11 @@ class Reader(object):
         if not self._skip_open:
             self.h5file.close()
 
+    def __repr__(self):
+        return yaml.safe_dump(
+            self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
+        )
+
     def refresh_file_stats(self) -> NoReturn:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
@@ -135,7 +140,8 @@ class Reader(object):
     def read_buffers(
         self, start_n: int = 0, end_n: int = None, is_raw: bool = False
     ) -> tuple:
-        """Generator that reads the specified range of buffers from the hdf5 file. can be configured on first call
+        """Generator that reads the specified range of buffers from the hdf5 file.
+        can be configured on first call
 
         Args:
             :param start_n: (int) Index of first buffer to be read
@@ -322,6 +328,9 @@ class Reader(object):
                 self.logger.warning(
                     f"gzip compression is too high ({opts} > 1) for BBone (@Validator)"
                 )
+        # host-name
+        if self.get_hostname() == "unknown":
+            self.logger.warning(f"Hostname was not set (@Validator)")
         return True
 
     def get_metadata(self, node=None, minimal: bool = False) -> dict:

@@ -116,7 +116,7 @@ class Reader(object):
         with Writer(shp_output, datatype="ivcurve", window_samples=pts_per_curve) as db:
 
             db.set_window_samples(pts_per_curve)
-
+            db.set_hostname("IVonne")
             curve_interval_us = round(db.sample_interval_ns * pts_per_curve / 1000)
             up_factor = self.sample_interval_ns // db.sample_interval_ns
             max_elements = math.ceil(db.max_elements // up_factor)
@@ -191,6 +191,7 @@ class Reader(object):
 
         with Writer(shp_output, datatype="ivsample") as db:
 
+            db.set_hostname("IVonne")
             interval_us = round(db.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // db.sample_interval_ns
             max_elements = math.ceil(db.max_elements // up_factor)
@@ -248,6 +249,7 @@ class Reader(object):
 
         with Writer(shp_output, datatype="isc_voc") as db:
 
+            db.set_hostname("IVonne")
             interval_us = round(db.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // db.sample_interval_ns
             max_elements = math.ceil(db.max_elements // up_factor)
