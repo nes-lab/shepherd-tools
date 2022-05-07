@@ -78,7 +78,7 @@ if __name__ == "__main__":
             # missing window_samples
             if "window_samples" not in fh.h5file["data"].attrs.keys():
                 if datatype == "ivcurve":
-                    print("Window size is missing, but ivcurves are detected -> will not guess! ... and exit without repair")
+                    print("Window size missing, but ivcurves detected -> no repair")
                     continue
                 print(" -> will set window size = 0")
                 fh.__exit__()

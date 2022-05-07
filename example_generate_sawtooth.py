@@ -17,7 +17,9 @@ if __name__ == "__main__":
 
         duration_s = 60
         repetitions = 60
-        timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns // 10**9)
+        timestamp_vector = np.arange(
+            0.0, duration_s, file.sample_interval_ns // 10**9
+        )
 
         # values in SI units
         voltages = np.linspace(3.60, 1.90, int(file.samplerate_sps * duration_s))

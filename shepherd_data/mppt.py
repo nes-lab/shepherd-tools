@@ -30,11 +30,12 @@ def find_oc(v_arr, i_arr, ratio: float = 0.05):
 
 
 class MPPTracker(object):
-    """ Prototype
+    """Prototype
 
     :param v_max: Maximum voltage supported by shepherd
     :param pts_per_curve: resolution of internal ivcurve
     """
+
     def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000):
         self.pts_per_curve = pts_per_curve
         self.v_max = v_max
@@ -45,35 +46,43 @@ class MPPTracker(object):
 
 
 class OpenCircuitTracker(MPPTracker):
-    """ Open-circuit based MPPT
+    """Open-circuit based MPPT
 
     :param v_max: Maximum voltage supported by shepherd
     :param pts_per_curve: resolution of internal ivcurve
     :param ratio:  (float) Ratio of open-circuit voltage to track
     """
 
-    def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000, ratio: float = 0.8):
+    def __init__(
+        self, v_max: float = 5.0, pts_per_curve: int = 1000, ratio: float = 0.8
+    ):
         super().__init__(v_max, pts_per_curve)
         self.ratio = ratio
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         if "voc" not in coeffs.columns:
-            coeffs["voc"] = coeffs.apply(lambda x: find_oc(self.v_proto, x["ivcurve"]), axis=1)
-        coeffs["rvoc_pos"] = coeffs.apply(lambda x: np.argmax(self.v_proto[self.v_proto < self.ratio * x["voc"]]), axis=1)
+            coeffs["voc"] = coeffs.apply(
+                lambda x: find_oc(self.v_proto, x["ivcurve"]), axis=1
+            )
+        coeffs["rvoc_pos"] = coeffs.apply(
+            lambda x: np.argmax(self.v_proto[self.v_proto < self.ratio * x["voc"]]),
+            axis=1,
+        )
         coeffs["i"] = coeffs.apply(lambda x: x["icurve"][x["rvoc_pos"]], axis=1)
         coeffs["v"] = coeffs.apply(lambda x: self.v_proto[x["rvoc_pos"]], axis=1)
         return coeffs
 
 
 class OptimalTracker(MPPTracker):
-    """ Optimal MPPT
+    """Optimal MPPT
 
     Calculates optimal harvesting voltage for every time and corresponding IV curve.
 
     :param v_max: Maximum voltage supported by shepherd
     :param pts_per_curve: resolution of internal ivcurve
     """
+
     def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000):
         super().__init__(v_max, pts_per_curve)
 

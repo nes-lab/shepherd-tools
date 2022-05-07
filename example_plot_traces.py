@@ -20,14 +20,16 @@ if __name__ == "__main__":
         db.plot_to_file(0, 100)
         db.plot_to_file(0, 10)
         db.plot_to_file(0, 1)
-        db.plot_to_file(0, .2)
+        db.plot_to_file(0, 0.2)
         db.plot_to_file(0.199, 0.201)
 
     # multiplot
-    files = [Path("./jogging_10m_ivcurves.h5"),
-             Path("./jogging_10m_isc_voc.h5"),
-             Path("./jogging_10m_ivsamples_voc.h5"),
-             Path("./jogging_10m_ivsamples_opt.h5")]
+    files = [
+        Path("./jogging_10m_ivcurves.h5"),
+        Path("./jogging_10m_isc_voc.h5"),
+        Path("./jogging_10m_ivsamples_voc.h5"),
+        Path("./jogging_10m_ivsamples_opt.h5"),
+    ]
     data = []
     for file in files:
         with shpd.Reader(file, verbose=False) as db:

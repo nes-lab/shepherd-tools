@@ -43,17 +43,17 @@ def get_isc(coeffs: pd.DataFrame):
 
 
 class Reader(object):
-    """
-
-    """
+    """ """
 
     samplerate_sps: int = 50
-    sample_interval_ns = int(10 ** 9 // samplerate_sps)
-    sample_interval_s: float = (1 / samplerate_sps)
+    sample_interval_ns = int(10**9 // samplerate_sps)
+    sample_interval_s: float = 1 / samplerate_sps
 
     logger = logging.getLogger("SHPData.IVonne.Reader")
 
-    def __init__(self, file_path: Path, samplerate_sps: int = None, verbose: bool = True):
+    def __init__(
+        self, file_path: Path, samplerate_sps: int = None, verbose: bool = True
+    ):
 
         self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
         # self.logger.addHandler(consoleHandler)
@@ -72,7 +72,8 @@ class Reader(object):
             f"Reading data from '{self.file_path}'\n"
             f"\t- runtime = {self.runtime_s} s\n"
             f"\t- size = {round(self.file_size / 2 ** 10, 3)} KiB\n"
-            f"\t- rate = {round(self.data_rate / 2 ** 10, 3)} KiB/s")
+            f"\t- rate = {round(self.data_rate / 2 ** 10, 3)} KiB/s"
+        )
         return self
 
     def __exit__(self, *exc):
@@ -83,12 +84,13 @@ class Reader(object):
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
-    def convert_2_ivcurves(self,
-                           shp_output: Path,
-                           v_max: float = 5.0,
-                           pts_per_curve: int = 1000,
-                           duration_s: float = None,
-                           ) -> NoReturn:
+    def convert_2_ivcurves(
+        self,
+        shp_output: Path,
+        v_max: float = 5.0,
+        pts_per_curve: int = 1000,
+        duration_s: float = None,
+    ) -> NoReturn:
         """Transforms previously recorded parameters to shepherd hdf database with IV curves.
         Shepherd should work with IV 'surfaces', where we have a stream of IV curves
 
@@ -99,7 +101,9 @@ class Reader(object):
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self.logger.info(f"  -> gets trimmed to {duration_s} s")
-            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
+            df_elements_n = min(
+                self._df.shape[0], int(duration_s * self.samplerate_sps)
+            )
         else:
             df_elements_n = self._df.shape[0]
 
@@ -119,18 +123,22 @@ class Reader(object):
             job_iter = trange(0, df_elements_n, max_elements, desc=f"generate ivcurves")
 
             for idx in job_iter:
-                df_slice = self._df.iloc[idx:idx + max_elements + 1].copy()
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
+                df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
+                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                    data=df_slice["time"], unit="s"
+                )
                 df_slice = df_slice.set_index("timestamp")
                 # warning: .interpolate does crash in debug-mode with typeError
-                df_slice = df_slice.resample(f"{curve_interval_us}us").interpolate(method="cubic").iloc[:-1]
+                df_slice = (
+                    df_slice.resample(f"{curve_interval_us}us")
+                    .interpolate(method="cubic")
+                    .iloc[:-1]
+                )
 
                 for sdx, coeffs in df_slice.iterrows():
                     i_proto = iv_model(v_proto, coeffs)
 
-                    db.append_iv_data_si(coeffs["time"],
-                                         v_proto,
-                                         i_proto)
+                    db.append_iv_data_si(coeffs["time"], v_proto, i_proto)
                 # TODO: this could be a lot faster:
                 #   - use lambdas to generate i_proto
                 #   - convert i_proto with lambdas to raw-values
@@ -140,13 +148,14 @@ class Reader(object):
                 #   - time can be generated and set as a whole
                 #   - v_proto is repetitive, can also be set as a whole
 
-    def convert_2_ivsamples(self,
-                            shp_output: Path,
-                            v_max: float = 5.0,
-                            duration_s: float = None,
-                            tracker: MPPTracker = None,
-                            ) -> NoReturn:
-        """ Transforms shepherd IV curves to shepherd IV traces.
+    def convert_2_ivsamples(
+        self,
+        shp_output: Path,
+        v_max: float = 5.0,
+        duration_s: float = None,
+        tracker: MPPTracker = None,
+    ) -> NoReturn:
+        """Transforms shepherd IV curves to shepherd IV traces.
 
         For the 'buck' and 'buck-boost' modes, shepherd takes voltage and current traces.
         These can be recorded with shepherd or generated from existing IV curves by, for
@@ -165,7 +174,9 @@ class Reader(object):
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self.logger.info(f"  -> gets trimmed to {duration_s} s")
-            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
+            df_elements_n = min(
+                self._df.shape[0], int(duration_s * self.samplerate_sps)
+            )
         else:
             df_elements_n = self._df.shape[0]
 
@@ -174,35 +185,50 @@ class Reader(object):
             return
 
         if tracker is None:
-            tracker = OptimalTracker(v_max, )
+            tracker = OptimalTracker(
+                v_max,
+            )
 
         with Writer(shp_output, datatype="ivsample") as db:
 
             interval_us = round(db.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // db.sample_interval_ns
             max_elements = math.ceil(db.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc=f"generate ivsamples")
+            job_iter = trange(
+                0, df_elements_n, max_elements, desc=f"generate ivsamples"
+            )
 
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps -> drop a sample at the end
-                df_slice = self._df.iloc[idx:idx+max_elements+1].copy()
+                df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice = tracker.process(df_slice)
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
-                df_slice = df_slice[["time", "v", "i", "timestamp"]].set_index("timestamp")
+                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                    data=df_slice["time"], unit="s"
+                )
+                df_slice = df_slice[["time", "v", "i", "timestamp"]].set_index(
+                    "timestamp"
+                )
                 # warning: .interpolate does crash in debug-mode with typeError
-                df_slice = df_slice.resample(f"{interval_us}us").interpolate(method="cubic").iloc[:-1]
-                db.append_iv_data_si(df_slice["time"].to_numpy(),
-                                     df_slice["v"].to_numpy(),
-                                     df_slice["i"].to_numpy())
+                df_slice = (
+                    df_slice.resample(f"{interval_us}us")
+                    .interpolate(method="cubic")
+                    .iloc[:-1]
+                )
+                db.append_iv_data_si(
+                    df_slice["time"].to_numpy(),
+                    df_slice["v"].to_numpy(),
+                    df_slice["i"].to_numpy(),
+                )
 
-    def upsample_2_isc_voc(self,
-                           shp_output: Path,
-                           v_max: float = 5.0,
-                           duration_s: float = None,
-                           ) -> NoReturn:
-        """ Transforms ivonne-parameters to upsampled version for shepherd
+    def upsample_2_isc_voc(
+        self,
+        shp_output: Path,
+        v_max: float = 5.0,
+        duration_s: float = None,
+    ) -> NoReturn:
+        """Transforms ivonne-parameters to upsampled version for shepherd
 
         :param shp_output: Path where the resulting hdf file shall be stored
         :param v_max: Maximum voltage supported by shepherd
@@ -210,7 +236,9 @@ class Reader(object):
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self.logger.info(f"  -> gets trimmed to {duration_s} s")
-            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
+            df_elements_n = min(
+                self._df.shape[0], int(duration_s * self.samplerate_sps)
+            )
         else:
             df_elements_n = self._df.shape[0]
 
@@ -227,14 +255,24 @@ class Reader(object):
 
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps -> drop a sample at the end
-                df_slice = self._df.iloc[idx:idx+max_elements+1].copy()
+                df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice.loc[:, "isc"] = get_isc(df_slice)
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
-                df_slice = df_slice[["time", "voc", "isc", "timestamp"]].set_index("timestamp")
+                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                    data=df_slice["time"], unit="s"
+                )
+                df_slice = df_slice[["time", "voc", "isc", "timestamp"]].set_index(
+                    "timestamp"
+                )
                 # warning: .interpolate does crash in debug-mode with typeError
-                df_slice = df_slice.resample(f"{interval_us}us").interpolate(method="cubic").iloc[:-1]
-                db.append_iv_data_si(df_slice["time"].to_numpy(),
-                                     df_slice["voc"].to_numpy(),
-                                     df_slice["isc"].to_numpy())
+                df_slice = (
+                    df_slice.resample(f"{interval_us}us")
+                    .interpolate(method="cubic")
+                    .iloc[:-1]
+                )
+                db.append_iv_data_si(
+                    df_slice["time"].to_numpy(),
+                    df_slice["voc"].to_numpy(),
+                    df_slice["isc"].to_numpy(),
+                )

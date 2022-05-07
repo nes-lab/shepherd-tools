@@ -28,14 +28,16 @@ if __name__ == "__main__":
                 # also generate overall cpu-util
                 ds_cpu = fh["sysutil"]["cpu"]
 
-                print(f"{file} \t-> {fh['mode']}, "
-                      f"{ds_cpu.attrs['description']} = {round(ds_cpu[:].mean(), 2)}, "
-                      f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
-                      )
+                print(
+                    f"{file} \t-> {fh['mode']}, "
+                    f"{ds_cpu.attrs['description']} = {round(ds_cpu[:].mean(), 2)}, "
+                    f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
+                )
             else:
-                print(f"{file} \t-> {fh['mode']}, "
-                      f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
-                      )
+                print(
+                    f"{file} \t-> {fh['mode']}, "
+                    f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
+                )
 
             if "timesync" in elements:
                 fh.save_csv(fh["timesync"])

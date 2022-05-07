@@ -40,14 +40,14 @@ def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
 
 # SI-value [SI-Unit] = raw-value * gain + offset
 general_calibration = {
-    "voltage": {"gain": 3 * 1e-9, "offset": 0.0},      # allows 0 - 12 V in 3 nV-Steps
-    "current": {"gain": 250 * 1e-12, "offset": 0.0},   # allows 0 - 1 A in 250 pA - Steps
+    "voltage": {"gain": 3 * 1e-9, "offset": 0.0},  # allows 0 - 12 V in 3 nV-Steps
+    "current": {"gain": 250 * 1e-12, "offset": 0.0},  # allows 0 - 1 A in 250 pA - Steps
     "time": {"gain": 1e-9, "offset": 0.0},
 }
 
 
 class Reader(object):
-    """ Sequentially Reads shepherd-data from HDF5 file.
+    """Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
         file_path: Path of hdf5 file containing shepherd data with iv-samples, iv-curves or isc&voc
@@ -56,13 +56,15 @@ class Reader(object):
 
     samples_per_buffer: int = 10_000
     samplerate_sps: int = 100_000
-    sample_interval_ns = int(10 ** 9 // samplerate_sps)
-    sample_interval_s: float = (1 / samplerate_sps)
+    sample_interval_ns = int(10**9 // samplerate_sps)
+    sample_interval_s: float = 1 / samplerate_sps
 
     max_elements: int = 100 * samplerate_sps  # per iteration (100s, ~ 300 MB RAM use)
 
-    mode_type_dict = {"harvester": ["ivsample", "ivcurve", "isc_voc"],
-                      "emulator": ["ivsample"]}
+    mode_type_dict = {
+        "harvester": ["ivsample", "ivcurve", "isc_voc"],
+        "emulator": ["ivsample"],
+    }
 
     logger = logging.getLogger("SHPData.Reader")
 
@@ -85,14 +87,22 @@ class Reader(object):
         if self.is_valid():
             self.logger.info(f"File is available now")
         else:
-            self.logger.error(f"File is faulty! Will try to open but there might be dragons")
+            self.logger.error(
+                f"File is faulty! Will try to open but there might be dragons"
+            )
 
         self.ds_time = self.h5file["data"]["time"]
         self.ds_voltage = self.h5file["data"]["voltage"]
         self.ds_current = self.h5file["data"]["current"]
         self.cal = {
-            "voltage": {"gain": self.ds_voltage.attrs["gain"], "offset": self.ds_voltage.attrs["offset"]},
-            "current": {"gain": self.ds_current.attrs["gain"], "offset": self.ds_current.attrs["offset"]},
+            "voltage": {
+                "gain": self.ds_voltage.attrs["gain"],
+                "offset": self.ds_voltage.attrs["offset"],
+            },
+            "current": {
+                "gain": self.ds_current.attrs["gain"],
+                "offset": self.ds_current.attrs["offset"],
+            },
         }
         self.refresh_file_stats()
 
@@ -103,7 +113,8 @@ class Reader(object):
                 f"\t- mode = {self.get_mode()}\n"
                 f"\t- window_size = {self.get_window_samples()}\n"
                 f"\t- size = {round(self.file_size/2**20)} MiB\n"
-                f"\t- rate = {round(self.data_rate/2**10)} KiB/s")
+                f"\t- rate = {round(self.data_rate/2**10)} KiB/s"
+            )
         return self
 
     def __exit__(self, *exc):
@@ -111,19 +122,20 @@ class Reader(object):
             self.h5file.close()
 
     def refresh_file_stats(self) -> NoReturn:
-        """ update internal states, helpful after resampling or other changes in data-group
-        """
+        """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
         if self.ds_time.shape[0] > 1:
             self.sample_interval_ns = int(self.ds_time[1] - self.ds_time[0])
             self.samplerate_sps = int(10**9 // self.sample_interval_ns)
-            self.sample_interval_s = (1.0 / self.samplerate_sps)
+            self.sample_interval_s = 1.0 / self.samplerate_sps
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
-    def read_buffers(self, start_n: int = 0, end_n: int = None, is_raw: bool = False) -> tuple:
-        """ Generator that reads the specified range of buffers from the hdf5 file. can be configured on first call
+    def read_buffers(
+        self, start_n: int = 0, end_n: int = None, is_raw: bool = False
+    ) -> tuple:
+        """Generator that reads the specified range of buffers from the hdf5 file. can be configured on first call
 
         Args:
             :param start_n: (int) Index of first buffer to be read
@@ -141,13 +153,21 @@ class Reader(object):
             idx_start = i * self.samples_per_buffer
             idx_end = idx_start + self.samples_per_buffer
             if _raw:
-                yield (self.ds_time[idx_start:idx_end],
-                       self.ds_voltage[idx_start:idx_end],
-                       self.ds_current[idx_start:idx_end])
+                yield (
+                    self.ds_time[idx_start:idx_end],
+                    self.ds_voltage[idx_start:idx_end],
+                    self.ds_current[idx_start:idx_end],
+                )
             else:
-                yield (self.ds_time[idx_start:idx_end] * 1e-9,
-                       self.raw_to_si(self.ds_voltage[idx_start:idx_end], self.cal["voltage"]),
-                       self.raw_to_si(self.ds_current[idx_start:idx_end], self.cal["current"]))
+                yield (
+                    self.ds_time[idx_start:idx_end] * 1e-9,
+                    self.raw_to_si(
+                        self.ds_voltage[idx_start:idx_end], self.cal["voltage"]
+                    ),
+                    self.raw_to_si(
+                        self.ds_current[idx_start:idx_end], self.cal["current"]
+                    ),
+                )
 
     def get_calibration_data(self) -> dict:
         """Reads calibration-data from hdf5 file.
@@ -182,35 +202,52 @@ class Reader(object):
         return ""
 
     def data_timediffs(self) -> list:
-        """ calculate list of (unique) time-deltas between buffers [s]
+        """calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
 
         :return: list of (unique) time-deltas between buffers [s]
         """
         iterations = math.ceil(self.h5file["data"]["time"].shape[0] / self.max_elements)
-        job_iter = trange(0, self.h5file["data"]["time"].shape[0], self.max_elements, desc="timediff", leave=False, disable=iterations < 8)
+        job_iter = trange(
+            0,
+            self.h5file["data"]["time"].shape[0],
+            self.max_elements,
+            desc="timediff",
+            leave=False,
+            disable=iterations < 8,
+        )
 
         def calc_timediffs(idx_start: int) -> list:
-            ds_time = self.h5file["data"]["time"][idx_start:(idx_start + self.max_elements):self.samples_per_buffer]
+            ds_time = self.h5file["data"]["time"][
+                idx_start : (idx_start + self.max_elements) : self.samples_per_buffer
+            ]
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
             return list(np.array(diffs_np))
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
-        diffs = set([round(float(j) * 1e-9 / self.samples_per_buffer, 6) for i in diffs_ll for j in i])
+        diffs = set(
+            [
+                round(float(j) * 1e-9 / self.samples_per_buffer, 6)
+                for i in diffs_ll
+                for j in i
+            ]
+        )
         return list(diffs)
 
     def check_timediffs(self) -> bool:
-        """ validate equal time-deltas -> unexpected time-jumps hint at a corrupted file or faulty measurement
+        """validate equal time-deltas -> unexpected time-jumps hint at a corrupted file or faulty measurement
 
         :return: True if OK
         """
         diffs = self.data_timediffs()
         if len(diffs) > 1:
-            self.logger.warning(f"Time-jumps detected -> expected 0.1 s steps, but got: {diffs} s")
+            self.logger.warning(
+                f"Time-jumps detected -> expected equal steps, but got: {diffs} s"
+            )
         return len(diffs) <= 1
 
     def is_valid(self) -> bool:
-        """ checks file for plausibility
+        """checks file for plausibility
 
         :return: state of validity
         """
@@ -227,7 +264,9 @@ class Reader(object):
                 return False
         for attr in ["window_samples", "datatype"]:
             if attr not in self.h5file["data"].attrs.keys():
-                self.logger.error(f"attribute '{attr}' not found in data-group (@Validator)")
+                self.logger.error(
+                    f"attribute '{attr}' not found in data-group (@Validator)"
+                )
                 return False
         for ds in ["time", "current", "voltage"]:
             if ds not in self.h5file["data"].keys():
@@ -235,42 +274,58 @@ class Reader(object):
                 return False
         for ds, attr in product(["current", "voltage"], ["gain", "offset"]):
             if attr not in self.h5file["data"][ds].attrs.keys():
-                self.logger.error(f"attribute '{attr}' not found in dataset '{ds}' (@Validator)")
+                self.logger.error(
+                    f"attribute '{attr}' not found in dataset '{ds}' (@Validator)"
+                )
                 return False
         if self.get_datatype() not in self.mode_type_dict[self.get_mode()]:
-            self.logger.error(f"unsupported type '{self.get_datatype()}' for mode '{self.get_mode()}' (@Validator)")
+            self.logger.error(
+                f"unsupported type '{self.get_datatype()}' for mode '{self.get_mode()}' (@Validator)"
+            )
             return False
 
         if self.get_datatype() == "ivcurve" and self.get_window_samples() < 1:
-            self.logger.error(f"window size / samples is < 1 -> invalid for ivcurves-datatype (@Validator)")
+            self.logger.error(
+                f"window size / samples is < 1 -> invalid for ivcurves-datatype (@Validator)"
+            )
             return False
 
         # soft-criteria:
         if self.get_datatype() != "ivcurve" and self.get_window_samples() > 0:
-            self.logger.warning(f"window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)")
+            self.logger.warning(
+                f"window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)"
+            )
         # same length of datasets:
         ds_time_size = self.h5file["data"]["time"].shape[0]
         for ds in ["current", "voltage"]:
             ds_size = self.h5file["data"][ds].shape[0]
             if ds_time_size != ds_size:
-                self.logger.warning(f"dataset '{ds}' has different size (={ds_size}), "
-                                    f"compared to time-ds (={ds_time_size}) (@Validator)")
+                self.logger.warning(
+                    f"dataset '{ds}' has different size (={ds_size}), "
+                    f"compared to time-ds (={ds_time_size}) (@Validator)"
+                )
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
-            self.logger.warning(f"datasets are not aligned with buffer-size (@Validator)")
+            self.logger.warning(
+                f"datasets are not aligned with buffer-size (@Validator)"
+            )
         # check compression
         for ds in ["time", "current", "voltage"]:
             comp = self.h5file["data"][ds].compression
             opts = self.h5file["data"][ds].compression_opts
             if comp not in [None, "gzip", "lzf"]:
-                self.logger.warning(f"unsupported compression found ({comp} != None, lzf, gzip) (@Validator)")
+                self.logger.warning(
+                    f"unsupported compression found ({comp} != None, lzf, gzip) (@Validator)"
+                )
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
-                self.logger.warning(f"gzip compression is too high ({opts} > 1) for BBone (@Validator)")
+                self.logger.warning(
+                    f"gzip compression is too high ({opts} > 1) for BBone (@Validator)"
+                )
         return True
 
     def get_metadata(self, node=None, minimal: bool = False) -> dict:
-        """ recursive FN to capture the structure of the file
+        """recursive FN to capture the structure of the file
 
         :param node: starting node, leave free to go through whole file
         :param minimal: just provide a bare tree (much faster)
@@ -320,7 +375,7 @@ class Reader(object):
         return metadata
 
     def save_metadata(self, node=None) -> dict:
-        """ get structure of file and dump content to yaml-file with same name as original
+        """get structure of file and dump content to yaml-file with same name as original
 
         :param node: starting node, leave free to go through whole file
         :return: structure of that node with everything inside it
@@ -335,7 +390,7 @@ class Reader(object):
         return metadata
 
     def __getitem__(self, key):
-        """ returns attribute or (if none found) a handle for a group or dataset (if found)
+        """returns attribute or (if none found) a handle for a group or dataset (if found)
 
         :param key: attribute, group, dataset
         :return: value of that key, or handle of object
@@ -347,8 +402,10 @@ class Reader(object):
         raise KeyError
 
     @staticmethod
-    def raw_to_si(values_raw: Union[np.ndarray, float, int], cal: dict) -> Union[np.ndarray, float]:
-        """ Helper to convert between physical units and raw uint values
+    def raw_to_si(
+        values_raw: Union[np.ndarray, float, int], cal: dict
+    ) -> Union[np.ndarray, float]:
+        """Helper to convert between physical units and raw uint values
 
         :param values_raw: number or numpy array with raw values
         :param cal: calibration-dict with entries for gain and offset
@@ -359,8 +416,10 @@ class Reader(object):
         return values_si
 
     @staticmethod
-    def si_to_raw(values_si: Union[np.ndarray, float], cal: dict) -> Union[np.ndarray, int]:
-        """ Helper to convert between physical units and raw uint values
+    def si_to_raw(
+        values_si: Union[np.ndarray, float], cal: dict
+    ) -> Union[np.ndarray, int]:
+        """Helper to convert between physical units and raw uint values
 
         :param values_si: number or numpy array with values in physical units
         :param cal: calibration-dict with entries for gain and offset
@@ -371,48 +430,74 @@ class Reader(object):
         return values_raw
 
     def energy(self) -> float:
-        """ determine the recorded energy of the trace
+        """determine the recorded energy of the trace
         # multiprocessing: https://stackoverflow.com/a/71898911
         # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool
 
         :return: sampled energy in Ws (watt-seconds)
         """
         iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
-        job_iter = trange(0, self.ds_time.shape[0], self.max_elements, desc="energy", leave=False, disable=iterations < 8)
+        job_iter = trange(
+            0,
+            self.ds_time.shape[0],
+            self.max_elements,
+            desc="energy",
+            leave=False,
+            disable=iterations < 8,
+        )
 
         def calc_energy(idx_start: int) -> float:
             idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
-            voltage_v = self.raw_to_si(self.ds_voltage[idx_start:idx_stop], self.cal["voltage"])
-            current_a = self.raw_to_si(self.ds_current[idx_start:idx_stop], self.cal["current"])
+            voltage_v = self.raw_to_si(
+                self.ds_voltage[idx_start:idx_stop], self.cal["voltage"]
+            )
+            current_a = self.raw_to_si(
+                self.ds_current[idx_start:idx_stop], self.cal["current"]
+            )
             return (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
 
         energy_ws = [calc_energy(i) for i in job_iter]
         return float(sum(energy_ws))
 
     def ds_statistics(self, ds: h5py.Dataset, cal: dict = None) -> dict:
-        """ some basic stats for a provided dataset
+        """some basic stats for a provided dataset
         :param ds: dataset to evaluate
         :param cal: calibration (if wanted)
         :return: dict with entries for mean, min, max, std
         """
         if not isinstance(cal, dict):
             if "gain" in ds.attrs.keys() and "offset" in ds.attrs.keys():
-                cal = {"gain": ds.attrs["gain"], "offset": ds.attrs["offset"], "si_converted": True}
+                cal = {
+                    "gain": ds.attrs["gain"],
+                    "offset": ds.attrs["offset"],
+                    "si_converted": True,
+                }
             else:
                 cal = {"gain": 1, "offset": 0, "si_converted": False}
         else:
             cal["si_converted"] = True
         iterations = math.ceil(ds.shape[0] / self.max_elements)
-        job_iter = trange(0, ds.shape[0], self.max_elements, desc=f"{ds.name}-stats", leave=False, disable=iterations < 8)
+        job_iter = trange(
+            0,
+            ds.shape[0],
+            self.max_elements,
+            desc=f"{ds.name}-stats",
+            leave=False,
+            disable=iterations < 8,
+        )
 
         def calc_statistics(data: np.ndarray) -> dict:
-            return {"mean": np.mean(data),
-                    "min": np.min(data),
-                    "max": np.max(data),
-                    "std": np.std(data),
-                    }
+            return {
+                "mean": np.mean(data),
+                "min": np.min(data),
+                "max": np.max(data),
+                "std": np.std(data),
+            }
 
-        stats_list = [calc_statistics(self.raw_to_si(ds[i:i + self.max_elements], cal)) for i in job_iter]
+        stats_list = [
+            calc_statistics(self.raw_to_si(ds[i : i + self.max_elements], cal))
+            for i in job_iter
+        ]
         if len(stats_list) < 1:
             return {}
         stats_df = pd.DataFrame(stats_list)
@@ -421,12 +506,12 @@ class Reader(object):
             "min": float(stats_df.loc[:, "min"].min()),
             "max": float(stats_df.loc[:, "max"].max()),
             "std": float(stats_df.loc[:, "std"].mean()),
-            "si_converted": cal["si_converted"]
+            "si_converted": cal["si_converted"],
         }
         return stats
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
-        """ extract numerical data via csv
+        """extract numerical data via csv
 
         :param h5_group: can be external and should probably be downsampled
         :param separator: used between columns
@@ -439,11 +524,17 @@ class Reader(object):
         if csv_path.exists():
             self.logger.warning(f"{csv_path} already exists, will skip")
             return 0
-        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
+        datasets = [
+            key if isinstance(h5_group[key], h5py.Dataset) else []
+            for key in h5_group.keys()
+        ]
         datasets.remove("time")
         datasets = ["time"] + datasets
         separator = separator.strip().ljust(2)
-        header = [h5_group[key].attrs["description"].replace(", ", separator) for key in datasets]
+        header = [
+            h5_group[key].attrs["description"].replace(", ", separator)
+            for key in datasets
+        ]
         header = separator.join(header)
         with open(csv_path, "w") as csv_file:
             csv_file.write(header + "\n")
@@ -459,7 +550,7 @@ class Reader(object):
         return h5_group["time"][:].shape[0]
 
     def save_log(self, h5_group: h5py.Group) -> int:
-        """ save dataset in group as log, optimal for logged dmesg and exceptions
+        """save dataset in group as log, optimal for logged dmesg and exceptions
 
         :param h5_group: can be external
         :return: number of processed entries
@@ -471,7 +562,10 @@ class Reader(object):
         if log_path.exists():
             self.logger.warning(f"{log_path} already exists, will skip")
             return 0
-        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group.keys()]
+        datasets = [
+            key if isinstance(h5_group[key], h5py.Dataset) else []
+            for key in h5_group.keys()
+        ]
         datasets.remove("time")
         with open(log_path, "w") as log_file:
             for idx, time_ns in enumerate(h5_group["time"][:]):
@@ -486,9 +580,16 @@ class Reader(object):
                 log_file.write("\n")
         return h5_group["time"].shape[0]
 
-    def downsample(self, data_src: h5py.Dataset, data_dst: Union[None, h5py.Dataset, np.ndarray],
-                   start_n: int = 0, end_n: int = None, ds_factor: float = 5, is_time: bool = False) -> Union[h5py.Dataset, np.ndarray]:
-        """ Warning: only valid for IV-Stream, not IV-Curves
+    def downsample(
+        self,
+        data_src: h5py.Dataset,
+        data_dst: Union[None, h5py.Dataset, np.ndarray],
+        start_n: int = 0,
+        end_n: int = None,
+        ds_factor: float = 5,
+        is_time: bool = False,
+    ) -> Union[h5py.Dataset, np.ndarray]:
+        """Warning: only valid for IV-Stream, not IV-Curves
 
         :param data_src: a h5-dataset to digest, can be external
         :param data_dst: can be a dataset, numpy-array or None (will be created internally then)
@@ -532,21 +633,38 @@ class Reader(object):
         z = np.zeros((flt.shape[0], 2))
 
         slice_len = 0
-        for i in trange(0, iterations, desc=f"downsampling {data_src.name}", leave=False, disable=iterations < 8):
-            slice_ds = data_src[start_n + i * iblock_len: start_n + (i + 1) * iblock_len]
+        for i in trange(
+            0,
+            iterations,
+            desc=f"downsampling {data_src.name}",
+            leave=False,
+            disable=iterations < 8,
+        ):
+            slice_ds = data_src[
+                start_n + i * iblock_len : start_n + (i + 1) * iblock_len
+            ]
             if not is_time and ds_factor > 1:
                 slice_ds, z = signal.sosfilt(flt, slice_ds, zi=z)
             slice_ds = slice_ds[::ds_factor]
             slice_len = min(dest_len - i * oblock_len, oblock_len)
-            data_dst[i * oblock_len: (i + 1) * oblock_len] = slice_ds[:slice_len]
+            data_dst[i * oblock_len : (i + 1) * oblock_len] = slice_ds[:slice_len]
         if isinstance(data_dst, np.ndarray):
-            data_dst.resize((oblock_len*(iterations-1) + slice_len,), refcheck=False)
+            data_dst.resize(
+                (oblock_len * (iterations - 1) + slice_len,), refcheck=False
+            )
         else:
-            data_dst.resize((oblock_len*(iterations-1) + slice_len,))
+            data_dst.resize((oblock_len * (iterations - 1) + slice_len,))
         return data_dst
 
-    def resample(self, data_src: h5py.Dataset, data_dst: Union[None, h5py.Dataset, np.ndarray],
-                 start_n: int = 0, end_n: int = None, samplerate_dst: float = 1000, is_time: bool = False) -> Union[h5py.Dataset, np.ndarray]:
+    def resample(
+        self,
+        data_src: h5py.Dataset,
+        data_dst: Union[None, h5py.Dataset, np.ndarray],
+        start_n: int = 0,
+        end_n: int = None,
+        samplerate_dst: float = 1000,
+        is_time: bool = False,
+    ) -> Union[h5py.Dataset, np.ndarray]:
         """
         :param data_src:
         :param data_dst:
@@ -556,7 +674,9 @@ class Reader(object):
         :param is_time:
         :return:
         """
-        self.logger.error("Resampling is still under construction - do not use for now!")
+        self.logger.error(
+            "Resampling is still under construction - do not use for now!"
+        )
         if self.get_datatype() == "ivcurve":
             self.logger.warning(f"Resampling-Function was not written for IVCurves")
 
@@ -587,20 +707,39 @@ class Reader(object):
         slice_out_now = 0
 
         if is_time:
-            for _ in trange(0, iterations, desc=f"resampling {data_src.name}", leave=False, disable=iterations < 8):
+            for _ in trange(
+                0,
+                iterations,
+                desc=f"resampling {data_src.name}",
+                leave=False,
+                disable=iterations < 8,
+            ):
                 tmin = data_src[slice_inp_now]
                 slice_inp_now += slice_inp_len
                 tmax = data_src[min(slice_inp_now, data_len - 1)]
-                slice_out_ds = np.arange(tmin, tmax, 1e9 / samplerate_dst)  # will be rounded in h5-dataset
+                slice_out_ds = np.arange(
+                    tmin, tmax, 1e9 / samplerate_dst
+                )  # will be rounded in h5-dataset
                 slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
                 data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
                 slice_out_now = slice_out_nxt
         else:
-            resampler = samplerate.Resampler("sinc_medium", channels=1, )  # sinc_best, _medium, _fastest or linear
-            for i in trange(0, iterations, desc=f"resampling {data_src.name}", leave=False, disable=iterations < 8):
-                slice_inp_ds = data_src[slice_inp_now:slice_inp_now + slice_inp_len]
+            resampler = samplerate.Resampler(
+                "sinc_medium",
+                channels=1,
+            )  # sinc_best, _medium, _fastest or linear
+            for i in trange(
+                0,
+                iterations,
+                desc=f"resampling {data_src.name}",
+                leave=False,
+                disable=iterations < 8,
+            ):
+                slice_inp_ds = data_src[slice_inp_now : slice_inp_now + slice_inp_len]
                 slice_inp_now += slice_inp_len
-                slice_out_ds = resampler.process(slice_inp_ds, fs_ratio, i == iterations - 1, verbose=True)
+                slice_out_ds = resampler.process(
+                    slice_inp_ds, fs_ratio, i == iterations - 1, verbose=True
+                )
                 # slice_out_ds = resampy.resample(slice_inp_ds, self.samplerate_sps, samplerate_dst, filter="kaiser_fast")
                 slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
                 # print(f"@{i}: got {slice_out_ds.shape[0]}")
@@ -615,8 +754,10 @@ class Reader(object):
 
         return data_dst
 
-    def generate_plot_data(self, start_s: float = None, end_s: float = None, relative_ts: bool = True) -> Dict:
-        """ provides down-sampled iv-data that can be feed into plot_to_file()
+    def generate_plot_data(
+        self, start_s: float = None, end_s: float = None, relative_ts: bool = True
+    ) -> Dict:
+        """provides down-sampled iv-data that can be feed into plot_to_file()
 
         :param start_s: time in seconds, relative to start of recording
         :param end_s: time in seconds, relative to start of recording
@@ -631,13 +772,26 @@ class Reader(object):
             end_s = self.runtime_s
         start_sample = round(start_s * self.samplerate_sps)
         end_sample = round(end_s * self.samplerate_sps)
-        samplerate_dst = max(round(self.max_elements/(end_s - start_s), 3), 0.001)
+        samplerate_dst = max(round(self.max_elements / (end_s - start_s), 3), 0.001)
         ds_factor = float(self.samplerate_sps / samplerate_dst)
         data = {
             "name": self.get_hostname(),
-            "time": self.downsample(self.ds_time, None, start_sample, end_sample, ds_factor, is_time=True).astype(float) * 1e-9,
-            "voltage": self.raw_to_si(self.downsample(self.ds_voltage, None, start_sample, end_sample, ds_factor), self.cal["voltage"]),
-            "current": self.raw_to_si(self.downsample(self.ds_current, None, start_sample, end_sample, ds_factor), self.cal["current"]),
+            "time": self.downsample(
+                self.ds_time, None, start_sample, end_sample, ds_factor, is_time=True
+            ).astype(float)
+            * 1e-9,
+            "voltage": self.raw_to_si(
+                self.downsample(
+                    self.ds_voltage, None, start_sample, end_sample, ds_factor
+                ),
+                self.cal["voltage"],
+            ),
+            "current": self.raw_to_si(
+                self.downsample(
+                    self.ds_current, None, start_sample, end_sample, ds_factor
+                ),
+                self.cal["current"],
+            ),
             "start_s": start_s,
             "end_s": end_s,
         }
@@ -646,7 +800,9 @@ class Reader(object):
         return data
 
     @staticmethod
-    def assemble_plot(data: Union[dict, list], width: int = 20, height: int = 10) -> plt.Figure:
+    def assemble_plot(
+        data: Union[dict, list], width: int = 20, height: int = 10
+    ) -> plt.Figure:
         """
         TODO: add power (if wanted)
 
@@ -672,10 +828,14 @@ class Reader(object):
         fig.tight_layout()
         return fig
 
-    def plot_to_file(self,
-                     start_s: float = None, end_s: float = None,
-                     width: int = 20, height: int = 10) -> NoReturn:
-        """ creates (down-sampled) IV-Plot
+    def plot_to_file(
+        self,
+        start_s: float = None,
+        end_s: float = None,
+        width: int = 20,
+        height: int = 10,
+    ) -> NoReturn:
+        """creates (down-sampled) IV-Plot
             -> omitting start- and end-time will use the whole duration
 
         :param start_s: time in seconds, relative to start of recording, optional
@@ -687,7 +847,9 @@ class Reader(object):
 
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = self.file_path.absolute().with_suffix(f".plot_{start_str}_to_{end_str}.png")
+        plot_path = self.file_path.absolute().with_suffix(
+            f".plot_{start_str}_to_{end_str}.png"
+        )
         if plot_path.exists():
             return
 
@@ -697,10 +859,10 @@ class Reader(object):
         plt.clf()
 
     @staticmethod
-    def multiplot_to_file(data: Union[list],
-                          plot_path: Path,
-                          width: int = 20, height: int = 10) -> NoReturn:
-        """ creates (down-sampled) IV-Multi-Plot
+    def multiplot_to_file(
+        data: Union[list], plot_path: Path, width: int = 20, height: int = 10
+    ) -> NoReturn:
+        """creates (down-sampled) IV-Multi-Plot
 
         :param data: plottable / down-sampled iv-data with some meta-data -> created with generate_plot_data()
         :param plot_path: optional
@@ -709,7 +871,9 @@ class Reader(object):
         """
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = plot_path.absolute().with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
+        plot_path = plot_path.absolute().with_suffix(
+            f".multiplot_{start_str}_to_{end_str}.png"
+        )
         if plot_path.exists():
             return
 
@@ -750,15 +914,15 @@ class Writer(Reader):
     logger = logging.getLogger("SHPData.Writer")
 
     def __init__(
-            self,
-            file_path: Path,
-            mode: str = None,
-            datatype: str = None,
-            window_samples: int = None,
-            calibration_data: dict = None,
-            modify_existing: bool = False,
-            compression: Union[None, str, int] = "default",
-            verbose: Union[bool, None] = True,
+        self,
+        file_path: Path,
+        mode: str = None,
+        datatype: str = None,
+        window_samples: int = None,
+        calibration_data: dict = None,
+        modify_existing: bool = False,
+        compression: Union[None, str, int] = "default",
+        verbose: Union[bool, None] = True,
     ):
         super().__init__(file_path=None, verbose=verbose)
 
@@ -774,9 +938,7 @@ class Writer(Reader):
             self.logger.info(f"Storing data to   '{self.file_path}'")
         else:
             base_dir = file_path.resolve().parents[0]
-            self.file_path = unique_path(
-                base_dir / file_path.stem, file_path.suffix
-            )
+            self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
             self.logger.warning(
                 f"File {file_path} already exists -> "
                 f"storing under {self.file_path.name} instead"
@@ -789,7 +951,11 @@ class Writer(Reader):
 
         if not isinstance(datatype, (str, type(None))):
             raise TypeError(f"can not handle type '{type(datatype)}' for datatype")
-        elif isinstance(datatype, str) and datatype not in self.mode_type_dict[self.mode_default if (mode is None) else mode]:
+        elif (
+            isinstance(datatype, str)
+            and datatype
+            not in self.mode_type_dict[self.mode_default if (mode is None) else mode]
+        ):
             raise ValueError(f"can not handle datatype '{datatype}'")
 
         if self._modify:
@@ -799,7 +965,9 @@ class Writer(Reader):
             self.window_samples = window_samples
         else:
             self.mode = self.mode_default if (mode is None) else mode
-            self.cal = self.cal_default if (calibration_data is None) else calibration_data
+            self.cal = (
+                self.cal_default if (calibration_data is None) else calibration_data
+            )
             self.datatype = self.datatype_default if (datatype is None) else datatype
             self.window_samples = 0 if (window_samples is None) else window_samples
 
@@ -828,7 +996,9 @@ class Writer(Reader):
             self.data_grp = self.h5file.create_group("data")
             # the size of window_samples-attribute in harvest-data indicates ivcurves as input
             # -> emulator uses virtual-harvester
-            self.data_grp.attrs["window_samples"] = 0  # will be adjusted by .embed_config()
+            self.data_grp.attrs[
+                "window_samples"
+            ] = 0  # will be adjusted by .embed_config()
 
             self.data_grp.create_dataset(
                 "time",
@@ -836,7 +1006,8 @@ class Writer(Reader):
                 dtype="u8",
                 maxshape=(None,),
                 chunks=self.chunk_shape,
-                compression=self.compression_algo)
+                compression=self.compression_algo,
+            )
             self.data_grp["time"].attrs["unit"] = f"ns"
             self.data_grp["time"].attrs["description"] = "system time [ns]"
 
@@ -846,9 +1017,12 @@ class Writer(Reader):
                 dtype="u4",
                 maxshape=(None,),
                 chunks=self.chunk_shape,
-                compression=self.compression_algo)
+                compression=self.compression_algo,
+            )
             self.data_grp["current"].attrs["unit"] = "A"
-            self.data_grp["current"].attrs["description"] = "current [A] = value * gain + offset"
+            self.data_grp["current"].attrs[
+                "description"
+            ] = "current [A] = value * gain + offset"
 
             self.data_grp.create_dataset(
                 "voltage",
@@ -856,15 +1030,21 @@ class Writer(Reader):
                 dtype="u4",
                 maxshape=(None,),
                 chunks=self.chunk_shape,
-                compression=self.compression_algo)
+                compression=self.compression_algo,
+            )
             self.data_grp["voltage"].attrs["unit"] = "V"
-            self.data_grp["voltage"].attrs["description"] = "voltage [V] = value * gain + offset"
+            self.data_grp["voltage"].attrs[
+                "description"
+            ] = "voltage [V] = value * gain + offset"
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
         if isinstance(self.mode, str) and self.mode in self.mode_type_dict:
             self.h5file.attrs["mode"] = self.mode
 
-        if isinstance(self.datatype, str) and self.datatype in self.mode_type_dict[self.get_mode()]:
+        if (
+            isinstance(self.datatype, str)
+            and self.datatype in self.mode_type_dict[self.get_mode()]
+        ):
             self.h5file["data"].attrs["datatype"] = self.datatype
         elif not self._modify:
             self.logger.error(f"datatype invalid? '{self.datatype}' not written")
@@ -873,8 +1053,12 @@ class Writer(Reader):
             self.h5file["data"].attrs["window_samples"] = self.window_samples
 
         if self.cal is not None:
-            for channel, parameter in product(["current", "voltage"], ["gain", "offset"]):
-                self.h5file["data"][channel].attrs[parameter] = self.cal[channel][parameter]
+            for channel, parameter in product(
+                ["current", "voltage"], ["gain", "offset"]
+            ):
+                self.h5file["data"][channel].attrs[parameter] = self.cal[channel][
+                    parameter
+                ]
 
         super().__enter__()
         return self
@@ -882,13 +1066,20 @@ class Writer(Reader):
     def __exit__(self, *exc):
         self._align()
         self.refresh_file_stats()
-        self.logger.info(f"closing hdf5 file, {self.runtime_s} s iv-data, "
-                         f"size = {round(self.file_size/2**20, 3)} MiB, "
-                         f"rate = {round(self.data_rate/2**10)} KiB/s")
+        self.logger.info(
+            f"closing hdf5 file, {self.runtime_s} s iv-data, "
+            f"size = {round(self.file_size/2**20, 3)} MiB, "
+            f"rate = {round(self.data_rate/2**10)} KiB/s"
+        )
         self.is_valid()
         self.h5file.close()
 
-    def append_iv_data_raw(self, timestamp_ns: Union[np.ndarray, float, int], voltage: np.ndarray, current: np.ndarray) -> NoReturn:
+    def append_iv_data_raw(
+        self,
+        timestamp_ns: Union[np.ndarray, float, int],
+        voltage: np.ndarray,
+        current: np.ndarray,
+    ) -> NoReturn:
         """Writes raw data to database
 
         Args:
@@ -917,12 +1108,17 @@ class Writer(Reader):
         self.ds_current.resize((len_old + len_new,))
 
         # append new data
-        self.ds_time[len_old:len_old + len_new] = timestamp_ns[:len_new]
-        self.ds_voltage[len_old:len_old + len_new] = voltage[:len_new]
-        self.ds_current[len_old:len_old + len_new] = current[:len_new]
+        self.ds_time[len_old : len_old + len_new] = timestamp_ns[:len_new]
+        self.ds_voltage[len_old : len_old + len_new] = voltage[:len_new]
+        self.ds_current[len_old : len_old + len_new] = current[:len_new]
 
-    def append_iv_data_si(self, timestamp: Union[np.ndarray, float], voltage: np.ndarray, current: np.array) -> NoReturn:
-        """ Writes data (in SI / physical unit) to file, but converts it to raw-data first
+    def append_iv_data_si(
+        self,
+        timestamp: Union[np.ndarray, float],
+        voltage: np.ndarray,
+        current: np.array,
+    ) -> NoReturn:
+        """Writes data (in SI / physical unit) to file, but converts it to raw-data first
 
         Args:
             timestamp: python timestamp (time.time()) in seconds (si-unit) -> just start of buffer or whole ndarray
@@ -936,8 +1132,7 @@ class Writer(Reader):
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def _align(self) -> NoReturn:
-        """ Align datasets with buffer-size of shepherd
-        """
+        """Align datasets with buffer-size of shepherd"""
         self.refresh_file_stats()
         n_buff = self.ds_time.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
@@ -945,7 +1140,9 @@ class Writer(Reader):
             if self.samplerate_sps < 95_000:
                 self.logger.debug(f"skipped alignment due to altered samplerate")
                 return
-            self.logger.info(f"aligning with buffer-size, discarding last {self.ds_time.size - size_new} entries")
+            self.logger.info(
+                f"aligning with buffer-size, discarding last {self.ds_time.size - size_new} entries"
+            )
             self.ds_time.resize((size_new,))
             self.ds_voltage.resize((size_new,))
             self.ds_current.resize((size_new,))
@@ -955,7 +1152,7 @@ class Writer(Reader):
         return self.h5file.attrs.__setitem__(key, item)
 
     def set_config(self, data: dict) -> NoReturn:
-        """ Important Step to get a self-describing Output-File
+        """Important Step to get a self-describing Output-File
 
         :param data: from virtual harvester or converter / source
         """
