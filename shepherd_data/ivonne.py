@@ -1,15 +1,15 @@
 import math
-from typing import Union, NoReturn
+from typing import NoReturn
 import logging
 import numpy as np
 import pandas as pd
 import pickle
 import scipy  # used for interpolation
 from pathlib import Path
-from tqdm import tqdm, trange
+from tqdm import trange
 
 from . import Writer
-from .mppt import MPPTracker, OpenCircuitTracker, OptimalTracker
+from .mppt import OptimalTracker, MPPTracker
 
 consoleHandler = logging.StreamHandler()
 
