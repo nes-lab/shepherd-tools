@@ -1,28 +1,34 @@
-## Shepherd - Datalib
+[![version](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
+[![version](https://img.shields.io/pypi/pyversions/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
+
+## Shepherd - Data
 
 This Python Module eases the handling of hdf5-recordings used by the [shepherd](https://github.com/orgua/shepherd)-testbed. Users can read, validate and create files and also extract, down-sample and plot information.
 
 ### Installation
+
+#### Via PIP
+
+`pip3 install shepherd-data`
 
 #### Manual
 
 - clone repository
 - navigate shell into directory
 - activate and update pipenv (optional) 
+  - for developers: add special packages
 - install module
 
 ```
+git clone https://github.com/orgua/shepherd-datalib
 cd .\shepherd-datalib
 
 pipenv shell
 pipenv update
+pipenv install -d
 
 python setup.py install
 ```
-
-#### Via PIP (TODO)
-
-`pip3 install shepherd_data`
 
 ### Programming Interface
 
@@ -62,7 +68,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `convert_2_ivcurves()` converts ivonne-recording into a shepherd ivcurve
   - `upsample_2_isc_voc()` TODO: for now a upsampled but unusable version of samples of short-circuit-current and open-circuit-voltage
   - `convert_2_ivsamples()` already applies a simple harvesting-algo and creates ivsamples
-- examples
+- `./examples/`
   - `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
   - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
   - `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
@@ -74,9 +80,9 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
 
 ### CLI-Interface
 
-After installing the module the datalib offers some often needed functions: 
+After installing the module the datalib offers some often needed functionality on the command line: 
 
-#### Validate Recordings
+**Validate Recordings**
 
 - takes a file or directory as an argument
 
@@ -88,7 +94,7 @@ shepherd-data validate ./
 shepherd-data validate hrv_saw_1h.h5
 ```
 
-#### Extract IV-Samples to csv
+**Extract IV-Samples to csv**
 
 - takes a file or directory as an argument
 - can take down-sample-factor as an argument
@@ -101,7 +107,7 @@ shepherd-data extract ./
 shepherd-data extract hrv_saw_1h.h5 -f 1000 -s;
 ```
 
-#### Extract meta-data and sys-logs
+**Extract meta-data and sys-logs**
 
 - takes a file or directory as an argument
 
@@ -113,7 +119,7 @@ shepherd-data extract-meta ./
 shepherd-data extract-meta hrv_saw_1h.h5
 ```
 
-#### Plot IVSamples
+**Plot IVSamples**
 
 - takes a file or directory as an argument
 - can take start- and end-time as an argument
@@ -127,7 +133,7 @@ shepherd-data plot ./ --multiplot
 shepherd-data plot hrv_saw_1h.h5 -s10 -e20
 ```
 
-#### Downsample IVSamples (for later GUI-usage, TODO)
+**Downsample IVSamples (for later GUI-usage, TODO)**
 
 - generates a set of downsamplings (20 kHz to 0.1 Hz in x4 to x5 Steps)
 - takes a file or directory as an argument
@@ -142,6 +148,8 @@ shepherd-data downsample hrv_saw_1h.h5 -f 1000
 ```
 
 ### Data-Layout and Design choices
+
+Details about the file-structure can be found in the [main-project](https://github.com/orgua/shepherd/blob/master/docs/user/data_format.rst).
 
 #### Modes and Datatypes
 

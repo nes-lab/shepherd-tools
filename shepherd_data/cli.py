@@ -3,7 +3,7 @@ import click
 import logging
 from pathlib import Path
 
-from shepherd_data import Writer, Reader
+from . import Writer, Reader
 
 
 logger = logging.getLogger("SHPData.cli")

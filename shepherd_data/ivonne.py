@@ -8,8 +8,8 @@ import scipy  # used for interpolation
 from pathlib import Path
 from tqdm import tqdm, trange
 
-from shepherd_data import Writer
-from shepherd_data.mppt import MPPTracker, OpenCircuitTracker, OptimalTracker
+from . import Writer
+from .mppt import MPPTracker, OpenCircuitTracker, OptimalTracker
 
 consoleHandler = logging.StreamHandler()
 

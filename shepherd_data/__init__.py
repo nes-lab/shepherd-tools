@@ -17,7 +17,7 @@ from pathlib import Path
 import h5py
 from itertools import product
 
-import samplerate as samplerate  # TODO:
+import samplerate as samplerate  # TODO: test for now
 from matplotlib import pyplot as plt
 from scipy import signal
 
