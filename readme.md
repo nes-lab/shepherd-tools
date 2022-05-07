@@ -1,5 +1,7 @@
 ## Shepherd - Datalib
 
+This Python Module eases the handling of hdf5-recordings used by the [shepherd](https://github.com/orgua/shepherd)-testbed. Users can read, validate and create files and also extract, down-sample and plot information.
+
 ### Installation
 
 #### Manual
@@ -189,9 +191,8 @@ shepherd-data downsample hrv_saw_1h.h5 -f 1000
   - generalize converters (currently in IVonne) 
     - isc&voc <-> ivcurve
     - ivcurve -> ivsample
-  - plotting for multi-node
   - plotting and downsampling for IVCurves ()
-  - plotting more generalized (power, cpu-util, ..., whole directory)
+  - plotting more generalized (power, cpu-util, ..., if IV then offer power as well)
   - some metadata is calculated wrong (non-scalar datasets)
   - unittests
 - main shepherd-code
@@ -204,14 +205,3 @@ shepherd-data downsample hrv_saw_1h.h5 -f 1000
   - use the datalib as a base
   - isc-voc-harvesting
   - directly process isc-voc -> resample to ivcurve?
-
-### Old Scripts and Files
-
-- `gen_data.py` creates hdf-files for every type of database we want to support.
-    - `curve2trace()`
-      - get voltage/current-trace by sending curve through MPPT-Converter or other Optimizer/Tracker (in `mppt.py`)
-      - can take very long (especially MPPT), but output can be limited by `duration` variable
-- `iv_reconstruct.py` ~~shows how the transformation-coefficients work~~ -> NOT UP TO DATE
-- `mppt.py` contains converters / trackers for `gen_data`
-- `plot.py`
-    - `python plot.py db_traces.h5` plots the content of the hdf
