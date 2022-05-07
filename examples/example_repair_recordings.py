@@ -1,13 +1,17 @@
+"""
+script will:
+- iterate through this directory and
+- try to find and fix errors in hdf5-files / shepherd-recordings
+- old recordings from shepherd 1.x can be made available for v2.x
+
+-> the usage of __enter__() and __exit__() is not encouraged,
+   but makes the codes simpler for this edge-case (reading- and writing-handler for same file)
+"""
 import os
 from pathlib import Path
 
 import shepherd_data as shpd
 
-# script iterates through this directory and tries to find and fix errors in hdf5-files / shepherd-recordings
-# - old recordings from shepherd 1.x can be made available for v2.x
-#
-# -> the usage of __enter__() and __exit__() is not encouraged,
-#    but makes the codes simpler for this edge-case (reading- and writing-handler for same file)
 
 if __name__ == "__main__":
 
@@ -23,27 +27,26 @@ if __name__ == "__main__":
             # hard criteria to detect shepherd-recording (and sort out other hdf5-files)
             if "data" not in elements:
                 continue
-            for ds in ["time", "current", "voltage"]:
-                if ds not in elements["data"]:
+            for dset in ["time", "current", "voltage"]:
+                if dset not in elements["data"]:
                     continue
 
             # datasets with unequal size
             ds_time_size = fh.h5file["data"]["time"].shape[0]
-            for ds in ["current", "voltage"]:
-                ds_size = fh.h5file["data"][ds].shape[0]
+            for dset in ["current", "voltage"]:
+                ds_size = fh.h5file["data"][dset].shape[0]
                 if ds_time_size != ds_size:
-                    print(f" -> will bring datasets to equal size")
+                    print(" -> will bring datasets to equal size")
                     fh.__exit__()
                     with shpd.Writer(fpath, modify_existing=True) as fw:
                         fw.h5file["data"]["time"].resize(min(ds_time_size, ds_size))
-                        fw.h5file["data"][ds].resize(min(ds_time_size, ds_size))
-                        pass
+                        fw.h5file["data"][dset].resize(min(ds_time_size, ds_size))
                     fh.__enter__()
 
             # unaligned datasets
             remaining_size = fh.h5file["data"]["time"].shape[0] % fh.samples_per_buffer
             if remaining_size != 0:
-                print(f" -> will align datasets")
+                print(" -> will align datasets")
                 fh.__exit__()
                 with shpd.Writer(fpath, modify_existing=True) as fw:
                     pass

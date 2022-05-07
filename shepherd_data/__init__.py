@@ -17,7 +17,7 @@ from pathlib import Path
 import h5py
 from itertools import product
 
-import samplerate as samplerate  # TODO: test for now
+import samplerate  # TODO: test for now
 from matplotlib import pyplot as plt
 from scipy import signal
 
@@ -30,6 +30,12 @@ consoleHandler = logging.StreamHandler()
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
+    """finds an unused filename in case it already exists
+
+    :param base_path: file-path to test
+    :param suffix: file-suffix
+    :return: new non-existing path
+    """
     counter = 0
     while True:
         path = base_path.with_suffix(f".{counter}{suffix}")
@@ -46,7 +52,7 @@ general_calibration = {
 }
 
 
-class Reader(object):
+class Reader:
     """Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
@@ -56,7 +62,7 @@ class Reader(object):
 
     samples_per_buffer: int = 10_000
     samplerate_sps: int = 100_000
-    sample_interval_ns = int(10**9 // samplerate_sps)
+    sample_interval_ns: int = int(10**9 // samplerate_sps)
     sample_interval_s: float = 1 / samplerate_sps
 
     max_elements: int = 100 * samplerate_sps  # per iteration (100s, ~ 300 MB RAM use)
@@ -66,7 +72,13 @@ class Reader(object):
         "emulator": ["ivsample"],
     }
 
-    logger = logging.getLogger("SHPData.Reader")
+    logger: logging.Logger = logging.getLogger("SHPData.Reader")
+
+    h5file: h5py.File = None
+    ds_time: h5py.Dataset = None
+    ds_voltage: h5py.Dataset = None
+    ds_current: h5py.Dataset = None
+    cal: dict[str, dict] = general_calibration
 
     def __init__(self, file_path: Union[Path, None], verbose: Union[bool, None] = True):
         self._skip_open = file_path is None  # for access by writer-class
@@ -85,10 +97,10 @@ class Reader(object):
             self.h5file = h5py.File(self.file_path, "r")
 
         if self.is_valid():
-            self.logger.info(f"File is available now")
+            self.logger.info("File is available now")
         else:
             self.logger.error(
-                f"File is faulty! Will try to open but there might be dragons"
+                "File is faulty! Will try to open but there might be dragons"
             )
 
         self.ds_time = self.h5file["data"]["time"]
@@ -108,12 +120,18 @@ class Reader(object):
 
         if not self._skip_open:
             self.logger.info(
-                f"Reading data from '{self.file_path}'\n"
-                f"\t- runtime {self.runtime_s} s\n"
-                f"\t- mode = {self.get_mode()}\n"
-                f"\t- window_size = {self.get_window_samples()}\n"
-                f"\t- size = {round(self.file_size/2**20)} MiB\n"
-                f"\t- rate = {round(self.data_rate/2**10)} KiB/s"
+                "Reading data from '%s'\n"
+                "\t- runtime %s s\n"
+                "\t- mode = %s\n"
+                "\t- window_size = %s\n"
+                "\t- size = %s MiB\n"
+                "\t- rate = %s KiB/s",
+                self.file_path,
+                self.runtime_s,
+                self.get_mode(),
+                self.get_window_samples(),
+                round(self.file_size / 2**20),
+                round(self.data_rate / 2**10),
             )
         return self
 
@@ -152,7 +170,9 @@ class Reader(object):
         """
         if end_n is None:
             end_n = int(self.h5file["data"]["time"].shape[0] // self.samples_per_buffer)
-        self.logger.debug(f"Reading blocks from {start_n} to {end_n} from source-file")
+        self.logger.debug(
+            "Reading blocks from %s to %s from source-file", start_n, end_n
+        )
         _raw = is_raw
 
         for i in range(start_n, end_n):
@@ -183,6 +203,9 @@ class Reader(object):
         return self.cal
 
     def get_window_samples(self) -> int:
+        """
+        :return:
+        """
         if "window_samples" in self.h5file["data"].attrs.keys():
             return self.h5file["data"].attrs["window_samples"]
         return 0
@@ -248,7 +271,7 @@ class Reader(object):
         diffs = self.data_timediffs()
         if len(diffs) > 1:
             self.logger.warning(
-                f"Time-jumps detected -> expected equal steps, but got: {diffs} s"
+                "Time-jumps detected -> expected equal steps, but got: %s s", diffs
             )
         return len(diffs) <= 1
 
@@ -259,78 +282,84 @@ class Reader(object):
         """
         # hard criteria
         if "data" not in self.h5file.keys():
-            self.logger.error(f"root data-group not found (@Validator)")
+            self.logger.error("root data-group not found (@Validator)")
             return False
         for attr in ["mode"]:
             if attr not in self.h5file.attrs.keys():
-                self.logger.error(f"attribute '{attr}' not found in file (@Validator)")
+                self.logger.error("attribute '%s' not found in file (@Validator)", attr)
                 return False
-            elif self.h5file.attrs["mode"] not in self.mode_type_dict:
-                self.logger.error(f"unsupported mode '{self.get_mode()}' (@Validator)")
+            if self.h5file.attrs["mode"] not in self.mode_type_dict:
+                self.logger.error("unsupported mode '%s' (@Validator)", attr)
                 return False
         for attr in ["window_samples", "datatype"]:
             if attr not in self.h5file["data"].attrs.keys():
                 self.logger.error(
-                    f"attribute '{attr}' not found in data-group (@Validator)"
+                    "attribute '%s' not found in data-group (@Validator)", attr
                 )
                 return False
-        for ds in ["time", "current", "voltage"]:
-            if ds not in self.h5file["data"].keys():
-                self.logger.error(f"dataset '{ds}' not found (@Validator)")
+        for dset in ["time", "current", "voltage"]:
+            if dset not in self.h5file["data"].keys():
+                self.logger.error("dataset '%s' not found (@Validator)", dset)
                 return False
-        for ds, attr in product(["current", "voltage"], ["gain", "offset"]):
-            if attr not in self.h5file["data"][ds].attrs.keys():
+        for dset, attr in product(["current", "voltage"], ["gain", "offset"]):
+            if attr not in self.h5file["data"][dset].attrs.keys():
                 self.logger.error(
-                    f"attribute '{attr}' not found in dataset '{ds}' (@Validator)"
+                    "attribute '%s' not found in dataset '%s' (@Validator)", attr, dset
                 )
                 return False
         if self.get_datatype() not in self.mode_type_dict[self.get_mode()]:
             self.logger.error(
-                f"unsupported type '{self.get_datatype()}' for mode '{self.get_mode()}' (@Validator)"
+                "unsupported type '%s' for mode '%s' (@Validator)",
+                self.get_datatype(),
+                self.get_mode(),
             )
             return False
 
         if self.get_datatype() == "ivcurve" and self.get_window_samples() < 1:
             self.logger.error(
-                f"window size / samples is < 1 -> invalid for ivcurves-datatype (@Validator)"
+                "window size / samples is < 1 -> invalid for ivcurves-datatype (@Validator)"
             )
             return False
 
         # soft-criteria:
         if self.get_datatype() != "ivcurve" and self.get_window_samples() > 0:
             self.logger.warning(
-                f"window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)"
+                "window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)"
             )
         # same length of datasets:
         ds_time_size = self.h5file["data"]["time"].shape[0]
-        for ds in ["current", "voltage"]:
-            ds_size = self.h5file["data"][ds].shape[0]
+        for dset in ["current", "voltage"]:
+            ds_size = self.h5file["data"][dset].shape[0]
             if ds_time_size != ds_size:
                 self.logger.warning(
-                    f"dataset '{ds}' has different size (={ds_size}), "
-                    f"compared to time-ds (={ds_time_size}) (@Validator)"
+                    "dataset '%s' has different size (=%s), "
+                    "compared to time-ds (=%s) (@Validator)",
+                    dset,
+                    ds_size,
+                    ds_time_size,
                 )
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
             self.logger.warning(
-                f"datasets are not aligned with buffer-size (@Validator)"
+                "datasets are not aligned with buffer-size (@Validator)"
             )
         # check compression
-        for ds in ["time", "current", "voltage"]:
-            comp = self.h5file["data"][ds].compression
-            opts = self.h5file["data"][ds].compression_opts
+        for dset in ["time", "current", "voltage"]:
+            comp = self.h5file["data"][dset].compression
+            opts = self.h5file["data"][dset].compression_opts
             if comp not in [None, "gzip", "lzf"]:
                 self.logger.warning(
-                    f"unsupported compression found ({comp} != None, lzf, gzip) (@Validator)"
+                    "unsupported compression found (%s != None, lzf, gzip) (@Validator)",
+                    comp,
                 )
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
                 self.logger.warning(
-                    f"gzip compression is too high ({opts} > 1) for BBone (@Validator)"
+                    "gzip compression is too high (%s > 1) for BBone (@Validator)", opts
                 )
         # host-name
         if self.get_hostname() == "unknown":
-            self.logger.warning(f"Hostname was not set (@Validator)")
+            self.logger.warning("Hostname was not set (@Validator)")
         return True
 
     def get_metadata(self, node=None, minimal: bool = False) -> dict:
@@ -391,7 +420,7 @@ class Reader(object):
         """
         yml_path = Path(self.file_path).absolute().with_suffix(".yml")
         if yml_path.exists():
-            self.logger.info(f"{yml_path} already exists, will skip")
+            self.logger.info("%s already exists, will skip", yml_path)
             return {}
         metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
         with open(yml_path, "w") as fd:
@@ -527,11 +556,11 @@ class Reader(object):
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
-            self.logger.warning(f"{h5_group.name} is empty, no csv generated")
+            self.logger.warning("%s is empty, no csv generated", h5_group.name)
             return 0
         csv_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
         if csv_path.exists():
-            self.logger.warning(f"{csv_path} already exists, will skip")
+            self.logger.warning("%s already exists, will skip", csv_path)
             return 0
         datasets = [
             key if isinstance(h5_group[key], h5py.Dataset) else []
@@ -565,11 +594,11 @@ class Reader(object):
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
-            self.logger.warning(f"{h5_group.name} is empty, no log generated")
+            self.logger.warning("%s is empty, no log generated", h5_group.name)
             return 0
         log_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
         if log_path.exists():
-            self.logger.warning(f"{log_path} already exists, will skip")
+            self.logger.warning("%s already exists, will skip", log_path)
             return 0
         datasets = [
             key if isinstance(h5_group[key], h5py.Dataset) else []
@@ -609,7 +638,7 @@ class Reader(object):
         :return: downsampled h5-dataset or numpy-array
         """
         if self.get_datatype() == "ivcurve":
-            self.logger.warning(f"Downsampling-Function was not written for IVCurves")
+            self.logger.warning("Downsampling-Function was not written for IVCurves")
         ds_factor = max(1, math.floor(ds_factor))
 
         if end_n is None:
@@ -619,7 +648,7 @@ class Reader(object):
         start_n = min(end_n, round(start_n))
         data_len = end_n - start_n  # TODO: one-off to calculation below
         if data_len == 0:
-            self.logger.warning(f"downsampling failed because of data_len = 0")
+            self.logger.warning("downsampling failed because of data_len = 0")
         iblock_len = min(self.max_elements, data_len)
         oblock_len = round(iblock_len / ds_factor)
         iterations = math.ceil(data_len / iblock_len)
@@ -687,7 +716,7 @@ class Reader(object):
             "Resampling is still under construction - do not use for now!"
         )
         if self.get_datatype() == "ivcurve":
-            self.logger.warning(f"Resampling-Function was not written for IVCurves")
+            self.logger.warning("Resampling-Function was not written for IVCurves")
 
         if end_n is None:
             end_n = data_src.shape[0]
@@ -696,7 +725,7 @@ class Reader(object):
         start_n = min(end_n, round(start_n))
         data_len = end_n - start_n
         if data_len == 0:
-            self.logger.warning(f"resampling failed because of data_len = 0")
+            self.logger.warning("resampling failed because of data_len = 0")
         fs_ratio = samplerate_dst / self.samplerate_sps
         dest_len = math.floor(data_len * fs_ratio) + 1
         if fs_ratio <= 1.0:  # down-sampling
@@ -774,7 +803,7 @@ class Reader(object):
         :return: down-sampled size of ~ self.max_elements
         """
         if self.get_datatype() == "ivcurve":
-            self.logger.warning(f"Plot-Function was not written for IVCurves")
+            self.logger.warning("Plot-Function was not written for IVCurves")
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
@@ -914,13 +943,13 @@ class Writer(Reader):
     #         --> _algo=number instead of "gzip" is read as compression level for gzip
     # -> comparison / benchmarks https://www.h5py.org/lzf/
     comp_default = 1
-    mode_default = "harvester"
-    datatype_default = "ivsample"
-    cal_default = general_calibration
+    mode_default: str = "harvester"
+    datatype_default: str = "ivsample"
+    cal_default: dict[str, dict] = general_calibration
 
-    chunk_shape = (Reader.samples_per_buffer,)
+    chunk_shape: tuple = (Reader.samples_per_buffer,)
 
-    logger = logging.getLogger("SHPData.Writer")
+    logger: logging.Logger = logging.getLogger("SHPData.Writer")
 
     def __init__(
         self,
@@ -944,23 +973,24 @@ class Writer(Reader):
 
         if self._modify or not file_path.exists():
             self.file_path = file_path
-            self.logger.info(f"Storing data to   '{self.file_path}'")
+            self.logger.info("Storing data to   '%s'", self.file_path)
         else:
             base_dir = file_path.resolve().parents[0]
             self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
             self.logger.warning(
-                f"File {file_path} already exists -> "
-                f"storing under {self.file_path.name} instead"
+                "File %s already exists -> " "storing under %s instead",
+                file_path,
+                self.file_path.name,
             )
 
         if not isinstance(mode, (str, type(None))):
             raise TypeError(f"can not handle type '{type(mode)}' for mode")
-        elif isinstance(mode, str) and mode not in self.mode_type_dict:
+        if isinstance(mode, str) and mode not in self.mode_type_dict:
             raise ValueError(f"can not handle mode '{mode}'")
 
         if not isinstance(datatype, (str, type(None))):
             raise TypeError(f"can not handle type '{type(datatype)}' for datatype")
-        elif (
+        if (
             isinstance(datatype, str)
             and datatype
             not in self.mode_type_dict[self.mode_default if (mode is None) else mode]
@@ -1017,7 +1047,7 @@ class Writer(Reader):
                 chunks=self.chunk_shape,
                 compression=self.compression_algo,
             )
-            self.data_grp["time"].attrs["unit"] = f"ns"
+            self.data_grp["time"].attrs["unit"] = "ns"
             self.data_grp["time"].attrs["description"] = "system time [ns]"
 
             self.data_grp.create_dataset(
@@ -1056,7 +1086,7 @@ class Writer(Reader):
         ):
             self.h5file["data"].attrs["datatype"] = self.datatype
         elif not self._modify:
-            self.logger.error(f"datatype invalid? '{self.datatype}' not written")
+            self.logger.error("datatype invalid? '%s' not written", self.datatype)
 
         if isinstance(self.window_samples, int):
             self.h5file["data"].attrs["window_samples"] = self.window_samples
@@ -1076,9 +1106,10 @@ class Writer(Reader):
         self._align()
         self.refresh_file_stats()
         self.logger.info(
-            f"closing hdf5 file, {self.runtime_s} s iv-data, "
-            f"size = {round(self.file_size/2**20, 3)} MiB, "
-            f"rate = {round(self.data_rate/2**10)} KiB/s"
+            "closing hdf5 file, %s s iv-data, size = %s MiB, rate = %s KiB/s",
+            self.runtime_s,
+            round(self.file_size / 2**20, 3),
+            round(self.data_rate / 2**10),
         )
         self.is_valid()
         self.h5file.close()
@@ -1106,7 +1137,7 @@ class Writer(Reader):
         if isinstance(timestamp_ns, np.ndarray):
             len_new = min(len_new, timestamp_ns.size)
         else:
-            self.logger.error(f"timestamp-data was not usable")
+            self.logger.error("timestamp-data was not usable")
             return
 
         len_old = self.ds_time.shape[0]
@@ -1147,10 +1178,11 @@ class Writer(Reader):
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
         if size_new < self.ds_time.size:
             if self.samplerate_sps < 95_000:
-                self.logger.debug(f"skipped alignment due to altered samplerate")
+                self.logger.debug("skipped alignment due to altered samplerate")
                 return
             self.logger.info(
-                f"aligning with buffer-size, discarding last {self.ds_time.size - size_new} entries"
+                "aligning with buffer-size, discarding last %s entries",
+                self.ds_time.size - size_new,
             )
             self.ds_time.resize((size_new,))
             self.ds_voltage.resize((size_new,))

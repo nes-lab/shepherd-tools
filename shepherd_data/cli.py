@@ -1,8 +1,7 @@
 import os
-import click
 import logging
 from pathlib import Path
-
+import click
 from . import Writer, Reader
 
 
@@ -30,7 +29,7 @@ def path_to_flist(data_path: Path) -> list[Path]:
     h5files = []
     if data_path.is_file() and data_path.suffix == ".h5":
         h5files.append(data_path)
-    elif data_path.is_dir:
+    elif data_path.is_dir():
         flist = os.listdir(data_path)
         for file in flist:
             fpath = Path(file)
@@ -66,14 +65,14 @@ def validate(in_data):
     files = path_to_flist(in_data)
     valid_dir = True
     for file in files:
-        logger.info(f"Validating '{file.name}' ...")
+        logger.info("Validating '%s' ...", file.name)
         valid_file = True
         with Reader(file, verbose=verbose_level > 2) as shpr:
             valid_file &= shpr.is_valid()
             valid_file &= shpr.check_timediffs()
             valid_dir &= valid_file
             if not valid_file:
-                logger.error(f" -> File '{file.name}' was NOT valid")
+                logger.error(" -> File '%s' was NOT valid", file.name)
     return not valid_dir
 
 
@@ -97,14 +96,14 @@ def extract(in_data, ds_factor, separator):
     files = path_to_flist(in_data)
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:
         ds_factor = 1000
-        logger.info(f"DS-Factor was invalid was reset to 1'000")
+        logger.info("DS-Factor was invalid was reset to 1'000")
     for file in files:
-        logger.info(f"Extracting IV-Samples from '{file.name}' ...")
+        logger.info("Extracting IV-Samples from '%s' ...", file.name)
         with Reader(file, verbose=verbose_level > 2) as shpr:
             # will create a downsampled h5-file (if not existing) and then saving to csv
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
             if not ds_file.exists():
-                logger.info(f"Downsampling '{file.name}' by factor x{ds_factor} ...")
+                logger.info("Downsampling '%s' by factor x%s ...", file.name, ds_factor)
                 with Writer(
                     ds_file,
                     mode=shpr.get_mode(),
@@ -140,7 +139,7 @@ def extract(in_data, ds_factor, separator):
 def extract_meta(in_data, separator):
     files = path_to_flist(in_data)
     for file in files:
-        logger.info(f"Extracting metadata & logs from '{file.name}' ...")
+        logger.info("Extracting metadata & logs from '%s' ...", file.name)
         with Reader(file, verbose=verbose_level > 2) as shpr:
             elements = shpr.save_metadata()
 
@@ -192,7 +191,7 @@ def downsample(in_data, ds_factor, sample_rate):
                 ds_file = file.with_suffix(f".downsampled_x{ds_factor}.h5")
                 if ds_file.exists():
                     continue
-                logger.info(f"Downsampling '{file.name}' by factor x{ds_factor} ...")
+                logger.info("Downsampling '%s' by factor x%s ...", file.name, ds_factor)
                 with Writer(
                     ds_file,
                     mode=shpr.get_mode(),
@@ -251,14 +250,12 @@ def downsample(in_data, ds_factor, sample_rate):
     help="Plot all files (in directory) into one Multiplot",
 )
 def plot(in_data, start: float, end: float, width: int, height: int, multiplot: bool):
-    logger.info(
-        f"CLI-options are start = {start} s, end= {end} s, width = {width}, height = {height}"
-    )
+
     files = path_to_flist(in_data)
     multiplot = multiplot and len(files) > 1
     data = []
     for file in files:
-        logger.info(f"Generating plot for '{file.name}' ...")
+        logger.info(f"Generating plot for '%s' ...", file.name)
         with Reader(file, verbose=verbose_level > 2) as shpr:
             if multiplot:
                 data.append(shpr.generate_plot_data(start, end, relative_ts=True))

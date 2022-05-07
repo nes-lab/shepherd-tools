@@ -1,15 +1,17 @@
+"""
+script iterates through this directory and analyzes hdf5-files
+- prints cpu-utilization and data-rate
+- saves logging-info to files
+- saves metadata to datasets and the file itself to yml
+
+CLI-Version of this is:
+shepherd-data extract-meta file_or_dir
+"""
 import os
 from pathlib import Path
 
 import shepherd_data as shpd
 
-# script iterates through this directory and analyzes hdf5-files
-# - prints cpu-utilization and data-rate
-# - saves logging-info to files
-# - saves metadata to datasets and the file itself to yml
-#
-# CLI-Version of this is:
-# shepherd-data extract-meta file_or_dir
 
 if __name__ == "__main__":
 

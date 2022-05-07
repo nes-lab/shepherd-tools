@@ -1,12 +1,16 @@
+"""
+script will:
+- generate plots with various zoom-levels for h5-files
+- note: let the generator- and converter-example run before
+
+CLI-Version of this is:
+shepherd-data plot file_or_dir [-s start_time] [-e end_time]
+                               [-w plot_width] [-h plot_height]
+                               [--multiplot]
+"""
 from pathlib import Path
 import shepherd_data as shpd
 
-# script will:
-# - generate plots with various zoom-levels for h5-files
-# - note: let the generator- and converter-example run before
-#
-# CLI-Version of this is:
-# shepherd-data plot file_or_dir [-s start_time] [-e end_time] [-w plot_width] [-h plot_height] [--multiplot]
 
 if __name__ == "__main__":
 

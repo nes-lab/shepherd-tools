@@ -29,7 +29,7 @@ def find_oc(v_arr, i_arr, ratio: float = 0.05):
     return v_arr[np.argmax(i_arr < i_arr[0] * ratio)]
 
 
-class MPPTracker(object):
+class MPPTracker:
     """Prototype
 
     :param v_max: Maximum voltage supported by shepherd

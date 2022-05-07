@@ -42,7 +42,7 @@ def get_isc(coeffs: pd.DataFrame):
     return coeffs["a"]
 
 
-class Reader(object):
+class Reader:
     """ """
 
     samplerate_sps: int = 50
@@ -69,10 +69,14 @@ class Reader(object):
             self._df = pickle.load(f)
         self.refresh_file_stats()
         self.logger.info(
-            f"Reading data from '{self.file_path}'\n"
-            f"\t- runtime = {self.runtime_s} s\n"
-            f"\t- size = {round(self.file_size / 2 ** 10, 3)} KiB\n"
-            f"\t- rate = {round(self.data_rate / 2 ** 10, 3)} KiB/s"
+            "Reading data from '%s'\n"
+            "\t- runtime = %s s\n"
+            "\t- size = %s KiB\n"
+            "\t- rate = %s KiB/s",
+            self.file_path,
+            self.runtime_s,
+            round(self.file_size / 2**10, 3),
+            round(self.data_rate / 2**10, 3),
         )
         return self
 
@@ -100,7 +104,7 @@ class Reader(object):
         :param duration_s: time to stop in seconds, counted from beginning
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self.logger.info(f"  -> gets trimmed to {duration_s} s")
+            self.logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -108,7 +112,7 @@ class Reader(object):
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self.logger.warning(f"{shp_output.name} already exists, will skip")
+            self.logger.warning("%s already exists, will skip", shp_output.name)
             return
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
@@ -173,7 +177,7 @@ class Reader(object):
         :param tracker: VOC or OPT
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self.logger.info(f"  -> gets trimmed to {duration_s} s")
+            self.logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -181,7 +185,7 @@ class Reader(object):
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self.logger.warning(f"{shp_output.name} already exists, will skip")
+            self.logger.warning("%s already exists, will skip", shp_output.name)
             return
 
         if tracker is None:
@@ -236,7 +240,7 @@ class Reader(object):
         :param duration_s: time to stop in seconds, counted from beginning
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self.logger.info(f"  -> gets trimmed to {duration_s} s")
+            self.logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -244,7 +248,7 @@ class Reader(object):
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self.logger.warning(f"{shp_output.name} already exists, will skip")
+            self.logger.warning("%s already exists, will skip", shp_output.name)
             return
 
         with Writer(shp_output, datatype="isc_voc") as db:

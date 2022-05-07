@@ -1,14 +1,16 @@
+"""
+this repo contains a recording from ivonne
+-> consists of voc & isc with 50 Hz sampling rate
+
+this script converts a IVonne-Recording to shepherd dataformat:
+- ivcurves that can be harvested during emulation
+- ivsamples that can be directly used for emulation
+  (already harvested with to different algorithms)
+- isc_voc not directly usable (for now)
+"""
 from pathlib import Path
-import shepherd_data.ivonne as ivonne
-import shepherd_data.mppt as mppt
+from shepherd_data import ivonne, mppt
 
-# this repo contains a recording from ivonne
-# -> consists of voc & isc with 50 Hz sampling rate
-
-# this script converts a IVonne-Recording to shepherd dataformat:
-# - ivcurves that can be harvested during emulation
-# - ivsamples that can be directly used for emulation (already harvested with to different algorithms)
-# - isc_voc not directly usable (for now)
 
 if __name__ == "__main__":
 
