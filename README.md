@@ -1,5 +1,6 @@
-[![version](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
-[![version](https://img.shields.io/pypi/pyversions/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
+[![PyPiVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
+[![PyVersion](https://img.shields.io/pypi/pyversions/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
+[![Pylint](https://github.com/orgua/shepherd-datalib/actions/workflows/pylint.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/pylint.yml)
 
 ## Shepherd - Data
 

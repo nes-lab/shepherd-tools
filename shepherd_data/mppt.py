@@ -1,23 +1,27 @@
+"""
+Harvesters, simple and fast approach.
+Might be exchanged by shepherds py-model of pru-harvesters
+"""
 import numpy as np
 import pandas as pd
 
 
-def iv_model(v: np.ndarray, coeffs: pd.DataFrame):
+def iv_model(voltages: np.ndarray, coeffs: pd.DataFrame) -> np.ndarray:
     """Simple diode based model of a solar panel IV curve.
 
     Args:
-        :param v: Load voltage of the solar panel
+        :param voltages: Load voltage of the solar panel
         :param coeffs: three generic coefficients
 
     Returns:
         Solar current at given load voltage
     """
-    i = coeffs["a"] - coeffs["b"] * (np.exp(coeffs["c"] * v) - 1)
-    if hasattr(i, "__len__"):
-        i[i < 0] = 0
+    currents = coeffs["a"] - coeffs["b"] * (np.exp(coeffs["c"] * voltages) - 1)
+    if hasattr(currents, "__len__"):
+        currents[currents < 0] = 0
     else:
-        i = max(0, i)
-    return i
+        currents = max(0, currents)
+    return currents
 
 
 def find_oc(v_arr, i_arr, ratio: float = 0.05):
@@ -37,11 +41,16 @@ class MPPTracker:
     """
 
     def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000):
-        self.pts_per_curve = pts_per_curve
-        self.v_max = v_max
-        self.v_proto = np.linspace(0, v_max, pts_per_curve)
+        self.pts_per_curve: int = pts_per_curve
+        self.v_max: float = v_max
+        self.v_proto: np.ndarray = np.linspace(0, v_max, pts_per_curve)
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
+        """ apply harvesting model to input data
+
+        :param coeffs: ivonne coefficients
+        :return:
+        """
         pass
 
 
@@ -86,7 +95,7 @@ class OptimalTracker(MPPTracker):
     def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000):
         super().__init__(v_max, pts_per_curve)
 
-    def process(self, coeffs: pd.DataFrame):
+    def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         coeffs["pcurve"] = coeffs.apply(lambda x: self.v_proto * x["icurve"], axis=1)
         coeffs["max_pos"] = coeffs.apply(lambda x: np.argmax(x["pcurve"]), axis=1)

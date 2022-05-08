@@ -14,7 +14,7 @@ with shpd.Reader(file) as shpr:
         out_file,
         mode=shpr.get_mode(),
         datatype=shpr.get_datatype(),
-        calibration_data=shpr.get_calibration_data(),
+        cal_data=shpr.get_calibration_data(),
     ) as shpw:
         shpr.resample(
             shpr.ds_time, shpw.ds_time, samplerate_dst=samplerate_sps, is_time=True

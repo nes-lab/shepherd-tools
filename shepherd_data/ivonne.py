@@ -1,35 +1,22 @@
-import math
+"""
+prototype of a file-reader with various converters
+to generate valid shepherd-data for emulation
+
+"""
 from typing import NoReturn
+from pathlib import Path
 import logging
+import pickle
+import math
+import errno
+import os
+
 import numpy as np
 import pandas as pd
-import pickle
-import scipy  # used for interpolation
-from pathlib import Path
 from tqdm import trange
 
 from . import Writer
-from .mppt import OptimalTracker, MPPTracker
-
-consoleHandler = logging.StreamHandler()
-
-
-def iv_model(v: np.ndarray, coeffs: pd.DataFrame):
-    """Simple diode based model of a solar panel IV curve.
-
-    Args:
-        :param v: Load voltage of the solar panel
-        :param coeffs: three generic coefficients
-
-    Returns:
-        Solar current at given load voltage
-    """
-    i = coeffs["a"] - coeffs["b"] * (np.exp(coeffs["c"] * v) - 1)
-    if hasattr(i, "__len__"):
-        i[i < 0] = 0
-    else:
-        i = max(0, i)
-    return i
+from .mppt import OptimalTracker, MPPTracker, iv_model
 
 
 def get_voc(coeffs: pd.DataFrame):
@@ -43,31 +30,37 @@ def get_isc(coeffs: pd.DataFrame):
 
 
 class Reader:
-    """ """
+    """ container for converters to shepherd-data
+
+    """
 
     samplerate_sps: int = 50
-    sample_interval_ns = int(10**9 // samplerate_sps)
+    sample_interval_ns: int = int(10**9 // samplerate_sps)
     sample_interval_s: float = 1 / samplerate_sps
 
-    logger = logging.getLogger("SHPData.IVonne.Reader")
+    runtime_s: float = None
+    file_size: int = None
+    data_rate: float = None
+
+    _df: pd.DataFrame = None
+
+    logger: logging.Logger = logging.getLogger("SHPData.IVonne.Reader")
 
     def __init__(
         self, file_path: Path, samplerate_sps: int = None, verbose: bool = True
     ):
-
         self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
-        # self.logger.addHandler(consoleHandler)
+
         self.file_path = Path(file_path)
         if samplerate_sps is not None:
             self.samplerate_sps = samplerate_sps
-        self.runtime_s = None
-        self.file_size = None
-        self.data_rate = None
 
     def __enter__(self):
-        with open(self.file_path, "rb") as f:
-            self._df = pickle.load(f)
-        self.refresh_file_stats()
+        if not self.file_path.exists():
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name)
+        with open(self.file_path, "rb") as ifr:
+            self._df = pickle.load(ifr)
+        self._refresh_file_stats()
         self.logger.info(
             "Reading data from '%s'\n"
             "\t- runtime = %s s\n"
@@ -83,7 +76,7 @@ class Reader:
     def __exit__(self, *exc):
         pass
 
-    def refresh_file_stats(self) -> NoReturn:
+    def _refresh_file_stats(self) -> NoReturn:
         self.runtime_s = round(self._df.shape[0] / self.samplerate_sps, 3)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
@@ -117,14 +110,14 @@ class Reader:
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
 
-        with Writer(shp_output, datatype="ivcurve", window_samples=pts_per_curve) as db:
+        with Writer(shp_output, datatype="ivcurve", window_samples=pts_per_curve) as sfw:
 
-            db.set_window_samples(pts_per_curve)
-            db.set_hostname("IVonne")
-            curve_interval_us = round(db.sample_interval_ns * pts_per_curve / 1000)
-            up_factor = self.sample_interval_ns // db.sample_interval_ns
-            max_elements = math.ceil(db.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc=f"generate ivcurves")
+            sfw.set_window_samples(pts_per_curve)
+            sfw.set_hostname("IVonne")
+            curve_interval_us = round(sfw.sample_interval_ns * pts_per_curve / 1000)
+            up_factor = self.sample_interval_ns // sfw.sample_interval_ns
+            max_elements = math.ceil(sfw.max_elements // up_factor)
+            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivcurves")
 
             for idx in job_iter:
                 df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
@@ -139,10 +132,10 @@ class Reader:
                     .iloc[:-1]
                 )
 
-                for sdx, coeffs in df_slice.iterrows():
+                for _, coeffs in df_slice.iterrows():
                     i_proto = iv_model(v_proto, coeffs)
 
-                    db.append_iv_data_si(coeffs["time"], v_proto, i_proto)
+                    sfw.append_iv_data_si(coeffs["time"], v_proto, i_proto)
                 # TODO: this could be a lot faster:
                 #   - use lambdas to generate i_proto
                 #   - convert i_proto with lambdas to raw-values
@@ -193,18 +186,19 @@ class Reader:
                 v_max,
             )
 
-        with Writer(shp_output, datatype="ivsample") as db:
+        with Writer(shp_output, datatype="ivsample") as sfw:
 
-            db.set_hostname("IVonne")
-            interval_us = round(db.sample_interval_ns / 1000)
-            up_factor = self.sample_interval_ns // db.sample_interval_ns
-            max_elements = math.ceil(db.max_elements // up_factor)
+            sfw.set_hostname("IVonne")
+            interval_us = round(sfw.sample_interval_ns / 1000)
+            up_factor = self.sample_interval_ns // sfw.sample_interval_ns
+            max_elements = math.ceil(sfw.max_elements // up_factor)
             job_iter = trange(
-                0, df_elements_n, max_elements, desc=f"generate ivsamples"
+                0, df_elements_n, max_elements, desc="generate ivsamples"
             )
 
             for idx in job_iter:
-                # select (max_elements + 1) elements, so upsampling is without gaps -> drop a sample at the end
+                # select (max_elements + 1) elements, so upsampling is without gaps
+                # -> drop a sample at the end
                 df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
@@ -221,7 +215,7 @@ class Reader:
                     .interpolate(method="cubic")
                     .iloc[:-1]
                 )
-                db.append_iv_data_si(
+                sfw.append_iv_data_si(
                     df_slice["time"].to_numpy(),
                     df_slice["v"].to_numpy(),
                     df_slice["i"].to_numpy(),
@@ -251,16 +245,17 @@ class Reader:
             self.logger.warning("%s already exists, will skip", shp_output.name)
             return
 
-        with Writer(shp_output, datatype="isc_voc") as db:
+        with Writer(shp_output, datatype="isc_voc") as sfw:
 
-            db.set_hostname("IVonne")
-            interval_us = round(db.sample_interval_ns / 1000)
-            up_factor = self.sample_interval_ns // db.sample_interval_ns
-            max_elements = math.ceil(db.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc=f"generate upsample")
+            sfw.set_hostname("IVonne")
+            interval_us = round(sfw.sample_interval_ns / 1000)
+            up_factor = self.sample_interval_ns // sfw.sample_interval_ns
+            max_elements = math.ceil(sfw.max_elements // up_factor)
+            job_iter = trange(0, df_elements_n, max_elements, desc="generate upsample")
 
             for idx in job_iter:
-                # select (max_elements + 1) elements, so upsampling is without gaps -> drop a sample at the end
+                # select (max_elements + 1) elements, so upsampling is without gaps
+                # -> drop a sample at the end
                 df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
@@ -277,7 +272,7 @@ class Reader:
                     .interpolate(method="cubic")
                     .iloc[:-1]
                 )
-                db.append_iv_data_si(
+                sfw.append_iv_data_si(
                     df_slice["time"].to_numpy(),
                     df_slice["voc"].to_numpy(),
                     df_slice["isc"].to_numpy(),

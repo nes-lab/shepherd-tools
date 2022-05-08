@@ -1,23 +1,25 @@
 """
 Reader-Baseclass
 """
-import math
-from datetime import datetime
-from typing import NoReturn, Union, Dict
 import logging
-
-import numpy as np
-from pathlib import Path
-import h5py
+import errno
+import math
+import os
+from datetime import datetime
 from itertools import product
+from pathlib import Path
+from typing import NoReturn, Union, Dict
 
-import samplerate  # TODO: test for now
 from matplotlib import pyplot as plt
 from scipy import signal
-
-import pandas as pd
-import yaml
 from tqdm import trange
+import h5py
+import yaml
+import numpy as np
+import pandas as pd
+import samplerate  # TODO: just a test-fn for now
+
+from .calibration import raw_to_si
 
 
 class Reader:
@@ -33,12 +35,16 @@ class Reader:
     sample_interval_ns: int = int(10**9 // samplerate_sps)
     sample_interval_s: float = 1 / samplerate_sps
 
-    max_elements: int = 100 * samplerate_sps  # per iteration (100s, ~ 300 MB RAM use)
+    max_elements: int = 40 * samplerate_sps  # per iteration (40s full res, < 200 MB RAM use)
 
     mode_type_dict = {
         "harvester": ["ivsample", "ivcurve", "isc_voc"],
         "emulator": ["ivsample"],
     }
+
+    runtime_s: float = None
+    file_size: int = None
+    data_rate: float = None
 
     logger: logging.Logger = logging.getLogger("SHPData.Reader")
 
@@ -55,20 +61,18 @@ class Reader:
         if verbose is not None:
             self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
-        self.runtime_s = None
-        self.file_size = None
-        self.data_rate = None
-
     def __enter__(self):
         if not self._skip_open:
+            if not self.file_path.exists():
+                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name)
             self.h5file = h5py.File(self.file_path, "r")
 
-        if self.is_valid():
-            self.logger.info("File is available now")
-        else:
-            self.logger.error(
-                "File is faulty! Will try to open but there might be dragons"
-            )
+            if self.is_valid():
+                self.logger.info("File is available now")
+            else:
+                self.logger.error(
+                    "File is faulty! Will try to open but there might be dragons"
+                )
 
         self.ds_time = self.h5file["data"]["time"]
         self.ds_voltage = self.h5file["data"]["voltage"]
@@ -83,7 +87,7 @@ class Reader:
                 "offset": self.ds_current.attrs["offset"],
             },
         }
-        self.refresh_file_stats()
+        self._refresh_file_stats()
 
         if not self._skip_open:
             self.logger.info(
@@ -111,7 +115,7 @@ class Reader:
             self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
         )
 
-    def refresh_file_stats(self) -> NoReturn:
+    def _refresh_file_stats(self) -> NoReturn:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
         if self.ds_time.shape[0] > 1:
@@ -154,12 +158,8 @@ class Reader:
             else:
                 yield (
                     self.ds_time[idx_start:idx_end] * 1e-9,
-                    self.raw_to_si(
-                        self.ds_voltage[idx_start:idx_end], self.cal["voltage"]
-                    ),
-                    self.raw_to_si(
-                        self.ds_current[idx_start:idx_end], self.cal["current"]
-                    ),
+                    raw_to_si(self.ds_voltage[idx_start:idx_end], self.cal["voltage"]),
+                    raw_to_si(self.ds_current[idx_start:idx_end], self.cal["current"]),
                 )
 
     def get_calibration_data(self) -> dict:
@@ -231,7 +231,8 @@ class Reader:
         return list(diffs)
 
     def check_timediffs(self) -> bool:
-        """validate equal time-deltas -> unexpected time-jumps hint at a corrupted file or faulty measurement
+        """validate equal time-deltas
+        -> unexpected time-jumps hint at a corrupted file or faulty measurement
 
         :return: True if OK
         """
@@ -294,7 +295,7 @@ class Reader:
                 "window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)"
             )
         # same length of datasets:
-        ds_time_size = self.ds_time.shape[0]
+        ds_time_size = self.h5file["data"]["time"].shape[0]
         for dset in ["current", "voltage"]:
             ds_size = self.h5file["data"][dset].shape[0]
             if ds_time_size != ds_size:
@@ -337,10 +338,10 @@ class Reader:
         :return: structure of that node with everything inside it
         """
         if node is None:
-            self.refresh_file_stats()
+            self._refresh_file_stats()
             return self.get_metadata(self.h5file, minimal=minimal)
 
-        metadata = {}
+        metadata: dict[str, dict] = {}
         if isinstance(node, h5py.Dataset) and not minimal:
             metadata["_dataset_info"] = {
                 "dtype": str(node.dtype),
@@ -352,7 +353,7 @@ class Reader:
             if "/data/time" == node.name:
                 metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
             elif "int" in str(node.dtype):
-                metadata["_dataset_info"]["statistics"] = self.ds_statistics(node)
+                metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
         for attr in node.attrs.keys():
             attr_value = node.attrs[attr]
             if isinstance(attr_value, str):
@@ -390,8 +391,8 @@ class Reader:
             self.logger.info("%s already exists, will skip", yml_path)
             return {}
         metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
-        with open(yml_path, "w") as fd:
-            yaml.safe_dump(metadata, fd, default_flow_style=False, sort_keys=False)
+        with open(yml_path, "w", encoding="utf-8-sig") as yfd:
+            yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
         return metadata
 
     def __getitem__(self, key):
@@ -405,34 +406,6 @@ class Reader:
         if key in self.h5file.keys():
             return self.h5file.__getitem__(key)
         raise KeyError
-
-    @staticmethod
-    def raw_to_si(
-        values_raw: Union[np.ndarray, float, int], cal: dict
-    ) -> Union[np.ndarray, float]:
-        """Helper to convert between physical units and raw uint values
-
-        :param values_raw: number or numpy array with raw values
-        :param cal: calibration-dict with entries for gain and offset
-        :return: converted number or array
-        """
-        values_si = values_raw * cal["gain"] + cal["offset"]
-        values_si[values_si < 0.0] = 0.0
-        return values_si
-
-    @staticmethod
-    def si_to_raw(
-        values_si: Union[np.ndarray, float], cal: dict
-    ) -> Union[np.ndarray, int]:
-        """Helper to convert between physical units and raw uint values
-
-        :param values_si: number or numpy array with values in physical units
-        :param cal: calibration-dict with entries for gain and offset
-        :return: converted number or array
-        """
-        values_raw = (values_si - cal["offset"]) / cal["gain"]
-        values_raw[values_raw < 0.0] = 0.0
-        return values_raw
 
     def energy(self) -> float:
         """determine the recorded energy of the trace
@@ -451,47 +424,47 @@ class Reader:
             disable=iterations < 8,
         )
 
-        def calc_energy(idx_start: int) -> float:
+        def _calc_energy(idx_start: int) -> float:
             idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
-            voltage_v = self.raw_to_si(
+            voltage_v = raw_to_si(
                 self.ds_voltage[idx_start:idx_stop], self.cal["voltage"]
             )
-            current_a = self.raw_to_si(
+            current_a = raw_to_si(
                 self.ds_current[idx_start:idx_stop], self.cal["current"]
             )
             return (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
 
-        energy_ws = [calc_energy(i) for i in job_iter]
+        energy_ws = [_calc_energy(i) for i in job_iter]
         return float(sum(energy_ws))
 
-    def ds_statistics(self, ds: h5py.Dataset, cal: dict = None) -> dict:
+    def _dset_statistics(self, dset: h5py.Dataset, cal: dict = None) -> dict:
         """some basic stats for a provided dataset
-        :param ds: dataset to evaluate
+        :param dset: dataset to evaluate
         :param cal: calibration (if wanted)
         :return: dict with entries for mean, min, max, std
         """
         if not isinstance(cal, dict):
-            if "gain" in ds.attrs.keys() and "offset" in ds.attrs.keys():
+            if "gain" in dset.attrs.keys() and "offset" in dset.attrs.keys():
                 cal = {
-                    "gain": ds.attrs["gain"],
-                    "offset": ds.attrs["offset"],
+                    "gain": dset.attrs["gain"],
+                    "offset": dset.attrs["offset"],
                     "si_converted": True,
                 }
             else:
                 cal = {"gain": 1, "offset": 0, "si_converted": False}
         else:
             cal["si_converted"] = True
-        iterations = math.ceil(ds.shape[0] / self.max_elements)
+        iterations = math.ceil(dset.shape[0] / self.max_elements)
         job_iter = trange(
             0,
-            ds.shape[0],
+            dset.shape[0],
             self.max_elements,
-            desc=f"{ds.name}-stats",
+            desc=f"{dset.name}-stats",
             leave=False,
             disable=iterations < 8,
         )
 
-        def calc_statistics(data: np.ndarray) -> dict:
+        def _calc_statistics(data: np.ndarray) -> dict:
             return {
                 "mean": np.mean(data),
                 "min": np.min(data),
@@ -500,7 +473,7 @@ class Reader:
             }
 
         stats_list = [
-            calc_statistics(self.raw_to_si(ds[i : i + self.max_elements], cal))
+            _calc_statistics(raw_to_si(dset[i: i + self.max_elements], cal))
             for i in job_iter
         ]
         if len(stats_list) < 1:
@@ -541,7 +514,7 @@ class Reader:
             for key in datasets
         ]
         header = separator.join(header)
-        with open(csv_path, "w") as csv_file:
+        with open(csv_path, "w", encoding="utf-8-sig") as csv_file:
             csv_file.write(header + "\n")
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
@@ -572,7 +545,7 @@ class Reader:
             for key in h5_group.keys()
         ]
         datasets.remove("time")
-        with open(log_path, "w") as log_file:
+        with open(log_path, "w", encoding="utf-8-sig") as log_file:
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
                 log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
@@ -613,7 +586,7 @@ class Reader:
         else:
             end_n = min(data_src.shape[0], round(end_n))
         start_n = min(end_n, round(start_n))
-        data_len = end_n - start_n  # TODO: one-off to calculation below
+        data_len = end_n - start_n  # TODO: one-off to calculation below ?
         if data_len == 0:
             self.logger.warning("downsampling failed because of data_len = 0")
         iblock_len = min(self.max_elements, data_len)
@@ -626,8 +599,9 @@ class Reader:
             data_dst.resize((dest_len,))
 
         # 8th order butterworth filter for downsampling
-        # note: cheby1 does not work well for static outputs (2.8V can become 2.0V for buck-converters)
-        flt = signal.iirfilter(
+        # note: cheby1 does not work well for static outputs
+        # (2.8V can become 2.0V for constant buck-converters)
+        filter_ = signal.iirfilter(
             N=8,
             Wn=1 / max(1.1, ds_factor),
             btype="lowpass",
@@ -635,10 +609,10 @@ class Reader:
             ftype="butter",
         )
         # filter state
-        z = np.zeros((flt.shape[0], 2))
+        f_state = np.zeros((filter_.shape[0], 2))
 
         slice_len = 0
-        for i in trange(
+        for _iter in trange(
             0,
             iterations,
             desc=f"downsampling {data_src.name}",
@@ -646,13 +620,15 @@ class Reader:
             disable=iterations < 8,
         ):
             slice_ds = data_src[
-                start_n + i * iblock_len : start_n + (i + 1) * iblock_len
+                start_n + _iter * iblock_len : start_n + (_iter + 1) * iblock_len
             ]
             if not is_time and ds_factor > 1:
-                slice_ds, z = signal.sosfilt(flt, slice_ds, zi=z)
+                slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
             slice_ds = slice_ds[::ds_factor]
-            slice_len = min(dest_len - i * oblock_len, oblock_len)
-            data_dst[i * oblock_len : (i + 1) * oblock_len] = slice_ds[:slice_len]
+            slice_len = min(dest_len - _iter * oblock_len, oblock_len)
+            data_dst[_iter * oblock_len : (_iter + 1) * oblock_len] = slice_ds[
+                :slice_len
+            ]
         if isinstance(data_dst, np.ndarray):
             data_dst.resize(
                 (oblock_len * (iterations - 1) + slice_len,), refcheck=False
@@ -733,7 +709,7 @@ class Reader:
                 "sinc_medium",
                 channels=1,
             )  # sinc_best, _medium, _fastest or linear
-            for i in trange(
+            for _iter in trange(
                 0,
                 iterations,
                 desc=f"resampling {data_src.name}",
@@ -743,9 +719,10 @@ class Reader:
                 slice_inp_ds = data_src[slice_inp_now : slice_inp_now + slice_inp_len]
                 slice_inp_now += slice_inp_len
                 slice_out_ds = resampler.process(
-                    slice_inp_ds, fs_ratio, i == iterations - 1, verbose=True
+                    slice_inp_ds, fs_ratio, _iter == iterations - 1, verbose=True
                 )
-                # slice_out_ds = resampy.resample(slice_inp_ds, self.samplerate_sps, samplerate_dst, filter="kaiser_fast")
+                # slice_out_ds = resampy.resample(slice_inp_ds, self.samplerate_sps,
+                #                                 samplerate_dst, filter="kaiser_fast")
                 slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
                 # print(f"@{i}: got {slice_out_ds.shape[0]}")
                 data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
@@ -785,13 +762,13 @@ class Reader:
                 self.ds_time, None, start_sample, end_sample, ds_factor, is_time=True
             ).astype(float)
             * 1e-9,
-            "voltage": self.raw_to_si(
+            "voltage": raw_to_si(
                 self.downsample(
                     self.ds_voltage, None, start_sample, end_sample, ds_factor
                 ),
                 self.cal["voltage"],
             ),
-            "current": self.raw_to_si(
+            "current": raw_to_si(
                 self.downsample(
                     self.ds_current, None, start_sample, end_sample, ds_factor
                 ),
@@ -811,7 +788,8 @@ class Reader:
         """
         TODO: add power (if wanted)
 
-        :param data: plottable / down-sampled iv-data with some meta-data -> created with generate_plot_data()
+        :param data: plottable / down-sampled iv-data with some meta-data
+                -> created with generate_plot_data()
         :param width: plot-width
         :param height: plot-height
         :return:
@@ -819,7 +797,7 @@ class Reader:
         if isinstance(data, dict):
             data = [data]
         fig, axes = plt.subplots(2, 1, sharex="all")
-        fig.suptitle(f"Voltage and current")
+        fig.suptitle("Voltage and current")
         for date in data:
             axes[0].plot(date["time"], date["voltage"], label=date["name"])
             axes[1].plot(date["time"], date["current"] * 10**6, label=date["name"])
@@ -869,7 +847,8 @@ class Reader:
     ) -> NoReturn:
         """creates (down-sampled) IV-Multi-Plot
 
-        :param data: plottable / down-sampled iv-data with some meta-data -> created with generate_plot_data()
+        :param data: plottable / down-sampled iv-data with some meta-data
+            -> created with generate_plot_data()
         :param plot_path: optional
         :param width: plot-width
         :param height: plot-height

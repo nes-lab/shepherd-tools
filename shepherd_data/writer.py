@@ -2,16 +2,17 @@
 Writer that inherits from Reader-Baseclass
 """
 import math
-from typing import NoReturn, Union, Dict
 import logging
+from itertools import product
+from pathlib import Path
+from typing import NoReturn, Union
 
 import numpy as np
-from pathlib import Path
 import h5py
-from itertools import product
 import yaml
 
 from .reader import Reader
+from .calibration import cal_default, si_to_raw
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
@@ -29,14 +30,6 @@ def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
         counter += 1
 
 
-# SI-value [SI-Unit] = raw-value * gain + offset
-general_calibration = {
-    "voltage": {"gain": 3 * 1e-9, "offset": 0.0},  # allows 0 - 12 V in 3 nV-Steps
-    "current": {"gain": 250 * 1e-12, "offset": 0.0},  # allows 0 - 1 A in 250 pA - Steps
-    "time": {"gain": 1e-9, "offset": 0.0},
-}
-
-
 class Writer(Reader):
     """Stores data for Shepherd in HDF5 format
 
@@ -45,23 +38,25 @@ class Writer(Reader):
         mode: (str) Indicates if this is data from harvester or emulator
         datatype: (str) choose type: ivsample (most common), ivcurve or isc_voc
         window_samples: (int) windows size for the datatype ivcurve
-        calibration_data: (CalibrationData) Data is written as raw ADC
+        cal_data: (CalibrationData) Data is written as raw ADC
             values. We need calibration data in order to convert to physical
             units later.
-        modify_existing: (bool) explicitly enable modifying, another file (unique name) will be created otherwise
+        modify_existing: (bool) explicitly enable modifying existing file
+            otherwise a unique name will be found
         compression: (str) use either None, lzf or "1" (gzips compression level)
         verbose: (bool) provides more info instead of just warnings / errors
     """
 
     # choose lossless compression filter
-    # - lzf: low to moderate compression, VERY fast, no options -> 20 % cpu overhead for half the filesize
-    # - gzip: good compression, moderate speed, select level from 1-9, default is 4 -> lower levels seem fine
-    #         --> _algo=number instead of "gzip" is read as compression level for gzip
+    # - lzf:  low to moderate compression, VERY fast, no options
+    #         -> 20 % cpu overhead for half the filesize
+    # - gzip: good compression, moderate speed, select level from 1-9, default is 4
+    #         -> lower levels seem fine
+    #         -> _algo=number instead of "gzip" is read as compression level for gzip
     # -> comparison / benchmarks https://www.h5py.org/lzf/
     comp_default = 1
     mode_default: str = "harvester"
     datatype_default: str = "ivsample"
-    cal_default: dict[str, dict] = general_calibration
 
     chunk_shape: tuple = (Reader.samples_per_buffer,)
 
@@ -73,7 +68,7 @@ class Writer(Reader):
         mode: str = None,
         datatype: str = None,
         window_samples: int = None,
-        calibration_data: dict = None,
+        cal_data: dict = None,
         modify_existing: bool = False,
         compression: Union[None, str, int] = "default",
         verbose: Union[bool, None] = True,
@@ -114,14 +109,12 @@ class Writer(Reader):
 
         if self._modify:
             self.mode = mode
-            self.cal = calibration_data
+            self.cal = cal_data
             self.datatype = datatype
             self.window_samples = window_samples
         else:
             self.mode = self.mode_default if (mode is None) else mode
-            self.cal = (
-                self.cal_default if (calibration_data is None) else calibration_data
-            )
+            self.cal = cal_default if (cal_data is None) else cal_data
             self.datatype = self.datatype_default if (datatype is None) else datatype
             self.window_samples = 0 if (window_samples is None) else window_samples
 
@@ -146,15 +139,14 @@ class Writer(Reader):
         else:
             self.h5file = h5py.File(self.file_path, "w")
 
-            # Store voltage and current samples in the data group, both are stored as 4 Byte unsigned int
-            self.data_grp = self.h5file.create_group("data")
+            # Store voltage and current samples in the data group,
+            # both are stored as 4 Byte unsigned int
+            gp_data = self.h5file.create_group("data")
             # the size of window_samples-attribute in harvest-data indicates ivcurves as input
-            # -> emulator uses virtual-harvester
-            self.data_grp.attrs[
-                "window_samples"
-            ] = 0  # will be adjusted by .embed_config()
+            # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
+            gp_data.attrs["window_samples"] = 0
 
-            self.data_grp.create_dataset(
+            gp_data.create_dataset(
                 "time",
                 (0,),
                 dtype="u8",
@@ -162,10 +154,10 @@ class Writer(Reader):
                 chunks=self.chunk_shape,
                 compression=self.compression_algo,
             )
-            self.data_grp["time"].attrs["unit"] = "ns"
-            self.data_grp["time"].attrs["description"] = "system time [ns]"
+            gp_data["time"].attrs["unit"] = "ns"
+            gp_data["time"].attrs["description"] = "system time [ns]"
 
-            self.data_grp.create_dataset(
+            gp_data.create_dataset(
                 "current",
                 (0,),
                 dtype="u4",
@@ -173,12 +165,12 @@ class Writer(Reader):
                 chunks=self.chunk_shape,
                 compression=self.compression_algo,
             )
-            self.data_grp["current"].attrs["unit"] = "A"
-            self.data_grp["current"].attrs[
+            gp_data["current"].attrs["unit"] = "A"
+            gp_data["current"].attrs[
                 "description"
             ] = "current [A] = value * gain + offset"
 
-            self.data_grp.create_dataset(
+            gp_data.create_dataset(
                 "voltage",
                 (0,),
                 dtype="u4",
@@ -186,8 +178,8 @@ class Writer(Reader):
                 chunks=self.chunk_shape,
                 compression=self.compression_algo,
             )
-            self.data_grp["voltage"].attrs["unit"] = "V"
-            self.data_grp["voltage"].attrs[
+            gp_data["voltage"].attrs["unit"] = "V"
+            gp_data["voltage"].attrs[
                 "description"
             ] = "voltage [V] = value * gain + offset"
 
@@ -219,7 +211,7 @@ class Writer(Reader):
 
     def __exit__(self, *exc):
         self._align()
-        self.refresh_file_stats()
+        self._refresh_file_stats()
         self.logger.info(
             "closing hdf5 file, %s s iv-data, size = %s MiB, rate = %s KiB/s",
             self.runtime_s,
@@ -265,7 +257,7 @@ class Writer(Reader):
         # append new data
         self.ds_time[len_old : len_old + len_new] = timestamp_ns[:len_new]
         self.ds_voltage[len_old : len_old + len_new] = voltage[:len_new]
-        self.ds_current[len_old: len_old + len_new] = current[:len_new]
+        self.ds_current[len_old : len_old + len_new] = current[:len_new]
 
     def append_iv_data_si(
         self,
@@ -276,19 +268,20 @@ class Writer(Reader):
         """Writes data (in SI / physical unit) to file, but converts it to raw-data first
 
         Args:
-            timestamp: python timestamp (time.time()) in seconds (si-unit) -> just start of buffer or whole ndarray
+            timestamp: python timestamp (time.time()) in seconds (si-unit)
+                       -> provide start of buffer or whole ndarray
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
         """
         # SI-value [SI-Unit] = raw-value * gain + offset,
         timestamp = timestamp * 10**9
-        voltage = self.si_to_raw(voltage, self.cal["voltage"])
-        current = self.si_to_raw(current, self.cal["current"])
+        voltage = si_to_raw(voltage, self.cal["voltage"])
+        current = si_to_raw(current, self.cal["current"])
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def _align(self) -> NoReturn:
         """Align datasets with buffer-size of shepherd"""
-        self.refresh_file_stats()
+        self._refresh_file_stats()
         n_buff = self.ds_time.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
         if size_new < self.ds_time.size:
@@ -304,7 +297,7 @@ class Writer(Reader):
             self.ds_current.resize((size_new,))
 
     def __setitem__(self, key, item):
-        """Offer a convenient interface to store any relevant key-value data (attribute) of H5-file-structure"""
+        """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
         return self.h5file.attrs.__setitem__(key, item)
 
     def set_config(self, data: dict) -> NoReturn:
@@ -317,7 +310,16 @@ class Writer(Reader):
             self.set_window_samples(data["window_samples"])
 
     def set_window_samples(self, samples: int = 0) -> NoReturn:
+        """parameter essential for ivcurves
+
+        :param samples: length of window / voltage sweep
+        """
         self.h5file["data"].attrs["window_samples"] = samples
 
     def set_hostname(self, name: str) -> NoReturn:
+        """option to distinguish the host, target or data-source in the testbed
+            -> perfect for plotting later
+
+        :param name: something unique, or "artificial" in case of generated content
+        """
         self.h5file.attrs["hostname"] = name

@@ -21,7 +21,7 @@ requirements = [
 
 setup(
     name="shepherd_data",
-    version="2022.5.1",  # year.month.sub
+    version="2022.5.2",  # year.month.sub
     description="Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed",
     long_description=README,
     long_description_content_type="text/markdown",
