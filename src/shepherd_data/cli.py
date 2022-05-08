@@ -2,13 +2,13 @@
 Command definitions for CLI
 """
 import os
+import sys
 import logging
 from pathlib import Path
 from typing import NoReturn
 
 import click
-from . import Writer, Reader
-
+from . import Writer, Reader, __version__
 
 logger = logging.getLogger("SHPData.cli")
 verbose_level = 2
@@ -64,6 +64,9 @@ def cli(ctx, verbose: int):
         verbose:
     """
     config_logger(verbose)
+    logger.info("Shepherd-Data Version: %s", __version__)
+    logger.debug("Python Version: %s", sys.version)
+    logger.debug("Click Version: %s", click.__version__)
     if not ctx.invoked_subcommand:
         click.echo("Please specify a command")
 
@@ -288,8 +291,4 @@ def plot(in_data, start: float, end: float, width: int, height: int, multiplot: 
 
 
 if __name__ == "__main__":
-    import sys
-
     print("This File should not be executed like this ...")
-    print(f"Python Version: {sys.version}")
-    print(f"Click Version: {format(click.__version__)}")

@@ -8,34 +8,47 @@ This Python Module eases the handling of hdf5-recordings used by the [shepherd](
 
 ### Installation
 
-#### Via PIP
+#### PIP - Online
 
-`pip3 install shepherd-data`
+```Shell
+pip3 install shepherd-data
+```
 
-#### Manual
+#### PIP - Offline
+
+- clone repository
+- navigate shell into directory
+- install local module
+
+```Shell
+git clone https://github.com/orgua/shepherd-datalib
+cd .\shepherd-datalib
+
+pip3 install -e ./
+```
+
+#### PipEnv - Manual
 
 - clone repository
 - navigate shell into directory
 - activate and update pipenv (optional) 
-  - for developers: add special packages
+  - for developers: add special packages with `-d` switch: `pipenv install -d ./`
 - install module
 
-```
+```Shell
 git clone https://github.com/orgua/shepherd-datalib
 cd .\shepherd-datalib
 
 pipenv shell
 pipenv update
-pipenv install -d
-
-python setup.py install
+pipenv install ./
 ```
 
 ### Programming Interface
 
 #### Basic Usage (recommendation)
 
-```
+```Python
 import shepherd_data as shpd
 
 with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
@@ -87,7 +100,7 @@ After installing the module the datalib offers some often needed functionality o
 
 - takes a file or directory as an argument
 
-```
+```Shell
 shepherd-data validate dir_or_file
 
 # examples:
@@ -100,7 +113,7 @@ shepherd-data validate hrv_saw_1h.h5
 - takes a file or directory as an argument
 - can take down-sample-factor as an argument
 
-```
+```Shell
 shepherd-data extract dir_or_file [-f ds_factor] [-s separator_symbol]
 
 # examples:
@@ -112,7 +125,7 @@ shepherd-data extract hrv_saw_1h.h5 -f 1000 -s;
 
 - takes a file or directory as an argument
 
-```
+```Shell
 shepherd-data extract-meta dir_or_file
 
 # examples:
@@ -126,7 +139,7 @@ shepherd-data extract-meta hrv_saw_1h.h5
 - can take start- and end-time as an argument
 - can take image-width and -height as an argument
 
-```
+```Shell
 shepherd-data plot dir_or_file [-s start_time] [-e end_time] [-w plot_width] [-h plot_height] [--multiplot]
 
 # examples:
@@ -140,7 +153,7 @@ shepherd-data plot hrv_saw_1h.h5 -s10 -e20
 - takes a file or directory as an argument
 - can take down-sample-factor as an argument
 
-```
+```Shell
 shepherd-data downsample dir_or_file [-f ds_factor]
 
 # examples:
