@@ -30,7 +30,7 @@ def test_convert_ivonne(tmp_path, example_path):
 
     energies = {}
     for file_path in [isc_path, ivc_path, voc_path, opt_path]:
-        with Reader(isc_path) as sfr:
+        with Reader(file_path) as sfr:
             assert sfr.runtime_s == 20
             energies[file_path.stem[-3:]] = sfr.energy()
 
