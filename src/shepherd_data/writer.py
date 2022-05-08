@@ -54,13 +54,13 @@ class Writer(Reader):
     #         -> lower levels seem fine
     #         -> _algo=number instead of "gzip" is read as compression level for gzip
     # -> comparison / benchmarks https://www.h5py.org/lzf/
-    comp_default = 1
-    mode_default: str = "harvester"
-    datatype_default: str = "ivsample"
+    _comp_default = 1
+    _mode_default: str = "harvester"
+    _datatype_default: str = "ivsample"
 
-    chunk_shape: tuple = (Reader.samples_per_buffer,)
+    _chunk_shape: tuple = (Reader.samples_per_buffer,)
 
-    logger: logging.Logger = logging.getLogger("SHPData.Writer")
+    _logger: logging.Logger = logging.getLogger("SHPData.Writer")
 
     def __init__(
         self,
@@ -79,23 +79,23 @@ class Writer(Reader):
         self._modify = modify_existing
 
         if verbose is not None:
-            self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
+            self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
         if self._modify or not file_path.exists():
-            self.file_path = file_path
-            self.logger.info("Storing data to   '%s'", self.file_path)
+            self._file_path = file_path
+            self._logger.info("Storing data to   '%s'", self._file_path)
         else:
             base_dir = file_path.resolve().parents[0]
-            self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
-            self.logger.warning(
+            self._file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
+            self._logger.warning(
                 "File %s already exists -> " "storing under %s instead",
                 file_path,
-                self.file_path.name,
+                self._file_path.name,
             )
 
         if not isinstance(mode, (str, type(None))):
             raise TypeError(f"can not handle type '{type(mode)}' for mode")
-        if isinstance(mode, str) and mode not in self.mode_type_dict:
+        if isinstance(mode, str) and mode not in self._mode_type_dict:
             raise ValueError(f"can not handle mode '{mode}'")
 
         if not isinstance(datatype, (str, type(None))):
@@ -103,25 +103,25 @@ class Writer(Reader):
         if (
             isinstance(datatype, str)
             and datatype
-            not in self.mode_type_dict[self.mode_default if (mode is None) else mode]
+            not in self._mode_type_dict[self._mode_default if (mode is None) else mode]
         ):
             raise ValueError(f"can not handle datatype '{datatype}'")
 
         if self._modify:
-            self.mode = mode
-            self.cal = cal_data
-            self.datatype = datatype
-            self.window_samples = window_samples
+            self._mode = mode
+            self._cal = cal_data
+            self._datatype = datatype
+            self._window_samples = window_samples
         else:
-            self.mode = self.mode_default if (mode is None) else mode
-            self.cal = cal_default if (cal_data is None) else cal_data
-            self.datatype = self.datatype_default if (datatype is None) else datatype
-            self.window_samples = 0 if (window_samples is None) else window_samples
+            self._mode = self._mode_default if (mode is None) else mode
+            self._cal = cal_default if (cal_data is None) else cal_data
+            self._datatype = self._datatype_default if (datatype is None) else datatype
+            self._window_samples = 0 if (window_samples is None) else window_samples
 
         if compression in [None, "lzf", 1]:  # order of recommendation
-            self.compression_algo = compression
+            self._compression_algo = compression
         else:
-            self.compression_algo = self.comp_default
+            self._compression_algo = self._comp_default
 
     def __enter__(self):
         """Initializes the structure of the HDF5 file
@@ -135,9 +135,9 @@ class Writer(Reader):
 
         """
         if self._modify:
-            self.h5file = h5py.File(self.file_path, "r+")
+            self.h5file = h5py.File(self._file_path, "r+")
         else:
-            self.h5file = h5py.File(self.file_path, "w")
+            self.h5file = h5py.File(self._file_path, "w")
 
             # Store voltage and current samples in the data group,
             # both are stored as 4 Byte unsigned int
@@ -151,8 +151,8 @@ class Writer(Reader):
                 (0,),
                 dtype="u8",
                 maxshape=(None,),
-                chunks=self.chunk_shape,
-                compression=self.compression_algo,
+                chunks=self._chunk_shape,
+                compression=self._compression_algo,
             )
             gp_data["time"].attrs["unit"] = "ns"
             gp_data["time"].attrs["description"] = "system time [ns]"
@@ -162,8 +162,8 @@ class Writer(Reader):
                 (0,),
                 dtype="u4",
                 maxshape=(None,),
-                chunks=self.chunk_shape,
-                compression=self.compression_algo,
+                chunks=self._chunk_shape,
+                compression=self._compression_algo,
             )
             gp_data["current"].attrs["unit"] = "A"
             gp_data["current"].attrs[
@@ -175,8 +175,8 @@ class Writer(Reader):
                 (0,),
                 dtype="u4",
                 maxshape=(None,),
-                chunks=self.chunk_shape,
-                compression=self.compression_algo,
+                chunks=self._chunk_shape,
+                compression=self._compression_algo,
             )
             gp_data["voltage"].attrs["unit"] = "V"
             gp_data["voltage"].attrs[
@@ -184,25 +184,25 @@ class Writer(Reader):
             ] = "voltage [V] = value * gain + offset"
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
-        if isinstance(self.mode, str) and self.mode in self.mode_type_dict:
-            self.h5file.attrs["mode"] = self.mode
+        if isinstance(self._mode, str) and self._mode in self._mode_type_dict:
+            self.h5file.attrs["mode"] = self._mode
 
         if (
-            isinstance(self.datatype, str)
-            and self.datatype in self.mode_type_dict[self.get_mode()]
+            isinstance(self._datatype, str)
+            and self._datatype in self._mode_type_dict[self.get_mode()]
         ):
-            self.h5file["data"].attrs["datatype"] = self.datatype
+            self.h5file["data"].attrs["datatype"] = self._datatype
         elif not self._modify:
-            self.logger.error("datatype invalid? '%s' not written", self.datatype)
+            self._logger.error("datatype invalid? '%s' not written", self._datatype)
 
-        if isinstance(self.window_samples, int):
-            self.h5file["data"].attrs["window_samples"] = self.window_samples
+        if isinstance(self._window_samples, int):
+            self.h5file["data"].attrs["window_samples"] = self._window_samples
 
-        if self.cal is not None:
+        if self._cal is not None:
             for channel, parameter in product(
                 ["current", "voltage"], ["gain", "offset"]
             ):
-                self.h5file["data"][channel].attrs[parameter] = self.cal[channel][
+                self.h5file["data"][channel].attrs[parameter] = self._cal[channel][
                     parameter
                 ]
 
@@ -212,7 +212,7 @@ class Writer(Reader):
     def __exit__(self, *exc):
         self._align()
         self._refresh_file_stats()
-        self.logger.info(
+        self._logger.info(
             "closing hdf5 file, %s s iv-data, size = %s MiB, rate = %s KiB/s",
             self.runtime_s,
             round(self.file_size / 2**20, 3),
@@ -244,7 +244,7 @@ class Writer(Reader):
         if isinstance(timestamp_ns, np.ndarray):
             len_new = min(len_new, timestamp_ns.size)
         else:
-            self.logger.error("timestamp-data was not usable")
+            self._logger.error("timestamp-data was not usable")
             return
 
         len_old = self.ds_time.shape[0]
@@ -255,9 +255,9 @@ class Writer(Reader):
         self.ds_current.resize((len_old + len_new,))
 
         # append new data
-        self.ds_time[len_old : len_old + len_new] = timestamp_ns[:len_new]
-        self.ds_voltage[len_old : len_old + len_new] = voltage[:len_new]
-        self.ds_current[len_old : len_old + len_new] = current[:len_new]
+        self.ds_time[len_old: len_old + len_new] = timestamp_ns[:len_new]
+        self.ds_voltage[len_old: len_old + len_new] = voltage[:len_new]
+        self.ds_current[len_old: len_old + len_new] = current[:len_new]
 
     def append_iv_data_si(
         self,
@@ -275,8 +275,8 @@ class Writer(Reader):
         """
         # SI-value [SI-Unit] = raw-value * gain + offset,
         timestamp = timestamp * 10**9
-        voltage = si_to_raw(voltage, self.cal["voltage"])
-        current = si_to_raw(current, self.cal["current"])
+        voltage = si_to_raw(voltage, self._cal["voltage"])
+        current = si_to_raw(current, self._cal["current"])
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def _align(self) -> NoReturn:
@@ -286,9 +286,9 @@ class Writer(Reader):
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
         if size_new < self.ds_time.size:
             if self.samplerate_sps < 95_000:
-                self.logger.debug("skipped alignment due to altered samplerate")
+                self._logger.debug("skipped alignment due to altered samplerate")
                 return
-            self.logger.info(
+            self._logger.info(
                 "aligning with buffer-size, discarding last %s entries",
                 self.ds_time.size - size_new,
             )

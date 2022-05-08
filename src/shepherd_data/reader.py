@@ -37,7 +37,7 @@ class Reader:
 
     max_elements: int = 40 * samplerate_sps  # per iteration (40s full res, < 200 MB RAM use)
 
-    mode_type_dict = {
+    _mode_type_dict = {
         "harvester": ["ivsample", "ivcurve", "isc_voc"],
         "emulator": ["ivsample"],
     }
@@ -46,38 +46,38 @@ class Reader:
     file_size: int = None
     data_rate: float = None
 
-    logger: logging.Logger = logging.getLogger("SHPData.Reader")
+    _logger: logging.Logger = logging.getLogger("SHPData.Reader")
 
     h5file: h5py.File = None
     ds_time: h5py.Dataset = None
     ds_voltage: h5py.Dataset = None
     ds_current: h5py.Dataset = None
-    cal: dict[str, dict] = None
+    _cal: dict[str, dict] = None
 
     def __init__(self, file_path: Union[Path, None], verbose: Union[bool, None] = True):
         self._skip_open = file_path is None  # for access by writer-class
         if not self._skip_open:
-            self.file_path = Path(file_path)
+            self._file_path = Path(file_path)
         if verbose is not None:
-            self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
+            self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
     def __enter__(self):
         if not self._skip_open:
-            if not self.file_path.exists():
-                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name)
-            self.h5file = h5py.File(self.file_path, "r")
+            if not self._file_path.exists():
+                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self._file_path.name)
+            self.h5file = h5py.File(self._file_path, "r")
 
             if self.is_valid():
-                self.logger.info("File is available now")
+                self._logger.info("File is available now")
             else:
-                self.logger.error(
+                self._logger.error(
                     "File is faulty! Will try to open but there might be dragons"
                 )
 
         self.ds_time = self.h5file["data"]["time"]
         self.ds_voltage = self.h5file["data"]["voltage"]
         self.ds_current = self.h5file["data"]["current"]
-        self.cal = {
+        self._cal = {
             "voltage": {
                 "gain": self.ds_voltage.attrs["gain"],
                 "offset": self.ds_voltage.attrs["offset"],
@@ -90,14 +90,14 @@ class Reader:
         self._refresh_file_stats()
 
         if not self._skip_open:
-            self.logger.info(
+            self._logger.info(
                 "Reading data from '%s'\n"
                 "\t- runtime %s s\n"
                 "\t- mode = %s\n"
                 "\t- window_size = %s\n"
                 "\t- size = %s MiB\n"
                 "\t- rate = %s KiB/s",
-                self.file_path,
+                self._file_path,
                 self.runtime_s,
                 self.get_mode(),
                 self.get_window_samples(),
@@ -123,7 +123,7 @@ class Reader:
             self.samplerate_sps = int(10**9 // self.sample_interval_ns)
             self.sample_interval_s = 1.0 / self.samplerate_sps
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
-        self.file_size = self.file_path.stat().st_size
+        self.file_size = self._file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
     def read_buffers(
@@ -141,7 +141,7 @@ class Reader:
         """
         if end_n is None:
             end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)
-        self.logger.debug(
+        self._logger.debug(
             "Reading blocks from %s to %s from source-file", start_n, end_n
         )
         _raw = is_raw
@@ -158,8 +158,8 @@ class Reader:
             else:
                 yield (
                     self.ds_time[idx_start:idx_end] * 1e-9,
-                    raw_to_si(self.ds_voltage[idx_start:idx_end], self.cal["voltage"]),
-                    raw_to_si(self.ds_current[idx_start:idx_end], self.cal["current"]),
+                    raw_to_si(self.ds_voltage[idx_start:idx_end], self._cal["voltage"]),
+                    raw_to_si(self.ds_current[idx_start:idx_end], self._cal["current"]),
                 )
 
     def get_calibration_data(self) -> dict:
@@ -167,7 +167,7 @@ class Reader:
 
         :return: Calibration data as CalibrationData object
         """
-        return self.cal
+        return self._cal
 
     def get_window_samples(self) -> int:
         """
@@ -215,7 +215,7 @@ class Reader:
 
         def calc_timediffs(idx_start: int) -> list:
             ds_time = self.ds_time[
-                idx_start : (idx_start + self.max_elements) : self.samples_per_buffer
+                      idx_start: (idx_start + self.max_elements): self.samples_per_buffer
             ]
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
             return list(np.array(diffs_np))
@@ -238,7 +238,7 @@ class Reader:
         """
         diffs = self.data_timediffs()
         if len(diffs) > 1:
-            self.logger.warning(
+            self._logger.warning(
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
             )
         return len(diffs) <= 1
@@ -250,33 +250,33 @@ class Reader:
         """
         # hard criteria
         if "data" not in self.h5file.keys():
-            self.logger.error("root data-group not found (@Validator)")
+            self._logger.error("root data-group not found (@Validator)")
             return False
         for attr in ["mode"]:
             if attr not in self.h5file.attrs.keys():
-                self.logger.error("attribute '%s' not found in file (@Validator)", attr)
+                self._logger.error("attribute '%s' not found in file (@Validator)", attr)
                 return False
-            if self.h5file.attrs["mode"] not in self.mode_type_dict:
-                self.logger.error("unsupported mode '%s' (@Validator)", attr)
+            if self.h5file.attrs["mode"] not in self._mode_type_dict:
+                self._logger.error("unsupported mode '%s' (@Validator)", attr)
                 return False
         for attr in ["window_samples", "datatype"]:
             if attr not in self.h5file["data"].attrs.keys():
-                self.logger.error(
+                self._logger.error(
                     "attribute '%s' not found in data-group (@Validator)", attr
                 )
                 return False
         for dset in ["time", "current", "voltage"]:
             if dset not in self.h5file["data"].keys():
-                self.logger.error("dataset '%s' not found (@Validator)", dset)
+                self._logger.error("dataset '%s' not found (@Validator)", dset)
                 return False
         for dset, attr in product(["current", "voltage"], ["gain", "offset"]):
             if attr not in self.h5file["data"][dset].attrs.keys():
-                self.logger.error(
+                self._logger.error(
                     "attribute '%s' not found in dataset '%s' (@Validator)", attr, dset
                 )
                 return False
-        if self.get_datatype() not in self.mode_type_dict[self.get_mode()]:
-            self.logger.error(
+        if self.get_datatype() not in self._mode_type_dict[self.get_mode()]:
+            self._logger.error(
                 "unsupported type '%s' for mode '%s' (@Validator)",
                 self.get_datatype(),
                 self.get_mode(),
@@ -284,14 +284,14 @@ class Reader:
             return False
 
         if self.get_datatype() == "ivcurve" and self.get_window_samples() < 1:
-            self.logger.error(
+            self._logger.error(
                 "window size / samples is < 1 -> invalid for ivcurves-datatype (@Validator)"
             )
             return False
 
         # soft-criteria:
         if self.get_datatype() != "ivcurve" and self.get_window_samples() > 0:
-            self.logger.warning(
+            self._logger.warning(
                 "window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)"
             )
         # same length of datasets:
@@ -299,7 +299,7 @@ class Reader:
         for dset in ["current", "voltage"]:
             ds_size = self.h5file["data"][dset].shape[0]
             if ds_time_size != ds_size:
-                self.logger.warning(
+                self._logger.warning(
                     "dataset '%s' has different size (=%s), "
                     "compared to time-ds (=%s) (@Validator)",
                     dset,
@@ -309,7 +309,7 @@ class Reader:
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
-            self.logger.warning(
+            self._logger.warning(
                 "datasets are not aligned with buffer-size (@Validator)"
             )
         # check compression
@@ -317,17 +317,17 @@ class Reader:
             comp = self.h5file["data"][dset].compression
             opts = self.h5file["data"][dset].compression_opts
             if comp not in [None, "gzip", "lzf"]:
-                self.logger.warning(
+                self._logger.warning(
                     "unsupported compression found (%s != None, lzf, gzip) (@Validator)",
                     comp,
                 )
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
-                self.logger.warning(
+                self._logger.warning(
                     "gzip compression is too high (%s > 1) for BBone (@Validator)", opts
                 )
         # host-name
         if self.get_hostname() == "unknown":
-            self.logger.warning("Hostname was not set (@Validator)")
+            self._logger.warning("Hostname was not set (@Validator)")
         return True
 
     def get_metadata(self, node=None, minimal: bool = False) -> dict:
@@ -386,9 +386,9 @@ class Reader:
         :param node: starting node, leave free to go through whole file
         :return: structure of that node with everything inside it
         """
-        yml_path = Path(self.file_path).absolute().with_suffix(".yml")
+        yml_path = Path(self._file_path).absolute().with_suffix(".yml")
         if yml_path.exists():
-            self.logger.info("%s already exists, will skip", yml_path)
+            self._logger.info("%s already exists, will skip", yml_path)
             return {}
         metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
         with open(yml_path, "w", encoding="utf-8-sig") as yfd:
@@ -427,10 +427,10 @@ class Reader:
         def _calc_energy(idx_start: int) -> float:
             idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
             voltage_v = raw_to_si(
-                self.ds_voltage[idx_start:idx_stop], self.cal["voltage"]
+                self.ds_voltage[idx_start:idx_stop], self._cal["voltage"]
             )
             current_a = raw_to_si(
-                self.ds_current[idx_start:idx_stop], self.cal["current"]
+                self.ds_current[idx_start:idx_stop], self._cal["current"]
             )
             return (voltage_v[:] * current_a[:]).sum() * self.sample_interval_s
 
@@ -496,11 +496,11 @@ class Reader:
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
-            self.logger.warning("%s is empty, no csv generated", h5_group.name)
+            self._logger.warning("%s is empty, no csv generated", h5_group.name)
             return 0
-        csv_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
+        csv_path = self._file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
         if csv_path.exists():
-            self.logger.warning("%s already exists, will skip", csv_path)
+            self._logger.warning("%s already exists, will skip", csv_path)
             return 0
         datasets = [
             key if isinstance(h5_group[key], h5py.Dataset) else []
@@ -534,11 +534,11 @@ class Reader:
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
-            self.logger.warning("%s is empty, no log generated", h5_group.name)
+            self._logger.warning("%s is empty, no log generated", h5_group.name)
             return 0
-        log_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
+        log_path = self._file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
         if log_path.exists():
-            self.logger.warning("%s already exists, will skip", log_path)
+            self._logger.warning("%s already exists, will skip", log_path)
             return 0
         datasets = [
             key if isinstance(h5_group[key], h5py.Dataset) else []
@@ -578,7 +578,7 @@ class Reader:
         :return: downsampled h5-dataset or numpy-array
         """
         if self.get_datatype() == "ivcurve":
-            self.logger.warning("Downsampling-Function was not written for IVCurves")
+            self._logger.warning("Downsampling-Function was not written for IVCurves")
         ds_factor = max(1, math.floor(ds_factor))
 
         if end_n is None:
@@ -588,7 +588,7 @@ class Reader:
         start_n = min(end_n, round(start_n))
         data_len = end_n - start_n  # TODO: one-off to calculation below ?
         if data_len == 0:
-            self.logger.warning("downsampling failed because of data_len = 0")
+            self._logger.warning("downsampling failed because of data_len = 0")
         iblock_len = min(self.max_elements, data_len)
         oblock_len = round(iblock_len / ds_factor)
         iterations = math.ceil(data_len / iblock_len)
@@ -655,11 +655,11 @@ class Reader:
         :param is_time:
         :return:
         """
-        self.logger.error(
+        self._logger.error(
             "Resampling is still under construction - do not use for now!"
         )
         if self.get_datatype() == "ivcurve":
-            self.logger.warning("Resampling-Function was not written for IVCurves")
+            self._logger.warning("Resampling-Function was not written for IVCurves")
 
         if end_n is None:
             end_n = data_src.shape[0]
@@ -668,7 +668,7 @@ class Reader:
         start_n = min(end_n, round(start_n))
         data_len = end_n - start_n
         if data_len == 0:
-            self.logger.warning("resampling failed because of data_len = 0")
+            self._logger.warning("resampling failed because of data_len = 0")
         fs_ratio = samplerate_dst / self.samplerate_sps
         dest_len = math.floor(data_len * fs_ratio) + 1
         if fs_ratio <= 1.0:  # down-sampling
@@ -747,7 +747,7 @@ class Reader:
         :return: down-sampled size of ~ self.max_elements
         """
         if self.get_datatype() == "ivcurve":
-            self.logger.warning("Plot-Function was not written for IVCurves")
+            self._logger.warning("Plot-Function was not written for IVCurves")
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
@@ -766,13 +766,13 @@ class Reader:
                 self.downsample(
                     self.ds_voltage, None, start_sample, end_sample, ds_factor
                 ),
-                self.cal["voltage"],
+                self._cal["voltage"],
             ),
             "current": raw_to_si(
                 self.downsample(
                     self.ds_current, None, start_sample, end_sample, ds_factor
                 ),
-                self.cal["current"],
+                self._cal["current"],
             ),
             "start_s": start_s,
             "end_s": end_s,
@@ -830,7 +830,7 @@ class Reader:
 
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = self.file_path.absolute().with_suffix(
+        plot_path = self._file_path.absolute().with_suffix(
             f".plot_{start_str}_to_{end_str}.png"
         )
         if plot_path.exists():

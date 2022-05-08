@@ -44,12 +44,12 @@ class Reader:
 
     _df: pd.DataFrame = None
 
-    logger: logging.Logger = logging.getLogger("SHPData.IVonne.Reader")
+    _logger: logging.Logger = logging.getLogger("SHPData.IVonne.Reader")
 
     def __init__(
         self, file_path: Path, samplerate_sps: int = None, verbose: bool = True
     ):
-        self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
         self.file_path = Path(file_path)
         if samplerate_sps is not None:
@@ -61,7 +61,7 @@ class Reader:
         with open(self.file_path, "rb") as ifr:
             self._df = pickle.load(ifr)
         self._refresh_file_stats()
-        self.logger.info(
+        self._logger.info(
             "Reading data from '%s'\n"
             "\t- runtime = %s s\n"
             "\t- size = %s KiB\n"
@@ -97,7 +97,7 @@ class Reader:
         :param duration_s: time to stop in seconds, counted from beginning
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self.logger.info("  -> gets trimmed to %s s", duration_s)
+            self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -105,7 +105,7 @@ class Reader:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self.logger.warning("%s already exists, will skip", shp_output.name)
+            self._logger.warning("%s already exists, will skip", shp_output.name)
             return
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
@@ -120,7 +120,8 @@ class Reader:
             job_iter = trange(0, df_elements_n, max_elements, desc="generate ivcurves")
 
             for idx in job_iter:
-                df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
+                idx_top = min(idx + max_elements, df_elements_n)
+                df_slice = self._df.iloc[idx : idx_top + 1].copy()
                 df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
                     data=df_slice["time"], unit="s"
                 )
@@ -170,7 +171,7 @@ class Reader:
         :param tracker: VOC or OPT
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self.logger.info("  -> gets trimmed to %s s", duration_s)
+            self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -178,7 +179,7 @@ class Reader:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self.logger.warning("%s already exists, will skip", shp_output.name)
+            self._logger.warning("%s already exists, will skip", shp_output.name)
             return
 
         if tracker is None:
@@ -199,7 +200,8 @@ class Reader:
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps
                 # -> drop a sample at the end
-                df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
+                idx_top = min(idx + max_elements, df_elements_n)
+                df_slice = self._df.iloc[idx : idx_top + 1].copy()
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice = tracker.process(df_slice)
@@ -234,7 +236,7 @@ class Reader:
         :param duration_s: time to stop in seconds, counted from beginning
         """
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self.logger.info("  -> gets trimmed to %s s", duration_s)
+            self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -242,7 +244,7 @@ class Reader:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self.logger.warning("%s already exists, will skip", shp_output.name)
+            self._logger.warning("%s already exists, will skip", shp_output.name)
             return
 
         with Writer(shp_output, datatype="isc_voc") as sfw:
@@ -256,7 +258,8 @@ class Reader:
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps
                 # -> drop a sample at the end
-                df_slice = self._df.iloc[idx : idx + max_elements + 1].copy()
+                idx_top = min(idx + max_elements, df_elements_n)
+                df_slice = self._df.iloc[idx : idx_top + 1].copy()
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice.loc[:, "isc"] = get_isc(df_slice)
