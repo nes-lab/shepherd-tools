@@ -15,6 +15,7 @@ verbose_level = 2
 
 
 def config_logger(verbose: int) -> NoReturn:
+    # TODO: put in __init__, provide logger, ditch global var
     if verbose == 0:
         logger.setLevel(logging.ERROR)
     elif verbose == 1:
@@ -34,14 +35,14 @@ def path_to_flist(data_path: Path) -> list[Path]:
     - if existing file: list with 1 element
     - or else: empty list
     """
-    data_path = Path(data_path)
+    data_path = Path(data_path).absolute()
     h5files = []
     if data_path.is_file() and data_path.suffix == ".h5":
         h5files.append(data_path)
     elif data_path.is_dir():
         flist = os.listdir(data_path)
         for file in flist:
-            fpath = Path(file)
+            fpath = data_path / str(file)
             if not fpath.is_file() or ".h5" != fpath.suffix:
                 continue
             h5files.append(fpath)
@@ -53,8 +54,8 @@ def path_to_flist(data_path: Path) -> list[Path]:
     "-v",
     "--verbose",
     count=True,
-    default=2,
-    help="4 Levels (Error, Warning, Info, Debug)",
+    default=0,
+    help="4 Levels [0..3](Error, Warning, Info, Debug)",
 )
 @click.pass_context
 def cli(ctx, verbose: int):
@@ -82,7 +83,7 @@ def validate(in_data):
     for file in files:
         logger.info("Validating '%s' ...", file.name)
         valid_file = True
-        with Reader(file, verbose=verbose_level > 2) as shpr:
+        with Reader(file, verbose=verbose_level >= 2) as shpr:
             valid_file &= shpr.is_valid()
             valid_file &= shpr.check_timediffs()
             valid_dir &= valid_file
@@ -116,7 +117,7 @@ def extract(in_data, ds_factor, separator):
         logger.info("DS-Factor was invalid was reset to 1'000")
     for file in files:
         logger.info("Extracting IV-Samples from '%s' ...", file.name)
-        with Reader(file, verbose=verbose_level > 2) as shpr:
+        with Reader(file, verbose=verbose_level >= 2) as shpr:
             # will create a downsampled h5-file (if not existing) and then saving to csv
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
             if not ds_file.exists():
@@ -127,7 +128,7 @@ def extract(in_data, ds_factor, separator):
                     datatype=shpr.get_datatype(),
                     window_samples=shpr.get_window_samples(),
                     cal_data=shpr.get_calibration_data(),
-                    verbose=verbose_level > 2,
+                    verbose=verbose_level >= 2,
                 ) as shpw:
                     shpw["ds_factor"] = ds_factor
                     shpw.set_hostname(shpr.get_hostname())
@@ -142,7 +143,7 @@ def extract(in_data, ds_factor, separator):
                         shpr.ds_current, shpw.ds_current, ds_factor=ds_factor
                     )
 
-            with Reader(ds_file, verbose=verbose_level > 2) as shpd:
+            with Reader(ds_file, verbose=verbose_level >= 2) as shpd:
                 shpd.save_csv(shpd["data"], separator)
 
 
@@ -163,7 +164,7 @@ def extract_meta(in_data, separator):
     files = path_to_flist(in_data)
     for file in files:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
-        with Reader(file, verbose=verbose_level > 2) as shpr:
+        with Reader(file, verbose=verbose_level >= 2) as shpr:
             elements = shpr.save_metadata()
 
             if "sysutil" in elements:
@@ -210,7 +211,7 @@ def downsample(in_data, ds_factor, sample_rate):
 
     files = path_to_flist(in_data)
     for file in files:
-        with Reader(file, verbose=verbose_level > 2) as shpr:
+        with Reader(file, verbose=verbose_level >= 2) as shpr:
             for _factor in ds_list:
                 if shpr.ds_time.shape[0] / _factor < 1000:
                     logger.warning("will skip downsampling for %s because resulting sample-size is too small")
@@ -225,7 +226,7 @@ def downsample(in_data, ds_factor, sample_rate):
                     datatype=shpr.get_datatype(),
                     window_samples=shpr.get_window_samples(),
                     cal_data=shpr.get_calibration_data(),
-                    verbose=verbose_level > 2,
+                    verbose=verbose_level >= 2,
                 ) as shpw:
                     shpw["ds_factor"] = _factor
                     shpw.set_hostname(shpr.get_hostname())
@@ -282,19 +283,20 @@ def downsample(in_data, ds_factor, sample_rate):
 def plot(in_data, start: float, end: float, width: int, height: int, multiplot: bool):
     """ Plots IV-trace from file or directory containing shepherd-recordings
     """
-    logger.info(in_data)
     files = path_to_flist(in_data)
     multiplot = multiplot and len(files) > 1
     data = []
     for file in files:
         logger.info("Generating plot for '%s' ...", file.name)
-        with Reader(file, verbose=verbose_level > 2) as shpr:
+        with Reader(file, verbose=verbose_level >= 2) as shpr:
             if multiplot:
                 data.append(shpr.generate_plot_data(start, end, relative_ts=True))
             else:
                 shpr.plot_to_file(start, end, width, height)
     if multiplot:
-        Reader.multiplot_to_file(data, in_data, width, height)
+        logger.info(f"Got {len(data)} datasets to plot")
+        mpl_path = Reader.multiplot_to_file(data, in_data, width, height)
+        logger.info("Plot generated and saved to '%s'", mpl_path.name)
 
 
 if __name__ == "__main__":

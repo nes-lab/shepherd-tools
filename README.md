@@ -115,11 +115,11 @@ shepherd-data validate hrv_saw_1h.h5
 - can take down-sample-factor as an argument
 
 ```Shell
-shepherd-data extract dir_or_file [-f ds-factor] [-s separator_symbol]
+shepherd-data extract [-f ds-factor] [-s separator_symbol] dir_or_file
 
 # examples:
 shepherd-data extract ./
-shepherd-data extract hrv_saw_1h.h5 -f 1000 -s;
+shepherd-data extract -f 1000 -s ; hrv_saw_1h.h5
 ```
 
 **Extract meta-data and sys-logs**
@@ -141,11 +141,11 @@ shepherd-data extract-meta hrv_saw_1h.h5
 - can take image-width and -height as an argument
 
 ```Shell
-shepherd-data plot dir_or_file [-s start_time] [-e end_time] [-w plot_width] [-h plot_height] [--multiplot]
+shepherd-data plot [-s start_time] [-e end_time] [-w plot_width] [-h plot_height] [--multiplot] dir_or_file
 
 # examples:
-shepherd-data plot ./ --multiplot
-shepherd-data plot hrv_saw_1h.h5 -s10 -e20
+shepherd-data plot --multiplot ./
+shepherd-data plot -s10 -e20 hrv_saw_1h.h5
 ```
 
 **Downsample IVSamples (for later GUI-usage, TODO)**
@@ -155,12 +155,12 @@ shepherd-data plot hrv_saw_1h.h5 -s10 -e20
 - can take down-sample-factor as an argument
 
 ```Shell
-shepherd-data downsample dir_or_file [-f ds-factor] [-r sample-rate]
+shepherd-data downsample [-f ds-factor] [-r sample-rate] dir_or_file
 
 # examples:
 shepherd-data downsample ./ 
-shepherd-data downsample hrv_saw_1h.h5 -f 1000
-shepherd-data downsample hrv_saw_1h.h5 -r 100
+shepherd-data downsample -f 1000 hrv_saw_1h.h5
+shepherd-data downsample -r 100 hrv_saw_1h.h5
 ```
 
 ### Data-Layout and Design choices

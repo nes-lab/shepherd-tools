@@ -849,7 +849,7 @@ class Reader:
     @staticmethod
     def multiplot_to_file(
         data: Union[list], plot_path: Path, width: int = 20, height: int = 10
-    ):
+    ) -> Union[Path, None]:
         """creates (down-sampled) IV-Multi-Plot
 
         :param data: plottable / down-sampled iv-data with some meta-data
@@ -860,13 +860,13 @@ class Reader:
         """
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = plot_path.absolute().with_suffix(
+        plot_path = Path(plot_path).absolute().with_suffix(
             f".multiplot_{start_str}_to_{end_str}.png"
         )
         if plot_path.exists():
-            return
-        Reader._logger.info("Plot generated, will be saved to '%s'", plot_path.name)
+            return None
         fig = Reader.assemble_plot(data, width, height)
         plt.savefig(plot_path)
         plt.close(fig)
         plt.clf()
+        return plot_path
