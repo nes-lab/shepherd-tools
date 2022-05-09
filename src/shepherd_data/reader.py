@@ -120,7 +120,7 @@ class Reader:
         self.h5file.flush()
         if self.ds_time.shape[0] > 1:
             self.sample_interval_ns = int(self.ds_time[1] - self.ds_time[0])
-            self.samplerate_sps = int(10**9 // self.sample_interval_ns)
+            self.samplerate_sps = max(int(10**9 // self.sample_interval_ns), 1)
             self.sample_interval_s = 1.0 / self.samplerate_sps
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
         self.file_size = self._file_path.stat().st_size
@@ -515,6 +515,7 @@ class Reader:
         ]
         header = separator.join(header)
         with open(csv_path, "w", encoding="utf-8-sig") as csv_file:
+            self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
             csv_file.write(header + "\n")
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
@@ -546,6 +547,7 @@ class Reader:
         ]
         datasets.remove("time")
         with open(log_path, "w", encoding="utf-8-sig") as log_file:
+            self._logger.info("Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name)
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
                 log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
@@ -838,7 +840,7 @@ class Reader:
         )
         if plot_path.exists():
             return
-
+        self._logger.info("Plot generated, will be saved to '%s'", plot_path.name)
         fig = self.assemble_plot(data, width, height)
         plt.savefig(plot_path)
         plt.close(fig)
@@ -847,7 +849,7 @@ class Reader:
     @staticmethod
     def multiplot_to_file(
         data: Union[list], plot_path: Path, width: int = 20, height: int = 10
-    ) -> NoReturn:
+    ):
         """creates (down-sampled) IV-Multi-Plot
 
         :param data: plottable / down-sampled iv-data with some meta-data
@@ -863,7 +865,7 @@ class Reader:
         )
         if plot_path.exists():
             return
-
+        Reader._logger.info("Plot generated, will be saved to '%s'", plot_path.name)
         fig = Reader.assemble_plot(data, width, height)
         plt.savefig(plot_path)
         plt.close(fig)

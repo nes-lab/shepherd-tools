@@ -115,7 +115,7 @@ shepherd-data validate hrv_saw_1h.h5
 - can take down-sample-factor as an argument
 
 ```Shell
-shepherd-data extract dir_or_file [-f ds_factor] [-s separator_symbol]
+shepherd-data extract dir_or_file [-f ds-factor] [-s separator_symbol]
 
 # examples:
 shepherd-data extract ./
@@ -155,11 +155,12 @@ shepherd-data plot hrv_saw_1h.h5 -s10 -e20
 - can take down-sample-factor as an argument
 
 ```Shell
-shepherd-data downsample dir_or_file [-f ds_factor]
+shepherd-data downsample dir_or_file [-f ds-factor] [-r sample-rate]
 
 # examples:
 shepherd-data downsample ./ 
 shepherd-data downsample hrv_saw_1h.h5 -f 1000
+shepherd-data downsample hrv_saw_1h.h5 -r 100
 ```
 
 ### Data-Layout and Design choices

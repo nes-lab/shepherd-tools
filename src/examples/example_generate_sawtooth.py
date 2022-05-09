@@ -17,6 +17,7 @@ if __name__ == "__main__":
 
     with shpd.Writer(file_path, compression=1) as file:
 
+        file.set_hostname("artificial")
         duration_s = 60
         repetitions = 60
         timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
@@ -30,7 +31,6 @@ if __name__ == "__main__":
             timestamps = idx * duration_s + timestamp_vector
             file.append_iv_data_si(timestamps, voltages, currents)
 
-        file.set_hostname("artificial")
         file.save_metadata()
 
     with shpd.Reader(file_path) as db:

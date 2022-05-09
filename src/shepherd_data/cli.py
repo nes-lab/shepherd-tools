@@ -25,6 +25,7 @@ def config_logger(verbose: int) -> NoReturn:
         logger.setLevel(logging.DEBUG)
     global verbose_level
     verbose_level = verbose
+    logging.basicConfig(format="%(message)s")  # reduce internals
 
 
 def path_to_flist(data_path: Path) -> list[Path]:
@@ -64,9 +65,9 @@ def cli(ctx, verbose: int):
         verbose:
     """
     config_logger(verbose)
-    logger.info("Shepherd-Data Version: %s", __version__)
-    logger.debug("Python Version: %s", sys.version)
-    logger.debug("Click Version: %s", click.__version__)
+    logger.info("Shepherd-Data v%s", __version__)
+    logger.debug("Python v%s", sys.version)
+    logger.debug("Click v%s", click.__version__)
     if not ctx.invoked_subcommand:
         click.echo("Please specify a command")
 
@@ -93,7 +94,7 @@ def validate(in_data):
 @cli.command(short_help="Extracts recorded IVSamples and stores it to csv")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
-    "--ds_factor",
+    "--ds-factor",
     "-f",
     default=1000,
     type=click.FLOAT,
@@ -118,16 +119,19 @@ def extract(in_data, ds_factor, separator):
         with Reader(file, verbose=verbose_level > 2) as shpr:
             # will create a downsampled h5-file (if not existing) and then saving to csv
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
-            # TODO: downsample, csv and others should not mess with suffix but add to stem _ds1000
             if not ds_file.exists():
                 logger.info("Downsampling '%s' by factor x%s ...", file.name, ds_factor)
                 with Writer(
                     ds_file,
                     mode=shpr.get_mode(),
+                    datatype=shpr.get_datatype(),
+                    window_samples=shpr.get_window_samples(),
                     cal_data=shpr.get_calibration_data(),
                     verbose=verbose_level > 2,
                 ) as shpw:
                     shpw["ds_factor"] = ds_factor
+                    shpw.set_hostname(shpr.get_hostname())
+                    shpw.set_config(shpr.get_config())
                     shpr.downsample(
                         shpr.ds_time, shpw.ds_time, ds_factor=ds_factor, is_time=True
                     )
@@ -182,7 +186,7 @@ def extract_meta(in_data, separator):
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 # @click.option("--out_data", "-o", type=click.Path(resolve_path=True))
 @click.option(
-    "--ds_factor",
+    "--ds-factor",
     "-f",
     default=None,
     type=click.FLOAT,
@@ -198,7 +202,7 @@ def downsample(in_data, ds_factor, sample_rate):
     """Creates an array of downsampling-files from file or directory containing shepherd-recordings
     """
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
-        _factor = int(Reader.samplerate_sps / sample_rate)
+        ds_factor = int(Reader.samplerate_sps / sample_rate)
     if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
         ds_list = [ds_factor]
     else:
@@ -208,9 +212,10 @@ def downsample(in_data, ds_factor, sample_rate):
     for file in files:
         with Reader(file, verbose=verbose_level > 2) as shpr:
             for _factor in ds_list:
-                if shpr.ds_time.shape[0] / _factor < Reader.samplerate_sps:
+                if shpr.ds_time.shape[0] / _factor < 1000:
+                    logger.warning("will skip downsampling for %s because resulting sample-size is too small")
                     break
-                ds_file = file.with_suffix(f".downsampled_x{_factor}.h5")
+                ds_file = file.with_suffix(f".downsampled_x{round(_factor)}.h5")
                 if ds_file.exists():
                     continue
                 logger.info("Downsampling '%s' by factor x%s ...", file.name, _factor)
@@ -218,12 +223,12 @@ def downsample(in_data, ds_factor, sample_rate):
                     ds_file,
                     mode=shpr.get_mode(),
                     datatype=shpr.get_datatype(),
+                    window_samples=shpr.get_window_samples(),
                     cal_data=shpr.get_calibration_data(),
                     verbose=verbose_level > 2,
                 ) as shpw:
                     shpw["ds_factor"] = _factor
                     shpw.set_hostname(shpr.get_hostname())
-                    shpw.set_window_samples(shpr.get_window_samples())
                     shpw.set_config(shpr.get_config())
                     shpr.downsample(
                         shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True
@@ -277,6 +282,7 @@ def downsample(in_data, ds_factor, sample_rate):
 def plot(in_data, start: float, end: float, width: int, height: int, multiplot: bool):
     """ Plots IV-trace from file or directory containing shepherd-recordings
     """
+    logger.info(in_data)
     files = path_to_flist(in_data)
     multiplot = multiplot and len(files) > 1
     data = []
