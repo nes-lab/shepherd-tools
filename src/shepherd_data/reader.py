@@ -17,7 +17,7 @@ import h5py
 import yaml
 import numpy as np
 import pandas as pd
-import samplerate  # TODO: just a test-fn for now
+#import samplerate  # TODO: just a test-fn for now
 
 from .calibration import raw_to_si
 
@@ -705,6 +705,7 @@ class Reader:
                 data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
                 slice_out_now = slice_out_nxt
         else:
+            """
             resampler = samplerate.Resampler(
                 "sinc_medium",
                 channels=1,
@@ -728,6 +729,8 @@ class Reader:
                 data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
                 slice_out_now = slice_out_nxt
             resampler.reset()
+            """
+            pass
 
         if isinstance(data_dst, np.ndarray):
             data_dst.resize((slice_out_now,), refcheck=False)
