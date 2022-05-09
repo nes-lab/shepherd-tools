@@ -87,7 +87,7 @@ def validate(in_data):
             valid_dir &= valid_file
             if not valid_file:
                 logger.error(" -> File '%s' was NOT valid", file.name)
-    return not valid_dir
+    sys.exit(int(not valid_dir))
 
 
 @cli.command(short_help="Extracts recorded IVSamples and stores it to csv")
@@ -118,6 +118,7 @@ def extract(in_data, ds_factor, separator):
         with Reader(file, verbose=verbose_level > 2) as shpr:
             # will create a downsampled h5-file (if not existing) and then saving to csv
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
+            # TODO: downsample, csv and others should not mess with suffix but add to stem _ds1000
             if not ds_file.exists():
                 logger.info("Downsampling '%s' by factor x%s ...", file.name, ds_factor)
                 with Writer(
@@ -292,3 +293,4 @@ def plot(in_data, start: float, end: float, width: int, height: int, multiplot: 
 
 if __name__ == "__main__":
     print("This File should not be executed like this ...")
+    cli()
