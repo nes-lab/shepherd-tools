@@ -1,6 +1,6 @@
 [![PyPiVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
-[![PyVersion](https://img.shields.io/pypi/pyversions/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
 [![Pylint](https://github.com/orgua/shepherd-datalib/actions/workflows/pylint.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/pylint.yml)
+[![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml)
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Shepherd - Data
@@ -218,7 +218,7 @@ Details about the file-structure can be found in the [main-project](https://gith
   - plotting and downsampling for IVCurves ()
   - plotting more generalized (power, cpu-util, ..., if IV then offer power as well)
   - some metadata is calculated wrong (non-scalar datasets)
-  - unittests & codecoverage
+  - unittests & codecoverage, https://pytest-cov.readthedocs.io/en/latest/config.html
 - main shepherd-code
   - proper validation first
   - update commentary
