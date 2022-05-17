@@ -218,7 +218,12 @@ Details about the file-structure can be found in the [main-project](https://gith
   - plotting and downsampling for IVCurves ()
   - plotting more generalized (power, cpu-util, ..., if IV then offer power as well)
   - some metadata is calculated wrong (non-scalar datasets)
-  - unittests & codecoverage, https://pytest-cov.readthedocs.io/en/latest/config.html
+  - unittests & codecoverage -> 79% with v22.5.4, https://pytest-cov.readthedocs.io/en/latest/config.html
+    - test example: https://github.com/kvas-it/pytest-console-scripts
+    - use coverage to test some edge-cases
+  - sub-divide valid() into healthy()
+  - add gain/factor to time, with repair-code
+  - add https://pypi.org/project/nessie-recorder/#files
 - main shepherd-code
   - proper validation first
   - update commentary

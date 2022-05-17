@@ -54,9 +54,9 @@ class Writer(Reader):
     #         -> lower levels seem fine
     #         -> _algo=number instead of "gzip" is read as compression level for gzip
     # -> comparison / benchmarks https://www.h5py.org/lzf/
-    _comp_default = 1
-    _mode_default: str = "harvester"
-    _datatype_default: str = "ivsample"
+    comp_default = 1
+    mode_default: str = "harvester"
+    datatype_default: str = "ivsample"
 
     _chunk_shape: tuple = (Reader.samples_per_buffer,)
 
@@ -95,7 +95,7 @@ class Writer(Reader):
 
         if not isinstance(mode, (str, type(None))):
             raise TypeError(f"can not handle type '{type(mode)}' for mode")
-        if isinstance(mode, str) and mode not in self._mode_type_dict:
+        if isinstance(mode, str) and mode not in self.mode_dtype_dict:
             raise ValueError(f"can not handle mode '{mode}'")
 
         if not isinstance(datatype, (str, type(None))):
@@ -103,7 +103,7 @@ class Writer(Reader):
         if (
             isinstance(datatype, str)
             and datatype
-            not in self._mode_type_dict[self._mode_default if (mode is None) else mode]
+            not in self.mode_dtype_dict[self.mode_default if (mode is None) else mode]
         ):
             raise ValueError(f"can not handle datatype '{datatype}'")
 
@@ -113,15 +113,15 @@ class Writer(Reader):
             self._datatype = datatype
             self._window_samples = window_samples
         else:
-            self._mode = self._mode_default if (mode is None) else mode
+            self._mode = self.mode_default if (mode is None) else mode
             self._cal = cal_default if (cal_data is None) else cal_data
-            self._datatype = self._datatype_default if (datatype is None) else datatype
+            self._datatype = self.datatype_default if (datatype is None) else datatype
             self._window_samples = 0 if (window_samples is None) else window_samples
 
         if compression in [None, "lzf", 1]:  # order of recommendation
             self._compression_algo = compression
         else:
-            self._compression_algo = self._comp_default
+            self._compression_algo = self.comp_default
 
     def __enter__(self):
         """Initializes the structure of the HDF5 file
@@ -184,12 +184,12 @@ class Writer(Reader):
             ] = "voltage [V] = value * gain + offset"
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
-        if isinstance(self._mode, str) and self._mode in self._mode_type_dict:
+        if isinstance(self._mode, str) and self._mode in self.mode_dtype_dict:
             self.h5file.attrs["mode"] = self._mode
 
         if (
             isinstance(self._datatype, str)
-            and self._datatype in self._mode_type_dict[self.get_mode()]
+            and self._datatype in self.mode_dtype_dict[self.get_mode()]
         ):
             self.h5file["data"].attrs["datatype"] = self._datatype
         elif not self._modify:
@@ -255,9 +255,9 @@ class Writer(Reader):
         self.ds_current.resize((len_old + len_new,))
 
         # append new data
-        self.ds_time[len_old: len_old + len_new] = timestamp_ns[:len_new]
-        self.ds_voltage[len_old: len_old + len_new] = voltage[:len_new]
-        self.ds_current[len_old: len_old + len_new] = current[:len_new]
+        self.ds_time[len_old : len_old + len_new] = timestamp_ns[:len_new]
+        self.ds_voltage[len_old : len_old + len_new] = voltage[:len_new]
+        self.ds_current[len_old : len_old + len_new] = current[:len_new]
 
     def append_iv_data_si(
         self,
@@ -305,7 +305,9 @@ class Writer(Reader):
 
         :param data: from virtual harvester or converter / source
         """
-        self.h5file["data"].attrs["config"] = yaml.dump(data, default_flow_style=False)
+        self.h5file["data"].attrs["config"] = yaml.safe_dump(
+            data, default_flow_style=False, sort_keys=False
+        )
         if "window_samples" in data:
             self.set_window_samples(data["window_samples"])
 

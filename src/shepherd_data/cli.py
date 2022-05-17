@@ -70,7 +70,7 @@ def cli(ctx, verbose: int):
     logger.debug("Python v%s", sys.version)
     logger.debug("Click v%s", click.__version__)
     if not ctx.invoked_subcommand:
-        click.echo("Please specify a command")
+        click.echo("Please specify a valid command")
 
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")

@@ -37,7 +37,7 @@ class Reader:
 
     max_elements: int = 40 * samplerate_sps  # per iteration (40s full res, < 200 MB RAM use)
 
-    _mode_type_dict = {
+    mode_dtype_dict = {
         "harvester": ["ivsample", "ivcurve", "isc_voc"],
         "emulator": ["ivsample"],
     }
@@ -197,6 +197,12 @@ class Reader:
             return self.h5file["data"].attrs["datatype"]
         return ""
 
+    def get_hrv_config(self) -> dict:
+        """ essential info for harvester
+        :return: config-dict directly for vHarvester to be used during emulation
+        """
+        return {"dtype": self.get_datatype(), "window_samples": self.get_window_samples()}
+
     def data_timediffs(self) -> list:
         """calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
@@ -256,7 +262,7 @@ class Reader:
             if attr not in self.h5file.attrs.keys():
                 self._logger.error("attribute '%s' not found in file (@Validator)", attr)
                 return False
-            if self.h5file.attrs["mode"] not in self._mode_type_dict:
+            if self.h5file.attrs["mode"] not in self.mode_dtype_dict:
                 self._logger.error("unsupported mode '%s' (@Validator)", attr)
                 return False
         for attr in ["window_samples", "datatype"]:
@@ -275,7 +281,7 @@ class Reader:
                     "attribute '%s' not found in dataset '%s' (@Validator)", attr, dset
                 )
                 return False
-        if self.get_datatype() not in self._mode_type_dict[self.get_mode()]:
+        if self.get_datatype() not in self.mode_dtype_dict[self.get_mode()]:
             self._logger.error(
                 "unsupported type '%s' for mode '%s' (@Validator)",
                 self.get_datatype(),

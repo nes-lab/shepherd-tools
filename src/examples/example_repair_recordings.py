@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
             # invalid modes
             mode = fh.get_mode()
-            if mode not in shpd.Reader.mode_type_dict:
+            if mode not in shpd.Reader.mode_dtype_dict:
                 mode = shpd.Writer.mode_default
                 if "har" in fh.get_mode():  # can be harvest, harvesting, ...
                     mode = "harvester"
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
             # invalid datatype
             datatype = fh.get_datatype()
-            if datatype not in shpd.Reader.mode_type_dict[mode]:
+            if datatype not in shpd.Reader.mode_dtype_dict[mode]:
                 datatype = shpd.Writer.datatype_default
                 if "curv" in fh.get_datatype():
                     datatype = "ivcurve"
