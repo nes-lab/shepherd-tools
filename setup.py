@@ -13,6 +13,7 @@ requirements = [
     "pyYAML",
     "scipy",
     "tqdm",
+    "samplerate",
 ]
 
 setup(

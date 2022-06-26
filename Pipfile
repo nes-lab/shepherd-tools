@@ -11,6 +11,7 @@ pandas = "*"
 scipy = "*"
 pyyaml = "*"
 tqdm = "*"
+samplerate = "*"
 
 [dev-packages]
 black = "*"
