@@ -167,6 +167,10 @@ shepherd-data downsample -r 100 hrv_saw_1h.h5
 
 Details about the file-structure can be found in the [main-project](https://github.com/orgua/shepherd/blob/master/docs/user/data_format.rst).
 
+TODO: 
+- update design of file
+- data dtype, mode, ...
+
 #### Modes and Datatypes
 
 - Mode `harvester` recorded a harvesting-source like solar with one of various algorithms
@@ -200,6 +204,13 @@ Details about the file-structure can be found in the [main-project](https://gith
   emu_120s_unc_to_lzf.h5 	-> emulator, cpu_util [%] = 57.28, data-rate =  686.0 KiB/s
   emu_120s_unc_to_unc.h5 	-> emulator, cpu_util [%] = 51.69, data-rate = 1564.0 KiB/s 
 ```
+
+### Release-Procedure
+
+- increase version number in __init__.py
+- every commits get automatically tested by Github
+- put together a release on Github - the tag should match current version-number
+- Github automatically pushed release to pypi
 
 ### Open Tasks
 
