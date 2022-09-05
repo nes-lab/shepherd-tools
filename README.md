@@ -45,6 +45,16 @@ pipenv update
 pipenv install ./
 ```
 
+#### running Testbench
+
+- install dependencies
+- run pytest
+
+```Shell
+pip3 install -e ./[test]
+pytest
+```
+
 ### Programming Interface
 
 #### Basic Usage (recommendation)
