@@ -24,7 +24,7 @@ pip3 install shepherd-data
 git clone https://github.com/orgua/shepherd-datalib
 cd .\shepherd-datalib
 
-pip3 install -e ./
+pip3 install ./
 ```
 
 ### Development
