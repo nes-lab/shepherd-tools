@@ -34,7 +34,7 @@ jobs:
         run: python -m pip install --upgrade pip
 
       - name: Build and install Package 🧱
-        run: pip3 install ./[test,dev]
+        run: pip3 install ./[test]
         working-directory: "./"
 
       - name: Test with pytest
@@ -70,4 +70,3 @@ jobs:
 
       - name: Analyze the code with pylint
         run: pylint $(git ls-files '*.py') || pylint-exit $?
-        
