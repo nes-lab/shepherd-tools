@@ -235,9 +235,16 @@ TODO:
 ### Release-Procedure
 
 - increase version number in __init__.py
+- install and run pre-commit, for QA-Checks, see steps below
 - every commit get automatically tested by Github
 - put together a release on Github - the tag should match current version-number
 - Github automatically pushes release to pypi
+
+```Shell
+pip3 install pre-commit
+
+pre-commit run --all-files
+```
 
 ### Open Tasks
 
