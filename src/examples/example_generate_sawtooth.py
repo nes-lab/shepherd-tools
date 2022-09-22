@@ -5,11 +5,11 @@ script will:
 - read file and query some data
 """
 from pathlib import Path
+
 import numpy as np
 from tqdm import trange
 
 import shepherd_data as shpd
-
 
 if __name__ == "__main__":
 

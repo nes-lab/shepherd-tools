@@ -2,8 +2,8 @@
 
 """
 from typing import Union
-import numpy as np
 
+import numpy as np
 
 # SI-value [SI-Unit] = raw-value * gain + offset
 cal_default: dict[str, dict] = {

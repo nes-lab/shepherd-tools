@@ -9,8 +9,9 @@ this script converts a IVonne-Recording to shepherd dataformat:
 - isc_voc not directly usable (for now)
 """
 from pathlib import Path
-from shepherd_data import ivonne, mppt
 
+from shepherd_data import ivonne
+from shepherd_data import mppt
 
 if __name__ == "__main__":
 

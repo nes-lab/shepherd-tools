@@ -9,8 +9,8 @@ shepherd-data plot file_or_dir [-s start_time] [-e end_time]
                                [--multiplot]
 """
 from pathlib import Path
-import shepherd_data as shpd
 
+import shepherd_data as shpd
 
 if __name__ == "__main__":
 

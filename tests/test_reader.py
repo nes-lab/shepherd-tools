@@ -1,7 +1,9 @@
 import sys
 
 import yaml
+
 from shepherd_data import Reader
+
 from .conftest import generate_h5_file
 
 

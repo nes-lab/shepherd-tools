@@ -1,26 +1,28 @@
 """
 Reader-Baseclass
 """
-import logging
 import errno
+import logging
 import math
 import os
 from datetime import datetime
 from itertools import product
 from pathlib import Path
-from typing import NoReturn, Union, Dict
+from typing import Dict
+from typing import NoReturn
+from typing import Union
 
+import h5py
+import numpy as np
+import pandas as pd
+import yaml
 from matplotlib import pyplot as plt
 from scipy import signal
 from tqdm import trange
-import h5py
-import yaml
-import numpy as np
-import pandas as pd
-
-# import samplerate  # TODO: just a test-fn for now
 
 from .calibration import raw_to_si
+
+# import samplerate  # TODO: just a test-fn for now
 
 
 class Reader:

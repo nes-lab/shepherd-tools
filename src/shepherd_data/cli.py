@@ -1,14 +1,17 @@
 """
 Command definitions for CLI
 """
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
 from typing import NoReturn
 
 import click
-from . import Writer, Reader, __version__
+
+from . import Reader
+from . import Writer
+from . import __version__
 
 logger = logging.getLogger("SHPData.cli")
 verbose_level = 2

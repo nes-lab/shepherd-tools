@@ -1,7 +1,10 @@
-import pytest
 from pathlib import Path
 
-from shepherd_data import Reader, ivonne, mppt
+import pytest
+
+from shepherd_data import Reader
+from shepherd_data import ivonne
+from shepherd_data import mppt
 
 
 @pytest.fixture

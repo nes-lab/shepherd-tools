@@ -3,20 +3,22 @@ prototype of a file-reader with various converters
 to generate valid shepherd-data for emulation
 
 """
-from typing import NoReturn
-from pathlib import Path
-import logging
-import pickle  # noqa: S403
-import math
 import errno
+import logging
+import math
 import os
+import pickle  # noqa: S403
+from pathlib import Path
+from typing import NoReturn
 
 import numpy as np
 import pandas as pd
 from tqdm import trange
 
 from . import Writer
-from .mppt import OptimalTracker, MPPTracker, iv_model
+from .mppt import MPPTracker
+from .mppt import OptimalTracker
+from .mppt import iv_model
 
 
 def get_voc(coeffs: pd.DataFrame):

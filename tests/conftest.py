@@ -1,9 +1,9 @@
-import pytest
 from pathlib import Path
 
 import numpy as np
+import pytest
 
-from shepherd_data import Reader, Writer
+from shepherd_data import Writer
 
 
 def generate_h5_file(file_path: Path, file_name: str = "harvest_example.h5") -> Path:

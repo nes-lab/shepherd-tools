@@ -1,6 +1,8 @@
-import pytest
 import numpy as np
-from shepherd_data import Reader, Writer
+import pytest
+
+from shepherd_data import Reader
+from shepherd_data import Writer
 
 
 def generate_shp_file(

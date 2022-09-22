@@ -1,18 +1,20 @@
 """
 Writer that inherits from Reader-Baseclass
 """
-import math
 import logging
+import math
 from itertools import product
 from pathlib import Path
-from typing import NoReturn, Union
+from typing import NoReturn
+from typing import Union
 
-import numpy as np
 import h5py
+import numpy as np
 import yaml
 
+from .calibration import cal_default
+from .calibration import si_to_raw
 from .reader import Reader
-from .calibration import cal_default, si_to_raw
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
