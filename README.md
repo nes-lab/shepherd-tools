@@ -60,7 +60,7 @@ pipenv install --dev pytest
 pytest
 ```
 
-#### code coverage
+#### code coverage (with pytest)
 
 - run coverage
 - check results (in browser `./htmlcov/index.html`)
@@ -193,7 +193,7 @@ shepherd-data downsample -r 100 hrv_saw_1h.h5
 
 ### Data-Layout and Design choices
 
-Details about the file-structure can be found in the [main-project](https://github.com/orgua/shepherd/blob/master/docs/user/data_format.rst).
+Details about the file-structure can be found in the [main-project](https://github.com/orgua/shepherd/blob/main/docs/user/data_format.rst).
 
 TODO:
 - update design of file
