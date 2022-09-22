@@ -1,5 +1,4 @@
 [![PyPiVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
-[![Pylint](https://github.com/orgua/shepherd-datalib/actions/workflows/pylint.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/pylint.yml)
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml)
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -236,9 +235,9 @@ TODO:
 ### Release-Procedure
 
 - increase version number in __init__.py
-- every commits get automatically tested by Github
+- every commit get automatically tested by Github
 - put together a release on Github - the tag should match current version-number
-- Github automatically pushed release to pypi
+- Github automatically pushes release to pypi
 
 ### Open Tasks
 
