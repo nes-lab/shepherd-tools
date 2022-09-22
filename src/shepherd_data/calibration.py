@@ -1,12 +1,13 @@
 """ Helper-FNs to convert values between raw/int and physical si-units
 
 """
+from typing import Dict
 from typing import Union
 
 import numpy as np
 
 # SI-value [SI-Unit] = raw-value * gain + offset
-cal_default: dict[str, dict] = {
+cal_default: Dict[str, dict] = {
     "voltage": {"gain": 3 * 1e-9, "offset": 0.0},  # allows 0 - 12 V in 3 nV-Steps
     "current": {"gain": 250 * 1e-12, "offset": 0.0},  # allows 0 - 1 A in 250 pA - Steps
     "time": {"gain": 1e-9, "offset": 0.0},

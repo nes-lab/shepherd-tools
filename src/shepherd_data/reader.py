@@ -59,7 +59,7 @@ class Reader:
     ds_time: h5py.Dataset = None
     ds_voltage: h5py.Dataset = None
     ds_current: h5py.Dataset = None
-    _cal: dict[str, dict] = None
+    _cal: Dict[str, dict] = None
 
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
         self._skip_open = file_path is None  # for access by writer-class
@@ -359,7 +359,7 @@ class Reader:
             self._refresh_file_stats()
             return self.get_metadata(self.h5file, minimal=minimal)
 
-        metadata: dict[str, dict] = {}
+        metadata: Dict[str, dict] = {}
         if isinstance(node, h5py.Dataset) and not minimal:
             metadata["_dataset_info"] = {
                 "dtype": str(node.dtype),
