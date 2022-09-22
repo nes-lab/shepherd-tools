@@ -1,6 +1,7 @@
 """
 Reader-Baseclass
 """
+import contextlib
 import errno
 import logging
 import math
@@ -10,6 +11,7 @@ from itertools import product
 from pathlib import Path
 from typing import Dict
 from typing import NoReturn
+from typing import Optional
 from typing import Union
 
 import h5py
@@ -59,7 +61,7 @@ class Reader:
     ds_current: h5py.Dataset = None
     _cal: dict[str, dict] = None
 
-    def __init__(self, file_path: Union[Path, None], verbose: Union[bool, None] = True):
+    def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
         self._skip_open = file_path is None  # for access by writer-class
         if not self._skip_open:
             self._file_path = Path(file_path)
@@ -180,27 +182,27 @@ class Reader:
         """
         :return:
         """
-        if "window_samples" in self.h5file["data"].attrs.keys():
+        if "window_samples" in self.h5file["data"].attrs:
             return self.h5file["data"].attrs["window_samples"]
         return 0
 
     def get_mode(self) -> str:
-        if "mode" in self.h5file.attrs.keys():
+        if "mode" in self.h5file.attrs:
             return self.h5file.attrs["mode"]
         return ""
 
     def get_config(self) -> Dict:
-        if "config" in self.h5file["data"].attrs.keys():
+        if "config" in self.h5file["data"].attrs:
             return yaml.safe_load(self.h5file["data"].attrs["config"])
         return {}
 
     def get_hostname(self) -> str:
-        if "hostname" in self.h5file.attrs.keys():
+        if "hostname" in self.h5file.attrs:
             return self.h5file.attrs["hostname"]
         return "unknown"
 
     def get_datatype(self) -> str:
-        if "datatype" in self.h5file["data"].attrs.keys():
+        if "datatype" in self.h5file["data"].attrs:
             return self.h5file["data"].attrs["datatype"]
         return ""
 
@@ -366,24 +368,22 @@ class Reader:
                 "compression": str(node.compression),
                 "compression_opts": str(node.compression_opts),
             }
-            if "/data/time" == node.name:
+            if node.name == "/data/time":
                 metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
             elif "int" in str(node.dtype):
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
         for attr in node.attrs.keys():
             attr_value = node.attrs[attr]
             if isinstance(attr_value, str):
-                try:
+                with contextlib.suppress(yaml.YAMLError):
                     attr_value = yaml.safe_load(attr_value)
-                except yaml.YAMLError:
-                    pass
             elif "int" in str(type(attr_value)):
                 attr_value = int(attr_value)
             else:
                 attr_value = float(attr_value)
             metadata[attr] = attr_value
         if isinstance(node, h5py.Group):
-            if "/data" == node.name and not minimal:
+            if node.name == "/data" and not minimal:
                 metadata["_group_info"] = {
                     "energy_Ws": self.energy(),
                     "runtime_s": round(self.runtime_s, 1),
@@ -417,9 +417,9 @@ class Reader:
         :param key: attribute, group, dataset
         :return: value of that key, or handle of object
         """
-        if key in self.h5file.attrs.keys():
+        if key in self.h5file.attrs:
             return self.h5file.attrs.__getitem__(key)
-        if key in self.h5file.keys():
+        if key in self.h5file:
             return self.h5file.__getitem__(key)
         raise KeyError
 
@@ -460,7 +460,7 @@ class Reader:
         :return: dict with entries for mean, min, max, std
         """
         if not isinstance(cal, dict):
-            if "gain" in dset.attrs.keys() and "offset" in dset.attrs.keys():
+            if "gain" in dset.attrs and "offset" in dset.attrs:
                 cal = {
                     "gain": dset.attrs["gain"],
                     "offset": dset.attrs["offset"],
@@ -630,7 +630,7 @@ class Reader:
             output="sos",
             ftype="butter",
         )
-        # filter state
+        # filter state - needed for sliced calculation
         f_state = np.zeros((filter_.shape[0], 2))
 
         slice_len = 0
@@ -747,7 +747,7 @@ class Reader:
                 # slice_out_ds = resampy.resample(slice_inp_ds, self.samplerate_sps,
                 #                                 samplerate_dst, filter="kaiser_fast")
                 slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
-                # print(f"@{i}: got {slice_out_ds.shape[0]}")
+                # print(f"@{i}: got {slice_out_ds.shape[0]}")  # noqa: E800
                 data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
                 slice_out_now = slice_out_nxt
             resampler.reset()
@@ -869,7 +869,7 @@ class Reader:
     @staticmethod
     def multiplot_to_file(
         data: Union[list], plot_path: Path, width: int = 20, height: int = 10
-    ) -> Union[Path, None]:
+    ) -> Optional[Path]:
         """creates (down-sampled) IV-Multi-Plot
 
         :param data: plottable / down-sampled iv-data with some meta-data

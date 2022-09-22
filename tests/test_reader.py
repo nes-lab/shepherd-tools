@@ -4,8 +4,6 @@ import yaml
 
 from shepherd_data import Reader
 
-from .conftest import generate_h5_file
-
 
 def test_reader_metadata(data_h5_path):
     with Reader(data_h5_path, verbose=True) as sfr:

@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from shepherd_data import Reader
 from shepherd_data import Writer

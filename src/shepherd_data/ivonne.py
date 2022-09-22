@@ -61,7 +61,7 @@ class Reader:
                 errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
             )
         with open(self.file_path, "rb") as ifr:
-            self._df = pickle.load(ifr)
+            self._df = pickle.load(ifr)  # noqa: S301
         self._refresh_file_stats()
         self._logger.info(
             "Reading data from '%s'\n"

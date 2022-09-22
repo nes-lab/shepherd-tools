@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import shepherd_data as shpd
@@ -5,11 +6,17 @@ import shepherd_data as shpd
 file = Path("./hrv_sawtooth_1h.h5")
 samplerate_sps = 1000
 
+logger = logging.getLogger("SHPData.debug")
+logger.setLevel(logging.DEBUG)
+
 with shpd.Reader(file) as shpr:
 
     out_file = file.with_suffix(f".fs_{samplerate_sps}.h5")
-    print(
-        f"Resampling '{file.name}' from {shpr.samplerate_sps} Hz to {samplerate_sps} ..."
+    logger.info(
+        "Resampling '%s' from %d Hz to %d Hz ...",
+        file.name,
+        shpr.samplerate_sps,
+        samplerate_sps,
     )
     with shpd.Writer(
         out_file,

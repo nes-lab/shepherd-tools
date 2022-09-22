@@ -10,8 +10,6 @@ import logging
 from .reader import Reader
 from .writer import Writer
 
-# from .ivonne import Reader as IVonneReader
-
 __version__ = "2022.9.1"
 __all__ = [
     "Reader",

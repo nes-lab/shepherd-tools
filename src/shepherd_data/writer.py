@@ -6,6 +6,7 @@ import math
 from itertools import product
 from pathlib import Path
 from typing import NoReturn
+from typing import Optional
 from typing import Union
 
 import h5py
@@ -73,7 +74,7 @@ class Writer(Reader):
         cal_data: dict = None,
         modify_existing: bool = False,
         compression: Union[None, str, int] = "default",
-        verbose: Union[bool, None] = True,
+        verbose: Optional[bool] = True,
     ):
         super().__init__(file_path=None, verbose=verbose)
 

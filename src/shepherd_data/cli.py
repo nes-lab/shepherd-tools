@@ -52,7 +52,7 @@ def path_to_flist(data_path: Path) -> list[Path]:
     return h5files
 
 
-@click.group(context_settings=dict(help_option_names=["-h", "--help"], obj={}))
+@click.group(context_settings={"help_option_names": ["-h", "--help"], "obj": {}})
 @click.option(
     "-v",
     "--verbose",
@@ -200,7 +200,8 @@ def extract_meta(in_data, separator):
     help="Alternative Input to determine a downsample-factor (Choose One)",
 )
 def downsample(in_data, ds_factor, sample_rate):
-    """Creates an array of downsampling-files from file or directory containing shepherd-recordings"""
+    """Creates an array of downsampling-files from file
+    or directory containing shepherd-recordings"""
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
         ds_factor = int(Reader.samplerate_sps / sample_rate)
     if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
@@ -290,11 +291,11 @@ def plot(in_data, start: float, end: float, width: int, height: int, multiplot: 
             else:
                 shpr.plot_to_file(start, end, width, height)
     if multiplot:
-        logger.info(f"Got {len(data)} datasets to plot")
+        logger.info("Got %d datasets to plot", len(data))
         mpl_path = Reader.multiplot_to_file(data, in_data, width, height)
         logger.info("Plot generated and saved to '%s'", mpl_path.name)
 
 
 if __name__ == "__main__":
-    print("This File should not be executed like this ...")
+    logger.info("This File should not be executed like this ...")
     cli()
