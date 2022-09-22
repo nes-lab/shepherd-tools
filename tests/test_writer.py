@@ -3,10 +3,27 @@ import numpy as np
 from shepherd_data import Reader, Writer
 
 
-def generate_shp_file(store_path, mode=None, datatype=None, window_samples=None, cal_data=None, config=None, compression="default", hostname="unknown"):
+def generate_shp_file(
+    store_path,
+    mode=None,
+    datatype=None,
+    window_samples=None,
+    cal_data=None,
+    config=None,
+    compression="default",
+    hostname="unknown",
+):
     if config is None:
         config = {}
-    with Writer(store_path, mode=mode, datatype=datatype, window_samples=window_samples, cal_data=cal_data, compression=compression, verbose=True) as file:
+    with Writer(
+        store_path,
+        mode=mode,
+        datatype=datatype,
+        window_samples=window_samples,
+        cal_data=cal_data,
+        compression=compression,
+        verbose=True,
+    ) as file:
         file.set_hostname(hostname)
         file.set_config(config)
         duration_s = 2
@@ -31,6 +48,7 @@ def test_writer_basics(tmp_path):
 def test_writer_compression_1(tmp_path):
     store_path = tmp_path / "hrv_test.h5"
     generate_shp_file(store_path, compression=1)
+
 
 # TODO:
 #  - test writing different and confirming them

@@ -46,7 +46,7 @@ class MPPTracker:
         self.v_proto: np.ndarray = np.linspace(0, v_max, pts_per_curve)
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
-        """ apply harvesting model to input data
+        """apply harvesting model to input data
 
         :param coeffs: ivonne coefficients
         :return:

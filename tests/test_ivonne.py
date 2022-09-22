@@ -37,6 +37,3 @@ def test_convert_ivonne(tmp_path, example_path):
     assert energies["isc"] > energies["opt"]
     assert energies["opt"] > energies["voc"]
     assert energies["voc"] > energies["ivc"]
-
-
-

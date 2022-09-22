@@ -76,8 +76,7 @@ def cli(ctx, verbose: int):
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 def validate(in_data):
-    """Validates a file or directory containing shepherd-recordings
-    """
+    """Validates a file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
     valid_dir = True
     for file in files:
@@ -109,8 +108,7 @@ def validate(in_data):
     help="Set an individual csv-separator",
 )
 def extract(in_data, ds_factor, separator):
-    """Extracts recorded IVSamples and stores it to csv
-    """
+    """Extracts recorded IVSamples and stores it to csv"""
     files = path_to_flist(in_data)
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:
         ds_factor = 1000
@@ -159,8 +157,7 @@ def extract(in_data, ds_factor, separator):
     help="Set an individual csv-separator",
 )
 def extract_meta(in_data, separator):
-    """Extracts metadata and logs from file or directory containing shepherd-recordings
-    """
+    """Extracts metadata and logs from file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
     for file in files:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
@@ -182,7 +179,7 @@ def extract_meta(in_data, separator):
 
 @cli.command(
     short_help="Creates an array of downsampling-files from "
-               "file or directory containing shepherd-recordings"
+    "file or directory containing shepherd-recordings"
 )
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 # @click.option("--out_data", "-o", type=click.Path(resolve_path=True))
@@ -200,8 +197,7 @@ def extract_meta(in_data, separator):
     help="Alternative Input to determine a downsample-factor (Choose One)",
 )
 def downsample(in_data, ds_factor, sample_rate):
-    """Creates an array of downsampling-files from file or directory containing shepherd-recordings
-    """
+    """Creates an array of downsampling-files from file or directory containing shepherd-recordings"""
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
         ds_factor = int(Reader.samplerate_sps / sample_rate)
     if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
@@ -214,7 +210,9 @@ def downsample(in_data, ds_factor, sample_rate):
         with Reader(file, verbose=verbose_level >= 2) as shpr:
             for _factor in ds_list:
                 if shpr.ds_time.shape[0] / _factor < 1000:
-                    logger.warning("will skip downsampling for %s because resulting sample-size is too small")
+                    logger.warning(
+                        "will skip downsampling for %s because resulting sample-size is too small"
+                    )
                     break
                 ds_file = file.with_suffix(f".downsampled_x{round(_factor)}.h5")
                 if ds_file.exists():
@@ -234,12 +232,8 @@ def downsample(in_data, ds_factor, sample_rate):
                     shpr.downsample(
                         shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True
                     )
-                    shpr.downsample(
-                        shpr.ds_voltage, shpw.ds_voltage, ds_factor=_factor
-                    )
-                    shpr.downsample(
-                        shpr.ds_current, shpw.ds_current, ds_factor=_factor
-                    )
+                    shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=_factor)
+                    shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=_factor)
 
 
 @cli.command(
@@ -281,8 +275,7 @@ def downsample(in_data, ds_factor, sample_rate):
     help="Plot all files (in directory) into one Multiplot",
 )
 def plot(in_data, start: float, end: float, width: int, height: int, multiplot: bool):
-    """ Plots IV-trace from file or directory containing shepherd-recordings
-    """
+    """Plots IV-trace from file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
     multiplot = multiplot and len(files) > 1
     data = []

@@ -17,7 +17,8 @@ import h5py
 import yaml
 import numpy as np
 import pandas as pd
-#import samplerate  # TODO: just a test-fn for now
+
+# import samplerate  # TODO: just a test-fn for now
 
 from .calibration import raw_to_si
 
@@ -35,7 +36,9 @@ class Reader:
     sample_interval_ns: int = int(10**9 // samplerate_sps)
     sample_interval_s: float = 1 / samplerate_sps
 
-    max_elements: int = 40 * samplerate_sps  # per iteration (40s full res, < 200 MB RAM use)
+    max_elements: int = (
+        40 * samplerate_sps
+    )  # per iteration (40s full res, < 200 MB RAM use)
 
     mode_dtype_dict = {
         "harvester": ["ivsample", "ivcurve", "isc_voc"],
@@ -64,7 +67,9 @@ class Reader:
     def __enter__(self):
         if not self._skip_open:
             if not self._file_path.exists():
-                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self._file_path.name)
+                raise FileNotFoundError(
+                    errno.ENOENT, os.strerror(errno.ENOENT), self._file_path.name
+                )
             self.h5file = h5py.File(self._file_path, "r")
 
             if self.is_valid():
@@ -198,10 +203,13 @@ class Reader:
         return ""
 
     def get_hrv_config(self) -> dict:
-        """ essential info for harvester
+        """essential info for harvester
         :return: config-dict directly for vHarvester to be used during emulation
         """
-        return {"dtype": self.get_datatype(), "window_samples": self.get_window_samples()}
+        return {
+            "dtype": self.get_datatype(),
+            "window_samples": self.get_window_samples(),
+        }
 
     def data_timediffs(self) -> list:
         """calculate list of (unique) time-deltas between buffers [s]
@@ -221,19 +229,17 @@ class Reader:
 
         def calc_timediffs(idx_start: int) -> list:
             ds_time = self.ds_time[
-                      idx_start: (idx_start + self.max_elements): self.samples_per_buffer
+                idx_start : (idx_start + self.max_elements) : self.samples_per_buffer
             ]
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
             return list(np.array(diffs_np))
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
-        diffs = set(
-            [
-                round(float(j) * 1e-9 / self.samples_per_buffer, 6)
-                for i in diffs_ll
-                for j in i
-            ]
-        )
+        diffs = {
+            round(float(j) * 1e-9 / self.samples_per_buffer, 6)
+            for i in diffs_ll
+            for j in i
+        }
         return list(diffs)
 
     def check_timediffs(self) -> bool:
@@ -260,7 +266,9 @@ class Reader:
             return False
         for attr in ["mode"]:
             if attr not in self.h5file.attrs.keys():
-                self._logger.error("attribute '%s' not found in file (@Validator)", attr)
+                self._logger.error(
+                    "attribute '%s' not found in file (@Validator)", attr
+                )
                 return False
             if self.h5file.attrs["mode"] not in self.mode_dtype_dict:
                 self._logger.error("unsupported mode '%s' (@Validator)", attr)
@@ -479,7 +487,7 @@ class Reader:
             }
 
         stats_list = [
-            _calc_statistics(raw_to_si(dset[i: i + self.max_elements], cal))
+            _calc_statistics(raw_to_si(dset[i : i + self.max_elements], cal))
             for i in job_iter
         ]
         if len(stats_list) < 1:
@@ -521,7 +529,9 @@ class Reader:
         ]
         header = separator.join(header)
         with open(csv_path, "w", encoding="utf-8-sig") as csv_file:
-            self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
+            self._logger.info(
+                "CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name
+            )
             csv_file.write(header + "\n")
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
@@ -553,7 +563,9 @@ class Reader:
         ]
         datasets.remove("time")
         with open(log_path, "w", encoding="utf-8-sig") as log_file:
-            self._logger.info("Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name)
+            self._logger.info(
+                "Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name
+            )
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
                 log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
@@ -866,8 +878,10 @@ class Reader:
         """
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = Path(plot_path).absolute().with_suffix(
-            f".multiplot_{start_str}_to_{end_str}.png"
+        plot_path = (
+            Path(plot_path)
+            .absolute()
+            .with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
         )
         if plot_path.exists():
             return None

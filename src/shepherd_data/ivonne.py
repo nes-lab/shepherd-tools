@@ -6,7 +6,7 @@ to generate valid shepherd-data for emulation
 from typing import NoReturn
 from pathlib import Path
 import logging
-import pickle
+import pickle  # noqa: S403
 import math
 import errno
 import os
@@ -30,9 +30,7 @@ def get_isc(coeffs: pd.DataFrame):
 
 
 class Reader:
-    """ container for converters to shepherd-data
-
-    """
+    """container for converters to shepherd-data"""
 
     samplerate_sps: int = 50
     sample_interval_ns: int = int(10**9 // samplerate_sps)
@@ -57,7 +55,9 @@ class Reader:
 
     def __enter__(self):
         if not self.file_path.exists():
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name)
+            raise FileNotFoundError(
+                errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
+            )
         with open(self.file_path, "rb") as ifr:
             self._df = pickle.load(ifr)
         self._refresh_file_stats()
@@ -110,7 +110,9 @@ class Reader:
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
 
-        with Writer(shp_output, datatype="ivcurve", window_samples=pts_per_curve) as sfw:
+        with Writer(
+            shp_output, datatype="ivcurve", window_samples=pts_per_curve
+        ) as sfw:
 
             sfw.set_hostname("IVonne")
             curve_interval_us = round(sfw.sample_interval_ns * pts_per_curve / 1000)
@@ -192,9 +194,7 @@ class Reader:
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
             max_elements = math.ceil(sfw.max_elements // up_factor)
-            job_iter = trange(
-                0, df_elements_n, max_elements, desc="generate ivsamples"
-            )
+            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivsamples")
 
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps

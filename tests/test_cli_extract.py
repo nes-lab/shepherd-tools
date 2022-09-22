@@ -4,7 +4,16 @@ from shepherd_data.cli import cli
 
 def test_cli_extract_file_full(data_h5_path):
     res = CliRunner().invoke(
-        cli, ["-vvv", "extract", "--ds-factor", "100", "--separator", ",", str(data_h5_path)]
+        cli,
+        [
+            "-vvv",
+            "extract",
+            "--ds-factor",
+            "100",
+            "--separator",
+            ",",
+            str(data_h5_path),
+        ],
     )
     assert res.exit_code == 0
     assert data_h5_path.with_suffix(".downsampled_x100.h5").exists()
@@ -21,9 +30,7 @@ def test_cli_extract_file_short(data_h5_path):
 
 
 def test_cli_extract_file_min(data_h5_path):
-    res = CliRunner().invoke(
-        cli, ["-vvv", "extract", str(data_h5_path)]
-    )
+    res = CliRunner().invoke(cli, ["-vvv", "extract", str(data_h5_path)])
     assert res.exit_code == 0
     assert data_h5_path.with_suffix(".downsampled_x1000.h5").exists()
     assert data_h5_path.with_suffix(".downsampled_x1000.data.csv").exists()
@@ -33,7 +40,16 @@ def test_cli_extract_dir_full(data_h5_path):
     print(data_h5_path.parent)
     print(data_h5_path.parent.is_dir())
     res = CliRunner().invoke(
-        cli, ["-vvv", "extract", "--ds-factor", "2000", "--separator", ";", str(data_h5_path.parent)]
+        cli,
+        [
+            "-vvv",
+            "extract",
+            "--ds-factor",
+            "2000",
+            "--separator",
+            ";",
+            str(data_h5_path.parent),
+        ],
     )
     assert res.exit_code == 0
     assert data_h5_path.with_suffix(".downsampled_x2000.h5").exists()

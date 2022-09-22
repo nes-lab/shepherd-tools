@@ -11,17 +11,13 @@ def test_cli_downsample_file_full(data_h5_path):
 
 
 def test_cli_downsample_file_short(data_h5_path):
-    res = CliRunner().invoke(
-        cli, ["-vvv", "downsample", "-f", "20", str(data_h5_path)]
-    )
+    res = CliRunner().invoke(cli, ["-vvv", "downsample", "-f", "20", str(data_h5_path)])
     assert res.exit_code == 0
     assert data_h5_path.with_suffix(".downsampled_x20.h5").exists()
 
 
 def test_cli_downsample_file_min(data_h5_path):
-    res = CliRunner().invoke(
-        cli, ["-vvv", "downsample", str(data_h5_path)]
-    )
+    res = CliRunner().invoke(cli, ["-vvv", "downsample", str(data_h5_path)])
     assert res.exit_code == 0
     assert data_h5_path.with_suffix(".downsampled_x5.h5").exists()
     assert data_h5_path.with_suffix(".downsampled_x25.h5").exists()

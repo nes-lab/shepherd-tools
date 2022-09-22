@@ -231,8 +231,8 @@ class Writer(Reader):
 
         Args:
             timestamp_ns: just start of buffer or whole ndarray
-            voltage: ndarray as raw uint values
-            current: ndarray as raw uint values
+            voltage: ndarray as raw unsigned integers
+            current: ndarray as raw unsigned integers
         """
         len_new = min(voltage.size, current.size)
 

@@ -16,7 +16,7 @@ cal_default: dict[str, dict] = {
 def raw_to_si(
     values_raw: Union[np.ndarray, float, int], cal: dict
 ) -> Union[np.ndarray, float]:
-    """Helper to convert between physical units and raw uint values
+    """Helper to convert between physical units and raw unsigned integers
 
     :param values_raw: number or numpy array with raw values
     :param cal: calibration-dict with entries for gain and offset
@@ -28,7 +28,7 @@ def raw_to_si(
 
 
 def si_to_raw(values_si: Union[np.ndarray, float], cal: dict) -> Union[np.ndarray, int]:
-    """Helper to convert between physical units and raw uint values
+    """Helper to convert between physical units and raw unsigned integers
 
     :param values_si: number or numpy array with values in physical units
     :param cal: calibration-dict with entries for gain and offset
