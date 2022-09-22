@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from typing import List
 from typing import NoReturn
 
 import click
@@ -32,7 +33,7 @@ def config_logger(verbose: int) -> NoReturn:
     logging.basicConfig(format="%(message)s")  # reduce internals
 
 
-def path_to_flist(data_path: Path) -> list[Path]:
+def path_to_flist(data_path: Path) -> List[Path]:
     """every path gets transformed to a list of paths
     - if directory: list of files inside
     - if existing file: list with 1 element
