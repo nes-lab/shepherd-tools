@@ -4,19 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "*"
-matplotlib = "*"
-h5py = "*"
-pandas = "*"
-scipy = "*"
-pyyaml = "*"
-tqdm = "*"
+shepherd = {editable = true, path = "./[test]"}
 samplerate = "*"
 
 [dev-packages]
-black = "*"
-pylint = "*"
-twine = "*"
+shepherd = {editable = true, path = "./[test, dev]"}
 
 [pipenv]
 allow_prereleases = false

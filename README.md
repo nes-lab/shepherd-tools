@@ -28,31 +28,49 @@ cd .\shepherd-datalib
 pip3 install -e ./
 ```
 
-#### PipEnv - Manual
+### Development
+
+#### PipEnv
 
 - clone repository
 - navigate shell into directory
-- activate and update pipenv (optional) 
-  - for developers: add special packages with `-d` switch: `pipenv install -d ./`
-- install module
+- install environment
+- activate shell
+- optional
+  - update pipenv (optional)
+  - add special packages with `-dev` switch
+
 
 ```Shell
 git clone https://github.com/orgua/shepherd-datalib
 cd .\shepherd-datalib
 
+pipenv install --dev
 pipenv shell
+
 pipenv update
-pipenv install ./
+pipenv install --dev pytest
 ```
 
 #### running Testbench
 
-- install dependencies
 - run pytest
 
 ```Shell
-pip3 install -e ./[test]
 pytest
+```
+
+#### code coverage
+
+- run coverage
+- check results (in browser `./htmlcov/index.html`)
+
+```Shell
+coverage run -m pytest
+
+coverage html
+# or simpler
+coverage report
 ```
 
 ### Programming Interface
@@ -74,7 +92,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - file can be checked for plausibility and validity (`is_valid()`)
   - internal structure of h5file (`get_metadata()` or `save_metadata()` ... to yaml) with lots of additional data
   - access data and various converters, calculators
-    - `read_buffers()` -> generator that provides one buffer per call, can be configured on first call 
+    - `read_buffers()` -> generator that provides one buffer per call, can be configured on first call
     - `get_calibration_data()`
     - `get_windows_samples()`
     - `get_mode()`
@@ -94,7 +112,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `upsample_2_isc_voc()` TODO: for now a upsampled but unusable version of samples of short-circuit-current and open-circuit-voltage
   - `convert_2_ivsamples()` already applies a simple harvesting-algo and creates ivsamples
 - `./examples/`
-  - `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation 
+  - `example_convert_ivonne.py` converts IVonne recording (`jogging_10m.iv`) to shepherd ivcurves, NOTE: slow implementation
   - `example_extract_logs.py` is analyzing all files in directory, saves logging-data and calculates cpu-load and data-rate
   - `example_generate_sawtooth.py` is using Writer to generate a 60s ramp with 1h repetition and uses Reader to dump metadata of that file
   - `example_plot_traces.py` demos some mpl-plots with various zoom levels
@@ -105,7 +123,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
 
 ### CLI-Interface
 
-After installing the module the datalib offers some often needed functionality on the command line: 
+After installing the module the datalib offers some often needed functionality on the command line:
 
 **Validate Recordings**
 
@@ -168,7 +186,7 @@ shepherd-data plot -s10 -e20 hrv_saw_1h.h5
 shepherd-data downsample [-f ds-factor] [-r sample-rate] dir_or_file
 
 # examples:
-shepherd-data downsample ./ 
+shepherd-data downsample ./
 shepherd-data downsample -f 1000 hrv_saw_1h.h5
 shepherd-data downsample -r 100 hrv_saw_1h.h5
 ```
@@ -177,7 +195,7 @@ shepherd-data downsample -r 100 hrv_saw_1h.h5
 
 Details about the file-structure can be found in the [main-project](https://github.com/orgua/shepherd/blob/master/docs/user/data_format.rst).
 
-TODO: 
+TODO:
 - update design of file
 - data dtype, mode, ...
 
@@ -196,7 +214,7 @@ TODO:
   - lzf seems better-suited due to lower load, or if space isn't a constraint: uncompressed (None as argument)
   - note: lzf seems to cause trouble with some third party hdf5-tools
   - compression is a heavy load for the beaglebone, but it got more performant with recent python-versions
-- size-experiment A: 24 h of ramping / sawtooth (data is repetitive with 1 minute ramp) 
+- size-experiment A: 24 h of ramping / sawtooth (data is repetitive with 1 minute ramp)
   - gzip-1: 49'646 MiB -> 588 KiB/s
   - lzf: 106'445 MiB -> 1262 KiB/s
   - uncompressed: 131'928 MiB -> 1564 KiB/s
@@ -212,7 +230,7 @@ TODO:
   emu_120s_lzf_to_unc.h5 	-> emulator, cpu_util [%] = 55.75, data-rate = 1564.0 KiB/s
   emu_120s_unc_to_gz1.h5 	-> emulator, cpu_util [%] = 63.84, data-rate =  351.0 KiB/s
   emu_120s_unc_to_lzf.h5 	-> emulator, cpu_util [%] = 57.28, data-rate =  686.0 KiB/s
-  emu_120s_unc_to_unc.h5 	-> emulator, cpu_util [%] = 51.69, data-rate = 1564.0 KiB/s 
+  emu_120s_unc_to_unc.h5 	-> emulator, cpu_util [%] = 51.69, data-rate = 1564.0 KiB/s
 ```
 
 ### Release-Procedure
@@ -225,7 +243,7 @@ TODO:
 ### Open Tasks
 
 - implementations for this lib
-  - generalize up- and down-sampling, use out_sample_rate instead of ds-factor 
+  - generalize up- and down-sampling, use out_sample_rate instead of ds-factor
     - lib samplerate (tested) -> promising, but designed for float32 and range of +-1.0
     - lib resampy (tested) -> could be problematic with slice-iterator
     - https://stackoverflow.com/questions/29085268/resample-a-numpy-array
@@ -233,7 +251,7 @@ TODO:
     - scipy.signal.decimate, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.decimate.html
     - scipy.signal.resample_poly, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample_poly.html#scipy.signal.resample_poly
     - timestamps could be regenerated with np.arange( tmin, tmax, 1e9/samplerate)
-  - generalize converters (currently in IVonne) 
+  - generalize converters (currently in IVonne)
     - isc&voc <-> ivcurve
     - ivcurve -> ivsample
   - plotting and downsampling for IVCurves ()
