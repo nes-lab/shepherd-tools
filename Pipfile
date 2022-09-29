@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-shepherd = {editable = true, path = "./[test]"}
+shepherd-data = {editable = true, path = "./[test]"}
 samplerate = "*"
 
 [dev-packages]
-shepherd = {editable = true, path = "./[test, dev]"}
+shepherd-data = {editable = true, path = "./[test, dev]"}
 
 [pipenv]
 allow_prereleases = false
