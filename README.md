@@ -248,6 +248,7 @@ pre-commit run --all-files
 
 ### Open Tasks
 
+- [click progressbar](https://click.palletsprojects.com/en/8.1.x/api/#click.progressbar) -> could replace tqdm
 - implementations for this lib
   - generalize up- and down-sampling, use out_sample_rate instead of ds-factor
     - lib samplerate (tested) -> promising, but designed for float32 and range of +-1.0
