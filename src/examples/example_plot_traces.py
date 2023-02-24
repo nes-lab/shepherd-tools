@@ -13,7 +13,6 @@ from pathlib import Path
 import shepherd_data as shpd
 
 if __name__ == "__main__":
-
     with shpd.Reader(Path("./hrv_sawtooth_1h.h5")) as db:
         db.plot_to_file()
         db.plot_to_file(0, 500)

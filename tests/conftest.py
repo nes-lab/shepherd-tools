@@ -10,7 +10,6 @@ def generate_h5_file(file_path: Path, file_name: str = "harvest_example.h5") -> 
     store_path = file_path / file_name
 
     with Writer(store_path, compression=1) as file:
-
         file.set_hostname("artificial")
 
         duration_s = 2

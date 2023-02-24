@@ -7,7 +7,6 @@ from shepherd_data import Reader
 
 def test_reader_metadata(data_h5_path):
     with Reader(data_h5_path, verbose=True) as sfr:
-
         assert sfr.energy() > 0
         assert sfr.is_valid()
 

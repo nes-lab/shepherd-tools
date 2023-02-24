@@ -12,11 +12,9 @@ from tqdm import trange
 import shepherd_data as shpd
 
 if __name__ == "__main__":
-
     file_path = Path("./hrv_sawtooth_1h.h5")
 
     with shpd.Writer(file_path, compression=1) as file:
-
         file.set_hostname("artificial")
         duration_s = 60
         repetitions = 60
@@ -27,7 +25,6 @@ if __name__ == "__main__":
         currents = np.linspace(100e-6, 2000e-6, int(file.samplerate_sps * duration_s))
 
         for idx in trange(repetitions, desc="generate"):
-
             timestamps = idx * duration_s + timestamp_vector
             file.append_iv_data_si(timestamps, voltages, currents)
 

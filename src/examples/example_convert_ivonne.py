@@ -14,7 +14,6 @@ from shepherd_data import ivonne
 from shepherd_data import mppt
 
 if __name__ == "__main__":
-
     inp_file_path = Path("./jogging_10m.iv")
     isc_file_path = Path("./jogging_10m_isc_voc.h5")
     ivc_file_path = Path("./jogging_10m_ivcurves.h5")

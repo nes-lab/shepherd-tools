@@ -13,7 +13,6 @@ from pathlib import Path
 import shepherd_data as shpd
 
 if __name__ == "__main__":
-
     flist = os.listdir("./")
     for file in flist:
         fpath = Path(file)
