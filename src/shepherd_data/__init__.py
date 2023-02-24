@@ -10,7 +10,7 @@ import logging
 from .reader import Reader
 from .writer import Writer
 
-__version__ = "2022.9.4"
+__version__ = "2023.2.1"
 __all__ = [
     "Reader",
     "Writer",
