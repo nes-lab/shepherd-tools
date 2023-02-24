@@ -10,7 +10,6 @@ logger = logging.getLogger("SHPData.debug")
 logger.setLevel(logging.DEBUG)
 
 with shpd.Reader(file) as shpr:
-
     out_file = file.with_suffix(f".fs_{samplerate_sps}.h5")
     logger.info(
         "Resampling '%s' from %d Hz to %d Hz ...",

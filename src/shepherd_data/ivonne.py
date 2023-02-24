@@ -115,7 +115,6 @@ class Reader:
         with Writer(
             shp_output, datatype="ivcurve", window_samples=pts_per_curve
         ) as sfw:
-
             sfw.set_hostname("IVonne")
             curve_interval_us = round(sfw.sample_interval_ns * pts_per_curve / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
@@ -191,7 +190,6 @@ class Reader:
             )
 
         with Writer(shp_output, datatype="ivsample") as sfw:
-
             sfw.set_hostname("IVonne")
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
@@ -249,7 +247,6 @@ class Reader:
             return
 
         with Writer(shp_output, datatype="isc_voc") as sfw:
-
             sfw.set_hostname("IVonne")
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
