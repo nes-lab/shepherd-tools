@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.pyright]
-include = ['./src/shepherd_data']
+include = ['./src/shepherd_data', './src/examples', "./tests"]
 root="./"
 
 # TODO: switch fully to this config: https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html

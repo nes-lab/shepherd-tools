@@ -1,3 +1,5 @@
+from typing import Union
+
 import numpy as np
 
 from shepherd_data import Reader
@@ -11,7 +13,7 @@ def generate_shp_file(
     window_samples=None,
     cal_data=None,
     config=None,
-    compression="default",
+    compression: Union[str, int, None] = "default",
     hostname="unknown",
 ):
     if config is None:
