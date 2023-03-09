@@ -6,7 +6,6 @@ import os
 import sys
 from pathlib import Path
 from typing import List
-from typing import NoReturn
 
 import click
 
@@ -18,7 +17,7 @@ logger = logging.getLogger("SHPData.cli")
 verbose_level = 2
 
 
-def config_logger(verbose: int) -> NoReturn:
+def config_logger(verbose: int) -> None:
     # TODO: put in __init__, provide logger, ditch global var
     if verbose == 0:
         logger.setLevel(logging.ERROR)
@@ -294,7 +293,10 @@ def plot(in_data, start: float, end: float, width: int, height: int, multiplot: 
     if multiplot:
         logger.info("Got %d datasets to plot", len(data))
         mpl_path = Reader.multiplot_to_file(data, in_data, width, height)
-        logger.info("Plot generated and saved to '%s'", mpl_path.name)
+        if mpl_path:
+            logger.info("Plot generated and saved to '%s'", mpl_path.name)
+        else:
+            logger.info("Plot not generated, path was already in use.")
 
 
 if __name__ == "__main__":

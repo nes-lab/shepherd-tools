@@ -2,11 +2,15 @@
 Harvesters, simple and fast approach.
 Might be exchanged by shepherds py-model of pru-harvesters
 """
+from typing import Union
+
 import numpy as np
 import pandas as pd
 
 
-def iv_model(voltages: np.ndarray, coeffs: pd.DataFrame) -> np.ndarray:
+def iv_model(
+    voltages: Union[np.ndarray, float], coeffs: pd.DataFrame
+) -> Union[np.ndarray, pd.Dataframe, float]:
     """Simple diode based model of a solar panel IV curve.
 
     Args:

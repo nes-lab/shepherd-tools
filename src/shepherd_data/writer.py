@@ -5,7 +5,6 @@ import logging
 import math
 from itertools import product
 from pathlib import Path
-from typing import NoReturn
 from typing import Optional
 from typing import Union
 
@@ -27,7 +26,7 @@ def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
     """
     counter = 0
     while True:
-        path = base_path.with_suffix(f".{counter}{suffix}")
+        path = Path(base_path).with_suffix(f".{counter}{suffix}")
         if not path.exists():
             return path
         counter += 1
@@ -68,10 +67,10 @@ class Writer(Reader):
     def __init__(
         self,
         file_path: Path,
-        mode: str = None,
-        datatype: str = None,
-        window_samples: int = None,
-        cal_data: dict = None,
+        mode: Optional[str] = None,
+        datatype: Optional[str] = None,
+        window_samples: Optional[int] = None,
+        cal_data: Optional[dict] = None,
         modify_existing: bool = False,
         compression: Union[None, str, int] = "default",
         verbose: Optional[bool] = True,
@@ -100,6 +99,12 @@ class Writer(Reader):
             raise TypeError(f"can not handle type '{type(mode)}' for mode")
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
             raise ValueError(f"can not handle mode '{mode}'")
+        if not isinstance(window_samples, (int, type(None))):
+            raise ValueError(
+                f"con not handle type '{type(window_samples)}' for window_samples"
+            )
+        if not isinstance(cal_data, (dict, type(None))):
+            raise ValueError(f"con not handle type '{type(cal_data)}' for cal_data")
 
         if not isinstance(datatype, (str, type(None))):
             raise TypeError(f"can not handle type '{type(datatype)}' for datatype")
@@ -116,10 +121,14 @@ class Writer(Reader):
             self._datatype = datatype
             self._window_samples = window_samples
         else:
-            self._mode = self.mode_default if (mode is None) else mode
-            self._cal = cal_default if (cal_data is None) else cal_data
-            self._datatype = self.datatype_default if (datatype is None) else datatype
-            self._window_samples = 0 if (window_samples is None) else window_samples
+            self._mode = mode if isinstance(mode, str) else self.mode_default
+            self._cal = cal_data if isinstance(cal_data, dict) else cal_default
+            self._datatype = (
+                datatype if isinstance(datatype, str) else self.datatype_default
+            )
+            self._window_samples = (
+                window_samples if isinstance(window_samples, int) else 0
+            )
 
         if compression in [None, "lzf", 1]:  # order of recommendation
             self._compression_algo = compression
@@ -229,7 +238,7 @@ class Writer(Reader):
         timestamp_ns: Union[np.ndarray, float, int],
         voltage: np.ndarray,
         current: np.ndarray,
-    ) -> NoReturn:
+    ) -> None:
         """Writes raw data to database
 
         Args:
@@ -266,8 +275,8 @@ class Writer(Reader):
         self,
         timestamp: Union[np.ndarray, float],
         voltage: np.ndarray,
-        current: np.array,
-    ) -> NoReturn:
+        current: np.ndarray,
+    ) -> None:
         """Writes data (in SI / physical unit) to file, but converts it to raw-data first
 
         Args:
@@ -282,7 +291,7 @@ class Writer(Reader):
         current = si_to_raw(current, self._cal["current"])
         self.append_iv_data_raw(timestamp, voltage, current)
 
-    def _align(self) -> NoReturn:
+    def _align(self) -> None:
         """Align datasets with buffer-size of shepherd"""
         self._refresh_file_stats()
         n_buff = self.ds_time.size / self.samples_per_buffer
@@ -303,7 +312,7 @@ class Writer(Reader):
         """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
         return self.h5file.attrs.__setitem__(key, item)
 
-    def set_config(self, data: dict) -> NoReturn:
+    def set_config(self, data: dict) -> None:
         """Important Step to get a self-describing Output-File
 
         :param data: from virtual harvester or converter / source
@@ -314,14 +323,14 @@ class Writer(Reader):
         if "window_samples" in data:
             self.set_window_samples(data["window_samples"])
 
-    def set_window_samples(self, samples: int = 0) -> NoReturn:
+    def set_window_samples(self, samples: int = 0) -> None:
         """parameter essential for ivcurves
 
         :param samples: length of window / voltage sweep
         """
         self.h5file["data"].attrs["window_samples"] = samples
 
-    def set_hostname(self, name: str) -> NoReturn:
+    def set_hostname(self, name: str) -> None:
         """option to distinguish the host, target or data-source in the testbed
             -> perfect for plotting later
 

@@ -2,7 +2,7 @@
 
 """
 from typing import Dict
-from typing import Union
+from typing import TypeVar
 
 import numpy as np
 
@@ -13,10 +13,10 @@ cal_default: Dict[str, dict] = {
     "time": {"gain": 1e-9, "offset": 0.0},
 }
 
+T_cnv = TypeVar("T_cnv", np.ndarray, float)
 
-def raw_to_si(
-    values_raw: Union[np.ndarray, float, int], cal: dict
-) -> Union[np.ndarray, float]:
+
+def raw_to_si(values_raw: T_cnv, cal: dict) -> T_cnv:
     """Helper to convert between physical units and raw unsigned integers
 
     :param values_raw: number or numpy array with raw values
@@ -28,7 +28,7 @@ def raw_to_si(
     return values_si
 
 
-def si_to_raw(values_si: Union[np.ndarray, float], cal: dict) -> Union[np.ndarray, int]:
+def si_to_raw(values_si: T_cnv, cal: dict) -> T_cnv:
     """Helper to convert between physical units and raw unsigned integers
 
     :param values_si: number or numpy array with values in physical units

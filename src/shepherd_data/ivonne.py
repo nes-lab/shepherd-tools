@@ -9,7 +9,7 @@ import math
 import os
 import pickle  # noqa: S403
 from pathlib import Path
-from typing import NoReturn
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -38,16 +38,19 @@ class Reader:
     sample_interval_ns: int = int(10**9 // samplerate_sps)
     sample_interval_s: float = 1 / samplerate_sps
 
-    runtime_s: float = None
-    file_size: int = None
-    data_rate: float = None
+    runtime_s: float = 0
+    file_size: int = 0
+    data_rate: float = 0
 
     _df: pd.DataFrame = None
 
     _logger: logging.Logger = logging.getLogger("SHPData.IVonne.Reader")
 
     def __init__(
-        self, file_path: Path, samplerate_sps: int = None, verbose: bool = True
+        self,
+        file_path: Path,
+        samplerate_sps: Optional[int] = None,
+        verbose: bool = True,
     ):
         self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
@@ -78,7 +81,7 @@ class Reader:
     def __exit__(self, *exc):
         pass
 
-    def _refresh_file_stats(self) -> NoReturn:
+    def _refresh_file_stats(self) -> None:
         self.runtime_s = round(self._df.shape[0] / self.samplerate_sps, 3)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
@@ -88,8 +91,8 @@ class Reader:
         shp_output: Path,
         v_max: float = 5.0,
         pts_per_curve: int = 1000,
-        duration_s: float = None,
-    ) -> NoReturn:
+        duration_s: Optional[float] = None,
+    ) -> None:
         """Transforms previously recorded parameters to shepherd hdf database with IV curves.
         Shepherd should work with IV 'surfaces', where we have a stream of IV curves
 
@@ -152,9 +155,9 @@ class Reader:
         self,
         shp_output: Path,
         v_max: float = 5.0,
-        duration_s: float = None,
-        tracker: MPPTracker = None,
-    ) -> NoReturn:
+        duration_s: Optional[float] = None,
+        tracker: Optional[MPPTracker] = None,
+    ) -> None:
         """Transforms shepherd IV curves to shepherd IV traces.
 
         For the 'buck' and 'buck-boost' modes, shepherd takes voltage and current traces.
@@ -226,8 +229,8 @@ class Reader:
         self,
         shp_output: Path,
         v_max: float = 5.0,
-        duration_s: float = None,
-    ) -> NoReturn:
+        duration_s: Optional[float] = None,
+    ) -> None:
         """Transforms ivonne-parameters to upsampled version for shepherd
 
         :param shp_output: Path where the resulting hdf file shall be stored
