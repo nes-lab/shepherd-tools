@@ -9,6 +9,7 @@ samplerate = "*"
 
 [dev-packages]
 shepherd-data = {editable = true, path = "./[test, dev]"}
+pyright = "*"
 
 [pipenv]
 allow_prereleases = false

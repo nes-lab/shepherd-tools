@@ -2,5 +2,9 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[tool.pyright]
+include = ['./src/shepherd_data']
+root="./"
+
 # TODO: switch fully to this config: https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 # TODO: build a light version with basic support for reading, writing (only libs that run on beaglebone)
