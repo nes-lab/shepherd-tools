@@ -2,15 +2,13 @@
 Harvesters, simple and fast approach.
 Might be exchanged by shepherds py-model of pru-harvesters
 """
-from typing import Union
-
 import numpy as np
 import pandas as pd
 
+from .calibration import T_calc
 
-def iv_model(
-    voltages: Union[np.ndarray, float], coeffs: pd.DataFrame
-) -> Union[np.ndarray, pd.Dataframe, float]:
+
+def iv_model(voltages: T_calc, coeffs: pd.Series) -> T_calc:
     """Simple diode based model of a solar panel IV curve.
 
     Args:
@@ -20,11 +18,17 @@ def iv_model(
     Returns:
         Solar current at given load voltage
     """
-    currents = coeffs["a"] - coeffs["b"] * (np.exp(coeffs["c"] * voltages) - 1)
-    if hasattr(currents, "__len__"):
+    currents = float(coeffs["a"]) - float(coeffs["b"]) * (
+        np.exp(float(coeffs["c"]) * voltages) - 1
+    )
+    if isinstance(currents, np.ndarray):
         currents[currents < 0] = 0
-    else:
+    elif isinstance(currents, (float, int)):
         currents = max(0, currents)
+    else:
+        raise TypeError(
+            f"Can't handle type '{type(currents)}' of derived iv_model [{T_calc}]"
+        )
     return currents
 
 

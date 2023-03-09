@@ -96,28 +96,35 @@ class Writer(Reader):
             )
 
         if not isinstance(mode, (str, type(None))):
-            raise TypeError(f"can not handle type '{type(mode)}' for mode")
+            raise TypeError(f"Can't handle type '{type(mode)}' for mode [str, None]")
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
-            raise ValueError(f"can not handle mode '{mode}'")
-        if not isinstance(window_samples, (int, type(None))):
             raise ValueError(
-                f"con not handle type '{type(window_samples)}' for window_samples"
+                f"Can't handle mode '{mode}' " f"(choose one of {self.mode_dtype_dict})"
+            )
+        if not isinstance(window_samples, (int, type(None))):
+            raise TypeError(
+                f"Can't handle type '{type(window_samples)}' for window_samples [int, None]"
             )
         if not isinstance(cal_data, (dict, type(None))):
-            raise ValueError(f"con not handle type '{type(cal_data)}' for cal_data")
+            raise TypeError(
+                f"Can't handle type '{type(cal_data)}' for cal_data [dict, None]"
+            )
 
         if not isinstance(datatype, (str, type(None))):
-            raise TypeError(f"can not handle type '{type(datatype)}' for datatype")
-        if (
-            isinstance(datatype, str)
-            and datatype
-            not in self.mode_dtype_dict[self.mode_default if (mode is None) else mode]
-        ):
-            raise ValueError(f"can not handle datatype '{datatype}'")
+            raise TypeError(
+                f"Can't handle type '{type(datatype)}' for datatype [str, None]"
+            )
+
+        _dtypes = self.mode_dtype_dict[self.mode_default if (mode is None) else mode]
+        if isinstance(datatype, str) and datatype not in _dtypes:
+            raise ValueError(
+                f"Can't handle value '{datatype}' of datatype "
+                f"(choose one of {_dtypes})"
+            )
 
         if self._modify:
             self._mode = mode
-            self._cal = cal_data
+            self._cal = cal_data if isinstance(cal_data, dict) else cal_default
             self._datatype = datatype
             self._window_samples = window_samples
         else:

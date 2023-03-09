@@ -13,10 +13,10 @@ cal_default: Dict[str, dict] = {
     "time": {"gain": 1e-9, "offset": 0.0},
 }
 
-T_cnv = TypeVar("T_cnv", np.ndarray, float)
+T_calc = TypeVar("T_calc", np.ndarray, float, int)
 
 
-def raw_to_si(values_raw: T_cnv, cal: dict) -> T_cnv:
+def raw_to_si(values_raw: T_calc, cal: dict) -> T_calc:
     """Helper to convert between physical units and raw unsigned integers
 
     :param values_raw: number or numpy array with raw values
@@ -28,7 +28,7 @@ def raw_to_si(values_raw: T_cnv, cal: dict) -> T_cnv:
     return values_si
 
 
-def si_to_raw(values_si: T_cnv, cal: dict) -> T_cnv:
+def si_to_raw(values_si: T_calc, cal: dict) -> T_calc:
     """Helper to convert between physical units and raw unsigned integers
 
     :param values_si: number or numpy array with values in physical units

@@ -149,8 +149,8 @@ class Reader:
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
     def read_buffers(
-        self, start_n: int = 0, end_n: int = None, is_raw: bool = False
-    ) -> Generator[tuple]:
+        self, start_n: int = 0, end_n: Optional[int] = None, is_raw: bool = False
+    ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
 
@@ -196,7 +196,7 @@ class Reader:
         :return:
         """
         if "window_samples" in self.h5file["data"].attrs:
-            return self.h5file["data"].attrs["window_samples"]
+            return int(self.h5file["data"].attrs["window_samples"])
         return 0
 
     def get_mode(self) -> str:
@@ -374,7 +374,7 @@ class Reader:
 
         metadata: Dict[str, dict] = {}
         if isinstance(node, h5py.Dataset) and not minimal:
-            metadata["_dataset_info"]: Dict[str, str] = {
+            metadata["_dataset_info"] = {
                 "dtype": str(node.dtype),
                 "shape": str(node.shape),
                 "chunks": str(node.chunks),
@@ -383,7 +383,7 @@ class Reader:
             }
             if node.name == "/data/time":
                 metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
-                # TODO: already convert to str?
+                # TODO: already convert to str to calm the typechecker?
             elif "int" in str(node.dtype):
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
                 # TODO: put this into metadata["_dataset_statistics"] ??
