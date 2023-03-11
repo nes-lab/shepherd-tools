@@ -125,7 +125,7 @@ class Reader:
             )
         return self
 
-    def __exit__(self, *exc):
+    def __exit__(self, *exc):  # type: ignore
         if isinstance(self._file_path, Path):
             self.h5file.close()
 
@@ -361,7 +361,9 @@ class Reader:
             self._logger.warning("Hostname was not set (@Validator)")
         return True
 
-    def get_metadata(self, node=None, minimal: bool = False) -> dict:
+    def get_metadata(
+        self, node: Union[h5py.Dataset, h5py.Group, None] = None, minimal: bool = False
+    ) -> Dict[str, dict]:
         """recursive FN to capture the structure of the file
 
         :param node: starting node, leave free to go through whole file
@@ -383,7 +385,7 @@ class Reader:
             }
             if node.name == "/data/time":
                 metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
-                # TODO: already convert to str to calm the typechecker?
+                # TODO: already convert to str to calm the typechecker? or construct a pydantic-class
             elif "int" in str(node.dtype):
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
                 # TODO: put this into metadata["_dataset_statistics"] ??
@@ -412,7 +414,7 @@ class Reader:
 
         return metadata
 
-    def save_metadata(self, node=None) -> dict:
+    def save_metadata(self, node: Union[h5py.Dataset, h5py.Group, None] = None) -> dict:
         """get structure of file and dump content to yaml-file with same name as original
 
         :param node: starting node, leave free to go through whole file
@@ -432,7 +434,7 @@ class Reader:
             metadata = {}
         return metadata
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         """returns attribute or (if none found) a handle for a group or dataset (if found)
 
         :param key: attribute, group, dataset

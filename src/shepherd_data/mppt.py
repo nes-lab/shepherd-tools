@@ -32,7 +32,7 @@ def iv_model(voltages: T_calc, coeffs: pd.Series) -> T_calc:
     return currents
 
 
-def find_oc(v_arr, i_arr, ratio: float = 0.05):
+def find_oc(v_arr: np.ndarray, i_arr: np.ndarray, ratio: float = 0.05):
     """Approximates opencircuit voltage.
 
     Searches last current value that is above a certain ratio of the short-circuit

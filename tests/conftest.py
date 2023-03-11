@@ -28,5 +28,5 @@ def generate_h5_file(file_path: Path, file_name: str = "harvest_example.h5") -> 
 
 
 @pytest.fixture
-def data_h5_path(tmp_path) -> Path:
+def data_h5(tmp_path: Path) -> Path:
     return generate_h5_file(tmp_path)

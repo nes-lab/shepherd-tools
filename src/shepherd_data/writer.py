@@ -228,7 +228,7 @@ class Writer(Reader):
         super().__enter__()
         return self
 
-    def __exit__(self, *exc):
+    def __exit__(self, *exc):  # type: ignore
         self._align()
         self._refresh_file_stats()
         self._logger.info(
@@ -315,7 +315,7 @@ class Writer(Reader):
             self.ds_voltage.resize((size_new,))
             self.ds_current.resize((size_new,))
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key: str, item):  # type: ignore
         """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
         return self.h5file.attrs.__setitem__(key, item)
 

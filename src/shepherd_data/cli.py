@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import click
 
@@ -60,8 +60,8 @@ def path_to_flist(data_path: Path) -> List[Path]:
     default=0,
     help="4 Levels [0..3](Error, Warning, Info, Debug)",
 )
-@click.pass_context
-def cli(ctx, verbose: int):
+@click.pass_context  # TODO: is the ctx-type correct?
+def cli(ctx: click.Context, verbose: int) -> None:
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder
 
     Args:
@@ -78,7 +78,7 @@ def cli(ctx, verbose: int):
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
-def validate(in_data):
+def validate(in_data: Path) -> None:
     """Validates a file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
     valid_dir = True
@@ -110,7 +110,7 @@ def validate(in_data):
     type=click.STRING,
     help="Set an individual csv-separator",
 )
-def extract(in_data, ds_factor, separator):
+def extract(in_data: Path, ds_factor: float, separator: str) -> None:
     """Extracts recorded IVSamples and stores it to csv"""
     files = path_to_flist(in_data)
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:
@@ -159,7 +159,7 @@ def extract(in_data, ds_factor, separator):
     type=click.STRING,
     help="Set an individual csv-separator",
 )
-def extract_meta(in_data, separator):
+def extract_meta(in_data: Path, separator: str) -> None:
     """Extracts metadata and logs from file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
     for file in files:
@@ -196,10 +196,12 @@ def extract_meta(in_data, separator):
 @click.option(
     "--sample-rate",
     "-r",
-    type=int,
+    type=click.INT,
     help="Alternative Input to determine a downsample-factor (Choose One)",
 )
-def downsample(in_data, ds_factor, sample_rate):
+def downsample(
+    in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]
+) -> None:
     """Creates an array of downsampling-files from file
     or directory containing shepherd-recordings"""
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
@@ -278,7 +280,14 @@ def downsample(in_data, ds_factor, sample_rate):
     is_flag=True,
     help="Plot all files (in directory) into one Multiplot",
 )
-def plot(in_data, start: float, end: float, width: int, height: int, multiplot: bool):
+def plot(
+    in_data: Path,
+    start: Optional[float],
+    end: Optional[float],
+    width: int,
+    height: int,
+    multiplot: bool,
+) -> None:
     """Plots IV-trace from file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
     multiplot = multiplot and len(files) > 1

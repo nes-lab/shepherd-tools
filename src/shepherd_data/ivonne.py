@@ -78,7 +78,7 @@ class Reader:
         )
         return self
 
-    def __exit__(self, *exc):
+    def __exit__(self, *exc):  # type: ignore
         pass
 
     def _refresh_file_stats(self) -> None:
