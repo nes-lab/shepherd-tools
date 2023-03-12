@@ -37,46 +37,50 @@ class Reader:
     """
 
     samples_per_buffer: int = 10_000
-    samplerate_sps: int = 100_000
-    sample_interval_ns: int = int(10**9 // samplerate_sps)
-    sample_interval_s: float = 1 / samplerate_sps
-
-    max_elements: int = (
-        40 * samplerate_sps
-    )  # per iteration (40s full res, < 200 MB RAM use)
+    samplerate_sps_default: int = 100_000
 
     mode_dtype_dict = {
         "harvester": ["ivsample", "ivcurve", "isc_voc"],
         "emulator": ["ivsample"],
     }
 
-    runtime_s: float = 0
-    file_size: int = 0
-    data_rate: float = 0
-
     _logger: logging.Logger = logging.getLogger("SHPData.Reader")
 
-    h5file: h5py.File = None
-    _file_path: Optional[Path] = None
-    ds_time: h5py.Dataset = None
-    ds_voltage: h5py.Dataset = None
-    ds_current: h5py.Dataset = None
-    _cal: Dict[str, dict] = {
-        "voltage": {
-            "gain": 1,
-            "offset": 0,
-        },
-        "current": {
-            "gain": 1,
-            "offset": 0,
-        },
-    }
-
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
+        self._file_path: Optional[Path] = None
         if isinstance(file_path, Path):
             self._file_path = Path(file_path)
         if verbose is not None:
             self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
+
+        self.samplerate_sps: int = 100_000
+        self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
+        self.sample_interval_s: float = 1 / self.samplerate_sps
+
+        self.max_elements: int = (
+            40 * self.samplerate_sps
+        )  # per iteration (40s full res, < 200 MB RAM use)
+
+        self.runtime_s: float = 0
+        self.file_size: int = 0
+        self.data_rate: float = 0
+
+        self.h5file: Optional[h5py.File] = None
+
+        self.ds_time: Optional[h5py.Dataset] = None
+        self.ds_voltage: Optional[h5py.Dataset] = None
+        self.ds_current: Optional[h5py.Dataset] = None
+
+        self._cal: Dict[str, dict] = {
+            "voltage": {
+                "gain": 1,
+                "offset": 0,
+            },
+            "current": {
+                "gain": 1,
+                "offset": 0,
+            },
+        }
 
     def __enter__(self):
         if isinstance(self._file_path, Path):
@@ -93,6 +97,7 @@ class Reader:
                     "File is faulty! Will try to open but there might be dragons"
                 )
 
+        # TODO: check for valid h5file
         self.ds_time = self.h5file["data"]["time"]
         self.ds_voltage = self.h5file["data"]["voltage"]
         self.ds_current = self.h5file["data"]["current"]
@@ -134,6 +139,16 @@ class Reader:
             self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
         )
 
+    @staticmethod
+    def enforce_context(method):
+        def decorator(self, *args, **kwargs):
+            if not self.h5file:
+                raise Exception("This method should be called from inside context.")
+            return method(self, *args, **kwargs)
+
+        return decorator
+
+    @enforce_context
     def _refresh_file_stats(self) -> None:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
@@ -385,7 +400,8 @@ class Reader:
             }
             if node.name == "/data/time":
                 metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
-                # TODO: already convert to str to calm the typechecker? or construct a pydantic-class
+                # TODO: already convert to str to calm the typechecker?
+                #  or construct a pydantic-class
             elif "int" in str(node.dtype):
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
                 # TODO: put this into metadata["_dataset_statistics"] ??

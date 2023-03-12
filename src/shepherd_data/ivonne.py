@@ -34,16 +34,6 @@ def get_isc(coeffs: pd.DataFrame):
 class Reader:
     """container for converters to shepherd-data"""
 
-    samplerate_sps: int = 50
-    sample_interval_ns: int = int(10**9 // samplerate_sps)
-    sample_interval_s: float = 1 / samplerate_sps
-
-    runtime_s: float = 0
-    file_size: int = 0
-    data_rate: float = 0
-
-    _df: pd.DataFrame = None
-
     _logger: logging.Logger = logging.getLogger("SHPData.IVonne.Reader")
 
     def __init__(
@@ -55,8 +45,18 @@ class Reader:
         self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
         self.file_path = Path(file_path)
+        self.samplerate_sps: int = 50
         if samplerate_sps is not None:
             self.samplerate_sps = samplerate_sps
+
+        self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
+        self.sample_interval_s: float = 1 / self.samplerate_sps
+
+        self.runtime_s: float = 0
+        self.file_size: int = 0
+        self.data_rate: float = 0
+
+        self._df: Optional[pd.DataFrame] = None
 
     def __enter__(self):
         if not self.file_path.exists():
@@ -82,6 +82,8 @@ class Reader:
         pass
 
     def _refresh_file_stats(self) -> None:
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         self.runtime_s = round(self._df.shape[0] / self.samplerate_sps, 3)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
@@ -101,6 +103,8 @@ class Reader:
         :param pts_per_curve: Number of sampling points of the prototype curve
         :param duration_s: time to stop in seconds, counted from beginning
         """
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
@@ -175,6 +179,8 @@ class Reader:
         :param duration_s: time to stop in seconds, counted from beginning
         :param tracker: VOC or OPT
         """
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
@@ -237,6 +243,8 @@ class Reader:
         :param v_max: Maximum voltage supported by shepherd
         :param duration_s: time to stop in seconds, counted from beginning
         """
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(

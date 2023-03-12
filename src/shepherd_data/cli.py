@@ -5,7 +5,8 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 import click
 
@@ -205,7 +206,7 @@ def downsample(
     """Creates an array of downsampling-files from file
     or directory containing shepherd-recordings"""
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
-        ds_factor = int(Reader.samplerate_sps / sample_rate)
+        ds_factor = int(Reader.samplerate_sps_default / sample_rate)
     if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
         ds_list = [ds_factor]
     else:

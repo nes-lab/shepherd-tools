@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional
+from typing import Union
 
 import numpy as np
 

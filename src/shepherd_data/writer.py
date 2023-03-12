@@ -56,7 +56,7 @@ class Writer(Reader):
     #         -> lower levels seem fine
     #         -> _algo=number instead of "gzip" is read as compression level for gzip
     # -> comparison / benchmarks https://www.h5py.org/lzf/
-    comp_default = 1
+    comp_default: int = 1
     mode_default: str = "harvester"
     datatype_default: str = "ivsample"
 
