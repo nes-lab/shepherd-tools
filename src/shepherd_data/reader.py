@@ -94,14 +94,14 @@ class Reader:
         self.ds_current: h5py.Dataset = self.h5file["data"]["current"]
 
         if not hasattr(self, "_cal"):
-            self._cal: Dict[str, dict] = {
+            self._cal: Dict[str, Dict[str, float]] = {
                 "voltage": {
-                    "gain": 1,
-                    "offset": 0,
+                    "gain": self.ds_voltage.attrs["gain"],
+                    "offset": self.ds_voltage.attrs["offset"],
                 },
                 "current": {
-                    "gain": 1,
-                    "offset": 0,
+                    "gain": self.ds_current.attrs["gain"],
+                    "offset": self.ds_current.attrs["offset"],
                 },
             }
 
