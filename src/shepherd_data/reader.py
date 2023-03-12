@@ -44,12 +44,14 @@ class Reader:
         "emulator": ["ivsample"],
     }
 
-    _logger: logging.Logger = logging.getLogger("SHPData.Reader")
-
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
-        self._file_path: Optional[Path] = None
-        if isinstance(file_path, Path):
-            self._file_path = Path(file_path)
+        if not hasattr(self, "_file_path"):
+            self._file_path: Optional[Path] = None
+            if isinstance(file_path, (Path, str)):
+                self._file_path = Path(file_path)
+
+        if not hasattr(self, "_logger"):
+            self._logger: logging.Logger = logging.getLogger("SHPData.Reader")
         if verbose is not None:
             self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
@@ -61,34 +63,21 @@ class Reader:
             40 * self.samplerate_sps
         )  # per iteration (40s full res, < 200 MB RAM use)
 
+        # init stats
         self.runtime_s: float = 0
         self.file_size: int = 0
         self.data_rate: float = 0
 
-        self.h5file: Optional[h5py.File] = None
-
-        self.ds_time: Optional[h5py.Dataset] = None
-        self.ds_voltage: Optional[h5py.Dataset] = None
-        self.ds_current: Optional[h5py.Dataset] = None
-
-        self._cal: Dict[str, dict] = {
-            "voltage": {
-                "gain": 1,
-                "offset": 0,
-            },
-            "current": {
-                "gain": 1,
-                "offset": 0,
-            },
-        }
-
-    def __enter__(self):
-        if isinstance(self._file_path, Path):
+        # open file (if not already done by writer)
+        if not hasattr(self, "h5file"):
+            if not isinstance(self._file_path, Path):
+                raise ValueError("Provide a valid Path-Object to Reader!")
             if not self._file_path.exists():
                 raise FileNotFoundError(
                     errno.ENOENT, os.strerror(errno.ENOENT), self._file_path.name
                 )
-            self.h5file = h5py.File(self._file_path, "r")
+
+            self.h5file = h5py.File(self._file_path, "r")  # = readonly
 
             if self.is_valid():
                 self._logger.info("File is available now")
@@ -97,23 +86,29 @@ class Reader:
                     "File is faulty! Will try to open but there might be dragons"
                 )
 
-        # TODO: check for valid h5file
-        self.ds_time = self.h5file["data"]["time"]
-        self.ds_voltage = self.h5file["data"]["voltage"]
-        self.ds_current = self.h5file["data"]["current"]
-        self._cal = {
-            "voltage": {
-                "gain": self.ds_voltage.attrs["gain"],
-                "offset": self.ds_voltage.attrs["offset"],
-            },
-            "current": {
-                "gain": self.ds_current.attrs["gain"],
-                "offset": self.ds_current.attrs["offset"],
-            },
-        }
+        if not isinstance(self.h5file, h5py.File):
+            raise TypeError("Type of opened file is not h5py.File")
+
+        self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
+        self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]
+        self.ds_current: h5py.Dataset = self.h5file["data"]["current"]
+
+        if not hasattr(self, "_cal"):
+            self._cal: Dict[str, dict] = {
+                "voltage": {
+                    "gain": 1,
+                    "offset": 0,
+                },
+                "current": {
+                    "gain": 1,
+                    "offset": 0,
+                },
+            }
+
         self._refresh_file_stats()
 
-        if isinstance(self._file_path, Path):
+        if file_path is not None:
+            # file opened by this reader
             self._logger.info(
                 "Reading data from '%s'\n"
                 "\t- runtime %s s\n"
@@ -128,6 +123,8 @@ class Reader:
                 round(self.file_size / 2**20),
                 round(self.data_rate / 2**10),
             )
+
+    def __enter__(self):
         return self
 
     def __exit__(self, *exc):  # type: ignore
@@ -139,16 +136,6 @@ class Reader:
             self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
         )
 
-    @staticmethod
-    def enforce_context(method):
-        def decorator(self, *args, **kwargs):
-            if not self.h5file:
-                raise Exception("This method should be called from inside context.")
-            return method(self, *args, **kwargs)
-
-        return decorator
-
-    @enforce_context
     def _refresh_file_stats(self) -> None:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
@@ -492,7 +479,9 @@ class Reader:
         energy_ws = [_calc_energy(i) for i in job_iter]
         return float(sum(energy_ws))
 
-    def _dset_statistics(self, dset: h5py.Dataset, cal: Optional[dict] = None) -> dict:
+    def _dset_statistics(
+        self, dset: h5py.Dataset, cal: Optional[dict] = None
+    ) -> Dict[str, float]:
         """some basic stats for a provided dataset
         :param dset: dataset to evaluate
         :param cal: calibration (if wanted)
@@ -534,7 +523,8 @@ class Reader:
         if len(stats_list) < 1:
             return {}
         stats_df = pd.DataFrame(stats_list)
-        stats = {  # TODO: wrong calculation for ndim-datasets with n>1
+        stats: Dict[str, float] = {
+            # TODO: wrong calculation for ndim-datasets with n>1
             "mean": float(stats_df.loc[:, "mean"].mean()),
             "min": float(stats_df.loc[:, "min"].min()),
             "max": float(stats_df.loc[:, "max"].max()),

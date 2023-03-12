@@ -62,8 +62,6 @@ class Writer(Reader):
 
     _chunk_shape: tuple = (Reader.samples_per_buffer,)
 
-    _logger: logging.Logger = logging.getLogger("SHPData.Writer")
-
     def __init__(
         self,
         file_path: Path,
@@ -75,16 +73,15 @@ class Writer(Reader):
         compression: Union[None, str, int] = "default",
         verbose: Optional[bool] = True,
     ):
-        super().__init__(file_path=None, verbose=verbose)
-
         file_path = Path(file_path)
         self._modify = modify_existing
 
-        if verbose is not None:
-            self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        if not hasattr(self, "_logger"):
+            self._logger: logging.Logger = logging.getLogger("SHPData.Writer")
+        # -> logger gets configured in reader()
 
         if self._modify or not file_path.exists():
-            self._file_path = file_path
+            self._file_path: Path = file_path
             self._logger.info("Storing data to   '%s'", self._file_path)
         else:
             base_dir = file_path.resolve().parents[0]
@@ -124,7 +121,9 @@ class Writer(Reader):
 
         if self._modify:
             self._mode = mode
-            self._cal = cal_data if isinstance(cal_data, dict) else cal_default
+            self._cal = (
+                cal_data if isinstance(cal_data, dict) else cal_default
+            )  # TODO: switch to pydantic
             self._datatype = datatype
             self._window_samples = window_samples
         else:
@@ -142,65 +141,12 @@ class Writer(Reader):
         else:
             self._compression_algo = self.comp_default
 
-    def __enter__(self):
-        """Initializes the structure of the HDF5 file
-
-        HDF5 is hierarchically structured and before writing data, we have to
-        setup this structure, i.e. creating the right groups with corresponding
-        data types. We will store 3 types of data in a database: The
-        actual IV samples recorded either from the harvester (during recording)
-        or the target (during emulation). Any log messages, that can be used to
-        store relevant events or tag some parts of the recorded data.
-
-        """
+        # open file
         if self._modify:
-            self.h5file = h5py.File(self._file_path, "r+")
+            self.h5file = h5py.File(self._file_path, "r+")  # = rw
         else:
-            self.h5file = h5py.File(self._file_path, "w")
-
-            # Store voltage and current samples in the data group,
-            # both are stored as 4 Byte unsigned int
-            gp_data = self.h5file.create_group("data")
-            # the size of window_samples-attribute in harvest-data indicates ivcurves as input
-            # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
-            gp_data.attrs["window_samples"] = 0
-
-            gp_data.create_dataset(
-                "time",
-                (0,),
-                dtype="u8",
-                maxshape=(None,),
-                chunks=self._chunk_shape,
-                compression=self._compression_algo,
-            )
-            gp_data["time"].attrs["unit"] = "ns"
-            gp_data["time"].attrs["description"] = "system time [ns]"
-
-            gp_data.create_dataset(
-                "current",
-                (0,),
-                dtype="u4",
-                maxshape=(None,),
-                chunks=self._chunk_shape,
-                compression=self._compression_algo,
-            )
-            gp_data["current"].attrs["unit"] = "A"
-            gp_data["current"].attrs[
-                "description"
-            ] = "current [A] = value * gain + offset"
-
-            gp_data.create_dataset(
-                "voltage",
-                (0,),
-                dtype="u4",
-                maxshape=(None,),
-                chunks=self._chunk_shape,
-                compression=self._compression_algo,
-            )
-            gp_data["voltage"].attrs["unit"] = "V"
-            gp_data["voltage"].attrs[
-                "description"
-            ] = "voltage [V] = value * gain + offset"
+            self.h5file = h5py.File(self._file_path, "w")  # write, truncate if exist
+            self._create_skeleton()
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
         if isinstance(self._mode, str) and self._mode in self.mode_dtype_dict:
@@ -224,7 +170,9 @@ class Writer(Reader):
                 self.h5file["data"][channel].attrs[parameter] = self._cal[channel][
                     parameter
                 ]
+        super().__init__(file_path=None, verbose=verbose)
 
+    def __enter__(self):
         super().__enter__()
         return self
 
@@ -239,6 +187,57 @@ class Writer(Reader):
         )
         self.is_valid()
         self.h5file.close()
+
+    def _create_skeleton(self) -> None:
+        """Initializes the structure of the HDF5 file
+
+        HDF5 is hierarchically structured and before writing data, we have to
+        setup this structure, i.e. creating the right groups with corresponding
+        data types. We will store 3 types of data in a database: The
+        actual IV samples recorded either from the harvester (during recording)
+        or the target (during emulation). Any log messages, that can be used to
+        store relevant events or tag some parts of the recorded data.
+
+        """
+        # Store voltage and current samples in the data group,
+        # both are stored as 4 Byte unsigned int
+        gp_data = self.h5file.create_group("data")
+        # the size of window_samples-attribute in harvest-data indicates ivcurves as input
+        # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
+        gp_data.attrs["window_samples"] = 0
+
+        gp_data.create_dataset(
+            "time",
+            (0,),
+            dtype="u8",
+            maxshape=(None,),
+            chunks=self._chunk_shape,
+            compression=self._compression_algo,
+        )
+        gp_data["time"].attrs["unit"] = "ns"
+        gp_data["time"].attrs["description"] = "system time [ns]"
+
+        gp_data.create_dataset(
+            "current",
+            (0,),
+            dtype="u4",
+            maxshape=(None,),
+            chunks=self._chunk_shape,
+            compression=self._compression_algo,
+        )
+        gp_data["current"].attrs["unit"] = "A"
+        gp_data["current"].attrs["description"] = "current [A] = value * gain + offset"
+
+        gp_data.create_dataset(
+            "voltage",
+            (0,),
+            dtype="u4",
+            maxshape=(None,),
+            chunks=self._chunk_shape,
+            compression=self._compression_algo,
+        )
+        gp_data["voltage"].attrs["unit"] = "V"
+        gp_data["voltage"].attrs["description"] = "voltage [V] = value * gain + offset"
 
     def append_iv_data_raw(
         self,
