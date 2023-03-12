@@ -19,16 +19,13 @@ def iv_model(voltages: T_calc, coeffs: pd.Series) -> T_calc:
         Solar current at given load voltage
     """
     currents = float(coeffs["a"]) - float(coeffs["b"]) * (
-        np.exp(float(coeffs["c"]) * voltages) - 1
+        np.exp(float(coeffs["c"]) * voltages) - 1.0
     )
     if isinstance(currents, np.ndarray):
-        currents[currents < 0] = 0
-    elif isinstance(currents, (float, int)):
-        currents = max(0, currents)
+        currents[currents < 0.0] = 0.0
     else:
-        raise TypeError(
-            f"Can't handle type '{type(currents)}' of derived iv_model [{T_calc}]"
-        )
+        currents = max(0.0, currents)
+
     return currents
 
 
@@ -59,7 +56,7 @@ class MPPTracker:
         :param coeffs: ivonne coefficients
         :return:
         """
-        pass
+        return pd.DataFrame()
 
 
 class OpenCircuitTracker(MPPTracker):

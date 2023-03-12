@@ -131,7 +131,7 @@ class Reader:
             for idx in job_iter:
                 idx_top = min(idx + max_elements, df_elements_n)
                 df_slice = self._df.iloc[idx : idx_top + 1].copy()
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                df_slice["timestamp"] = pd.TimedeltaIndex(
                     data=df_slice["time"], unit="s"
                 )
                 df_slice = df_slice.set_index("timestamp")
@@ -213,7 +213,7 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice = tracker.process(df_slice)
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                df_slice["timestamp"] = pd.TimedeltaIndex(
                     data=df_slice["time"], unit="s"
                 )
                 df_slice = df_slice[["time", "v", "i", "timestamp"]].set_index(
@@ -272,7 +272,7 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice.loc[:, "isc"] = get_isc(df_slice)
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                df_slice["timestamp"] = pd.TimedeltaIndex(
                     data=df_slice["time"], unit="s"
                 )
                 df_slice = df_slice[["time", "voc", "isc", "timestamp"]].set_index(
