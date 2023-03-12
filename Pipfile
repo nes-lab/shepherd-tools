@@ -10,6 +10,7 @@ samplerate = "*"
 [dev-packages]
 shepherd-data = {editable = true, path = "./[test, dev]"}
 pyright = "*"
+pandas-stubs = "*"  # as long as pandas has to type hints
 
 [pipenv]
 allow_prereleases = false
