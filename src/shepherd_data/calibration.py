@@ -7,11 +7,12 @@ from typing import TypeVar
 import numpy as np
 from numpy.typing import NDArray
 
-# SI-value [SI-Unit] = raw-value * gain + offset
+
 cal_default: Dict[str, Dict[str, float]] = {
     "voltage": {"gain": 3 * 1e-9, "offset": 0.0},  # allows 0 - 12 V in 3 nV-Steps
     "current": {"gain": 250 * 1e-12, "offset": 0.0},  # allows 0 - 1 A in 250 pA - Steps
     "time": {"gain": 1e-9, "offset": 0.0},
+    # SI-value [SI-Unit] = raw-value * gain + offset
 }
 
 T_calc = TypeVar("T_calc", NDArray[np.float64], float)

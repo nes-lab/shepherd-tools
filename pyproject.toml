@@ -9,5 +9,107 @@ pythonVersion = "3.8"
 pythonPlatform = "All"
 reportMissingParameterType = true
 
-# TODO: switch fully to this config: https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
-# TODO: build a light version with basic support for reading, writing (only libs that run on beaglebone)
+[tool.codespell]
+builtin = "clear,rare,informal,usage,code,en-GB_to_en-US"
+
+#skip = ""
+#ignore-words-list = ""
+
+# options without argument
+check-filenames = ""
+# check-hidden = ""
+
+[tool.isort]
+profile = "black"
+filter_files = true
+force_single_line = true
+
+[tool.flake8]
+max-line-length = 100
+require-plugins = [
+    # https://github.com/DmytroLitvinov/awesome-flake8-extensions
+
+    ### Bugs & Code-Smells
+    "flake8-bugbear",
+    "flake8-secure-coding-standard",
+    "flake8-bandit",
+    "flake8-builtins",
+
+    ### Clean Code
+    "flake8-comprehensions",
+    "flake8-simplify",
+    "flake8-eradicate",
+    "flake8-commas",
+
+    ### Limitations
+    "flake8-blind-except",
+    "flake8-logging-format",
+    "flake8-print",
+
+    ### Documentation
+    "flake8-comments",
+    # flake8-docstrings
+    # flake8-rst-docstrings
+
+    ### Test-Improvements
+    "flake8-assertive",
+]
+
+extend-ignore = [
+    # black-formatter-specific
+    "E203",
+    # open() vs os.open()
+    "SCS109",
+    # hideous commas
+    "C812",
+    "C815",
+    "C813",
+    # DOCString TODO: reduce here
+    "D100",
+    "D102",
+    "D103",
+]
+
+per-file-ignores = """
+# asserts (in tests are ok), also allow print() instead of logger
+tests/*: SCS108, S101, T201
+# allow print()
+src/examples/*: T201
+"""
+
+count = true
+statistics = true
+
+[tool.ruff]  # TODO: once stable it replaces flake8, pyupgrade, isort, ...
+line-length = 100
+select = [
+    "A",
+    "ARG",
+    "B",
+    "C",
+    "C4",
+    "E",
+    "ERA",
+    "F",
+#    "I",  # incomplete isort
+    "N",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "RET",
+    "S",
+    "T10",
+    "UP",
+    "W",  # TODO: just a proposed starting-config
+]
+ignore = ["A003"]
+target-version = "py38"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**" = ["ARG", "S"]
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10

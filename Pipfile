@@ -4,12 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-shepherd-data = {editable = true, extras = ["test", "dev"], path = "./"}
+shepherd-data = {editable = true, extras = ["dev","test"], path = "."}
 samplerate = "*"
 
 [dev-packages]
-pyright = "*"
-pandas-stubs = "*"  # as long as pandas has to type hints (and pyright is used)
 
 [pipenv]
 allow_prereleases = false

@@ -285,13 +285,14 @@ class Writer(Reader):
     ) -> None:
         """Writes data (in SI / physical unit) to file, but converts it to raw-data first
 
+           SI-value [SI-Unit] = raw-value * gain + offset,
+
         Args:
             timestamp: python timestamp (time.time()) in seconds (si-unit)
                        -> provide start of buffer or whole ndarray
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
         """
-        # SI-value [SI-Unit] = raw-value * gain + offset,
         timestamp = timestamp * 10**9
         voltage = si_to_raw(voltage, self._cal["voltage"])
         current = si_to_raw(current, self._cal["current"])
