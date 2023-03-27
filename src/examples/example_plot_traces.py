@@ -1,7 +1,7 @@
 """
 script will:
 - generate plots with various zoom-levels for h5-files
-- note: let the generator- and converter-example run before
+- NOTE: let the generator- and converter-example run before
 
 CLI-Version of this is:
 shepherd-data plot file_or_dir [-s start_time] [-e end_time]
@@ -39,4 +39,5 @@ if __name__ == "__main__":
             date = db.generate_plot_data(0, 1)
             date["name"] = file.stem[12:]  # cut away "jogging_10m_"
             data.append(date)
+            print(db.energy())
     shpd.Reader.multiplot_to_file(data, Path(files[0].stem[:11]))

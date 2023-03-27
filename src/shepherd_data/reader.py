@@ -10,7 +10,8 @@ from datetime import datetime
 from itertools import product
 from pathlib import Path
 from typing import Dict
-from typing import NoReturn
+from typing import Generator
+from typing import List
 from typing import Optional
 from typing import Union
 
@@ -36,45 +37,47 @@ class Reader:
     """
 
     samples_per_buffer: int = 10_000
-    samplerate_sps: int = 100_000
-    sample_interval_ns: int = int(10**9 // samplerate_sps)
-    sample_interval_s: float = 1 / samplerate_sps
-
-    max_elements: int = (
-        40 * samplerate_sps
-    )  # per iteration (40s full res, < 200 MB RAM use)
+    samplerate_sps_default: int = 100_000
 
     mode_dtype_dict = {
         "harvester": ["ivsample", "ivcurve", "isc_voc"],
         "emulator": ["ivsample"],
     }
 
-    runtime_s: float = None
-    file_size: int = None
-    data_rate: float = None
-
-    _logger: logging.Logger = logging.getLogger("SHPData.Reader")
-
-    h5file: h5py.File = None
-    ds_time: h5py.Dataset = None
-    ds_voltage: h5py.Dataset = None
-    ds_current: h5py.Dataset = None
-    _cal: Dict[str, dict] = None
-
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
-        self._skip_open = file_path is None  # for access by writer-class
-        if not self._skip_open:
-            self._file_path = Path(file_path)
+        if not hasattr(self, "_file_path"):
+            self._file_path: Optional[Path] = None
+            if isinstance(file_path, (Path, str)):
+                self._file_path = Path(file_path)
+
+        if not hasattr(self, "_logger"):
+            self._logger: logging.Logger = logging.getLogger("SHPData.Reader")
         if verbose is not None:
             self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
-    def __enter__(self):
-        if not self._skip_open:
+        self.samplerate_sps: int = 100_000
+        self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
+        self.sample_interval_s: float = 1 / self.samplerate_sps
+
+        self.max_elements: int = (
+            40 * self.samplerate_sps
+        )  # per iteration (40s full res, < 200 MB RAM use)
+
+        # init stats
+        self.runtime_s: float = 0
+        self.file_size: int = 0
+        self.data_rate: float = 0
+
+        # open file (if not already done by writer)
+        if not hasattr(self, "h5file"):
+            if not isinstance(self._file_path, Path):
+                raise ValueError("Provide a valid Path-Object to Reader!")
             if not self._file_path.exists():
                 raise FileNotFoundError(
                     errno.ENOENT, os.strerror(errno.ENOENT), self._file_path.name
                 )
-            self.h5file = h5py.File(self._file_path, "r")
+
+            self.h5file = h5py.File(self._file_path, "r")  # = readonly
 
             if self.is_valid():
                 self._logger.info("File is available now")
@@ -83,22 +86,29 @@ class Reader:
                     "File is faulty! Will try to open but there might be dragons"
                 )
 
-        self.ds_time = self.h5file["data"]["time"]
-        self.ds_voltage = self.h5file["data"]["voltage"]
-        self.ds_current = self.h5file["data"]["current"]
-        self._cal = {
-            "voltage": {
-                "gain": self.ds_voltage.attrs["gain"],
-                "offset": self.ds_voltage.attrs["offset"],
-            },
-            "current": {
-                "gain": self.ds_current.attrs["gain"],
-                "offset": self.ds_current.attrs["offset"],
-            },
-        }
+        if not isinstance(self.h5file, h5py.File):
+            raise TypeError("Type of opened file is not h5py.File")
+
+        self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
+        self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]
+        self.ds_current: h5py.Dataset = self.h5file["data"]["current"]
+
+        if not hasattr(self, "_cal"):
+            self._cal: Dict[str, Dict[str, float]] = {
+                "voltage": {
+                    "gain": self.ds_voltage.attrs["gain"],
+                    "offset": self.ds_voltage.attrs["offset"],
+                },
+                "current": {
+                    "gain": self.ds_current.attrs["gain"],
+                    "offset": self.ds_current.attrs["offset"],
+                },
+            }
+
         self._refresh_file_stats()
 
-        if not self._skip_open:
+        if file_path is not None:
+            # file opened by this reader
             self._logger.info(
                 "Reading data from '%s'\n"
                 "\t- runtime %s s\n"
@@ -113,10 +123,12 @@ class Reader:
                 round(self.file_size / 2**20),
                 round(self.data_rate / 2**10),
             )
+
+    def __enter__(self):
         return self
 
-    def __exit__(self, *exc):
-        if not self._skip_open:
+    def __exit__(self, *exc):  # type: ignore
+        if isinstance(self._file_path, Path):
             self.h5file.close()
 
     def __repr__(self):
@@ -124,7 +136,7 @@ class Reader:
             self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
         )
 
-    def _refresh_file_stats(self) -> NoReturn:
+    def _refresh_file_stats(self) -> None:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
         if self.ds_time.shape[0] > 1:
@@ -132,12 +144,15 @@ class Reader:
             self.samplerate_sps = max(int(10**9 // self.sample_interval_ns), 1)
             self.sample_interval_s = 1.0 / self.samplerate_sps
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
-        self.file_size = self._file_path.stat().st_size
+        if isinstance(self._file_path, Path):
+            self.file_size = self._file_path.stat().st_size
+        else:
+            self.file_size = 0
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
     def read_buffers(
-        self, start_n: int = 0, end_n: int = None, is_raw: bool = False
-    ) -> tuple:
+        self, start_n: int = 0, end_n: Optional[int] = None, is_raw: bool = False
+    ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
 
@@ -183,7 +198,7 @@ class Reader:
         :return:
         """
         if "window_samples" in self.h5file["data"].attrs:
-            return self.h5file["data"].attrs["window_samples"]
+            return int(self.h5file["data"].attrs["window_samples"])
         return 0
 
     def get_mode(self) -> str:
@@ -215,7 +230,7 @@ class Reader:
             "window_samples": self.get_window_samples(),
         }
 
-    def data_timediffs(self) -> list:
+    def data_timediffs(self) -> List[float]:
         """calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
 
@@ -348,7 +363,9 @@ class Reader:
             self._logger.warning("Hostname was not set (@Validator)")
         return True
 
-    def get_metadata(self, node=None, minimal: bool = False) -> dict:
+    def get_metadata(
+        self, node: Union[h5py.Dataset, h5py.Group, None] = None, minimal: bool = False
+    ) -> Dict[str, dict]:
         """recursive FN to capture the structure of the file
 
         :param node: starting node, leave free to go through whole file
@@ -370,14 +387,18 @@ class Reader:
             }
             if node.name == "/data/time":
                 metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
+                # TODO: already convert to str to calm the typechecker?
+                #  or construct a pydantic-class
             elif "int" in str(node.dtype):
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
+                # TODO: put this into metadata["_dataset_statistics"] ??
         for attr in node.attrs.keys():
             attr_value = node.attrs[attr]
             if isinstance(attr_value, str):
                 with contextlib.suppress(yaml.YAMLError):
                     attr_value = yaml.safe_load(attr_value)
             elif "int" in str(type(attr_value)):
+                # TODO: why not isinstance? can it be list[int] other complex type?
                 attr_value = int(attr_value)
             else:
                 attr_value = float(attr_value)
@@ -396,22 +417,27 @@ class Reader:
 
         return metadata
 
-    def save_metadata(self, node=None) -> dict:
+    def save_metadata(self, node: Union[h5py.Dataset, h5py.Group, None] = None) -> dict:
         """get structure of file and dump content to yaml-file with same name as original
 
         :param node: starting node, leave free to go through whole file
         :return: structure of that node with everything inside it
         """
-        yml_path = Path(self._file_path).absolute().with_suffix(".yml")
-        if yml_path.exists():
-            self._logger.info("%s already exists, will skip", yml_path)
-            return {}
-        metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
-        with open(yml_path, "w", encoding="utf-8-sig") as yfd:
-            yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
+        if isinstance(self._file_path, Path):
+            yml_path = Path(self._file_path).absolute().with_suffix(".yml")
+            if yml_path.exists():
+                self._logger.info("%s already exists, will skip", yml_path)
+                return {}
+            metadata = self.get_metadata(
+                node
+            )  # {"h5root": self.get_metadata(self.h5file)}
+            with open(yml_path, "w", encoding="utf-8-sig") as yfd:
+                yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
+        else:
+            metadata = {}
         return metadata
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         """returns attribute or (if none found) a handle for a group or dataset (if found)
 
         :param key: attribute, group, dataset
@@ -453,7 +479,9 @@ class Reader:
         energy_ws = [_calc_energy(i) for i in job_iter]
         return float(sum(energy_ws))
 
-    def _dset_statistics(self, dset: h5py.Dataset, cal: dict = None) -> dict:
+    def _dset_statistics(
+        self, dset: h5py.Dataset, cal: Optional[dict] = None
+    ) -> Dict[str, float]:
         """some basic stats for a provided dataset
         :param dset: dataset to evaluate
         :param cal: calibration (if wanted)
@@ -495,7 +523,8 @@ class Reader:
         if len(stats_list) < 1:
             return {}
         stats_df = pd.DataFrame(stats_list)
-        stats = {  # TODO: wrong calculation for ndim-datasets with n>1
+        stats: Dict[str, float] = {
+            # TODO: wrong calculation for ndim-datasets with n>1
             "mean": float(stats_df.loc[:, "mean"].mean()),
             "min": float(stats_df.loc[:, "min"].min()),
             "max": float(stats_df.loc[:, "max"].max()),
@@ -513,6 +542,8 @@ class Reader:
         """
         if h5_group["time"].shape[0] < 1:
             self._logger.warning("%s is empty, no csv generated", h5_group.name)
+            return 0
+        if not isinstance(self._file_path, Path):
             return 0
         csv_path = self._file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
         if csv_path.exists():
@@ -555,6 +586,8 @@ class Reader:
         if h5_group["time"].shape[0] < 1:
             self._logger.warning("%s is empty, no log generated", h5_group.name)
             return 0
+        if not isinstance(self._file_path, Path):
+            return 0
         log_path = self._file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
         if log_path.exists():
             self._logger.warning("%s already exists, will skip", log_path)
@@ -585,7 +618,7 @@ class Reader:
         data_src: h5py.Dataset,
         data_dst: Union[None, h5py.Dataset, np.ndarray],
         start_n: int = 0,
-        end_n: int = None,
+        end_n: Optional[int] = None,
         ds_factor: float = 5,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
@@ -603,12 +636,13 @@ class Reader:
             self._logger.warning("Downsampling-Function was not written for IVCurves")
         ds_factor = max(1, math.floor(ds_factor))
 
-        if end_n is None:
-            end_n = data_src.shape[0]
+        if isinstance(end_n, (int, float)):
+            _end_n = min(data_src.shape[0], round(end_n))
         else:
-            end_n = min(data_src.shape[0], round(end_n))
-        start_n = min(end_n, round(start_n))
-        data_len = end_n - start_n  # TODO: one-off to calculation below ?
+            _end_n = data_src.shape[0]
+
+        start_n = min(_end_n, round(start_n))
+        data_len = _end_n - start_n  # TODO: one-off to calculation below ?
         if data_len == 0:
             self._logger.warning("downsampling failed because of data_len = 0")
         iblock_len = min(self.max_elements, data_len)
@@ -664,7 +698,7 @@ class Reader:
         data_src: h5py.Dataset,
         data_dst: Union[None, h5py.Dataset, np.ndarray],
         start_n: int = 0,
-        end_n: int = None,
+        end_n: Optional[int] = None,
         samplerate_dst: float = 1000,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
@@ -683,12 +717,13 @@ class Reader:
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Resampling-Function was not written for IVCurves")
 
-        if end_n is None:
-            end_n = data_src.shape[0]
+        if isinstance(end_n, (int, float)):
+            _end_n = min(data_src.shape[0], round(end_n))
         else:
-            end_n = min(data_src.shape[0], round(end_n))
-        start_n = min(end_n, round(start_n))
-        data_len = end_n - start_n
+            _end_n = data_src.shape[0]
+
+        start_n = min(_end_n, round(start_n))
+        data_len = _end_n - start_n
         if data_len == 0:
             self._logger.warning("resampling failed because of data_len = 0")
         fs_ratio = samplerate_dst / self.samplerate_sps
@@ -762,7 +797,10 @@ class Reader:
         return data_dst
 
     def generate_plot_data(
-        self, start_s: float = None, end_s: float = None, relative_ts: bool = True
+        self,
+        start_s: Optional[float] = None,
+        end_s: Optional[float] = None,
+        relative_ts: bool = True,
     ) -> Dict:
         """provides down-sampled iv-data that can be feed into plot_to_file()
 
@@ -838,11 +876,11 @@ class Reader:
 
     def plot_to_file(
         self,
-        start_s: float = None,
-        end_s: float = None,
+        start_s: Optional[float] = None,
+        end_s: Optional[float] = None,
         width: int = 20,
         height: int = 10,
-    ) -> NoReturn:
+    ) -> None:
         """creates (down-sampled) IV-Plot
             -> omitting start- and end-time will use the whole duration
 
@@ -851,6 +889,9 @@ class Reader:
         :param width: plot-width
         :param height: plot-height
         """
+        if not isinstance(self._file_path, Path):
+            return
+
         data = [self.generate_plot_data(start_s, end_s)]
 
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
@@ -868,7 +909,7 @@ class Reader:
 
     @staticmethod
     def multiplot_to_file(
-        data: Union[list], plot_path: Path, width: int = 20, height: int = 10
+        data: list, plot_path: Path, width: int = 20, height: int = 10
     ) -> Optional[Path]:
         """creates (down-sampled) IV-Multi-Plot
 

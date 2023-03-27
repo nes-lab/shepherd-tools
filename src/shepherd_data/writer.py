@@ -5,7 +5,6 @@ import logging
 import math
 from itertools import product
 from pathlib import Path
-from typing import NoReturn
 from typing import Optional
 from typing import Union
 
@@ -27,7 +26,7 @@ def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
     """
     counter = 0
     while True:
-        path = base_path.with_suffix(f".{counter}{suffix}")
+        path = Path(base_path).with_suffix(f".{counter}{suffix}")
         if not path.exists():
             return path
         counter += 1
@@ -57,35 +56,32 @@ class Writer(Reader):
     #         -> lower levels seem fine
     #         -> _algo=number instead of "gzip" is read as compression level for gzip
     # -> comparison / benchmarks https://www.h5py.org/lzf/
-    comp_default = 1
+    comp_default: int = 1
     mode_default: str = "harvester"
     datatype_default: str = "ivsample"
 
     _chunk_shape: tuple = (Reader.samples_per_buffer,)
 
-    _logger: logging.Logger = logging.getLogger("SHPData.Writer")
-
     def __init__(
         self,
         file_path: Path,
-        mode: str = None,
-        datatype: str = None,
-        window_samples: int = None,
-        cal_data: dict = None,
+        mode: Optional[str] = None,
+        datatype: Optional[str] = None,
+        window_samples: Optional[int] = None,
+        cal_data: Optional[dict] = None,
         modify_existing: bool = False,
         compression: Union[None, str, int] = "default",
         verbose: Optional[bool] = True,
     ):
-        super().__init__(file_path=None, verbose=verbose)
-
         file_path = Path(file_path)
         self._modify = modify_existing
 
-        if verbose is not None:
-            self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
+        if not hasattr(self, "_logger"):
+            self._logger: logging.Logger = logging.getLogger("SHPData.Writer")
+        # -> logger gets configured in reader()
 
         if self._modify or not file_path.exists():
-            self._file_path = file_path
+            self._file_path: Path = file_path
             self._logger.info("Storing data to   '%s'", self._file_path)
         else:
             base_dir = file_path.resolve().parents[0]
@@ -97,94 +93,60 @@ class Writer(Reader):
             )
 
         if not isinstance(mode, (str, type(None))):
-            raise TypeError(f"can not handle type '{type(mode)}' for mode")
+            raise TypeError(f"Can't handle type '{type(mode)}' for mode [str, None]")
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
-            raise ValueError(f"can not handle mode '{mode}'")
+            raise ValueError(
+                f"Can't handle mode '{mode}' " f"(choose one of {self.mode_dtype_dict})"
+            )
+        if not isinstance(window_samples, (int, type(None))):
+            raise TypeError(
+                f"Can't handle type '{type(window_samples)}' for window_samples [int, None]"
+            )
+        if not isinstance(cal_data, (dict, type(None))):
+            raise TypeError(
+                f"Can't handle type '{type(cal_data)}' for cal_data [dict, None]"
+            )
 
         if not isinstance(datatype, (str, type(None))):
-            raise TypeError(f"can not handle type '{type(datatype)}' for datatype")
-        if (
-            isinstance(datatype, str)
-            and datatype
-            not in self.mode_dtype_dict[self.mode_default if (mode is None) else mode]
-        ):
-            raise ValueError(f"can not handle datatype '{datatype}'")
+            raise TypeError(
+                f"Can't handle type '{type(datatype)}' for datatype [str, None]"
+            )
+
+        _dtypes = self.mode_dtype_dict[self.mode_default if (mode is None) else mode]
+        if isinstance(datatype, str) and datatype not in _dtypes:
+            raise ValueError(
+                f"Can't handle value '{datatype}' of datatype "
+                f"(choose one of {_dtypes})"
+            )
 
         if self._modify:
             self._mode = mode
-            self._cal = cal_data
+            self._cal = (
+                cal_data if isinstance(cal_data, dict) else cal_default
+            )  # TODO: switch to pydantic
             self._datatype = datatype
             self._window_samples = window_samples
         else:
-            self._mode = self.mode_default if (mode is None) else mode
-            self._cal = cal_default if (cal_data is None) else cal_data
-            self._datatype = self.datatype_default if (datatype is None) else datatype
-            self._window_samples = 0 if (window_samples is None) else window_samples
+            self._mode = mode if isinstance(mode, str) else self.mode_default
+            self._cal = cal_data if isinstance(cal_data, dict) else cal_default
+            self._datatype = (
+                datatype if isinstance(datatype, str) else self.datatype_default
+            )
+            self._window_samples = (
+                window_samples if isinstance(window_samples, int) else 0
+            )
 
         if compression in [None, "lzf", 1]:  # order of recommendation
             self._compression_algo = compression
         else:
             self._compression_algo = self.comp_default
 
-    def __enter__(self):
-        """Initializes the structure of the HDF5 file
-
-        HDF5 is hierarchically structured and before writing data, we have to
-        setup this structure, i.e. creating the right groups with corresponding
-        data types. We will store 3 types of data in a database: The
-        actual IV samples recorded either from the harvester (during recording)
-        or the target (during emulation). Any log messages, that can be used to
-        store relevant events or tag some parts of the recorded data.
-
-        """
+        # open file
         if self._modify:
-            self.h5file = h5py.File(self._file_path, "r+")
+            self.h5file = h5py.File(self._file_path, "r+")  # = rw
         else:
-            self.h5file = h5py.File(self._file_path, "w")
-
-            # Store voltage and current samples in the data group,
-            # both are stored as 4 Byte unsigned int
-            gp_data = self.h5file.create_group("data")
-            # the size of window_samples-attribute in harvest-data indicates ivcurves as input
-            # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
-            gp_data.attrs["window_samples"] = 0
-
-            gp_data.create_dataset(
-                "time",
-                (0,),
-                dtype="u8",
-                maxshape=(None,),
-                chunks=self._chunk_shape,
-                compression=self._compression_algo,
-            )
-            gp_data["time"].attrs["unit"] = "ns"
-            gp_data["time"].attrs["description"] = "system time [ns]"
-
-            gp_data.create_dataset(
-                "current",
-                (0,),
-                dtype="u4",
-                maxshape=(None,),
-                chunks=self._chunk_shape,
-                compression=self._compression_algo,
-            )
-            gp_data["current"].attrs["unit"] = "A"
-            gp_data["current"].attrs[
-                "description"
-            ] = "current [A] = value * gain + offset"
-
-            gp_data.create_dataset(
-                "voltage",
-                (0,),
-                dtype="u4",
-                maxshape=(None,),
-                chunks=self._chunk_shape,
-                compression=self._compression_algo,
-            )
-            gp_data["voltage"].attrs["unit"] = "V"
-            gp_data["voltage"].attrs[
-                "description"
-            ] = "voltage [V] = value * gain + offset"
+            self.h5file = h5py.File(self._file_path, "w")  # write, truncate if exist
+            self._create_skeleton()
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
         if isinstance(self._mode, str) and self._mode in self.mode_dtype_dict:
@@ -208,11 +170,13 @@ class Writer(Reader):
                 self.h5file["data"][channel].attrs[parameter] = self._cal[channel][
                     parameter
                 ]
+        super().__init__(file_path=None, verbose=verbose)
 
+    def __enter__(self):
         super().__enter__()
         return self
 
-    def __exit__(self, *exc):
+    def __exit__(self, *exc):  # type: ignore
         self._align()
         self._refresh_file_stats()
         self._logger.info(
@@ -224,12 +188,63 @@ class Writer(Reader):
         self.is_valid()
         self.h5file.close()
 
+    def _create_skeleton(self) -> None:
+        """Initializes the structure of the HDF5 file
+
+        HDF5 is hierarchically structured and before writing data, we have to
+        setup this structure, i.e. creating the right groups with corresponding
+        data types. We will store 3 types of data in a database: The
+        actual IV samples recorded either from the harvester (during recording)
+        or the target (during emulation). Any log messages, that can be used to
+        store relevant events or tag some parts of the recorded data.
+
+        """
+        # Store voltage and current samples in the data group,
+        # both are stored as 4 Byte unsigned int
+        gp_data = self.h5file.create_group("data")
+        # the size of window_samples-attribute in harvest-data indicates ivcurves as input
+        # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
+        gp_data.attrs["window_samples"] = 0
+
+        gp_data.create_dataset(
+            "time",
+            (0,),
+            dtype="u8",
+            maxshape=(None,),
+            chunks=self._chunk_shape,
+            compression=self._compression_algo,
+        )
+        gp_data["time"].attrs["unit"] = "ns"
+        gp_data["time"].attrs["description"] = "system time [ns]"
+
+        gp_data.create_dataset(
+            "current",
+            (0,),
+            dtype="u4",
+            maxshape=(None,),
+            chunks=self._chunk_shape,
+            compression=self._compression_algo,
+        )
+        gp_data["current"].attrs["unit"] = "A"
+        gp_data["current"].attrs["description"] = "current [A] = value * gain + offset"
+
+        gp_data.create_dataset(
+            "voltage",
+            (0,),
+            dtype="u4",
+            maxshape=(None,),
+            chunks=self._chunk_shape,
+            compression=self._compression_algo,
+        )
+        gp_data["voltage"].attrs["unit"] = "V"
+        gp_data["voltage"].attrs["description"] = "voltage [V] = value * gain + offset"
+
     def append_iv_data_raw(
         self,
         timestamp_ns: Union[np.ndarray, float, int],
         voltage: np.ndarray,
         current: np.ndarray,
-    ) -> NoReturn:
+    ) -> None:
         """Writes raw data to database
 
         Args:
@@ -266,9 +281,11 @@ class Writer(Reader):
         self,
         timestamp: Union[np.ndarray, float],
         voltage: np.ndarray,
-        current: np.array,
-    ) -> NoReturn:
+        current: np.ndarray,
+    ) -> None:
         """Writes data (in SI / physical unit) to file, but converts it to raw-data first
+
+           SI-value [SI-Unit] = raw-value * gain + offset,
 
         Args:
             timestamp: python timestamp (time.time()) in seconds (si-unit)
@@ -276,13 +293,12 @@ class Writer(Reader):
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
         """
-        # SI-value [SI-Unit] = raw-value * gain + offset,
         timestamp = timestamp * 10**9
         voltage = si_to_raw(voltage, self._cal["voltage"])
         current = si_to_raw(current, self._cal["current"])
         self.append_iv_data_raw(timestamp, voltage, current)
 
-    def _align(self) -> NoReturn:
+    def _align(self) -> None:
         """Align datasets with buffer-size of shepherd"""
         self._refresh_file_stats()
         n_buff = self.ds_time.size / self.samples_per_buffer
@@ -299,11 +315,11 @@ class Writer(Reader):
             self.ds_voltage.resize((size_new,))
             self.ds_current.resize((size_new,))
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key: str, item):  # type: ignore
         """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
         return self.h5file.attrs.__setitem__(key, item)
 
-    def set_config(self, data: dict) -> NoReturn:
+    def set_config(self, data: dict) -> None:
         """Important Step to get a self-describing Output-File
 
         :param data: from virtual harvester or converter / source
@@ -314,14 +330,14 @@ class Writer(Reader):
         if "window_samples" in data:
             self.set_window_samples(data["window_samples"])
 
-    def set_window_samples(self, samples: int = 0) -> NoReturn:
+    def set_window_samples(self, samples: int = 0) -> None:
         """parameter essential for ivcurves
 
         :param samples: length of window / voltage sweep
         """
         self.h5file["data"].attrs["window_samples"] = samples
 
-    def set_hostname(self, name: str) -> NoReturn:
+    def set_hostname(self, name: str) -> None:
         """option to distinguish the host, target or data-source in the testbed
             -> perfect for plotting later
 

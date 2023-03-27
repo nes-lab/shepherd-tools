@@ -9,7 +9,7 @@ import math
 import os
 import pickle  # noqa: S403
 from pathlib import Path
-from typing import NoReturn
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -34,26 +34,29 @@ def get_isc(coeffs: pd.DataFrame):
 class Reader:
     """container for converters to shepherd-data"""
 
-    samplerate_sps: int = 50
-    sample_interval_ns: int = int(10**9 // samplerate_sps)
-    sample_interval_s: float = 1 / samplerate_sps
-
-    runtime_s: float = None
-    file_size: int = None
-    data_rate: float = None
-
-    _df: pd.DataFrame = None
-
     _logger: logging.Logger = logging.getLogger("SHPData.IVonne.Reader")
 
     def __init__(
-        self, file_path: Path, samplerate_sps: int = None, verbose: bool = True
+        self,
+        file_path: Path,
+        samplerate_sps: Optional[int] = None,
+        verbose: bool = True,
     ):
         self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
         self.file_path = Path(file_path)
+        self.samplerate_sps: int = 50
         if samplerate_sps is not None:
             self.samplerate_sps = samplerate_sps
+
+        self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
+        self.sample_interval_s: float = 1 / self.samplerate_sps
+
+        self.runtime_s: float = 0
+        self.file_size: int = 0
+        self.data_rate: float = 0
+
+        self._df: Optional[pd.DataFrame] = None
 
     def __enter__(self):
         if not self.file_path.exists():
@@ -75,10 +78,12 @@ class Reader:
         )
         return self
 
-    def __exit__(self, *exc):
+    def __exit__(self, *exc):  # type: ignore
         pass
 
-    def _refresh_file_stats(self) -> NoReturn:
+    def _refresh_file_stats(self) -> None:
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         self.runtime_s = round(self._df.shape[0] / self.samplerate_sps, 3)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
@@ -88,8 +93,8 @@ class Reader:
         shp_output: Path,
         v_max: float = 5.0,
         pts_per_curve: int = 1000,
-        duration_s: float = None,
-    ) -> NoReturn:
+        duration_s: Optional[float] = None,
+    ) -> None:
         """Transforms previously recorded parameters to shepherd hdf database with IV curves.
         Shepherd should work with IV 'surfaces', where we have a stream of IV curves
 
@@ -98,6 +103,8 @@ class Reader:
         :param pts_per_curve: Number of sampling points of the prototype curve
         :param duration_s: time to stop in seconds, counted from beginning
         """
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
@@ -124,7 +131,7 @@ class Reader:
             for idx in job_iter:
                 idx_top = min(idx + max_elements, df_elements_n)
                 df_slice = self._df.iloc[idx : idx_top + 1].copy()
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                df_slice["timestamp"] = pd.TimedeltaIndex(
                     data=df_slice["time"], unit="s"
                 )
                 df_slice = df_slice.set_index("timestamp")
@@ -152,9 +159,9 @@ class Reader:
         self,
         shp_output: Path,
         v_max: float = 5.0,
-        duration_s: float = None,
-        tracker: MPPTracker = None,
-    ) -> NoReturn:
+        duration_s: Optional[float] = None,
+        tracker: Optional[MPPTracker] = None,
+    ) -> None:
         """Transforms shepherd IV curves to shepherd IV traces.
 
         For the 'buck' and 'buck-boost' modes, shepherd takes voltage and current traces.
@@ -172,6 +179,8 @@ class Reader:
         :param duration_s: time to stop in seconds, counted from beginning
         :param tracker: VOC or OPT
         """
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
@@ -204,7 +213,7 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice = tracker.process(df_slice)
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                df_slice["timestamp"] = pd.TimedeltaIndex(
                     data=df_slice["time"], unit="s"
                 )
                 df_slice = df_slice[["time", "v", "i", "timestamp"]].set_index(
@@ -226,14 +235,16 @@ class Reader:
         self,
         shp_output: Path,
         v_max: float = 5.0,
-        duration_s: float = None,
-    ) -> NoReturn:
+        duration_s: Optional[float] = None,
+    ) -> None:
         """Transforms ivonne-parameters to upsampled version for shepherd
 
         :param shp_output: Path where the resulting hdf file shall be stored
         :param v_max: Maximum voltage supported by shepherd
         :param duration_s: time to stop in seconds, counted from beginning
         """
+        if self._df is None:
+            raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %s s", duration_s)
             df_elements_n = min(
@@ -261,7 +272,7 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice.loc[:, "isc"] = get_isc(df_slice)
-                df_slice.loc[:, "timestamp"] = pd.TimedeltaIndex(
+                df_slice["timestamp"] = pd.TimedeltaIndex(
                     data=df_slice["time"], unit="s"
                 )
                 df_slice = df_slice[["time", "voc", "isc", "timestamp"]].set_index(

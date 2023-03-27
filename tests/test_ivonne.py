@@ -13,7 +13,7 @@ def example_path() -> Path:
     return here.parent / "src" / "examples"
 
 
-def test_convert_ivonne(tmp_path, example_path):
+def test_convert_ivonne(tmp_path: Path, example_path: Path) -> None:
     input_file = "jogging_10m"
     inp_path = example_path / (input_file + ".iv")
     isc_path = tmp_path / (input_file + "_isc.h5")

@@ -1,35 +1,43 @@
+# Shepherd - Data
+
 [![PyPiVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml)
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## Shepherd - Data
-
 This Python Module eases the handling of hdf5-recordings used by the [shepherd](https://github.com/orgua/shepherd)-testbed. Users can read, validate and create files and also extract, down-sample and plot information.
 
-### Installation
+---
 
-#### PIP - Online
+**Main Project**: [https://github.com/orgua/shepherd](https://github.com/orgua/shepherd)
 
-```Shell
+**Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
+
+---
+
+## Installation
+
+### PIP - Online
+
+```shell
 pip3 install shepherd-data
 ```
 
-#### PIP - Offline
+### PIP - Offline
 
 - clone repository
 - navigate shell into directory
 - install local module
 
-```Shell
+```shell
 git clone https://github.com/orgua/shepherd-datalib
 cd .\shepherd-datalib
 
 pip3 install ./
 ```
 
-### Development
+## Development
 
-#### PipEnv
+### PipEnv
 
 - clone repository
 - navigate shell into directory
@@ -51,20 +59,20 @@ pipenv update
 pipenv install --dev pytest
 ```
 
-#### running Testbench
+### running Testbench
 
 - run pytest
 
-```Shell
+```shell
 pytest
 ```
 
-#### code coverage (with pytest)
+### code coverage (with pytest)
 
 - run coverage
 - check results (in browser `./htmlcov/index.html`)
 
-```Shell
+```shell
 coverage run -m pytest
 
 coverage html
@@ -72,11 +80,11 @@ coverage html
 coverage report
 ```
 
-### Programming Interface
+## Programming Interface
 
-#### Basic Usage (recommendation)
+### Basic Usage (recommendation)
 
-```Python
+```python
 import shepherd_data as shpd
 
 with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
@@ -85,7 +93,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
     print(f"Config: {db.get_config()}")
 ```
 
-#### Available Functionality
+### Available Functionality
 
 - `Reader()`
   - file can be checked for plausibility and validity (`is_valid()`)
@@ -120,7 +128,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
       - 50 Hz measurement with Short-Circuit-Current and two other parameters
       - recorded with "IVonne"
 
-### CLI-Interface
+## CLI-Interface
 
 After installing the module the datalib offers some often needed functionality on the command line:
 
@@ -128,7 +136,7 @@ After installing the module the datalib offers some often needed functionality o
 
 - takes a file or directory as an argument
 
-```Shell
+```shell
 shepherd-data validate dir_or_file
 
 # examples:
@@ -141,7 +149,7 @@ shepherd-data validate hrv_saw_1h.h5
 - takes a file or directory as an argument
 - can take down-sample-factor as an argument
 
-```Shell
+```shell
 shepherd-data extract [-f ds-factor] [-s separator_symbol] dir_or_file
 
 # examples:
@@ -153,7 +161,7 @@ shepherd-data extract -f 1000 -s ; hrv_saw_1h.h5
 
 - takes a file or directory as an argument
 
-```Shell
+```shell
 shepherd-data extract-meta dir_or_file
 
 # examples:
@@ -167,7 +175,7 @@ shepherd-data extract-meta hrv_saw_1h.h5
 - can take start- and end-time as an argument
 - can take image-width and -height as an argument
 
-```Shell
+```shell
 shepherd-data plot [-s start_time] [-e end_time] [-w plot_width] [-h plot_height] [--multiplot] dir_or_file
 
 # examples:
@@ -181,7 +189,7 @@ shepherd-data plot -s10 -e20 hrv_saw_1h.h5
 - takes a file or directory as an argument
 - can take down-sample-factor as an argument
 
-```Shell
+```shell
 shepherd-data downsample [-f ds-factor] [-r sample-rate] dir_or_file
 
 # examples:
@@ -190,7 +198,7 @@ shepherd-data downsample -f 1000 hrv_saw_1h.h5
 shepherd-data downsample -r 100 hrv_saw_1h.h5
 ```
 
-### Data-Layout and Design choices
+## Data-Layout and Design choices
 
 Details about the file-structure can be found in the [main-project](https://github.com/orgua/shepherd/blob/main/docs/user/data_format.rst).
 
@@ -198,7 +206,7 @@ TODO:
 - update design of file
 - data dtype, mode, ...
 
-#### Modes and Datatypes
+### Modes and Datatypes
 
 - Mode `harvester` recorded a harvesting-source like solar with one of various algorithms
   - Datatype `ivsample` is directly usable by shepherd, input for virtual source / converter
@@ -207,7 +215,7 @@ TODO:
 - Mode `emulator` replayed a harvester-recording through a virtual converter and supplied a target while recording the power-consumption
   - Datatype `ivsample` is the only output of this mode
 
-#### Compression & Beaglebone
+### Compression & Beaglebone
 
 - supported are uncompressed, lzf and gzip with level 1 (order of recommendation)
   - lzf seems better-suited due to lower load, or if space isn't a constraint: uncompressed (None as argument)
@@ -232,7 +240,7 @@ TODO:
   emu_120s_unc_to_unc.h5 	-> emulator, cpu_util [%] = 51.69, data-rate = 1564.0 KiB/s
 ```
 
-### Release-Procedure
+## Release-Procedure
 
 - increase version number in __init__.py
 - install and run pre-commit, for QA-Checks, see steps below
@@ -240,13 +248,13 @@ TODO:
 - put together a release on Github - the tag should match current version-number
 - Github automatically pushes release to pypi
 
-```Shell
+```shell
 pip3 install pre-commit
 
 pre-commit run --all-files
 ```
 
-### Open Tasks
+## Open Tasks
 
 - [click progressbar](https://click.palletsprojects.com/en/8.1.x/api/#click.progressbar) -> could replace tqdm
 - implementations for this lib

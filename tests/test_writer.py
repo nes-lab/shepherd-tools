@@ -1,3 +1,7 @@
+from pathlib import Path
+from typing import Optional
+from typing import Union
+
 import numpy as np
 
 from shepherd_data import Reader
@@ -5,14 +9,14 @@ from shepherd_data import Writer
 
 
 def generate_shp_file(
-    store_path,
-    mode=None,
-    datatype=None,
-    window_samples=None,
-    cal_data=None,
-    config=None,
-    compression="default",
-    hostname="unknown",
+    store_path: Path,
+    mode: Optional[str] = None,
+    datatype: Optional[str] = None,
+    window_samples: Optional[int] = None,
+    cal_data: Optional[dict] = None,
+    config: Optional[dict] = None,
+    compression: Union[str, int, None] = "default",
+    hostname: str = "unknown",
 ):
     if config is None:
         config = {}
@@ -34,7 +38,7 @@ def generate_shp_file(
         file.append_iv_data_si(timestamps, voltages, currents)
 
 
-def test_writer_basics(tmp_path):
+def test_writer_basics(tmp_path: Path) -> None:
     store_path = tmp_path / "hrv_test.h5"
     generate_shp_file(store_path)
     with Reader(store_path, verbose=True) as file:
@@ -46,7 +50,7 @@ def test_writer_basics(tmp_path):
         assert file.get_hostname() == "unknown"
 
 
-def test_writer_compression_1(tmp_path):
+def test_writer_compression_1(tmp_path: Path) -> None:
     store_path = tmp_path / "hrv_test.h5"
     generate_shp_file(store_path, compression=1)
 

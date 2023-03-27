@@ -5,8 +5,10 @@ Might be exchanged by shepherds py-model of pru-harvesters
 import numpy as np
 import pandas as pd
 
+from .calibration import T_calc
 
-def iv_model(voltages: np.ndarray, coeffs: pd.DataFrame) -> np.ndarray:
+
+def iv_model(voltages: T_calc, coeffs: pd.Series) -> T_calc:
     """Simple diode based model of a solar panel IV curve.
 
     Args:
@@ -16,15 +18,18 @@ def iv_model(voltages: np.ndarray, coeffs: pd.DataFrame) -> np.ndarray:
     Returns:
         Solar current at given load voltage
     """
-    currents = coeffs["a"] - coeffs["b"] * (np.exp(coeffs["c"] * voltages) - 1)
-    if hasattr(currents, "__len__"):
-        currents[currents < 0] = 0
+    currents = float(coeffs["a"]) - float(coeffs["b"]) * (
+        np.exp(float(coeffs["c"]) * voltages) - 1.0
+    )
+    if isinstance(currents, np.ndarray):
+        currents[currents < 0.0] = 0.0
     else:
-        currents = max(0, currents)
+        currents = max(0.0, currents)
+
     return currents
 
 
-def find_oc(v_arr, i_arr, ratio: float = 0.05):
+def find_oc(v_arr: np.ndarray, i_arr: np.ndarray, ratio: float = 0.05):
     """Approximates opencircuit voltage.
 
     Searches last current value that is above a certain ratio of the short-circuit
@@ -51,7 +56,7 @@ class MPPTracker:
         :param coeffs: ivonne coefficients
         :return:
         """
-        pass
+        return pd.DataFrame()
 
 
 class OpenCircuitTracker(MPPTracker):
