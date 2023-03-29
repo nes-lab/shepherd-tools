@@ -37,8 +37,9 @@ jobs:
         run: pip3 install ./[test]
         working-directory: "./"
 
-      - name: Test with pytest
+      - name: Test with pytest 🧫
         run: pytest
+        working-directory: "./"
 
   test_package:
 

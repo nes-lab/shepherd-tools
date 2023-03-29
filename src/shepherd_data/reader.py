@@ -55,7 +55,7 @@ class Reader:
         if verbose is not None:
             self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
-        self.samplerate_sps: int = 100_000
+        self.samplerate_sps: int = self.samplerate_sps_default
         self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
@@ -69,6 +69,7 @@ class Reader:
         self.data_rate: float = 0
 
         # open file (if not already done by writer)
+        self.reader_opened: bool = False
         if not hasattr(self, "h5file"):
             if not isinstance(self._file_path, Path):
                 raise ValueError("Provide a valid Path-Object to Reader!")
@@ -78,6 +79,7 @@ class Reader:
                 )
 
             self.h5file = h5py.File(self._file_path, "r")  # = readonly
+            self.reader_opened = True
 
             if self.is_valid():
                 self._logger.info("File is available now")
@@ -128,7 +130,7 @@ class Reader:
         return self
 
     def __exit__(self, *exc):  # type: ignore
-        if isinstance(self._file_path, Path):
+        if self.reader_opened:
             self.h5file.close()
 
     def __repr__(self):

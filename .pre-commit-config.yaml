@@ -1,9 +1,6 @@
-# install:
-#  pip3 install pre-commit
-# run:
-#  pre-commit run --all-files
-# update deps:
-#  pre-commit autoupdate
+# install       pip3 install pre-commit
+# run           pre-commit run -a
+# update deps   pre-commit autoupdate
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
