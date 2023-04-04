@@ -61,18 +61,19 @@ def path_to_flist(data_path: Path) -> List[Path]:
     default=0,
     help="4 Levels [0..3](Error, Warning, Info, Debug)",
 )
+@click.option(
+    "--version",
+    is_flag=True,
+    help="Prints version-info at start (combinable with -v)",
+)
 @click.pass_context  # TODO: is the ctx-type correct?
-def cli(ctx: click.Context, verbose: int) -> None:
-    """Shepherd: Synchronized Energy Harvesting Emulator and Recorder
-
-    Args:
-        ctx:
-        verbose:
-    """
+def cli(ctx: click.Context, verbose: int, version: bool) -> None:
+    """Shepherd: Synchronized Energy Harvesting Emulator and Recorder"""
     config_logger(verbose)
-    logger.info("Shepherd-Data v%s", __version__)
-    logger.debug("Python v%s", sys.version)
-    logger.debug("Click v%s", click.__version__)
+    if version:
+        logger.info("Shepherd-Data v%s", __version__)
+        logger.debug("Python v%s", sys.version)
+        logger.debug("Click v%s", click.__version__)
     if not ctx.invoked_subcommand:
         click.echo("Please specify a valid command")
 
