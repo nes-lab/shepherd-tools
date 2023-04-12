@@ -4,7 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [tool.pyright]
 root = "./"
-include = ['./src/shepherd_data', './src/examples', "./tests"]
+include = [
+    './shepherd_data/src/shepherd_data',
+    './shepherd_data/src/examples',
+    "./shepherd_data/tests",
+    './shepherd_core/src/shepherd_core',
+    './shepherd_core/src/examples',
+    "./shepherd_core/tests"
+]
 pythonVersion = "3.8"
 pythonPlatform = "All"
 reportMissingParameterType = true
