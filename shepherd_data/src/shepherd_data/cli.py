@@ -15,22 +15,7 @@ from . import Writer
 from . import __version__
 
 logger = logging.getLogger("SHPData.cli")
-verbose_level = 2
 
-
-def config_logger(verbose: int) -> None:
-    # TODO: put in __init__, provide logger, ditch global var
-    if verbose == 0:
-        logger.setLevel(logging.ERROR)
-    elif verbose == 1:
-        logger.setLevel(logging.WARNING)
-    elif verbose == 2:
-        logger.setLevel(logging.INFO)
-    elif verbose > 2:
-        logger.setLevel(logging.DEBUG)
-    global verbose_level
-    verbose_level = verbose
-    logging.basicConfig(format="%(message)s")  # reduce internals
 
 
 def path_to_flist(data_path: Path) -> List[Path]:

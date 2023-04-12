@@ -23,26 +23,19 @@ from matplotlib import pyplot as plt
 from scipy import signal
 from tqdm import trange
 
-from .calibration import raw_to_si
+from shepherd_core import raw_to_si
+from shepherd_core import BaseReader
 
 # import samplerate  # TODO: just a test-fn for now
 
 
-class Reader:
+class Reader(BaseReader):
     """Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
         file_path: Path of hdf5 file containing shepherd data with iv-samples, iv-curves or isc&voc
         verbose: more info during usage, 'None' skips the setter
     """
-
-    samples_per_buffer: int = 10_000
-    samplerate_sps_default: int = 100_000
-
-    mode_dtype_dict = {
-        "harvester": ["ivsample", "ivcurve", "isc_voc"],
-        "emulator": ["ivsample"],
-    }
 
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
         if not hasattr(self, "_file_path"):

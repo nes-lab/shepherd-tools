@@ -8,13 +8,11 @@ HDF5 files.
 import logging
 
 from .reader import Reader
-from .writer import Writer
+from shepherd_core import BaseWriter as Writer
 
-__version__ = "2023.3.1"
+__version__ = "2023.4.1"
 
 __all__ = [
     "Reader",
     "Writer",
 ]
-
-logging.basicConfig(format="%(name)s %(levelname)s: %(message)s", level=logging.INFO)
