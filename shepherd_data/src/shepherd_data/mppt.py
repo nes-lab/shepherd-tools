@@ -5,7 +5,7 @@ Might be exchanged by shepherds py-model of pru-harvesters
 import numpy as np
 import pandas as pd
 
-from .calibration import T_calc
+from shepherd_core.calibration import T_calc
 
 
 def iv_model(voltages: T_calc, coeffs: pd.Series) -> T_calc:

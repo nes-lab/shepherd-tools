@@ -39,6 +39,7 @@ def set_verbose_level(verbose: int) -> None:
     else:
         chromalog.basicConfig(format="%(message)s")  # reduce internals
 
+
 # short reminder for format-strings:
 # %s    string
 # %d    decimal

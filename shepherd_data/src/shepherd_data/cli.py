@@ -10,12 +10,14 @@ from typing import Optional
 
 import click
 
+from shepherd_core import get_verbose_level
+from shepherd_core import set_verbose_level
+
 from . import Reader
 from . import Writer
 from . import __version__
 
 logger = logging.getLogger("SHPData.cli")
-
 
 
 def path_to_flist(data_path: Path) -> List[Path]:
@@ -54,7 +56,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
 @click.pass_context  # TODO: is the ctx-type correct?
 def cli(ctx: click.Context, verbose: int, version: bool) -> None:
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder"""
-    config_logger(verbose)
+    set_verbose_level(verbose)
     if version:
         logger.info("Shepherd-Data v%s", __version__)
         logger.debug("Python v%s", sys.version)
@@ -68,6 +70,7 @@ def cli(ctx: click.Context, verbose: int, version: bool) -> None:
 def validate(in_data: Path) -> None:
     """Validates a file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
+    verbose_level = get_verbose_level()  # TODO: should be stored and passed in ctx
     valid_dir = True
     for file in files:
         logger.info("Validating '%s' ...", file.name)
@@ -100,6 +103,7 @@ def validate(in_data: Path) -> None:
 def extract(in_data: Path, ds_factor: float, separator: str) -> None:
     """Extracts recorded IVSamples and stores it to csv"""
     files = path_to_flist(in_data)
+    verbose_level = get_verbose_level()
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:
         ds_factor = 1000
         logger.info("DS-Factor was invalid was reset to 1'000")
@@ -149,6 +153,7 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
 def extract_meta(in_data: Path, separator: str) -> None:
     """Extracts metadata and logs from file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
+    verbose_level = get_verbose_level()
     for file in files:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
         with Reader(file, verbose=verbose_level >= 2) as shpr:
@@ -199,6 +204,7 @@ def downsample(
         ds_list = [5, 25, 100, 500, 2_500, 10_000, 50_000, 250_000, 1_000_000]
 
     files = path_to_flist(in_data)
+    verbose_level = get_verbose_level()
     for file in files:
         with Reader(file, verbose=verbose_level >= 2) as shpr:
             for _factor in ds_list:
@@ -277,6 +283,7 @@ def plot(
 ) -> None:
     """Plots IV-trace from file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
+    verbose_level = get_verbose_level()
     multiplot = multiplot and len(files) > 1
     data = []
     for file in files:

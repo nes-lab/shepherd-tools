@@ -317,28 +317,3 @@ class BaseReader:
         if key in self.h5file:
             return self.h5file.__getitem__(key)
         raise KeyError
-
-# moved to datalib
-
-# __repr__()
-
-# check_timediffs()
-# data_timediffs()
-
-# get_metadata()
-# save_metadata()
-
-# energy()
-# _dset_statistics()
-
-# save_csv()
-# save_log()
-
-# downsample()
-# resample()
-
-# generate_plot_data()
-# assemble_plot()
-# plot_to_file()
-# multiplot_to_file()
-

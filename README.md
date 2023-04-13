@@ -128,6 +128,46 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
       - 50 Hz measurement with Short-Circuit-Current and two other parameters
       - recorded with "IVonne"
 
+### Functionality Update (WIP)
+
+- `BaseReader`
+  - `read_buffers`
+  - `get_calibration_data`
+  - `get_window_samples`
+  - `get_mode`
+  - `get_config`
+  - `get_hostname`
+  - `get_datatype`
+  - `get_hrv_config`
+  - `is_valid`
+
+- `BaseWriter(BaseReader)`
+  - `append_iv_data_raw`
+  - `append_iv_data_si`
+  - `set_config`
+  - `set_window_samples`
+  - `set_hostname`
+
+- `Reader(BaseReader)`
+  - `__repr__()`
+  - `check_timediffs()`
+  - `data_timediffs()`
+  - `get_metadata()`
+  - `save_metadata()`
+  - `energy()`
+  - `save_csv()`
+  - `save_log()`
+  - `downsample()`
+  - `resample()`
+  - `generate_plot_data()`
+  - `assemble_plot()`
+  - `plot_to_file()`
+  - `multiplot_to_file()`
+- `Writer(BaseWriter)`
+  - (no extending methods)
+
+
+
 ## CLI-Interface
 
 After installing the module the datalib offers some often needed functionality on the command line:
