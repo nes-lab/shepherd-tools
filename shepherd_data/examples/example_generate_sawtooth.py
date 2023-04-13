@@ -7,9 +7,8 @@ script will:
 from pathlib import Path
 
 import numpy as np
-from tqdm import trange
-
 import shepherd_data as shpd
+from tqdm import trange
 
 if __name__ == "__main__":
     file_path = Path("./hrv_sawtooth_1h.h5")

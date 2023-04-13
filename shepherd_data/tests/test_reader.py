@@ -2,7 +2,6 @@ import sys
 from pathlib import Path
 
 import yaml
-
 from shepherd_data import Reader
 
 

@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from shepherd_data import Reader
 from shepherd_data import ivonne
 from shepherd_data import mppt

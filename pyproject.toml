@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [tool.pyright]
 root = "./"
 include = [
-    './shepherd_data/src/shepherd_data',
-    './shepherd_data/src/examples',
+    './shepherd_data/shepherd_data',
+    './shepherd_data/examples',
     "./shepherd_data/tests",
-    './shepherd_core/src/shepherd_core',
-    './shepherd_core/src/examples',
+    './shepherd_core/shepherd_core',
+    './shepherd_core/examples',
     "./shepherd_core/tests"
 ]
 pythonVersion = "3.8"
