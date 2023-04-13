@@ -7,13 +7,14 @@ script will:
 from pathlib import Path
 
 import numpy as np
-import shepherd_data as shpd
 from tqdm import trange
+
+import shepherd_data as shp
 
 if __name__ == "__main__":
     file_path = Path("./hrv_sawtooth_1h.h5")
 
-    with shpd.Writer(file_path, compression=1) as file:
+    with shp.Writer(file_path, compression=1) as file:
         file.set_hostname("artificial")
         duration_s = 60
         repetitions = 60
@@ -29,7 +30,7 @@ if __name__ == "__main__":
 
         file.save_metadata()
 
-    with shpd.Reader(file_path) as db:
+    with shp.Reader(file_path) as db:
         print(f"Mode:     {db.get_mode()}")
         print(f"Datatype: {db.get_datatype()}")
         print(f"Window:   {db.get_window_samples()} samples")

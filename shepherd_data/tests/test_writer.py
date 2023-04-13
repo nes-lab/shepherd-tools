@@ -3,6 +3,7 @@ from typing import Optional
 from typing import Union
 
 import numpy as np
+
 from shepherd_data import Reader
 from shepherd_data import Writer
 

@@ -10,7 +10,7 @@ shepherd-data extract-meta file_or_dir
 import os
 from pathlib import Path
 
-import shepherd_data as shpd
+import shepherd_data as shp
 
 if __name__ == "__main__":
     flist = os.listdir("./")
@@ -19,7 +19,7 @@ if __name__ == "__main__":
         if not fpath.is_file() or ".h5" != fpath.suffix:
             continue
 
-        with shpd.Reader(fpath, verbose=False) as fh:
+        with shp.Reader(fpath, verbose=False) as fh:
             elements = fh.save_metadata()
 
             if "sysutil" in elements:

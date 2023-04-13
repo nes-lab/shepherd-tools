@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+
 from shepherd_data import Reader
 from shepherd_data import ivonne
 from shepherd_data import mppt
@@ -9,7 +10,7 @@ from shepherd_data import mppt
 @pytest.fixture
 def example_path() -> Path:
     here = Path(__file__).absolute().parent
-    return here.parent / "src" / "examples"
+    return here.parent / "examples"
 
 
 def test_convert_ivonne(tmp_path: Path, example_path: Path) -> None:

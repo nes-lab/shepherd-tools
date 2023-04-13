@@ -16,9 +16,10 @@ import pandas as pd
 import yaml
 from matplotlib import pyplot as plt
 from scipy import signal
+from tqdm import trange
+
 from shepherd_core import BaseReader
 from shepherd_core import raw_to_si
-from tqdm import trange
 
 # import samplerate  # TODO: just a test-fn for now
 
