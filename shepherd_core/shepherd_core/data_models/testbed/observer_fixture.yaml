@@ -1,0 +1,53 @@
+--- # add with >>> python manage.py loaddata <fixturename>
+- model: testbed.observer
+  pk: 1
+  fields:
+    name: sheep01
+    ip: 192.168.165.195
+    mac: 18:62:E4:E4:41:8D
+    room: II69
+    eth_port: II65_S3_B_10
+    comment: test-deployment, not final
+    longitude: 13.723073
+    latitude: 51.026566
+    target_a: T_nRF52_2021_001
+    target_b:
+- model: testbed.observer
+  pk: 2
+  fields:
+    name: sheep02
+    ip: 192.168.165.196
+    mac: 18:62:E4:D0:DE:3F
+    room: II69
+    eth_port: II65_S3_B_12
+    comment: test-deployment, not final
+    longitude: 13.723076
+    latitude: 51.026554
+    target_a: T_nRF52_2021_002
+    target_b:
+- model: testbed.observer
+  pk: 3
+  fields:
+    name: sheep03
+    ip: 192.168.165.197
+    mac: 18:62:E4:D0:9E:6A
+    room: II69
+    eth_port: II65_S3_B_14
+    comment: test-deployment, not final
+    longitude: 13.723080
+    latitude: 51.026543
+    target_a: T_nRF52_2021_003
+    target_b:
+- model: testbed.observer
+  pk: 4
+  fields:
+    name: sheep04
+    ip: 192.168.165.198
+    mac: 18:62:E4:D0:61:4D
+    room: II71
+    eth_port: II65_S3_C_4
+    comment: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    target_a: T_nRF52_2021_004
+    target_b:

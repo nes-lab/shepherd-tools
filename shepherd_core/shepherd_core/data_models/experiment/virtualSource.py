@@ -1,13 +1,15 @@
-from ..model_shepherd import ShpModel
-from ..model_fixture import Fixtures
-from .virtualHarvester import VirtualHarvester
 from pydantic import confloat
 from pydantic import conint
 from pydantic import conlist
 from pydantic import constr
 from pydantic import root_validator
 
-vsources = Fixtures("virtualSource_fixture.yaml", "VirtualSources")
+from shepherd_core.data_models.model_fixture import Fixtures
+from shepherd_core.data_models.model_shepherd import ShpModel
+
+from .virtualHarvester import VirtualHarvester
+
+fixtures = Fixtures("virtualSource_fixture.yaml", "experiment.VirtualSource")
 
 
 class VirtualSource(ShpModel):
@@ -79,9 +81,12 @@ class VirtualSource(ShpModel):
     class Config:
         title = "Virtual Source MinDef"
 
+    def __str__(self):
+        return self.name
+
     @root_validator(pre=True)
     def recursive_fill(cls, values: dict):
-        values, chain = vsources.inheritance(values)
+        values, chain = fixtures.inheritance(values)
         print(f"VSrc-Inheritances: {chain}")
         return values
 

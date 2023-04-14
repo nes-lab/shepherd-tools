@@ -1,17 +1,17 @@
-from datetime import timedelta, datetime
+from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
-from typing import Optional, List
+from typing import List
+from typing import Optional
 
-from pydantic import confloat
-from pydantic import conint
-from pydantic import constr
+from shepherd_core.data_models.testbed.observer import Observer
+from shepherd_core.data_models.testbed.target import Target
 
-from .emulator import Emulator
 from ..model_shepherd import ShpModel
+from .emulator import Emulator
 
 
 class Experiment(ShpModel):
-
     # from emulation TODO
     output_path: Optional[Path]
     time_start: Optional[datetime] = None  # = ASAP
@@ -20,9 +20,8 @@ class Experiment(ShpModel):
     #
     emulator_default: Emulator
 
-    observer_config: List[ObserverConfig]
+    observer_config: List[Observer]
 
 
 class ObserverConfig(ShpModel):
-
     targets: list[Target]

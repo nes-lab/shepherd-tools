@@ -1,13 +1,14 @@
 from enum import Enum
 
-from ..model_shepherd import ShpModel
-from ..model_fixture import Fixtures
 from pydantic import confloat
 from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
-vharvesters = Fixtures("virtualHarvester_fixture.yaml", "VirtualHarvesters")
+from shepherd_core.data_models.model_fixture import Fixtures
+from shepherd_core.data_models.model_shepherd import ShpModel
+
+fixtures = Fixtures("virtualHarvester_fixture.yaml", "experiment.VirtualHarvesters")
 
 
 class DTypeEnum(str, Enum):
@@ -52,9 +53,12 @@ class VirtualHarvester(ShpModel):
     wait_cycles: conint(ge=0, le=100) = 1
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
+    def __str__(self):
+        return self.name
+
     @root_validator(pre=True)
     def recursive_fill(cls, values: dict):
-        values, chain = vharvesters.inheritance(values)
+        values, chain = fixtures.inheritance(values)
         if values["name"] == "neutral":
             raise ValueError("Resulting Harvester can't be neutral")
         print(f"VHrv-Inheritances: {chain}")

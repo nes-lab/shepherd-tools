@@ -1,10 +1,12 @@
-VirtualSources:
-  # info:
-  # - compendium of all parameters & description
-  # - base for neutral fallback values if provided yml is sparse
-  # - -> it is encouraged to omit redundant parameters
-
-  neutral:
+# info:
+# - compendium of all parameters & description
+# - base for neutral fallback values if provided yml is sparse
+# - -> it is encouraged to omit redundant parameters
+---
+- model: experiment.VirtualSource
+  pk: 0
+  fields:
+    name: neutral
     # General Config
     enable_boost: false # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     enable_buck: false # if false -> v_output = v_intermediate
@@ -65,26 +67,44 @@ VirtualSources:
     LUT_output_efficiency: [ 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 ] # array[12] depending on output_current
     LUT_output_I_min_log2_nA: 0  # 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
-  direct:
+- model: experiment.VirtualSource
+  pk: 10
+  fields:
+    name: direct
     inherit_from: neutral
     # Note: current input has no influence
 
-  diode+capacitor:
+- model: experiment.VirtualSource
+  pk: 11
+  fields:
+    name: diode+capacitor
     inherit_from: neutral
     V_input_drop_mV: 300  # simulate input-diode
     C_intermediate_uF: 10  # primary storage-Cap
 
-  dio_cap: # simpler naming
+- model: experiment.VirtualSource
+  pk: 12
+  fields:
+    name: dio_cap # simpler naming
     inherit_from: diode+capacitor
 
-  diode+resistor+capacitor:
+- model: experiment.VirtualSource
+  pk: 13
+  fields:
+    name: diode+resistor+capacitor
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
-  dio_res_cap: # simpler naming
+- model: experiment.VirtualSource
+  pk: 14
+  fields:
+    name: dio_res_cap # simpler naming
     inherit_from: diode+resistor+capacitor
 
-  BQ25504:
+- model: experiment.VirtualSource
+  pk: 20
+  fields:
+    name: BQ25504
     inherit_from: neutral # to complete undefined vars
     enable_boost: true # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     log_intermediate_voltage: false # record virtual intermediate (cap-)voltage and -output-current instead of output-voltage and -current
@@ -128,14 +148,23 @@ VirtualSources:
     LUT_input_V_min_log2_uV: 17 # example: 2^7 = 128 uV -> array[0] is for inputs < 128 uV
     LUT_input_I_min_log2_nA: 13 # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA
 
-  BQ25504s: # Version with Schmitt-Trigger
+- model: experiment.VirtualSource
+  pk: 21
+  fields:
+    name: BQ25504s # Version with Schmitt-Trigger
     inherit_from: BQ25504
     immediate_pwr_good_signal: true
 
-  BQ25504-Schmitt:
+- model: experiment.VirtualSource
+  pk: 22
+  fields:
+    name: BQ25504-Schmitt
     inherit_from: BQ25504s
 
-  BQ25570:
+- model: experiment.VirtualSource
+  pk: 30
+  fields:
+    name: BQ25570
     inherit_from: BQ25504 # inherit Input-LUT that is similar enough
     enable_boost: true # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     enable_buck: true # if false -> v_output = v_intermediate
@@ -169,15 +198,27 @@ VirtualSources:
     LUT_output_efficiency: [ 0.40, 0.50, 0.60, 0.73, 0.82, 0.86, 0.88, 0.90, 0.91, 0.92, 0.93, 0.92] # array[12] depending on output_current
     LUT_output_I_min_log2_nA: 10  # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
-  BQ25570s:  # Version with Schmitt-Trigger
+- model: experiment.VirtualSource
+  pk: 31
+  fields:
+    name: BQ25570s  # Version with Schmitt-Trigger
     inherit_from: BQ25570
     immediate_pwr_good_signal: true
 
-  BQ25570-Schmitt:
+- model: experiment.VirtualSource
+  pk: 32
+  fields:
+    name: BQ25570-Schmitt
     inherit_from: BQ25570s
-  default:
+- model: experiment.VirtualSource
+  pk: 33
+  fields:
+    name: default
     inherit_from: BQ25570s
 
-  BQ25570si:  # record internal StorageCap instead of Output
+- model: experiment.VirtualSource
+  pk: 34
+  fields:
+    name: BQ25570si  # record internal StorageCap instead of Output
     inherit_from: BQ25570s
     log_intermediate_voltage: true

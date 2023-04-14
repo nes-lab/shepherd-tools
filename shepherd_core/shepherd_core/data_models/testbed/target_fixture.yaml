@@ -1,0 +1,33 @@
+--- # add with >>> python manage.py loaddata <fixturename>
+- model: testbed.target
+  pk: 1
+  fields:
+    name: T_nRF52_2021_001  # replace with proper name
+    description: single target PCB, v2.1r0
+    comment: ONLY VIRTUAL - NOT REAL
+    controller1: nRF52
+    controller2:
+- model: testbed.target
+  pk: 2
+  fields:
+    name: T_nRF52_2021_002
+    description: single target PCB, v2.1r0
+    comment: ONLY VIRTUAL - NOT REAL
+    controller1: nRF52
+    controller2:
+- model: testbed.target
+  pk: 3
+  fields:
+    name: T_nRF52_2021_003
+    description: single target PCB, v2.1r0
+    comment: ONLY VIRTUAL - NOT REAL
+    controller1: nRF52
+    controller2:
+- model: testbed.target
+  pk: 4
+  fields:
+    name: T_nRF52_2021_004
+    description: single target PCB, v2.1r0
+    comment: ONLY VIRTUAL - NOT REAL
+    controller1: nRF52
+    controller2:

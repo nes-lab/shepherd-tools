@@ -5,15 +5,15 @@ from pathlib import Path
 from typing import Optional
 from typing import Union
 
+from pydantic import confloat
+from pydantic import root_validator
+
+from shepherd_core.data_models.model_shepherd import ShpModel
+
 from .emulator_features import GpioLogging
 from .emulator_features import PowerLogging
 from .emulator_features import SystemLogging
 from .virtualSource import VirtualSource
-
-from pydantic import confloat
-from pydantic import root_validator
-
-from ..model_shepherd import ShpModel
 
 
 class TargetPort(str, Enum):
@@ -35,7 +35,8 @@ class Emulator(ShpModel):
     output_path: Optional[Path]
     # ⤷ output_path:
     #   - providing a directory -> file is named emu_timestamp.h5
-    #   - for a complete path the filename is not changed except it exists and overwrite is disabled -> emu#num.h5
+    #   - for a complete path the filename is not changed except it exists and
+    #     overwrite is disabled -> emu#num.h5
     force_overwrite: bool = False
     output_compression: Union[None, str, int] = None
     # ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)

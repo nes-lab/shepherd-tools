@@ -4,7 +4,6 @@ from typing import Optional
 
 import yaml
 
-
 # Proposed field-name:
 # - inheritance
 # - inherit_from
@@ -19,11 +18,23 @@ class Fixtures:
     elements: dict = {}
 
     def __init__(self, file_name: str, model_name: str):
-        self.path = Path(__file__).parent.resolve() / file_name
+        self.path = Path(file_name).resolve()
         self.name = model_name
         with open(self.path) as fix_data:
-            fixtures = yaml.safe_load(fix_data)[self.name]
-            self.elements = {k.lower(): v for k, v in fixtures.items()}
+            fixtures = yaml.safe_load(fix_data)
+            for fixture in fixtures:
+                if not isinstance(fixture, dict):
+                    continue
+                if "fields" not in fixture or "model" not in fixture:
+                    continue
+                if fixture["model"].lower() != model_name.lower():
+                    continue
+                if "name" not in fixture["fields"]:
+                    continue
+                name = str(fixture["fields"]["name"]).lower()
+                data = fixture["fields"]
+                self.elements[name] = data
+            print(self.elements)
 
     def __getitem__(self, key) -> dict:
         key = key.lower()
