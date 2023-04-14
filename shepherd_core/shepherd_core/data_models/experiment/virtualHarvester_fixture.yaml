@@ -1,0 +1,102 @@
+VirtualHarvesters:
+  # info:
+  # - compendium of all parameters & description
+  # - look into the implementation to see which parameters are used
+  # - base for neutral fallback values if provided yml is sparse
+  # - -> it is encouraged to omit redundant parameters in your own implementation
+
+  neutral:  # note: can not be used as a valid harvester
+    window_size: 8
+    voltage_mV: 2500  # starting-point for some algorithms (mppt_po)
+    voltage_min_mV: 0
+    voltage_max_mV: 5000
+    current_limit_uA: 50000   # allows to keep trajectory in special region (or constant current tracking)
+    voltage_step_mV: 1
+    # TODO: current limit not used atm?!
+    setpoint_n: 0.70
+    interval_ms: 100     # between start of measurements
+    duration_ms: 0.1     # of measurement
+    rising: true
+    # underlying recoder
+    wait_cycles: 1 # first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
+
+  ivcurve: # sawtooth-wave
+    inherit_from: neutral
+    datatype: ivcurve
+    window_size: 250
+    voltage_min_mV: 0
+    voltage_max_mV: 5000
+    wait_cycles: 1  # results in 200 Hz (= 100kHz /(2*250))
+    rising: false # downward sawtooth seems to have advantages for solar cells
+    # todo: also add switch for sawtooth- vs triangle-wave?
+    # todo: could also include a version with dynamic upper-boundary, varied if voc is reached very early
+
+  ivcurves:  # synonym
+    inherit_from: ivcurve
+
+  iv1000:  # name relates to curves per second
+    inherit_from: ivcurve
+    window_size: 100
+    wait_cycles: 0
+
+  iv110: # between 50 & 60 Hz line-frequency to avoid standing waves
+    inherit_from: ivcurve
+    window_size: 909
+    wait_cycles: 0
+
+  isc_voc:  # short circuit current, open circuit voltage,
+    inherit_from: neutral
+    datatype: isc_voc
+    wait_cycles: 1  # results in 25 kHz (isc, wait, voc, wait)
+
+  cv: # constant voltage
+    inherit_from: neutral
+    datatype: ivsample
+    voltage_mV: 2400
+
+  cv20:
+    inherit_from: cv
+    voltage_mV: 2000
+
+  cv33:
+    inherit_from: cv
+    voltage_mV: 3300
+
+  mppt_voc: # open circuit voltage for solar
+    inherit_from: neutral
+    datatype: ivsample
+    setpoint_n: 0.76
+    interval_ms: 100     # between measurements
+    duration_ms: 1.2     # solar can overshoot when load is removed
+    current_limit_uA: 5  # boundary for detecting open circuit in emulated version (working on IV-Curves)
+
+  mppt_bq: # mppt of TI BQ-Converters for solar
+    inherit_from: mppt_voc
+    setpoint_n: 0.76
+    interval_ms: 16000  # between measurements
+    duration_ms: 256    # of measurement
+
+  mppt_bqt: # mppt of TI BQ-Converters for thermoelectric
+    inherit_from: mppt_voc
+    setpoint_n: 0.50
+    interval_ms: 16000  # between measurements
+    duration_ms: 256    # of measurement
+
+  mppt_bq_solar: # explicit naming
+    inherit_from: mppt_bq
+
+  mppt_bq_thermoelectric: # explicit naming
+    inherit_from: mppt_bqt
+
+  mppt_po: # perturb & observe
+    inherit_from: neutral
+    datatype: ivsample
+    voltage_min_mV: 0
+    voltage_max_mV: 5000
+    voltage_step_mV: 10
+    interval_ms: 18   # between steps
+
+  mppt_opt: # power-optimum with very fast PO-Variant (harvesting) or special max-pwr-picker (emulator / ivcurve)
+    inherit_from: mppt_po
+    voltage_step_mV: 1
+    interval_ms: 0.01
