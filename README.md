@@ -20,14 +20,18 @@ This Repo contains python packages for the [shepherd](https://github.com/orgua/s
 
 - increase version number in __init__.py of both packages
 - install and run pre-commit for QA-Checks, see steps below
-- every commit get automatically tested by Github
-- put together a release on Github - the tag should match current version-number
+- every commit get automatically tested by GitHub
+- put together a release on GitHub - the tag should match current version-number
 - Github automatically pushes the release to pypi
 
 ```shell
 pip3 install pre-commit
 
 pre-commit run --all-files
+
+# additional QA-Tests (currently with open issues)
+pyright
+ruff check .
 ```
 
 ## Open Tasks

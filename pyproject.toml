@@ -5,12 +5,8 @@ build-backend = "setuptools.build_meta"
 [tool.pyright]
 root = "./"
 include = [
-    './shepherd_data/shepherd_data',
-    './shepherd_data/examples',
-    "./shepherd_data/tests",
-    './shepherd_core/shepherd_core',
-    './shepherd_core/examples',
-    "./shepherd_core/tests"
+    './shepherd_core/',
+    './shepherd_data/',
 ]
 pythonVersion = "3.8"
 pythonPlatform = "All"
@@ -20,7 +16,7 @@ reportMissingParameterType = true
 builtin = "clear,rare,informal,usage,code,en-GB_to_en-US"
 
 #skip = ""
-#ignore-words-list = ""
+ignore-words-list = "astroid,ws"
 
 # options without argument
 check-filenames = ""
@@ -115,7 +111,7 @@ target-version = "py38"
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
-"tests/**" = ["ARG", "S"]
+"*/tests/**" = ["ARG", "S"]
 
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
