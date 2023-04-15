@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class ShpModel(BaseModel):
     # TODO: not needed anymore (currently)
     class Config:
-        # title = "Virtual Source MinDef"
+        title = ""  # example: Virtual Source MinDef"
         allow_mutation = False  # const after creation?
         extra = "forbid"  # no unnamed attributes allowed
         validate_all = True  # also check defaults

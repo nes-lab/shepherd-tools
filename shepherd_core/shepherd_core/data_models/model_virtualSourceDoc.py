@@ -7,6 +7,7 @@ from pydantic import confloat
 from pydantic import conlist
 from pydantic import root_validator
 
+from .. import logger
 from .experiment.virtualHarvester import VirtualHarvester
 
 
@@ -53,7 +54,8 @@ class VirtualSourceDoc(BaseModel):
     )
 
     enable_boost: bool = Field(
-        description="If false -> V_intermediate becomes V_input, output-switch-hysteresis is still usable",
+        description="If false -> V_intermediate becomes V_input, "
+        "output-switch-hysteresis is still usable",
         default=False,
     )
     enable_buck: bool = Field(
@@ -61,7 +63,8 @@ class VirtualSourceDoc(BaseModel):
         default=False,
     )
     log_intermediate_voltage: bool = Field(
-        description="Record / log virtual intermediate (cap-)voltage and -current (out) instead of output-voltage and -current",
+        description="Record / log virtual intermediate (cap-)voltage and "
+        "-current (out) instead of output-voltage and -current",
         default=False,
     )
 
@@ -145,24 +148,28 @@ class VirtualSourceDoc(BaseModel):
     )
 
     V_pwr_good_enable_threshold_mV: float = Field(
-        description="Target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage",
+        description="Target is informed by pwr-good on output-pin (hysteresis) "
+        "-> for intermediate voltage",
         default=2800,
         ge=0,
         le=10_000,
     )
     V_pwr_good_disable_threshold_mV: float = Field(
-        description="Target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage",
+        description="Target is informed by pwr-good on output-pin (hysteresis) "
+        "-> for intermediate voltage",
         default=2200,
         ge=0,
         le=10_000,
     )
     immediate_pwr_good_signal: bool = Field(
-        description="1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds",
+        description="1: activate instant schmitt-trigger, "
+        "0: stay in interval for checking thresholds",
         default=True,
     )
 
     C_output_uF: float = Field(
-        description="Final (always last) stage to compensate undetectable current spikes when enabling power for target",
+        description="Final (always last) stage to compensate undetectable "
+        "current spikes when enabling power for target",
         default=1.0,
         ge=0,
         le=4.29e6,
@@ -195,7 +202,9 @@ class VirtualSourceDoc(BaseModel):
         min_items=12,
         max_items=12,
     ) = Field(
-        description="# input-array[12][12] depending on array[inp_voltage][log(inp_current)], influence of cap-voltage is not implemented",
+        description="# input-array[12][12] depending on "
+        "array[inp_voltage][log(inp_current)], "
+        "influence of cap-voltage is not implemented",
         default=12 * [12 * [1.00]],
     )
     LUT_input_V_min_log2_uV: int = Field(
@@ -213,7 +222,8 @@ class VirtualSourceDoc(BaseModel):
 
     # Buck Converter
     V_output_mV: float = Field(
-        description="Fixed Voltage of Buck-Converter (as long as Input is > Output + Drop-Voltage)",
+        description="Fixed Voltage of Buck-Converter (as long as "
+        "Input is > Output + Drop-Voltage)",
         default=2400,
         ge=0,
         le=5_000,
@@ -234,7 +244,8 @@ class VirtualSourceDoc(BaseModel):
         default=12 * [1.00],
     )
     LUT_output_I_min_log2_nA: int = Field(
-        description="Example: n=8, 2^n = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation",
+        description="Example: n=8, 2^n = 256 nA -> array[0] is for inputs < 256 nA, "
+        "see notes on LUT_input for explanation",
         default=0,
         ge=0,
         le=20,
@@ -245,7 +256,7 @@ class VirtualSourceDoc(BaseModel):
         if "inherit_from" in values:
             config_name = values.get("inherit_from")
             config_base = acquire_def(config_name)
-            print(f"Will init VS from {config_name}")
+            logger.debug("Will init VS from '%s'", config_name)
             config_base["name"] = config_name
             base_dict = VirtualSourceDoc.recursive_fill(values=config_base)
             for key, value in values.items():
@@ -258,7 +269,7 @@ class VirtualSourceDoc(BaseModel):
                 values["name"] = config_name
             else:
                 config_base = acquire_def(config_name)
-                print(f"Will init VS as {config_name}")
+                logger.debug("Will init VS as '%s'", config_name)
                 config_base["name"] = config_name
                 values = VirtualSourceDoc.recursive_fill(values=config_base)
         return values

@@ -6,6 +6,7 @@ from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
+from shepherd_core import logger
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
@@ -28,7 +29,7 @@ class VirtualHarvester(ShpModel):
     ) = "mppt_opt"
 
     datatype: DTypeEnum  # = DTypeEnum.ivcurve
-    # ⤷ of input file
+    # ⤷ of input file, TODO
 
     window_size: conint(ge=8, le=2_000) = 8  # TODO: min was 16
 
@@ -55,16 +56,6 @@ class VirtualHarvester(ShpModel):
     wait_cycles: conint(ge=0, le=100) = 1
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
-    # Control behavior of pydantic-class
-    class Config:
-        # allow_mutation = False  # const after creation?
-        extra = "forbid"  # no unnamed attributes allowed
-        validate_all = True  # also check defaults
-        # validate_assignment = True
-        min_anystr_length = 4
-        anystr_lower = True
-        anystr_strip_whitespace = True  # strip leading & trailing whitespaces
-
     def __str__(self):
         return self.name
 
@@ -73,7 +64,7 @@ class VirtualHarvester(ShpModel):
         values, chain = fixture.inheritance(values)
         if values["name"] == "neutral":
             raise ValueError("Resulting Harvester can't be neutral")
-        print(f"VHrv-Inheritances: {chain}")
+        logger.debug("VHrv-Inheritances: %s", chain)
         return values
 
     @root_validator(pre=False)

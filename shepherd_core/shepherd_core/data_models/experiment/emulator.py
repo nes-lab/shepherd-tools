@@ -71,16 +71,13 @@ class Emulator(ShpModel):
 
     @root_validator()
     def validate(cls, values: dict):
-        if isinstance(values, bytes):
-            print(values)  # TODO: only temporary - bughunt
-        comp = values.get("output_compression", None)
+        comp = values.get("output_compression")
         if comp not in compressions_allowed:
             raise ValueError(
                 f"value is not allowed ({comp} not in {compressions_allowed}",
             )
         # TODO: limit paths
-        # TODO: date older than now?
-        # TODO:
+        # TODO: limit date older than now?
         return values
 
     @root_validator(pre=False)
@@ -90,6 +87,5 @@ class Emulator(ShpModel):
 
     def get_parameters(self):
         # TODO
-        print("you got it")
         return self.dict()
         # pass

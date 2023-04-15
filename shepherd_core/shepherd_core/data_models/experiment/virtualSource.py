@@ -7,6 +7,7 @@ from pydantic import constr
 from pydantic import root_validator
 from virtualHarvester import VirtualHarvester
 
+from shepherd_core import logger
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
@@ -80,15 +81,7 @@ class VirtualSource(ShpModel):
     ) = 12 * [1.00]
     LUT_output_I_min_log2_nA: conint(ge=0, le=20) = 0
 
-    # Control behavior of pydantic-class
-    class Config:
-        # allow_mutation = False  # const after creation?
-        extra = "forbid"  # no unnamed attributes allowed
-        validate_all = True  # also check defaults
-        # validate_assignment = True
-        min_anystr_length = 4
-        anystr_lower = True
-        anystr_strip_whitespace = True  # strip leading & trailing whitespaces
+    # super().Config.title "VirtualSource"
 
     def __str__(self):
         return self.name
@@ -96,7 +89,7 @@ class VirtualSource(ShpModel):
     @root_validator(pre=True)
     def recursive_fill(cls, values: dict):
         values, chain = fixtures.inheritance(values)
-        print(f"VSrc-Inheritances: {chain}")
+        logger.debug("VSrc-Inheritances: %s", chain)
         return values
 
     @root_validator(pre=False)

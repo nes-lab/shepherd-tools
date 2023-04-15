@@ -4,6 +4,8 @@ from typing import Optional
 
 import yaml
 
+from shepherd_core import logger
+
 # Proposed field-name:
 # - inheritance
 # - inherit_from
@@ -64,7 +66,7 @@ class Fixtures:
                     )
                 chain.append(base_name)
             fixture_base = copy.copy(self[fixture_name])
-            # print(f"{self.name} will inherit from {fixture_name}")
+            logger.debug("'%s' will inherit from '%s'", self.name, fixture_name)
             fixture_base["name"] = fixture_name
             chain.append(fixture_name)
             base_dict, chain = self.inheritance(values=fixture_base, chain=chain)
@@ -79,7 +81,6 @@ class Fixtures:
                 values["name"] = fixture_name
             else:
                 fixture_base = copy.copy(self[fixture_name])
-                # print(f"{self.name} '{fixture_name}' will init as {fixture_name}")
                 fixture_base["name"] = fixture_name
                 chain.append(fixture_name)
                 values, chain = self.inheritance(values=fixture_base, chain=chain)

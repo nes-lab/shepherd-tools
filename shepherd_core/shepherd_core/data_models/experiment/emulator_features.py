@@ -10,7 +10,7 @@ class PowerLogging(ShpModel):
     # initial recording
     log_voltage: bool = True
     log_current: bool = True
-    # compression: Optional[Compression] = None  # -> to Emu
+    # compression -> to Emu, TODO
     log_intermediate_voltage: bool = False  # TODO: duplicate in PowerSampling()
 
     # post-processing, TODO: not supported ATM

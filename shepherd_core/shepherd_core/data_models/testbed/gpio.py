@@ -11,8 +11,8 @@ fixtures = Fixtures(fixture_path, "testbed.gpio")
 
 
 class Direction(str, Enum):
-    I = "Input"
-    O = "Output"
+    IN = "Input"
+    OUT = "Output"
     IO = "Bidirectional"  # TODO: probably the other way around
 
 
@@ -21,7 +21,7 @@ class GPIO(ShpModel):
     description: str = ""
     comment: str = ""
 
-    direction: Direction = Direction.I
+    direction: Direction = Direction.IN
     dir_switch: str
 
     reg_pru = str
