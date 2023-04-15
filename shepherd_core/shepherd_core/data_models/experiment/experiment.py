@@ -12,7 +12,7 @@ from .emulator import Emulator
 
 
 class Experiment(ShpModel):
-    # from emulation TODO
+    # taken from emulation TODO
     output_path: Optional[Path]
     time_start: Optional[datetime] = None  # = ASAP
     duration: Optional[timedelta] = None  # = till EOF
@@ -21,7 +21,7 @@ class Experiment(ShpModel):
     emulator_default: Emulator
 
     observer_config: List[Observer]
-
-
-class ObserverConfig(ShpModel):
-    targets: list[Target]
+    targets: List[Target]
+    # TODO: link list of targets to
+    #       - emulator-configs and
+    #       - firmware / programmings

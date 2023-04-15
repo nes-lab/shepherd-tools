@@ -1,15 +1,17 @@
+from pathlib import Path
+
 from pydantic import confloat
 from pydantic import conint
 from pydantic import conlist
 from pydantic import constr
 from pydantic import root_validator
+from virtualHarvester import VirtualHarvester
 
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
-from .virtualHarvester import VirtualHarvester
-
-fixtures = Fixtures("virtualSource_fixture.yaml", "experiment.VirtualSource")
+fixture_path = Path("virtualSource_fixture.yaml").resolve()
+fixtures = Fixtures(fixture_path, "experiment.VirtualSource")
 
 
 class VirtualSource(ShpModel):
@@ -78,8 +80,15 @@ class VirtualSource(ShpModel):
     ) = 12 * [1.00]
     LUT_output_I_min_log2_nA: conint(ge=0, le=20) = 0
 
+    # Control behavior of pydantic-class
     class Config:
-        title = "Virtual Source MinDef"
+        # allow_mutation = False  # const after creation?
+        extra = "forbid"  # no unnamed attributes allowed
+        validate_all = True  # also check defaults
+        # validate_assignment = True
+        min_anystr_length = 4
+        anystr_lower = True
+        anystr_strip_whitespace = True  # strip leading & trailing whitespaces
 
     def __str__(self):
         return self.name

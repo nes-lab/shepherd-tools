@@ -1,17 +1,20 @@
 from datetime import datetime
-from typing import List, Optional
+from pathlib import Path
+from typing import Optional
 
-from pydantic import Field, root_validator
+from pydantic import Field
+from pydantic import root_validator
 
-from .mcu import MCU
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
-fixtures = Fixtures("target_fixture.yaml", "testbed.target")
+from .mcu import MCU
+
+fixture_path = Path("target_fixture.yaml").resolve()
+fixtures = Fixtures(fixture_path, "testbed.target")
 
 
 class Target(ShpModel):
-
     name: str
     version: str
     description: str = ""

@@ -1,19 +1,22 @@
 import ipaddress
 from datetime import datetime
+from pathlib import Path
 from typing import Union
 
-from pydantic import Field, root_validator
+from pydantic import Field
+from pydantic import root_validator
 
-from .cape import Cape
-from .target import Target
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
-fixtures = Fixtures("observer_fixture.yaml", "testbed.observer")
+from .cape import Cape
+from .target import Target
+
+fixture_path = Path("observer_fixture.yaml").resolve()
+fixtures = Fixtures(fixture_path, "testbed.observer")
 
 
 class Observer(ShpModel):
-
     name: str
     description: str = ""
     comment: str = ""

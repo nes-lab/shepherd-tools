@@ -15,8 +15,13 @@
 
 ### real world models
 
-- !testbed
-- !observer
-- !cape
-- !target
-- !MCU
+- testbed
+- observer
+- cape
+- target
+- MCU
+
+
+## Pydantic-Pitfalls (<v2)
+
+- the fixture-inheritance-system must have a

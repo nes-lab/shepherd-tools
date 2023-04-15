@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class ShpModel(BaseModel):
+    # TODO: not needed anymore (currently)
     class Config:
         # title = "Virtual Source MinDef"
         allow_mutation = False  # const after creation?

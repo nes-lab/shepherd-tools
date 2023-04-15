@@ -1,15 +1,17 @@
 from datetime import datetime
+from pathlib import Path
 
-from pydantic import Field, root_validator
+from pydantic import Field
+from pydantic import root_validator
 
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
-fixtures = Fixtures("cape_fixture.yaml", "testbed.cape")
+fixture_path = Path("cape_fixture.yaml").resolve()
+fixtures = Fixtures(fixture_path, "testbed.cape")
 
 
 class Cape(ShpModel):
-
     name: str
     version: str
     description: str = ""

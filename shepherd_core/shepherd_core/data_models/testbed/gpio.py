@@ -1,11 +1,14 @@
 from enum import Enum
+from pathlib import Path
 
 from pydantic import root_validator
 
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
-fixtures = Fixtures("gpio_fixture.yaml", "testbed.gpio")
+fixture_path = Path("gpio_fixture.yaml").resolve()
+fixtures = Fixtures(fixture_path, "testbed.gpio")
+
 
 class Direction(str, Enum):
     I = "Input"
@@ -14,7 +17,6 @@ class Direction(str, Enum):
 
 
 class GPIO(ShpModel):
-
     name: str
     description: str = ""
     comment: str = ""

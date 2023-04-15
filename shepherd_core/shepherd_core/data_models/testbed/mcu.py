@@ -1,11 +1,14 @@
 from enum import Enum
+from pathlib import Path
 
 from pydantic import root_validator
 
 from shepherd_core.data_models.model_fixture import Fixtures
 from shepherd_core.data_models.model_shepherd import ShpModel
 
-fixtures = Fixtures("mcu_fixture.yaml", "testbed.mcu")
+fixture_path = Path("mcu_fixture.yaml").resolve()
+fixtures = Fixtures(fixture_path, "testbed.mcu")
+
 
 class Programmer(str, Enum):
     swd = "SWD"
@@ -15,7 +18,6 @@ class Programmer(str, Enum):
 
 
 class MCU(ShpModel):
-
     name: str
     description: str = ""
     comment: str = ""

@@ -13,13 +13,11 @@ import yaml
 
 
 class Fixtures:
-    path: Path
-    name: str
-    elements: dict = {}
-
-    def __init__(self, file_name: str, model_name: str):
-        self.path = Path(file_name).resolve()
-        self.name = model_name
+    def __init__(self, file_path: Path, model_name: str):
+        # TODO: input could be just __file__(str)
+        self.path: Path = file_path
+        self.name: str = model_name
+        self.elements: dict = {}
         with open(self.path) as fix_data:
             fixtures = yaml.safe_load(fix_data)
             for fixture in fixtures:
@@ -34,7 +32,6 @@ class Fixtures:
                 name = str(fixture["fields"]["name"]).lower()
                 data = fixture["fields"]
                 self.elements[name] = data
-            print(self.elements)
 
     def __getitem__(self, key) -> dict:
         key = key.lower()
