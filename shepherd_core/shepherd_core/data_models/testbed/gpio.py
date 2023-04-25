@@ -1,12 +1,13 @@
 from enum import Enum
 from pathlib import Path
+from typing import Optional
 
 from pydantic import root_validator
 
-from shepherd_core.data_models.model_fixture import Fixtures
-from shepherd_core.data_models.model_shepherd import ShpModel
+from ..model_fixture import Fixtures
+from ..model_shepherd import ShpModel
 
-fixture_path = Path("gpio_fixture.yaml").resolve()
+fixture_path = Path(__file__).resolve().with_name("gpio_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.gpio")
 
 
@@ -22,12 +23,12 @@ class GPIO(ShpModel):
     comment: str = ""
 
     direction: Direction = Direction.IN
-    dir_switch: str
+    dir_switch: Optional[str]
 
-    reg_pru = str
-    pin_pru = str
-    reg_sys = str
-    pin_sys = str
+    reg_pru: str = ""  # TODO: these also optional instead of ""?
+    pin_pru: str = ""
+    reg_sys: str = ""
+    pin_sys: str = ""
 
     def __str__(self):
         return self.name

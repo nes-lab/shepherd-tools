@@ -1,4 +1,5 @@
 --- # add with >>> python manage.py loaddata <fixturename>
+# cape v2.4
 - model: testbed.gpio
   pk: 1
   fields:
@@ -31,7 +32,7 @@
     pin_pru: P8_43
     reg_sys: 46
     pin_sys: P8_16
-- model: testbed.gpio # TODO: continue, firmware/pru1/main.c -> table
+- model: testbed.gpio
   pk: 4
   fields:
     name: GPIO3

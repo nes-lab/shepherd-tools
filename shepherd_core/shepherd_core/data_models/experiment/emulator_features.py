@@ -1,9 +1,10 @@
 from typing import List
+from typing import Optional
 
 from pydantic import conint
 
-from shepherd_core.data_models.model_shepherd import ShpModel
-from shepherd_core.data_models.testbed.gpio import GPIO
+from ..model_shepherd import ShpModel
+from ..testbed.gpio import GPIO
 
 
 class PowerLogging(ShpModel):
@@ -24,7 +25,7 @@ class GpioLogging(ShpModel):
     # initial recording
     log_gpio: bool = False  # TODO: activate
     mask: conint(ge=0, le=2**10) = 2**10  # all
-    gpios: List[GPIO]  # TODO: list of GPIO to build mask
+    gpios: Optional[List[GPIO]]  # TODO: list of GPIO to build mask
 
     # post-processing, TODO: not supported ATM
     decode_uart: bool = False

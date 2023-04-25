@@ -1,5 +1,3 @@
-from datetime import datetime
-from datetime import timedelta
 from enum import Enum
 from pathlib import Path
 from typing import Optional
@@ -8,8 +6,7 @@ from typing import Union
 from pydantic import confloat
 from pydantic import root_validator
 
-from shepherd_core.data_models.model_shepherd import ShpModel
-
+from ..model_shepherd import ShpModel
 from .emulator_features import GpioLogging
 from .emulator_features import PowerLogging
 from .emulator_features import SystemLogging
@@ -41,8 +38,9 @@ class Emulator(ShpModel):
     output_compression: Union[None, str, int] = None
     # ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)
 
-    start_time: datetime  # = Field(default_factory=datetime.utcnow)
-    duration: timedelta  # TODO: both could also be "None", interpreted as start ASAP, run till EOF
+    #    start_time: datetime  # = Field(default_factory=datetime.utcnow)
+    #    duration: Optional[timedelta] = None
+    # TODO: both could also be "None", interpreted as start ASAP, run till EOF
 
     # emulation-specific
     use_cal_default: bool = False
@@ -50,9 +48,11 @@ class Emulator(ShpModel):
 
     enable_io: bool = False
     # ⤷ pre-req for sampling gpio
-    io_port: TargetPort = "A"
+    io_port: TargetPort = (
+        TargetPort.A
+    )  # TODO: these two must be optimized - auto-choose depending on target-choice
     # ⤷ either Port A or B
-    pwr_port: TargetPort = "A"
+    pwr_port: TargetPort = TargetPort.A
     # ⤷ that one will be current monitored (main), the other is aux
     voltage_aux: confloat(ge=0, le=5) = 0
     # ⤷ aux_voltage options:
@@ -64,7 +64,7 @@ class Emulator(ShpModel):
     # TODO: verbosity
 
     # sub-elements
-    virtual_source: VirtualSource = {"name": "neutral"}
+    virtual_source: VirtualSource = VirtualSource(name="neutral")  # {"name": "neutral"}
     power_logging: PowerLogging = PowerLogging()
     gpio_logging: GpioLogging = GpioLogging()
     sys_logging: SystemLogging = SystemLogging()

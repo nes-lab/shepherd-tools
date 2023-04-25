@@ -6,11 +6,11 @@ from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
-from shepherd_core import logger
-from shepherd_core.data_models.model_fixture import Fixtures
-from shepherd_core.data_models.model_shepherd import ShpModel
+from ...logger import logger
+from ..model_fixture import Fixtures
+from ..model_shepherd import ShpModel
 
-fixture_path = Path("virtualHarvester_fixture.yaml").resolve()
+fixture_path = Path(__file__).resolve().with_name("virtualHarvester_fixture.yaml")
 fixture = Fixtures(fixture_path, "experiment.VirtualHarvester")
 
 

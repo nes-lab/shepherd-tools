@@ -3,10 +3,10 @@ from pathlib import Path
 
 from pydantic import root_validator
 
-from shepherd_core.data_models.model_fixture import Fixtures
-from shepherd_core.data_models.model_shepherd import ShpModel
+from ..model_fixture import Fixtures
+from ..model_shepherd import ShpModel
 
-fixture_path = Path("mcu_fixture.yaml").resolve()
+fixture_path = Path(__file__).resolve().with_name("mcu_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.mcu")
 
 

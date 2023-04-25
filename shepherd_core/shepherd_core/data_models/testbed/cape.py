@@ -4,15 +4,15 @@ from pathlib import Path
 from pydantic import Field
 from pydantic import root_validator
 
-from shepherd_core.data_models.model_fixture import Fixtures
-from shepherd_core.data_models.model_shepherd import ShpModel
+from ..model_fixture import Fixtures
+from ..model_shepherd import ShpModel
 
-fixture_path = Path("cape_fixture.yaml").resolve()
+fixture_path = Path(__file__).resolve().with_name("cape_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.cape")
 
 
 class Cape(ShpModel):
-    name: str
+    name: str  # TODO: wouldn't a unique ID be better?
     version: str
     description: str = ""
     comment: str = ""

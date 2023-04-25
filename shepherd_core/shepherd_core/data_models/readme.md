@@ -24,4 +24,4 @@
 
 ## Pydantic-Pitfalls (<v2)
 
-- the fixture-inheritance-system must have a
+- ``@root_validator`` does not get an extra ``@classmethod``

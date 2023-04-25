@@ -5,13 +5,13 @@ from pydantic import conint
 from pydantic import conlist
 from pydantic import constr
 from pydantic import root_validator
-from virtualHarvester import VirtualHarvester
 
-from shepherd_core import logger
-from shepherd_core.data_models.model_fixture import Fixtures
-from shepherd_core.data_models.model_shepherd import ShpModel
+from ...logger import logger
+from ..model_fixture import Fixtures
+from ..model_shepherd import ShpModel
+from .virtualHarvester import VirtualHarvester
 
-fixture_path = Path("virtualSource_fixture.yaml").resolve()
+fixture_path = Path(__file__).resolve().with_name("virtualSource_fixture.yaml")
 fixtures = Fixtures(fixture_path, "experiment.VirtualSource")
 
 

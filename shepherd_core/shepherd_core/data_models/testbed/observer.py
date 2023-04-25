@@ -6,13 +6,12 @@ from typing import Union
 from pydantic import Field
 from pydantic import root_validator
 
-from shepherd_core.data_models.model_fixture import Fixtures
-from shepherd_core.data_models.model_shepherd import ShpModel
-
+from ..model_fixture import Fixtures
+from ..model_shepherd import ShpModel
 from .cape import Cape
 from .target import Target
 
-fixture_path = Path("observer_fixture.yaml").resolve()
+fixture_path = Path(__file__).resolve().with_name("observer_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.observer")
 
 

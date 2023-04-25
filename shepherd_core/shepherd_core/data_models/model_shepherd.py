@@ -1,3 +1,7 @@
+from pathlib import Path
+from typing import Union
+
+import yaml
 from pydantic import BaseModel
 
 
@@ -16,3 +20,16 @@ class ShpModel(BaseModel):
         #   - https://docs.pydantic.dev/usage/schema/#field-customization
         #   - https://docs.pydantic.dev/usage/model_config/
         # "fields["name"].description = ... should be usable to modify model
+
+    @classmethod
+    def dump_schema(cls, path: Union[str, Path]):
+        model_dict = cls.schema()
+        model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
+        with open(Path(path).with_suffix(".yaml"), "w") as f:
+            f.write(model_yaml)
+
+    def dump_dict(self, path: Union[str, Path]):
+        model_dict = self.dict()
+        model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
+        with open(Path(path).with_suffix(".yaml"), "w") as f:
+            f.write(model_yaml)
