@@ -40,7 +40,7 @@ class Fixtures:
         if key in self.elements:
             return self.elements[key]
         else:
-            ValueError(f"{self.name} '{key}' not found!")
+            raise ValueError(f"{self.name} '{key}' not found!")
 
     def keys(self):  # -> _dict_keys[Any, Any]:
         return self.elements.keys()
@@ -76,13 +76,13 @@ class Fixtures:
 
         elif "name" in values and values.get("name").lower() in self.elements:
             fixture_name = values.get("name").lower()
-            if fixture_name == "neutral":
-                values = self[fixture_name]
-                values["name"] = fixture_name
-            else:
-                fixture_base = copy.copy(self[fixture_name])
-                fixture_base["name"] = fixture_name
+            fixture_base = copy.copy(self[fixture_name])
+            fixture_base["name"] = fixture_name
+            if "inherit_from" in fixture_base:
+                # as long as this key is present this will act recursively
                 chain.append(fixture_name)
                 values, chain = self.inheritance(values=fixture_base, chain=chain)
+            else:
+                values = fixture_base
 
         return values, chain  # TODO: add _chain to values

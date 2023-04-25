@@ -3,15 +3,15 @@
   pk: 2
   fields:
     name: nRF52
-    comment: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+    description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
     platform: nRF52
     core: nRF52840
-    programmer: swd
+    programmer: SWD
 - model: testbed.mcu
   pk: 3
   fields:
     name: MSP430FR
-    comment: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
+    description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
     platform: MSP430
     core: MSP430FR5962
-    programmer: sbw
+    programmer: SBW

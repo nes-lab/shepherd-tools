@@ -1,8 +1,21 @@
+import enum
+import pathlib
 from pathlib import Path
 from typing import Union
 
 import yaml
 from pydantic import BaseModel
+from yaml.representer import SafeRepresenter
+
+
+def repr_str(dumper, data):
+    return dumper.represent_scalar(u'tag:yaml.org,2002:str', str(data))
+
+
+yaml.add_representer(pathlib.PosixPath, repr_str)
+yaml.add_representer(pathlib.WindowsPath, repr_str)
+yaml.add_representer(pathlib.Path, repr_str)
+yaml.add_representer(enum.Enum, repr_str)
 
 
 class ShpModel(BaseModel):

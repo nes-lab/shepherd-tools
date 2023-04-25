@@ -1,7 +1,7 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import Field
 from pydantic import root_validator
@@ -17,8 +17,8 @@ fixtures = Fixtures(fixture_path, "testbed.observer")
 
 class Observer(ShpModel):
     name: str
-    description: str = ""
-    comment: str = ""
+    description: str
+    comment: Optional[str] = None
 
     ip: ipaddress.IPv4Address = ""
     mac: str = ""  # TODO

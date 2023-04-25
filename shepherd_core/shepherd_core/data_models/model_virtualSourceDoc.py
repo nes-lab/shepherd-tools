@@ -29,7 +29,7 @@ def acquire_def(name: str):
         config_base = configs_predef[name]
         return config_base
     else:
-        ValueError(f"ConverterBase {name} not known!")
+        raise ValueError(f"ConverterBase {name} not known!")
 
 
 # TODO: use title, alias,

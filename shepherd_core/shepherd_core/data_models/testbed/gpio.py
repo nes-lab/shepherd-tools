@@ -1,26 +1,30 @@
-from enum import Enum
+import yaml
+from strenum import StrEnum
 from pathlib import Path
 from typing import Optional
 
 from pydantic import root_validator
 
 from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel
+from ..model_shepherd import ShpModel, repr_str
 
 fixture_path = Path(__file__).resolve().with_name("gpio_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.gpio")
 
 
-class Direction(str, Enum):
+class Direction(StrEnum):
     IN = "Input"
     OUT = "Output"
     IO = "Bidirectional"  # TODO: probably the other way around
 
 
+yaml.add_representer(Direction, repr_str)
+
+
 class GPIO(ShpModel):
     name: str
-    description: str = ""
-    comment: str = ""
+    description: Optional[str] = None
+    comment: Optional[str] = None
 
     direction: Direction = Direction.IN
     dir_switch: Optional[str]

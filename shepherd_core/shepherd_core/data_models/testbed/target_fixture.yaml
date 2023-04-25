@@ -6,7 +6,8 @@
     version: v2.1r0
     description: single target PCB, v2.1r0
     comment: ONLY VIRTUAL - NOT REAL
-    mcu1: nRF52
+    mcu1:
+      name: nRF52
     mcu2: null
     firmware1: demo_rf.hex
     firmware2: null
@@ -17,8 +18,10 @@
     version: v1.0r0
     description: nRF52 & MSP430, v1.0r0
     comment: ONLY VIRTUAL - NOT REAL
-    mcu1: nRF52
-    mcu2: MSP430FR
+    mcu1:
+      name: nRF52
+    mcu2:
+      name: MSP430FR
     firmware1: demo_rf.hex
     firmware2: msp430_spi_fram.hex
 - model: testbed.target

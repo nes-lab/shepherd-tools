@@ -1,4 +1,5 @@
-from enum import Enum
+import yaml
+from strenum import StrEnum
 from pathlib import Path
 from typing import Optional
 from typing import Union
@@ -6,21 +7,25 @@ from typing import Union
 from pydantic import confloat
 from pydantic import root_validator
 
-from ..model_shepherd import ShpModel
+from ..model_shepherd import ShpModel, repr_str
 from .emulator_features import GpioLogging
 from .emulator_features import PowerLogging
 from .emulator_features import SystemLogging
 from .virtualSource import VirtualSource
 
 
-class TargetPort(str, Enum):
+class TargetPort(StrEnum):
     A = "A"
     B = "B"
 
 
-class Compression(str, Enum):
+class Compression(StrEnum):
     lzf = "lzf"
-    gzip1 = 1  # TODO: will not work
+    gzip1 = "1"  # TODO: will not work
+
+
+yaml.add_representer(TargetPort, repr_str)
+yaml.add_representer(Compression, repr_str)
 
 
 compressions_allowed: list = [None, "lzf", 1]
@@ -28,7 +33,7 @@ compressions_allowed: list = [None, "lzf", 1]
 
 class Emulator(ShpModel):
     # General config
-    input_path: Path
+    input_path: Path  # TODO: should be in vsource
     output_path: Optional[Path]
     # ⤷ output_path:
     #   - providing a directory -> file is named emu_timestamp.h5
@@ -48,10 +53,9 @@ class Emulator(ShpModel):
 
     enable_io: bool = False
     # ⤷ pre-req for sampling gpio
-    io_port: TargetPort = (
-        TargetPort.A
-    )  # TODO: these two must be optimized - auto-choose depending on target-choice
+    io_port: TargetPort = TargetPort.A
     # ⤷ either Port A or B
+    # TODO: these two must be optimized - auto-choose depending on target-choice
     pwr_port: TargetPort = TargetPort.A
     # ⤷ that one will be current monitored (main), the other is aux
     voltage_aux: confloat(ge=0, le=5) = 0
@@ -71,7 +75,13 @@ class Emulator(ShpModel):
 
     @root_validator()
     def validate(cls, values: dict):
-        comp = values.get("output_compression")
+        if isinstance(values, dict):
+            comp = values.get("output_compression")
+        elif isinstance(values, Emulator):
+            comp = values.output_compression
+        else:
+            raise ValueError("Emulator was not initialized correctly")
+
         if comp not in compressions_allowed:
             raise ValueError(
                 f"value is not allowed ({comp} not in {compressions_allowed}",

@@ -1,4 +1,5 @@
-from enum import Enum
+import yaml
+from strenum import StrEnum
 from pathlib import Path
 
 from pydantic import confloat
@@ -8,16 +9,19 @@ from pydantic import root_validator
 
 from ...logger import logger
 from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel
+from ..model_shepherd import ShpModel, repr_str
 
 fixture_path = Path(__file__).resolve().with_name("virtualHarvester_fixture.yaml")
 fixture = Fixtures(fixture_path, "experiment.VirtualHarvester")
 
 
-class DTypeEnum(str, Enum):
+class DTypeEnum(StrEnum):
     ivsample = "ivsample"
     ivcurve = "ivcurve"
     isc_voc = "isc_voc"
+
+
+yaml.add_representer(DTypeEnum, repr_str)
 
 
 class VirtualHarvester(ShpModel):

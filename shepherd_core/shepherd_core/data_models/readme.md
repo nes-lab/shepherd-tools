@@ -22,6 +22,10 @@
 - MCU
 
 
+## TODO
+
+- establish internal variables ``_var``
+
 ## Pydantic-Pitfalls (<v2)
 
 - ``@root_validator`` does not get an extra ``@classmethod``

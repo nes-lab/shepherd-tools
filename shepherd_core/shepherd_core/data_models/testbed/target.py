@@ -17,10 +17,10 @@ fixtures = Fixtures(fixture_path, "testbed.target")
 class Target(ShpModel):
     name: str
     version: str
-    description: str = ""
+    description: str
     # TODO: unique ID, sequential ID, backwards_ref for cape, observer, emu
 
-    comment: str = ""
+    comment: Optional[str] = None
 
     created: datetime = Field(default_factory=datetime.now)
 
@@ -28,7 +28,7 @@ class Target(ShpModel):
     mcu2: Optional[MCU] = None
 
     firmware1: Union[Path, str]
-    firmware2: Optional[Union[Path, str]] = None
+    firmware2: Union[Path, str, None] = None
 
     # TODO: programming pins per mcu should be here (or better in Cape)
     # TODO: firmware should be handled here
