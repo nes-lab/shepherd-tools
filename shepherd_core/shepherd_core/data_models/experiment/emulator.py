@@ -1,17 +1,18 @@
-import yaml
-from strenum import StrEnum
 from pathlib import Path
 from typing import Optional
 from typing import Union
 
+import yaml
 from pydantic import confloat
 from pydantic import root_validator
+from strenum import StrEnum
 
-from ..model_shepherd import ShpModel, repr_str
+from .. import ShpModel
+from ..model_shepherd import repr_str
 from .emulator_features import GpioLogging
 from .emulator_features import PowerLogging
 from .emulator_features import SystemLogging
-from .virtualSource import VirtualSource
+from .virtual_source import VirtualSource
 
 
 class TargetPort(StrEnum):

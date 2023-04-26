@@ -7,11 +7,11 @@ from pydantic import constr
 from pydantic import root_validator
 
 from ...logger import logger
-from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel
-from .virtualHarvester import VirtualHarvester
+from .. import Fixtures
+from .. import ShpModel
+from .virtual_harvester import VirtualHarvester
 
-fixture_path = Path(__file__).resolve().with_name("virtualSource_fixture.yaml")
+fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "experiment.VirtualSource")
 
 

@@ -31,6 +31,7 @@ class Fixtures:
                     continue
                 if "name" not in fixture["fields"]:
                     continue
+                # TODO: use pk as uid and other way around
                 name = str(fixture["fields"]["name"]).lower()
                 data = fixture["fields"]
                 self.elements[name] = data
@@ -71,13 +72,16 @@ class Fixtures:
             chain.append(fixture_name)
             base_dict, chain = self.inheritance(values=fixture_base, chain=chain)
             for key, value in values.items():
+                # keep previous entries
                 base_dict[key] = value
             values = base_dict
 
         elif "name" in values and values.get("name").lower() in self.elements:
             fixture_name = values.get("name").lower()
             fixture_base = copy.copy(self[fixture_name])
-            fixture_base["name"] = fixture_name
+            for key, value in values.items():
+                # keep previous entries
+                fixture_base[key] = value
             if "inherit_from" in fixture_base:
                 # as long as this key is present this will act recursively
                 chain.append(fixture_name)

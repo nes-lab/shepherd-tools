@@ -15,16 +15,19 @@
 
 ### real world models
 
-- testbed
-- observer
-- cape
-- target
+- Testbed
+- Observer
+- Cape
+- Target
 - MCU
+- Firmware
 
 
 ## TODO
 
 - establish internal variables ``_var``
+- fixtures selectable by name & uid
+-
 
 ## Pydantic-Pitfalls (<v2)
 

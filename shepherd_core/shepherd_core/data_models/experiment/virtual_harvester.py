@@ -1,17 +1,18 @@
-import yaml
-from strenum import StrEnum
 from pathlib import Path
 
+import yaml
 from pydantic import confloat
 from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
+from strenum import StrEnum
 
 from ...logger import logger
-from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel, repr_str
+from .. import Fixtures
+from .. import ShpModel
+from ..model_shepherd import repr_str
 
-fixture_path = Path(__file__).resolve().with_name("virtualHarvester_fixture.yaml")
+fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
 fixture = Fixtures(fixture_path, "experiment.VirtualHarvester")
 
 

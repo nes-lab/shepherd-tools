@@ -1,13 +1,14 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from typing import Union
 
 from pydantic import Field
+from pydantic import conint
 from pydantic import root_validator
 
-from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel
+from .. import Fixtures
+from .. import ShpModel
+from .firmware import Firmware
 from .mcu import MCU
 
 fixture_path = Path(__file__).resolve().with_name("target_fixture.yaml")
@@ -15,6 +16,7 @@ fixtures = Fixtures(fixture_path, "testbed.target")
 
 
 class Target(ShpModel):
+    uid: conint(ge=0, lt=2**16)
     name: str
     version: str
     description: str
@@ -27,11 +29,10 @@ class Target(ShpModel):
     mcu1: MCU
     mcu2: Optional[MCU] = None
 
-    firmware1: Union[Path, str]
-    firmware2: Union[Path, str, None] = None
+    firmware1: Firmware
+    firmware2: Optional[Firmware] = None
 
-    # TODO: programming pins per mcu should be here (or better in Cape)
-    # TODO: firmware should be handled here
+    # TODO programming pins per mcu should be here (or better in Cape)
 
     def __str__(self):
         return self.name
@@ -39,4 +40,5 @@ class Target(ShpModel):
     @root_validator(pre=True)
     def recursive_fill(cls, values: dict):
         values, chain = fixtures.inheritance(values)
+        # TODO: test for matching FW
         return values

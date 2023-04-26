@@ -1,13 +1,14 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional
+from typing import Union
 
 from pydantic import Field
 from pydantic import root_validator
 
-from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel
+from .. import Fixtures
+from .. import ShpModel
 from .cape import Cape
 from .target import Target
 

@@ -1,0 +1,79 @@
+---
+- model: testbed.firmware
+  pk: 1000
+  fields:
+    uid: 1000
+    name: nrf52_demo_rf
+    description: demo implementation for a simple node that sends readings when energy budget allows it
+    mcu:
+      name: nRF52
+    data: name.hex
+    owner: ingmar
+    group: NESLab
+    open2group: true
+    open2all: true
+- model: testbed.firmware
+  pk: 1001
+  fields:
+    uid: 1001
+    name: nrf52_spi_radio
+    description: default implementation to use nRF as a radio frontend
+    mcu:
+      name: nRF52
+    data: name.hex
+    owner: ingmar
+    group: NESLab
+    open2group: true
+    open2all: true
+- model: testbed.firmware
+  pk: 1002
+  fields:
+    uid: 1002
+    name: nrf52_testable
+    description: blinks LEDs on boot and listens/answers to UART
+    mcu:
+      name: nRF52
+    data: name.hex
+    owner: ingmar
+    group: NESLab
+    open2group: true
+    open2all: false
+- model: testbed.firmware
+  pk: 2000
+  fields:
+    uid: 2000
+    name: msp430_deep_sleep
+    description: practically turned off msp with lowest possible consumption
+    mcu:
+      name: MSP430FR
+    data: name.hex
+    owner: ingmar
+    group: NESLab
+    open2group: true
+    open2all: true
+- model: testbed.firmware
+  pk: 2001
+  fields:
+    uid: 2001
+    name: msp430_spi_fram
+    description: default implementation to use MSP as a flash storage
+    mcu:
+      name: MSP430FR
+    data: name.hex
+    owner: ingmar
+    group: NESLab
+    open2group: true
+    open2all: true
+- model: testbed.firmware
+  pk: 2002
+  fields:
+    uid: 2002
+    name: msp430_testable
+    description: blinks LEDs on boot and listens/answers to UART
+    mcu:
+      name: MSP430FR
+    data: name.hex
+    owner: ingmar
+    group: NESLab
+    open2group: true
+    open2all: false

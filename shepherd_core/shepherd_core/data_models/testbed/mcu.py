@@ -1,12 +1,13 @@
-import yaml
-from strenum import StrEnum
 from pathlib import Path
 from typing import Optional
 
+import yaml
 from pydantic import root_validator
+from strenum import StrEnum
 
-from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel, repr_str
+from .. import Fixtures
+from .. import ShpModel
+from ..model_shepherd import repr_str
 
 fixture_path = Path(__file__).resolve().with_name("mcu_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.mcu")

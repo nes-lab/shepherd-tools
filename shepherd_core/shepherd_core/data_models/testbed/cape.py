@@ -5,8 +5,8 @@ from typing import Optional
 from pydantic import Field
 from pydantic import root_validator
 
-from ..model_fixture import Fixtures
-from ..model_shepherd import ShpModel
+from .. import Fixtures
+from .. import ShpModel
 
 fixture_path = Path(__file__).resolve().with_name("cape_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.cape")

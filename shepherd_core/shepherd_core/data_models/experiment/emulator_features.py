@@ -3,8 +3,8 @@ from typing import Optional
 
 from pydantic import conint
 
-from ..model_shepherd import ShpModel
-from ..testbed.gpio import GPIO
+from .. import ShpModel
+from ..testbed import GPIO
 
 
 class PowerLogging(ShpModel):
