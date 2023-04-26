@@ -16,6 +16,13 @@ fixtures = Fixtures(fixture_path, "experiment.VirtualSource")
 
 
 class VirtualSource(ShpModel):
+    uid: constr(
+        strip_whitespace=True,
+        to_lower=True,
+        min_length=4,
+        max_length=16,
+    )
+
     # General Config
     name: constr(
         strip_whitespace=True,

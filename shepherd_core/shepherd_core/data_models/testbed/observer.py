@@ -5,6 +5,7 @@ from typing import Optional
 from typing import Union
 
 from pydantic import Field
+from pydantic import constr
 from pydantic import root_validator
 
 from .. import Fixtures
@@ -17,6 +18,13 @@ fixtures = Fixtures(fixture_path, "testbed.observer")
 
 
 class Observer(ShpModel):
+    uid: constr(
+        strip_whitespace=True,
+        to_lower=True,
+        min_length=4,
+        max_length=16,
+    )
+
     name: str
     description: str
     comment: Optional[str] = None

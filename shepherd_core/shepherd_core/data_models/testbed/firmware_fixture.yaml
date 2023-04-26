@@ -8,6 +8,7 @@
     mcu:
       name: nRF52
     data: name.hex
+    data_type: hex
     owner: ingmar
     group: NESLab
     open2group: true
@@ -21,6 +22,7 @@
     mcu:
       name: nRF52
     data: name.hex
+    data_type: hex
     owner: ingmar
     group: NESLab
     open2group: true
@@ -34,6 +36,7 @@
     mcu:
       name: nRF52
     data: name.hex
+    data_type: hex
     owner: ingmar
     group: NESLab
     open2group: true
@@ -47,6 +50,7 @@
     mcu:
       name: MSP430FR
     data: name.hex
+    data_type: hex
     owner: ingmar
     group: NESLab
     open2group: true
@@ -60,6 +64,7 @@
     mcu:
       name: MSP430FR
     data: name.hex
+    data_type: hex
     owner: ingmar
     group: NESLab
     open2group: true
@@ -73,6 +78,7 @@
     mcu:
       name: MSP430FR
     data: name.hex
+    data_type: hex
     owner: ingmar
     group: NESLab
     open2group: true

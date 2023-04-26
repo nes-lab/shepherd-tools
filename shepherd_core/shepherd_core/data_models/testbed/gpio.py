@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 import yaml
+from pydantic import constr
 from pydantic import root_validator
 from strenum import StrEnum
 
@@ -23,6 +24,13 @@ yaml.add_representer(Direction, repr_str)
 
 
 class GPIO(ShpModel):
+    uid: constr(
+        strip_whitespace=True,
+        to_lower=True,
+        min_length=4,
+        max_length=16,
+    )
+
     name: str
     description: Optional[str] = None
     comment: Optional[str] = None

@@ -11,7 +11,7 @@
         power-logging (Features)
         gpio-logging
         sys-logging
-
+    targetCfg
 
 ### real world models
 

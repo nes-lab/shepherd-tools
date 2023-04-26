@@ -14,6 +14,7 @@ emu = Emulator(input_path="solar_xyz")
 targets = [
     Target(name="T_nRF52_2021_001", firmware1={"name": "nrf52_testable"}),
     Target(name="T_nRF52_FRAM_2023_001", firmware1={"name": "nrf52_demo_rf"}),
+    Target(uid="3003", firmware1={"name": "nrf52_demo_rf"}),
 ]
 
 xperi = Experiment(

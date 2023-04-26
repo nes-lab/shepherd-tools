@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 import yaml
+from pydantic import constr
 from pydantic import root_validator
 from strenum import StrEnum
 
@@ -24,6 +25,13 @@ yaml.add_representer(Programmer, repr_str)
 
 
 class MCU(ShpModel):
+    uid: constr(
+        strip_whitespace=True,
+        to_lower=True,
+        min_length=4,
+        max_length=16,
+    )
+
     name: str
     description: str
     comment: Optional[str] = None

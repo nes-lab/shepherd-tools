@@ -4,7 +4,7 @@
 # - -> it is encouraged to omit redundant parameters
 ---
 - model: experiment.VirtualSource
-  pk: 0
+  pk: 1000
   fields:
     name: neutral
     # General Config
@@ -68,14 +68,14 @@
     LUT_output_I_min_log2_nA: 0  # 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
 - model: experiment.VirtualSource
-  pk: 10
+  pk: 1010
   fields:
     name: direct
     inherit_from: neutral
     # Note: current input has no influence
 
 - model: experiment.VirtualSource
-  pk: 11
+  pk: 1011
   fields:
     name: diode+capacitor
     inherit_from: neutral
@@ -83,26 +83,26 @@
     C_intermediate_uF: 10  # primary storage-Cap
 
 - model: experiment.VirtualSource
-  pk: 12
+  pk: 1012
   fields:
     name: dio_cap # simpler naming
     inherit_from: diode+capacitor
 
 - model: experiment.VirtualSource
-  pk: 13
+  pk: 1013
   fields:
     name: diode+resistor+capacitor
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
 - model: experiment.VirtualSource
-  pk: 14
+  pk: 1014
   fields:
     name: dio_res_cap # simpler naming
     inherit_from: diode+resistor+capacitor
 
 - model: experiment.VirtualSource
-  pk: 20
+  pk: 1020
   fields:
     name: BQ25504
     inherit_from: neutral # to complete undefined vars
@@ -149,20 +149,20 @@
     LUT_input_I_min_log2_nA: 13 # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA
 
 - model: experiment.VirtualSource
-  pk: 21
+  pk: 1021
   fields:
     name: BQ25504s # Version with Schmitt-Trigger
     inherit_from: BQ25504
     immediate_pwr_good_signal: true
 
 - model: experiment.VirtualSource
-  pk: 22
+  pk: 1022
   fields:
     name: BQ25504-Schmitt
     inherit_from: BQ25504s
 
 - model: experiment.VirtualSource
-  pk: 30
+  pk: 1030
   fields:
     name: BQ25570
     inherit_from: BQ25504 # inherit Input-LUT that is similar enough
@@ -199,25 +199,25 @@
     LUT_output_I_min_log2_nA: 10  # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
 - model: experiment.VirtualSource
-  pk: 31
+  pk: 1031
   fields:
     name: BQ25570s  # Version with Schmitt-Trigger
     inherit_from: BQ25570
     immediate_pwr_good_signal: true
 
 - model: experiment.VirtualSource
-  pk: 32
+  pk: 1032
   fields:
     name: BQ25570-Schmitt
     inherit_from: BQ25570s
 - model: experiment.VirtualSource
-  pk: 33
+  pk: 1033
   fields:
     name: default
     inherit_from: BQ25570s
 
 - model: experiment.VirtualSource
-  pk: 34
+  pk: 1034
   fields:
     name: BQ25570si  # record internal StorageCap instead of Output
     inherit_from: BQ25570s

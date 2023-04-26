@@ -1,13 +1,13 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 - model: testbed.cape
-  pk: 0
+  pk: 1000
   fields:
     name: cape1
     version: v2.4
     description: ID=1270053
     created: 2022-12-12
 - model: testbed.cape
-  pk: 1
+  pk: 1001
   fields:
     name: cape2
     version: v2.4

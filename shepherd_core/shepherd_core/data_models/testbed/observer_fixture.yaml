@@ -1,6 +1,6 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 - model: testbed.observer
-  pk: 1
+  pk: 1001
   fields:
     name: sheep01
     ip: 192.168.165.195
@@ -13,7 +13,7 @@
     target_a: T_nRF52_2021_001
     target_b:
 - model: testbed.observer
-  pk: 2
+  pk: 1002
   fields:
     name: sheep02
     ip: 192.168.165.196
@@ -26,7 +26,7 @@
     target_a: T_nRF52_2021_002
     target_b:
 - model: testbed.observer
-  pk: 3
+  pk: 1003
   fields:
     name: sheep03
     ip: 192.168.165.197
@@ -39,7 +39,7 @@
     target_a: T_nRF52_2021_003
     target_b:
 - model: testbed.observer
-  pk: 4
+  pk: 1004
   fields:
     name: sheep04
     ip: 192.168.165.198

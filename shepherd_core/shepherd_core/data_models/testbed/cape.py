@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic import Field
+from pydantic import constr
 from pydantic import root_validator
 
 from .. import Fixtures
@@ -13,6 +14,13 @@ fixtures = Fixtures(fixture_path, "testbed.cape")
 
 
 class Cape(ShpModel):
+    uid: constr(
+        strip_whitespace=True,
+        to_lower=True,
+        min_length=4,
+        max_length=16,
+    )
+
     name: str  # TODO: wouldn't a unique ID be better?
     version: str
     description: str

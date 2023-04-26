@@ -1,6 +1,6 @@
 ---
 - model: testbed.target
-  pk: 1
+  pk: 1002
   fields:
     name: target_nRF52_v21r0
     version: v2.1r0
@@ -13,7 +13,7 @@
       name: nrf52_demo_rf
     firmware2: null
 - model: testbed.target
-  pk: 2
+  pk: 1003
   fields:
     name: T_nRF52_FRAM_2023_001
     version: v1.0r0
@@ -28,46 +28,39 @@
     firmware2:
       name: msp430_spi_fram
 - model: testbed.target
-  pk: 1000
-  fields:
-    uid: 1000
-    name: T_nRF52_2021_001  # replace with proper name
-    inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 1001
-  fields:
-    uid: 1001
-    name: T_nRF52_2021_002
-    inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 1002
-  fields:
-    uid: 1002
-    name: T_nRF52_2021_003
-    inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 1003
-  fields:
-    uid: 1003
-    name: T_nRF52_2021_004
-    inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 2000
-  fields:
-    uid: 2000
-    name: T_nRF52_FRAM_2023_001
-    inherit_from: target_nRF52_v21r0
-- model: testbed.target
   pk: 2001
   fields:
-    uid: 2001
-    name: T_nRF52_FRAM_2023_002
+    name: T_nRF52_2021_001  # replace with proper name
     inherit_from: target_nRF52_v21r0
 - model: testbed.target
   pk: 2002
   fields:
-    uid: 2002
+    name: T_nRF52_2021_002
+    inherit_from: target_nRF52_v21r0
+- model: testbed.target
+  pk: 2003
+  fields:
+    name: T_nRF52_2021_003
+    inherit_from: target_nRF52_v21r0
+- model: testbed.target
+  pk: 2004
+  fields:
+    name: T_nRF52_2021_004
+    inherit_from: target_nRF52_v21r0
+- model: testbed.target
+  pk: 3001
+  fields:
+    name: T_nRF52_FRAM_2023_001
+    inherit_from: target_nRF52_v21r0
+- model: testbed.target
+  pk: 3002
+  fields:
     name: T_nRF52_FRAM_2023_002
+    inherit_from: target_nRF52_v21r0
+- model: testbed.target
+  pk: 3003
+  fields:
+    name: T_nRF52_FRAM_2023_003
     inherit_from: target_nRF52_v21r0
     firmware2:
       name: msp430_deep_sleep
