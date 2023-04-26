@@ -1,4 +1,4 @@
-from pydantic import PositiveInt
+from pydantic import conint
 from pydantic import constr
 
 from .model_shepherd import ShpModel
@@ -9,5 +9,5 @@ from .model_shepherd import ShpModel
 class Wrapper(ShpModel):
     # initial recording
     model: constr(max_length=32)  # = model
-    uid: PositiveInt  # unique id, 'pk' is django-style
+    uid: conint(ge=0)  # unique id, 'pk' is django-style
     fields: dict  # ShpModel

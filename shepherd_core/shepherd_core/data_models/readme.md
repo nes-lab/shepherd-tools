@@ -29,6 +29,9 @@
 + fixtures selectable by name & uid
 + limit all strings
 - add descriptions to fixtures
+- @kai
+  - firmwares
+  - programmer-ports determine IC
 
 ## Pydantic-Pitfalls (<v2)
 

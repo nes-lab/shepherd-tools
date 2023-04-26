@@ -8,7 +8,9 @@ from pydantic import conlist
 from pydantic import root_validator
 
 from .. import logger
-from .experiment.virtualHarvester import VirtualHarvester
+from .experiment import VirtualHarvester
+
+# TODO: Deprecated
 
 
 def load_vsources() -> dict:

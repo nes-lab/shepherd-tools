@@ -9,8 +9,9 @@ from strenum import StrEnum
 
 from .. import ShpModel
 from ..model_shepherd import repr_str
-from .emulator_features import GpioLogging
-from .emulator_features import PowerLogging
+from .emulator_features import GpioActuation
+from .emulator_features import GpioTracing
+from .emulator_features import PowerTracing
 from .emulator_features import SystemLogging
 from .virtual_source import VirtualSource
 
@@ -68,10 +69,11 @@ class Emulator(ShpModel):
 
     # TODO: verbosity
 
-    # sub-elements
+    # sub-elements, could be partly moved to emulation
     virtual_source: VirtualSource = VirtualSource(name="neutral")  # {"name": "neutral"}
-    power_logging: PowerLogging = PowerLogging()
-    gpio_logging: GpioLogging = GpioLogging()
+    power_tracing: PowerTracing = PowerTracing()
+    gpio_tracing: GpioTracing = GpioTracing()
+    gpio_actuation: GpioActuation = GpioActuation()
     sys_logging: SystemLogging = SystemLogging()
 
     @root_validator()

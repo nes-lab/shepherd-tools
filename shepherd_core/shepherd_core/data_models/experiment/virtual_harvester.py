@@ -17,13 +17,13 @@ fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yam
 fixture = Fixtures(fixture_path, "experiment.VirtualHarvester")
 
 
-class DTypeEnum(StrEnum):
+class HarvestDType(StrEnum):
     ivsample = "ivsample"
     ivcurve = "ivcurve"
     isc_voc = "isc_voc"
 
 
-yaml.add_representer(DTypeEnum, repr_str)
+yaml.add_representer(HarvestDType, repr_str)
 
 
 class VirtualHarvester(ShpModel):
@@ -43,7 +43,7 @@ class VirtualHarvester(ShpModel):
     description: Optional[str] = None
     comment: Optional[str] = None
 
-    datatype: DTypeEnum  # = DTypeEnum.ivcurve
+    datatype: HarvestDType  # = DTypeEnum.ivcurve
     # ⤷ of input file, TODO
 
     window_size: conint(ge=8, le=2_000) = 8  # TODO: min was 16

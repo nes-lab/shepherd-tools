@@ -22,6 +22,7 @@ class Experiment(ShpModel):
     output_path: Optional[Path]
     # ⤷ TODO: should get default filename (rec_timestamp_observerID.h5)
     # ⤷ TODO taken from emulation, double
+    # ⤷ TODO needs datatype
     email_results: Optional[EmailStr]
 
     # schedule
