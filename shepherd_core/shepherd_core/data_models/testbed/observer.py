@@ -1,10 +1,10 @@
-import ipaddress
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from typing import Union
 
 from pydantic import Field
+from pydantic import IPvAnyAddress
+from pydantic import confloat
 from pydantic import constr
 from pydantic import root_validator
 
@@ -25,22 +25,22 @@ class Observer(ShpModel):
         max_length=16,
     )
 
-    name: str
+    name: constr(max_length=32)
     description: str
     comment: Optional[str] = None
 
-    ip: ipaddress.IPv4Address = ""
-    mac: str = ""  # TODO
+    ip: IPvAnyAddress
+    mac: constr(max_length=17)  # TODO
 
-    room: str = ""
-    eth_port: str = ""
+    room: constr(max_length=32) = ""
+    eth_port: constr(max_length=32) = ""
 
-    latitude: float = 51.026573  # cfaed
-    longitude: float = 13.723291
+    latitude: confloat(ge=-90, le=90) = 51.026573  # cfaed
+    longitude: confloat(ge=-180, le=180) = 13.723291
 
-    cape: Union[str, Cape] = ""
-    target_a: Union[str, Target] = ""
-    target_b: Union[str, Target] = ""
+    cape: Cape
+    target_a: Target
+    target_b: Optional[Target] = None
 
     alive_last: datetime
     created: datetime = Field(default_factory=datetime.now)

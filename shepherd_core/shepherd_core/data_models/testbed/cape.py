@@ -21,12 +21,13 @@ class Cape(ShpModel):
         max_length=16,
     )
 
-    name: str  # TODO: wouldn't a unique ID be better?
-    version: str
+    name: constr(max_length=32)
+    version: constr(max_length=32)
     description: str
     comment: Optional[str] = None
 
     created: datetime = Field(default_factory=datetime.now)
+    calibrated: datetime
 
     def __str__(self):
         return self.name

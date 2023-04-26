@@ -14,14 +14,15 @@ fixture_path = Path(__file__).resolve().with_name("mcu_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.mcu")
 
 
-class Programmer(StrEnum):
+class ProgramProtocol(StrEnum):
+    SWD = "SWD"
     swd = "SWD"
     sbw = "SBW"
     jtag = "JTAG"
     uart = "UART"
 
 
-yaml.add_representer(Programmer, repr_str)
+yaml.add_representer(ProgramProtocol, repr_str)
 
 
 class MCU(ShpModel):
@@ -32,13 +33,13 @@ class MCU(ShpModel):
         max_length=16,
     )
 
-    name: str
+    name: constr(max_length=32)
     description: str
     comment: Optional[str] = None
 
-    platform: str
-    core: str
-    programmer: Programmer
+    platform: constr(max_length=32)
+    core: constr(max_length=32)
+    programmer: ProgramProtocol
 
     def __str__(self):
         return self.name

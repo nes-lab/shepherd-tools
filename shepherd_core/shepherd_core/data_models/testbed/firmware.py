@@ -18,9 +18,10 @@ fixtures = Fixtures(fixture_path, "testbed.firmware")
 
 
 class FirmwareDType(StrEnum):
-    hex = "hex"  # TODO: rename to base64_hex/elf and path_hex/elf
-    elf = "elf"
-    path = "path"
+    base64_hex = "hex"
+    base64_elf = "elf"
+    path_hex = "path_hex"
+    path_elf = "path_elf"
 
 
 yaml.add_representer(FirmwareDType, repr_str)
@@ -33,15 +34,15 @@ class Firmware(ShpModel):
         min_length=4,
         max_length=16,
     )
-    name: str
+    name: constr(max_length=32)
     description: Optional[str]
     mcu: MCU
-    data: str
+    data: bytes  # TODO: test if str-max-length also applies to this
     data_type: FirmwareDType
 
     # internal, TODO: together with uid these vars could be become a new template class
-    owner: str
-    group: str
+    owner: constr(max_length=32)
+    group: constr(max_length=32)
     open2group: bool = False
     open2all: bool = False
     created: datetime = Field(default_factory=datetime.now)

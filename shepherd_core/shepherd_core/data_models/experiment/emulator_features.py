@@ -24,15 +24,25 @@ class PowerLogging(ShpModel):
 class GpioLogging(ShpModel):
     # initial recording
     log_gpio: bool = False  # TODO: activate
-    mask: conint(ge=0, le=2**10) = 2**10  # all
-    gpios: Optional[List[GPIO]]  # TODO: list of GPIO to build mask
+    mask: conint(ge=0, lt=2**10) = 0b11_1111_1111  # all
+    gpios: Optional[
+        List[GPIO]
+    ]  # TODO: list of GPIO to build mask, one of both should be internal
+    delay: conint(ge=0) = 1  # seconds
 
     # post-processing, TODO: not supported ATM
-    decode_uart: bool = False
-    baudrate_uart: conint(ge=2_400, le=921_600) = 115_200
+    uart_decode: bool = False
+    uart_pin: GPIO = GPIO(name="GPIO8")
+    uart_baudrate: conint(ge=2_400, le=921_600) = 115_200
     # TODO: more uart-config -> dedicated interface?
 
 
 class SystemLogging(ShpModel):
     log_dmesg: bool = False  # TODO: activate
     log_ptp: bool = False  # TODO: activate
+
+
+# TODO: some more interaction would be good
+#     - execute limited python-scripts
+#     - send uart-frames
+#     - interact with gpio in general

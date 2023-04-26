@@ -4,6 +4,7 @@ from typing import Optional
 
 from pydantic import Field
 from pydantic import conint
+from pydantic import constr
 from pydantic import root_validator
 
 from .. import Fixtures
@@ -17,8 +18,8 @@ fixtures = Fixtures(fixture_path, "testbed.target")
 
 class Target(ShpModel):
     uid: conint(ge=0, lt=2**16)
-    name: str
-    version: str
+    name: constr(max_length=32)
+    version: constr(max_length=32)
     description: str
     # TODO: unique ID, sequential ID, backwards_ref for cape, observer, emu
 

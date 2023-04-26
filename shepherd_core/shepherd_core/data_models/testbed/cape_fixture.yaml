@@ -1,15 +1,49 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 - model: testbed.cape
-  pk: 1000
+  pk: 1001
   fields:
     name: cape1
     version: v2.4
     description: ID=1270053
     created: 2022-12-12
+    calibrated: 2022-12-12
 - model: testbed.cape
-  pk: 1001
+  pk: 1002
   fields:
     name: cape2
     version: v2.4
     description: virtual
     created: 2023-11-12
+    calibrated: 2023-11-12
+- model: testbed.cape
+  pk: 1003
+  fields:
+    name: cape3
+    version: v2.4
+    description: virtual
+    created: 2023-11-12
+    calibrated: 2023-11-12
+- model: testbed.cape
+  pk: 1004
+  fields:
+    name: cape4
+    version: v2.4
+    description: virtual
+    created: 2023-11-12
+    calibrated: 2023-11-12
+- model: testbed.cape
+  pk: 1005
+  fields:
+    name: cape5
+    version: v2.4
+    description: virtual
+    created: 2023-11-12
+    calibrated: 2023-11-12
+- model: testbed.cape
+  pk: 1006
+  fields:
+    name: cape6
+    version: v2.4
+    description: virtual
+    created: 2023-11-12
+    calibrated: 2023-11-12

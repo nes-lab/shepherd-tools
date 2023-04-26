@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from pydantic import confloat
 from pydantic import conint
@@ -28,12 +29,16 @@ class VirtualSource(ShpModel):
         strip_whitespace=True,
         to_lower=True,
         min_length=4,
+        max_length=32,
     ) = "neutral"
     inherit_from: constr(
         strip_whitespace=True,
         to_lower=True,
         min_length=4,
+        max_length=32,
     ) = "neutral"
+    description: Optional[str] = None
+    comment: Optional[str] = None
 
     enable_boost: bool = False
     enable_buck: bool = False

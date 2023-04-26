@@ -26,8 +26,9 @@
 ## TODO
 
 - establish internal variables ``_var``
-- fixtures selectable by name & uid
--
++ fixtures selectable by name & uid
++ limit all strings
+- add descriptions to fixtures
 
 ## Pydantic-Pitfalls (<v2)
 

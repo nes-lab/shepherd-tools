@@ -26,6 +26,7 @@ class ShpModel(BaseModel):
         validate_all = True  # also check defaults
         validate_assignment = True
         min_anystr_length = 4
+        max_anystr_length = 512
         anystr_lower = True
         anystr_strip_whitespace = True  # strip leading & trailing whitespaces
         # TODO: according to

@@ -5,6 +5,7 @@ from typing import List
 from typing import Optional
 
 from pydantic import EmailStr
+from pydantic import constr
 
 from .. import ShpModel
 from ..testbed import Target
@@ -13,7 +14,7 @@ from .emulator import Emulator
 
 class Experiment(ShpModel):
     # general
-    name: str
+    name: constr(max_length=32)
     description: Optional[str] = None
     comment: Optional[str] = None
 

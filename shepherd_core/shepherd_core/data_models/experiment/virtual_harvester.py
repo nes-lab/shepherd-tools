@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import yaml
 from pydantic import confloat
@@ -39,6 +40,8 @@ class VirtualHarvester(ShpModel):
         to_lower=True,
         min_length=4,
     ) = "mppt_opt"
+    description: Optional[str] = None
+    comment: Optional[str] = None
 
     datatype: DTypeEnum  # = DTypeEnum.ivcurve
     # ⤷ of input file, TODO
