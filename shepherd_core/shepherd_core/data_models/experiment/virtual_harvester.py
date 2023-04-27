@@ -1,32 +1,27 @@
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-import yaml
 from pydantic import confloat
 from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
-from strenum import StrEnum
 
 from ...logger import logger
 from .. import Fixtures
 from .. import ShpModel
-from ..model_shepherd import repr_str
 
 fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
 fixture = Fixtures(fixture_path, "experiment.VirtualHarvester")
 
 
-class HarvestDType(StrEnum):
+class HarvestDType(str, Enum):
     ivsample = "ivsample"
     ivcurve = "ivcurve"
     isc_voc = "isc_voc"
 
 
-yaml.add_representer(HarvestDType, repr_str)
-
-
-class VirtualHarvester(ShpModel):
+class VirtualHarvester(ShpModel, title=""):
     uid: constr(
         strip_whitespace=True,
         to_lower=True,

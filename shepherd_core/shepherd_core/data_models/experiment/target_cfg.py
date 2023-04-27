@@ -7,10 +7,12 @@ from ..testbed import Firmware
 from .virtual_source import VirtualSource
 
 
-class TargetCfg(ShpModel):
-    targetUIDs: list[str]
-    customUIDs: list[conint(ge=0)]
+class TargetCfg(ShpModel, title="Config for Target Nodes (DuT)"):
+    """ Test DocString Description
+    """
+    target_UIDs: list[str]
+    custom_UIDs: list[conint(ge=0)]
     virtual_source: VirtualSource = VirtualSource(name="neutral")
-    # ⤷ TODO should be callable by hash or name
+    target_delays: list[conint(ge=0)]
     firmware1: Firmware
     firmware2: Optional[Firmware] = None

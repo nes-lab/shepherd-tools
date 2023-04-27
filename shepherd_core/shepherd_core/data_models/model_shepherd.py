@@ -1,10 +1,10 @@
-import enum
 import pathlib
 from pathlib import Path
 from typing import Union
 
 import yaml
 from pydantic import BaseModel
+from pydantic import Extra
 
 
 def repr_str(dumper, data):
@@ -14,21 +14,21 @@ def repr_str(dumper, data):
 yaml.add_representer(pathlib.PosixPath, repr_str)
 yaml.add_representer(pathlib.WindowsPath, repr_str)
 yaml.add_representer(pathlib.Path, repr_str)
-yaml.add_representer(enum.Enum, repr_str)
 
 
 class ShpModel(BaseModel):
     # TODO: not needed anymore (currently)
     class Config:
-        title = ""  # example: Virtual Source MinDef"
+        title = ""  # example: Virtual Source MinDef
         allow_mutation = False  # const after creation?
-        extra = "forbid"  # no unnamed attributes allowed
-        validate_all = True  # also check defaults
+        extra = Extra.forbid  # no unnamed attributes allowed
+        validate_all = True  # also checks defaults
         validate_assignment = True
         min_anystr_length = 4
         max_anystr_length = 512
         anystr_lower = True
         anystr_strip_whitespace = True  # strip leading & trailing whitespaces
+        use_enum_values = True  # cleaner export of enum-fields
         # TODO: according to
         #   - https://docs.pydantic.dev/usage/schema/#field-customization
         #   - https://docs.pydantic.dev/usage/model_config/

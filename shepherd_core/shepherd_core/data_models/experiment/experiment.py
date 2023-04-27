@@ -10,9 +10,10 @@ from pydantic import constr
 from .. import ShpModel
 from ..testbed import Target
 from .emulator import Emulator
+from .target_cfg import TargetCfg
 
 
-class Experiment(ShpModel):
+class Experiment(ShpModel, title="Config for Experiments on the Shepherd-Testbed"):
     # general
     name: constr(max_length=32)
     description: Optional[str] = None
@@ -34,7 +35,8 @@ class Experiment(ShpModel):
     emulator_default: Emulator
 
     #    observer_config: List[Observer]  # TODO
-    targets: List[Target]
+    targets: List[Target]  # TODO
+    target_cfgs: List[TargetCfg] = []  # TODO
     # TODO: link list of targets to
     #       - emulator-configs and
     #       - firmware / programmings

@@ -16,7 +16,7 @@ fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "experiment.VirtualSource")
 
 
-class VirtualSource(ShpModel):
+class VirtualSource(ShpModel, title="Config for "):
     uid: constr(
         strip_whitespace=True,
         to_lower=True,

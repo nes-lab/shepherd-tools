@@ -29,6 +29,7 @@
 + fixtures selectable by name & uid
 + limit all strings
 - add descriptions to fixtures
+- descriptions to fields (docstring on sub-models)
 - @kai
   - firmwares
   - programmer-ports determine IC

@@ -1,30 +1,25 @@
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-import yaml
 from pydantic import Field
 from pydantic import constr
 from pydantic import root_validator
-from strenum import StrEnum
 
 from .. import Fixtures
 from .. import ShpModel
-from ..model_shepherd import repr_str
 from .mcu import MCU
 
 fixture_path = Path(__file__).resolve().with_name("firmware_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.firmware")
 
 
-class FirmwareDType(StrEnum):
+class FirmwareDType(str, Enum):
     base64_hex = "hex"
     base64_elf = "elf"
     path_hex = "path_hex"
     path_elf = "path_elf"
-
-
-yaml.add_representer(FirmwareDType, repr_str)
 
 
 class Firmware(ShpModel):

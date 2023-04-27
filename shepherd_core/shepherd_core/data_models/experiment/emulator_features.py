@@ -1,18 +1,16 @@
-from enum import StrEnum
+from enum import Enum
 from typing import List
 from typing import Optional
 
-import yaml
 from pydantic import PositiveFloat
 from pydantic import confloat
 from pydantic import conint
 
 from .. import ShpModel
-from ..model_shepherd import repr_str
 from ..testbed import GPIO
 
 
-class PowerTracing(ShpModel):
+class PowerTracing(ShpModel, title="Config for recording the Power-Consumption of the Target Nodes"):
     # initial recording
     voltage: bool = True
     current: bool = True
@@ -30,7 +28,7 @@ class PowerTracing(ShpModel):
     discard_voltage: bool = False
 
 
-class GpioTracing(ShpModel):
+class GpioTracing(ShpModel, title="Config for recording the GPIO-Output of the Target Nodes"):
     # initial recording
     log_gpio: bool = False
     mask: conint(ge=0, lt=2**10) = 0b11_1111_1111  # all
@@ -48,16 +46,13 @@ class GpioTracing(ShpModel):
     # TODO: more uart-config -> dedicated interface?
 
 
-class GpioLevel(StrEnum):
+class GpioLevel(str, Enum):
     low = "L"
     high = "H"
     toggle = "X"
 
 
-yaml.add_representer(GpioLevel, repr_str)
-
-
-class GpioEvent(ShpModel):  # TODO: not implemented
+class GpioEvent(ShpModel, title="Config for a single GPIO-Event (Actuation)"):  # TODO: not implemented
     delay: PositiveFloat  # resolution 10 us (guaranteed, but finer steps are possible)
     gpio: GPIO
     level: GpioLevel
@@ -65,11 +60,11 @@ class GpioEvent(ShpModel):  # TODO: not implemented
     count: conint(ge=1, le=4096)
 
 
-class GpioActuation(ShpModel):  # TODO: not implemented
+class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):  # TODO: not implemented
     actions: list[GpioEvent] = []
 
 
-class SystemLogging(ShpModel):
+class SystemLogging(ShpModel, title="Config for recording Debug-Output of the Observers System-Services"):
     log_dmesg: bool = False  # TODO: activate
     log_ptp: bool = False  # TODO: activate
 

@@ -1,14 +1,12 @@
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 from typing import Union
 
-import yaml
 from pydantic import confloat
 from pydantic import root_validator
-from strenum import StrEnum
 
 from .. import ShpModel
-from ..model_shepherd import repr_str
 from .emulator_features import GpioActuation
 from .emulator_features import GpioTracing
 from .emulator_features import PowerTracing
@@ -16,24 +14,20 @@ from .emulator_features import SystemLogging
 from .virtual_source import VirtualSource
 
 
-class TargetPort(StrEnum):
+class TargetPort(str, Enum):
     A = "A"
     B = "B"
 
 
-class Compression(StrEnum):
+class Compression(str, Enum):
     lzf = "lzf"
-    gzip1 = "1"  # TODO: will not work
+    gzip1 = "1"
 
 
-yaml.add_representer(TargetPort, repr_str)
-yaml.add_representer(Compression, repr_str)
+compressions_allowed: list = [None, "lzf", 1]  # is it still needed?
 
 
-compressions_allowed: list = [None, "lzf", 1]
-
-
-class Emulator(ShpModel):
+class Emulator(ShpModel, title="Config for Emulation of Energy Environments"):
     # General config
     input_path: Path  # TODO: should be in vsource
     output_path: Optional[Path]
