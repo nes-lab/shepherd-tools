@@ -68,23 +68,23 @@
 - model: experiment.VirtualHarvester
   pk: 1030
   fields:
-    name: cv # constant voltage
+    name: cv20 # constant voltage
     inherit_from: neutral
     datatype: ivsample
-    voltage_mV: 2400
+    voltage_mV: 2000
 
 - model: experiment.VirtualHarvester
   pk: 1031
   fields:
-    name: cv20
-    inherit_from: cv
-    voltage_mV: 2000
+    name: cv24
+    inherit_from: cv20
+    voltage_mV: 2400
 
 - model: experiment.VirtualHarvester
   pk: 1032
   fields:
     name: cv33
-    inherit_from: cv
+    inherit_from: cv20
     voltage_mV: 3300
 
 - model: experiment.VirtualHarvester

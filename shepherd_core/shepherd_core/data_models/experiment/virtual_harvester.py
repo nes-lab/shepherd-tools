@@ -12,7 +12,7 @@ from .. import Fixtures
 from .. import ShpModel
 
 fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
-fixture = Fixtures(fixture_path, "experiment.VirtualHarvester")
+fixtures = Fixtures(fixture_path, "experiment.VirtualHarvester")
 
 
 class HarvestDType(str, Enum):
@@ -74,7 +74,7 @@ class VirtualHarvester(ShpModel, title="Config for the Harvester"):
 
     @root_validator(pre=True)
     def recursive_fill(cls, values: dict):
-        values, chain = fixture.inheritance(values)
+        values, chain = fixtures.inheritance(values)
         if values["name"] == "neutral":
             raise ValueError("Resulting Harvester can't be neutral")
         logger.debug("VHrv-Inheritances: %s", chain)

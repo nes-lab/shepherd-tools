@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from typing import Union
 
 from pydantic import Field
 from pydantic import conint
@@ -41,7 +42,8 @@ class Target(ShpModel, title="Target Node (DuT)"):
         return self.name
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def recursive_fill(cls, values: Union[dict, str, int]):
+        values = fixtures.lookup(values)  # TODO: a (non-working) test for now
         values, chain = fixtures.inheritance(values)
         # TODO: test for matching FW
         return values

@@ -1,6 +1,8 @@
+from datetime import date
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from typing import Union
 
 from pydantic import Field
 from pydantic import constr
@@ -28,8 +30,8 @@ class Cape(ShpModel, title="Shepherd-Cape"):
     description: str
     comment: Optional[str] = None
 
-    created: datetime = Field(default_factory=datetime.now)
-    calibrated: datetime
+    created: Union[date, datetime] = Field(default_factory=datetime.now)
+    calibrated: Union[date, datetime, None] = None
 
     def __str__(self):
         return self.name

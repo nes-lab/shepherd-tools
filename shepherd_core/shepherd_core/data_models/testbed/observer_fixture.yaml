@@ -10,8 +10,10 @@
     description: test-deployment, not final
     longitude: 13.723073
     latitude: 51.026566
-    cape: cape1
-    target_a: T_nRF52_2021_001
+    cape:
+      name: cape1
+    target_a:
+      name: T_nRF52_2021_001
     target_b:
 - model: testbed.observer
   pk: 1002
@@ -24,8 +26,10 @@
     description: test-deployment, not final
     longitude: 13.723076
     latitude: 51.026554
-    cape: cape2
-    target_a: T_nRF52_2021_002
+    cape:
+      name: cape2
+    target_a:
+      name: T_nRF52_2021_002
     target_b:
 - model: testbed.observer
   pk: 1003
@@ -38,8 +42,10 @@
     description: test-deployment, not final
     longitude: 13.723080
     latitude: 51.026543
-    cape: cape3
-    target_a: T_nRF52_2021_003
+    cape:
+      name: cape3
+    target_a:
+      name: T_nRF52_2021_003
     target_b:
 - model: testbed.observer
   pk: 1004
@@ -52,6 +58,8 @@
     description: test-deployment, not final
     longitude: 13.722991
     latitude: 51.026536
-    cape: cape4
-    target_a: T_nRF52_2021_004
+    cape:
+      name: cape4
+    target_a:
+      name: T_nRF52_2021_004
     target_b:

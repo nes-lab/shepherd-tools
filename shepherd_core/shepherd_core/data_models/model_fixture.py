@@ -1,6 +1,7 @@
 import copy
 from pathlib import Path
 from typing import Optional
+from typing import Union
 
 import yaml
 
@@ -37,11 +38,14 @@ class Fixtures:
                 name = str(fixture["fields"]["name"]).lower()
                 if "uid" not in fixture["fields"]:
                     # pk-field (django) acts as an uid if none is found
-                    fixture["fields"]["uid"] = fixture["pk"]
+                    fixture["fields"]["uid"] = str(fixture["pk"]).lower()
                 uid = str(fixture["fields"]["uid"]).lower()
                 data = fixture["fields"]
                 self.elements_by_name[name] = data
                 self.elements_by_uid[uid] = data
+        # for iterator
+        self._iter_index: int = 0
+        self._iter_list: list = list(self.elements_by_name.values())
 
     def __getitem__(self, key) -> dict:
         key = key.lower()
@@ -49,6 +53,18 @@ class Fixtures:
             return self.elements_by_name[key]
         else:
             raise ValueError(f"{self.name} '{key}' not found!")
+
+    def __iter__(self):
+        self._iter_index = 0
+        self._iter_list = list(self.elements_by_name.values())
+        return self
+
+    def __next__(self):
+        if self._iter_index < len(self._iter_list):
+            member = self._iter_list[self._iter_index]
+            self._iter_index += 1
+            return member
+        raise StopIteration
 
     def keys(self):  # -> _dict_keys[Any, Any]:
         return self.elements_by_name.keys()
@@ -89,7 +105,7 @@ class Fixtures:
             post_process = True
 
         elif "uid" in values and str(values.get("uid")).lower() in self.elements_by_uid:
-            fixture_uid = values.get("uid").lower()
+            fixture_uid = str(values.get("uid")).lower()
             fixture_base = copy.copy(self.elements_by_uid[fixture_uid])
             post_process = True
 
@@ -106,3 +122,19 @@ class Fixtures:
                 values = fixture_base
 
         return values, chain  # TODO: add _chain to values
+
+    def lookup(self, values: Union[dict, str, int]) -> dict:
+        """should allow to init a fixture class with Class("name") or
+        Class(uid) instead of Class(name=name)"""
+        if isinstance(values, int):
+            values = {"uid": str(values)}
+        if isinstance(values, str):
+            if values in self.elements_by_name:
+                values = {"name": values}
+            elif values in self.elements_by_uid:
+                values = {"uid": values}
+            else:
+                raise ValueError(
+                    "String-Input should be either known Name or UID (is %s)", values
+                )
+        return values
