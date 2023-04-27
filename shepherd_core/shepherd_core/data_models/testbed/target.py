@@ -16,7 +16,9 @@ fixture_path = Path(__file__).resolve().with_name("target_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.target")
 
 
-class Target(ShpModel):
+class Target(ShpModel, title="Target Node (DuT)"):
+    """meta-data representation of a testbed-component (physical object)"""
+
     uid: conint(ge=0, lt=2**16)
     name: constr(max_length=32)
     version: constr(max_length=32)

@@ -21,7 +21,9 @@ class Direction(str, Enum):
     IO = "IO"
 
 
-class GPIO(ShpModel):
+class GPIO(ShpModel, title="GPIO of Observer Node"):
+    """meta-data representation of a testbed-component"""
+
     uid: constr(
         strip_whitespace=True,
         to_lower=True,

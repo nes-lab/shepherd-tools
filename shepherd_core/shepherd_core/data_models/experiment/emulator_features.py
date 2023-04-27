@@ -10,7 +10,9 @@ from .. import ShpModel
 from ..testbed import GPIO
 
 
-class PowerTracing(ShpModel, title="Config for recording the Power-Consumption of the Target Nodes"):
+class PowerTracing(ShpModel, title="Config for Power-Tracing"):
+    """Configuration for recording the Power-Consumption of the Target Nodes"""
+
     # initial recording
     voltage: bool = True
     current: bool = True
@@ -28,7 +30,9 @@ class PowerTracing(ShpModel, title="Config for recording the Power-Consumption o
     discard_voltage: bool = False
 
 
-class GpioTracing(ShpModel, title="Config for recording the GPIO-Output of the Target Nodes"):
+class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
+    """Configuration for recording the GPIO-Output of the Target Nodes"""
+
     # initial recording
     log_gpio: bool = False
     mask: conint(ge=0, lt=2**10) = 0b11_1111_1111  # all
@@ -39,7 +43,7 @@ class GpioTracing(ShpModel, title="Config for recording the GPIO-Output of the T
     delay: conint(ge=0) = 1  # seconds
     duration: Optional[conint(ge=0)] = None  # will be max
 
-    # post-processing, TODO: not supported ATM
+    # post-processing, TODO: not implemented ATM
     uart_decode: bool = False
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: conint(ge=2_400, le=921_600) = 115_200
@@ -52,7 +56,11 @@ class GpioLevel(str, Enum):
     toggle = "X"
 
 
-class GpioEvent(ShpModel, title="Config for a single GPIO-Event (Actuation)"):  # TODO: not implemented
+class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
+    """Configuration for a single GPIO-Event (Actuation)
+    TODO: not implemented ATM
+    """
+
     delay: PositiveFloat  # resolution 10 us (guaranteed, but finer steps are possible)
     gpio: GPIO
     level: GpioLevel
@@ -60,11 +68,17 @@ class GpioEvent(ShpModel, title="Config for a single GPIO-Event (Actuation)"):  
     count: conint(ge=1, le=4096)
 
 
-class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):  # TODO: not implemented
+class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
+    """Configuration for a GPIO-Actuation-Sequence
+    TODO: not implemented ATM
+    """
+
     actions: list[GpioEvent] = []
 
 
-class SystemLogging(ShpModel, title="Config for recording Debug-Output of the Observers System-Services"):
+class SystemLogging(ShpModel, title="Config for System-Logging"):
+    """Configuration for recording Debug-Output of the Observers System-Services"""
+
     log_dmesg: bool = False  # TODO: activate
     log_ptp: bool = False  # TODO: activate
 

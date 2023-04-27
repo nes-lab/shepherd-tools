@@ -13,7 +13,9 @@ from .emulator import Emulator
 from .target_cfg import TargetCfg
 
 
-class Experiment(ShpModel, title="Config for Experiments on the Shepherd-Testbed"):
+class Experiment(ShpModel, title="Config of an Experiment"):
+    """Configuration for Experiments on the Shepherd-Testbed"""
+
     # general
     name: constr(max_length=32)
     description: Optional[str] = None
@@ -40,3 +42,11 @@ class Experiment(ShpModel, title="Config for Experiments on the Shepherd-Testbed
     # TODO: link list of targets to
     #       - emulator-configs and
     #       - firmware / programmings
+
+
+#    def __init__(self):  # test to add doc after creation -> to avoid Field()
+#        super().__init__()
+#        self.Config.fields["output_path"].description = "test description"
+#    class Config:
+#        fields: dict[str, Field] = {}
+#        fields["output_path"] = Field(description="test description")

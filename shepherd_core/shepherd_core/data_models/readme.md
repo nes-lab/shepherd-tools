@@ -33,6 +33,10 @@
 - @kai
   - firmwares
   - programmer-ports determine IC
+    - memory read - family-code, or write factory
+- ``objcopy -O ihex input.elf output.hex``
+  - ``-S`` will strip useless sections
+- title in class might be rubbish
 
 ## Pydantic-Pitfalls (<v2)
 

@@ -27,7 +27,9 @@ class Compression(str, Enum):
 compressions_allowed: list = [None, "lzf", 1]  # is it still needed?
 
 
-class Emulator(ShpModel, title="Config for Emulation of Energy Environments"):
+class Emulator(ShpModel, title="Config for Emulator"):
+    """Configuration for the Emulation of Energy Environments"""
+
     # General config
     input_path: Path  # TODO: should be in vsource
     output_path: Optional[Path]

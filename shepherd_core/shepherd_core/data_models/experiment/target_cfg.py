@@ -7,11 +7,13 @@ from ..testbed import Firmware
 from .virtual_source import VirtualSource
 
 
-class TargetCfg(ShpModel, title="Config for Target Nodes (DuT)"):
-    """ Test DocString Description
-    """
-    target_UIDs: list[str]
-    custom_UIDs: list[conint(ge=0)]
+class TargetCfg(ShpModel, title="Target Config"):
+    """Configuration for Target Nodes (DuT)"""
+
+    target_UIDs: list[conint(ge=0, lt=2**16)]
+    custom_UIDs: list[conint(ge=0, lt=2**16)] = []
+    # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID'
+
     virtual_source: VirtualSource = VirtualSource(name="neutral")
     target_delays: list[conint(ge=0)]
     firmware1: Firmware

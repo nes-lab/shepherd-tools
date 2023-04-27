@@ -15,6 +15,8 @@ from shepherd_core import logger
 
 
 class Fixtures:
+    """Current implementation of a file-based database"""
+
     def __init__(self, file_path: Path, model_name: str):
         # TODO: input could be just __file__(str)
         self.path: Path = file_path

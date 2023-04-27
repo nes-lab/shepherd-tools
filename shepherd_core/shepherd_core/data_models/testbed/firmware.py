@@ -22,7 +22,9 @@ class FirmwareDType(str, Enum):
     path_elf = "path_elf"
 
 
-class Firmware(ShpModel):
+class Firmware(ShpModel, title="Firmware of Target"):
+    """meta-data representation of a testbed-component"""
+
     uid: constr(
         strip_whitespace=True,
         to_lower=True,

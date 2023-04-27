@@ -16,7 +16,15 @@ fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "experiment.VirtualSource")
 
 
-class VirtualSource(ShpModel, title="Config for "):
+class VirtualSource(ShpModel, title="Config for the virtual Source"):
+    """The virtual Source uses the energy environment (file)
+    for supplying the Target Node during the experiment.
+    If not already done, the energy will be harvested and then converted.
+    The converter-stage is software defined and offers:
+      buck-boost-combinations,
+      a simple diode + resistor and
+      an intermediate buffer capacitor."""
+
     uid: constr(
         strip_whitespace=True,
         to_lower=True,

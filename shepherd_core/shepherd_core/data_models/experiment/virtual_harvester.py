@@ -21,7 +21,10 @@ class HarvestDType(str, Enum):
     isc_voc = "isc_voc"
 
 
-class VirtualHarvester(ShpModel, title=""):
+class VirtualHarvester(ShpModel, title="Config for the Harvester"):
+    """A Harvester is needed when the file-based energy environment
+    of the virtual source is not already supplied as ivsamples"""
+
     uid: constr(
         strip_whitespace=True,
         to_lower=True,

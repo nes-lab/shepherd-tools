@@ -20,7 +20,9 @@ class ProgramProtocol(str, Enum):
     uart = "UART"
 
 
-class MCU(ShpModel):
+class MCU(ShpModel, title="Microcontroller of the Target Node"):
+    """meta-data representation of a testbed-component (physical object)"""
+
     uid: constr(
         strip_whitespace=True,
         to_lower=True,

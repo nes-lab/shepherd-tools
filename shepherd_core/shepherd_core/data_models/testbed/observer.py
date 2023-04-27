@@ -17,7 +17,9 @@ fixture_path = Path(__file__).resolve().with_name("observer_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.observer")
 
 
-class Observer(ShpModel):
+class Observer(ShpModel, title="Shepherd-Sheep"):
+    """meta-data representation of a testbed-component (physical object)"""
+
     uid: constr(
         strip_whitespace=True,
         to_lower=True,
