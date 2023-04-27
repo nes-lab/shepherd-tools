@@ -1,7 +1,6 @@
 from enum import Enum
 from pathlib import Path
 from typing import Optional
-from typing import Union
 
 from pydantic import confloat
 from pydantic import root_validator
@@ -20,8 +19,8 @@ class TargetPort(str, Enum):
 
 
 class Compression(str, Enum):
-    lzf = "lzf"
-    gzip1 = "1"
+    lzf = "lzf"  # not native hdf5
+    gzip1 = "1"  # higher compr & load
 
 
 compressions_allowed: list = [None, "lzf", 1]  # is it still needed?
@@ -38,7 +37,7 @@ class Emulator(ShpModel, title="Config for Emulator"):
     #   - for a complete path the filename is not changed except it exists and
     #     overwrite is disabled -> emu#num.h5
     force_overwrite: bool = False
-    output_compression: Union[None, str, int] = None
+    output_compression: Optional[Compression] = Compression.lzf
     # ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)
 
     #    start_time: datetime  # = Field(default_factory=datetime.utcnow)

@@ -8,8 +8,6 @@ from pydantic import EmailStr
 from pydantic import constr
 
 from .. import ShpModel
-from ..testbed import Target
-from .emulator import Emulator
 from .target_cfg import TargetCfg
 
 
@@ -34,19 +32,11 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     abort_on_error: bool = False
 
     #
-    emulator_default: Emulator
+    # emulator_default: Emulator
 
     #    observer_config: List[Observer]  # TODO
-    targets: List[Target]  # TODO
+    # targets: List[Target]  # TODO
     target_cfgs: List[TargetCfg] = []  # TODO
     # TODO: link list of targets to
     #       - emulator-configs and
     #       - firmware / programmings
-
-
-#    def __init__(self):  # test to add doc after creation -> to avoid Field()
-#        super().__init__()
-#        self.Config.fields["output_path"].description = "test description"
-#    class Config:
-#        fields: dict[str, Field] = {}
-#        fields["output_path"] = Field(description="test description")

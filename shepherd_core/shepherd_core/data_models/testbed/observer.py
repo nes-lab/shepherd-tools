@@ -1,7 +1,6 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from typing import Union
 
 from pydantic import Field
 from pydantic import IPvAnyAddress
@@ -52,7 +51,6 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
         return self.name
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: Union[dict, str, int]):
-        values = fixtures.lookup(values)
+    def recursive_fill(cls, values: dict):
         values, chain = fixtures.inheritance(values)
         return values
