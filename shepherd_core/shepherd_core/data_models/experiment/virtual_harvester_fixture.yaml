@@ -6,7 +6,8 @@
 - model: experiment.VirtualHarvester
   pk: 1000
   fields:
-    name: neutral  # note: can not be used as a valid harvester
+    name: neutral
+    description: Can NOT be used as a valid harvester
     window_size: 8
     voltage_mV: 2500  # starting-point for some algorithms (mppt_po)
     voltage_min_mV: 0
@@ -24,7 +25,9 @@
 - model: experiment.VirtualHarvester
   pk: 1010
   fields:
-    name: ivcurve # sawtooth-wave
+    name: ivcurve
+    description: Postpone harvesting by sampling ivcurves (voltage stepped as sawtooth-wave)
+    comment: ~200 Hz
     inherit_from: neutral
     datatype: ivcurve
     window_size: 250
@@ -44,7 +47,8 @@
 - model: experiment.VirtualHarvester
   pk: 1012
   fields:
-    name: iv1000  # name relates to curves per second
+    name: iv1000
+    comment: Name relates to curves per second
     inherit_from: ivcurve
     window_size: 100
     wait_cycles: 0
@@ -52,7 +56,8 @@
 - model: experiment.VirtualHarvester
   pk: 1013
   fields:
-    name: iv110 # between 50 & 60 Hz line-frequency to avoid standing waves
+    name: iv110
+    comment: Between 50 & 60 Hz line-frequency to avoid standing waves
     inherit_from: ivcurve
     window_size: 909
     wait_cycles: 0
@@ -60,7 +65,8 @@
 - model: experiment.VirtualHarvester
   pk: 1020
   fields:
-    name: isc_voc  # short circuit current, open circuit voltage,
+    name: isc_voc
+    description: Postpone harvesting by sampling short circuit current & open circuit voltage
     inherit_from: neutral
     datatype: isc_voc
     wait_cycles: 1  # results in 25 kHz (isc, wait, voc, wait)
@@ -68,7 +74,8 @@
 - model: experiment.VirtualHarvester
   pk: 1030
   fields:
-    name: cv20 # constant voltage
+    name: cv20
+    description: Harvesting with constant Voltage
     inherit_from: neutral
     datatype: ivsample
     voltage_mV: 2000
@@ -90,7 +97,8 @@
 - model: experiment.VirtualHarvester
   pk: 1040
   fields:
-    name: mppt_voc # open circuit voltage for solar
+    name: mppt_voc
+    description: MPPT based on open circuit voltage for solar
     inherit_from: neutral
     datatype: ivsample
     setpoint_n: 0.76
@@ -101,7 +109,8 @@
 - model: experiment.VirtualHarvester
   pk: 1041
   fields:
-    name: mppt_bq # mppt of TI BQ-Converters for solar
+    name: mppt_bq
+    description: MPPT of TI BQ-Converters for solar
     inherit_from: mppt_voc
     setpoint_n: 0.76
     interval_ms: 16000  # between measurements
@@ -110,7 +119,8 @@
 - model: experiment.VirtualHarvester
   pk: 1042
   fields:
-    name: mppt_bqt # mppt of TI BQ-Converters for thermoelectric
+    name: mppt_bqt
+    description: MPPT of TI BQ-Converters for thermoelectric
     inherit_from: mppt_voc
     setpoint_n: 0.50
     interval_ms: 16000  # between measurements
@@ -131,7 +141,8 @@
 - model: experiment.VirtualHarvester
   pk: 1045
   fields:
-    name: mppt_po # perturb & observe
+    name: mppt_po
+    description: MPPT based on perturb & observe algorithm
     inherit_from: neutral
     datatype: ivsample
     voltage_min_mV: 0
@@ -142,7 +153,8 @@
 - model: experiment.VirtualHarvester
   pk: 1046
   fields:
-    name: mppt_opt # power-optimum with very fast PO-Variant (harvesting) or special max-pwr-picker (emulator / ivcurve)
+    name: mppt_opt
+    description: Power-Otimum with very fast PO-Variant (harvesting) or special max-pwr-picker (emulator / ivcurve)
     inherit_from: mppt_po
     voltage_step_mV: 1
     interval_ms: 0.01

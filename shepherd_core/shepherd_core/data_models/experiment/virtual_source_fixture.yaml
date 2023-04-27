@@ -7,6 +7,7 @@
   pk: 1000
   fields:
     name: neutral
+    description: Direct feed-through of energy environment with no converter (allows on-off-patters)
     # General Config
     enable_boost: false # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     enable_buck: false # if false -> v_output = v_intermediate
@@ -78,6 +79,7 @@
   pk: 1011
   fields:
     name: diode+capacitor
+    description: Simple Converter based on diode and buffer capacitor
     inherit_from: neutral
     V_input_drop_mV: 300  # simulate input-diode
     C_intermediate_uF: 10  # primary storage-Cap
@@ -92,6 +94,7 @@
   pk: 1013
   fields:
     name: diode+resistor+capacitor
+    description: Simple Converter based on diode, current limiting resistor and buffer capacitor
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
@@ -105,6 +108,7 @@
   pk: 1020
   fields:
     name: BQ25504
+    description: TI BQ25504 with integrated boost-converter
     inherit_from: neutral # to complete undefined vars
     enable_boost: true # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     log_intermediate_voltage: false # record virtual intermediate (cap-)voltage and -output-current instead of output-voltage and -current
@@ -152,6 +156,7 @@
   pk: 1021
   fields:
     name: BQ25504s # Version with Schmitt-Trigger
+    description: TI BQ25504 with Schmitt-Trigger for a faster power-good-signal
     inherit_from: BQ25504
     immediate_pwr_good_signal: true
 
@@ -165,6 +170,7 @@
   pk: 1030
   fields:
     name: BQ25570
+    description: TI BQ25570 with integrated boost- & buck-converter
     inherit_from: BQ25504 # inherit Input-LUT that is similar enough
     enable_boost: true # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     enable_buck: true # if false -> v_output = v_intermediate
@@ -201,7 +207,8 @@
 - model: experiment.VirtualSource
   pk: 1031
   fields:
-    name: BQ25570s  # Version with Schmitt-Trigger
+    name: BQ25570s
+    description: TI BQ25570 with Schmitt-Trigger for a faster power-good-signal
     inherit_from: BQ25570
     immediate_pwr_good_signal: true
 
@@ -219,6 +226,7 @@
 - model: experiment.VirtualSource
   pk: 1034
   fields:
-    name: BQ25570si  # record internal StorageCap instead of Output
+    name: BQ25570si
+    comment: records internal StorageCap instead of Output
     inherit_from: BQ25570s
     log_intermediate_voltage: true
