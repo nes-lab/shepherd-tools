@@ -2,6 +2,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
+from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
@@ -40,7 +41,7 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
 
     reg_pru: Optional[constr(max_length=10)] = None
     pin_pru: Optional[constr(max_length=10)] = None
-    reg_sys: Optional[int] = None
+    reg_sys: Optional[conint(ge=0)] = None
     pin_sys: Optional[constr(max_length=10)] = None
 
     def __str__(self):

@@ -12,7 +12,7 @@
 - model: testbed.target
   pk: 1003
   fields:
-    name: T_nRF52_FRAM_2023_001
+    name: target_nRF52_FRAM_v10r0
     version: v1.0r0
     description: nRF52 & MSP430, v1.0r0
     comment: ONLY VIRTUAL - NOT REAL
@@ -44,14 +44,14 @@
   pk: 3001
   fields:
     name: T_nRF52_FRAM_2023_001
-    inherit_from: target_nRF52_v21r0
+    inherit_from: target_nRF52_FRAM_v10r0
 - model: testbed.target
   pk: 3002
   fields:
     name: T_nRF52_FRAM_2023_002
-    inherit_from: target_nRF52_v21r0
+    inherit_from: target_nRF52_FRAM_v10r0
 - model: testbed.target
   pk: 3003
   fields:
     name: T_nRF52_FRAM_2023_003
-    inherit_from: target_nRF52_v21r0
+    inherit_from: target_nRF52_FRAM_v10r0

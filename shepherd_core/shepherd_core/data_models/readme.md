@@ -4,7 +4,7 @@
 
 - fixtures selectable by name & uid
 - fixtures support inheritance
-- behaviour controlled by ``ShpModel``
+- behavior controlled by ``ShpModel``
 - models support
   - auto-completion with neutral / sensible values
   - checking of inputs and type-casting
@@ -31,12 +31,17 @@
 ## TODO
 
 - establish internal variables ``_var``
-- limit exposed lists in length
 - descriptions to fields (docstring on sub-models)
 - @kai
   - firmwares
   - programmer-ports determine IC
     - memory read - family-code, or write factory
+- converter for
+  - pre-tasks (copying, programming)
+  - emulation
+  - post-tasks (copying, transformations, cleaning)
+    - feature-tasks
+    - email results
 - ``objcopy -O ihex input.elf output.hex``
   - ``-S`` will strip useless sections
   - ``-I ihex -O elf32-littlearm`` for reversal is also possible

@@ -10,35 +10,28 @@ from shepherd_core.data_models.content.virtual_source import fixtures as fix_src
 
 def test_testbed_fixture_energy_environment():
     for fix in fix_ee:
-        name = fix["name"]
-        EnergyEnvironment(name=name)
-        uid = fix["uid"]
-        EnergyEnvironment(uid=uid)
+        EnergyEnvironment(name=fix["name"])
+        EnergyEnvironment(uid=fix["uid"])
 
 
 def test_testbed_fixture_firmware():
     for fix in fix_firmware:
-        name = fix["name"]
         uid = fix["uid"]
         if uid in [1001, 1002]:
             continue
-        Firmware(name=name)
-        Firmware(uid=uid)
+        Firmware(name=fix["name"])
+        Firmware(uid=fix["uid"])
 
 
 def test_experiment_fixture_vsrc():
     for fix in fix_src:
-        name = fix["name"]
-        VirtualSource(name=name)
-        uid = fix["uid"]
-        VirtualSource(uid=uid)
+        VirtualSource(name=fix["name"])
+        VirtualSource(uid=fix["uid"])
 
 
 def test_experiment_fixture_vhrv():
     for fix in fix_hrv:
-        name = fix["name"]
-        if name == "neutral":
+        if fix["name"] == "neutral":
             continue
-        VirtualHarvester(name=name)
-        uid = fix["uid"]
-        VirtualHarvester(uid=uid)
+        VirtualHarvester(name=fix["name"])
+        VirtualHarvester(uid=fix["uid"])

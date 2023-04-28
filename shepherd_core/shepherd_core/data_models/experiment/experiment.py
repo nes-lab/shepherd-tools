@@ -1,9 +1,9 @@
 from datetime import datetime
 from datetime import timedelta
-from typing import List
 from typing import Optional
 
 from pydantic import EmailStr
+from pydantic import conlist
 from pydantic import constr
 
 from .. import ShpModel
@@ -22,7 +22,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     # feedback
     email_results: Optional[EmailStr]
-    sys_logging: SystemLogging = SystemLogging()
+    sys_logging: SystemLogging = SystemLogging(log_dmesg=True, log_ptp=False)
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP
@@ -30,6 +30,4 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     abort_on_error: bool = False
 
     # targets
-    target_configs: List[TargetConfig] = []
-
-    # TODO: exporter for observerCfg
+    target_configs: conlist(item_type=TargetConfig, min_items=1, max_items=64)

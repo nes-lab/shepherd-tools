@@ -34,14 +34,14 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     ip: IPvAnyAddress
     mac: constr(max_length=17)  # TODO
 
-    room: constr(max_length=32) = ""
-    eth_port: constr(max_length=32) = ""
+    room: constr(max_length=32)
+    eth_port: constr(max_length=32)
 
     latitude: confloat(ge=-90, le=90) = 51.026573  # cfaed
     longitude: confloat(ge=-180, le=180) = 13.723291
 
     cape: Cape
-    target_a: Target
+    target_a: Optional[Target]
     target_b: Optional[Target] = None
 
     created: datetime = Field(default_factory=datetime.now)

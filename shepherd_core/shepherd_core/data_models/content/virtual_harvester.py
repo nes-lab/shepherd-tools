@@ -5,6 +5,7 @@ from pydantic import confloat
 from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
+
 from shepherd_core.data_models.content import EnergyDType
 
 from ...logger import logger
@@ -36,7 +37,7 @@ class VirtualHarvester(ShpModel, title="Config for the Harvester"):
     comment: Optional[str] = None
 
     datatype: EnergyDType = EnergyDType.ivsample
-    # ⤷ of output, TODO: test emu-experiment for that
+    # ⤷ of output, TODO: test emu-experiment for ivsample!
 
     window_size: conint(ge=8, le=2_000) = 8  # TODO: min was 16
 

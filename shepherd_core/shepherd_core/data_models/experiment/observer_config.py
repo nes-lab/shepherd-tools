@@ -66,9 +66,11 @@ class ObserverEmulationConfig(ShpModel):
 
     # sub-elements, could be partly moved to emulation
     virtual_source: VirtualSource = VirtualSource(name="neutral")  # {"name": "neutral"}
+
+    # TODO: should these really be here? if no: add gpio_mask
     power_tracing: PowerTracing = PowerTracing()
     gpio_tracing: GpioTracing = GpioTracing()
-    gpio_actuation: GpioActuation = GpioActuation()
+    gpio_actuation: Optional[GpioActuation]
     sys_logging: SystemLogging = SystemLogging()
 
     @root_validator()

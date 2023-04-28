@@ -1,10 +1,10 @@
 from enum import Enum
-from typing import List
 from typing import Optional
 
 from pydantic import PositiveFloat
 from pydantic import confloat
 from pydantic import conint
+from pydantic import conlist
 
 from .. import ShpModel
 from ..testbed.gpio import GPIO
@@ -34,14 +34,14 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """Configuration for recording the GPIO-Output of the Target Nodes"""
 
     # initial recording
-    log_gpio: bool = False
+    enable: bool = True
     mask: conint(ge=0, lt=2**10) = 0b11_1111_1111  # all
-    gpios: Optional[List[GPIO]]
+    gpios: Optional[conlist(item_type=GPIO, min_items=1, max_items=10)]  # = all
     # ⤷ TODO: list of GPIO to build mask, one of both should be internal
 
     # time
-    delay: conint(ge=0) = 1  # seconds
-    duration: Optional[conint(ge=0)] = None  # will be max
+    delay: conint(ge=0) = 0  # seconds
+    duration: Optional[conint(ge=0)] = None  # = max
 
     # post-processing, TODO: not implemented ATM
     uart_decode: bool = False
@@ -53,7 +53,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 class GpioLevel(str, Enum):
     low = "L"
     high = "H"
-    toggle = "X"
+    toggle = "X"  # TODO: not the smartest decision for writing a converter
 
 
 class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
@@ -61,11 +61,13 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
     TODO: not implemented ATM
     """
 
-    delay: PositiveFloat  # resolution 10 us (guaranteed, but finer steps are possible)
+    delay: PositiveFloat
+    # ⤷ from start_time
+    # ⤷ resolution 10 us (guaranteed, but finer steps are possible)
     gpio: GPIO
     level: GpioLevel
-    period: confloat(ge=10e-6)
-    count: conint(ge=1, le=4096)
+    period: confloat(ge=10e-6) = 1
+    count: conint(ge=1, le=4096) = 1
 
 
 class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
@@ -73,14 +75,14 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
     TODO: not implemented ATM
     """
 
-    actions: list[GpioEvent] = []
+    events: conlist(item_type=GpioEvent, min_items=1, max_items=1000)
 
 
 class SystemLogging(ShpModel, title="Config for System-Logging"):
     """Configuration for recording Debug-Output of the Observers System-Services"""
 
-    log_dmesg: bool = False  # TODO: activate
-    log_ptp: bool = False  # TODO: activate
+    log_dmesg: bool = True
+    log_ptp: bool = True
 
 
 # TODO: some more interaction would be good

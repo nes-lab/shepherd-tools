@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Optional
+from typing import Union
 
 from pydantic import Field
 from pydantic import constr
@@ -32,14 +33,17 @@ class Firmware(ShpModel, title="Firmware of Target"):
         max_length=16,
     )
     name: constr(max_length=32)
-    description: Optional[str] = None
+    description: Optional[
+        str
+    ] = None  # TODO: should not be optional for content (open2group/all)
     comment: Optional[str] = None
 
     mcu: MCU
-    data: bytes  # TODO: test if str-max-length also applies to this
+    data: Union[constr(min_length=3, max_length=1_000_000), Path]
+    # ⤷ local str-length constraints overrule global ones!
     data_type: FirmwareDType
 
-    # internal, TODO: together with uid these vars could be become a new template class
+    # internal, TODO: together with uid these vars could be become a new template class for content
     owner: constr(max_length=32)
     group: constr(max_length=32)
     open2group: bool = False

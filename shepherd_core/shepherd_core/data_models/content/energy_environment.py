@@ -2,8 +2,9 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from pydantic import PositiveFloat, root_validator
+from pydantic import PositiveFloat
 from pydantic import constr
+from pydantic import root_validator
 
 from .. import Fixtures
 from .. import ShpModel

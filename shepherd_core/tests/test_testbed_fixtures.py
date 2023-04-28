@@ -12,40 +12,29 @@ from shepherd_core.data_models.testbed.target import fixtures as fix_target
 
 def test_testbed_fixture_cape():
     for fix in fix_cape:
-        name = fix["name"]
-        Cape(name=name)
-        uid = fix["uid"]
-        Cape(uid=uid)
+        Cape(name=fix["name"])
+        Cape(uid=fix["uid"])
 
 
 def test_testbed_fixture_gpio():
     for fix in fix_gpio:
-        name = fix["name"]
-        GPIO(name=name)
-        uid = fix["uid"]
-        GPIO(uid=uid)
+        GPIO(name=fix["name"])
+        GPIO(uid=fix["uid"])
 
 
 def test_testbed_fixture_mcu():
     for fix in fix_mcu:
-        name = fix["name"]
-        MCU(name=name)
-        uid = fix["uid"]
-        MCU(uid=uid)
+        MCU(name=fix["name"])
+        MCU(uid=fix["uid"])
 
 
 def test_testbed_fixture_observer():
     for fix in fix_observer:
-        name = fix["name"]
-        print(name)
-        Observer(name=name)
-        uid = fix["uid"]
-        Observer(uid=uid)
+        Observer(name=fix["name"])
+        Observer(uid=fix["uid"])
 
 
 def test_testbed_fixture_target():
     for fix in fix_target:
-        name = fix["name"]
-        Target(name=name)
-        uid = fix["uid"]
-        Target(uid=uid)
+        Target(name=fix["name"])
+        Target(uid=fix["uid"])
