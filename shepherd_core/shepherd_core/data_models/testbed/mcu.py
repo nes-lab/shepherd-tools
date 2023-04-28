@@ -12,7 +12,7 @@ fixture_path = Path(__file__).resolve().with_name("mcu_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.mcu")
 
 
-class ProgramProtocol(str, Enum):
+class ProgrammerProtocol(str, Enum):
     SWD = "SWD"
     swd = "SWD"
     sbw = "SBW"
@@ -36,7 +36,7 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
 
     platform: constr(max_length=32)
     core: constr(max_length=32)
-    programmer: ProgramProtocol
+    programmer: ProgrammerProtocol
 
     def __str__(self):
         return self.name

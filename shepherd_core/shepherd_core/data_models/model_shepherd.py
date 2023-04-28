@@ -14,6 +14,7 @@ def repr_str(dumper, data):
 yaml.add_representer(pathlib.PosixPath, repr_str)
 yaml.add_representer(pathlib.WindowsPath, repr_str)
 yaml.add_representer(pathlib.Path, repr_str)
+# todo: handle bytes
 
 
 class ShpModel(BaseModel):

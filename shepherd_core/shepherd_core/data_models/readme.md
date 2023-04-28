@@ -1,34 +1,37 @@
 ## Datastructure
 
-### experiment models
+### Features
 
-!experiment
-    !basics / schedule
-    !programming
-    emulator
-        vsource
-            vharvester
-        power-logging (Features)
-        gpio-logging
-        sys-logging
-    targetCfg
+- fixtures selectable by name & uid
+- fixtures support inheritance
+- behaviour controlled by ``ShpModel``
+- models support
+  - auto-completion with neutral / sensible values
+  - checking of inputs and type-casting
+  - generate their own schema (for web-forms)
+- experiment-definition should be secure
+  - types are limited in size (str)
+  - exposes no internal paths
 
-### real world models
+### experiment-structure
 
-- Testbed
-- Observer
-- Cape
-- Target
-- MCU
-- Firmware
-
+- basics
+- scheduling
+- **SystemLogger**
+- ~~AuxPort~~
+- TargetConfigs
+  - Programming
+  - PowerTracer
+  - GpioTracer
+  - GpioActuator
+  - vSrc
+    - vHarvester
+    - [vConverter]
 
 ## TODO
 
 - establish internal variables ``_var``
-+ fixtures selectable by name & uid
-+ limit all strings
-- add descriptions to fixtures
+- limit exposed lists in length
 - descriptions to fields (docstring on sub-models)
 - @kai
   - firmwares
@@ -66,6 +69,12 @@ What I want: init a fixture-class with Class("name") or Class(uid) instead of Cl
 What does not work:
 
 ```Python
+from pathlib import Path
+from typing import Union
+from pydantic import root_validator
+from shepherd_core.data_models import Fixtures
+
+fixtures = Fixtures(Path("fix.yaml"), "testbed.target")
 class Target(ShpModel, title="Target Node (DuT)"):
     @root_validator(pre=True)
     def recursive_fill(cls, values: Union[dict, str, int]):

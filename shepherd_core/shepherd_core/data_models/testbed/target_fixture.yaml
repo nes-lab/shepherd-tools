@@ -9,9 +9,6 @@
     mcu1:
       name: nRF52
     mcu2: null
-    firmware1:
-      name: nrf52_demo_rf
-    firmware2: null
 - model: testbed.target
   pk: 1003
   fields:
@@ -23,10 +20,6 @@
       name: nRF52
     mcu2:
       name: MSP430FR
-    firmware1:
-      name: nrf52_demo_rf
-    firmware2:
-      name: msp430_spi_fram
 - model: testbed.target
   pk: 2001
   fields:
@@ -62,5 +55,3 @@
   fields:
     name: T_nRF52_FRAM_2023_003
     inherit_from: target_nRF52_v21r0
-    firmware2:
-      name: msp430_deep_sleep

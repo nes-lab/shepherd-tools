@@ -10,7 +10,6 @@ from pydantic import root_validator
 
 from .. import Fixtures
 from .. import ShpModel
-from .firmware import Firmware
 from .mcu import MCU
 
 fixture_path = Path(__file__).resolve().with_name("target_fixture.yaml")
@@ -24,7 +23,6 @@ class Target(ShpModel, title="Target Node (DuT)"):
     name: constr(max_length=32)
     version: constr(max_length=32)
     description: str
-    # TODO: unique ID, sequential ID, backwards_ref for cape, observer, emu
 
     comment: Optional[str] = None
 
@@ -32,9 +30,6 @@ class Target(ShpModel, title="Target Node (DuT)"):
 
     mcu1: MCU
     mcu2: Optional[MCU] = None
-
-    firmware1: Firmware
-    firmware2: Optional[Firmware] = None
 
     # TODO programming pins per mcu should be here (or better in Cape)
 

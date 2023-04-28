@@ -1,7 +1,5 @@
 from shepherd_core.data_models.testbed.cape import Cape
 from shepherd_core.data_models.testbed.cape import fixtures as fix_cape
-from shepherd_core.data_models.testbed.firmware import Firmware
-from shepherd_core.data_models.testbed.firmware import fixtures as fix_firmware
 from shepherd_core.data_models.testbed.gpio import GPIO
 from shepherd_core.data_models.testbed.gpio import fixtures as fix_gpio
 from shepherd_core.data_models.testbed.mcu import MCU
@@ -18,14 +16,6 @@ def test_testbed_fixture_cape():
         Cape(name=name)
         uid = fix["uid"]
         Cape(uid=uid)
-
-
-def test_testbed_fixture_firmware():
-    for fix in fix_firmware:
-        name = fix["name"]
-        Firmware(name=name)
-        uid = fix["uid"]
-        Firmware(uid=uid)
 
 
 def test_testbed_fixture_gpio():

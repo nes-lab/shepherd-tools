@@ -9,10 +9,10 @@ from pydantic import root_validator
 
 from .. import Fixtures
 from .. import ShpModel
-from .mcu import MCU
+from ..testbed.mcu import MCU
 
 fixture_path = Path(__file__).resolve().with_name("firmware_fixture.yaml")
-fixtures = Fixtures(fixture_path, "testbed.firmware")
+fixtures = Fixtures(fixture_path, "content.firmware")
 
 
 class FirmwareDType(str, Enum):
@@ -23,7 +23,7 @@ class FirmwareDType(str, Enum):
 
 
 class Firmware(ShpModel, title="Firmware of Target"):
-    """meta-data representation of a testbed-component"""
+    """meta-data representation of a data-component"""
 
     uid: constr(
         strip_whitespace=True,
@@ -32,7 +32,9 @@ class Firmware(ShpModel, title="Firmware of Target"):
         max_length=16,
     )
     name: constr(max_length=32)
-    description: Optional[str]
+    description: Optional[str] = None
+    comment: Optional[str] = None
+
     mcu: MCU
     data: bytes  # TODO: test if str-max-length also applies to this
     data_type: FirmwareDType

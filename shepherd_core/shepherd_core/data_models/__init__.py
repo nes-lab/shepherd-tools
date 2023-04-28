@@ -6,4 +6,5 @@ __all__ = [
     "ShpModel",
     "Fixtures",
     "Wrapper",
+    # easier access for external code
 ]

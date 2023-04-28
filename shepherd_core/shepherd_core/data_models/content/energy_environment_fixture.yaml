@@ -1,0 +1,16 @@
+- model: content.EnergyEnvironment
+  pk: 1001
+  fields:
+    name: SolarSunny
+    description: Sunny Day with 4cm² Solar Cell
+    data_path: group/user/eenv/solar_4h_new.h5
+    data_type: ivsample
+    duration: 14400
+- model: content.EnergyEnvironment
+  pk: 1002
+  fields:
+    name: ThermoelectricWashingMachine
+    description: Energy harvested from side of machine during washing  & tumbling
+    data_path: group/user/eenv/thermoelectric_1h_wash.h5
+    data_type: ivcurve
+    duration: 3600

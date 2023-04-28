@@ -3,7 +3,7 @@
 # - look into the implementation to see which parameters are used
 # - base for neutral fallback values if provided yml is sparse
 # - -> it is encouraged to omit redundant parameters in your own implementation
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1000
   fields:
     name: neutral
@@ -22,7 +22,7 @@
     # underlying recoder
     wait_cycles: 1 # first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1010
   fields:
     name: ivcurve
@@ -38,13 +38,13 @@
     # todo: also add switch for sawtooth- vs triangle-wave?
     # todo: could also include a version with dynamic upper-boundary, varied if voc is reached very early
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1011
   fields:
     name: ivcurves  # synonym
     inherit_from: ivcurve
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1012
   fields:
     name: iv1000
@@ -53,7 +53,7 @@
     window_size: 100
     wait_cycles: 0
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1013
   fields:
     name: iv110
@@ -62,7 +62,7 @@
     window_size: 909
     wait_cycles: 0
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1020
   fields:
     name: isc_voc
@@ -71,7 +71,7 @@
     datatype: isc_voc
     wait_cycles: 1  # results in 25 kHz (isc, wait, voc, wait)
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1030
   fields:
     name: cv20
@@ -80,21 +80,21 @@
     datatype: ivsample
     voltage_mV: 2000
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1031
   fields:
     name: cv24
     inherit_from: cv20
     voltage_mV: 2400
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1032
   fields:
     name: cv33
     inherit_from: cv20
     voltage_mV: 3300
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1040
   fields:
     name: mppt_voc
@@ -106,7 +106,7 @@
     duration_ms: 1.2     # solar can overshoot when load is removed
     current_limit_uA: 5  # boundary for detecting open circuit in emulated version (working on IV-Curves)
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1041
   fields:
     name: mppt_bq
@@ -116,7 +116,7 @@
     interval_ms: 16000  # between measurements
     duration_ms: 256    # of measurement
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1042
   fields:
     name: mppt_bqt
@@ -126,19 +126,19 @@
     interval_ms: 16000  # between measurements
     duration_ms: 256    # of measurement
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1043
   fields:
     name: mppt_bq_solar # explicit naming
     inherit_from: mppt_bq
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1044
   fields:
     name: mppt_bq_thermoelectric # explicit naming
     inherit_from: mppt_bqt
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1045
   fields:
     name: mppt_po
@@ -150,7 +150,7 @@
     voltage_step_mV: 10
     interval_ms: 18   # between steps
 
-- model: experiment.VirtualHarvester
+- model: content.VirtualHarvester
   pk: 1046
   fields:
     name: mppt_opt

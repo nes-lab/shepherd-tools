@@ -13,7 +13,7 @@ from .. import ShpModel
 from .virtual_harvester import VirtualHarvester
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
-fixtures = Fixtures(fixture_path, "experiment.VirtualSource")
+fixtures = Fixtures(fixture_path, "content.VirtualSource")
 
 
 class VirtualSource(ShpModel, title="Config for the virtual Source"):

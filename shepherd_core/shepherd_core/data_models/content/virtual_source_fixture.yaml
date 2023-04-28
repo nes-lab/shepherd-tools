@@ -3,7 +3,7 @@
 # - base for neutral fallback values if provided yml is sparse
 # - -> it is encouraged to omit redundant parameters
 ---
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1000
   fields:
     name: neutral
@@ -68,14 +68,14 @@
     LUT_output_efficiency: [ 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 ] # array[12] depending on output_current
     LUT_output_I_min_log2_nA: 0  # 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1010
   fields:
     name: direct
     inherit_from: neutral
     # Note: current input has no influence
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1011
   fields:
     name: diode+capacitor
@@ -84,13 +84,13 @@
     V_input_drop_mV: 300  # simulate input-diode
     C_intermediate_uF: 10  # primary storage-Cap
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1012
   fields:
     name: dio_cap # simpler naming
     inherit_from: diode+capacitor
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1013
   fields:
     name: diode+resistor+capacitor
@@ -98,13 +98,13 @@
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1014
   fields:
     name: dio_res_cap # simpler naming
     inherit_from: diode+resistor+capacitor
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1020
   fields:
     name: BQ25504
@@ -152,7 +152,7 @@
     LUT_input_V_min_log2_uV: 17 # example: 2^7 = 128 uV -> array[0] is for inputs < 128 uV
     LUT_input_I_min_log2_nA: 13 # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1021
   fields:
     name: BQ25504s # Version with Schmitt-Trigger
@@ -160,13 +160,13 @@
     inherit_from: BQ25504
     immediate_pwr_good_signal: true
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1022
   fields:
     name: BQ25504-Schmitt
     inherit_from: BQ25504s
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1030
   fields:
     name: BQ25570
@@ -204,7 +204,7 @@
     LUT_output_efficiency: [ 0.40, 0.50, 0.60, 0.73, 0.82, 0.86, 0.88, 0.90, 0.91, 0.92, 0.93, 0.92] # array[12] depending on output_current
     LUT_output_I_min_log2_nA: 10  # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1031
   fields:
     name: BQ25570s
@@ -212,18 +212,18 @@
     inherit_from: BQ25570
     immediate_pwr_good_signal: true
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1032
   fields:
     name: BQ25570-Schmitt
     inherit_from: BQ25570s
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1033
   fields:
     name: default
     inherit_from: BQ25570s
 
-- model: experiment.VirtualSource
+- model: content.VirtualSource
   pk: 1034
   fields:
     name: BQ25570si

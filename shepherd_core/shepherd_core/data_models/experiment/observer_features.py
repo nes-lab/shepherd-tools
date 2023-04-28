@@ -7,7 +7,7 @@ from pydantic import confloat
 from pydantic import conint
 
 from .. import ShpModel
-from ..testbed import GPIO
+from ..testbed.gpio import GPIO
 
 
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):

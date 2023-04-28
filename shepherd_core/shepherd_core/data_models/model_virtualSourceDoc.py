@@ -8,7 +8,7 @@ from pydantic import conlist
 from pydantic import root_validator
 
 from .. import logger
-from .experiment import VirtualHarvester
+from .content import VirtualHarvester
 
 # TODO: Deprecated
 

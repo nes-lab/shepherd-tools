@@ -1,0 +1,2 @@
+from shepherd_core.data_models.content import VirtualHarvester
+from shepherd_core.data_models.content import VirtualSource

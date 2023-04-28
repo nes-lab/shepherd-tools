@@ -1,4 +1,3 @@
-from enum import Enum
 from pathlib import Path
 from typing import Optional
 
@@ -6,19 +5,14 @@ from pydantic import confloat
 from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
+from shepherd_core.data_models.content import EnergyDType
 
 from ...logger import logger
 from .. import Fixtures
 from .. import ShpModel
 
 fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
-fixtures = Fixtures(fixture_path, "experiment.VirtualHarvester")
-
-
-class HarvestDType(str, Enum):
-    ivsample = "ivsample"
-    ivcurve = "ivcurve"
-    isc_voc = "isc_voc"
+fixtures = Fixtures(fixture_path, "content.VirtualHarvester")
 
 
 class VirtualHarvester(ShpModel, title="Config for the Harvester"):
@@ -41,8 +35,8 @@ class VirtualHarvester(ShpModel, title="Config for the Harvester"):
     description: Optional[str] = None
     comment: Optional[str] = None
 
-    datatype: HarvestDType  # = DTypeEnum.ivcurve
-    # ⤷ of input file, TODO
+    datatype: EnergyDType = EnergyDType.ivsample
+    # ⤷ of output, TODO: test emu-experiment for that
 
     window_size: conint(ge=8, le=2_000) = 8  # TODO: min was 16
 

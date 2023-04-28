@@ -1,6 +1,5 @@
 from datetime import datetime
 from datetime import timedelta
-from pathlib import Path
 from typing import List
 from typing import Optional
 
@@ -8,11 +7,13 @@ from pydantic import EmailStr
 from pydantic import constr
 
 from .. import ShpModel
-from .target_cfg import TargetCfg
+from .observer_features import SystemLogging
+from .target_config import TargetConfig
 
 
 class Experiment(ShpModel, title="Config of an Experiment"):
-    """Configuration for Experiments on the Shepherd-Testbed"""
+    """Configuration for Experiments on the Shepherd-Testbed
+    emulating Energy Environments for Target Nodes"""
 
     # general
     name: constr(max_length=32)
@@ -20,23 +21,15 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     comment: Optional[str] = None
 
     # feedback
-    output_path: Optional[Path]
-    # ⤷ TODO: should get default filename (rec_timestamp_observerID.h5)
-    # ⤷ TODO taken from emulation, double
-    # ⤷ TODO needs datatype
     email_results: Optional[EmailStr]
+    sys_logging: SystemLogging = SystemLogging()
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP
     duration: Optional[timedelta] = None  # = till EOF
     abort_on_error: bool = False
 
-    #
-    # emulator_default: Emulator
+    # targets
+    target_configs: List[TargetConfig] = []
 
-    #    observer_config: List[Observer]  # TODO
-    # targets: List[Target]  # TODO
-    target_cfgs: List[TargetCfg] = []  # TODO
-    # TODO: link list of targets to
-    #       - emulator-configs and
-    #       - firmware / programmings
+    # TODO: exporter for observerCfg
