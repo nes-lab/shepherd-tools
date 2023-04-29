@@ -5,7 +5,7 @@ from .firmware import FirmwareDType
 from .virtual_harvester import VirtualHarvester
 from .virtual_source import VirtualSource
 
-# these models import locally in /content and externally in /testbed
+# these models import externally from: /base, /testbed
 
 __all__ = [
     "EnergyEnvironment",

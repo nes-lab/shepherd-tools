@@ -1,58 +1,31 @@
 from pathlib import Path
 
-import yaml
-from pydantic import BaseModel
 from pydantic import Field
 from pydantic import confloat
 from pydantic import conlist
 from pydantic import root_validator
 
+from shepherd_core.data_models import Fixtures
+from shepherd_core.data_models import ShpModel
+
 from .. import logger
 from .content import VirtualHarvester
 
-# TODO: Deprecated
+fixture_path = Path(__file__).resolve().with_name("content/virtual_source_fixture.yaml")
+fixtures = Fixtures(fixture_path, "content.VirtualSource")
 
 
-def load_vsources() -> dict:
-    def_file = "virtual_source_defs.yml"
-    def_path = Path(__file__).parent.resolve() / def_file
-    with open(def_path) as def_data:
-        configs = yaml.safe_load(def_data)["virtsources"]
-        configs = {k.lower(): v for k, v in configs.items()}
-    return configs
-
-
-configs_predef = load_vsources()
-
-
-def acquire_def(name: str):
-    name = name.lower()
-    if name in configs_predef:
-        config_base = configs_predef[name]
-        return config_base
-    else:
-        raise ValueError(f"ConverterBase {name} not known!")
-
-
-# TODO: use title, alias,
-
-
-class VirtualSourceDoc(BaseModel):
+@DeprecationWarning
+class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)"):
     # General Config
     name: str = Field(
         title="Name of Virtual Source",
         description="Slug to use this Name as later reference",
         default="neutral",
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
     )
     inherit_from: str = Field(
         description="Name of converter to derive defaults from",
         default="neutral",
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
     )
 
     enable_boost: bool = Field(
@@ -79,10 +52,7 @@ class VirtualSourceDoc(BaseModel):
 
     harvester: VirtualHarvester = Field(
         description="Only active / needed if input is 'ivcurves'",
-        default="mppt_opt",
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
+        default=VirtualHarvester(name="mppt_opt"),
     )
 
     V_input_max_mV: float = Field(
@@ -254,41 +224,7 @@ class VirtualSourceDoc(BaseModel):
     )
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values):
-        if "inherit_from" in values:
-            config_name = values.get("inherit_from")
-            config_base = acquire_def(config_name)
-            logger.debug("Will init VS from '%s'", config_name)
-            config_base["name"] = config_name
-            base_dict = VirtualSourceDoc.recursive_fill(values=config_base)
-            for key, value in values.items():
-                base_dict[key] = value
-            values = base_dict
-        elif "name" in values and values.get("name").lower() in configs_predef:
-            config_name = values.get("name").lower()
-            if config_name == "neutral":
-                values = acquire_def(config_name)
-                values["name"] = config_name
-            else:
-                config_base = acquire_def(config_name)
-                logger.debug("Will init VS as '%s'", config_name)
-                config_base["name"] = config_name
-                values = VirtualSourceDoc.recursive_fill(values=config_base)
+    def recursive_fill(cls, values: dict):
+        values, chain = fixtures.inheritance(values)
+        logger.debug("VSrc-Inheritances: %s", chain)
         return values
-
-    @root_validator(pre=False)
-    def post_adjust(cls, values):
-        # TODO
-        return values
-
-    def get_parameters(self):
-        pass
-
-    class Config:
-        title = "Virtual Source (Documented)"
-        allow_mutation = False  # const after creation?
-        extra = "forbid"  # no unnamed attributes allowed
-        validate_all = True  # also check defaults
-        min_anystr_length = 4
-        anystr_lower = True
-        anstr_strip_whitespace = True  # strip leading & trailing whitespaces

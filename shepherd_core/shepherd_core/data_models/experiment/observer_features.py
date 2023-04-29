@@ -6,7 +6,7 @@ from pydantic import confloat
 from pydantic import conint
 from pydantic import conlist
 
-from .. import ShpModel
+from ..base.shepherd import ShpModel
 from ..testbed.gpio import GPIO
 
 

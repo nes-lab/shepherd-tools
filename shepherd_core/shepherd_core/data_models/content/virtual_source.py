@@ -1,22 +1,20 @@
 from pathlib import Path
-from typing import Optional
 
 from pydantic import confloat
 from pydantic import conint
 from pydantic import conlist
-from pydantic import constr
 from pydantic import root_validator
 
 from ...logger import logger
-from .. import Fixtures
-from .. import ShpModel
+from ..base.content import ContentModel
+from ..base.fixture import Fixtures
 from .virtual_harvester import VirtualHarvester
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "content.VirtualSource")
 
 
-class VirtualSource(ShpModel, title="Config for the virtual Source"):
+class VirtualSource(ContentModel, title="Config for the virtual Source"):
     """The virtual Source uses the energy environment (file)
     for supplying the Target Node during the experiment.
     If not already done, the energy will be harvested and then converted.
@@ -25,28 +23,7 @@ class VirtualSource(ShpModel, title="Config for the virtual Source"):
       a simple diode + resistor and
       an intermediate buffer capacitor."""
 
-    uid: constr(
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
-        max_length=16,
-    )
-
-    # General Config
-    name: constr(
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
-        max_length=32,
-    ) = "neutral"
-    inherit_from: constr(
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
-        max_length=32,
-    ) = "neutral"
-    description: Optional[str] = None
-    comment: Optional[str] = None
+    # General Metadata & Ownership -> ContentModel
 
     enable_boost: bool = False
     enable_buck: bool = False
@@ -100,8 +77,6 @@ class VirtualSource(ShpModel, title="Config for the virtual Source"):
         max_items=12,
     ) = 12 * [1.00]
     LUT_output_I_min_log2_nA: conint(ge=0, le=20) = 0
-
-    # super().Config.title "VirtualSource"
 
     def __str__(self):
         return self.name

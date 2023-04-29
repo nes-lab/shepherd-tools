@@ -2,10 +2,17 @@
   pk: 1001
   fields:
     name: SolarSunny
-    description: Sunny Day with 4cm² Solar Cell
+    description: Sunny Day with 4 sq-cm Solar Cell
     data_path: group/user/eenv/solar_4h_new.h5
     data_type: ivsample
     duration: 14400
+    energy_Ws: 0.5
+
+    owner: Ingmar
+    group: NES Lab
+    open2group: true
+    open2all: true
+
 - model: content.EnergyEnvironment
   pk: 1002
   fields:
@@ -14,3 +21,9 @@
     data_path: group/user/eenv/thermoelectric_1h_wash.h5
     data_type: ivcurve
     duration: 3600
+    energy_Ws: 0.1
+
+    owner: Ingmar
+    group: NES Lab
+    open2group: true
+    open2all: true

@@ -6,8 +6,8 @@ from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
-from .. import Fixtures
-from .. import ShpModel
+from ..base.fixture import Fixtures
+from ..base.shepherd import ShpModel
 
 fixture_path = Path(__file__).resolve().with_name("gpio_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.gpio")
@@ -25,13 +25,7 @@ class Direction(str, Enum):
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component"""
 
-    uid: constr(
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
-        max_length=16,
-    )
-
+    uid: constr(to_lower=True, max_length=16)
     name: constr(max_length=32)
     description: Optional[str] = None
     comment: Optional[str] = None

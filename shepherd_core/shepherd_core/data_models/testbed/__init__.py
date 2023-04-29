@@ -5,10 +5,12 @@ from .mcu import MCU
 from .mcu import ProgrammerProtocol
 from .observer import Observer
 from .target import Target
+from .testbed import Testbed
 
-# these models only import locally in /testbed
+# these models import externally from: /base
 
 __all__ = [
+    "Testbed",
     "Observer",
     "Cape",
     "Target",

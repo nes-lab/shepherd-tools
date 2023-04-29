@@ -1,7 +1,7 @@
 from pydantic import conint
 from pydantic import constr
 
-from .model_shepherd import ShpModel
+from .shepherd import ShpModel
 
 
 class Wrapper(ShpModel):

@@ -6,8 +6,8 @@
     name: nrf52_open4group
     mcu:
       name: nRF52
-    owner: ingmar
-    group: NESLab
+    owner: Ingmar
+    group: NES Lab
     open2group: true
     open2all: false
 - model: content.firmware
@@ -17,8 +17,8 @@
     name: msp430_open4group
     mcu:
       name: MSP430FR
-    owner: ingmar
-    group: NESLab
+    owner: Ingmar
+    group: NES Lab
     open2group: true
     open2all: false
 - model: content.firmware

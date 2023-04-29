@@ -14,6 +14,9 @@ def test_content_model_min_ee1():
         data_path="./file",
         data_type="isc_voc",
         duration=1,
+        energy_Ws=0.1,
+        owner="jane",
+        group="wayne",
     )
 
 
@@ -24,6 +27,9 @@ def test_content_model_min_ee2():
         data_path="./file",
         data_type=EnergyDType.ivcurve,
         duration=999,
+        energy_Ws=3.1,
+        owner="jane",
+        group="wayne",
     )
 
 
@@ -43,10 +49,15 @@ def test_content_model_min_hrv():
     VirtualHarvester(
         uid=9999,
         name="whatever",
+        owner="jane",
+        group="wayne",
     )
 
 
 def test_content_model_min_src():
     VirtualSource(
-        uid=9999,  # is neutral
+        uid=9999,
+        name="new_src",
+        owner="jane",
+        group="wayne",
     )

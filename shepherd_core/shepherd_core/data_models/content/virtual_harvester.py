@@ -1,40 +1,24 @@
 from pathlib import Path
-from typing import Optional
 
 from pydantic import confloat
 from pydantic import conint
-from pydantic import constr
 from pydantic import root_validator
 
 from shepherd_core.data_models.content import EnergyDType
 
 from ...logger import logger
-from .. import Fixtures
-from .. import ShpModel
+from ..base.content import ContentModel
+from ..base.fixture import Fixtures
 
 fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
 fixtures = Fixtures(fixture_path, "content.VirtualHarvester")
 
 
-class VirtualHarvester(ShpModel, title="Config for the Harvester"):
+class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     """A Harvester is needed when the file-based energy environment
     of the virtual source is not already supplied as ivsamples"""
 
-    uid: constr(
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
-        max_length=16,
-    )
-
-    # General Config
-    name: constr(
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
-    ) = "mppt_opt"
-    description: Optional[str] = None
-    comment: Optional[str] = None
+    # General Metadata & Ownership -> ContentModel
 
     datatype: EnergyDType = EnergyDType.ivsample
     # ⤷ of output, TODO: test emu-experiment for ivsample!

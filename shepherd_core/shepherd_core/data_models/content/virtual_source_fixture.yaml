@@ -68,6 +68,11 @@
     LUT_output_efficiency: [ 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 ] # array[12] depending on output_current
     LUT_output_I_min_log2_nA: 0  # 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
+    owner: Ingmar
+    group: NES Lab
+    open2group: true
+    open2all: true
+
 - model: content.VirtualSource
   pk: 1010
   fields:

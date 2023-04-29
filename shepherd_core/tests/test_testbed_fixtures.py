@@ -8,6 +8,8 @@ from shepherd_core.data_models.testbed.observer import Observer
 from shepherd_core.data_models.testbed.observer import fixtures as fix_observer
 from shepherd_core.data_models.testbed.target import Target
 from shepherd_core.data_models.testbed.target import fixtures as fix_target
+from shepherd_core.data_models.testbed.testbed import Testbed
+from shepherd_core.data_models.testbed.testbed import fixtures as fix_testbed
 
 
 def test_testbed_fixture_cape():
@@ -38,3 +40,9 @@ def test_testbed_fixture_target():
     for fix in fix_target:
         Target(name=fix["name"])
         Target(uid=fix["uid"])
+
+
+def test_testbed_fixture_testbed():
+    for fix in fix_testbed:
+        Testbed(name=fix["name"])
+        Testbed(uid=fix["uid"])

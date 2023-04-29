@@ -8,8 +8,8 @@ from pydantic import confloat
 from pydantic import constr
 from pydantic import root_validator
 
-from .. import Fixtures
-from .. import ShpModel
+from ..base.fixture import Fixtures
+from ..base.shepherd import ShpModel
 from .cape import Cape
 from .target import Target
 
@@ -20,13 +20,7 @@ fixtures = Fixtures(fixture_path, "testbed.observer")
 class Observer(ShpModel, title="Shepherd-Sheep"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    uid: constr(
-        strip_whitespace=True,
-        to_lower=True,
-        min_length=4,
-        max_length=16,
-    )
-
+    uid: constr(to_lower=True, max_length=16)
     name: constr(max_length=32)
     description: str
     comment: Optional[str] = None

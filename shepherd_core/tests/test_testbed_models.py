@@ -5,6 +5,7 @@ from shepherd_core.data_models.testbed import Direction
 from shepherd_core.data_models.testbed import Observer
 from shepherd_core.data_models.testbed import ProgrammerProtocol
 from shepherd_core.data_models.testbed import Target
+from shepherd_core.data_models.testbed import Testbed
 
 
 def test_testbed_model_min_cape():
@@ -66,4 +67,15 @@ def test_testbed_model_min_target():
         version="v1.00",
         description="lorem",
         mcu1=MCU(name="MSP430FR"),
+    )
+
+
+def test_testbed_model_min_testbed():
+    Testbed(
+        name="shepherd",
+        uid="9955",
+        description="lorem",
+        observers=[Observer(name="sheep02")],
+        data_on_server="/mnt/driveA",
+        data_on_observer="/mnt/driveB",
     )

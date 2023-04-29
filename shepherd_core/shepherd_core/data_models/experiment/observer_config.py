@@ -7,7 +7,7 @@ from typing import Optional
 from pydantic import confloat
 from pydantic import root_validator
 
-from .. import ShpModel
+from ..base.shepherd import ShpModel
 from ..content.virtual_source import VirtualSource
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing

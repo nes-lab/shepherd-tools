@@ -14,7 +14,6 @@ def repr_str(dumper, data):
 yaml.add_representer(pathlib.PosixPath, repr_str)
 yaml.add_representer(pathlib.WindowsPath, repr_str)
 yaml.add_representer(pathlib.Path, repr_str)
-# todo: handle bytes
 
 
 class ShpModel(BaseModel):
@@ -30,14 +29,14 @@ class ShpModel(BaseModel):
         validate_assignment = True
         min_anystr_length = 4
         max_anystr_length = 512
-        anystr_lower = True  # TODO: not needed anymore, only for uid
+        # ⤷ local str-length constraints overrule global ones!
         anystr_strip_whitespace = True  # strip leading & trailing whitespaces
         use_enum_values = True  # cleaner export of enum-fields
-        # TODO: according to
-        #   - https://docs.pydantic.dev/usage/schema/#field-customization
-        #   - https://docs.pydantic.dev/usage/model_config/
+
+        # Options:
+        # - https://docs.pydantic.dev/usage/schema/#field-customization
+        # - https://docs.pydantic.dev/usage/model_config/
         # "fields["name"].description = ... should be usable to modify model
-        fields: dict = {}
 
     @classmethod
     def dump_schema(cls, path: Union[str, Path]):
@@ -48,7 +47,7 @@ class ShpModel(BaseModel):
 
     def dump_dict(self, path: Union[str, Path], minimal: bool = False):
         if minimal:
-            model_dict = self._min_dict  # TODO: alpha, non-functioning atm
+            model_dict = self._min_dict  # TODO: test, non-functioning atm
         else:
             model_dict = self.dict()
         model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)

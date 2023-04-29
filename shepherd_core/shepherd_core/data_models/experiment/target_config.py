@@ -3,9 +3,9 @@ from typing import Optional
 from pydantic import conint
 from pydantic import conlist
 
-from .. import ShpModel
-from ..content import Firmware
+from ..base.shepherd import ShpModel
 from ..content.energy_environment import EnergyEnvironment
+from ..content.firmware import Firmware
 from ..content.virtual_source import VirtualSource
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing

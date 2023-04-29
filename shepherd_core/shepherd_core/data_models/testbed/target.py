@@ -8,8 +8,8 @@ from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
-from .. import Fixtures
-from .. import ShpModel
+from ..base.fixture import Fixtures
+from ..base.shepherd import ShpModel
 from .mcu import MCU
 
 fixture_path = Path(__file__).resolve().with_name("target_fixture.yaml")

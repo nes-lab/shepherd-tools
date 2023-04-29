@@ -5,7 +5,7 @@ from typing import Union
 
 import yaml
 
-from shepherd_core import logger
+from ...logger import logger
 
 # Proposed field-name:
 # - inheritance
