@@ -8,6 +8,7 @@ from pydantic import root_validator
 from ...logger import logger
 from ..base.content import ContentModel
 from ..base.fixture import Fixtures
+from .energy_environment import EnergyDType
 from .virtual_harvester import VirtualHarvester
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
@@ -82,16 +83,17 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
         return self.name
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values
 
     @root_validator(pre=False)
-    def post_adjust(cls, values: dict):
-        # TODO
+    def post_validation(cls, values: dict):
+        if values["harvester"].datatype != EnergyDType.ivsample:
+            raise ValueError(
+                "Harvester of Source must output iv-samples for emulation "
+                f"(but is '{values['harvester'].datatype}')"
+            )
         return values
-
-    def get_parameters(self):
-        # TODO
-        pass

@@ -18,7 +18,7 @@ fixtures = Fixtures(fixture_path, "testbed.cape")
 class Cape(ShpModel, title="Shepherd-Cape"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    uid: constr(to_lower=True, max_length=16)
+    id: constr(to_lower=True, max_length=16)  # noqa: A003
     name: constr(max_length=32)
     version: constr(max_length=32)
     description: str
@@ -31,6 +31,7 @@ class Cape(ShpModel, title="Shepherd-Cape"):
         return self.name
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values

@@ -47,3 +47,27 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
+- model: testbed.cape
+  pk: 1011
+  fields:
+    name: cape11
+    version: v2.4
+    description: virtual
+    created: 2023-11-12
+    calibrated: 2023-11-12
+- model: testbed.cape
+  pk: 1012
+  fields:
+    name: cape12
+    version: v2.4
+    description: virtual
+    created: 2023-11-12
+    calibrated: 2023-11-12
+- model: testbed.cape
+  pk: 1013
+  fields:
+    name: cape13
+    version: v2.4
+    description: virtual
+    created: 2023-11-12
+    calibrated: 2023-11-12

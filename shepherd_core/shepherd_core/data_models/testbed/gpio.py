@@ -25,7 +25,7 @@ class Direction(str, Enum):
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component"""
 
-    uid: constr(to_lower=True, max_length=16)
+    id: constr(to_lower=True, max_length=16)  # noqa: A003
     name: constr(max_length=32)
     description: Optional[str] = None
     comment: Optional[str] = None
@@ -42,6 +42,7 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
         return self.name
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values

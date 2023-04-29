@@ -4,11 +4,10 @@ from pydantic import confloat
 from pydantic import conint
 from pydantic import root_validator
 
-from shepherd_core.data_models.content import EnergyDType
-
 from ...logger import logger
 from ..base.content import ContentModel
 from ..base.fixture import Fixtures
+from .energy_environment import EnergyDType
 
 fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
 fixtures = Fixtures(fixture_path, "content.VirtualHarvester")
@@ -21,7 +20,7 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     # General Metadata & Ownership -> ContentModel
 
     datatype: EnergyDType = EnergyDType.ivsample
-    # ⤷ of output, TODO: test emu-experiment for ivsample!
+    # ⤷ of output
 
     window_size: conint(ge=8, le=2_000) = 8  # TODO: min was 16
 
@@ -52,7 +51,8 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
         return self.name
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         if values["name"] == "neutral":
             raise ValueError("Resulting Harvester can't be neutral")
@@ -60,10 +60,6 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
         return values
 
     @root_validator(pre=False)
-    def post_adjust(cls, values: dict):
-        # TODO
+    def post_validation(cls, values: dict):
+        # TODO: remove if unneeded
         return values
-
-    def get_parameters(self):
-        # TODO
-        pass

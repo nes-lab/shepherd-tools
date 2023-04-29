@@ -224,7 +224,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
     )
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
         values, chain = fixtures.inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values

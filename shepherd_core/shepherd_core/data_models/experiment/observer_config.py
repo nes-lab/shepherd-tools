@@ -75,6 +75,7 @@ class ObserverEmulationConfig(ShpModel):
 
     @root_validator()
     def validate(cls, values: dict):
+        # TODO: cleanup
         if isinstance(values, dict):
             comp = values.get("output_compression")
         elif isinstance(values, ObserverEmulationConfig):
@@ -92,11 +93,11 @@ class ObserverEmulationConfig(ShpModel):
 
     @root_validator(pre=False)
     def post_adjust(cls, values: dict):
-        # TODO
+        # TODO: remove if unneeded
         return values
 
     def get_parameters(self):
-        # TODO
+        # TODO: remove if unneeded
         return self.dict()
         # pass
 

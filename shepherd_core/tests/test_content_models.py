@@ -9,7 +9,7 @@ from shepherd_core.data_models.testbed import MCU
 
 def test_content_model_min_ee1():
     EnergyEnvironment(
-        uid=9999,
+        id=9999,
         name="some",
         data_path="./file",
         data_type="isc_voc",
@@ -22,7 +22,7 @@ def test_content_model_min_ee1():
 
 def test_content_model_min_ee2():
     EnergyEnvironment(
-        uid="98765",
+        id="98765",
         name="some",
         data_path="./file",
         data_type=EnergyDType.ivcurve,
@@ -35,7 +35,7 @@ def test_content_model_min_ee2():
 
 def test_content_model_min_fw():
     Firmware(
-        uid=9999,
+        id=9999,
         name="dome",
         mcu=MCU(name="nRF52"),
         data="xyz",
@@ -47,7 +47,7 @@ def test_content_model_min_fw():
 
 def test_content_model_min_hrv():
     VirtualHarvester(
-        uid=9999,
+        id=9999,
         name="whatever",
         owner="jane",
         group="wayne",
@@ -56,7 +56,7 @@ def test_content_model_min_hrv():
 
 def test_content_model_min_src():
     VirtualSource(
-        uid=9999,
+        id=9999,
         name="new_src",
         owner="jane",
         group="wayne",

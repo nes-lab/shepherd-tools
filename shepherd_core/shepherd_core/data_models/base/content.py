@@ -10,8 +10,8 @@ from .shepherd import ShpModel
 
 class ContentModel(ShpModel):
     # General Properties
-    uid: constr(to_lower=True, max_length=16, regex=r"^[\w]*$") = Field(
-        description="Unique ID (AlphaNum > 4 chars)"
+    id: constr(to_lower=True, max_length=16, regex=r"^[\w]*$") = Field(  # noqa: A003
+        description="Unique ID (AlphaNum > 4 chars)",
     )
     name: constr(max_length=32, regex=r"^[ -~]*$")
     description: Optional[constr(regex=r"^[ -~]*$")] = Field(
@@ -31,11 +31,11 @@ class ContentModel(ShpModel):
     # ^[ -~]*$    All Printable ASCII-Characters with Space
 
     @root_validator(pre=False)
-    def post_tests(cls, values: dict):
-        if isinstance(values["description"], type(None)) and (
-            values["open2group"] or values["open2all"]
-        ):
+    def content_validation(cls, values: dict):
+        is_open = values["open2group"] or values["open2all"]
+        if is_open and isinstance(values["description"], type(None)):
             raise ValueError(
-                "Public instances require a description (check open2*- and description-field)"
+                "Public instances require a description "
+                "(check open2*- and description-field)"
             )
         return values

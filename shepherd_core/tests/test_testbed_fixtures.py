@@ -1,3 +1,4 @@
+from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.testbed.cape import Cape
 from shepherd_core.data_models.testbed.cape import fixtures as fix_cape
 from shepherd_core.data_models.testbed.gpio import GPIO
@@ -15,34 +16,35 @@ from shepherd_core.data_models.testbed.testbed import fixtures as fix_testbed
 def test_testbed_fixture_cape():
     for fix in fix_cape:
         Cape(name=fix["name"])
-        Cape(uid=fix["uid"])
+        Cape(id=fix["id"])
 
 
 def test_testbed_fixture_gpio():
     for fix in fix_gpio:
         GPIO(name=fix["name"])
-        GPIO(uid=fix["uid"])
+        GPIO(id=fix["id"])
 
 
 def test_testbed_fixture_mcu():
     for fix in fix_mcu:
         MCU(name=fix["name"])
-        MCU(uid=fix["uid"])
+        mcu = MCU(id=fix["id"])
+        Firmware(name=mcu.fw_name_default)
 
 
 def test_testbed_fixture_observer():
     for fix in fix_observer:
         Observer(name=fix["name"])
-        Observer(uid=fix["uid"])
+        Observer(id=fix["id"])
 
 
 def test_testbed_fixture_target():
     for fix in fix_target:
         Target(name=fix["name"])
-        Target(uid=fix["uid"])
+        Target(id=fix["id"])
 
 
 def test_testbed_fixture_testbed():
     for fix in fix_testbed:
         Testbed(name=fix["name"])
-        Testbed(uid=fix["uid"])
+        Testbed(id=fix["id"])

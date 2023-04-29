@@ -31,6 +31,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
     data_type: FirmwareDType
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values

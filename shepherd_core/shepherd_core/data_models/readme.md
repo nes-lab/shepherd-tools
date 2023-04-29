@@ -2,7 +2,7 @@
 
 ### Features
 
-- fixtures selectable by name & uid
+- fixtures selectable by name & ID
 - fixtures support inheritance
 - behavior controlled by ``ShpModel``
 - models support
@@ -58,6 +58,9 @@
 - these do not work
 
 ```Python
+from pydantic import Field
+from shepherd_core.data_models import ShpModel
+
 class Experiment(ShpModel, title="Config of an Experiment"):
     def __init__(self):  # test to add doc after creation -> to avoid Field()
         super().__init__()
@@ -69,7 +72,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
 ### simplify init of pydantic-class
 
-What I want: init a fixture-class with Class("name") or Class(uid) instead of Class(name="name")
+What I want: init a fixture-class with Class("name") or Class(ID) instead of Class(name="name")
 
 What does not work:
 
@@ -78,13 +81,15 @@ from pathlib import Path
 from typing import Union
 from pydantic import root_validator
 from shepherd_core.data_models import Fixtures
+from shepherd_core.data_models import ShpModel
 
 fixtures = Fixtures(Path("fix.yaml"), "testbed.target")
 class Target(ShpModel, title="Target Node (DuT)"):
     @root_validator(pre=True)
-    def recursive_fill(cls, values: Union[dict, str, int]):
-        values = fixtures.lookup(values)  # TODO: a (non-working) test for now
+    def from_fixture(cls, values: Union[dict, str, int]):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
+        return values
 ```
 
 what might work:

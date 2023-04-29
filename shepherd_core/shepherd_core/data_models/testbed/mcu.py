@@ -23,7 +23,7 @@ class ProgrammerProtocol(str, Enum):
 class MCU(ShpModel, title="Microcontroller of the Target Node"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    uid: constr(to_lower=True, max_length=16)
+    id: constr(to_lower=True, max_length=16)  # noqa: A003
     name: constr(max_length=32)
     description: str
     comment: Optional[str] = None
@@ -32,10 +32,14 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
     core: constr(max_length=32)
     programmer: ProgrammerProtocol
 
+    fw_name_default: str
+    # ⤷ can't be FW-Object (circular import)
+
     def __str__(self):
         return self.name
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values

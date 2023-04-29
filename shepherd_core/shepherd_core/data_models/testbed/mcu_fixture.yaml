@@ -7,6 +7,7 @@
     platform: nRF52
     core: nRF52840
     programmer: SWD
+    fw_name_default: nrf52_demo_rf
 - model: testbed.mcu
   pk: 1002
   fields:
@@ -15,3 +16,4 @@
     platform: MSP430
     core: MSP430FR5962
     programmer: SBW
+    fw_name_default: msp430_deep_sleep

@@ -9,6 +9,7 @@
     mcu1:
       name: nRF52
     mcu2: null
+    created: 2022-12-12 12:12:12
 - model: testbed.target
   pk: 1003
   fields:
@@ -20,6 +21,7 @@
       name: nRF52
     mcu2:
       name: MSP430FR
+    created: 2022-12-12 12:12:12
 - model: testbed.target
   pk: 2001
   fields:
@@ -39,6 +41,11 @@
   pk: 2004
   fields:
     name: T_nRF52_2021_004
+    inherit_from: target_nRF52_v21r0
+- model: testbed.target
+  pk: 2005
+  fields:
+    name: T_nRF52_2021_005
     inherit_from: target_nRF52_v21r0
 - model: testbed.target
   pk: 3001

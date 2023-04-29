@@ -11,22 +11,22 @@ from shepherd_core.data_models.content.virtual_source import fixtures as fix_src
 def test_testbed_fixture_energy_environment():
     for fix in fix_ee:
         EnergyEnvironment(name=fix["name"])
-        EnergyEnvironment(uid=fix["uid"])
+        EnergyEnvironment(id=fix["id"])
 
 
 def test_testbed_fixture_firmware():
     for fix in fix_firmware:
-        uid = fix["uid"]
-        if uid in [1001, 1002]:
+        _id = fix["id"]
+        if _id in [1001, 1002]:
             continue
         Firmware(name=fix["name"])
-        Firmware(uid=fix["uid"])
+        Firmware(id=fix["id"])
 
 
 def test_experiment_fixture_vsrc():
     for fix in fix_src:
         VirtualSource(name=fix["name"])
-        VirtualSource(uid=fix["uid"])
+        VirtualSource(id=fix["id"])
 
 
 def test_experiment_fixture_vhrv():
@@ -34,4 +34,4 @@ def test_experiment_fixture_vhrv():
         if fix["name"] == "neutral":
             continue
         VirtualHarvester(name=fix["name"])
-        VirtualHarvester(uid=fix["uid"])
+        VirtualHarvester(id=fix["id"])

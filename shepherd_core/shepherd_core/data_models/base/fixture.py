@@ -1,7 +1,6 @@
 import copy
 from pathlib import Path
 from typing import Optional
-from typing import Union
 
 import yaml
 
@@ -19,11 +18,10 @@ class Fixtures:
     """Current implementation of a file-based database"""
 
     def __init__(self, file_path: Path, model_name: str):
-        # TODO: input could be just __file__(str)
         self.path: Path = file_path
         self.name: str = model_name
         self.elements_by_name: dict = {}
-        self.elements_by_uid: dict = {}
+        self.elements_by_id: dict = {}
         with open(self.path) as fix_data:
             fixtures = yaml.safe_load(fix_data)
             for fixture in fixtures:
@@ -36,13 +34,13 @@ class Fixtures:
                 if "name" not in fixture["fields"]:
                     continue
                 name = str(fixture["fields"]["name"]).lower()
-                if "uid" not in fixture["fields"]:
-                    # pk-field (django) acts as an uid if none is found
-                    fixture["fields"]["uid"] = str(fixture["pk"]).lower()
-                uid = str(fixture["fields"]["uid"]).lower()
+                if "id" not in fixture["fields"]:
+                    # pk-field (django) acts as an id if none is found
+                    fixture["fields"]["id"] = str(fixture["pk"]).lower()
+                _id = str(fixture["fields"]["id"]).lower()
                 data = fixture["fields"]
                 self.elements_by_name[name] = data
-                self.elements_by_uid[uid] = data
+                self.elements_by_id[_id] = data
         # for iterator
         self._iter_index: int = 0
         self._iter_list: list = list(self.elements_by_name.values())
@@ -104,9 +102,9 @@ class Fixtures:
             fixture_base = copy.copy(self.elements_by_name[fixture_name])
             post_process = True
 
-        elif "uid" in values and str(values.get("uid")).lower() in self.elements_by_uid:
-            fixture_uid = str(values.get("uid")).lower()
-            fixture_base = copy.copy(self.elements_by_uid[fixture_uid])
+        elif "id" in values and str(values.get("id")).lower() in self.elements_by_id:
+            fixture_id = str(values.get("id")).lower()
+            fixture_base = copy.copy(self.elements_by_id[fixture_id])
             post_process = True
 
         if post_process:
@@ -121,20 +119,18 @@ class Fixtures:
             else:
                 values = fixture_base
 
-        return values, chain  # TODO: add _chain to values
+        return values, chain
 
-    def lookup(self, values: Union[dict, str, int]) -> dict:
-        """should allow to init a fixture class with Class("name") or
-        Class(uid) instead of Class(name=name)"""
-        if isinstance(values, int):
-            values = {"uid": str(values)}
-        if isinstance(values, str):
-            if values in self.elements_by_name:
-                values = {"name": values}
-            elif values in self.elements_by_uid:
-                values = {"uid": values}
+    def lookup(self, values: dict) -> dict:
+        """init by name/id for none existing instances raise Exception"""
+        if len(values) == 1 and list(values.keys())[0] in ["id", "name"]:
+            value = str(list(values.values())[0]).lower()
+            if value in self.elements_by_name:
+                values = {"name": value}
+            elif value in self.elements_by_id:
+                values = {"id": value}
             else:
                 raise ValueError(
-                    "String-Input should be either known Name or UID (is %s)", values
+                    f"Initialization of {self.name} by name or ID failed - {values} is unknown!"
                 )
         return values

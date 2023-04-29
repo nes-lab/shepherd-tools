@@ -14,7 +14,7 @@
       name: cape1
     target_a:
       name: T_nRF52_2021_001
-    target_b:
+    created: 2022-12-12 12:12:12
 - model: testbed.observer
   pk: 1002
   fields:
@@ -30,7 +30,7 @@
       name: cape2
     target_a:
       name: T_nRF52_2021_002
-    target_b:
+    created: 2022-12-12 12:12:12
 - model: testbed.observer
   pk: 1003
   fields:
@@ -46,7 +46,7 @@
       name: cape3
     target_a:
       name: T_nRF52_2021_003
-    target_b:
+    created: 2022-12-12 12:12:12
 - model: testbed.observer
   pk: 1004
   fields:
@@ -62,4 +62,54 @@
       name: cape4
     target_a:
       name: T_nRF52_2021_004
+    created: 2022-12-12 12:12:12
+- model: testbed.observer
+  pk: 1011
+  fields:
+    name: sheep11
+    ip: 192.168.165.211
+    mac: 18:62:E4:D0:61:4E
+    room: II71
+    eth_port: II65_S3_C_4
+    description: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    cape:
+      name: cape11
+    target_a:
+      name: T_nRF52_2021_005
     target_b:
+      name: T_nRF52_FRAM_2023_001
+    created: 2022-12-12 12:12:12
+- model: testbed.observer
+  pk: 1012
+  fields:
+    name: sheep12
+    ip: 192.168.165.212
+    mac: 18:62:E4:D0:61:4F
+    room: II71
+    eth_port: II65_S3_C_4
+    description: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    cape:
+      name: cape12
+    target_b:
+      name: T_nRF52_FRAM_2023_002
+    created: 2022-12-12 12:12:12
+- model: testbed.observer
+  pk: 1013
+  fields:
+    name: sheep13
+    ip: 192.168.165.213
+    mac: 18:62:E4:D0:61:50
+    room: II71
+    eth_port: II65_S3_C_4
+    description: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    cape:
+      name: cape13
+    target_b:
+      name: T_nRF52_FRAM_2023_003
+    created: 2022-12-12 12:12:12

@@ -16,8 +16,8 @@ fixtures = Fixtures(fixture_path, "testbed.testbed")
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
+    id: constr(to_lower=True, max_length=16)  # noqa: A003
     name: constr(max_length=32)
-    uid: constr(to_lower=True, max_length=16)
     description: str
     comment: Optional[str] = None
 
@@ -28,6 +28,9 @@ class Testbed(ShpModel):
     # TODO: one BBone is currently time-keeper
 
     @root_validator(pre=True)
-    def recursive_fill(cls, values: dict):
+    def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values
+
+    # TODO: test distinct IPs, capes, MACs, targets, observers, same ethernet-port

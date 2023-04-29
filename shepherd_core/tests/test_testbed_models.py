@@ -10,7 +10,7 @@ from shepherd_core.data_models.testbed import Testbed
 
 def test_testbed_model_min_cape():
     Cape(
-        uid=9999,
+        id=9999,
         name="cappi",
         version="1.0.0",
         description="lorem",
@@ -19,7 +19,7 @@ def test_testbed_model_min_cape():
 
 def test_testbed_model_min_gpio():
     GPIO(
-        uid=9999,
+        id=9999,
         name="gippi",
         reg_pru="ABCD",
         pin_pru="EFGH",
@@ -28,7 +28,7 @@ def test_testbed_model_min_gpio():
 
 def test_testbed_model_var_gpio():
     GPIO(
-        uid=9999,
+        id=9999,
         name="gippi",
         direction=Direction.Bidirectional,
         reg_pru="ABCD",
@@ -38,18 +38,19 @@ def test_testbed_model_var_gpio():
 
 def test_testbed_model_min_mcu():
     MCU(
-        uid=9922,
+        id=9922,
         name="controller2",
         description="lorem",
         platform="arm32",
         core="STM32F7",
         programmer=ProgrammerProtocol.SWD,
+        fw_name_default="nananana",
     )
 
 
 def test_testbed_model_min_observer():
     Observer(
-        uid=9933,
+        id=9933,
         name="sheep120",
         description="not existing",
         ip="127.0.0.1",
@@ -62,7 +63,7 @@ def test_testbed_model_min_observer():
 
 def test_testbed_model_min_target():
     Target(
-        uid=9944,
+        id=9944,
         name="TerraTarget",
         version="v1.00",
         description="lorem",
@@ -73,7 +74,7 @@ def test_testbed_model_min_target():
 def test_testbed_model_min_testbed():
     Testbed(
         name="shepherd",
-        uid="9955",
+        id="9955",
         description="lorem",
         observers=[Observer(name="sheep02")],
         data_on_server="/mnt/driveA",

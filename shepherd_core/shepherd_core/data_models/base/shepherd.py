@@ -1,3 +1,4 @@
+import hashlib
 import pathlib
 from pathlib import Path
 from typing import Union
@@ -23,7 +24,7 @@ class ShpModel(BaseModel):
 
     class Config:
         allow_mutation = False  # const after creation?
-        # ⤷ TODO: either freeze (hashable) or allow changes
+        frozen = True  # -> hashable! but currently manually with .get_hash()
         extra = Extra.forbid  # no unnamed attributes allowed
         validate_all = True  # also checks defaults
         validate_assignment = True
@@ -32,6 +33,7 @@ class ShpModel(BaseModel):
         # ⤷ local str-length constraints overrule global ones!
         anystr_strip_whitespace = True  # strip leading & trailing whitespaces
         use_enum_values = True  # cleaner export of enum-fields
+        allow_inf_nan = False  # float without +-inf or NaN
 
         # Options:
         # - https://docs.pydantic.dev/usage/schema/#field-customization
@@ -47,10 +49,21 @@ class ShpModel(BaseModel):
 
     def dump_dict(self, path: Union[str, Path], minimal: bool = False):
         if minimal:
-            model_dict = self._min_dict  # TODO: test, non-functioning atm
+            model_dict = self._min_dict
         else:
             model_dict = self.dict()
         model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
         with open(Path(path).with_suffix(".yaml"), "w") as f:
             f.write(model_yaml)
-        # TODO: it would be useful to store a minimal set (dict from
+        # TODO: it would be useful to store a minimal set
+        #    - current dict cleaned from default values
+        #    - better: the init-args (probably name or id)
+        #  -> test, non-functioning atm
+
+    @classmethod  # @root_validator(pre=True, allow_reuse=True)
+    def pre_snitch(cls, values):
+        values["_min_dict"] = values
+        return values
+
+    def get_hash(self):
+        return hashlib.sha3_224(str(self.dict()).encode("utf-8")).hexdigest()
