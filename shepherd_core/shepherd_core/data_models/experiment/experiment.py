@@ -10,7 +10,7 @@ from pydantic import root_validator
 
 from ..base.content import id_str
 from ..base.content import name_str
-from ..base.content import print_str
+from ..base.content import safe_str
 from ..base.shepherd import ShpModel
 from ..testbed.target import Target
 from ..testbed.testbed import Testbed
@@ -28,16 +28,14 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         default=hashlib.sha3_224(str(datetime.now()).encode("utf-8")).hexdigest()[-16:],
     )
     name: name_str
-    description: Optional[print_str] = Field(
-        description="Required for public instances"
-    )
-    comment: Optional[print_str] = None
+    description: Optional[safe_str] = Field(description="Required for public instances")
+    comment: Optional[safe_str] = None
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access, TODO
 
     # feedback
-    email_results: Optional[EmailStr]
+    email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account
     sys_logging: SystemLogging = SystemLogging(log_dmesg=True, log_ptp=False)
 
     # schedule
@@ -49,15 +47,24 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     target_configs: conlist(item_type=TargetConfig, min_items=1, max_items=64)
 
     @root_validator(pre=False)
-    def post_validation(cls, values: dict):
+    def post_validation(cls, values: dict) -> dict:
         target_ids = []
+        custom_ids = []
         for _config in values["target_configs"]:
             for _id in _config.target_IDs:
                 target_ids.append(str(_id).lower())
                 Target(id=_id)
                 # ⤷ this can raise exception for non-existing targets
+            if _config.custom_IDs is not None:
+                custom_ids = custom_ids + _config.custom_IDs[: len(_config.target_IDs)]
+            else:
+                custom_ids = custom_ids + _config.target_IDs
         if len(target_ids) > len(set(target_ids)):
             raise ValueError("Target-ID used more than once in Experiment!")
+        if len(target_ids) > len(set(custom_ids)):
+            raise ValueError(
+                "Custom Target-ID are faulty (some form of id-collisions)!"
+            )
 
         testbed = Testbed(name="shepherd_tud_nes")
         target_observers = []

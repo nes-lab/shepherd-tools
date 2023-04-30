@@ -9,17 +9,16 @@ from .shepherd import ShpModel
 
 id_str = constr(to_lower=True, max_length=16, regex=r"^[\w]*$")
 name_str = constr(max_length=32, regex=r"^[ -~]*$")
-print_str = constr(regex=r"^[ -~]*$")
+# ⤷ TODO: maybe this should be more limited to file-system-chars
+safe_str = constr(regex=r"^[ -~]*$")
 
 
 class ContentModel(ShpModel):
     # General Properties
     id: id_str = Field(description="Unique ID (AlphaNum > 4 chars)")  # noqa: A003
     name: name_str
-    description: Optional[print_str] = Field(
-        description="Required for public instances"
-    )
-    comment: Optional[print_str] = None
+    description: Optional[safe_str] = Field(description="Required when public")
+    comment: Optional[safe_str] = None
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access

@@ -2,9 +2,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from pydantic import constr
 from pydantic import root_validator
 
+from ..base.content import id_str
+from ..base.content import name_str
+from ..base.content import safe_str
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 
@@ -23,13 +25,13 @@ class ProgrammerProtocol(str, Enum):
 class MCU(ShpModel, title="Microcontroller of the Target Node"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: constr(to_lower=True, max_length=16)  # noqa: A003
-    name: constr(max_length=32)
-    description: str
-    comment: Optional[str] = None
+    id: id_str  # noqa: A003
+    name: name_str
+    description: safe_str
+    comment: Optional[safe_str] = None
 
-    platform: constr(max_length=32)
-    core: constr(max_length=32)
+    platform: name_str
+    core: name_str
     programmer: ProgrammerProtocol
 
     fw_name_default: str
@@ -39,7 +41,7 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
         return self.name
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict):
+    def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values

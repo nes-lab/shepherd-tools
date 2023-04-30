@@ -36,7 +36,11 @@ class TargetConfig(ShpModel, title="Target Config"):
     gpio_actuation: Optional[GpioActuation]
 
     @root_validator(pre=False)
-    def post_validation(cls, values: dict):
+    def post_validation(cls, values: dict) -> dict:
+        if not values["energy_env"].valid:
+            raise ValueError(
+                f"EnergyEnv '{values['energy_env'].name}' for target must be valid"
+            )
         for _id in values["target_IDs"]:
             target = Target(id=_id)
             has_fw1 = values["firmware1"] is not None
@@ -51,12 +55,26 @@ class TargetConfig(ShpModel, title="Target Config"):
             has_fw2 = values["firmware2"] is not None
             has_mcu2 = target.mcu2 is not None
             if not has_fw2 and has_mcu2:
-                values["firmware2"] = Firmware(name=target.mcu2.fw_name_default)
-                has_fw2 = values["firmware2"] is not None
+                fw_def = Firmware(name=target.mcu2.fw_name_default)
+                # ⤷ this will raise if default is faulty
+                if target.mcu2.id != fw_def.mcu.id:
+                    raise ValueError(
+                        f"Default-Firmware for MCU2 of Target-ID '{target.id}' "
+                        f"(={fw_def.mcu.name}) "
+                        f"is incompatible (={target.mcu2.name})"
+                    )
+
             if has_fw2 and has_mcu2 and values["firmware2"].mcu.id != target.mcu2.id:
                 raise ValueError(
                     f"Firmware2 for MCU of Target-ID '{target.id}' "
                     f"(={values['firmware2'].mcu.name}) "
                     f"is incompatible (={target.mcu2.name})"
                 )
+        c_ids = values["custom_IDs"]
+        if c_ids is not None and (len(set(c_ids)) < len(set(values["target_IDs"]))):
+            raise ValueError(
+                f"Provided custom IDs {c_ids} not enough "
+                f"to cover target range {values['target_IDs']}"
+            )
+        # TODO: if custom ids present, firmware must be ELF
         return values

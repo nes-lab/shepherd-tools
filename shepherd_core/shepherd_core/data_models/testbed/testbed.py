@@ -2,9 +2,11 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic import conlist
-from pydantic import constr
 from pydantic import root_validator
 
+from ..base.content import id_str
+from ..base.content import name_str
+from ..base.content import safe_str
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 from .observer import Observer
@@ -16,10 +18,10 @@ fixtures = Fixtures(fixture_path, "testbed.testbed")
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: constr(to_lower=True, max_length=16)  # noqa: A003
-    name: constr(max_length=32)
-    description: str
-    comment: Optional[str] = None
+    id: id_str  # noqa: A003
+    name: name_str
+    description: safe_str
+    comment: Optional[safe_str] = None
 
     observers: conlist(item_type=Observer, min_items=1, max_items=64)
     shared_storage: bool = True
@@ -28,13 +30,13 @@ class Testbed(ShpModel):
     # TODO: one BBone is currently time-keeper
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict):
+    def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values
 
     @root_validator(pre=False)
-    def post_validation(cls, values: dict):
+    def post_validation(cls, values: dict) -> dict:
         observers = []
         ips = []
         macs = []

@@ -1,7 +1,7 @@
+from .emulation_config import Compression
+from .emulation_config import EmulationConfig
+from .emulation_config import TargetPort
 from .experiment import Experiment
-from .observer_config import Compression
-from .observer_config import ObserverEmulationConfig
-from .observer_config import TargetPort
 from .observer_features import GpioActuation
 from .observer_features import GpioEvent
 from .observer_features import GpioLevel
@@ -23,7 +23,7 @@ __all__ = [
     "GpioEvent",
     "SystemLogging",
     # Config for Observer  # todo: add programmer + sheep
-    "ObserverEmulationConfig",
+    "EmulationConfig",
     "TargetPort",
     "Compression",
 ]

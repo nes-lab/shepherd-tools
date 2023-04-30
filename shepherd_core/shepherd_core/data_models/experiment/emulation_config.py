@@ -22,13 +22,13 @@ class TargetPort(str, Enum):
 
 class Compression(str, Enum):
     lzf = "lzf"  # not native hdf5
-    gzip1 = "1"  # higher compr & load
+    gzip1 = 1  # higher compr & load
 
 
 compressions_allowed: list = [None, "lzf", 1]  # is it still needed?
 
 
-class ObserverEmulationConfig(ShpModel):
+class EmulationConfig(ShpModel):
     """Configuration for the Observer in Emulation-Mode"""
 
     # General config
@@ -62,28 +62,23 @@ class ObserverEmulationConfig(ShpModel):
     #   - "mid" will output intermediate voltage (vsource storage cap),
     #   - true or "main" to mirror main target voltage
 
-    # TODO: verbosity
+    verbose: bool = False
 
     # sub-elements, could be partly moved to emulation
     virtual_source: VirtualSource = VirtualSource(name="neutral")  # {"name": "neutral"}
 
-    # TODO: should these really be here? if no: add gpio_mask
     power_tracing: PowerTracing = PowerTracing()
     gpio_tracing: GpioTracing = GpioTracing()
     gpio_actuation: Optional[GpioActuation]
     sys_logging: SystemLogging = SystemLogging()
 
     @root_validator(pre=False)
-    def post_validation(cls, values: dict):
+    def post_validation(cls, values: dict) -> dict:
         # TODO: limit paths
         has_start = values["time_start"] is not None
         if has_start and values["time_start"] < datetime.utcnow():
             raise ValueError("Start-Time for Emulation can't be in the past.")
         return values
-
-    def get_parameters(self):
-        # TODO: remove if unneeded
-        return self.dict()
 
 
 # TODO: herdConfig

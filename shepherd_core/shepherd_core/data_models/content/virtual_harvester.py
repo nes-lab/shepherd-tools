@@ -51,7 +51,7 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
         return self.name
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict):
+    def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         if values["name"] == "neutral":
@@ -60,6 +60,6 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
         return values
 
     @root_validator(pre=False)
-    def post_validation(cls, values: dict):
-        # TODO: remove if unneeded
+    def post_validation(cls, values: dict) -> dict:
+        # TODO: port it over
         return values

@@ -5,7 +5,9 @@ from shepherd_core.data_models.testbed import Direction
 from shepherd_core.data_models.testbed import Observer
 from shepherd_core.data_models.testbed import ProgrammerProtocol
 from shepherd_core.data_models.testbed import Target
-from shepherd_core.data_models.testbed import Testbed
+from shepherd_core.data_models.testbed import Testbed as TasteBad
+
+# ⤷ TasteBad avoids pytest-warning
 
 
 def test_testbed_model_min_cape():
@@ -71,8 +73,8 @@ def test_testbed_model_min_target():
     )
 
 
-def test_testbed_model_min_testbed():
-    Testbed(
+def test_testbed_model_min_tb():
+    TasteBad(
         name="shepherd",
         id="9955",
         description="lorem",

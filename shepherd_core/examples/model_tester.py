@@ -24,7 +24,7 @@ target_cfgs = [
     # second Instance fully object-oriented
     TargetConfig(
         target_IDs=list(range(2001, 2005)),
-        custom_IDs=list(range(0, 4)),
+        custom_IDs=list(range(7, 18)),
         energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
         virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
         firmware1=Firmware(name="nrf52_demo_rf"),

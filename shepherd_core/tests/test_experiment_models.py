@@ -1,21 +1,20 @@
 import hashlib
-from pathlib import Path
-
-import yaml
 
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
+from shepherd_core.data_models.experiment import EmulationConfig
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import GpioActuation
 from shepherd_core.data_models.experiment import GpioEvent
 from shepherd_core.data_models.experiment import GpioLevel
 from shepherd_core.data_models.experiment import GpioTracing
-from shepherd_core.data_models.experiment import ObserverEmulationConfig
 from shepherd_core.data_models.experiment import PowerTracing
 from shepherd_core.data_models.experiment import SystemLogging
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.testbed import GPIO
 from shepherd_core.data_models.testbed import Target
+
+from .conftest import load_yaml
 
 
 def test_experiment_model_min_tgt_cfg():
@@ -42,19 +41,13 @@ def test_experiment_model_min_exp():
 
 
 def test_experiment_model_yaml_load():
-    exp1_path = Path(__file__).resolve().with_name("./example_config_experiment.yaml")
-    with open(exp1_path) as fix_data:
-        exp1_data = yaml.safe_load(fix_data)
-        print(exp1_data)
-        Experiment(**exp1_data)
+    exp1_data = load_yaml("example_config_experiment.yaml")
+    Experiment(**exp1_data)
 
 
 def test_experiment_model_yaml_comparison():
-    exp1_path = Path(__file__).resolve().with_name("./example_config_experiment.yaml")
-    with open(exp1_path) as fix_data:
-        exp1_data = yaml.safe_load(fix_data)
-        print(exp1_data)
-        exp1 = Experiment(**exp1_data)
+    exp1_data = load_yaml("example_config_experiment.yaml")
+    exp1 = Experiment(**exp1_data)
     exp1_hash = hashlib.sha3_224(str(exp1.dict()).encode("utf-8")).hexdigest()
     print(f"YamlExp Hash {exp1_hash}")
 
@@ -78,7 +71,7 @@ def test_experiment_model_yaml_comparison():
 
 
 def test_experiment_model_min_observer():
-    ObserverEmulationConfig(
+    EmulationConfig(
         input_path="./here",
     )
 
@@ -94,7 +87,7 @@ def test_experiment_model_min_gpiotracing():
 def test_experiment_model_min_gpioevent():
     GpioEvent(
         delay=300,
-        gpio=GPIO(name="GPIO7"),
+        gpio=GPIO(name="GPIO3"),
         level=GpioLevel.high,
     )
 
@@ -104,7 +97,7 @@ def test_experiment_model_min_gpioactuation():
         events=[
             GpioEvent(
                 delay=300,
-                gpio=GPIO(name="GPIO7"),
+                gpio=GPIO(name="GPIO2"),
                 level=GpioLevel.high,
             )
         ]

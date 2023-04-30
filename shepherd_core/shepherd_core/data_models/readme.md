@@ -37,6 +37,7 @@
   - firmwares
   - programmer-ports determine IC
     - memory read - family-code, or write factory
+  - when tracing v_intermediate, also this current, or output?
 - converter for
   - pre-tasks (copying, programming)
   - emulation

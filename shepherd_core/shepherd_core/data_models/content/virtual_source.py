@@ -28,7 +28,6 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
 
     enable_boost: bool = False
     enable_buck: bool = False
-    log_intermediate_voltage: bool = False  # TODO: duplicate in PowerSampling()
 
     interval_startup_delay_drain_ms: confloat(ge=0, le=10e3) = 0
 
@@ -83,18 +82,19 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
         return self.name
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict):
+    def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values
 
     @root_validator(pre=False)
-    def post_validation(cls, values: dict):
+    def post_validation(cls, values: dict) -> dict:
         if values["harvester"].datatype != EnergyDType.ivsample:
             raise ValueError(
                 f"Harvester '{values['harvester'].name}' of "
                 f"Source '{values['name']}' must output iv-samples for emulation "
                 f"(but is '{values['harvester'].datatype}')"
             )
+        # TODO: port rest over
         return values

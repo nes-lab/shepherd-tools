@@ -11,7 +11,6 @@
     # General Config
     enable_boost: false # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     enable_buck: false # if false -> v_output = v_intermediate
-    log_intermediate_voltage: false # record / log virtual intermediate (cap-)voltage and -current (out) instead of output-voltage and -current
 
     interval_startup_delay_drain_ms: 0
 
@@ -117,7 +116,7 @@
     description: TI BQ25504 with integrated boost-converter
     inherit_from: neutral # to complete undefined vars
     enable_boost: true # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
-    log_intermediate_voltage: false # record virtual intermediate (cap-)voltage and -output-current instead of output-voltage and -current
+
     harvester:
       name: mppt_bq_solar # harvester only active if input is "ivcurves"
 
@@ -228,11 +227,3 @@
   fields:
     name: default
     inherit_from: BQ25570s
-
-- model: content.VirtualSource
-  pk: 1034
-  fields:
-    name: BQ25570si
-    comment: records internal StorageCap instead of Output
-    inherit_from: BQ25570s
-    log_intermediate_voltage: true
