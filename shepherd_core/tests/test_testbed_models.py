@@ -54,7 +54,7 @@ def test_testbed_model_min_observer():
         name="sheep120",
         description="not existing",
         ip="127.0.0.1",
-        mac="FF:FF:FF:FF:FF",
+        mac="FF:FF:FF:FF:FF:FF",
         room="IIE72",
         eth_port="375b2",
         cape=Cape(name="cape3"),

@@ -73,33 +73,17 @@ class ObserverEmulationConfig(ShpModel):
     gpio_actuation: Optional[GpioActuation]
     sys_logging: SystemLogging = SystemLogging()
 
-    @root_validator()
-    def validate(cls, values: dict):
-        # TODO: cleanup
-        if isinstance(values, dict):
-            comp = values.get("output_compression")
-        elif isinstance(values, ObserverEmulationConfig):
-            comp = values.output_compression
-        else:
-            raise ValueError("Emulator was not initialized correctly")
-
-        if comp not in compressions_allowed:
-            raise ValueError(
-                f"value is not allowed ({comp} not in {compressions_allowed}",
-            )
-        # TODO: limit paths
-        # TODO: limit date older than now?
-        return values
-
     @root_validator(pre=False)
-    def post_adjust(cls, values: dict):
-        # TODO: remove if unneeded
+    def post_validation(cls, values: dict):
+        # TODO: limit paths
+        has_start = values["time_start"] is not None
+        if has_start and values["time_start"] < datetime.utcnow():
+            raise ValueError("Start-Time for Emulation can't be in the past.")
         return values
 
     def get_parameters(self):
         # TODO: remove if unneeded
         return self.dict()
-        # pass
 
 
 # TODO: herdConfig

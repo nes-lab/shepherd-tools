@@ -6,9 +6,11 @@ from typing import Optional
 from pydantic import EmailStr
 from pydantic import Field
 from pydantic import conlist
-from pydantic import constr
 from pydantic import root_validator
 
+from ..base.content import id_str
+from ..base.content import name_str
+from ..base.content import print_str
 from ..base.shepherd import ShpModel
 from ..testbed.target import Target
 from ..testbed.testbed import Testbed
@@ -21,13 +23,15 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     emulating Energy Environments for Target Nodes"""
 
     # General Properties
-    id: constr(to_lower=True, max_length=16, regex=r"^[\w]*$") = Field(  # noqa: A003
+    id: id_str = Field(  # noqa: A003
         description="Unique ID (AlphaNum > 4 chars)",
         default=hashlib.sha3_224(str(datetime.now()).encode("utf-8")).hexdigest()[-16:],
     )
-    name: constr(max_length=32, regex=r"^[\w\-\s]*$")
-    description: Optional[str] = Field(description="Required for public instances")
-    comment: Optional[str] = None
+    name: name_str
+    description: Optional[print_str] = Field(
+        description="Required for public instances"
+    )
+    comment: Optional[print_str] = None
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access, TODO
@@ -52,26 +56,26 @@ class Experiment(ShpModel, title="Config of an Experiment"):
                 target_ids.append(str(_id).lower())
                 Target(id=_id)
                 # ⤷ this can raise exception for non-existing targets
-        if len(target_ids) != len(set(target_ids)):
-            raise ValueError("Target-IDs in Experiment got used more than once!")
+        if len(target_ids) > len(set(target_ids)):
+            raise ValueError("Target-ID used more than once in Experiment!")
 
         testbed = Testbed(name="shepherd_tud_nes")
         target_observers = []
         for _id in target_ids:
             has_hit = False
             for _observer in testbed.observers:
-                has_tgt_a = isinstance(_observer.target_a, Target)
+                has_tgt_a = _observer.target_a is not None
                 if has_tgt_a and _id == str(_observer.target_a.id).lower():
                     target_observers.append(_observer.id)
                     has_hit = True
                     break
-                has_tgt_b = isinstance(_observer.target_b, Target)
+                has_tgt_b = _observer.target_b is not None
                 if has_tgt_b and _id == str(_observer.target_b.id).lower():
                     target_observers.append(_observer.id)
                     has_hit = True
                     break
             if not has_hit:
                 raise ValueError(f"Target-ID {_id} was not found in Testbed")
-        if len(target_ids) != len(set(target_observers)):
-            raise ValueError("Observers in Experiment got used more than once!")
+        if len(target_ids) > len(set(target_observers)):
+            raise ValueError("Observer used more than once in Experiment!")
         return values

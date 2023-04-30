@@ -93,7 +93,8 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
     def post_validation(cls, values: dict):
         if values["harvester"].datatype != EnergyDType.ivsample:
             raise ValueError(
-                "Harvester of Source must output iv-samples for emulation "
+                f"Harvester '{values['harvester'].name}' of "
+                f"Source '{values['name']}' must output iv-samples for emulation "
                 f"(but is '{values['harvester'].datatype}')"
             )
         return values

@@ -46,3 +46,14 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values
+
+    @root_validator(pre=False)
+    def post_validation(cls, values: dict):
+        # ensure that either pru or sys is used, otherwise instance is considered faulty
+        no_pru = (values["reg_pru"] is None) or (values["pin_pru"] is None)
+        no_sys = (values["reg_sys"] is None) or (values["pin_sys"] is None)
+        if no_pru and no_sys:
+            raise ValueError(
+                f"GPIO-Instance is faulty -> it needs to use pru or sys, content: {values}"
+            )
+        return values

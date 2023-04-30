@@ -8,7 +8,6 @@ from ..base.shepherd import ShpModel
 from ..content.energy_environment import EnergyEnvironment
 from ..content.firmware import Firmware
 from ..content.virtual_source import VirtualSource
-from ..testbed.mcu import MCU
 from ..testbed.target import Target
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
@@ -40,8 +39,8 @@ class TargetConfig(ShpModel, title="Target Config"):
     def post_validation(cls, values: dict):
         for _id in values["target_IDs"]:
             target = Target(id=_id)
-            has_fw1 = isinstance(values["firmware1"], Firmware)
-            has_mcu1 = isinstance(target.mcu1, MCU)
+            has_fw1 = values["firmware1"] is not None
+            has_mcu1 = target.mcu1 is not None
             if has_fw1 and has_mcu1 and values["firmware1"].mcu.id != target.mcu1.id:
                 raise ValueError(
                     f"Firmware1 for MCU of Target-ID '{target.id}' "
@@ -49,11 +48,11 @@ class TargetConfig(ShpModel, title="Target Config"):
                     f"is incompatible (={target.mcu1.name})"
                 )
 
-            has_fw2 = isinstance(values["firmware2"], Firmware)
-            has_mcu2 = isinstance(target.mcu2, MCU)
+            has_fw2 = values["firmware2"] is not None
+            has_mcu2 = target.mcu2 is not None
             if not has_fw2 and has_mcu2:
                 values["firmware2"] = Firmware(name=target.mcu2.fw_name_default)
-                has_fw2 = isinstance(values["firmware2"], Firmware)
+                has_fw2 = values["firmware2"] is not None
             if has_fw2 and has_mcu2 and values["firmware2"].mcu.id != target.mcu2.id:
                 raise ValueError(
                     f"Firmware2 for MCU of Target-ID '{target.id}' "

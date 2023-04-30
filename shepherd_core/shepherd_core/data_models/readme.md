@@ -9,6 +9,7 @@
   - auto-completion with neutral / sensible values
   - checking of inputs and type-casting
   - generate their own schema (for web-forms)
+  - pre-validation
 - experiment-definition should be secure
   - types are limited in size (str)
   - exposes no internal paths

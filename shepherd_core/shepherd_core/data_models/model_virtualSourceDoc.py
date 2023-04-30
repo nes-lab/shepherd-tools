@@ -225,6 +225,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
 
     @root_validator(pre=True)
     def from_fixture(cls, values: dict):
+        values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values

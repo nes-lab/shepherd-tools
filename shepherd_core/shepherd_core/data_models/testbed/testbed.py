@@ -33,4 +33,35 @@ class Testbed(ShpModel):
         values, chain = fixtures.inheritance(values)
         return values
 
-    # TODO: test distinct IPs, capes, MACs, targets, observers, same ethernet-port
+    @root_validator(pre=False)
+    def post_validation(cls, values: dict):
+        observers = []
+        ips = []
+        macs = []
+        capes = []
+        targets = []
+        eth_ports = []
+        for _obs in values["observers"]:
+            observers.append(_obs.id)
+            ips.append(_obs.ip)
+            macs.append(_obs.mac)
+            if _obs.cape is not None:
+                capes.append(_obs.cape)
+            if _obs.target_a is not None:
+                targets.append(_obs.target_a)
+            if _obs.target_b is not None:
+                targets.append(_obs.target_b)
+            eth_ports.append(_obs.eth_port)
+        if len(observers) > len(set(observers)):
+            raise ValueError("Observers used more than once in Testbed")
+        if len(ips) > len(set(ips)):
+            raise ValueError("Observer-IP used more than once in Testbed")
+        if len(macs) > len(set(macs)):
+            raise ValueError("Observers-MAC-Addresse used more than once in Testbed")
+        if len(capes) > len(set(capes)):
+            raise ValueError("Cape used more than once in Testbed")
+        if len(targets) > len(set(targets)):
+            raise ValueError("Target used more than once in Testbed")
+        if len(eth_ports) > len(set(eth_ports)):
+            raise ValueError("Observers-Ethernet-Port used more than once in Testbed")
+        return values

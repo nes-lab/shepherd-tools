@@ -8,8 +8,8 @@
       name: nRF52
     owner: Ingmar
     group: NES Lab
-    open2group: true
-    open2all: false
+    visible2group: true
+    visible2all: false
     created: 2022-12-12 12:12:12
 - model: content.firmware
   pk: 1002
@@ -20,8 +20,8 @@
       name: MSP430FR
     owner: Ingmar
     group: NES Lab
-    open2group: true
-    open2all: false
+    visible2group: true
+    visible2all: false
     created: 2022-12-12 12:12:12
 - model: content.firmware
   pk: 2000
@@ -31,7 +31,7 @@
     description: demo implementation for a simple node that sends readings when energy budget allows it
     data: name.hex
     data_type: path_hex
-    open2all: true
+    visible2all: true
     inherit_from: nrf52_open4group
 - model: content.firmware
   pk: 2001
@@ -41,7 +41,7 @@
     description: default implementation to use nRF as a radio frontend
     data: name.hex
     data_type: path_hex
-    open2all: true
+    visible2all: true
     inherit_from: nrf52_open4group
 - model: content.firmware
   pk: 2002
@@ -69,7 +69,7 @@
     description: practically turned off msp with lowest possible consumption
     data: name.hex
     data_type: path_hex
-    open2all: true
+    visible2all: true
     inherit_from: msp430_open4group
 - model: content.firmware
   pk: 2001
@@ -79,7 +79,7 @@
     description: default implementation to use MSP as a flash storage
     data: name.hex
     data_type: path_hex
-    open2all: true
+    visible2all: true
     inherit_from: msp430_open4group
 - model: content.firmware
   pk: 2002

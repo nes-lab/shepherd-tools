@@ -23,8 +23,8 @@
     wait_cycles: 1 # first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
     owner: Ingmar
     group: NES Lab
-    open2group: true
-    open2all: true
+    visible2group: true
+    visible2all: true
     created: 2022-12-12 12:12:12
 
 - model: content.VirtualHarvester

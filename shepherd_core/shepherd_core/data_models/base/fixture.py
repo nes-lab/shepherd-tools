@@ -134,3 +134,6 @@ class Fixtures:
                     f"Initialization of {self.name} by name or ID failed - {values} is unknown!"
                 )
         return values
+
+    def load_from_testbed(self):
+        pass  # TODO

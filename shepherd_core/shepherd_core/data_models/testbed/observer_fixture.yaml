@@ -70,7 +70,7 @@
     ip: 192.168.165.211
     mac: 18:62:E4:D0:61:4E
     room: II71
-    eth_port: II65_S3_C_4
+    eth_port: II65_S3_C_6
     description: test-deployment, not final
     longitude: 13.722991
     latitude: 51.026536
@@ -88,7 +88,7 @@
     ip: 192.168.165.212
     mac: 18:62:E4:D0:61:4F
     room: II71
-    eth_port: II65_S3_C_4
+    eth_port: II65_S3_C_8
     description: test-deployment, not final
     longitude: 13.722991
     latitude: 51.026536
@@ -104,7 +104,7 @@
     ip: 192.168.165.213
     mac: 18:62:E4:D0:61:50
     room: II71
-    eth_port: II65_S3_C_4
+    eth_port: II65_S3_C_10
     description: test-deployment, not final
     longitude: 13.722991
     latitude: 51.026536
