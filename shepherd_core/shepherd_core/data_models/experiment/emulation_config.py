@@ -9,15 +9,12 @@ from pydantic import root_validator
 
 from ..base.shepherd import ShpModel
 from ..content.virtual_source import VirtualSource
+from ..testbed.cape import TargetPort
+from .experiment import Experiment
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing
 from .observer_features import SystemLogging
-
-
-class TargetPort(str, Enum):
-    A = "A"
-    B = "B"
 
 
 class Compression(str, Enum):
@@ -79,6 +76,10 @@ class EmulationConfig(ShpModel):
         if has_start and values["time_start"] < datetime.utcnow():
             raise ValueError("Start-Time for Emulation can't be in the past.")
         return values
+
+    @classmethod
+    def from_xp(cls, xp: Experiment):
+        pass
 
 
 # TODO: herdConfig

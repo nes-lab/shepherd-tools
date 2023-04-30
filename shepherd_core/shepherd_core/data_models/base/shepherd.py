@@ -34,6 +34,7 @@ class ShpModel(BaseModel):
         anystr_strip_whitespace = True  # strip leading & trailing whitespaces
         use_enum_values = True  # cleaner export of enum-fields
         allow_inf_nan = False  # float without +-inf or NaN
+        underscore_attrs_are_private = True  # allows using them
 
         # Options:
         # - https://docs.pydantic.dev/usage/schema/#field-customization

@@ -1,6 +1,6 @@
+from ..testbed.cape import TargetPort
 from .emulation_config import Compression
 from .emulation_config import EmulationConfig
-from .emulation_config import TargetPort
 from .experiment import Experiment
 from .observer_features import GpioActuation
 from .observer_features import GpioEvent

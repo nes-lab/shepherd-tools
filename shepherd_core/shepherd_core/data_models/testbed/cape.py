@@ -1,5 +1,6 @@
 from datetime import date
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 from typing import Union
@@ -15,6 +16,11 @@ from ..base.shepherd import ShpModel
 
 fixture_path = Path(__file__).resolve().with_name("cape_fixture.yaml")
 fixtures = Fixtures(fixture_path, "testbed.cape")
+
+
+class TargetPort(str, Enum):
+    A = "A"
+    B = "B"
 
 
 class Cape(ShpModel, title="Shepherd-Cape"):

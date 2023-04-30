@@ -14,6 +14,7 @@ from ..base.content import safe_str
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 from .cape import Cape
+from .cape import TargetPort
 from .target import Target
 
 fixture_path = Path(__file__).resolve().with_name("observer_fixture.yaml")
@@ -66,3 +67,9 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 f"Observer '{values['name']}' is faulty " f"-> has targets but no cape"
             )
         return values
+
+    def get_target_port(self, target_id: int) -> TargetPort:
+        if target_id == self.target_a.id:
+            return TargetPort.A
+        if target_id == self.target_b.id:
+            return TargetPort.B

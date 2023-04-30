@@ -67,3 +67,13 @@ class Testbed(ShpModel):
         if len(eth_ports) > len(set(eth_ports)):
             raise ValueError("Observers-Ethernet-Port used more than once in Testbed")
         return values
+
+    def get_observer(self, target_id: int):
+        for _observer in self.observers:
+            has_tgt_a = _observer.target_a is not None
+            if has_tgt_a and target_id == _observer.target_a.id:
+                return _observer
+            has_tgt_b = _observer.target_b is not None
+            if has_tgt_b and target_id == _observer.target_b.id:
+                return _observer
+        raise ValueError(f"Target-ID {target_id} was not found in Testbed")

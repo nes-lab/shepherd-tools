@@ -33,6 +33,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access, TODO
+    _owner: name_str
 
     # feedback
     email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account
@@ -48,11 +49,17 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
+        cls.validate_targets(values)
+        cls.validate_observers(values)
+        return values
+
+    @staticmethod
+    def validate_targets(values: dict):
         target_ids = []
         custom_ids = []
         for _config in values["target_configs"]:
             for _id in _config.target_IDs:
-                target_ids.append(str(_id).lower())
+                target_ids.append(_id)
                 Target(id=_id)
                 # ⤷ this can raise exception for non-existing targets
             if _config.custom_IDs is not None:
@@ -66,23 +73,31 @@ class Experiment(ShpModel, title="Config of an Experiment"):
                 "Custom Target-ID are faulty (some form of id-collisions)!"
             )
 
+    @staticmethod
+    def validate_observers(values: dict):
+        target_ids = []
+        for _config in values["target_configs"]:
+            for _id in _config.target_IDs:
+                target_ids.append(_id)
+
         testbed = Testbed(name="shepherd_tud_nes")
-        target_observers = []
+        obs_ids = []
         for _id in target_ids:
-            has_hit = False
-            for _observer in testbed.observers:
-                has_tgt_a = _observer.target_a is not None
-                if has_tgt_a and _id == str(_observer.target_a.id).lower():
-                    target_observers.append(_observer.id)
-                    has_hit = True
-                    break
-                has_tgt_b = _observer.target_b is not None
-                if has_tgt_b and _id == str(_observer.target_b.id).lower():
-                    target_observers.append(_observer.id)
-                    has_hit = True
-                    break
-            if not has_hit:
-                raise ValueError(f"Target-ID {_id} was not found in Testbed")
-        if len(target_ids) > len(set(target_observers)):
-            raise ValueError("Observer used more than once in Experiment!")
-        return values
+            obs_ids.append(testbed.get_observer(_id).id)
+        if len(target_ids) > len(set(obs_ids)):
+            raise ValueError(
+                "Observer used more than once in Experiment "
+                "-> only 1 target per observer!"
+            )
+
+    def get_target_ids(self) -> list:
+        target_ids = []
+        for _config in self.target_configs:
+            for _id in _config.target_IDs:
+                target_ids.append(_id)
+        return target_ids
+
+    def get_target_config(self, target_id: int) -> TargetConfig:
+        for _config in self.target_configs:
+            if target_id in _config.target_IDs:
+                return _config
