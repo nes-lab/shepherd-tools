@@ -62,7 +62,7 @@ class ShpModel(BaseModel):
         #  -> test, non-functioning atm
 
     @classmethod  # @root_validator(pre=True, allow_reuse=True)
-    def pre_snitch(cls, values):
+    def pre_snitch(cls, values):  # TODO: useless
         values["_min_dict"] = values
         return values
 

@@ -1,6 +1,6 @@
 from shepherd_core.data_models.content import VirtualSource
-from shepherd_core.data_models.experiment import EmulationConfig
 from shepherd_core.data_models.experiment import Experiment
+from shepherd_core.data_models.task import EmulationTask
 from shepherd_core.data_models.testbed.testbed import Testbed as TasteBad
 
 from .conftest import load_yaml
@@ -10,7 +10,7 @@ from .conftest import load_yaml
 
 def test_example_emu():
     data_dict = load_yaml("example_config_emulator.yml")
-    EmulationConfig(**data_dict["parameters"])
+    EmulationTask(**data_dict["parameters"])
 
 
 def test_example_exp():

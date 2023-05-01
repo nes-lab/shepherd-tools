@@ -1,6 +1,4 @@
 from ..testbed.cape import TargetPort
-from .emulation_config import Compression
-from .emulation_config import EmulationConfig
 from .experiment import Experiment
 from .observer_features import GpioActuation
 from .observer_features import GpioEvent
@@ -19,11 +17,9 @@ __all__ = [
     "PowerTracing",
     "GpioTracing",
     "GpioActuation",
-    "GpioLevel",
     "GpioEvent",
     "SystemLogging",
-    # Config for Observer  # todo: add programmer + sheep
-    "EmulationConfig",
+    # Enums
+    "GpioLevel",
     "TargetPort",
-    "Compression",
 ]

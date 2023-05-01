@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 
@@ -24,9 +25,11 @@ class Testbed(ShpModel):
     comment: Optional[safe_str] = None
 
     observers: conlist(item_type=Observer, min_items=1, max_items=64)
+
     shared_storage: bool = True
     data_on_server: Path
     data_on_observer: Path
+    pre_duration: timedelta = timedelta(minutes=5)
     # TODO: one BBone is currently time-keeper
 
     @root_validator(pre=True)

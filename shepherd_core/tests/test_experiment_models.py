@@ -2,7 +2,6 @@ import hashlib
 
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
-from shepherd_core.data_models.experiment import EmulationConfig
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import GpioActuation
 from shepherd_core.data_models.experiment import GpioEvent
@@ -68,12 +67,6 @@ def test_experiment_model_yaml_comparison():
     exp2_hash = hashlib.sha3_224(str(exp2.dict()).encode("utf-8")).hexdigest()
     print(f"  PyExp Hash {exp2_hash}")
     assert exp1_hash == exp2_hash
-
-
-def test_experiment_model_min_observer():
-    EmulationConfig(
-        input_path="./here",
-    )
 
 
 def test_experiment_model_min_pwrtracing():

@@ -9,9 +9,10 @@ from .virtual_source import VirtualSource
 
 __all__ = [
     "EnergyEnvironment",
-    "EnergyDType",
     "VirtualSource",
     "VirtualHarvester",
     "Firmware",
+    # Enums
+    "EnergyDType",
     "FirmwareDType",
 ]

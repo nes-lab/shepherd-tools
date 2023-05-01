@@ -9,6 +9,7 @@ from ..content.energy_environment import EnergyEnvironment
 from ..content.firmware import Firmware
 from ..content.virtual_source import VirtualSource
 from ..testbed.target import Target
+from ..testbed.target import id_int
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing
@@ -17,10 +18,8 @@ from .observer_features import PowerTracing
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration for Target Nodes (DuT)"""
 
-    target_IDs: conlist(item_type=conint(ge=0, lt=2**16), min_items=1, max_items=64)
-    custom_IDs: Optional[
-        conlist(item_type=conint(ge=0, lt=2**16), min_items=1, max_items=64)
-    ]
+    target_IDs: conlist(item_type=id_int, min_items=1, max_items=64)
+    custom_IDs: Optional[conlist(item_type=id_int, min_items=1, max_items=64)]
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
 
     energy_env: EnergyEnvironment  # alias: input
@@ -78,3 +77,8 @@ class TargetConfig(ShpModel, title="Target Config"):
             )
         # TODO: if custom ids present, firmware must be ELF
         return values
+
+    def get_custom_id(self, target_id: int):
+        if target_id in self.target_IDs:
+            return self.custom_IDs[self.target_IDs.index(target_id)]
+        return None

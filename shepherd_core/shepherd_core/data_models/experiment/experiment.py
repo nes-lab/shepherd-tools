@@ -33,7 +33,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access, TODO
-    _owner: name_str
+    owner_id: Optional[id_str]  # UUID?
 
     # feedback
     email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account

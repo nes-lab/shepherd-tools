@@ -9,12 +9,12 @@ from pydantic import root_validator
 
 from ..base.shepherd import ShpModel
 from ..content.virtual_source import VirtualSource
+from ..experiment.experiment import Experiment
+from ..experiment.observer_features import GpioActuation
+from ..experiment.observer_features import GpioTracing
+from ..experiment.observer_features import PowerTracing
+from ..experiment.observer_features import SystemLogging
 from ..testbed.cape import TargetPort
-from .experiment import Experiment
-from .observer_features import GpioActuation
-from .observer_features import GpioTracing
-from .observer_features import PowerTracing
-from .observer_features import SystemLogging
 
 
 class Compression(str, Enum):
@@ -22,10 +22,10 @@ class Compression(str, Enum):
     gzip1 = 1  # higher compr & load
 
 
-compressions_allowed: list = [None, "lzf", 1]  # is it still needed?
+compressions_allowed: list = [None, "lzf", 1]  # TODO: is it still needed?
 
 
-class EmulationConfig(ShpModel):
+class EmulationTask(ShpModel):
     """Configuration for the Observer in Emulation-Mode"""
 
     # General config
@@ -79,6 +79,7 @@ class EmulationConfig(ShpModel):
 
     @classmethod
     def from_xp(cls, xp: Experiment):
+        # TODO
         pass
 
 

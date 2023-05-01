@@ -1,15 +1,14 @@
 from pathlib import Path
-from typing import Optional
 
 from pydantic import confloat
-from pydantic import conint
 
 from ..base.shepherd import ShpModel
+from ..experiment.experiment import Experiment
+from ..experiment.target_config import TargetConfig
 from ..testbed.mcu import ProgrammerProtocol
-from .experiment import Experiment
 
 
-class ProgrammerConfig(ShpModel):
+class ProgrammerTask(ShpModel):
     firmware_file: Path
     sel_a: bool = True
     voltage: confloat(ge=2, lt=4) = 3
@@ -17,8 +16,11 @@ class ProgrammerConfig(ShpModel):
     protocol: ProgrammerProtocol
     prog1: bool = True
     simulate: bool = False
-    custom_id: Optional[conint(ge=0, lt=2**16)]
 
     @classmethod
-    def from_xp(cls, xp: Experiment):
+    def from_xp(cls, xp: Experiment, tcfg: TargetConfig, prog_port: int):
+        fw = tcfg.firmware1 if prog_port == 1 else tcfg.firmware2
+        if fw is None:
+            return None
+
         pass
