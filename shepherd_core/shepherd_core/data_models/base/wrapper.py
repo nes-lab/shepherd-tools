@@ -1,15 +1,16 @@
+from typing import Optional
+
+from pydantic import BaseModel
 from pydantic import conint
-from pydantic import constr
-
-from .shepherd import ShpModel
 
 
-class Wrapper(ShpModel):
-    """Prototype for enabling one web-interface for all models with dynamic typecasting"""
+class Wrapper(BaseModel):
+    """Prototype for enabling one web- & file-interface for
+    all models with dynamic typecasting"""
 
     # initial recording
-    model: constr(max_length=32)
+    model: str
     # ⤷ model-name
-    id: conint(ge=0)  # noqa: A003
+    id: Optional[conint(ge=0, lt=2**128)]  # noqa: A003
     # ⤷ unique id, 'pk' is django-style
     fields: dict  # ShpModel

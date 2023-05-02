@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import conlist
 from pydantic import root_validator
 
-from ..base.content import id_str
+from ..base.content import id_int
 from ..base.content import name_str
 from ..base.content import safe_str
 from ..base.fixture import Fixtures
@@ -13,13 +13,13 @@ from ..base.shepherd import ShpModel
 from .observer import Observer
 
 fixture_path = Path(__file__).resolve().with_name("testbed_fixture.yaml")
-fixtures = Fixtures(fixture_path, "testbed.testbed")
+fixtures = Fixtures(fixture_path, "testbed")
 
 
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: id_str  # noqa: A003
+    id: id_int  # noqa: A003
     name: name_str
     description: safe_str
     comment: Optional[safe_str] = None

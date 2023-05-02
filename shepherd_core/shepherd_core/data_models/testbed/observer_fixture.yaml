@@ -1,6 +1,6 @@
 --- # add with >>> python manage.py loaddata <fixturename>
-- model: testbed.observer
-  pk: 1001
+- model: observer
+  id: 1001
   fields:
     name: sheep01
     ip: 192.168.165.195
@@ -15,8 +15,8 @@
     target_a:
       name: T_nRF52_2021_001
     created: 2022-12-12 12:12:12
-- model: testbed.observer
-  pk: 1002
+- model: observer
+  id: 1002
   fields:
     name: sheep02
     ip: 192.168.165.196
@@ -31,8 +31,8 @@
     target_a:
       name: T_nRF52_2021_002
     created: 2022-12-12 12:12:12
-- model: testbed.observer
-  pk: 1003
+- model: observer
+  id: 1003
   fields:
     name: sheep03
     ip: 192.168.165.197
@@ -47,8 +47,8 @@
     target_a:
       name: T_nRF52_2021_003
     created: 2022-12-12 12:12:12
-- model: testbed.observer
-  pk: 1004
+- model: observer
+  id: 1004
   fields:
     name: sheep04
     ip: 192.168.165.198
@@ -63,8 +63,8 @@
     target_a:
       name: T_nRF52_2021_004
     created: 2022-12-12 12:12:12
-- model: testbed.observer
-  pk: 1011
+- model: observer
+  id: 1011
   fields:
     name: sheep11
     ip: 192.168.165.211
@@ -81,8 +81,8 @@
     target_b:
       name: T_nRF52_FRAM_2023_001
     created: 2022-12-12 12:12:12
-- model: testbed.observer
-  pk: 1012
+- model: observer
+  id: 1012
   fields:
     name: sheep12
     ip: 192.168.165.212
@@ -97,8 +97,8 @@
     target_b:
       name: T_nRF52_FRAM_2023_002
     created: 2022-12-12 12:12:12
-- model: testbed.observer
-  pk: 1013
+- model: observer
+  id: 1013
   fields:
     name: sheep13
     ip: 192.168.165.213

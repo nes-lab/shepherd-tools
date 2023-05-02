@@ -1,5 +1,5 @@
-- model: content.EnergyEnvironment
-  pk: 1001
+- model: EnergyEnvironment
+  id: 1001
   fields:
     name: SolarSunny
     description: Sunny Day with 4 sq-cm Solar Cell
@@ -15,8 +15,8 @@
     visible2all: true
     created: 2022-12-12 12:12:12
 
-- model: content.EnergyEnvironment
-  pk: 1002
+- model: EnergyEnvironment
+  id: 1002
   fields:
     name: ThermoelectricWashingMachine
     description: Energy harvested from side of machine during washing  & tumbling

@@ -1,4 +1,3 @@
-import hashlib
 from datetime import datetime
 from datetime import timedelta
 from typing import Optional
@@ -8,7 +7,8 @@ from pydantic import Field
 from pydantic import conlist
 from pydantic import root_validator
 
-from ..base.content import id_str
+from ..base.content import id_default
+from ..base.content import id_int
 from ..base.content import name_str
 from ..base.content import safe_str
 from ..base.shepherd import ShpModel
@@ -23,9 +23,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     emulating Energy Environments for Target Nodes"""
 
     # General Properties
-    id: id_str = Field(  # noqa: A003
-        description="Unique ID (AlphaNum > 4 chars)",
-        default=hashlib.sha3_224(str(datetime.now()).encode("utf-8")).hexdigest()[-16:],
+    id: id_int = Field(  # noqa: A003
+        description="Unique ID",
+        default_factory=id_default,
     )
     name: name_str
     description: Optional[safe_str] = Field(description="Required for public instances")
@@ -33,7 +33,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access, TODO
-    owner_id: Optional[id_str]  # UUID?
+    owner_id: Optional[id_int]  # UUID?
 
     # feedback
     email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account

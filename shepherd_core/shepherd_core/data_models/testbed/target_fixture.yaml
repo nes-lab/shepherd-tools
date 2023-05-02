@@ -1,6 +1,6 @@
 ---
-- model: testbed.target
-  pk: 1002
+- model: target
+  id: 1002
   fields:
     name: target_nRF52_v21r0
     version: v2.1r0
@@ -10,8 +10,8 @@
       name: nRF52
     mcu2: null
     created: 2022-12-12 12:12:12
-- model: testbed.target
-  pk: 1003
+- model: target
+  id: 1003
   fields:
     name: target_nRF52_FRAM_v10r0
     version: v1.0r0
@@ -22,43 +22,43 @@
     mcu2:
       name: MSP430FR
     created: 2022-12-12 12:12:12
-- model: testbed.target
-  pk: 2001
+- model: target
+  id: 2001
   fields:
     name: T_nRF52_2021_001  # replace with proper name
     inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 2002
+- model: target
+  id: 2002
   fields:
     name: T_nRF52_2021_002
     inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 2003
+- model: target
+  id: 2003
   fields:
     name: T_nRF52_2021_003
     inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 2004
+- model: target
+  id: 2004
   fields:
     name: T_nRF52_2021_004
     inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 2005
+- model: target
+  id: 2005
   fields:
     name: T_nRF52_2021_005
     inherit_from: target_nRF52_v21r0
-- model: testbed.target
-  pk: 3001
+- model: target
+  id: 3001
   fields:
     name: T_nRF52_FRAM_2023_001
     inherit_from: target_nRF52_FRAM_v10r0
-- model: testbed.target
-  pk: 3002
+- model: target
+  id: 3002
   fields:
     name: T_nRF52_FRAM_2023_002
     inherit_from: target_nRF52_FRAM_v10r0
-- model: testbed.target
-  pk: 3003
+- model: target
+  id: 3003
   fields:
     name: T_nRF52_FRAM_2023_003
     inherit_from: target_nRF52_FRAM_v10r0

@@ -5,23 +5,24 @@ from typing import Optional
 from pydantic import EmailStr
 from pydantic import conlist
 
-from ..base.content import id_str
+from ..base.content import id_int
 from ..base.content import name_str
 from ..base.content import safe_str
 from ..base.shepherd import ShpModel
 from ..content.firmware import Firmware
 from ..experiment.experiment import Experiment
-from ..testbed.target import id_int
+from ..testbed.target import id_int16
 from ..testbed.testbed import Testbed
 from .emulation import Compression
 from .emulation import EmulationTask
 from .programmer import ProgrammerTask
 
 __all__ = [
+    # Hierarchical Order
     "TestbedTasks",
     "ObserverTasks",
-    "EmulationTask",
     "ProgrammerTask",
+    "EmulationTask",
     # Enums
     "Compression",
 ]
@@ -29,7 +30,7 @@ __all__ = [
 
 class ObserverTasks(ShpModel):
     observer: name_str
-    owner_id: id_str
+    owner_id: id_int
 
     # PRE PROCESS
     pre_start: datetime
@@ -39,7 +40,7 @@ class ObserverTasks(ShpModel):
     fw2: Optional[Firmware]
     fw1_name: safe_str
     fw2_name: safe_str
-    custom_id: id_int
+    custom_id: id_int16
     # actual programming
     prog1: Optional[ProgrammerTask]
     prog1: Optional[ProgrammerTask]

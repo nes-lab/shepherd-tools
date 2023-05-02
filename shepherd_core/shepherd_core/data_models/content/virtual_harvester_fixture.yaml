@@ -3,8 +3,8 @@
 # - look into the implementation to see which parameters are used
 # - base for neutral fallback values if provided yml is sparse
 # - -> it is encouraged to omit redundant parameters in your own implementation
-- model: content.VirtualHarvester
-  pk: 1000
+- model: VirtualHarvester
+  id: 1000
   fields:
     name: neutral
     description: Can NOT be used as a valid harvester
@@ -27,8 +27,8 @@
     visible2all: true
     created: 2022-12-12 12:12:12
 
-- model: content.VirtualHarvester
-  pk: 1010
+- model: VirtualHarvester
+  id: 1010
   fields:
     name: ivcurve
     description: Postpone harvesting by sampling ivcurves (voltage stepped as sawtooth-wave)
@@ -43,14 +43,14 @@
     # todo: also add switch for sawtooth- vs triangle-wave?
     # todo: could also include a version with dynamic upper-boundary, varied if voc is reached very early
 
-- model: content.VirtualHarvester
-  pk: 1011
+- model: VirtualHarvester
+  id: 1011
   fields:
     name: ivcurves  # synonym
     inherit_from: ivcurve
 
-- model: content.VirtualHarvester
-  pk: 1012
+- model: VirtualHarvester
+  id: 1012
   fields:
     name: iv1000
     comment: Name relates to curves per second
@@ -58,8 +58,8 @@
     window_size: 100
     wait_cycles: 0
 
-- model: content.VirtualHarvester
-  pk: 1013
+- model: VirtualHarvester
+  id: 1013
   fields:
     name: iv110
     comment: Between 50 & 60 Hz line-frequency to avoid standing waves
@@ -67,8 +67,8 @@
     window_size: 909
     wait_cycles: 0
 
-- model: content.VirtualHarvester
-  pk: 1020
+- model: VirtualHarvester
+  id: 1020
   fields:
     name: isc_voc
     description: Postpone harvesting by sampling short circuit current & open circuit voltage
@@ -76,8 +76,8 @@
     datatype: isc_voc
     wait_cycles: 1  # results in 25 kHz (isc, wait, voc, wait)
 
-- model: content.VirtualHarvester
-  pk: 1030
+- model: VirtualHarvester
+  id: 1030
   fields:
     name: cv20
     description: Harvesting with constant Voltage
@@ -85,22 +85,22 @@
     datatype: ivsample
     voltage_mV: 2000
 
-- model: content.VirtualHarvester
-  pk: 1031
+- model: VirtualHarvester
+  id: 1031
   fields:
     name: cv24
     inherit_from: cv20
     voltage_mV: 2400
 
-- model: content.VirtualHarvester
-  pk: 1032
+- model: VirtualHarvester
+  id: 1032
   fields:
     name: cv33
     inherit_from: cv20
     voltage_mV: 3300
 
-- model: content.VirtualHarvester
-  pk: 1040
+- model: VirtualHarvester
+  id: 1040
   fields:
     name: mppt_voc
     description: MPPT based on open circuit voltage for solar
@@ -111,8 +111,8 @@
     duration_ms: 1.2     # solar can overshoot when load is removed
     current_limit_uA: 5  # boundary for detecting open circuit in emulated version (working on IV-Curves)
 
-- model: content.VirtualHarvester
-  pk: 1041
+- model: VirtualHarvester
+  id: 1041
   fields:
     name: mppt_bq
     description: MPPT of TI BQ-Converters for solar
@@ -121,8 +121,8 @@
     interval_ms: 16000  # between measurements
     duration_ms: 256    # of measurement
 
-- model: content.VirtualHarvester
-  pk: 1042
+- model: VirtualHarvester
+  id: 1042
   fields:
     name: mppt_bqt
     description: MPPT of TI BQ-Converters for thermoelectric
@@ -131,20 +131,20 @@
     interval_ms: 16000  # between measurements
     duration_ms: 256    # of measurement
 
-- model: content.VirtualHarvester
-  pk: 1043
+- model: VirtualHarvester
+  id: 1043
   fields:
     name: mppt_bq_solar # explicit naming
     inherit_from: mppt_bq
 
-- model: content.VirtualHarvester
-  pk: 1044
+- model: VirtualHarvester
+  id: 1044
   fields:
     name: mppt_bq_thermoelectric # explicit naming
     inherit_from: mppt_bqt
 
-- model: content.VirtualHarvester
-  pk: 1045
+- model: VirtualHarvester
+  id: 1045
   fields:
     name: mppt_po
     description: MPPT based on perturb & observe algorithm
@@ -155,8 +155,8 @@
     voltage_step_mV: 10
     interval_ms: 18   # between steps
 
-- model: content.VirtualHarvester
-  pk: 1046
+- model: VirtualHarvester
+  id: 1046
   fields:
     name: mppt_opt
     description: Power-Otimum with very fast PO-Variant (harvesting) or special max-pwr-picker (emulator / ivcurve)

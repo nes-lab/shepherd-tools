@@ -1,5 +1,5 @@
-- model: testbed.testbed
-  pk: 1337
+- model: testbed
+  id: 1337
   fields:
     name: shepherd_tud_nes
     description: "Shepherd Testbed of the NES Lab Group at TU Dresden, Germany"

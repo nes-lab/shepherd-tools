@@ -5,6 +5,7 @@ from typing import Optional
 import yaml
 
 from ...logger import logger
+from .wrapper import Wrapper
 
 # Proposed field-name:
 # - inheritance
@@ -27,18 +28,18 @@ class Fixtures:
             for fixture in fixtures:
                 if not isinstance(fixture, dict):
                     continue
-                if "fields" not in fixture or "model" not in fixture:
+                fwrap = Wrapper(**fixture)
+                if fwrap.model.lower() != model_name.lower():
                     continue
-                if fixture["model"].lower() != model_name.lower():
+                if "name" not in fwrap.fields:
                     continue
-                if "name" not in fixture["fields"]:
-                    continue
-                name = str(fixture["fields"]["name"]).lower()
-                if "id" not in fixture["fields"]:
-                    # pk-field (django) acts as an id if none is found
-                    fixture["fields"]["id"] = str(fixture["pk"]).lower()
-                _id = str(fixture["fields"]["id"]).lower()
-                data = fixture["fields"]
+                name = str(fwrap.fields["name"]).lower()
+                if "id" not in fwrap.fields:
+                    fwrap.fields["id"] = fwrap.id
+                _id = fwrap.fields["id"]
+                data = (
+                    fwrap.fields
+                )  # TODO: could get easier if not model_name but class used
                 self.elements_by_name[name] = data
                 self.elements_by_id[_id] = data
         # for iterator
@@ -102,9 +103,9 @@ class Fixtures:
             fixture_base = copy.copy(self.elements_by_name[fixture_name])
             post_process = True
 
-        elif "id" in values and str(values.get("id")).lower() in self.elements_by_id:
-            fixture_id = str(values.get("id")).lower()
-            fixture_base = copy.copy(self.elements_by_id[fixture_id])
+        elif "id" in values and values["id"] in self.elements_by_id:
+            _id = values["id"]
+            fixture_base = copy.copy(self.elements_by_id[_id])
             post_process = True
 
         if post_process:
@@ -124,10 +125,10 @@ class Fixtures:
     def lookup(self, values: dict) -> dict:
         """init by name/id for none existing instances raise Exception"""
         if len(values) == 1 and list(values.keys())[0] in ["id", "name"]:
-            value = str(list(values.values())[0]).lower()
-            if value in self.elements_by_name:
+            value = list(values.values())[0]
+            if isinstance(value, str) and value.lower() in self.elements_by_name:
                 values = {"name": value}
-            elif value in self.elements_by_id:
+            elif isinstance(value, int) and value in self.elements_by_id:
                 values = {"id": value}
             else:
                 raise ValueError(

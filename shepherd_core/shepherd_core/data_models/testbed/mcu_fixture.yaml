@@ -1,6 +1,6 @@
 --- # add with >>> python manage.py loaddata <fixturename>
-- model: testbed.mcu
-  pk: 1001
+- model: mcu
+  id: 1001
   fields:
     name: nRF52
     description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
@@ -8,8 +8,8 @@
     core: nRF52840
     programmer: SWD
     fw_name_default: nrf52_demo_rf
-- model: testbed.mcu
-  pk: 1002
+- model: mcu
+  id: 1002
   fields:
     name: MSP430FR
     description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM

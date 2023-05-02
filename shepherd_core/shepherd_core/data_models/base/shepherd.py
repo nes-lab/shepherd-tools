@@ -7,6 +7,8 @@ import yaml
 from pydantic import BaseModel
 from pydantic import Extra
 
+from .wrapper import Wrapper
+
 
 def repr_str(dumper, data):
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
@@ -48,18 +50,36 @@ class ShpModel(BaseModel):
         with open(Path(path).with_suffix(".yaml"), "w") as f:
             f.write(model_yaml)
 
-    def dump_dict(self, path: Union[str, Path], minimal: bool = False):
+    def to_file(self, path: Union[str, Path], minimal: bool = False):
         if minimal:
             model_dict = self._min_dict
         else:
             model_dict = self.dict()
-        model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
-        with open(Path(path).with_suffix(".yaml"), "w") as f:
+        model_wrap = Wrapper(
+            model=type(self).__name__,
+            id=model_dict.get("id"),
+            fields=model_dict,
+        )
+        model_yaml = yaml.dump(
+            model_wrap.dict(), default_flow_style=False, sort_keys=False
+        )
+        model_path = Path(path).with_suffix(".yaml")
+        with open(model_path, "w") as f:
             f.write(model_yaml)
+        return model_path
         # TODO: it would be useful to store a minimal set
         #    - current dict cleaned from default values
         #    - better: the init-args (probably name or id)
         #  -> test, non-functioning atm
+
+    @classmethod
+    def from_file(cls, path: Union[str, Path]):
+        with open(Path(path)) as shp_file:
+            shp_dict = yaml.safe_load(shp_file)
+        shp_wrap = Wrapper(**shp_dict)
+        if shp_wrap.model != cls.__name__:
+            raise ValueError("Model in file does not match the used one")
+        return cls(**shp_wrap.fields)
 
     @classmethod  # @root_validator(pre=True, allow_reuse=True)
     def pre_snitch(cls, values):  # TODO: useless

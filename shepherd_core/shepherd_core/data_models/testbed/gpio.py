@@ -6,14 +6,14 @@ from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
-from ..base.content import id_str
+from ..base.content import id_int
 from ..base.content import name_str
 from ..base.content import safe_str
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 
 fixture_path = Path(__file__).resolve().with_name("gpio_fixture.yaml")
-fixtures = Fixtures(fixture_path, "testbed.gpio")
+fixtures = Fixtures(fixture_path, "gpio")
 
 
 class Direction(str, Enum):
@@ -28,7 +28,7 @@ class Direction(str, Enum):
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component"""
 
-    id: id_str  # noqa: A003
+    id: id_int  # noqa: A003
     name: name_str
     description: Optional[safe_str] = None
     comment: Optional[safe_str] = None

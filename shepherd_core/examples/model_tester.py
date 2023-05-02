@@ -39,4 +39,9 @@ xperi = Experiment(
     target_configs=target_cfgs,
 )
 
-xperi.dump_dict("experiment_dict.yaml")
+xperi.to_file("experiment_dict.yaml")
+
+xperi2 = Experiment.from_file("experiment_dict.yaml")
+
+print(f"xp1 hash: {xperi.get_hash()}")
+print(f"xp2 hash: {xperi2.get_hash()}")

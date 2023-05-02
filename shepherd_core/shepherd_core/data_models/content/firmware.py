@@ -10,7 +10,7 @@ from ..base.fixture import Fixtures
 from ..testbed.mcu import MCU
 
 fixture_path = Path(__file__).resolve().with_name("firmware_fixture.yaml")
-fixtures = Fixtures(fixture_path, "content.firmware")
+fixtures = Fixtures(fixture_path, "firmware")
 
 
 class FirmwareDType(str, Enum):

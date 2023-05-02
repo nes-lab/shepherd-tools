@@ -9,7 +9,7 @@ from ..content.energy_environment import EnergyEnvironment
 from ..content.firmware import Firmware
 from ..content.virtual_source import VirtualSource
 from ..testbed.target import Target
-from ..testbed.target import id_int
+from ..testbed.target import id_int16
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing
@@ -18,8 +18,8 @@ from .observer_features import PowerTracing
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration for Target Nodes (DuT)"""
 
-    target_IDs: conlist(item_type=id_int, min_items=1, max_items=64)
-    custom_IDs: Optional[conlist(item_type=id_int, min_items=1, max_items=64)]
+    target_IDs: conlist(item_type=id_int16, min_items=1, max_items=64)
+    custom_IDs: Optional[conlist(item_type=id_int16, min_items=1, max_items=64)]
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
 
     energy_env: EnergyEnvironment  # alias: input

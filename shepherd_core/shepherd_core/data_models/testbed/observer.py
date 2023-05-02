@@ -8,7 +8,7 @@ from pydantic import confloat
 from pydantic import constr
 from pydantic import root_validator
 
-from ..base.content import id_str
+from ..base.content import id_int
 from ..base.content import name_str
 from ..base.content import safe_str
 from ..base.fixture import Fixtures
@@ -18,7 +18,7 @@ from .cape import TargetPort
 from .target import Target
 
 fixture_path = Path(__file__).resolve().with_name("observer_fixture.yaml")
-fixtures = Fixtures(fixture_path, "testbed.observer")
+fixtures = Fixtures(fixture_path, "observer")
 
 mac_str = constr(max_length=17, regex=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
 
@@ -26,7 +26,7 @@ mac_str = constr(max_length=17, regex=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})
 class Observer(ShpModel, title="Shepherd-Sheep"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: id_str  # noqa: A003
+    id: id_int  # noqa: A003
     name: name_str
     description: safe_str
     comment: Optional[safe_str] = None

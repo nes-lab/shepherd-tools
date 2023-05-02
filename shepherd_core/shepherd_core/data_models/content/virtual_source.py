@@ -12,7 +12,7 @@ from .energy_environment import EnergyDType
 from .virtual_harvester import VirtualHarvester
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
-fixtures = Fixtures(fixture_path, "content.VirtualSource")
+fixtures = Fixtures(fixture_path, "VirtualSource")
 
 
 class VirtualSource(ContentModel, title="Config for the virtual Source"):

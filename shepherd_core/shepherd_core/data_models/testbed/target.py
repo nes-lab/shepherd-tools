@@ -14,15 +14,15 @@ from ..base.shepherd import ShpModel
 from .mcu import MCU
 
 fixture_path = Path(__file__).resolve().with_name("target_fixture.yaml")
-fixtures = Fixtures(fixture_path, "testbed.target")
+fixtures = Fixtures(fixture_path, "target")
 
-id_int = conint(ge=0, lt=2**16)
+id_int16 = conint(ge=0, lt=2**16)
 
 
 class Target(ShpModel, title="Target Node (DuT)"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: id_int  # noqa: A003
+    id: id_int16  # noqa: A003
     name: name_str
     version: name_str
     description: safe_str

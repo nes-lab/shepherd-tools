@@ -40,12 +40,12 @@ def test_experiment_model_min_exp():
 
 
 def test_experiment_model_yaml_load():
-    exp1_data = load_yaml("example_config_experiment.yaml")
+    exp1_data = load_yaml("example_config_experiment_alternative.yaml")
     Experiment(**exp1_data)
 
 
 def test_experiment_model_yaml_comparison():
-    exp1_data = load_yaml("example_config_experiment.yaml")
+    exp1_data = load_yaml("example_config_experiment_alternative.yaml")
     exp1 = Experiment(**exp1_data)
     exp1_hash = hashlib.sha3_224(str(exp1.dict()).encode("utf-8")).hexdigest()
     print(f"YamlExp Hash {exp1_hash}")

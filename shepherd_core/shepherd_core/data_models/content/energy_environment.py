@@ -8,7 +8,7 @@ from ..base.content import ContentModel
 from ..base.fixture import Fixtures
 
 fixture_path = Path(__file__).resolve().with_name("energy_environment_fixture.yaml")
-fixtures = Fixtures(fixture_path, "content.EnergyEnvironment")
+fixtures = Fixtures(fixture_path, "EnergyEnvironment")
 
 
 class EnergyDType(str, Enum):

@@ -7,7 +7,7 @@ from .mcu import ProgrammerProtocol
 from .observer import Observer
 from .observer import mac_str
 from .target import Target
-from .target import id_int
+from .target import id_int16
 from .testbed import Testbed
 
 # these models import externally from: /base
@@ -24,6 +24,6 @@ __all__ = [
     "Direction",
     "TargetPort",
     # custom types
-    "id_int",
+    "id_int16",
     "mac_str",
 ]
