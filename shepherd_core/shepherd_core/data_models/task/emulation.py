@@ -7,6 +7,8 @@ from typing import Optional
 from pydantic import confloat
 from pydantic import root_validator
 
+from shepherd_core.data_models.testbed import Testbed
+
 from ..base.shepherd import ShpModel
 from ..content.virtual_source import VirtualSource
 from ..experiment.experiment import Experiment
@@ -78,7 +80,7 @@ class EmulationTask(ShpModel):
         return values
 
     @classmethod
-    def from_xp(cls, xp: Experiment):
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: int):
         # TODO
         pass
 

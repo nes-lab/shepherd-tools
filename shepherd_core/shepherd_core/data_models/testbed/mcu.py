@@ -2,6 +2,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
+from pydantic import confloat
+from pydantic import conint
 from pydantic import root_validator
 
 from ..base.content import id_int
@@ -32,7 +34,9 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
 
     platform: name_str
     core: name_str
-    programmer: ProgrammerProtocol
+    prog_protocol: ProgrammerProtocol
+    prog_voltage: confloat(ge=1, le=5) = 3
+    prog_datarate: conint(gt=0, le=1_000_000) = 500_000
 
     fw_name_default: str
     # ⤷ can't be FW-Object (circular import)

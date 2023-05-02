@@ -29,7 +29,7 @@ class Testbed(ShpModel):
     shared_storage: bool = True
     data_on_server: Path
     data_on_observer: Path
-    pre_duration: timedelta = timedelta(minutes=5)
+    prep_duration: timedelta = timedelta(minutes=5)
     # TODO: one BBone is currently time-keeper
 
     @root_validator(pre=True)
@@ -79,4 +79,6 @@ class Testbed(ShpModel):
             has_tgt_b = _observer.target_b is not None
             if has_tgt_b and target_id == _observer.target_b.id:
                 return _observer
-        raise ValueError(f"Target-ID {target_id} was not found in Testbed")
+        raise ValueError(
+            f"Target-ID {target_id} was not found in Testbed '{self.name}'"
+        )

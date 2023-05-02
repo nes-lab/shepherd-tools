@@ -4,6 +4,7 @@ from typing import Optional
 
 from pydantic import EmailStr
 from pydantic import conlist
+from pydantic import validate_arguments
 
 from ..base.content import id_int
 from ..base.content import name_str
@@ -33,7 +34,7 @@ class ObserverTasks(ShpModel):
     owner_id: id_int
 
     # PRE PROCESS
-    pre_start: datetime
+    time_prep: datetime
     root_path: Path
     # fw mod & store as hex-file
     fw1: Optional[Firmware]
@@ -41,9 +42,10 @@ class ObserverTasks(ShpModel):
     fw1_name: safe_str
     fw2_name: safe_str
     custom_id: id_int16
+
     # actual programming
     prog1: Optional[ProgrammerTask]
-    prog1: Optional[ProgrammerTask]
+    prog2: Optional[ProgrammerTask]
 
     # MAIN PROCESS
     emulation: Optional[EmulationTask]
@@ -54,38 +56,44 @@ class ObserverTasks(ShpModel):
     # post_copy, Todo
 
     @classmethod
+    @validate_arguments
     def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: int):
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
 
-        observer = tb.get_observer(tgt_id)
+        obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
-        directory = "experiment_" + xp.time_start.strftime("%Y-%m-%d_%H:%M:%S")
+        xp_dir = "experiment_" + xp.time_start.strftime("%Y-%m-%d_%H:%M:%S")
+        fw1_path = tb.data_on_observer / xp_dir / ("fw1_" + obs.name + ".hex")
+        fw2_path = tb.data_on_observer / xp_dir / ("fw1_" + obs.name + ".hex")
+
         return ObserverTasks(
-            observer=observer.name,
+            observer=obs.name,
             owner_id=xp.owner_id,
-            pre_start=xp.time_start - tb.pre_duration,
-            root_path=tb.data_on_observer / directory,
+            time_prep=xp.time_start - tb.prep_duration,
+            root_path=tb.data_on_observer / xp_dir,
             fw1=tgt_cfg.firmware1,
             fw2=tgt_cfg.firmware2,
-            fw1_name="fw1_" + observer + ".hex",
-            fw2_name="fw2_" + observer + ".hex",
+            fw1_name=fw1_path.name,
+            fw2_name=fw2_path.name,
             custom_id=tgt_cfg.get_custom_id(tgt_id),
-            prog1=ProgrammerTask.from_xp(xp, tgt_cfg, 1),
-            prog2=ProgrammerTask.from_xp(xp, tgt_cfg, 2),
-            emulation=EmulationTask.from_xp(xp),
+            prog1=ProgrammerTask.from_xp(xp, tb, tgt_id, 1, fw1_path),
+            prog2=ProgrammerTask.from_xp(xp, tb, tgt_id, 2, fw2_path),
+            emulation=EmulationTask.from_xp(xp, tb, tgt_id),
         )
 
 
 class TestbedTasks(ShpModel):
-    tasks: conlist(item_type=ObserverTasks, min_items=1, max_items=64)
+    name: name_str
+    observer_tasks: conlist(item_type=ObserverTasks, min_items=1, max_items=64)
 
     @classmethod
+    @validate_arguments
     def from_xp(cls, xp: Experiment):
         tb = Testbed(name="shepherd_tud_nes")  # also as argument?
         tgt_ids = xp.get_target_ids()
         obs_tasks = [ObserverTasks.from_xp(xp, tb, _id) for _id in tgt_ids]
-        return TestbedTasks(tasks=obs_tasks)
+        return TestbedTasks(name=xp.name, observer_tasks=obs_tasks)
 
     def store(self):
         # TODO

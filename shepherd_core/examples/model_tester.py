@@ -7,6 +7,7 @@ from shepherd_core.data_models.content import VirtualHarvester
 from shepherd_core.data_models.content import VirtualSource
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import TargetConfig
+from shepherd_core.data_models.task import TestbedTasks
 
 Experiment.dump_schema("experiment_schema.yaml")
 
@@ -45,3 +46,6 @@ xperi2 = Experiment.from_file("experiment_dict.yaml")
 
 print(f"xp1 hash: {xperi.get_hash()}")
 print(f"xp2 hash: {xperi2.get_hash()}")
+
+tbt = TestbedTasks.from_xp(xperi2)
+tbt.to_file("experiment_tb_tasks.yaml")

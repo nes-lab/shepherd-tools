@@ -45,7 +45,7 @@ def test_testbed_model_min_mcu():
         description="lorem",
         platform="arm32",
         core="STM32F7",
-        programmer=ProgrammerProtocol.SWD,
+        prog_protocol=ProgrammerProtocol.SWD,
         fw_name_default="nananana",
     )
 

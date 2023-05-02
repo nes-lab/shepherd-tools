@@ -33,7 +33,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access, TODO
-    owner_id: Optional[id_int]  # UUID?
+    owner_id: Optional[id_int] = 5472  # UUID?
 
     # feedback
     email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account
@@ -101,3 +101,6 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         for _config in self.target_configs:
             if target_id in _config.target_IDs:
                 return _config
+        raise ValueError(
+            f"Target-ID {target_id} was not found in Experiment '{self.name}'"
+        )

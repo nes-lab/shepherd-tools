@@ -6,7 +6,7 @@
     description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
     platform: nRF52
     core: nRF52840
-    programmer: SWD
+    prog_protocol: SWD
     fw_name_default: nrf52_demo_rf
 - model: mcu
   id: 1002
@@ -15,5 +15,5 @@
     description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
     platform: MSP430
     core: MSP430FR5962
-    programmer: SBW
+    prog_protocol: SBW
     fw_name_default: msp430_deep_sleep
