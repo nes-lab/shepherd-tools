@@ -1,0 +1,92 @@
+---
+- model: Firmware
+  id: 1001
+  fields:
+    id: 1001
+    name: nrf52_open4group
+    mcu:
+      name: nRF52
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: false
+    created: 2022-12-12 12:12:12
+- model: Firmware
+  id: 1002
+  fields:
+    id: 1002
+    name: msp430_open4group
+    mcu:
+      name: MSP430FR
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: false
+    created: 2022-12-12 12:12:12
+- model: Firmware
+  id: 2000
+  fields:
+    id: 2000
+    name: nrf52_demo_rf
+    description: demo implementation for a simple node that sends readings when energy budget allows it
+    data: name.hex
+    data_type: path_hex
+    visible2all: true
+    inherit_from: nrf52_open4group
+- model: Firmware
+  id: 2001
+  fields:
+    id: 2001
+    name: nrf52_spi_radio
+    description: default implementation to use nRF as a radio frontend
+    data: name.hex
+    data_type: path_hex
+    visible2all: true
+    inherit_from: nrf52_open4group
+- model: Firmware
+  id: 2002
+  fields:
+    id: 2002
+    name: nrf52_testable
+    description: blinks LEDs on boot and listens/answers to UART
+    data: name.hex
+    data_type: path_hex
+    inherit_from: nrf52_open4group
+- model: firmware
+  id: 2003
+  fields:
+    id: 2003
+    name: nrf52_conn_test_tx
+    description: Connection Tester - TX-Unit - sends packet with every possible P_TX, loops 10x
+    data: name.hex
+    data_type: path_hex
+    inherit_from: nrf52_open4group
+- model: Firmware
+  id: 3000
+  fields:
+    id: 2000
+    name: msp430_deep_sleep
+    description: practically turned off msp with lowest possible consumption
+    data: name.hex
+    data_type: path_hex
+    visible2all: true
+    inherit_from: msp430_open4group
+- model: Firmware
+  id: 2001
+  fields:
+    id: 2001
+    name: msp430_spi_fram
+    description: default implementation to use MSP as a flash storage
+    data: name.hex
+    data_type: path_hex
+    visible2all: true
+    inherit_from: msp430_open4group
+- model: Firmware
+  id: 2002
+  fields:
+    id: 2002
+    name: msp430_testable
+    description: blinks LEDs on boot and listens/answers to UART
+    data: name.hex
+    data_type: path_hex
+    inherit_from: msp430_open4group

@@ -4,7 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.pyright]
 root = "./"
-include = ['./src/shepherd_data', './src/examples', "./tests"]
+include = [
+    './shepherd_core/',
+    './shepherd_data/',
+]
 pythonVersion = "3.8"
 pythonPlatform = "All"
 reportMissingParameterType = true
@@ -13,7 +16,7 @@ reportMissingParameterType = true
 builtin = "clear,rare,informal,usage,code,en-GB_to_en-US"
 
 #skip = ""
-#ignore-words-list = ""
+ignore-words-list = "astroid,ws"
 
 # options without argument
 check-filenames = ""
@@ -72,9 +75,9 @@ extend-ignore = [
 
 per-file-ignores = """
 # asserts (in tests are ok), also allow print() instead of logger
-tests/*: SCS108, S101, T201
+*/tests/*: SCS108, S101, T201
 # allow print()
-src/examples/*: T201
+*/examples/*: T201
 """
 
 count = true
@@ -108,7 +111,7 @@ target-version = "py38"
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
-"tests/**" = ["ARG", "S"]
+"*/tests/**" = ["ARG", "S"]
 
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.

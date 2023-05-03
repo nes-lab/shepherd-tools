@@ -1,0 +1,115 @@
+--- # add with >>> python manage.py loaddata <fixturename>
+- model: observer
+  id: 1001
+  fields:
+    name: sheep01
+    ip: 192.168.165.195
+    mac: 18:62:E4:E4:41:8D
+    room: II69
+    eth_port: II65_S3_B_10
+    description: test-deployment, not final
+    longitude: 13.723073
+    latitude: 51.026566
+    cape:
+      name: cape1
+    target_a:
+      name: T_nRF52_2021_001
+    created: 2022-12-12 12:12:12
+- model: observer
+  id: 1002
+  fields:
+    name: sheep02
+    ip: 192.168.165.196
+    mac: 18:62:E4:D0:DE:3F
+    room: II69
+    eth_port: II65_S3_B_12
+    description: test-deployment, not final
+    longitude: 13.723076
+    latitude: 51.026554
+    cape:
+      name: cape2
+    target_a:
+      name: T_nRF52_2021_002
+    created: 2022-12-12 12:12:12
+- model: observer
+  id: 1003
+  fields:
+    name: sheep03
+    ip: 192.168.165.197
+    mac: 18:62:E4:D0:9E:6A
+    room: II69
+    eth_port: II65_S3_B_14
+    description: test-deployment, not final
+    longitude: 13.723080
+    latitude: 51.026543
+    cape:
+      name: cape3
+    target_a:
+      name: T_nRF52_2021_003
+    created: 2022-12-12 12:12:12
+- model: observer
+  id: 1004
+  fields:
+    name: sheep04
+    ip: 192.168.165.198
+    mac: 18:62:E4:D0:61:4D
+    room: II71
+    eth_port: II65_S3_C_4
+    description: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    cape:
+      name: cape4
+    target_a:
+      name: T_nRF52_2021_004
+    created: 2022-12-12 12:12:12
+- model: observer
+  id: 1011
+  fields:
+    name: sheep11
+    ip: 192.168.165.211
+    mac: 18:62:E4:D0:61:4E
+    room: II71
+    eth_port: II65_S3_C_6
+    description: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    cape:
+      name: cape11
+    target_a:
+      name: T_nRF52_2021_005
+    target_b:
+      name: T_nRF52_FRAM_2023_001
+    created: 2022-12-12 12:12:12
+- model: observer
+  id: 1012
+  fields:
+    name: sheep12
+    ip: 192.168.165.212
+    mac: 18:62:E4:D0:61:4F
+    room: II71
+    eth_port: II65_S3_C_8
+    description: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    cape:
+      name: cape12
+    target_b:
+      name: T_nRF52_FRAM_2023_002
+    created: 2022-12-12 12:12:12
+- model: observer
+  id: 1013
+  fields:
+    name: sheep13
+    ip: 192.168.165.213
+    mac: 18:62:E4:D0:61:50
+    room: II71
+    eth_port: II65_S3_C_10
+    description: test-deployment, not final
+    longitude: 13.722991
+    latitude: 51.026536
+    cape:
+      name: cape13
+    target_b:
+      name: T_nRF52_FRAM_2023_003
+    created: 2022-12-12 12:12:12

@@ -1,0 +1,165 @@
+# info:
+# - compendium of all parameters & description
+# - look into the implementation to see which parameters are used
+# - base for neutral fallback values if provided yml is sparse
+# - -> it is encouraged to omit redundant parameters in your own implementation
+- model: VirtualHarvester
+  id: 1000
+  fields:
+    name: neutral
+    description: Can NOT be used as a valid harvester
+    window_size: 8
+    voltage_mV: 2500  # starting-point for some algorithms (mppt_po)
+    voltage_min_mV: 0
+    voltage_max_mV: 5000
+    current_limit_uA: 50000   # allows to keep trajectory in special region (or constant current tracking)
+    voltage_step_mV: 1
+    # TODO: current limit not used atm?!
+    setpoint_n: 0.70
+    interval_ms: 100     # between start of measurements
+    duration_ms: 0.1     # of measurement
+    rising: true
+    # underlying recoder
+    wait_cycles: 1 # first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    created: 2022-12-12 12:12:12
+
+- model: VirtualHarvester
+  id: 1010
+  fields:
+    name: ivcurve
+    description: Postpone harvesting by sampling ivcurves (voltage stepped as sawtooth-wave)
+    comment: ~200 Hz
+    inherit_from: neutral
+    datatype: ivcurve
+    window_size: 250
+    voltage_min_mV: 0
+    voltage_max_mV: 5000
+    wait_cycles: 1  # results in 200 Hz (= 100kHz /(2*250))
+    rising: false # downward sawtooth seems to have advantages for solar cells
+    # todo: also add switch for sawtooth- vs triangle-wave?
+    # todo: could also include a version with dynamic upper-boundary, varied if voc is reached very early
+
+- model: VirtualHarvester
+  id: 1011
+  fields:
+    name: ivcurves  # synonym
+    inherit_from: ivcurve
+
+- model: VirtualHarvester
+  id: 1012
+  fields:
+    name: iv1000
+    comment: Name relates to curves per second
+    inherit_from: ivcurve
+    window_size: 100
+    wait_cycles: 0
+
+- model: VirtualHarvester
+  id: 1013
+  fields:
+    name: iv110
+    comment: Between 50 & 60 Hz line-frequency to avoid standing waves
+    inherit_from: ivcurve
+    window_size: 909
+    wait_cycles: 0
+
+- model: VirtualHarvester
+  id: 1020
+  fields:
+    name: isc_voc
+    description: Postpone harvesting by sampling short circuit current & open circuit voltage
+    inherit_from: neutral
+    datatype: isc_voc
+    wait_cycles: 1  # results in 25 kHz (isc, wait, voc, wait)
+
+- model: VirtualHarvester
+  id: 1030
+  fields:
+    name: cv20
+    description: Harvesting with constant Voltage
+    inherit_from: neutral
+    datatype: ivsample
+    voltage_mV: 2000
+
+- model: VirtualHarvester
+  id: 1031
+  fields:
+    name: cv24
+    inherit_from: cv20
+    voltage_mV: 2400
+
+- model: VirtualHarvester
+  id: 1032
+  fields:
+    name: cv33
+    inherit_from: cv20
+    voltage_mV: 3300
+
+- model: VirtualHarvester
+  id: 1040
+  fields:
+    name: mppt_voc
+    description: MPPT based on open circuit voltage for solar
+    inherit_from: neutral
+    datatype: ivsample
+    setpoint_n: 0.76
+    interval_ms: 100     # between measurements
+    duration_ms: 1.2     # solar can overshoot when load is removed
+    current_limit_uA: 5  # boundary for detecting open circuit in emulated version (working on IV-Curves)
+
+- model: VirtualHarvester
+  id: 1041
+  fields:
+    name: mppt_bq
+    description: MPPT of TI BQ-Converters for solar
+    inherit_from: mppt_voc
+    setpoint_n: 0.76
+    interval_ms: 16000  # between measurements
+    duration_ms: 256    # of measurement
+
+- model: VirtualHarvester
+  id: 1042
+  fields:
+    name: mppt_bqt
+    description: MPPT of TI BQ-Converters for thermoelectric
+    inherit_from: mppt_voc
+    setpoint_n: 0.50
+    interval_ms: 16000  # between measurements
+    duration_ms: 256    # of measurement
+
+- model: VirtualHarvester
+  id: 1043
+  fields:
+    name: mppt_bq_solar # explicit naming
+    inherit_from: mppt_bq
+
+- model: VirtualHarvester
+  id: 1044
+  fields:
+    name: mppt_bq_thermoelectric # explicit naming
+    inherit_from: mppt_bqt
+
+- model: VirtualHarvester
+  id: 1045
+  fields:
+    name: mppt_po
+    description: MPPT based on perturb & observe algorithm
+    inherit_from: neutral
+    datatype: ivsample
+    voltage_min_mV: 0
+    voltage_max_mV: 5000
+    voltage_step_mV: 10
+    interval_ms: 18   # between steps
+
+- model: VirtualHarvester
+  id: 1046
+  fields:
+    name: mppt_opt
+    description: Power-Otimum with very fast PO-Variant (harvesting) or special max-pwr-picker (emulator / ivcurve)
+    inherit_from: mppt_po
+    voltage_step_mV: 1
+    interval_ms: 0.01

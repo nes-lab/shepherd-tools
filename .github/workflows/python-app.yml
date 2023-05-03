@@ -31,14 +31,30 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies 🔧
-        run: python -m pip install --upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
 
-      - name: Build and install Package 🧱
-        run: pip3 install ./[test]
-        working-directory: "./"
+      - name: Test-Build core-package 🧱
+        run: python -m build
+        working-directory: "./shepherd_core"
+      - name: Test-Build data-package 🧱
+        run: python -m build
+        working-directory: "./shepherd_data"
 
-      - name: Test with pytest
+      - name: Install core-package 🧱
+        run: pip install .[test]
+        working-directory: "./shepherd_core"
+      - name: Install data-package 🧱
+        run: pip install .[test]
+        working-directory: "./shepherd_data"
+
+      - name: Test core-package with pytest 🧫
         run: pytest
+        working-directory: "./shepherd_core"
+      - name: Test data-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_data"
 
   test_package:
 
@@ -56,17 +72,24 @@ jobs:
       - name: Install dependencies 🔧
         run: |
           python -m pip install --upgrade pip
-          pip3 install pylint pylint-exit
+          pip install pylint pylint-exit
 
-      - name: Build and install Package 🧱
-        run: pip3 install ./[test,dev]
-        working-directory: "./"
+      - name: Install Core-Package 🧱
+        run: pip install .[test,dev]
+        working-directory: "./shepherd_core"
+      - name: Install Data-Package 🧱
+        run: pip install .[test,dev]
+        working-directory: "./shepherd_data"
 
       - name: Run Pre-Commit Tests 🧪
         uses: pre-commit/action@v3.0.0
 
-      - name: Test with pytest 🧫
+      - name: Test core-package with pytest 🧫
         run: pytest
+        working-directory: "./shepherd_core"
+      - name: Test data-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_data"
 
       - name: Analyze the code with pylint 🧐
         run: pylint $(git ls-files '*.py') || pylint-exit $?
