@@ -30,8 +30,8 @@ class TargetConfig(ShpModel, title="Target Config"):
     firmware1: Firmware
     firmware2: Optional[Firmware] = None
 
-    power_tracing: PowerTracing = PowerTracing()
-    gpio_tracing: GpioTracing = GpioTracing()
+    power_tracing: Optional[PowerTracing]
+    gpio_tracing: Optional[GpioTracing]
     gpio_actuation: Optional[GpioActuation]
 
     @root_validator(pre=False)

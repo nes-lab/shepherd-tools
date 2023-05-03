@@ -37,7 +37,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     # feedback
     email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account
-    sys_logging: SystemLogging = SystemLogging(log_dmesg=True, log_ptp=False)
+    sys_logging: SystemLogging = SystemLogging(dmesg=True, ptp=False, shepherd=True)
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP

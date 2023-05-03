@@ -1,7 +1,9 @@
+import copy
 from pathlib import Path
 
 from pydantic import confloat
 from pydantic import conint
+from pydantic import root_validator
 from pydantic import validate_arguments
 
 from shepherd_core.data_models import Experiment
@@ -13,6 +15,8 @@ from ..testbed.mcu import ProgrammerProtocol
 
 
 class ProgrammerTask(ShpModel):
+    """Config for Task programming the target selected"""
+
     firmware_file: Path
     sel_a: bool = True
     voltage: confloat(ge=1, lt=5) = 3
@@ -20,6 +24,12 @@ class ProgrammerTask(ShpModel):
     protocol: ProgrammerProtocol
     prog1: bool = True
     simulate: bool = False
+
+    @root_validator(pre=False)
+    def post_validation(cls, values: dict) -> dict:
+        if values["firmware_file"].suffix.lower() != ".hex":
+            ValueError(f"Firmware is not intel-.hex ('{values['firmware_file']}')")
+        return values
 
     @classmethod
     @validate_arguments
@@ -33,8 +43,8 @@ class ProgrammerTask(ShpModel):
         if fw is None:
             return None
 
-        return ProgrammerTask(
-            firmware_file=fw_path,
+        return cls(
+            firmware_file=copy.copy(fw_path),
             sel_a=obs.get_target_port(tgt_id) == TargetPort.A,
             voltage=fw.mcu.prog_voltage,
             datarate=fw.mcu.prog_datarate,

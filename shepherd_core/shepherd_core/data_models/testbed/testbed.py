@@ -29,6 +29,8 @@ class Testbed(ShpModel):
     shared_storage: bool = True
     data_on_server: Path
     data_on_observer: Path
+    # ⤷ storage layout: root_path/content_type/group/owner/[object]
+
     prep_duration: timedelta = timedelta(minutes=5)
     # TODO: one BBone is currently time-keeper
 

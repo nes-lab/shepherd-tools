@@ -51,7 +51,6 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """
 
     # initial recording
-    enabled: bool = True
     mask: conint(ge=0, lt=2**10) = 0b11_1111_1111  # all
     # ⤷ TODO: custom mask not implemented
     gpios: Optional[conlist(item_type=GPIO, min_items=1, max_items=10)]  # = all
@@ -68,7 +67,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if values["enabled"] and values["mask"] == 0:
+        if values["mask"] == 0:
             raise ValueError("Error in config -> tracing enabled but mask is 0")
         return values
 
@@ -113,12 +112,16 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
     events: conlist(item_type=GpioEvent, min_items=1, max_items=1024)
 
+    def get_gpios(self):
+        return {_ev.gpio for _ev in self.events}
+
 
 class SystemLogging(ShpModel, title="Config for System-Logging"):
     """Configuration for recording Debug-Output of the Observers System-Services"""
 
-    log_dmesg: bool = True
-    log_ptp: bool = True
+    dmesg: bool = True
+    ptp: bool = True
+    shepherd: bool = True
 
 
 # TODO: some more interaction would be good

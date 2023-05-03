@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from datetime import timedelta
 from enum import Enum
@@ -6,6 +7,7 @@ from typing import Optional
 
 from pydantic import confloat
 from pydantic import root_validator
+from pydantic import validate_arguments
 
 from shepherd_core.data_models.testbed import Testbed
 
@@ -48,7 +50,7 @@ class EmulationTask(ShpModel):
     use_cal_default: bool = False
     # ⤷ do not load calibration from EEPROM
 
-    enable_io: bool = False
+    enable_io: bool = False  # TODO: direction of pins!
     # ⤷ pre-req for sampling gpio
     io_port: TargetPort = TargetPort.A
     # ⤷ either Port A or B
@@ -61,15 +63,13 @@ class EmulationTask(ShpModel):
     #   - "mid" will output intermediate voltage (vsource storage cap),
     #   - true or "main" to mirror main target voltage
 
-    verbose: bool = False
-
     # sub-elements, could be partly moved to emulation
     virtual_source: VirtualSource = VirtualSource(name="neutral")  # {"name": "neutral"}
 
-    power_tracing: PowerTracing = PowerTracing()
-    gpio_tracing: GpioTracing = GpioTracing()
+    power_tracing: Optional[PowerTracing]
+    gpio_tracing: Optional[GpioTracing]
     gpio_actuation: Optional[GpioActuation]
-    sys_logging: SystemLogging = SystemLogging()
+    sys_logging: Optional[SystemLogging]
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
@@ -80,9 +80,26 @@ class EmulationTask(ShpModel):
         return values
 
     @classmethod
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: int):
-        # TODO
-        pass
+    @validate_arguments
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: int, root_path: Path):
+        obs = tb.get_observer(tgt_id)
+        tgt_cfg = xp.get_target_config(tgt_id)
+
+        return cls(
+            input_path=tb.data_on_observer / tgt_cfg.energy_env.data_path,
+            output_path=root_path / f"emu_{obs.name}.h5",
+            time_start=copy.copy(xp.time_start),
+            duration=xp.duration,
+            enable_io=(tgt_cfg.gpio_tracing is not None)
+            or (tgt_cfg.gpio_actuation is not None),
+            io_port=obs.get_target_port(tgt_id),
+            pwr_port=obs.get_target_port(tgt_id),
+            virtual_source=tgt_cfg.virtual_source,
+            power_tracing=tgt_cfg.power_tracing,
+            gpio_tracing=tgt_cfg.gpio_tracing,
+            gpio_actuation=tgt_cfg.gpio_actuation,
+            sys_logging=xp.sys_logging,
+        )
 
 
 # TODO: herdConfig
