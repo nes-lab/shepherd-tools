@@ -13,7 +13,7 @@ from .logger import set_verbose_level
 from .reader import BaseReader
 from .writer import BaseWriter
 
-__version__ = "2023.5.1"
+__version__ = "2023.5.2"
 
 __all__ = [
     "BaseReader",
