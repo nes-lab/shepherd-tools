@@ -6,6 +6,7 @@ __pycache__
 
 *.h5
 *.yml
+*.yaml
 *.png
 *.csv
 *.log
