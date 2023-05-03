@@ -41,7 +41,7 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_CORE_TOKEN }}
-          packages-dir: shepherd_core/
+          packages-dir: shepherd_core/dist/
 
       - name: Build data-package 🧱
         run: python -m build
@@ -51,4 +51,4 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_DATA_TOKEN }}
-          packages-dir: shepherd_data/
+          packages-dir: shepherd_data/dist/
