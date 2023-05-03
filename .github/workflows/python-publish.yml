@@ -37,7 +37,7 @@ jobs:
         run: python -m build
         working-directory: "./shepherd_core"
       - name: Publish core-package 🥳
-        uses: pypa/gh-action-pypi-publish@v1 # always newest stable
+        uses: pypa/gh-action-pypi-publish@release/v1 # always newest stable
         with:
           user: __token__
           password: ${{ secrets.PYPI_CORE_TOKEN }}
@@ -47,7 +47,7 @@ jobs:
         run: python -m build
         working-directory: "./shepherd_data"
       - name: Publish package 🥳
-        uses: pypa/gh-action-pypi-publish@v1
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.PYPI_DATA_TOKEN }}
