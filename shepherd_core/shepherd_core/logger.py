@@ -10,7 +10,6 @@ verbose_level: int = 2
 
 
 def get_verbose_level() -> int:
-    global verbose_level
     return verbose_level
 
 

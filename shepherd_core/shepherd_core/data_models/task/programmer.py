@@ -6,12 +6,11 @@ from pydantic import conint
 from pydantic import root_validator
 from pydantic import validate_arguments
 
-from shepherd_core.data_models import Experiment
-from shepherd_core.data_models.testbed import TargetPort
-from shepherd_core.data_models.testbed import Testbed
-
 from ..base.shepherd import ShpModel
+from ..experiment.experiment import Experiment
+from ..testbed.cape import TargetPort
 from ..testbed.mcu import ProgrammerProtocol
+from ..testbed.testbed import Testbed
 
 
 class ProgrammerTask(ShpModel):

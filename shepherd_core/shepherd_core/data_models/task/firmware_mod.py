@@ -6,12 +6,11 @@ from pydantic import constr
 from pydantic import root_validator
 from pydantic import validate_arguments
 
-from shepherd_core.data_models import Experiment
-from shepherd_core.data_models import FirmwareDType
-from shepherd_core.data_models.testbed import id_int16
-
 from ...logger import logger
 from ..base.shepherd import ShpModel
+from ..content.firmware import FirmwareDType
+from ..experiment.experiment import Experiment
+from ..testbed.target import id_int16
 
 
 class FirmwareModTask(ShpModel):

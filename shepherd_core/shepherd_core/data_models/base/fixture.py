@@ -50,8 +50,7 @@ class Fixtures:
         key = key.lower()
         if key in self.elements_by_name:
             return self.elements_by_name[key]
-        else:
-            raise ValueError(f"{self.name} '{key}' not found!")
+        raise ValueError(f"{self.name} '{key}' not found!")
 
     def __iter__(self):
         self._iter_index = 0

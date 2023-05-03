@@ -49,7 +49,10 @@ jobs:
         run: pip install .[test]
         working-directory: "./shepherd_data"
 
-      - name: Test with pytest 🧫
+      - name: Test core-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_core"
+      - name: Test data-package with pytest 🧫
         run: pytest
         working-directory: "./shepherd_data"
 
@@ -81,7 +84,10 @@ jobs:
       - name: Run Pre-Commit Tests 🧪
         uses: pre-commit/action@v3.0.0
 
-      - name: Test with pytest 🧫
+      - name: Test core-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_core"
+      - name: Test data-package with pytest 🧫
         run: pytest
         working-directory: "./shepherd_data"
 
