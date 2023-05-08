@@ -48,8 +48,10 @@ class Fixtures:
 
     def __getitem__(self, key) -> dict:
         key = key.lower()
-        if key in self.elements_by_name:
-            return self.elements_by_name[key]
+        if key.lower() in self.elements_by_name:
+            return self.elements_by_name[key.lower()]
+        if key in self.elements_by_id:
+            return self.elements_by_id[key]
         raise ValueError(f"{self.name} '{key}' not found!")
 
     def __iter__(self):
@@ -66,6 +68,9 @@ class Fixtures:
 
     def keys(self):  # -> _dict_keys[Any, Any]:
         return self.elements_by_name.keys()
+
+    def refs(self) -> dict:
+        return {_i["id"]: _i["name"] for _i in self.elements_by_id.values()}
 
     def inheritance(self, values: dict, chain: Optional[list] = None) -> (dict, list):
         if chain is None:

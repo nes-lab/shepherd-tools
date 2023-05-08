@@ -12,6 +12,7 @@ from pydantic import validate_arguments
 
 from shepherd_core.data_models.testbed import Testbed
 
+from ..base.content import IdInt
 from ..base.shepherd import ShpModel
 from ..content.virtual_source import VirtualSource
 from ..experiment.experiment import Experiment
@@ -99,7 +100,7 @@ class EmulationTask(ShpModel):
 
     @classmethod
     @validate_arguments
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: int, root_path: Path):
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path):
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 

@@ -44,13 +44,13 @@ class ShpModel(BaseModel):
         # "fields["name"].description = ... should be usable to modify model
 
     @classmethod
-    def dump_schema(cls, path: Union[str, Path]):
+    def dump_schema(cls, path: Union[str, Path]) -> None:
         model_dict = cls.schema()
         model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
         with open(Path(path).with_suffix(".yaml"), "w") as f:
             f.write(model_yaml)
 
-    def to_file(self, path: Union[str, Path], minimal: bool = False):
+    def to_file(self, path: Union[str, Path], minimal: bool = False) -> Path:
         if minimal:
             model_dict = self._min_dict
         else:

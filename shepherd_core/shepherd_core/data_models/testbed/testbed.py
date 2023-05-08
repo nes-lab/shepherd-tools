@@ -6,9 +6,9 @@ from pydantic import HttpUrl
 from pydantic import conlist
 from pydantic import root_validator
 
-from ..base.content import id_int
-from ..base.content import name_str
-from ..base.content import safe_str
+from ..base.content import IdInt
+from ..base.content import NameStr
+from ..base.content import SafeStr
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 from .observer import Observer
@@ -20,10 +20,10 @@ fixtures = Fixtures(fixture_path, "testbed")
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: id_int  # noqa: A003
-    name: name_str
-    description: safe_str
-    comment: Optional[safe_str] = None
+    id: IdInt  # noqa: A003
+    name: NameStr
+    description: SafeStr
+    comment: Optional[SafeStr] = None
 
     url: Optional[HttpUrl]
 
@@ -76,7 +76,7 @@ class Testbed(ShpModel):
             raise ValueError("Observers-Ethernet-Port used more than once in Testbed")
         return values
 
-    def get_observer(self, target_id: int):
+    def get_observer(self, target_id: int) -> Observer:
         for _observer in self.observers:
             has_tgt_a = _observer.target_a is not None
             if has_tgt_a and target_id == _observer.target_a.id:

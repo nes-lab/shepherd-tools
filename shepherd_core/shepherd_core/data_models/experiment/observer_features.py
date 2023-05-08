@@ -100,7 +100,7 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
             )
         return values
 
-    def get_events(self):
+    def get_events(self) -> np.ndarray:
         stop = self.delay + self.count * self.period
         timings = np.arange(self.delay, stop, self.period)
         return timings
@@ -115,7 +115,7 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
     events: conlist(item_type=GpioEvent, min_items=1, max_items=1024)
 
-    def get_gpios(self):
+    def get_gpios(self) -> set:
         return {_ev.gpio for _ev in self.events}
 
 

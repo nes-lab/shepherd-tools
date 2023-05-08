@@ -6,10 +6,12 @@ from pydantic import conint
 from pydantic import root_validator
 from pydantic import validate_arguments
 
+from ..base.content import IdInt
 from ..base.shepherd import ShpModel
 from ..experiment.experiment import Experiment
 from ..testbed.cape import TargetPort
 from ..testbed.mcu import ProgrammerProtocol
+from ..testbed.target import MCUPort
 from ..testbed.testbed import Testbed
 
 
@@ -18,10 +20,11 @@ class ProgrammingTask(ShpModel):
 
     firmware_file: Path
     target_port: TargetPort = TargetPort.A
+    mcu_port: MCUPort = 1
     voltage: confloat(ge=1, lt=5) = 3
     datarate: conint(gt=0, le=1_000_000) = 500_000
     protocol: ProgrammerProtocol
-    mcu_port: bool = True
+
     simulate: bool = False
 
     @root_validator(pre=False)
@@ -33,7 +36,12 @@ class ProgrammingTask(ShpModel):
     @classmethod
     @validate_arguments
     def from_xp(
-        cls, xp: Experiment, tb: Testbed, tgt_id: int, mcu_port: int, fw_path: Path
+        cls,
+        xp: Experiment,
+        tb: Testbed,
+        tgt_id: IdInt,
+        mcu_port: MCUPort,
+        fw_path: Path,
     ):
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
@@ -44,9 +52,9 @@ class ProgrammingTask(ShpModel):
 
         return cls(
             firmware_file=copy.copy(fw_path),
-            port=obs.get_target_port(tgt_id),
+            target_port=obs.get_target_port(tgt_id),
+            mcu_port=mcu_port,
             voltage=fw.mcu.prog_voltage,
             datarate=fw.mcu.prog_datarate,
             protocol=fw.mcu.prog_protocol,
-            prog1=mcu_port == 1,
         )

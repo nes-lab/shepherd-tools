@@ -11,10 +11,10 @@ from .shepherd import ShpModel
 
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
-id_int = conint(ge=0, lt=2**128)
-name_str = constr(max_length=32, regex=r'^[^<>:;,?"*|]+$')
+IdInt = conint(ge=0, lt=2**128)
+NameStr = constr(max_length=32, regex=r'^[^<>:;,?"*|]+$')
 # ⤷ Regex = FS-Compatible ASCII
-safe_str = constr(regex=r"^[ -~]+$")
+SafeStr = constr(regex=r"^[ -~]+$")
 # ⤷ Regex = All Printable ASCII-Characters with Space
 
 
@@ -26,23 +26,23 @@ def id_default() -> int:
 
 class ContentModel(ShpModel):
     # General Properties
-    id: id_int = Field(  # noqa: A003
+    id: IdInt = Field(  # noqa: A003
         description="Unique ID",
         default_factory=id_default,
     )
-    name: name_str
-    description: Optional[safe_str] = Field(description="Required when public")
-    comment: Optional[safe_str] = None
+    name: NameStr
+    description: Optional[SafeStr] = Field(description="Required when public")
+    comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access
-    owner: name_str
-    group: name_str = Field(description="University or Subgroup")
+    owner: NameStr
+    group: NameStr = Field(description="University or Subgroup")
     visible2group: bool = False
     visible2all: bool = False
 
     @root_validator(pre=False)
-    def content_validation(cls, values: dict):
+    def content_validation(cls, values: dict) -> dict:
         is_visible = values["visible2group"] or values["visible2all"]
         if is_visible and values["description"] is None:
             raise ValueError(

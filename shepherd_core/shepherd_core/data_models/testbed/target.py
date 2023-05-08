@@ -7,8 +7,9 @@ from pydantic import Field
 from pydantic import conint
 from pydantic import root_validator
 
-from ..base.content import name_str
-from ..base.content import safe_str
+from ..base.content import IdInt
+from ..base.content import NameStr
+from ..base.content import SafeStr
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 from .mcu import MCU
@@ -16,7 +17,7 @@ from .mcu import MCU
 fixture_path = Path(__file__).resolve().with_name("target_fixture.yaml")
 fixtures = Fixtures(fixture_path, "target")
 
-id_int16 = conint(ge=0, lt=2**16)
+IdInt16 = conint(ge=0, lt=2**16)
 
 MCUPort = conint(ge=1, le=2)
 
@@ -24,17 +25,18 @@ MCUPort = conint(ge=1, le=2)
 class Target(ShpModel, title="Target Node (DuT)"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: id_int16  # noqa: A003
-    name: name_str
-    version: name_str
-    description: safe_str
+    id: IdInt  # noqa: A003
+    name: NameStr
+    version: NameStr
+    description: SafeStr
 
-    comment: Optional[safe_str] = None
+    comment: Optional[SafeStr] = None
 
     created: datetime = Field(default_factory=datetime.now)
 
-    mcu1: Union[MCU, name_str]
-    mcu2: Union[MCU, name_str, None] = None
+    fw_id: Optional[IdInt16]
+    mcu1: Union[MCU, NameStr]
+    mcu2: Union[MCU, NameStr, None] = None
     #
 
     # TODO programming pins per mcu should be here (or better in Cape)
@@ -55,4 +57,6 @@ class Target(ShpModel, title="Target Node (DuT)"):
             # ⤷ this will raise if default is faulty
         if isinstance(values["mcu2"], str):
             values["mcu2"] = MCU(name=values["mcu2"])
+        if values.get("fw_id") is None:
+            values["fw_id"] = values["id"] % 2**16
         return values

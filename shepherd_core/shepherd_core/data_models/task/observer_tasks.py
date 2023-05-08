@@ -5,8 +5,8 @@ from typing import Optional
 from pydantic import EmailStr
 from pydantic import validate_arguments
 
-from ..base.content import id_int
-from ..base.content import name_str
+from ..base.content import IdInt
+from ..base.content import NameStr
 from ..base.shepherd import ShpModel
 from ..experiment.experiment import Experiment
 from ..testbed.testbed import Testbed
@@ -18,8 +18,8 @@ from .programming import ProgrammingTask
 class ObserverTasks(ShpModel):
     """Collection of tasks for selected observer included in experiment"""
 
-    observer: name_str
-    owner_id: id_int
+    observer: NameStr
+    owner_id: IdInt
 
     # PRE PROCESS
     time_prep: datetime
@@ -46,7 +46,7 @@ class ObserverTasks(ShpModel):
 
     @classmethod
     @validate_arguments
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: int):
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt):
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
 
@@ -62,8 +62,8 @@ class ObserverTasks(ShpModel):
             time_prep=xp.time_start - tb.prep_duration,
             root_path=root_path,
             abort_on_error=xp.abort_on_error,
-            fw1_mod=FirmwareModTask.from_xp(xp, tgt_id, 1, fw_paths[0]),
-            fw2_mod=FirmwareModTask.from_xp(xp, tgt_id, 2, fw_paths[1]),
+            fw1_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
+            fw2_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
             fw1_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
             fw2_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
             emulation=EmulationTask.from_xp(xp, tb, tgt_id, root_path),

@@ -1,5 +1,6 @@
 import copy
 from pathlib import Path
+from typing import Optional
 from typing import Union
 
 from pydantic import constr
@@ -7,11 +8,13 @@ from pydantic import root_validator
 from pydantic import validate_arguments
 
 from ...logger import logger
+from ..base.content import IdInt
 from ..base.shepherd import ShpModel
 from ..content.firmware import FirmwareDType
 from ..experiment.experiment import Experiment
+from ..testbed import Testbed
+from ..testbed.target import IdInt16
 from ..testbed.target import MCUPort
-from ..testbed.target import id_int16
 
 
 class FirmwareModTask(ShpModel):
@@ -19,7 +22,7 @@ class FirmwareModTask(ShpModel):
 
     data: Union[constr(min_length=3, max_length=1_000_000), Path]
     data_type: FirmwareDType
-    custom_id: id_int16
+    custom_id: Optional[IdInt16]
     firmware_file: Path
 
     @root_validator(pre=False)
@@ -32,16 +35,28 @@ class FirmwareModTask(ShpModel):
 
     @classmethod
     @validate_arguments
-    def from_xp(cls, xp: Experiment, tgt_id: int, mcu_port: MCUPort, fw_path: Path):
+    def from_xp(
+        cls,
+        xp: Experiment,
+        tb: Testbed,
+        tgt_id: IdInt,
+        mcu_port: MCUPort,
+        fw_path: Path,
+    ):
         tgt_cfg = xp.get_target_config(tgt_id)
 
         fw = tgt_cfg.firmware1 if mcu_port == 1 else tgt_cfg.firmware2
-        if (fw is None) or (tgt_cfg.get_custom_id(tgt_id) is None):
+        if fw is None:
             return None
+
+        fw_id = tgt_cfg.get_custom_id(tgt_id)
+        if fw_id is None:
+            obs = tb.get_observer(tgt_id)
+            fw_id = obs.get_target(tgt_id).fw_id
 
         return cls(
             data=fw.data,
             data_type=fw.data_type,
-            custom_id=tgt_cfg.get_custom_id(tgt_id),
+            custom_id=fw_id,
             firmware_file=copy.copy(fw_path),
         )

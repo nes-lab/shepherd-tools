@@ -6,9 +6,9 @@ from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
-from ..base.content import id_int
-from ..base.content import name_str
-from ..base.content import safe_str
+from ..base.content import IdInt
+from ..base.content import NameStr
+from ..base.content import SafeStr
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 
@@ -28,10 +28,10 @@ class Direction(str, Enum):
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component"""
 
-    id: id_int  # noqa: A003
-    name: name_str
-    description: Optional[safe_str] = None
-    comment: Optional[safe_str] = None
+    id: IdInt  # noqa: A003
+    name: NameStr
+    description: Optional[SafeStr] = None
+    comment: Optional[SafeStr] = None
 
     direction: Direction = Direction.Input
     dir_switch: Optional[constr(max_length=32)]
