@@ -107,8 +107,10 @@ class CalibrationHarvester(ShpModel):
 
 
 class CalibrationEmulator(ShpModel):
-    dac_V_Main: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    dac_V_Aux: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
+    """Cal-Data for both Target-Ports
+    """
+    dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
+    dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     adc_C_A: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
     adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
 
@@ -118,14 +120,15 @@ class CalibrationEmulator(ShpModel):
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
         # ADC-V is handled in uV (micro-volt), gain is shifted by 8 bit
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
+        TODO: current impl does not distinguish target_ports for DAC
         """
         cal_set = {
             "adc_current_gain": round(1e9 * (2**8) * self.adc_C_A.gain),
             "adc_current_offset": round(1e9 * (2**0) * self.adc_C_A.offset),
             "adc_voltage_gain": round(1e6 * (2**8) * self.adc_C_B.gain),
             "adc_voltage_offset": round(1e6 * (2**0) * self.adc_C_B.offset),
-            "dac_voltage_gain": round((2**20) / (1e6 * self.dac_V_Main.gain)),
-            "dac_voltage_offset": round(1e6 * (2**0) * self.dac_V_Main.offset),
+            "dac_voltage_gain": round((2**20) / (1e6 * self.dac_V_A.gain)),
+            "dac_voltage_offset": round(1e6 * (2**0) * self.dac_V_A.offset),
         }
         for key, value in cal_set.items():
             if (("gain" in key) and not (0 <= value < 2**32)) or (
