@@ -13,7 +13,7 @@ from .shepherd import ShpModel
 # ⤷ Regex = AlphaNum
 IdInt = conint(ge=0, lt=2**128)
 NameStr = constr(max_length=32, regex=r'^[^<>:;,?"*|]+$')
-# ⤷ Regex = FS-Compatible ASCII
+# ⤷ Regex = FileSystem-Compatible ASCII
 SafeStr = constr(regex=r"^[ -~]+$")
 # ⤷ Regex = All Printable ASCII-Characters with Space
 

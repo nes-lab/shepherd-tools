@@ -26,4 +26,5 @@ def test_task_model_min_prog():
     ProgrammingTask(
         firmware_file=Path("fw_to_load.hex"),
         protocol=ProgrammerProtocol.SWD,
+        mcu_type="nrf52",
     )

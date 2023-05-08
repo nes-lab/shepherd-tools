@@ -75,7 +75,7 @@ class BaseReader:
                 self._logger.info("File is available now")
             else:
                 self._logger.error(
-                    "File is faulty! Will try to open but there might be dragons"
+                    "File is faulty! Will try to open but there might be dragons",
                 )
 
         if not isinstance(self.h5file, h5py.File):

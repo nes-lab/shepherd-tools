@@ -7,6 +7,7 @@ from pydantic import root_validator
 from pydantic import validate_arguments
 
 from ..base.content import IdInt
+from ..base.content import SafeStr
 from ..base.shepherd import ShpModel
 from ..experiment.experiment import Experiment
 from ..testbed.cape import TargetPort
@@ -21,6 +22,8 @@ class ProgrammingTask(ShpModel):
     firmware_file: Path
     target_port: TargetPort = TargetPort.A
     mcu_port: MCUPort = 1
+    mcu_type: SafeStr
+    # ⤷ for later
     voltage: confloat(ge=1, lt=5) = 3
     datarate: conint(gt=0, le=1_000_000) = 500_000
     protocol: ProgrammerProtocol
@@ -54,6 +57,7 @@ class ProgrammingTask(ShpModel):
             firmware_file=copy.copy(fw_path),
             target_port=obs.get_target_port(tgt_id),
             mcu_port=mcu_port,
+            mcu_type=fw.mcu.name,
             voltage=fw.mcu.prog_voltage,
             datarate=fw.mcu.prog_datarate,
             protocol=fw.mcu.prog_protocol,
