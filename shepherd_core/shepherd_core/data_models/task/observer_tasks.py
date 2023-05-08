@@ -12,7 +12,7 @@ from ..experiment.experiment import Experiment
 from ..testbed.testbed import Testbed
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask
-from .programmer import ProgrammerTask
+from .programming import ProgrammingTask
 
 
 class ObserverTasks(ShpModel):
@@ -29,8 +29,8 @@ class ObserverTasks(ShpModel):
     # fw mod, store as hex-file and program
     fw1_mod: Optional[FirmwareModTask]
     fw2_mod: Optional[FirmwareModTask]
-    fw1_prog: Optional[ProgrammerTask]
-    fw2_prog: Optional[ProgrammerTask]
+    fw1_prog: Optional[ProgrammingTask]
+    fw2_prog: Optional[ProgrammingTask]
 
     # MAIN PROCESS
     emulation: Optional[EmulationTask]
@@ -64,8 +64,8 @@ class ObserverTasks(ShpModel):
             abort_on_error=xp.abort_on_error,
             fw1_mod=FirmwareModTask.from_xp(xp, tgt_id, 1, fw_paths[0]),
             fw2_mod=FirmwareModTask.from_xp(xp, tgt_id, 2, fw_paths[1]),
-            fw1_prog=ProgrammerTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
-            fw2_prog=ProgrammerTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
+            fw1_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
+            fw2_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
             emulation=EmulationTask.from_xp(xp, tb, tgt_id, root_path),
             email=xp.email_results,
         )

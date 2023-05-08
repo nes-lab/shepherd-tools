@@ -4,6 +4,7 @@ from datetime import timedelta
 from enum import Enum
 from pathlib import Path
 from typing import Optional
+from typing import Union
 
 from pydantic import confloat
 from pydantic import root_validator
@@ -34,42 +35,50 @@ class EmulationTask(ShpModel):
 
     # General config
     input_path: Path
+    # ⤷ hdf5 file containing harvesting data
     output_path: Optional[Path]
-    # ⤷ output_path:
+    # ⤷ dir- or file path for storing the recorded data:
     #   - providing a directory -> file is named emu_timestamp.h5
     #   - for a complete path the filename is not changed except it exists and
     #     overwrite is disabled -> emu#num.h5
     force_overwrite: bool = False
+    # ⤷ Overwrite existing file
     output_compression: Optional[Compression] = Compression.lzf
     # ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)
 
-    time_start: Optional[datetime] = None  # = ASAP
-    duration: Optional[timedelta] = None  # = till EOF
+    time_start: Optional[datetime] = None
+    # timestamp or unix epoch time, None = ASAP
+    duration: Optional[timedelta] = None
+    # ⤷ Duration of recording in seconds, None = till EOF
+    abort_on_error: bool = False
 
     # emulation-specific
     use_cal_default: bool = False
-    # ⤷ do not load calibration from EEPROM
+    # ⤷ Use default calibration values, skip loading from EEPROM
 
     enable_io: bool = False  # TODO: direction of pins!
-    # ⤷ pre-req for sampling gpio
+    # ⤷ Switch the GPIO level converter to targets on/off
+    #   pre-req for sampling gpio,
     io_port: TargetPort = TargetPort.A
-    # ⤷ either Port A or B
+    # ⤷ Either Port A or B that gets connected to IO
     pwr_port: TargetPort = TargetPort.A
-    # ⤷ that one will be current monitored (main), the other is aux
-    voltage_aux: confloat(ge=0, le=5) = 0
+    # ⤷ chosen port will be current-monitored (main, connected to virtual Source),
+    #   the other port is aux
+    voltage_aux: Union[confloat(ge=0, le=4.5), str] = 0
     # ⤷ aux_voltage options:
-    #   - None to disable (0 V),
-    #   - 0-4.5 for specific const Voltage,
-    #   - "mid" will output intermediate voltage (vsource storage cap),
-    #   - true or "main" to mirror main target voltage
+    #   - 0-4.5 for specific const Voltage (0 V = disabled),
+    #   - "mid" will output intermediate voltage (storage cap of vsource),
+    #   - "main" will mirror main target voltage
 
     # sub-elements, could be partly moved to emulation
     virtual_source: VirtualSource = VirtualSource(name="neutral")  # {"name": "neutral"}
+    # ⤷ Use the desired setting for the virtual source,
+    #   provide parameters or name like BQ25570
 
-    power_tracing: Optional[PowerTracing]
-    gpio_tracing: Optional[GpioTracing]
-    gpio_actuation: Optional[GpioActuation]
-    sys_logging: Optional[SystemLogging]
+    power_tracing: Optional[PowerTracing] = PowerTracing()
+    gpio_tracing: Optional[GpioTracing] = GpioTracing()
+    gpio_actuation: Optional[GpioActuation] = None
+    sys_logging: Optional[SystemLogging] = SystemLogging()
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
@@ -77,6 +86,15 @@ class EmulationTask(ShpModel):
         has_start = values["time_start"] is not None
         if has_start and values["time_start"] < datetime.utcnow():
             raise ValueError("Start-Time for Emulation can't be in the past.")
+        if isinstance(values["voltage_aux"], str) and values["voltage_aux"] not in [
+            "main",
+            "mid",
+        ]:
+            raise ValueError(
+                "Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'."
+            )
+        if values["gpio_actuation"] is not None:
+            raise ValueError("GPIO Actuation not yet implemented!")
         return values
 
     @classmethod
@@ -90,6 +108,7 @@ class EmulationTask(ShpModel):
             output_path=root_path / f"emu_{obs.name}.h5",
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
+            abort_on_error=xp.abort_on_error,
             enable_io=(tgt_cfg.gpio_tracing is not None)
             or (tgt_cfg.gpio_actuation is not None),
             io_port=obs.get_target_port(tgt_id),

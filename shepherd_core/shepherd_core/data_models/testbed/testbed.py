@@ -2,6 +2,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 
+from pydantic import HttpUrl
 from pydantic import conlist
 from pydantic import root_validator
 
@@ -24,6 +25,8 @@ class Testbed(ShpModel):
     description: safe_str
     comment: Optional[safe_str] = None
 
+    url: Optional[HttpUrl]
+
     observers: conlist(item_type=Observer, min_items=1, max_items=64)
 
     shared_storage: bool = True
@@ -36,7 +39,7 @@ class Testbed(ShpModel):
 
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
-        values = fixtures.lookup(values)
+        values = fixtures.lookup(values)  # TODO: load from url
         values, chain = fixtures.inheritance(values)
         return values
 

@@ -13,15 +13,15 @@ from ..testbed.mcu import ProgrammerProtocol
 from ..testbed.testbed import Testbed
 
 
-class ProgrammerTask(ShpModel):
+class ProgrammingTask(ShpModel):
     """Config for Task programming the target selected"""
 
     firmware_file: Path
-    sel_a: bool = True
+    target_port: TargetPort = TargetPort.A
     voltage: confloat(ge=1, lt=5) = 3
     datarate: conint(gt=0, le=1_000_000) = 500_000
     protocol: ProgrammerProtocol
-    prog1: bool = True
+    mcu_port: bool = True
     simulate: bool = False
 
     @root_validator(pre=False)
@@ -33,20 +33,20 @@ class ProgrammerTask(ShpModel):
     @classmethod
     @validate_arguments
     def from_xp(
-        cls, xp: Experiment, tb: Testbed, tgt_id: int, prog_port: int, fw_path: Path
+        cls, xp: Experiment, tb: Testbed, tgt_id: int, mcu_port: int, fw_path: Path
     ):
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 
-        fw = tgt_cfg.firmware1 if prog_port == 1 else tgt_cfg.firmware2
+        fw = tgt_cfg.firmware1 if mcu_port == 1 else tgt_cfg.firmware2
         if fw is None:
             return None
 
         return cls(
             firmware_file=copy.copy(fw_path),
-            sel_a=obs.get_target_port(tgt_id) == TargetPort.A,
+            port=obs.get_target_port(tgt_id),
             voltage=fw.mcu.prog_voltage,
             datarate=fw.mcu.prog_datarate,
             protocol=fw.mcu.prog_protocol,
-            prog1=prog_port == 1,
+            prog1=mcu_port == 1,
         )

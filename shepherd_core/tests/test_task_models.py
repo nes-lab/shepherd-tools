@@ -3,7 +3,7 @@ from pathlib import Path
 from shepherd_core.data_models import FirmwareDType
 from shepherd_core.data_models.task.emulation import EmulationTask
 from shepherd_core.data_models.task.firmware_mod import FirmwareModTask
-from shepherd_core.data_models.task.programmer import ProgrammerTask
+from shepherd_core.data_models.task.programming import ProgrammingTask
 from shepherd_core.data_models.testbed import ProgrammerProtocol
 
 
@@ -23,7 +23,7 @@ def test_task_model_min_fw():
 
 
 def test_task_model_min_prog():
-    ProgrammerTask(
+    ProgrammingTask(
         firmware_file=Path("fw_to_load.hex"),
         protocol=ProgrammerProtocol.SWD,
     )

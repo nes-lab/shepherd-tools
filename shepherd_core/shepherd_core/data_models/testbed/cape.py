@@ -21,6 +21,8 @@ fixtures = Fixtures(fixture_path, "cape")
 class TargetPort(str, Enum):
     A = "A"
     B = "B"
+    a = "A"
+    b = "B"
 
 
 class Cape(ShpModel, title="Shepherd-Cape"):

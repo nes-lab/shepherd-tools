@@ -10,6 +10,7 @@ from ...logger import logger
 from ..base.shepherd import ShpModel
 from ..content.firmware import FirmwareDType
 from ..experiment.experiment import Experiment
+from ..testbed.target import MCUPort
 from ..testbed.target import id_int16
 
 
@@ -31,10 +32,10 @@ class FirmwareModTask(ShpModel):
 
     @classmethod
     @validate_arguments
-    def from_xp(cls, xp: Experiment, tgt_id: int, prog_port: int, fw_path: Path):
+    def from_xp(cls, xp: Experiment, tgt_id: int, mcu_port: MCUPort, fw_path: Path):
         tgt_cfg = xp.get_target_config(tgt_id)
 
-        fw = tgt_cfg.firmware1 if prog_port == 1 else tgt_cfg.firmware2
+        fw = tgt_cfg.firmware1 if mcu_port == 1 else tgt_cfg.firmware2
         if (fw is None) or (tgt_cfg.get_custom_id(tgt_id) is None):
             return None
 

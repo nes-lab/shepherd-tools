@@ -18,6 +18,8 @@ fixtures = Fixtures(fixture_path, "target")
 
 id_int16 = conint(ge=0, lt=2**16)
 
+MCUPort = conint(ge=1, le=2)
+
 
 class Target(ShpModel, title="Target Node (DuT)"):
     """meta-data representation of a testbed-component (physical object)"""

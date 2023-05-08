@@ -22,7 +22,8 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     current: bool = True
 
     intermediate_voltage: bool = False
-    # ⤷ buffer capacitor instead of output (good for V_out = const)
+    # ⤷ record buffer capacitor instead of output (good for V_out = const)
+
     # TODO: also switch current to buffer? seems reasonable
 
     # time
@@ -34,6 +35,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     samplerate: conint(ge=10, le=100_000) = 100_000  # down-sample
     discard_current: bool = False
     discard_voltage: bool = False
+    # ⤷ reduce file-size by omitting current / voltage
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
@@ -64,6 +66,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     uart_decode: bool = False
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: conint(ge=2_400, le=921_600) = 115_200
+    # TODO: add a "discard_gpio" (if only uart is wanted)
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
