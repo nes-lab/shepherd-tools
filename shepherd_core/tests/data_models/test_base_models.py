@@ -15,7 +15,7 @@ def test_base_model_cal_pair_conv():
     val_raw = 500
     val_si = cal.raw_to_si(val_raw)
     val_rbw = cal.si_to_raw(val_si)
-    assert val_raw == round(val_rbw)
+    assert val_raw == val_rbw
 
 
 def test_base_model_cal_pair_conv2():
@@ -49,7 +49,7 @@ def test_base_model_cal_cape_bytestr():
     assert cal1.get_hash() == cal2.get_hash()
 
 
-def test_base_model_cal_cape_example(tmp_path):
+def test_base_model_cal_cape_example(tmp_path: Path):
     cal0 = CalMeasurementCape()
     path1 = Path(__file__).absolute().with_name("example_cal_data.yaml")
     cal1 = CalibrationCape.from_file(path1)

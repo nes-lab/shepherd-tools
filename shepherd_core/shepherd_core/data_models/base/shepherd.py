@@ -102,7 +102,7 @@ class ShpModel(BaseModel):
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.model != cls.__name__:
-            raise ValueError("Model in file does not match the used one")
+            raise ValueError("Model in file does not match the requirement")
         return cls(**shp_wrap.fields)
 
     @classmethod  # @root_validator(pre=True, allow_reuse=True)

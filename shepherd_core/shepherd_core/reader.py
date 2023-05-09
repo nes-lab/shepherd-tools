@@ -1,21 +1,27 @@
 """
 Reader-Baseclass
 """
+import contextlib
 import errno
 import logging
+import math
 import os
 from itertools import product
 from pathlib import Path
 from typing import Dict
 from typing import Generator
+from typing import List
 from typing import Optional
+from typing import Union
 
 import h5py
+import numpy as np
 import yaml
+from pydantic import validate_arguments
+from tqdm import trange
 
-from .calibration import raw_to_si
-
-# import samplerate  # TODO: just a test-fn for now
+from .data_models.base.calibration import CalibrationPair
+from .data_models.base.calibration import CalibrationSeries
 
 
 class BaseReader:
@@ -34,6 +40,7 @@ class BaseReader:
         "emulator": ["ivsample"],
     }
 
+    @validate_arguments
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
         if not hasattr(self, "_file_path"):
             self._file_path: Optional[Path] = None
@@ -49,9 +56,8 @@ class BaseReader:
         self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
-        self.max_elements: int = (
-            40 * self.samplerate_sps
-        )  # per iteration (40s full res, < 200 MB RAM use)
+        self.max_elements: int = 40 * self.samplerate_sps
+        # ⤷ per iteration (40s full res, < 200 MB RAM use)
 
         # init stats
         self.runtime_s: float = 0
@@ -86,16 +92,16 @@ class BaseReader:
         self.ds_current: h5py.Dataset = self.h5file["data"]["current"]
 
         if not hasattr(self, "_cal"):
-            self._cal: Dict[str, Dict[str, float]] = {
-                "voltage": {
-                    "gain": self.ds_voltage.attrs["gain"],
-                    "offset": self.ds_voltage.attrs["offset"],
-                },
-                "current": {
-                    "gain": self.ds_current.attrs["gain"],
-                    "offset": self.ds_current.attrs["offset"],
-                },
-            }
+            self._cal = CalibrationSeries(
+                voltage=CalibrationPair(
+                    gain=self.ds_voltage.attrs["gain"],
+                    offset=self.ds_voltage.attrs["offset"],
+                ),
+                current=CalibrationPair(
+                    gain=self.ds_current.attrs["gain"],
+                    offset=self.ds_current.attrs["offset"],
+                ),
+            )
 
         self._refresh_file_stats()
 
@@ -171,11 +177,11 @@ class BaseReader:
             else:
                 yield (
                     self.ds_time[idx_start:idx_end] * 1e-9,
-                    raw_to_si(self.ds_voltage[idx_start:idx_end], self._cal["voltage"]),
-                    raw_to_si(self.ds_current[idx_start:idx_end], self._cal["current"]),
+                    self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_end]),
+                    self._cal.current.raw_to_si(self.ds_current[idx_start:idx_end]),
                 )
 
-    def get_calibration_data(self) -> dict:
+    def get_calibration_data(self) -> CalibrationSeries:
         """Reads calibration-data from hdf5 file.
 
         :return: Calibration data as CalibrationData object
@@ -319,3 +325,194 @@ class BaseReader:
         if key in self.h5file:
             return self.h5file.__getitem__(key)
         raise KeyError
+
+    def energy(self) -> float:
+        """determine the recorded energy of the trace
+        # multiprocessing: https://stackoverflow.com/a/71898911
+        # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool
+
+        :return: sampled energy in Ws (watt-seconds)
+        """
+        iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
+        job_iter = trange(
+            0,
+            self.ds_time.shape[0],
+            self.max_elements,
+            desc="energy",
+            leave=False,
+            disable=iterations < 8,
+        )
+
+        def _calc_energy(idx_start: int) -> float:
+            idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
+            vol_v = self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_stop])
+            cur_a = self._cal.current.raw_to_si(self.ds_current[idx_start:idx_stop])
+            return (vol_v[:] * cur_a[:]).sum() * self.sample_interval_s
+
+        energy_ws = [_calc_energy(i) for i in job_iter]
+        return float(sum(energy_ws))
+
+    def _dset_statistics(
+        self, dset: h5py.Dataset, cal: Optional[CalibrationPair] = None
+    ) -> Dict[str, float]:
+        """some basic stats for a provided dataset
+        :param dset: dataset to evaluate
+        :param cal: calibration (if wanted)
+        :return: dict with entries for mean, min, max, std
+        """
+        si_converted = True
+        if not isinstance(cal, CalibrationPair):
+            if "gain" in dset.attrs and "offset" in dset.attrs:
+                cal = CalibrationPair(
+                    gain=dset.attrs["gain"], offset=dset.attrs["offset"]
+                )
+            else:
+                cal = CalibrationPair(gain=1)
+                si_converted = False
+        iterations = math.ceil(dset.shape[0] / self.max_elements)
+        job_iter = trange(
+            0,
+            dset.shape[0],
+            self.max_elements,
+            desc=f"{dset.name}-stats",
+            leave=False,
+            disable=iterations < 8,
+        )
+
+        def _calc_statistics(data: np.ndarray) -> list:
+            return [np.mean(data), np.min(data), np.max(data), np.std(data)]
+
+        stats_list = [
+            _calc_statistics(cal.raw_to_si(dset[i : i + self.max_elements]))
+            for i in job_iter
+        ]
+        if len(stats_list) < 1:
+            return {}
+        stats_nd = np.stack(stats_list)
+        stats: Dict[str, float] = {
+            # TODO: wrong calculation for ndim-datasets with n>1
+            "mean": float(stats_nd[:, 0].mean()),
+            "min": float(stats_nd[:, 1].min()),
+            "max": float(stats_nd[:, 2].max()),
+            "std": float(stats_nd[:, 3].mean()),  # TODO: sooo wrong :)
+            "si_converted": si_converted,
+        }
+        return stats
+
+    def data_timediffs(self) -> List[float]:
+        """calculate list of (unique) time-deltas between buffers [s]
+            -> optimized version that only looks at the start of each buffer
+
+        :return: list of (unique) time-deltas between buffers [s]
+        """
+        iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
+        job_iter = trange(
+            0,
+            self.h5file["data"]["time"].shape[0],
+            self.max_elements,
+            desc="timediff",
+            leave=False,
+            disable=iterations < 8,
+        )
+
+        def calc_timediffs(idx_start: int) -> list:
+            ds_time = self.ds_time[
+                idx_start : (idx_start + self.max_elements) : self.samples_per_buffer
+            ]
+            diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
+            return list(np.array(diffs_np))
+
+        diffs_ll = [calc_timediffs(i) for i in job_iter]
+        diffs = {
+            round(float(j) * 1e-9 / self.samples_per_buffer, 6)
+            for i in diffs_ll
+            for j in i
+        }
+        return list(diffs)
+
+    def check_timediffs(self) -> bool:
+        """validate equal time-deltas
+        -> unexpected time-jumps hint at a corrupted file or faulty measurement
+
+        :return: True if OK
+        """
+        diffs = self.data_timediffs()
+        if len(diffs) > 1:
+            self._logger.warning(
+                "Time-jumps detected -> expected equal steps, but got: %s s", diffs
+            )
+        return len(diffs) <= 1
+
+    def get_metadata(
+        self, node: Union[h5py.Dataset, h5py.Group, None] = None, minimal: bool = False
+    ) -> Dict[str, dict]:
+        """recursive FN to capture the structure of the file
+        TODO: port to BaseReader (.data_dimediffs(), _dset_statistics())
+        :param node: starting node, leave free to go through whole file
+        :param minimal: just provide a bare tree (much faster)
+        :return: structure of that node with everything inside it
+        """
+        if node is None:
+            self._refresh_file_stats()
+            return self.get_metadata(self.h5file, minimal=minimal)
+
+        metadata: Dict[str, dict] = {}
+        if isinstance(node, h5py.Dataset) and not minimal:
+            metadata["_dataset_info"] = {
+                "dtype": str(node.dtype),
+                "shape": str(node.shape),
+                "chunks": str(node.chunks),
+                "compression": str(node.compression),
+                "compression_opts": str(node.compression_opts),
+            }
+            if node.name == "/data/time":
+                metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
+                # TODO: already convert to str to calm the typechecker?
+                #  or construct a pydantic-class
+            elif "int" in str(node.dtype):
+                metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
+                # TODO: put this into metadata["_dataset_statistics"] ??
+        for attr in node.attrs.keys():
+            attr_value = node.attrs[attr]
+            if isinstance(attr_value, str):
+                with contextlib.suppress(yaml.YAMLError):
+                    attr_value = yaml.safe_load(attr_value)
+            elif "int" in str(type(attr_value)):
+                # TODO: why not isinstance? can it be list[int] other complex type?
+                attr_value = int(attr_value)
+            else:
+                attr_value = float(attr_value)
+            metadata[attr] = attr_value
+        if isinstance(node, h5py.Group):
+            if node.name == "/data" and not minimal:
+                metadata["_group_info"] = {
+                    "energy_Ws": self.energy(),
+                    "runtime_s": round(self.runtime_s, 1),
+                    "data_rate_KiB_s": round(self.data_rate / 2**10),
+                    "file_size_MiB": round(self.file_size / 2**20, 3),
+                    "valid": self.is_valid(),
+                }
+            for item in node.keys():
+                metadata[item] = self.get_metadata(node[item], minimal=minimal)
+
+        return metadata
+
+    def save_metadata(self, node: Union[h5py.Dataset, h5py.Group, None] = None) -> dict:
+        """get structure of file and dump content to yaml-file with same name as original
+
+        :param node: starting node, leave free to go through whole file
+        :return: structure of that node with everything inside it
+        """
+        if isinstance(self._file_path, Path):
+            yml_path = Path(self._file_path).absolute().with_suffix(".yml")
+            if yml_path.exists():
+                self._logger.info("%s already exists, will skip", yml_path)
+                return {}
+            metadata = self.get_metadata(
+                node
+            )  # {"h5root": self.get_metadata(self.h5file)}
+            with open(yml_path, "w", encoding="utf-8-sig") as yfd:
+                yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
+        else:
+            metadata = {}
+        return metadata

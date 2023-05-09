@@ -4,7 +4,7 @@ import numpy as np
 from pydantic import PositiveFloat
 from pydantic import conlist
 from pydantic import validate_arguments
-from scipy.stats import stats
+from scipy import stats
 
 from ...logger import logger
 from .. import CalibrationCape

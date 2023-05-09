@@ -11,9 +11,9 @@ from typing import Union
 import h5py
 import numpy as np
 import yaml
+from pydantic import validate_arguments
 
-from .calibration import cal_default
-from .calibration import si_to_raw
+from .data_models.base.calibration import CalibrationSeries
 from .reader import BaseReader
 
 
@@ -62,13 +62,14 @@ class BaseWriter(BaseReader):
 
     _chunk_shape: tuple = (BaseReader.samples_per_buffer,)
 
+    @validate_arguments
     def __init__(
         self,
         file_path: Path,
         mode: Optional[str] = None,
         datatype: Optional[str] = None,
         window_samples: Optional[int] = None,
-        cal_data: Optional[dict] = None,
+        cal_data: Optional[CalibrationSeries] = None,
         modify_existing: bool = False,
         compression: Union[None, str, int] = "default",
         verbose: Optional[bool] = True,
@@ -91,7 +92,7 @@ class BaseWriter(BaseReader):
                 file_path,
                 self._file_path.name,
             )
-
+        # TODO: remove type-checks (done by pydantic now)
         if not isinstance(mode, (str, type(None))):
             raise TypeError(f"Can't handle type '{type(mode)}' for mode [str, None]")
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
@@ -102,9 +103,9 @@ class BaseWriter(BaseReader):
             raise TypeError(
                 f"Can't handle type '{type(window_samples)}' for window_samples [int, None]"
             )
-        if not isinstance(cal_data, (dict, type(None))):
+        if not isinstance(cal_data, (CalibrationSeries, type(None))):
             raise TypeError(
-                f"Can't handle type '{type(cal_data)}' for cal_data [dict, None]"
+                f"Can't handle type '{type(cal_data)}' for cal_data [CalSeries, None]"
             )
 
         if not isinstance(datatype, (str, type(None))):
@@ -121,14 +122,12 @@ class BaseWriter(BaseReader):
 
         if self._modify:
             self._mode = mode
-            self._cal = (
-                cal_data if isinstance(cal_data, dict) else cal_default
-            )  # TODO: switch to pydantic
+            self._cal = cal_data if cal_data else CalibrationSeries()
             self._datatype = datatype
             self._window_samples = window_samples
         else:
             self._mode = mode if isinstance(mode, str) else self.mode_default
-            self._cal = cal_data if isinstance(cal_data, dict) else cal_default
+            self._cal = cal_data if cal_data else CalibrationSeries()
             self._datatype = (
                 datatype if isinstance(datatype, str) else self.datatype_default
             )
@@ -294,8 +293,8 @@ class BaseWriter(BaseReader):
             current: ndarray in physical-unit A
         """
         timestamp = timestamp * 10**9
-        voltage = si_to_raw(voltage, self._cal["voltage"])
-        current = si_to_raw(current, self._cal["current"])
+        voltage = self._cal.voltage.si_to_raw(voltage)
+        current = self._cal.current.si_to_raw(current)
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def _align(self) -> None:

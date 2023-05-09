@@ -11,7 +11,9 @@ SafeStrClone = constr(regex=r"^[ -~]+$")
 
 class Wrapper(BaseModel):
     """Prototype for enabling one web- & file-interface for
-    all models with dynamic typecasting"""
+    all models with dynamic typecasting
+    TODO: id not needed, fields=>parameters, model=>type
+    """
 
     model: str
     # ⤷ model-name

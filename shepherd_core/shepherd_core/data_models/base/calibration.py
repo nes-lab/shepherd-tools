@@ -7,6 +7,7 @@ from typing import Union
 import numpy as np
 from numpy.typing import NDArray
 from pydantic import PositiveFloat
+from pydantic import validate_arguments
 
 from ...calibration_hw_def import adc_current_to_raw
 from ...calibration_hw_def import adc_voltage_to_raw
@@ -54,8 +55,9 @@ class CalibrationPair(ShpModel):
         values_raw = (values_si - self.offset) / self.gain
         if isinstance(values_raw, np.ndarray):
             values_raw[values_raw < 0.0] = 0.0
+            values_raw = np.around(values_raw)
         else:
-            values_raw = max(values_raw, 0.0)
+            values_raw = round(max(values_raw, 0.0))
         return values_raw
 
     @classmethod
@@ -66,15 +68,6 @@ class CalibrationPair(ShpModel):
             gain=1.0 / float(gain_inv),
             offset=-float(offset) / gain_inv,
         )
-
-
-class CalibrationSeries(ShpModel):
-    voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9)
-    # ⤷ default allows 0 - 12 V in 3 nV-Steps
-    current: CalibrationPair = CalibrationPair(gain=250 * 1e-12)
-    # ⤷ default allows 0 - 1 A in 250 pA - Steps
-    time: CalibrationPair = CalibrationPair(gain=1e-9)
-    # ⤷ default allows nanoseconds
 
 
 cal_hrv_legacy = {  # legacy translator
@@ -195,3 +188,27 @@ class CalibrationCape(ShpModel):
         lw = list(dict_generator(self.dict()))
         values = [walk[-1] for walk in lw]
         return struct.pack(">" + len(lw) * "d", *values)
+
+
+class CalibrationSeries(ShpModel):
+    voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9)
+    # ⤷ default allows 0 - 12 V in 3 nV-Steps
+    current: CalibrationPair = CalibrationPair(gain=250 * 1e-12)
+    # ⤷ default allows 0 - 1 A in 250 pA - Steps
+    time: CalibrationPair = CalibrationPair(gain=1e-9)
+    # ⤷ default allows nanoseconds
+
+    @classmethod
+    @validate_arguments
+    def from_cal(
+        cls,
+        cal: Union[CalibrationHarvester, CalibrationEmulator],
+        emu_port_a: bool = True,
+    ):
+        if isinstance(cal, CalibrationHarvester):
+            return cls(voltage=cal.adc_V_Sense, current=cal.dac_V_Hrv)
+        else:
+            if emu_port_a:
+                return cls(voltage=cal.dac_V_A, current=cal.adc_C_A)
+            else:
+                return cls(voltage=cal.dac_V_B, current=cal.adc_C_B)

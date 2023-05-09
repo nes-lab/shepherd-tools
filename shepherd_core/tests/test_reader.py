@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from shepherd_data import Reader
+from shepherd_core import BaseReader as Reader
 
 
 def test_reader_metadata(data_h5: Path) -> None:

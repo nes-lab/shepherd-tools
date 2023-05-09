@@ -1,5 +1,3 @@
-import hashlib
-
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.experiment import Experiment
@@ -47,8 +45,6 @@ def test_experiment_model_yaml_load():
 def test_experiment_model_yaml_comparison():
     exp1_data = load_yaml("example_config_experiment_alternative.yaml")
     exp1 = Experiment(**exp1_data)
-    exp1_hash = hashlib.sha3_224(str(exp1.dict()).encode("utf-8")).hexdigest()
-    print(f"YamlExp Hash {exp1_hash}")
 
     target_cfgs = TargetConfig(
         target_IDs=list(range(2001, 2005)),
@@ -64,9 +60,7 @@ def test_experiment_model_yaml_comparison():
         time_start="2023-12-12 12:12:12",
         target_configs=[target_cfgs],
     )
-    exp2_hash = hashlib.sha3_224(str(exp2.dict()).encode("utf-8")).hexdigest()
-    print(f"  PyExp Hash {exp2_hash}")
-    assert exp1_hash == exp2_hash
+    assert exp1.get_hash() == exp2.get_hash()
 
 
 def test_experiment_model_min_pwrtracing():

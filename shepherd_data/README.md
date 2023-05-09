@@ -140,6 +140,11 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `get_datatype`
   - `get_hrv_config`
   - `is_valid`
+  - `energy()`
+  - `check_timediffs()`
+  - `data_timediffs()`
+  - `get_metadata()`
+  - `save_metadata()`
 
 - `BaseWriter(BaseReader)`
   - `append_iv_data_raw`
@@ -150,11 +155,6 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
 
 - `Reader(BaseReader)`
   - `__repr__()`
-  - `check_timediffs()`
-  - `data_timediffs()`
-  - `get_metadata()`
-  - `save_metadata()`
-  - `energy()`
   - `save_csv()`
   - `save_log()`
   - `downsample()`
@@ -163,10 +163,9 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `assemble_plot()`
   - `plot_to_file()`
   - `multiplot_to_file()`
+-
 - `Writer(BaseWriter)`
   - (no extending methods)
-
-
 
 ## CLI-Interface
 

@@ -4,8 +4,8 @@ from typing import Union
 
 import numpy as np
 
-from shepherd_data import Reader
-from shepherd_data import Writer
+from shepherd_core import BaseReader as Reader
+from shepherd_core import BaseWriter as Writer
 
 
 def generate_shp_file(
