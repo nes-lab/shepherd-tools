@@ -77,6 +77,14 @@ class CalibrationSeries(ShpModel):
     # ⤷ default allows nanoseconds
 
 
+cal_hrv_legacy = {  # legacy translator
+    "dac_voltage_a": "dac_V_Sim",
+    "dac_voltage_b": "dac_V_Hrv",
+    "adc_current": "adc_C_Hrv",  # datalog current
+    "adc_voltage": "adc_V_Sense",  # datalog voltage
+}
+
+
 class CalibrationHarvester(ShpModel):
     dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
@@ -106,9 +114,17 @@ class CalibrationHarvester(ShpModel):
         return cal_set
 
 
+cal_emu_legacy = {  # legacy translator
+    "dac_voltage_a": "dac_V_A",
+    "dac_voltage_b": "dac_V_B",  # datalog voltage
+    "adc_current": "adc_C_A",  # datalog current
+    "adc_voltage": "adc_C_B",
+}
+
+
 class CalibrationEmulator(ShpModel):
-    """Cal-Data for both Target-Ports
-    """
+    """Cal-Data for both Target-Ports A/B"""
+
     dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     adc_C_A: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)

@@ -48,7 +48,6 @@ class ShpModel(BaseModel):
         use_enum_values = True  # cleaner export of enum-fields
         allow_inf_nan = False  # float without +-inf or NaN
         underscore_attrs_are_private = True  # allows using them
-
         # Options:
         # - https://docs.pydantic.dev/usage/schema/#field-customization
         # - https://docs.pydantic.dev/usage/model_config/
@@ -58,7 +57,7 @@ class ShpModel(BaseModel):
         return str(self.dict())
 
     def __getitem__(self, key):
-        return self.dict()[key]
+        return self.__getattribute__(key)
 
     @classmethod
     def dump_schema(cls, path: Union[str, Path]) -> None:

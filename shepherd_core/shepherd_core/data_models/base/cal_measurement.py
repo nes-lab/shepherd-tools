@@ -71,8 +71,8 @@ class CalMeasurementHarvester(ShpModel):
     def to_cal(self) -> CalibrationHarvester:
         dv = self.dict()
         dcal = CalibrationHarvester().dict()
-        for key, value in dv.items():
-            dcal[key] = meas_to_cal(value, dcal[key], f"hrv_{key}")
+        for key in dv.keys():
+            dcal[key] = meas_to_cal(self[key], dcal[key], f"hrv_{key}")
         return CalibrationHarvester(**dcal)
 
 
@@ -85,8 +85,8 @@ class CalMeasurementEmulator(ShpModel):
     def to_cal(self) -> CalibrationEmulator:
         dv = self.dict()
         dcal = CalibrationEmulator().dict()
-        for key, value in dv.items():
-            dcal[key] = meas_to_cal(value, dcal[key], f"emu_{key}")
+        for key in dv.keys():
+            dcal[key] = meas_to_cal(self[key], dcal[key], f"emu_{key}")
         return CalibrationEmulator(**dcal)
 
 
@@ -97,7 +97,8 @@ class CalMeasurementCape(ShpModel):
     def to_cal(self) -> CalibrationCape:
         dv = self.dict()
         dcal = CalibrationCape().dict()
+        # TODO: is it helpful to default wrong / missing values?
         for key, value in dv.items():
             if value is not None:
-                dcal[key] = value.to_cal()
+                dcal[key] = self[key].to_cal()
         return CalibrationCape(**dcal)

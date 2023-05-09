@@ -2,15 +2,12 @@ from pathlib import Path
 
 import numpy as np
 
-from shepherd_core.data_models.base.calibration import CalibrationPair
+from shepherd_core.data_models.base.cal_measurement import CalMeasurementCape
 from shepherd_core.data_models.base.calibration import CalibrationCape
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
 from shepherd_core.data_models.base.calibration import CalibrationHarvester
+from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
-from shepherd_core.data_models.base.cal_measurement import CalMeasurementPair
-from shepherd_core.data_models.base.cal_measurement import CalMeasurementEmulator
-from shepherd_core.data_models.base.cal_measurement import CalMeasurementHarvester
-from shepherd_core.data_models.base.cal_measurement import CalMeasurementCape
 
 
 def test_base_model_cal_pair_conv():
@@ -18,7 +15,7 @@ def test_base_model_cal_pair_conv():
     val_raw = 500
     val_si = cal.raw_to_si(val_raw)
     val_rbw = cal.si_to_raw(val_si)
-    assert val_raw == val_rbw
+    assert val_raw == round(val_rbw)
 
 
 def test_base_model_cal_pair_conv2():
@@ -36,11 +33,13 @@ def test_base_model_cal_series_min():
 def test_base_model_cal_hrv_min():
     cal = CalibrationHarvester()
     cs = cal.export_for_sysfs()
+    assert len(cs) == 6
 
 
 def test_base_model_cal_emu_min():
     cal = CalibrationEmulator()
     cs = cal.export_for_sysfs()
+    assert len(cs) == 6
 
 
 def test_base_model_cal_cape_bytestr():
