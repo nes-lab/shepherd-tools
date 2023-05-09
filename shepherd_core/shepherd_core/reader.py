@@ -65,7 +65,7 @@ class BaseReader:
         self.data_rate: float = 0
 
         # open file (if not already done by writer)
-        self.reader_opened: bool = False
+        self._reader_opened: bool = False
         if not hasattr(self, "h5file"):
             if not isinstance(self._file_path, Path):
                 raise ValueError("Provide a valid Path-Object to Reader!")
@@ -75,7 +75,7 @@ class BaseReader:
                 )
 
             self.h5file = h5py.File(self._file_path, "r")  # = readonly
-            self.reader_opened = True
+            self._reader_opened = True
 
             if self.is_valid():
                 self._logger.info("File is available now")
@@ -126,7 +126,7 @@ class BaseReader:
         return self
 
     def __exit__(self, *exc):  # type: ignore
-        if self.reader_opened:
+        if self._reader_opened:
             self.h5file.close()
 
     def _refresh_file_stats(self) -> None:
@@ -161,7 +161,7 @@ class BaseReader:
         if end_n is None:
             end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)
         self._logger.debug(
-            "Reading blocks from %s to %s from source-file", start_n, end_n
+            "Reading blocks from %d to %d from source-file", start_n, end_n
         )
         _raw = is_raw
 
@@ -184,14 +184,11 @@ class BaseReader:
     def get_calibration_data(self) -> CalibrationSeries:
         """Reads calibration-data from hdf5 file.
 
-        :return: Calibration data as CalibrationData object
+        :return: Calibration data as CalibrationSeries object
         """
         return self._cal
 
     def get_window_samples(self) -> int:
-        """
-        :return:
-        """
         if "window_samples" in self.h5file["data"].attrs:
             return int(self.h5file["data"].attrs["window_samples"])
         return 0
@@ -269,14 +266,16 @@ class BaseReader:
 
         if self.get_datatype() == "ivcurve" and self.get_window_samples() < 1:
             self._logger.error(
-                "window size / samples is < 1 -> invalid for ivcurves-datatype (@Validator)"
+                "window size / samples is < 1 "
+                "-> invalid for ivcurves-datatype (@Validator)"
             )
             return False
 
         # soft-criteria:
         if self.get_datatype() != "ivcurve" and self.get_window_samples() > 0:
             self._logger.warning(
-                "window size / samples is > 0 despite not using the ivcurves-datatype (@Validator)"
+                "window size / samples is > 0 despite "
+                "not using the ivcurves-datatype (@Validator)"
             )
         # same length of datasets:
         ds_time_size = self.h5file["data"]["time"].shape[0]
@@ -284,8 +283,8 @@ class BaseReader:
             ds_size = self.h5file["data"][dset].shape[0]
             if ds_time_size != ds_size:
                 self._logger.warning(
-                    "dataset '%s' has different size (=%s), "
-                    "compared to time-ds (=%s) (@Validator)",
+                    "dataset '%s' has different size (=%d), "
+                    "compared to time-ds (=%d) (@Validator)",
                     dset,
                     ds_size,
                     ds_time_size,
@@ -307,7 +306,7 @@ class BaseReader:
                 )
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
                 self._logger.warning(
-                    "gzip compression is too high (%s > 1) for BBone (@Validator)", opts
+                    "gzip compression is too high (%d > 1) for BBone (@Validator)", opts
                 )
         # host-name
         if self.get_hostname() == "unknown":
