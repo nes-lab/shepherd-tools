@@ -11,7 +11,7 @@ from .conftest import load_yaml
 
 
 def test_example_emu():
-    data_dict = load_yaml("example_config_emulator.yml")
+    data_dict = load_yaml("example_config_emulator.yaml")
     EmulationTask(**data_dict["parameters"])
 
 
@@ -28,11 +28,11 @@ def test_example_exp():
 
 
 def test_example_tb():
-    data_dict = load_yaml("example_config_testbed.yml")
+    data_dict = load_yaml("example_config_testbed.yaml")
     print(data_dict)
     TasteBad(**data_dict)
 
 
 def test_example_vsrc():
-    data_dict = load_yaml("example_config_virtsource.yml")
+    data_dict = load_yaml("example_config_virtsource.yaml")
     VirtualSource(**data_dict["VirtualSource"])
