@@ -129,6 +129,11 @@ class BaseReader:
         if self._reader_opened:
             self.h5file.close()
 
+    def __repr__(self):
+        return yaml.safe_dump(
+            self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
+        )
+
     def _refresh_file_stats(self) -> None:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()

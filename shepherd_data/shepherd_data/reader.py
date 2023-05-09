@@ -31,11 +31,6 @@ class Reader(BaseReader):
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
         super().__init__(file_path, verbose)
 
-    def __repr__(self):
-        return yaml.safe_dump(
-            self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
-        )
-
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
         """extract numerical data via csv
 

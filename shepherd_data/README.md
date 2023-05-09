@@ -131,6 +131,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
 ### Functionality Update (WIP)
 
 - `BaseReader`
+  - `__repr__()`
   - `read_buffers`
   - `get_calibration_data`
   - `get_window_samples`
@@ -154,7 +155,6 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `set_hostname`
 
 - `Reader(BaseReader)`
-  - `__repr__()`
   - `save_csv()`
   - `save_log()`
   - `downsample()`
@@ -163,7 +163,7 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `assemble_plot()`
   - `plot_to_file()`
   - `multiplot_to_file()`
--
+
 - `Writer(BaseWriter)`
   - (no extending methods)
 
