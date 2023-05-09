@@ -1,0 +1,26 @@
+---
+id: 8472
+name: undine
+description: lore
+observers:
+  - id: 1911
+    name: the_one
+    description: data
+    ip: 127.0.0.1
+    mac: AA-BB-CC-DD-EE-FF
+    room: bar1
+    eth_port: bar1xyz
+    cape:
+      id: 123
+      name: invisibility
+      version: v7.00
+      description: see no more
+    target_a:
+      id: 101
+      name: hirogen
+      version: v2.00
+      description: delta
+      mcu1: nRF52
+    target_b: null
+data_on_server: /tmp
+data_on_observer: /mnt/shp
