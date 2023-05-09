@@ -10,7 +10,6 @@ from typing import Union
 
 import h5py
 import numpy as np
-import yaml
 from matplotlib import pyplot as plt
 from scipy import signal
 from tqdm import trange
