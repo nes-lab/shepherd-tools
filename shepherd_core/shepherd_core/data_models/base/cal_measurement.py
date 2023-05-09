@@ -13,6 +13,8 @@ from .. import CalibrationHarvester
 from .. import CalibrationPair
 from .shepherd import ShpModel
 
+# TODO: move to shepherd_data to remove scipy-dependency
+
 
 class CalMeasurementPair(ShpModel):
     shepherd_raw: PositiveFloat
