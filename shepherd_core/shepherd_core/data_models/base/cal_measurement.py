@@ -13,8 +13,6 @@ from .. import CalibrationHarvester
 from .. import CalibrationPair
 from .shepherd import ShpModel
 
-# TODO: port over TESTs
-
 
 class CalMeasurementPair(ShpModel):
     shepherd_raw: PositiveFloat

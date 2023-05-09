@@ -14,9 +14,7 @@ from ...calibration_hw_def import adc_voltage_to_raw
 from ...calibration_hw_def import dac_voltage_to_raw
 from .shepherd import ShpModel
 
-# TODO: port over TESTs
-
-T_calc = TypeVar("T_calc", NDArray[np.float64], float)
+Calc_t = TypeVar("Calc_t", NDArray[np.float64], float)
 
 
 def dict_generator(indict, pre=None) -> Generator[list, None, None]:
@@ -40,7 +38,7 @@ class CalibrationPair(ShpModel):
     gain: PositiveFloat
     offset: float = 0
 
-    def raw_to_si(self, values_raw: T_calc) -> T_calc:
+    def raw_to_si(self, values_raw: Calc_t) -> Calc_t:
         """Helper to convert between physical units and raw unsigned integers"""
         values_si = values_raw * self.gain + self.offset
         if isinstance(values_si, np.ndarray):
@@ -50,7 +48,7 @@ class CalibrationPair(ShpModel):
             values_si = float(max(values_si, 0.0))
         return values_si
 
-    def si_to_raw(self, values_si: T_calc) -> T_calc:
+    def si_to_raw(self, values_si: Calc_t) -> Calc_t:
         """Helper to convert between physical units and raw unsigned integers"""
         values_raw = (values_si - self.offset) / self.gain
         if isinstance(values_raw, np.ndarray):

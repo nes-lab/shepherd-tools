@@ -5,6 +5,7 @@ Provides classes for storing and retrieving sampled IV data to/from
 HDF5 files.
 
 """
+from .data_models.base.calibration import Calc_t
 from .data_models.base.calibration import CalibrationCape
 from .data_models.base.calibration import CalibrationEmulator
 from .data_models.base.calibration import CalibrationHarvester
@@ -29,4 +30,5 @@ __all__ = [
     "CalibrationEmulator",
     "CalibrationHarvester",
     "CalibrationPair",
+    "Calc_t",
 ]
