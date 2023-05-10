@@ -194,7 +194,7 @@ class CalibrationSeries(ShpModel):
     current: CalibrationPair = CalibrationPair(gain=250 * 1e-12)
     # ⤷ default allows 0 - 1 A in 250 pA - Steps
     time: CalibrationPair = CalibrationPair(gain=1e-9)
-    # ⤷ default allows nanoseconds
+    # ⤷ default = nanoseconds
 
     @classmethod
     @validate_arguments

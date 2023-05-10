@@ -91,17 +91,14 @@ class BaseReader:
         self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]
         self.ds_current: h5py.Dataset = self.h5file["data"]["current"]
 
+        # retrieve cal-data
         if not hasattr(self, "_cal"):
-            self._cal = CalibrationSeries(
-                voltage=CalibrationPair(
-                    gain=self.ds_voltage.attrs["gain"],
-                    offset=self.ds_voltage.attrs["offset"],
-                ),
-                current=CalibrationPair(
-                    gain=self.ds_current.attrs["gain"],
-                    offset=self.ds_current.attrs["offset"],
-                ),
-            )
+            cal_dict = CalibrationSeries().dict()
+            for ds, param in product(
+                ["current", "voltage", "time"], ["gain", "offset"]
+            ):
+                cal_dict[ds][param] = self.h5file["data"][ds].attrs[param]
+            self._cal = CalibrationSeries(**cal_dict)
 
         self._refresh_file_stats()
 
@@ -181,7 +178,7 @@ class BaseReader:
                 )
             else:
                 yield (
-                    self.ds_time[idx_start:idx_end] * 1e-9,
+                    self._cal.time.raw_to_si(self.ds_time[idx_start:idx_end]),
                     self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_end]),
                     self._cal.current.raw_to_si(self.ds_current[idx_start:idx_end]),
                 )
@@ -255,12 +252,14 @@ class BaseReader:
             if dset not in self.h5file["data"].keys():
                 self._logger.error("dataset '%s' not found (@Validator)", dset)
                 return False
-        for dset, attr in product(["current", "voltage"], ["gain", "offset"]):
-            if attr not in self.h5file["data"][dset].attrs.keys():
-                self._logger.error(
-                    "attribute '%s' not found in dataset '%s' (@Validator)", attr, dset
-                )
-                return False
+            for attr in ["gain", "offset"]:
+                if attr not in self.h5file["data"][dset].attrs.keys():
+                    self._logger.error(
+                        "attribute '%s' not found in dataset '%s' (@Validator)",
+                        attr,
+                        dset,
+                    )
+                    return False
         if self.get_datatype() not in self.mode_dtype_dict[self.get_mode()]:
             self._logger.error(
                 "unsupported type '%s' for mode '%s' (@Validator)",
@@ -428,7 +427,7 @@ class BaseReader:
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
         diffs = {
-            round(float(j) * 1e-9 / self.samples_per_buffer, 6)
+            round(self._cal.time.raw_to_si(j) / self.samples_per_buffer, 6)
             for i in diffs_ll
             for j in i
         }

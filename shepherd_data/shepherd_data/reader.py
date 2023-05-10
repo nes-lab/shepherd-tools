@@ -318,10 +318,16 @@ class Reader(BaseReader):
         ds_factor = float(self.samplerate_sps / samplerate_dst)
         data = {
             "name": self.get_hostname(),
-            "time": self.downsample(
-                self.ds_time, None, start_sample, end_sample, ds_factor, is_time=True
-            ).astype(float)
-            * 1e-9,
+            "time": self._cal.time.raw_to_si(
+                self.downsample(
+                    self.ds_time,
+                    None,
+                    start_sample,
+                    end_sample,
+                    ds_factor,
+                    is_time=True,
+                )
+            ).astype(float),
             "voltage": self._cal.voltage.raw_to_si(
                 self.downsample(
                     self.ds_voltage, None, start_sample, end_sample, ds_factor
@@ -336,7 +342,7 @@ class Reader(BaseReader):
             "end_s": end_s,
         }
         if relative_ts:
-            data["time"] = data["time"] - self.ds_time[0] * 1e-9
+            data["time"] = data["time"] - self._cal.time.raw_to_si(self.ds_time[0])
         return data
 
     @staticmethod

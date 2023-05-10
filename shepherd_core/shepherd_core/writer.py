@@ -122,18 +122,18 @@ class BaseWriter(BaseReader):
 
         if self._modify:
             self._mode = mode
-            self._cal = cal_data if cal_data else CalibrationSeries()
             self._datatype = datatype
             self._window_samples = window_samples
         else:
             self._mode = mode if isinstance(mode, str) else self.mode_default
-            self._cal = cal_data if cal_data else CalibrationSeries()
             self._datatype = (
                 datatype if isinstance(datatype, str) else self.datatype_default
             )
             self._window_samples = (
                 window_samples if isinstance(window_samples, int) else 0
             )
+
+        self._cal = cal_data if cal_data else CalibrationSeries()
 
         if compression in [None, "lzf", 1]:  # order of recommendation
             self._compression_algo = compression
@@ -162,13 +162,10 @@ class BaseWriter(BaseReader):
         if isinstance(self._window_samples, int):
             self.h5file["data"].attrs["window_samples"] = self._window_samples
 
-        if self._cal is not None:
-            for channel, parameter in product(
-                ["current", "voltage"], ["gain", "offset"]
-            ):
-                self.h5file["data"][channel].attrs[parameter] = self._cal[channel][
-                    parameter
-                ]
+        # include cal-data
+        for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
+            self.h5file["data"][ds].attrs[param] = self._cal[ds][param]
+
         super().__init__(file_path=None, verbose=verbose)
 
     def __enter__(self):
@@ -213,8 +210,10 @@ class BaseWriter(BaseReader):
             chunks=self._chunk_shape,
             compression=self._compression_algo,
         )
-        gp_data["time"].attrs["unit"] = "ns"
-        gp_data["time"].attrs["description"] = "system time [ns]"
+        gp_data["time"].attrs["unit"] = "s"
+        gp_data["time"].attrs[
+            "description"
+        ] = "system time [s] = value * gain + (offset)"
 
         gp_data.create_dataset(
             "current",
@@ -240,26 +239,26 @@ class BaseWriter(BaseReader):
 
     def append_iv_data_raw(
         self,
-        timestamp_ns: Union[np.ndarray, float, int],
+        timestamp: Union[np.ndarray, float, int],
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:
         """Writes raw data to database
 
         Args:
-            timestamp_ns: just start of buffer or whole ndarray
+            timestamp: just start of buffer or whole ndarray
             voltage: ndarray as raw unsigned integers
             current: ndarray as raw unsigned integers
         """
         len_new = min(voltage.size, current.size)
 
-        if isinstance(timestamp_ns, float):
-            timestamp_ns = int(timestamp_ns)
-        if isinstance(timestamp_ns, int):
+        if isinstance(timestamp, float):
+            timestamp = int(timestamp)
+        if isinstance(timestamp, int):
             time_series_ns = self.sample_interval_ns * np.arange(len_new).astype("u8")
-            timestamp_ns = timestamp_ns + time_series_ns
-        if isinstance(timestamp_ns, np.ndarray):
-            len_new = min(len_new, timestamp_ns.size)
+            timestamp = timestamp + time_series_ns
+        if isinstance(timestamp, np.ndarray):
+            len_new = min(len_new, timestamp.size)
         else:
             self._logger.error("timestamp-data was not usable")
             return
@@ -272,7 +271,7 @@ class BaseWriter(BaseReader):
         self.ds_current.resize((len_old + len_new,))
 
         # append new data
-        self.ds_time[len_old : len_old + len_new] = timestamp_ns[:len_new]
+        self.ds_time[len_old : len_old + len_new] = timestamp[:len_new]
         self.ds_voltage[len_old : len_old + len_new] = voltage[:len_new]
         self.ds_current[len_old : len_old + len_new] = current[:len_new]
 
@@ -292,7 +291,7 @@ class BaseWriter(BaseReader):
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
         """
-        timestamp = timestamp * 10**9
+        timestamp = self._cal.time.si_to_raw(timestamp)
         voltage = self._cal.voltage.si_to_raw(voltage)
         current = self._cal.current.si_to_raw(current)
         self.append_iv_data_raw(timestamp, voltage, current)
