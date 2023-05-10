@@ -23,7 +23,7 @@ def dict_generator(indict, pre=None) -> Generator[list, None, None]:
         for key, value in indict.items():
             if isinstance(value, dict):
                 yield from dict_generator(value, pre + [key])
-            elif isinstance(value, Union[list, tuple]):
+            elif isinstance(value, (list, tuple)):
                 for v in value:
                     yield from dict_generator(v, pre + [key])
             else:
@@ -205,8 +205,6 @@ class CalibrationSeries(ShpModel):
     ):
         if isinstance(cal, CalibrationHarvester):
             return cls(voltage=cal.adc_V_Sense, current=cal.dac_V_Hrv)
-        else:
-            if emu_port_a:
-                return cls(voltage=cal.dac_V_A, current=cal.adc_C_A)
-            else:
-                return cls(voltage=cal.dac_V_B, current=cal.adc_C_B)
+        if emu_port_a:
+            return cls(voltage=cal.dac_V_A, current=cal.adc_C_A)
+        return cls(voltage=cal.dac_V_B, current=cal.adc_C_B)

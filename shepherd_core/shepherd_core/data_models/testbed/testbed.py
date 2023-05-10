@@ -67,7 +67,7 @@ class Testbed(ShpModel):
         if len(ips) > len(set(ips)):
             raise ValueError("Observer-IP used more than once in Testbed")
         if len(macs) > len(set(macs)):
-            raise ValueError("Observers-MAC-Addresse used more than once in Testbed")
+            raise ValueError("Observers-MAC-Address used more than once in Testbed")
         if len(capes) > len(set(capes)):
             raise ValueError("Cape used more than once in Testbed")
         if len(targets) > len(set(targets)):
