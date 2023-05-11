@@ -40,9 +40,9 @@ class Reader(BaseReader):
         if h5_group["time"].shape[0] < 1:
             self._logger.warning("%s is empty, no csv generated", h5_group.name)
             return 0
-        if not isinstance(self._file_path, Path):
+        if not isinstance(self.file_path, Path):
             return 0
-        csv_path = self._file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
+        csv_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
         if csv_path.exists():
             self._logger.warning("%s already exists, will skip", csv_path)
             return 0
@@ -83,9 +83,9 @@ class Reader(BaseReader):
         if h5_group["time"].shape[0] < 1:
             self._logger.warning("%s is empty, no log generated", h5_group.name)
             return 0
-        if not isinstance(self._file_path, Path):
+        if not isinstance(self.file_path, Path):
             return 0
-        log_path = self._file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
+        log_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
         if log_path.exists():
             self._logger.warning("%s already exists, will skip", log_path)
             return 0
@@ -390,14 +390,14 @@ class Reader(BaseReader):
         :param width: plot-width
         :param height: plot-height
         """
-        if not isinstance(self._file_path, Path):
+        if not isinstance(self.file_path, Path):
             return
 
         data = [self.generate_plot_data(start_s, end_s)]
 
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = self._file_path.absolute().with_suffix(
+        plot_path = self.file_path.absolute().with_suffix(
             f".plot_{start_str}_to_{end_str}.png"
         )
         if plot_path.exists():

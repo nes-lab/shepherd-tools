@@ -26,9 +26,13 @@ from ..testbed.cape import TargetPort
 class Compression(str, Enum):
     lzf = "lzf"  # not native hdf5
     gzip1 = 1  # higher compr & load
+    gzip = 1
+    default = 1
+    null = None
 
 
-compressions_allowed: list = [None, "lzf", 1]  # TODO: is it still needed?
+compressions_allowed: list = [None, "lzf", 1]
+c_translate = {"lzf": "lzf", "1": 1, "None": None, None: None}
 
 
 class EmulationTask(ShpModel):
@@ -38,13 +42,13 @@ class EmulationTask(ShpModel):
     input_path: Path
     # ⤷ hdf5 file containing harvesting data
     output_path: Optional[Path]
-    # ⤷ dir- or file path for storing the recorded data:
+    # ⤷ dir- or file-path for storing the recorded data:
     #   - providing a directory -> file is named emu_timestamp.h5
     #   - for a complete path the filename is not changed except it exists and
     #     overwrite is disabled -> emu#num.h5
     force_overwrite: bool = False
     # ⤷ Overwrite existing file
-    output_compression: Optional[Compression] = Compression.lzf
+    output_compression: Optional[Compression] = Compression.default
     # ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)
 
     time_start: Optional[datetime] = None

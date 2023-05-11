@@ -150,9 +150,8 @@ with shpd.Reader("./hrv_sawtooth_1h.h5") as db:
 - `BaseWriter(BaseReader)`
   - `append_iv_data_raw`
   - `append_iv_data_si`
-  - `set_config`
-  - `set_window_samples`
-  - `set_hostname`
+  - `store_config`
+  - `store_hostname`
 
 - `Reader(BaseReader)`
   - `save_csv()`

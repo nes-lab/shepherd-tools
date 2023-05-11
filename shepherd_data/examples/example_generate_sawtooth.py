@@ -15,7 +15,7 @@ if __name__ == "__main__":
     file_path = Path("./hrv_sawtooth_1h.h5")
 
     with shp.Writer(file_path, compression=1) as file:
-        file.set_hostname("artificial")
+        file.store_hostname("artificial")
         duration_s = 60
         repetitions = 60
         timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)

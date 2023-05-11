@@ -1,11 +1,11 @@
 from pathlib import Path
 from typing import Optional
-from typing import Union
 
 import numpy as np
 
 from shepherd_core import BaseReader as Reader
 from shepherd_core import BaseWriter as Writer
+from shepherd_core.data_models.task import Compression
 
 
 def generate_shp_file(
@@ -15,7 +15,7 @@ def generate_shp_file(
     window_samples: Optional[int] = None,
     cal_data: Optional[dict] = None,
     config: Optional[dict] = None,
-    compression: Union[str, int, None] = "default",
+    compression: Optional[Compression] = Compression.default,
     hostname: str = "unknown",
 ):
     if config is None:
@@ -29,8 +29,8 @@ def generate_shp_file(
         compression=compression,
         verbose=True,
     ) as file:
-        file.set_hostname(hostname)
-        file.set_config(config)
+        file.store_hostname(hostname)
+        file.store_config(config)
         duration_s = 2
         timestamps = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
         voltages = np.linspace(3.60, 1.90, int(file.samplerate_sps * duration_s))
@@ -52,7 +52,7 @@ def test_writer_basics(tmp_path: Path) -> None:
 
 def test_writer_compression_1(tmp_path: Path) -> None:
     store_path = tmp_path / "hrv_test.h5"
-    generate_shp_file(store_path, compression=1)
+    generate_shp_file(store_path, compression=Compression.gzip1)
 
 
 # TODO:

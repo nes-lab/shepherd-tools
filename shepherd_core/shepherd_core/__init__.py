@@ -11,6 +11,7 @@ from .data_models.base.calibration import CalibrationEmulator
 from .data_models.base.calibration import CalibrationHarvester
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
+from .data_models.task import Compression
 from .logger import get_verbose_level
 from .logger import logger
 from .logger import set_verbose_level
@@ -31,4 +32,5 @@ __all__ = [
     "CalibrationHarvester",
     "CalibrationPair",
     "Calc_t",
+    "Compression",
 ]

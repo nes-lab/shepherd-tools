@@ -94,5 +94,5 @@ if __name__ == "__main__":
                 print(" -> will set hostname = SheepX")
                 fh.__exit__()
                 with shp.Writer(fpath, modify_existing=True) as fw:
-                    fw.set_hostname("SheepX")
+                    fw.store_hostname("SheepX")
                 fh.__enter__()

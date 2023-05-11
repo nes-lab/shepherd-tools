@@ -123,8 +123,8 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                     verbose=verbose_level >= 2,
                 ) as shpw:
                     shpw["ds_factor"] = ds_factor
-                    shpw.set_hostname(shpr.get_hostname())
-                    shpw.set_config(shpr.get_config())
+                    shpw.store_hostname(shpr.get_hostname())
+                    shpw.store_config(shpr.get_config())
                     shpr.downsample(
                         shpr.ds_time, shpw.ds_time, ds_factor=ds_factor, is_time=True
                     )
@@ -226,8 +226,8 @@ def downsample(
                     verbose=verbose_level >= 2,
                 ) as shpw:
                     shpw["ds_factor"] = _factor
-                    shpw.set_hostname(shpr.get_hostname())
-                    shpw.set_config(shpr.get_config())
+                    shpw.store_hostname(shpr.get_hostname())
+                    shpw.store_config(shpr.get_config())
                     shpr.downsample(
                         shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True
                     )

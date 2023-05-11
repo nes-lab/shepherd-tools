@@ -42,17 +42,18 @@ class BaseReader:
 
     @validate_arguments
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
-        if not hasattr(self, "_file_path"):
-            self._file_path: Optional[Path] = None
+        if not hasattr(self, "file_path"):
+            self.file_path: Optional[Path] = None
             if isinstance(file_path, (Path, str)):
-                self._file_path = Path(file_path)
+                self.file_path = Path(file_path)
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Reader")
         if verbose is not None:
             self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
-        self.samplerate_sps: int = self.samplerate_sps_default
+        if not hasattr(self, "samplerate_sps"):
+            self.samplerate_sps: int = self.samplerate_sps_default
         self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
@@ -67,14 +68,14 @@ class BaseReader:
         # open file (if not already done by writer)
         self._reader_opened: bool = False
         if not hasattr(self, "h5file"):
-            if not isinstance(self._file_path, Path):
+            if not isinstance(self.file_path, Path):
                 raise ValueError("Provide a valid Path-Object to Reader!")
-            if not self._file_path.exists():
+            if not self.file_path.exists():
                 raise FileNotFoundError(
-                    errno.ENOENT, os.strerror(errno.ENOENT), self._file_path.name
+                    errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
                 )
 
-            self.h5file = h5py.File(self._file_path, "r")  # = readonly
+            self.h5file = h5py.File(self.file_path, "r")  # = readonly
             self._reader_opened = True
 
             if self.is_valid():
@@ -111,7 +112,7 @@ class BaseReader:
                 "\t- window_size = %s\n"
                 "\t- size = %s MiB\n"
                 "\t- rate = %s KiB/s",
-                self._file_path,
+                self.file_path,
                 self.runtime_s,
                 self.get_mode(),
                 self.get_window_samples(),
@@ -139,8 +140,8 @@ class BaseReader:
             self.samplerate_sps = max(int(10**9 // self.sample_interval_ns), 1)
             self.sample_interval_s = 1.0 / self.samplerate_sps
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
-        if isinstance(self._file_path, Path):
-            self.file_size = self._file_path.stat().st_size
+        if isinstance(self.file_path, Path):
+            self.file_size = self.file_path.stat().st_size
         else:
             self.file_size = 0
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
@@ -506,8 +507,8 @@ class BaseReader:
         :param node: starting node, leave free to go through whole file
         :return: structure of that node with everything inside it
         """
-        if isinstance(self._file_path, Path):
-            yml_path = Path(self._file_path).absolute().with_suffix(".yml")
+        if isinstance(self.file_path, Path):
+            yml_path = Path(self.file_path).absolute().with_suffix(".yml")
             if yml_path.exists():
                 self._logger.info("%s already exists, will skip", yml_path)
                 return {}
