@@ -12,7 +12,8 @@ from .conftest import load_yaml
 
 def test_example_emu():
     data_dict = load_yaml("example_config_emulator.yaml")
-    EmulationTask(**data_dict["parameters"])
+    emu = EmulationTask(**data_dict["parameters"])
+    print(emu)
 
 
 def test_example_exp_recommended():

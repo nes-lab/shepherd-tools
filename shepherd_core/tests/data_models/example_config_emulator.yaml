@@ -32,9 +32,7 @@ parameters:
     V_buck_drop_mV: 0
     V_output_mV: 3000
 
-  power_tracing:
-    voltage: true
-    current: true
+  power_tracing: null
   gpio_tracing:
     uart_decode: true
     uart_baudrate: 9600
