@@ -15,7 +15,9 @@ fixtures = Fixtures(fixture_path, "VirtualHarvester")
 
 class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     """A Harvester is needed when the file-based energy environment
-    of the virtual source is not already supplied as ivsamples"""
+    of the virtual source is not already supplied as ivsamples
+    TODO: Should be named -Config internally
+    """
 
     # General Metadata & Ownership -> ContentModel
 

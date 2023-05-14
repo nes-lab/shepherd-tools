@@ -16,8 +16,8 @@ import math
 from typing import Optional
 
 from shepherd_core import CalibrationEmulator
-
-from .virtual_source_config import VirtualSourceConfig
+from shepherd_core.data_models import VirtualSource
+from shepherd_core.data_models.content.virtual_source import VirtualSourcePRU
 
 
 class PruCalibration:
@@ -40,14 +40,14 @@ class PruCalibration:
         return dac_raw
 
 
-class KernelConverterStruct:
+class KernelConverterStruct:  # TODO: can be replaced by VirtualSourcePRU
     """part of commons.h"""
 
-    def __init__(self, vs_data: VirtualSourceConfig):
+    def __init__(self, vs_data: VirtualSource):
         # NOTE:
         #  - yaml is based on si-units like nA, mV, ms, uF
         #  - c-code and py-copy is using nA, uV, ns, nF, fW, raw
-        values = vs_data.export_for_sysfs()
+        values = list(VirtualSourcePRU.from_vsrc(vs_data).dict().values())
 
         # generate a new dict from raw_list (that is intended for PRU / sys_fs, see commons.h)
         self.LUT_size: int = 12

@@ -20,6 +20,7 @@ import yaml
 from pydantic import validate_arguments
 from tqdm import trange
 
+from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 
@@ -33,7 +34,6 @@ class BaseReader:
     """
 
     samples_per_buffer: int = 10_000
-    samplerate_sps_default: int = 100_000
 
     mode_dtype_dict = {
         "harvester": ["ivsample", "ivcurve", "isc_voc"],
@@ -53,7 +53,7 @@ class BaseReader:
             self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
         if not hasattr(self, "samplerate_sps"):
-            self.samplerate_sps: int = self.samplerate_sps_default
+            self.samplerate_sps: int = samplerate_sps_default
         self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 

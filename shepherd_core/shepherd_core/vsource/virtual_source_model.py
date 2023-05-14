@@ -12,14 +12,13 @@ from typing import Optional
 
 from shepherd_core import CalibrationEmulator
 
+from ..data_models import VirtualSource
 from .virtual_converter_model import KernelConverterStruct
 from .virtual_converter_model import PruCalibration
 from .virtual_converter_model import VirtualConverterModel
 from .virtual_harvester_config import VirtualHarvesterConfig
 from .virtual_harvester_model import KernelHarvesterStruct
 from .virtual_harvester_model import VirtualHarvesterModel
-from .virtual_source_config import T_vSrc
-from .virtual_source_config import VirtualSourceConfig
 
 
 class VirtualSourceModel:
@@ -27,14 +26,14 @@ class VirtualSourceModel:
 
     def __init__(
         self,
-        vs_setting: Optional[T_vSrc],
+        vs_setting: Optional[VirtualSource],
         cal_emu: CalibrationEmulator,
         input_setting: Optional[dict],
     ):
         self._cal: CalibrationEmulator = cal_emu
         self._prc: PruCalibration = PruCalibration(cal_emu)
 
-        vs_config = VirtualSourceConfig(vs_setting)
+        vs_config = VirtualSource() if vs_setting is None else vs_setting
         vc_struct = KernelConverterStruct(vs_config)
         self.cnv: VirtualConverterModel = VirtualConverterModel(vc_struct, self._prc)
 

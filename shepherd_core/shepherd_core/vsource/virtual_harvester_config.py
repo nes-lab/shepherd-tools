@@ -3,11 +3,12 @@ from __future__ import annotations
 import copy
 import logging
 from pathlib import Path
-from typing import Optional
 from typing import TypeVar
 
 import yaml
+
 from shepherd_core import CalibrationHarvester
+from shepherd_core.commons import samplerate_sps_default
 
 logger = logging.getLogger("shp.hrvConfig")
 
@@ -46,9 +47,9 @@ class VirtualHarvesterConfig:
 
     def __init__(
         self,
-        setting: Optional[T_vHrv] = None,
-        samplerate_sps: int = 100_000,
-        emu_cfg: Optional[dict[str, float]] = None,
+        setting: T_vHrv | None = None,
+        samplerate_sps: int = samplerate_sps_default,
+        emu_cfg: dict[str, float] | None = None,
     ):
         self.samplerate_sps = samplerate_sps
         self.for_emulation = emu_cfg is not None

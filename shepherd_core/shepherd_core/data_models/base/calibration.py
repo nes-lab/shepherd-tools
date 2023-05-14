@@ -125,15 +125,15 @@ class CalibrationEmulator(ShpModel):
         """
         [scaling according to commons.h]
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
-        # ADC-V is handled in uV (micro-volt), gain is shifted by 8 bit
+        # ADC-V -> unused by vsrc / emu
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
         TODO: current impl does not distinguish target_ports for DAC
         """
         cal_set = {
             "adc_current_gain": round(1e9 * (2**8) * self.adc_C_A.gain),
             "adc_current_offset": round(1e9 * (2**0) * self.adc_C_A.offset),
-            "adc_voltage_gain": round(1e6 * (2**8) * self.adc_C_B.gain),
-            "adc_voltage_offset": round(1e6 * (2**0) * self.adc_C_B.offset),
+            "adc_voltage_gain": round(1e6 * (2**8) * 1),
+            "adc_voltage_offset": round(1e6 * (2**0) * 0),
             "dac_voltage_gain": round((2**20) / (1e6 * self.dac_V_A.gain)),
             "dac_voltage_offset": round(1e6 * (2**0) * self.dac_V_A.offset),
         }
