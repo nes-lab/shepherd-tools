@@ -14,7 +14,7 @@ import shepherd_data as shp
 if __name__ == "__main__":
     file_path = Path("./hrv_sawtooth_1h.h5")
 
-    with shp.Writer(file_path, compression=1) as file:
+    with shp.Writer(file_path) as file:
         file.store_hostname("artificial")
         duration_s = 60
         repetitions = 60
