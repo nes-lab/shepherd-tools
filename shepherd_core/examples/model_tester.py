@@ -1,3 +1,23 @@
+"""
+
+How to define an experiment:
+
+- within python (shown in this example)
+    - object-oriented data-models of
+        - experiment
+        - TargetConfig -> shared for group of targets
+        - virtualSource -> defines energy environment and converters
+    - sub-elements reusable
+    - scriptable for range of experiments
+    - check for plausibility right away
+- as yaml (shown in experiment_from_yaml.yaml)
+    - default file-format for storing meta-data (for shepherd)
+    - minimal writing
+    - easy to copy parts
+    - submittable through web-interface
+
+"""
+
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import VirtualHarvester
@@ -6,35 +26,22 @@ from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 
+# generate description for all parameters / fields -> base for web-forms
 Experiment.dump_schema("experiment_schema.yaml")
 
-"""
-
-How to define an experiment:
-
-- within python (shown in this example)
-    - object-oriented
-    - sub-elements reusable
-    - scriptable for suite of experiments
-    - check for plausibility right away 
-- as yaml (shown in experiment_from_yaml.yaml)
-    - minimal writing
-    - easily copyable
-    - submittable through web-interface
-
-"""
-
+# Defining an Experiment in Python
 hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
 
 target_cfgs = [
+    # first Instance similar to yaml-syntax
     TargetConfig(
-        target_IDs=list(range(3001, 3004)),
-        custom_IDs=list(range(0, 3)),
+        target_IDs=[3001, 3002, 3003],
+        custom_IDs=[0, 1, 2],
         energy_env={"name": "SolarSunny"},
         virtual_source={"name": "diode+capacitor"},
         firmware1={"name": "nrf52_demo_rf"},
     ),
-    # second Instance fully object-oriented
+    # second Instance fully object-oriented (preferred)
     TargetConfig(
         target_IDs=list(range(2001, 2005)),
         custom_IDs=list(range(7, 18)),  # note: longer list is OK
@@ -48,8 +55,7 @@ target_cfgs = [
 xperi1 = Experiment(
     id="4567",
     name="meaningful Test-Name",
-    # time_start=datetime.utcnow() + timedelta(minutes=30),
-    time_start="2033-03-13 14:15:16",
+    time_start="2033-03-13 14:15:16",  # or: datetime.utcnow() + timedelta(minutes=30)
     target_configs=target_cfgs,
 )
 

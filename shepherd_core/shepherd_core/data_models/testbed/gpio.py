@@ -47,7 +47,7 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values, _ = fixtures.inheritance(values)
         return values
 
     @root_validator(pre=False)

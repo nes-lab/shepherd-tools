@@ -40,7 +40,7 @@ class Testbed(ShpModel):
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)  # TODO: load from url
-        values, chain = fixtures.inheritance(values)
+        values, _ = fixtures.inheritance(values)
         return values
 
     @root_validator(pre=False)

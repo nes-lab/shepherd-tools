@@ -12,6 +12,8 @@ from ..base.content import ContentModel
 from ..base.fixture import Fixtures
 from .energy_environment import EnergyDType
 from .virtual_harvester import VirtualHarvester
+from .virtual_harvester import VirtualHarvesterPRU
+from .virtual_harvester import algo_to_dtype
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "VirtualSource")
@@ -119,12 +121,14 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if values["harvester"].datatype != EnergyDType.ivsample:
+        if algo_to_dtype[values["harvester"].algorithm] != EnergyDType.ivsample:
             raise ValueError(
                 f"Harvester '{values['harvester'].name}' of "
                 f"Source '{values['name']}' must output iv-samples for emulation "
                 f"(but is '{values['harvester'].datatype}')"
             )
+        # trigger stricter test of parameters
+        VirtualHarvesterPRU.from_vhrv(values["harvester"], for_emu=True)
         return values
 
     def calc_internal_states(self) -> dict:

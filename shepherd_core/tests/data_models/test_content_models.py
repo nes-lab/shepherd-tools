@@ -51,6 +51,7 @@ def test_content_model_min_hrv():
         name="whatever",
         owner="jane",
         group="wayne",
+        algorithm="mppt_opt",
     )
 
 

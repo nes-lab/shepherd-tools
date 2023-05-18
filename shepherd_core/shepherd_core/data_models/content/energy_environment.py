@@ -32,5 +32,5 @@ class EnergyEnvironment(ContentModel):
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values, _ = fixtures.inheritance(values)
         return values
