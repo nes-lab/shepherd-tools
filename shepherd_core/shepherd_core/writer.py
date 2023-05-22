@@ -5,6 +5,7 @@ import logging
 import math
 from itertools import product
 from pathlib import Path
+from typing import Any
 from typing import Optional
 from typing import Union
 
@@ -13,6 +14,7 @@ import numpy as np
 import yaml
 from pydantic import validate_arguments
 
+from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
@@ -90,6 +92,8 @@ class BaseWriter(BaseReader):
         if self._modify or force_overwrite or not file_path.exists():
             self.file_path: Path = file_path
             self._logger.info("Storing data to   '%s'", self.file_path)
+        elif file_path.exists() and not file_path.is_file():
+            raise TypeError(f"Path is not a file ({file_path})")
         else:
             base_dir = file_path.resolve().parents[0]
             self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
@@ -260,8 +264,7 @@ class BaseWriter(BaseReader):
         if isinstance(timestamp, np.ndarray):
             len_new = min(len_new, timestamp.size)
         else:
-            self._logger.error("timestamp-data was not usable")
-            return
+            raise ValueError("timestamp-data was not usable")
 
         len_old = self.ds_time.shape[0]
 
@@ -302,7 +305,7 @@ class BaseWriter(BaseReader):
         n_buff = self.ds_time.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
         if size_new < self.ds_time.size:
-            if self.samplerate_sps < 95_000:
+            if self.samplerate_sps != samplerate_sps_default:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(
@@ -313,7 +316,7 @@ class BaseWriter(BaseReader):
             self.ds_voltage.resize((size_new,))
             self.ds_current.resize((size_new,))
 
-    def __setitem__(self, key: str, item):  # type: ignore
+    def __setitem__(self, key: str, item: Any):
         """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
         return self.h5file.attrs.__setitem__(key, item)
 

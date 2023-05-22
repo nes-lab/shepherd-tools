@@ -69,8 +69,8 @@ class BaseReader:
         self._reader_opened: bool = False
         if not hasattr(self, "h5file"):
             if not isinstance(self.file_path, Path):
-                raise ValueError("Provide a valid Path-Object to Reader!")
-            if not self.file_path.exists():
+                raise TypeError("Provide a valid Path-Object to Reader!")
+            if not (self.file_path.exists() and self.file_path.is_file()):
                 raise FileNotFoundError(
                     errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
                 )
@@ -135,10 +135,12 @@ class BaseReader:
     def _refresh_file_stats(self) -> None:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
-        if self.ds_time.shape[0] > 1:
-            self.sample_interval_ns = int(self.ds_time[1] - self.ds_time[0])
+        if (self.ds_time.shape[0] > 1) and (self.ds_time[1] != self.ds_time[0]):
+            self.sample_interval_s = self._cal.time.raw_to_si(
+                self.ds_time[1] - self.ds_time[0]
+            )
+            self.sample_interval_ns = int(10**9 * self.sample_interval_s)
             self.samplerate_sps = max(int(10**9 // self.sample_interval_ns), 1)
-            self.sample_interval_s = 1.0 / self.samplerate_sps
         self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
@@ -445,7 +447,7 @@ class BaseReader:
             self._logger.warning(
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
             )
-        return len(diffs) <= 1
+        return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.samples_per_buffer, 6)
 
     def get_metadata(
         self, node: Union[h5py.Dataset, h5py.Group, None] = None, minimal: bool = False
