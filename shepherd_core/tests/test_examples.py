@@ -12,6 +12,9 @@ def example_path() -> Path:
     return path
 
 
-def test_example_script_1(example_path: Path) -> None:
-    path = example_path / "model_tester.py"
-    subprocess.call(f"python {path}", shell=True)
+examples = ["model_tester.py"]
+
+
+@pytest.mark.parametrize("file", examples)
+def test_example_script_1(example_path: Path, file: str) -> None:
+    subprocess.call(f"python {example_path / file}", shell=True)

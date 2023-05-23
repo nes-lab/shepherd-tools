@@ -12,26 +12,15 @@ def example_path() -> Path:
     return path
 
 
-def test_example_script_1(example_path: Path) -> None:
-    path = example_path / "example_convert_ivonne.py"
-    subprocess.call(f"python {path}", shell=True)
+examples = [
+    "example_convert_ivonne.py",
+    "example_extract_logs.py",
+    "example_generate_sawtooth.py",
+    "example_plot_traces.py",
+    "example_repair_recordings.py",
+]
 
 
-def test_example_script_2(example_path: Path) -> None:
-    path = example_path / "example_extract_logs.py"
-    subprocess.call(f"python {path}", shell=True)
-
-
-def test_example_script_3(example_path: Path) -> None:
-    path = example_path / "example_generate_sawtooth.py"
-    subprocess.call(f"python {path}", shell=True)
-
-
-def test_example_script_4(example_path: Path) -> None:
-    path = example_path / "example_plot_traces.py"
-    subprocess.call(f"python {path}", shell=True)
-
-
-def test_example_script_5(example_path: Path) -> None:
-    path = example_path / "example_repair_recordings.py"
-    subprocess.call(f"python {path}", shell=True)
+@pytest.mark.parametrize("file", examples)
+def test_example_scripts(example_path: Path, file: str) -> None:
+    subprocess.call(f"python {example_path / file}", shell=True)

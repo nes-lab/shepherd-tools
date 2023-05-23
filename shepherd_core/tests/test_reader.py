@@ -50,7 +50,7 @@ def test_reader_open(tmp_path: Path) -> None:
             sfr.is_valid()
 
 
-def test_reader_meta(data_h5: Path) -> None:
+def test_reader_meta_repr(data_h5: Path) -> None:
     with Reader(data_h5, verbose=True) as sfr:
         print(sfr)
         print(sfr.get_calibration_data())
@@ -102,6 +102,12 @@ def test_reader_non_valid(tmp_path: Path) -> None:
         sfr.get_hostname()
         sfr.get_datatype()
         assert not sfr.is_valid()
+
+
+def test_reader_fault_path(tmp_path: Path) -> None:
+    with pytest.raises(FileNotFoundError):
+        with Reader(tmp_path, verbose=True) as sfr:
+            assert not sfr.is_valid()
 
 
 def test_reader_fault_no_data(data_h5: Path) -> None:
