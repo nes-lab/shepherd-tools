@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from typing import Optional
+from typing import Tuple
 
 from pydantic import confloat
 from pydantic import conint
@@ -134,7 +135,7 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
             )
         return num
 
-    def calc_timings_ms(self, for_emu: bool) -> tuple[float, float]:
+    def calc_timings_ms(self, for_emu: bool) -> Tuple[float, float]:
         """factor-in model-internal timing-constraints"""
         window_length = self.samples_n * (1 + self.wait_cycles)
         time_min_ms = (1 + self.wait_cycles) * 1_000 / samplerate_sps_default

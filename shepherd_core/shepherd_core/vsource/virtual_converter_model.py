@@ -13,6 +13,7 @@ Compromises:
 """
 
 import math
+from typing import List
 from typing import Optional
 
 from shepherd_core import CalibrationEmulator
@@ -98,10 +99,10 @@ class KernelConverterStruct:  # TODO: can be replaced by VirtualSourcePRU
         self.LUT_input_V_min_log2_uV: int = values[21]
         self.LUT_input_I_min_log2_nA: int = values[22]
         self.LUT_output_I_min_log2_nA: int = values[23]
-        self.LUT_inp_efficiency_n8: list[int] = values[
+        self.LUT_inp_efficiency_n8: List[int] = values[
             24
         ]  # depending on inp_voltage, inp_current, (cap voltage),
-        self.LUT_out_inv_efficiency_n4: list[int] = values[
+        self.LUT_out_inv_efficiency_n4: List[int] = values[
             25
         ]  # depending on output_current
 

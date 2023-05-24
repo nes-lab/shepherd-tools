@@ -484,7 +484,7 @@ class BaseReader:
                 with contextlib.suppress(yaml.YAMLError):
                     attr_value = yaml.safe_load(attr_value)
             elif "int" in str(type(attr_value)):
-                # TODO: why not isinstance? can it be list[int] other complex type?
+                # TODO: why not isinstance? can it be List[int] other complex type?
                 attr_value = int(attr_value)
             else:
                 attr_value = float(attr_value)
