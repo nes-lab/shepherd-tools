@@ -7,7 +7,7 @@ from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import FirmwareDType
 from shepherd_core.data_models.content import VirtualHarvester
 from shepherd_core.data_models.content import VirtualSource
-from shepherd_core.data_models.content.virtual_source import VirtualSourcePRU
+from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
 from shepherd_core.data_models.testbed import MCU
 
 
@@ -126,7 +126,7 @@ def test_content_model_src_force_warning() -> None:
         C_output_uF=200,
         C_intermediate_uF=100,
     )
-    VirtualSourcePRU.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src)
     # -> triggers warning currently
 
 
@@ -138,7 +138,7 @@ def test_content_model_src_force_other_hysteresis1() -> None:
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )
-    VirtualSourcePRU.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src)
 
 
 def test_content_model_src_force_other_hysteresis2() -> None:
@@ -149,4 +149,4 @@ def test_content_model_src_force_other_hysteresis2() -> None:
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )
-    VirtualSourcePRU.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src)

@@ -143,7 +143,7 @@ def test_experiment_model_exp_missing_target() -> None:
     with pytest.raises(ValidationError):
         # should raise ValueError in Experiment
         # buts gets already caught in target_config
-        target_cfgs = [
+        _ = [
             TargetConfig(
                 target_IDs=[1234567],  # <- not existent
                 custom_IDs=list(range(7, 18)),
@@ -153,12 +153,7 @@ def test_experiment_model_exp_missing_target() -> None:
                 firmware2=Firmware(name="msp430_deep_sleep"),
             ),
         ]
-        _ = Experiment(
-            id="4567",
-            name="meaningful Test-Name",
-            time_start=datetime.utcnow() + timedelta(minutes=30),
-            target_configs=target_cfgs,
-        )
+        # experiment (like above) removed
 
 
 def test_experiment_model_pwrtracing_min() -> None:

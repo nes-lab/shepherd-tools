@@ -18,6 +18,7 @@ from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
+from .data_models.content.energy_environment import EnergyDType
 from .data_models.task import Compression
 from .data_models.task.emulation import c_translate
 from .reader import BaseReader
@@ -65,7 +66,7 @@ class BaseWriter(BaseReader):
 
     comp_default: int = 1
     mode_default: str = "harvester"
-    datatype_default: str = "ivsample"
+    datatype_default: str = EnergyDType.ivsample.name
 
     _chunk_shape: tuple = (BaseReader.samples_per_buffer,)
 
@@ -163,7 +164,7 @@ class BaseWriter(BaseReader):
 
         if isinstance(self._window_samples, int):
             self.h5file["data"].attrs["window_samples"] = self._window_samples
-        if datatype == "ivcurve" and (self._window_samples in [None, 0]):
+        if datatype == EnergyDType.ivcurve and (self._window_samples in [None, 0]):
             raise ValueError("Window Size argument needed for ivcurve-Datatype")
 
         # include cal-data

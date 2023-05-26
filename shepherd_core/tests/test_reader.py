@@ -34,20 +34,17 @@ def test_reader_items(data_h5: Path) -> None:
 
 def test_reader_open(tmp_path: Path) -> None:
     with pytest.raises(TypeError):
-        with Reader(file_path=None) as sfr:
-            sfr.is_valid()
+        Reader(file_path=None)
 
     tmp_file = tmp_path / "data.h5"
 
     with pytest.raises(FileNotFoundError):
-        with Reader(file_path=tmp_file) as sfr:
-            sfr.is_valid()
+        Reader(file_path=tmp_file)
 
     with open(tmp_file, "w") as tf:
         tf.write("abc def ghi")
     with pytest.raises(OSError):  # should be TypeError
-        with Reader(file_path=tmp_file) as sfr:
-            sfr.is_valid()
+        Reader(file_path=tmp_file)
 
 
 def test_reader_meta_repr(data_h5: Path) -> None:
@@ -106,16 +103,14 @@ def test_reader_non_valid(tmp_path: Path) -> None:
 
 def test_reader_fault_path(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
-        with Reader(tmp_path, verbose=True) as sfr:
-            assert not sfr.is_valid()
+        Reader(tmp_path, verbose=True)
 
 
 def test_reader_fault_no_data(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
         del sfw.h5file["data"]
     with pytest.raises(KeyError):
-        with Reader(data_h5, verbose=True) as sfr:
-            assert not sfr.is_valid()  # raises earlier :(
+        Reader(data_h5, verbose=True)
 
 
 def test_reader_fault_no_mode(data_h5: Path) -> None:
@@ -153,52 +148,49 @@ def test_reader_fault_wrong_datatype(data_h5: Path) -> None:
         assert not sfr.is_valid()
 
 
-def test_reader_fault_wrong_window(data_h5: Path) -> None:
+def test_reader_fault_wrong_window1(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
-        sfw["data"].attrs["datatype"] = "ivcurves"
+        sfw["data"].attrs["datatype"] = "ivcurve"
         sfw["data"].attrs["window_samples"] = 0
     with Reader(data_h5, verbose=True) as sfr:
         assert not sfr.is_valid()
 
 
-def test_reader_fault_no_time(data_h5: Path) -> None:
+def test_reader_fault_wrong_window2(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
-        del sfw.h5file["data"]["time"]
-    with pytest.raises(KeyError):
-        with Reader(data_h5, verbose=True) as sfr:
-            assert not sfr.is_valid()
+        sfw["data"].attrs["datatype"] = "ivsample"
+        sfw["data"].attrs["window_samples"] = 1111
+    with Reader(data_h5, verbose=True) as sfr:
+        # only triggers warning
+        assert sfr.is_valid()
 
 
 def test_reader_fault_no_current(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
         del sfw.h5file["data"]["current"]
     with pytest.raises(KeyError):
-        with Reader(data_h5, verbose=True) as sfr:
-            assert not sfr.is_valid()
+        Reader(data_h5, verbose=True)
 
 
 def test_reader_fault_no_voltage(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
         del sfw.h5file["data"]["voltage"]
     with pytest.raises(KeyError):
-        with Reader(data_h5, verbose=True) as sfr:
-            assert not sfr.is_valid()
+        Reader(data_h5, verbose=True)
 
 
 def test_reader_fault_no_gain(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
         del sfw.h5file["data"]["time"].attrs["gain"]
     with pytest.raises(KeyError):
-        with Reader(data_h5, verbose=True) as sfr:
-            assert not sfr.is_valid()
+        Reader(data_h5, verbose=True)
 
 
 def test_reader_fault_no_offset(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
         del sfw.h5file["data"]["time"].attrs["offset"]
     with pytest.raises(KeyError):
-        with Reader(data_h5, verbose=True) as sfr:
-            assert not sfr.is_valid()
+        Reader(data_h5, verbose=True)
 
 
 def test_reader_fault_non_eq_time(data_h5: Path) -> None:

@@ -23,6 +23,7 @@ from tqdm import trange
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
+from .data_models.content.energy_environment import EnergyDType
 
 
 class BaseReader:
@@ -36,8 +37,12 @@ class BaseReader:
     samples_per_buffer: int = 10_000
 
     mode_dtype_dict = {
-        "harvester": ["ivsample", "ivcurve", "isc_voc"],
-        "emulator": ["ivsample"],
+        "harvester": [
+            EnergyDType.ivsample.name,
+            EnergyDType.ivcurve.name,
+            EnergyDType.isc_voc.name,
+        ],
+        "emulator": [EnergyDType.ivsample.name],
     }
 
     @validate_arguments
@@ -271,18 +276,18 @@ class BaseReader:
             )
             return False
 
-        if self.get_datatype() == "ivcurve" and self.get_window_samples() < 1:
+        if self.get_datatype() == EnergyDType.ivcurve and self.get_window_samples() < 1:
             self._logger.error(
                 "window size / samples is < 1 "
-                "-> invalid for ivcurves-datatype (@Validator)"
+                "-> invalid for ivcurve-datatype (@Validator)"
             )
             return False
 
         # soft-criteria:
-        if self.get_datatype() != "ivcurve" and self.get_window_samples() > 0:
+        if self.get_datatype() != EnergyDType.ivcurve and self.get_window_samples() > 0:
             self._logger.warning(
                 "window size / samples is > 0 despite "
-                "not using the ivcurves-datatype (@Validator)"
+                "not using the ivcurve-datatype (@Validator)"
             )
         # same length of datasets:
         ds_time_size = self.h5file["data"]["time"].shape[0]
