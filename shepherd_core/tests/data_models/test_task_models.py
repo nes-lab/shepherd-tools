@@ -16,6 +16,31 @@ def test_task_model_emu_min() -> None:
     )
 
 
+def test_task_model_emu_fault_in_past() -> None:
+    with pytest.raises(ValueError):
+        EmulationTask(
+            input_path="./here",
+            time_start="1984-01-01 11:12:13",
+        )
+
+
+@pytest.mark.parametrize("value", [0, 1, 2, 3, 4, 4.5, "buffer", "main"])
+def test_task_model_emu_custom_aux(value) -> None:
+    EmulationTask(
+        input_path="./here",
+        voltage_aux=value,
+    )
+
+
+@pytest.mark.parametrize("value", [-1.0, 5, "max", "something"])
+def test_task_model_emu_fault_aux(value) -> None:
+    with pytest.raises(ValueError):
+        EmulationTask(
+            input_path="./here",
+            voltage_aux=value,
+        )
+
+
 def test_task_model_fw_min() -> None:
     FirmwareModTask(
         data=Path("/"),

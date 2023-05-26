@@ -73,7 +73,7 @@ class EmulationTask(ShpModel):
     voltage_aux: Union[confloat(ge=0, le=4.5), str] = 0
     # ⤷ aux_voltage options:
     #   - 0-4.5 for specific const Voltage (0 V = disabled),
-    #   - "mid" will output intermediate voltage (storage cap of vsource),
+    #   - "buffer" will output intermediate voltage (storage cap of vsource),
     #   - "main" will mirror main target voltage
 
     # sub-elements, could be partly moved to emulation
@@ -89,17 +89,19 @@ class EmulationTask(ShpModel):
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
         # TODO: limit paths
-        has_start = values["time_start"] is not None
-        if has_start and values["time_start"] < datetime.utcnow():
+        has_start = values.get("time_start") is not None
+        if has_start and values.get("time_start") < datetime.utcnow():
             raise ValueError("Start-Time for Emulation can't be in the past.")
-        if isinstance(values["voltage_aux"], str) and values["voltage_aux"] not in [
+        if isinstance(values.get("voltage_aux"), str) and values.get(
+            "voltage_aux"
+        ) not in [
             "main",
-            "mid",
+            "buffer",
         ]:
             raise ValueError(
                 "Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'."
             )
-        if values["gpio_actuation"] is not None:
+        if values.get("gpio_actuation") is not None:
             raise ValueError("GPIO Actuation not yet implemented!")
         return values
 

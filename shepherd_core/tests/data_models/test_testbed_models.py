@@ -10,7 +10,7 @@ from shepherd_core.data_models.testbed import Testbed as TasteBad
 # ⤷ TasteBad avoids pytest-warning
 
 
-def test_testbed_model_min_cape():
+def test_testbed_model_min_cape() -> None:
     Cape(
         id=9999,
         name="cappi",
@@ -19,7 +19,7 @@ def test_testbed_model_min_cape():
     )
 
 
-def test_testbed_model_min_gpio():
+def test_testbed_model_min_gpio() -> None:
     GPIO(
         id=9999,
         name="gippi",
@@ -28,7 +28,7 @@ def test_testbed_model_min_gpio():
     )
 
 
-def test_testbed_model_var_gpio():
+def test_testbed_model_var_gpio() -> None:
     GPIO(
         id=9999,
         name="gippi",
@@ -38,7 +38,7 @@ def test_testbed_model_var_gpio():
     )
 
 
-def test_testbed_model_min_mcu():
+def test_testbed_model_min_mcu() -> None:
     MCU(
         id=9922,
         name="controller2",
@@ -50,7 +50,7 @@ def test_testbed_model_min_mcu():
     )
 
 
-def test_testbed_model_min_observer():
+def test_testbed_model_min_observer() -> None:
     Observer(
         id=9933,
         name="sheep120",
@@ -63,7 +63,7 @@ def test_testbed_model_min_observer():
     )
 
 
-def test_testbed_model_min_target():
+def test_testbed_model_min_target() -> None:
     Target(
         id=9944,
         name="TerraTarget",
@@ -73,7 +73,7 @@ def test_testbed_model_min_target():
     )
 
 
-def test_testbed_model_min_tb():
+def test_testbed_model_min_tb() -> None:
     TasteBad(
         name="shepherd",
         id="9955",

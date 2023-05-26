@@ -32,7 +32,7 @@ class ProgrammingTask(ShpModel):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if values["firmware_file"].suffix.lower() != ".hex":
+        if values.get("firmware_file").suffix.lower() != ".hex":
             ValueError(f"Firmware is not intel-.hex ('{values['firmware_file']}')")
         return values
 

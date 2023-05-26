@@ -46,8 +46,8 @@ class ContentModel(ShpModel):
 
     @root_validator(pre=False)
     def content_validation(cls, values: dict) -> dict:
-        is_visible = values["visible2group"] or values["visible2all"]
-        if is_visible and values["description"] is None:
+        is_visible = values.get("visible2group") or values.get("visible2all")
+        if is_visible and values.get("description") is None:
             raise ValueError(
                 "Public instances require a description "
                 "(check visible2*- and description-field)"

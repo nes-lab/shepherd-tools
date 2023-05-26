@@ -52,11 +52,11 @@ class Target(ShpModel, title="Target Node (DuT)"):
 
     @root_validator(pre=False)
     def post_correction(cls, values: dict) -> dict:
-        if isinstance(values["mcu1"], str):
+        if isinstance(values.get("mcu1"), str):
             values["mcu1"] = MCU(name=values["mcu1"])
             # ⤷ this will raise if default is faulty
-        if isinstance(values["mcu2"], str):
+        if isinstance(values.get("mcu2"), str):
             values["mcu2"] = MCU(name=values["mcu2"])
         if values.get("fw_id") is None:
-            values["fw_id"] = values["id"] % 2**16
+            values["fw_id"] = values.get("id") % 2**16
         return values

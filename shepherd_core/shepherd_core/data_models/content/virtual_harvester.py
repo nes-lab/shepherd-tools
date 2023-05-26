@@ -86,11 +86,11 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if values["voltage_min_mV"] > values["voltage_max_mV"]:
+        if values.get("voltage_min_mV") > values.get("voltage_max_mV"):
             raise ValueError("Voltage min > max")
-        if values["voltage_mV"] < values["voltage_min_mV"]:
+        if values.get("voltage_mV") < values.get("voltage_min_mV"):
             raise ValueError("Voltage below min")
-        if values["voltage_mV"] > values["voltage_max_mV"]:
+        if values.get("voltage_mV") > values.get("voltage_max_mV"):
             raise ValueError("Voltage above max")
 
         cal = CalibrationHarvester()  # todo: as argument?

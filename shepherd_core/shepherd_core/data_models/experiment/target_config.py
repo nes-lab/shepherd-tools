@@ -37,14 +37,15 @@ class TargetConfig(ShpModel, title="Target Config"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if not values["energy_env"].valid:
+        if not values.get("energy_env").valid:
             raise ValueError(
                 f"EnergyEnv '{values['energy_env'].name}' for target must be valid"
             )
-        for _id in values["target_IDs"]:
+        for _id in values.get("target_IDs"):
             target = Target(id=_id)
             for mcu_num in [1, 2]:
-                has_fw = values[f"firmware{mcu_num}"] is not None
+                val_fw = values.get(f"firmware{mcu_num}")
+                has_fw = val_fw is not None
                 tgt_mcu = target[f"mcu{mcu_num}"]
                 has_mcu = tgt_mcu is not None
                 if not has_fw and has_mcu:
@@ -56,22 +57,19 @@ class TargetConfig(ShpModel, title="Target Config"):
                             f"(={fw_def.mcu.name}) "
                             f"is incompatible (={tgt_mcu.name})"
                         )
-                if (
-                    has_fw
-                    and has_mcu
-                    and values[f"firmware{mcu_num}"].mcu.id != tgt_mcu.id
-                ):
+                if has_fw and has_mcu and val_fw.mcu.id != tgt_mcu.id:
                     raise ValueError(
                         f"Firmware{mcu_num} for MCU of Target-ID '{target.id}' "
-                        f"(={values[f'firmware{mcu_num}'].mcu.name}) "
+                        f"(={val_fw.mcu.name}) "
                         f"is incompatible (={tgt_mcu.name})"
                     )
 
-        c_ids = values["custom_IDs"]
-        if c_ids is not None and (len(set(c_ids)) < len(set(values["target_IDs"]))):
+        c_ids = values.get("custom_IDs")
+        t_ids = values.get("target_IDs")
+        if c_ids is not None and (len(set(c_ids)) < len(set(t_ids))):
             raise ValueError(
                 f"Provided custom IDs {c_ids} not enough "
-                f"to cover target range {values['target_IDs']}"
+                f"to cover target range {t_ids}"
             )
         # TODO: if custom ids present, firmware must be ELF
         return values

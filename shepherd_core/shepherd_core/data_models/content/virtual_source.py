@@ -117,7 +117,7 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
         # trigger stricter test of harv-parameters
-        VirtualHarvesterPRU.from_vhrv(values["harvester"], for_emu=True)
+        VirtualHarvesterPRU.from_vhrv(values.get("harvester"), for_emu=True)
         return values
 
     def calc_internal_states(self) -> dict:

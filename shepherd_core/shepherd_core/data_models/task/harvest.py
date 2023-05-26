@@ -45,7 +45,7 @@ class HarvestTask(ShpModel):
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
         # TODO: limit paths
-        has_start = values["time_start"] is not None
+        has_start = values.get("time_start") is not None
         if has_start and values["time_start"] < datetime.utcnow():
             raise ValueError("Start-Time for Harvest can't be in the past.")
         return values

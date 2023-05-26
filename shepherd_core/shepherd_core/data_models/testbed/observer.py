@@ -58,13 +58,14 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        has_cape = values["cape"] is not None
-        has_target = (values["target_a"] is not None) or (
-            values["target_b"] is not None
+        has_cape = values.get("cape") is not None
+        has_target = (values.get("target_a") is not None) or (
+            values.get("target_b") is not None
         )
         if not has_cape and has_target:
             raise ValueError(
-                f"Observer '{values['name']}' is faulty " f"-> has targets but no cape"
+                f"Observer '{values.get('name')}' is faulty "
+                f"-> has targets but no cape"
             )
         return values
 

@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.data_models.content import EnergyEnvironment
@@ -82,10 +83,9 @@ def test_content_model_hrv_steps() -> None:
 
 
 def test_content_model_hrv_faulty_voltage0() -> None:
-    # this should trigger ValidationError or ValueError -> pydantic-oddity?
-    with pytest.raises(KeyError):
+    with pytest.raises(ValidationError):
         _ = VirtualHarvester(name="iv110", voltage_max_mV=5001)
-    with pytest.raises(KeyError):
+    with pytest.raises(ValidationError):
         _ = VirtualHarvester(name="iv110", voltage_min_mV=-1)
 
 

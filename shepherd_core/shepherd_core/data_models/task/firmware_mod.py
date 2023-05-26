@@ -27,7 +27,10 @@ class FirmwareModTask(ShpModel):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if values["data_type"] in [FirmwareDType.base64_hex, FirmwareDType.path_hex]:
+        if values.get("data_type") in [
+            FirmwareDType.base64_hex,
+            FirmwareDType.path_hex,
+        ]:
             logger.warning(
                 "Firmware is scheduled to get custom-ID but is not in elf-format"
             )

@@ -10,13 +10,13 @@ from shepherd_core.data_models.content.virtual_source import VirtualSourcePRU
 from shepherd_core.data_models.content.virtual_source import fixtures as fix_src
 
 
-def test_testbed_fixture_energy_environment():
+def test_testbed_fixture_energy_environment() -> None:
     for fix in fix_ee:
         EnergyEnvironment(name=fix["name"])
         EnergyEnvironment(id=fix["id"])
 
 
-def test_testbed_fixture_firmware():
+def test_testbed_fixture_firmware() -> None:
     for fix in fix_firmware:
         _id = fix["id"]
         if _id in [1001, 1002]:
@@ -25,7 +25,7 @@ def test_testbed_fixture_firmware():
         Firmware(id=fix["id"])
 
 
-def test_experiment_fixture_vsrc():
+def test_experiment_fixture_vsrc() -> None:
     for fix in fix_src:
         vsrc = VirtualSource(name=fix["name"])
         VirtualSource(id=fix["id"])
@@ -33,7 +33,7 @@ def test_experiment_fixture_vsrc():
         VirtualSourcePRU.from_vsrc(vsrc, log_intermediate_node=True)
 
 
-def test_experiment_fixture_vhrv():
+def test_experiment_fixture_vhrv() -> None:
     for fix in fix_hrv:
         if fix["name"] == "neutral":
             continue

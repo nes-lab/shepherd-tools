@@ -34,12 +34,12 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        discard_all = values["discard_current"] and values["discard_voltage"]
-        if not values["calculate_power"] and discard_all:
+        discard_all = values.get("discard_current") and values.get("discard_voltage")
+        if not values.get("calculate_power") and discard_all:
             raise ValueError(
                 "Error in config -> tracing enabled, but output gets discarded"
             )
-        if values["calculate_power"]:
+        if values.get("calculate_power"):
             raise ValueError("postprocessing not implemented ATM")
         return values
 
@@ -67,7 +67,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if values["mask"] == 0:
+        if values.get("mask") == 0:
             raise ValueError("Error in config -> tracing enabled but mask is 0")
         return values
 
@@ -92,9 +92,9 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if not values["gpio"].user_controllable():
+        if not values.get("gpio").user_controllable():
             raise ValueError(
-                f"GPIO '{values['gpio'].name}' in actuation-event not controllable by user"
+                f"GPIO '{values.get('gpio').name}' in actuation-event not controllable by user"
             )
         return values
 

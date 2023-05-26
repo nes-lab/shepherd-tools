@@ -107,7 +107,7 @@ class Fixtures:
             fixture_base = copy.copy(self.elements_by_name[fixture_name])
             post_process = True
 
-        elif "id" in values and values["id"] in self.elements_by_id:
+        elif values.get("id") in self.elements_by_id:
             _id = values["id"]
             fixture_base = copy.copy(self.elements_by_id[_id])
             post_process = True

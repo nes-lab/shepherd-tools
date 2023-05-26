@@ -57,7 +57,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     def validate_targets(values: dict) -> None:
         target_ids = []
         custom_ids = []
-        for _config in values["target_configs"]:
+        for _config in values.get("target_configs"):
             for _id in _config.target_IDs:
                 target_ids.append(_id)
                 Target(id=_id)
@@ -76,7 +76,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     @staticmethod
     def validate_observers(values: dict) -> None:
         target_ids = []
-        for _config in values["target_configs"]:
+        for _config in values.get("target_configs"):
             for _id in _config.target_IDs:
                 target_ids.append(_id)
 

@@ -51,7 +51,7 @@ class Testbed(ShpModel):
         capes = []
         targets = []
         eth_ports = []
-        for _obs in values["observers"]:
+        for _obs in values.get("observers"):
             observers.append(_obs.id)
             ips.append(_obs.ip)
             macs.append(_obs.mac)
@@ -74,7 +74,8 @@ class Testbed(ShpModel):
             raise ValueError("Target used more than once in Testbed")
         if len(eth_ports) > len(set(eth_ports)):
             raise ValueError("Observers-Ethernet-Port used more than once in Testbed")
-        if not values["shared_storage"]:
+
+        if not values.get("shared_storage"):
             raise ValueError("Only shared-storage-option is implemented")
         return values
 
