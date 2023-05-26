@@ -3,6 +3,7 @@ from pathlib import Path
 from shepherd_core.data_models.content import VirtualSource
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.task import EmulationTask
+from shepherd_core.data_models.task import HarvestTask
 from shepherd_core.data_models.testbed.testbed import Testbed as TasteBad
 
 from .conftest import load_yaml
@@ -12,7 +13,15 @@ from .conftest import load_yaml
 
 def test_example_emu():
     data_dict = load_yaml("example_config_emulator.yaml")
+    assert data_dict["mode"] == "emulator"
     emu = EmulationTask(**data_dict["parameters"])
+    print(emu)
+
+
+def test_example_hrv():
+    data_dict = load_yaml("example_config_harvester.yaml")
+    assert data_dict["mode"] == "harvester"
+    emu = HarvestTask(**data_dict["parameters"])
     print(emu)
 
 

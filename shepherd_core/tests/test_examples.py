@@ -16,5 +16,5 @@ examples = ["model_tester.py"]
 
 
 @pytest.mark.parametrize("file", examples)
-def test_example_script_1(example_path: Path, file: str) -> None:
+def test_example_scripts(example_path: Path, file: str) -> None:
     subprocess.call(f"python {example_path / file}", shell=True)

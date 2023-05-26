@@ -12,7 +12,7 @@ from .shepherd import ShpModel
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
 IdInt = conint(ge=0, lt=2**128)
-NameStr = constr(max_length=32, regex=r'^[^<>:;,?"*|]+$')
+NameStr = constr(max_length=32, regex=r'^[^<>:;,?"*|\/\\]+$')
 # ⤷ Regex = FileSystem-Compatible ASCII
 SafeStr = constr(regex=r"^[ -~]+$")
 # ⤷ Regex = All Printable ASCII-Characters with Space
@@ -40,6 +40,9 @@ class ContentModel(ShpModel):
     group: NameStr = Field(description="University or Subgroup")
     visible2group: bool = False
     visible2all: bool = False
+
+    def __str__(self):
+        return self.name
 
     @root_validator(pre=False)
     def content_validation(cls, values: dict) -> dict:

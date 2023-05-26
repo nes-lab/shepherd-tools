@@ -1,3 +1,11 @@
+from datetime import datetime
+from datetime import timedelta
+
+import pytest
+from pydantic import ValidationError
+
+from shepherd_core.data_models import VirtualHarvester
+from shepherd_core.data_models import VirtualSource
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.experiment import Experiment
@@ -14,17 +22,7 @@ from shepherd_core.data_models.testbed import Target
 from .conftest import load_yaml
 
 
-def test_experiment_model_min_tgt_cfg():
-    cfg = TargetConfig(
-        target_IDs=[3001],
-        energy_env=EnergyEnvironment(name="SolarSunny"),
-        firmware1=Firmware(name="nrf52_demo_rf"),
-    )
-    for _id in cfg.target_IDs:
-        Target(id=_id)
-
-
-def test_experiment_model_min_exp():
+def test_experiment_model_exp_min() -> None:
     Experiment(
         name="mex per",
         target_configs=[
@@ -37,12 +35,12 @@ def test_experiment_model_min_exp():
     )
 
 
-def test_experiment_model_yaml_load():
+def test_experiment_model_exp_yaml_load() -> None:
     exp1_data = load_yaml("example_config_experiment_alternative.yaml")
     Experiment(**exp1_data)
 
 
-def test_experiment_model_yaml_comparison():
+def test_experiment_model_exp_yaml_comparison() -> None:
     exp1_data = load_yaml("example_config_experiment_alternative.yaml")
     exp1 = Experiment(**exp1_data)
 
@@ -63,24 +61,149 @@ def test_experiment_model_yaml_comparison():
     assert exp1.get_hash() == exp2.get_hash()
 
 
-def test_experiment_model_min_pwrtracing():
+def test_experiment_model_exp_collision_target_id() -> None:
+    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    target_cfgs = [
+        TargetConfig(
+            target_IDs=[3001, 3002, 3003, 2001],  # <- collision
+            custom_IDs=[0, 1, 2, 3],
+            energy_env={"name": "SolarSunny"},
+            virtual_source={"name": "diode+capacitor"},
+            firmware1={"name": "nrf52_demo_rf"},
+        ),
+        TargetConfig(
+            target_IDs=list(range(2001, 2005)),  # <- collision
+            custom_IDs=list(range(7, 18)),  # note: longer list is OK
+            energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
+            virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+            firmware1=Firmware(name="nrf52_demo_rf"),
+            firmware2=Firmware(name="msp430_deep_sleep"),
+        ),
+    ]
+    with pytest.raises(ValueError):
+        _ = Experiment(
+            id="4567",
+            name="meaningful Test-Name",
+            time_start=datetime.utcnow() + timedelta(minutes=30),
+            target_configs=target_cfgs,
+        )
+
+
+def test_experiment_model_exp_collision_custom_id() -> None:
+    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    target_cfgs = [
+        TargetConfig(
+            target_IDs=[3001, 3002, 3003],
+            custom_IDs=[0, 1, 7],  # <- collision
+            energy_env={"name": "SolarSunny"},
+            virtual_source={"name": "diode+capacitor"},
+            firmware1={"name": "nrf52_demo_rf"},
+        ),
+        TargetConfig(
+            target_IDs=list(range(2001, 2005)),
+            custom_IDs=list(range(7, 18)),  # <- collision
+            energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
+            virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+            firmware1=Firmware(name="nrf52_demo_rf"),
+            firmware2=Firmware(name="msp430_deep_sleep"),
+        ),
+    ]
+    with pytest.raises(ValueError):
+        _ = Experiment(
+            id="4567",
+            name="meaningful Test-Name",
+            time_start=datetime.utcnow() + timedelta(minutes=30),
+            target_configs=target_cfgs,
+        )
+
+
+def test_experiment_model_exp_collision_observer() -> None:
+    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    target_cfgs = [
+        TargetConfig(
+            target_IDs=[2005, 3001],  # <- both on same observer
+            custom_IDs=list(range(7, 18)),
+            energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
+            virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+            firmware1=Firmware(name="nrf52_demo_rf"),
+            firmware2=Firmware(name="msp430_deep_sleep"),
+        ),
+    ]
+    with pytest.raises(ValueError):
+        _ = Experiment(
+            id="4567",
+            name="meaningful Test-Name",
+            time_start=datetime.utcnow() + timedelta(minutes=30),
+            target_configs=target_cfgs,
+        )
+
+
+def test_experiment_model_exp_missing_target() -> None:
+    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    with pytest.raises(ValidationError):
+        # should raise ValueError in Experiment
+        # buts gets already caught in target_config
+        target_cfgs = [
+            TargetConfig(
+                target_IDs=[1234567],  # <- not existent
+                custom_IDs=list(range(7, 18)),
+                energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
+                virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+                firmware1=Firmware(name="nrf52_demo_rf"),
+                firmware2=Firmware(name="msp430_deep_sleep"),
+            ),
+        ]
+        _ = Experiment(
+            id="4567",
+            name="meaningful Test-Name",
+            time_start=datetime.utcnow() + timedelta(minutes=30),
+            target_configs=target_cfgs,
+        )
+
+
+def test_experiment_model_pwrtracing_min() -> None:
     PowerTracing()
 
 
-def test_experiment_model_min_gpiotracing():
+def test_experiment_model_pwrtracing_fault_post() -> None:
+    with pytest.raises(ValueError):
+        PowerTracing(calculate_power=True)
+
+
+def test_experiment_model_pwrtracing_fault_discard_all() -> None:
+    with pytest.raises(ValueError):
+        PowerTracing(calculate_power=False, discard_current=True, discard_voltage=True)
+
+
+def test_experiment_model_gpiotracing_min() -> None:
     GpioTracing()
 
 
-def test_experiment_model_min_gpioevent():
-    GpioEvent(
+def test_experiment_model_gpiotracing_fault_mask() -> None:
+    with pytest.raises(ValueError):
+        GpioTracing(mask=0)
+
+
+def test_experiment_model_gpioevent_min() -> None:
+    gevt = GpioEvent(
         delay=300,
         gpio=GPIO(name="GPIO3"),
         level=GpioLevel.high,
     )
+    gevt.get_events()
 
 
-def test_experiment_model_min_gpioactuation():
-    GpioActuation(
+def test_experiment_model_gpioevent_fault_readonly() -> None:
+    with pytest.raises(ValueError):
+        GpioEvent(
+            delay=300,
+            gpio=GPIO(name="BAT_OK"),
+            level=GpioLevel.high,
+        )
+
+
+def test_experiment_model_gpioactuation_min() -> None:
+    gact = GpioActuation(
         events=[
             GpioEvent(
                 delay=300,
@@ -89,7 +212,71 @@ def test_experiment_model_min_gpioactuation():
             )
         ]
     )
+    gact.get_gpios()
 
 
-def test_experiment_model_min_syslogging():
+def test_experiment_model_syslogging_min() -> None:
     SystemLogging()
+
+
+def test_experiment_model_tgt_cfg_min1() -> None:
+    cfg = TargetConfig(
+        target_IDs=[3001],
+        energy_env=EnergyEnvironment(name="SolarSunny"),
+        firmware1=Firmware(name="nrf52_demo_rf"),
+    )
+    for _id in cfg.target_IDs:
+        Target(id=_id)
+    assert cfg.get_custom_id(3001) is None
+
+
+def test_experiment_model_tgt_cfg_min2() -> None:
+    cfg = TargetConfig(
+        target_IDs=[3001, 3002],
+        custom_IDs=[7, 9],
+        energy_env=EnergyEnvironment(name="SolarSunny"),
+        firmware1=Firmware(name="nrf52_demo_rf"),
+    )
+    for _id in cfg.target_IDs:
+        Target(id=_id)
+    assert cfg.get_custom_id(3001) == 7
+    assert cfg.get_custom_id(3002) == 9
+    assert cfg.get_custom_id(3003) is None
+
+
+def test_experiment_model_tgt_cfg_fault_valid_ee() -> None:
+    with pytest.raises(ValueError):
+        _ = TargetConfig(
+            target_IDs=[3001],
+            energy_env=EnergyEnvironment(name="nuclear"),
+            firmware1=Firmware(name="nrf52_demo_rf"),
+        )
+
+
+def test_experiment_model_tgt_cfg_fault_firmware1() -> None:
+    with pytest.raises(ValueError):
+        _ = TargetConfig(
+            target_IDs=[3001],  # is nRF
+            energy_env=EnergyEnvironment(name="SolarSunny"),
+            firmware1=Firmware(name="msp430_spi_fram"),
+        )
+
+
+def test_experiment_model_tgt_cfg_fault_firmware2() -> None:
+    with pytest.raises(ValueError):
+        _ = TargetConfig(
+            target_IDs=[3001],  # is nRF
+            energy_env=EnergyEnvironment(name="SolarSunny"),
+            firmware1=Firmware(name="nrf52_demo_rf"),
+            firmware2=Firmware(name="nrf52_demo_rf"),
+        )
+
+
+def test_experiment_model_tgt_cfg_fault_custom_ids() -> None:
+    with pytest.raises(ValueError):
+        _ = TargetConfig(
+            target_IDs=[3001, 3002, 3003],
+            custom_IDs=[0, 1],  # not enough
+            energy_env=EnergyEnvironment(name="SolarSunny"),
+            firmware1=Firmware(name="nrf52_demo_rf"),
+        )

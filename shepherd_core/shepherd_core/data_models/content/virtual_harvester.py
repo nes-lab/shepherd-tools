@@ -74,14 +74,12 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     wait_cycles: conint(ge=0, le=100) = 1
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
-    def __str__(self):
-        return self.name
-
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         if values["name"] == "neutral":
+            # TODO: same test is later done in calc_algorithm_num() again
             raise ValueError("Resulting Harvester can't be neutral")
         logger.debug("VHrv-Inheritances: %s", chain)
         return values
@@ -101,11 +99,10 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
         )
 
         if values.get("voltage_step_mV") is None:
-            values["voltage_step_mV"] = (
-                abs(values["voltage_max_mV"] - values["voltage_min_mV"])
-                / values["samples_n"]
-                # TODO: dyn / (samples - 1) might be more correct
-            )
+            # algo includes min & max!
+            values["voltage_step_mV"] = abs(
+                values["voltage_max_mV"] - values["voltage_min_mV"]
+            ) / (values["samples_n"] - 1)
 
         values["voltage_step_mV"] = max(
             10**3 * cal.dac_V_Hrv.raw_to_si(4), values["voltage_step_mV"]
@@ -123,7 +120,7 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
 
     def calc_algorithm_num(self, for_emu: bool) -> int:
         num = algo_to_num.get(self.algorithm)
-        if for_emu and num <= algo_to_num["ivcurve"]:
+        if for_emu and self.get_datatype() != EnergyDType.ivsample:
             raise ValueError(
                 f"[{self.name}] Select valid harvest-algorithm for emulator, "
                 f"current usage = {self.algorithm}",

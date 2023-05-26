@@ -10,10 +10,8 @@ from ...logger import logger
 from .. import ShpModel
 from ..base.content import ContentModel
 from ..base.fixture import Fixtures
-from .energy_environment import EnergyDType
 from .virtual_harvester import VirtualHarvester
 from .virtual_harvester import VirtualHarvesterPRU
-from .virtual_harvester import algo_to_dtype
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "VirtualSource")
@@ -109,9 +107,6 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
     LUT_output_I_min_log2_nA: conint(ge=0, le=20) = 0
     # ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
-    def __str__(self):
-        return self.name
-
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
@@ -121,13 +116,7 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if algo_to_dtype[values["harvester"].algorithm] != EnergyDType.ivsample:
-            raise ValueError(
-                f"Harvester '{values['harvester'].name}' of "
-                f"Source '{values['name']}' must output iv-samples for emulation "
-                f"(but is '{values['harvester'].datatype}')"
-            )
-        # trigger stricter test of parameters
+        # trigger stricter test of harv-parameters
         VirtualHarvesterPRU.from_vhrv(values["harvester"], for_emu=True)
         return values
 
@@ -179,6 +168,7 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
             isinstance(dV_output_imed_low_mV, (int, float))
             and (dV_output_imed_low_mV >= 0)
         ):
+            logger.warning("VSrc: C_output shouldn't be larger than C_intermediate")
             dV_output_imed_low_mV = 0
 
         # decide which hysteresis-thresholds to use for buck-converter

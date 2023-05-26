@@ -43,33 +43,30 @@ class TargetConfig(ShpModel, title="Target Config"):
             )
         for _id in values["target_IDs"]:
             target = Target(id=_id)
-            has_fw1 = values["firmware1"] is not None
-            has_mcu1 = target.mcu1 is not None
-            if has_fw1 and has_mcu1 and values["firmware1"].mcu.id != target.mcu1.id:
-                raise ValueError(
-                    f"Firmware1 for MCU of Target-ID '{target.id}' "
-                    f"(={values['firmware1'].mcu.name}) "
-                    f"is incompatible (={target.mcu1.name})"
-                )
-
-            has_fw2 = values["firmware2"] is not None
-            has_mcu2 = target.mcu2 is not None
-            if not has_fw2 and has_mcu2:
-                fw_def = Firmware(name=target.mcu2.fw_name_default)
-                # ⤷ this will raise if default is faulty
-                if target.mcu2.id != fw_def.mcu.id:
+            for mcu_num in [1, 2]:
+                has_fw = values[f"firmware{mcu_num}"] is not None
+                tgt_mcu = target[f"mcu{mcu_num}"]
+                has_mcu = tgt_mcu is not None
+                if not has_fw and has_mcu:
+                    fw_def = Firmware(name=tgt_mcu.fw_name_default)
+                    # ⤷ this will raise if default is faulty
+                    if tgt_mcu.id != fw_def.mcu.id:
+                        raise ValueError(
+                            f"Default-Firmware for MCU{mcu_num} of Target-ID '{target.id}' "
+                            f"(={fw_def.mcu.name}) "
+                            f"is incompatible (={tgt_mcu.name})"
+                        )
+                if (
+                    has_fw
+                    and has_mcu
+                    and values[f"firmware{mcu_num}"].mcu.id != tgt_mcu.id
+                ):
                     raise ValueError(
-                        f"Default-Firmware for MCU2 of Target-ID '{target.id}' "
-                        f"(={fw_def.mcu.name}) "
-                        f"is incompatible (={target.mcu2.name})"
+                        f"Firmware{mcu_num} for MCU of Target-ID '{target.id}' "
+                        f"(={values[f'firmware{mcu_num}'].mcu.name}) "
+                        f"is incompatible (={tgt_mcu.name})"
                     )
 
-            if has_fw2 and has_mcu2 and values["firmware2"].mcu.id != target.mcu2.id:
-                raise ValueError(
-                    f"Firmware2 for MCU of Target-ID '{target.id}' "
-                    f"(={values['firmware2'].mcu.name}) "
-                    f"is incompatible (={target.mcu2.name})"
-                )
         c_ids = values["custom_IDs"]
         if c_ids is not None and (len(set(c_ids)) < len(set(values["target_IDs"]))):
             raise ValueError(

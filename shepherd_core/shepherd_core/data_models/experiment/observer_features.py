@@ -39,6 +39,8 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
             raise ValueError(
                 "Error in config -> tracing enabled, but output gets discarded"
             )
+        if values["calculate_power"]:
+            raise ValueError("postprocessing not implemented ATM")
         return values
 
 
@@ -58,7 +60,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     duration: Optional[conint(ge=0)] = None  # = max
 
     # post-processing,
-    uart_decode: bool = False
+    uart_decode: bool = False  # todo: is currently done online by system-service
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: conint(ge=2_400, le=921_600) = 115_200
     # TODO: add a "discard_gpio" (if only uart is wanted)
@@ -85,6 +87,7 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
     gpio: GPIO
     level: GpioLevel
     period: confloat(ge=10e-6) = 1
+    # ⤷ time base of periodicity in s
     count: conint(ge=1, le=4096) = 1
 
     @root_validator(pre=False)

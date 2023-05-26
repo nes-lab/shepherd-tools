@@ -6,7 +6,6 @@ from pydantic import conlist
 from pydantic import validate_arguments
 from scipy import stats
 
-from ...logger import logger
 from .. import CalibrationCape
 from .. import CalibrationEmulator
 from .. import CalibrationHarvester
@@ -25,34 +24,16 @@ CalMeasPairs = conlist(item_type=CalMeasurementPair, min_items=2)
 
 
 @validate_arguments
-def meas_to_cal(
-    data: CalMeasPairs, default: CalibrationPair, component: str
-) -> CalibrationPair:
-    gain = default.gain
-    offset = default.offset
-    rval = 0
-    try:
-        x = np.empty(len(data))
-        y = np.empty(len(data))
-        for i, pair in enumerate(data):
-            x[i] = pair.shepherd_raw
-            y[i] = pair.reference_si
-        result = stats.linregress(x, y)
-        offset = float(result.intercept)
-        gain = float(result.slope)
-        rval = result.rvalue  # test quality of regression
-    except KeyError:
-        logger.error(
-            "data not found in '%s' -> fallback to default (gain=%f)",
-            component,
-            gain,
-        )
-    except ValueError:
-        logger.error(
-            "data not found in '%s' -> fallback to default (gain=%f)",
-            component,
-            gain,
-        )
+def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
+    x = np.empty(len(data))
+    y = np.empty(len(data))
+    for i, pair in enumerate(data):
+        x[i] = pair.shepherd_raw
+        y[i] = pair.reference_si
+    result = stats.linregress(x, y)
+    offset = float(result.intercept)
+    gain = float(result.slope)
+    rval = result.rvalue  # test quality of regression
 
     if rval < 0.999:
         raise ValueError(
@@ -72,7 +53,7 @@ class CalMeasurementHarvester(ShpModel):
         dv = self.dict()
         dcal = CalibrationHarvester().dict()
         for key in dv.keys():
-            dcal[key] = meas_to_cal(self[key], dcal[key], f"hrv_{key}")
+            dcal[key] = meas_to_cal(self[key], f"hrv_{key}")
         return CalibrationHarvester(**dcal)
 
 
@@ -86,7 +67,7 @@ class CalMeasurementEmulator(ShpModel):
         dv = self.dict()
         dcal = CalibrationEmulator().dict()
         for key in dv.keys():
-            dcal[key] = meas_to_cal(self[key], dcal[key], f"emu_{key}")
+            dcal[key] = meas_to_cal(self[key], f"emu_{key}")
         return CalibrationEmulator(**dcal)
 
 

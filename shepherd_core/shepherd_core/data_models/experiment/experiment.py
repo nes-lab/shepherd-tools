@@ -101,6 +101,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         for _config in self.target_configs:
             if target_id in _config.target_IDs:
                 return _config
+        # .. gets already caught in target_config .. but keep:
         raise ValueError(
             f"Target-ID {target_id} was not found in Experiment '{self.name}'"
         )

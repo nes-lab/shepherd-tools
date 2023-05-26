@@ -46,6 +46,7 @@ class EmulationTask(ShpModel):
     #   - providing a directory -> file is named emu_timestamp.h5
     #   - for a complete path the filename is not changed except it exists and
     #     overwrite is disabled -> emu#num.h5
+    # TODO: should the path be mandatory?
     force_overwrite: bool = False
     # ⤷ Overwrite existing file
     output_compression: Optional[Compression] = Compression.default

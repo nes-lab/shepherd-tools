@@ -74,6 +74,8 @@ class Testbed(ShpModel):
             raise ValueError("Target used more than once in Testbed")
         if len(eth_ports) > len(set(eth_ports)):
             raise ValueError("Observers-Ethernet-Port used more than once in Testbed")
+        if not values["shared_storage"]:
+            raise ValueError("Only shared-storage-option is implemented")
         return values
 
     def get_observer(self, target_id: int) -> Observer:
