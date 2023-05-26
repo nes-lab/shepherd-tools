@@ -14,28 +14,7 @@ Compromises:
 """
 from typing import Tuple
 
-from .virtual_harvester_config import VirtualHarvesterConfig
-
-
-class KernelHarvesterStruct:
-    def __init__(self, vh_data: VirtualHarvesterConfig):
-        # Kernel-Task -> Map settings-list to internal state-vars struct ConverterConfig
-        # NOTE:
-        #  - yaml is based on si-units like nA, mV, ms, uF
-        #  - c-code and py-copy is using nA, uV, ns, nF, fW, raw
-        values = vh_data.export_for_sysfs()
-        self.algorithm: int = values[0]
-        self.hrv_mode: int = values[1]
-        self.window_size: int = values[2]
-        self.voltage_uV: int = values[3]
-        self.voltage_min_uV: int = values[4]
-        self.voltage_max_uV: int = values[5]
-        self.voltage_step_uV: int = values[6]
-        self.current_limit_nA: int = values[7]
-        self.setpoint_n8: int = values[8]
-        self.interval_n: int = values[9]
-        self.duration_n: int = values[10]
-        self.wait_cycles_n: int = values[11]
+from ..data_models.content.virtual_harvester import HarvesterPRUConfig
 
 
 class VirtualHarvesterModel:
@@ -45,8 +24,8 @@ class VirtualHarvesterModel:
     HRV_MPPT_PO: int = 2**13
     HRV_MPPT_OPT: int = 2**14
 
-    def __init__(self, config: KernelHarvesterStruct):
-        self._cfg: KernelHarvesterStruct = config
+    def __init__(self, cfg: HarvesterPRUConfig):
+        self._cfg: HarvesterPRUConfig = cfg
 
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1

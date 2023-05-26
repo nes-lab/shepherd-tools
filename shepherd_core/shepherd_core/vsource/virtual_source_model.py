@@ -13,11 +13,10 @@ from typing import Optional
 from shepherd_core import CalibrationEmulator
 
 from ..data_models import VirtualSource
-from .virtual_converter_model import KernelConverterStruct
+from ..data_models.content.virtual_harvester import HarvesterPRUConfig
+from ..data_models.content.virtual_source import ConverterPRUConfig
 from .virtual_converter_model import PruCalibration
 from .virtual_converter_model import VirtualConverterModel
-from .virtual_harvester_config import VirtualHarvesterConfig
-from .virtual_harvester_model import KernelHarvesterStruct
 from .virtual_harvester_model import VirtualHarvesterModel
 
 
@@ -26,25 +25,23 @@ class VirtualSourceModel:
 
     def __init__(
         self,
-        vs_setting: Optional[VirtualSource],
+        vsrc: Optional[VirtualSource],
         cal_emu: CalibrationEmulator,
-        input_setting: Optional[dict],
+        log_intermediate: bool = False,
     ):
-        self._cal: CalibrationEmulator = cal_emu
-        self._prc: PruCalibration = PruCalibration(cal_emu)
+        self._cal_emu: CalibrationEmulator = cal_emu
+        self._cal_pru: PruCalibration = PruCalibration(cal_emu)
 
-        vs_config = VirtualSource() if vs_setting is None else vs_setting
-        vc_struct = KernelConverterStruct(vs_config)
-        self.cnv: VirtualConverterModel = VirtualConverterModel(vc_struct, self._prc)
-
-        vh_config = VirtualHarvesterConfig(
-            vs_config.get_harvester(),
-            vs_config.samplerate_sps,
-            emu_cfg=input_setting,
+        self.cfg_src = VirtualSource() if vsrc is None else vsrc
+        cnv_config = ConverterPRUConfig.from_vsrc(
+            self.cfg_src, log_intermediate_node=log_intermediate
+        )
+        self.cnv: VirtualConverterModel = VirtualConverterModel(
+            cnv_config, self._cal_pru
         )
 
-        vh_struct = KernelHarvesterStruct(vh_config)
-        self.hrv: VirtualHarvesterModel = VirtualHarvesterModel(vh_struct)
+        hrv_config = HarvesterPRUConfig.from_vhrv(self.cfg_src.harvester, for_emu=True)
+        self.hrv: VirtualHarvesterModel = VirtualHarvesterModel(hrv_config)
 
         self.W_inp_fWs: float = 0.0
         self.W_out_fWs: float = 0.0
@@ -64,12 +61,12 @@ class VirtualSourceModel:
         P_inp_fW = self.cnv.calc_inp_power(V_inp_uV, I_inp_nA)
 
         # fake ADC read
-        A_out_raw = self._cal.adc_C_A.si_to_raw(A_out_nA * 10**-9)
+        A_out_raw = self._cal_emu.adc_C_A.si_to_raw(A_out_nA * 10**-9)
 
         P_out_fW = self.cnv.calc_out_power(A_out_raw)
         self.cnv.update_cap_storage()
         V_out_raw = self.cnv.update_states_and_output()
-        V_out_uV = int(self._cal.dac_V_A.raw_to_si(V_out_raw) * 10**6)
+        V_out_uV = int(self._cal_emu.dac_V_A.raw_to_si(V_out_raw) * 10**6)
 
         self.W_inp_fWs += P_inp_fW
         self.W_out_fWs += P_out_fW

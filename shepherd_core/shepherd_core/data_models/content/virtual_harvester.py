@@ -184,7 +184,14 @@ algo_to_dtype = {
 }
 
 
-class VirtualHarvesterPRU(ShpModel):
+class HarvesterPRUConfig(ShpModel):
+    """
+    Kernel-Task -> Map settings-list to internal state-vars struct ConverterConfig
+    NOTE:
+      - yaml is based on si-units like nA, mV, ms, uF
+      - c-code and py-copy is using nA, uV, ns, nF, fW, raw
+    """
+
     algorithm: u32
     hrv_mode: u32
     window_size: u32

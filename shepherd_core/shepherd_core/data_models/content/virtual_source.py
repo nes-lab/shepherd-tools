@@ -10,8 +10,8 @@ from ...logger import logger
 from .. import ShpModel
 from ..base.content import ContentModel
 from ..base.fixture import Fixtures
+from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvester
-from .virtual_harvester import VirtualHarvesterPRU
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "VirtualSource")
@@ -117,7 +117,7 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
         # trigger stricter test of harv-parameters
-        VirtualHarvesterPRU.from_vhrv(values.get("harvester"), for_emu=True)
+        HarvesterPRUConfig.from_vhrv(values.get("harvester"), for_emu=True)
         return values
 
     def calc_internal_states(self) -> dict:
@@ -228,7 +228,7 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
 
 u32 = conint(ge=0, lt=2**32)
 u8 = conint(ge=0, lt=2**8)
-LUT_SIZE = 12
+LUT_SIZE: int = 12
 lut_i = conlist(
     item_type=conlist(u8, min_items=LUT_SIZE, max_items=LUT_SIZE),
     min_items=LUT_SIZE,
@@ -237,7 +237,7 @@ lut_i = conlist(
 lut_o = conlist(u32, min_items=LUT_SIZE, max_items=LUT_SIZE)
 
 
-class VirtualSourcePRU(ShpModel):
+class ConverterPRUConfig(ShpModel):
     converter_mode: u32
     interval_startup_delay_drain_n: u32
 
@@ -273,6 +273,7 @@ class VirtualSourcePRU(ShpModel):
     LUT_output_I_min_log2_nA: u32
     LUT_inp_efficiency_n8: lut_i
     LUT_out_inv_efficiency_n4: lut_o
+    LUT_size: u32 = LUT_SIZE
 
     @classmethod
     def from_vsrc(cls, data: VirtualSource, log_intermediate_node: bool = False):

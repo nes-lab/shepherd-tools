@@ -13,12 +13,10 @@ Compromises:
 """
 
 import math
-from typing import List
 from typing import Optional
 
 from shepherd_core import CalibrationEmulator
-from shepherd_core.data_models import VirtualSource
-from shepherd_core.data_models.content.virtual_source import VirtualSourcePRU
+from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
 
 
 class PruCalibration:
@@ -41,76 +39,14 @@ class PruCalibration:
         return dac_raw
 
 
-class KernelConverterStruct:  # TODO: can be replaced by VirtualSourcePRU
-    """part of commons.h"""
-
-    def __init__(self, vs_data: VirtualSource):
-        # NOTE:
-        #  - yaml is based on si-units like nA, mV, ms, uF
-        #  - c-code and py-copy is using nA, uV, ns, nF, fW, raw
-        values = list(VirtualSourcePRU.from_vsrc(vs_data).dict().values())
-
-        # generate a new dict from raw_list (that is intended for PRU / sys_fs, see commons.h)
-        self.LUT_size: int = 12
-
-        # General Reg Config
-        self.converter_mode: int = values[0]
-        self.interval_startup_delay_drain_n: int = values[1]
-
-        self.V_input_max_uV: int = values[2]
-        self.I_input_max_nA: int = values[3]
-        self.V_input_drop_uV: int = values[4]
-        self.R_input_kOhm: int = values[5] / (2**22)
-
-        self.Constant_us_per_nF: float = values[6] / (2**28)
-        self.V_intermediate_init_uV: int = values[7]  # allow a proper / fast startup
-        self.I_intermediate_leak_nA: int = values[8]
-
-        self.V_enable_output_threshold_uV: int = values[
-            9
-        ]  # -> target gets connected (hysteresis-combo with next value)
-        self.V_disable_output_threshold_uV: int = values[
-            10
-        ]  # -> target gets disconnected
-        self.dV_enable_output_uV: int = values[11]
-        self.interval_check_thresholds_n: int = values[
-            12
-        ]  # some BQs check every 65 ms if output should be disconnected
-
-        self.V_pwr_good_enable_threshold_uV: int = values[
-            13
-        ]  # range where target is informed by output-pin
-        self.V_pwr_good_disable_threshold_uV: int = values[14]
-        self.immediate_pwr_good_signal: int = values[15]
-
-        self.V_output_log_gpio_threshold_uV: int = values[16]
-
-        # boost converter
-        self.V_input_boost_threshold_uV: int = values[
-            17
-        ]  # min input-voltage for the boost converter to work
-        self.V_intermediate_max_uV: int = values[18]  # -> boost shuts off
-
-        # Buck Boost, ie. BQ25570)
-        self.V_output_uV: int = values[19]
-        self.V_buck_drop_uV: int = values[20]
-
-        # LUTs
-        self.LUT_input_V_min_log2_uV: int = values[21]
-        self.LUT_input_I_min_log2_nA: int = values[22]
-        self.LUT_output_I_min_log2_nA: int = values[23]
-        self.LUT_inp_efficiency_n8: List[int] = values[
-            24
-        ]  # depending on inp_voltage, inp_current, (cap voltage),
-        self.LUT_out_inv_efficiency_n4: List[int] = values[
-            25
-        ]  # depending on output_current
-
-
 class VirtualConverterModel:
-    def __init__(self, config: KernelConverterStruct, calibration: PruCalibration):
-        self._cal: PruCalibration = calibration
-        self._cfg: KernelConverterStruct = config
+    def __init__(self, cfg: ConverterPRUConfig, cal: PruCalibration):
+        self._cal: PruCalibration = cal
+        self._cfg: ConverterPRUConfig = cfg
+
+        # simplifications for python
+        self.R_input_kOhm = float(self._cfg.R_input_kOhm_n22) / 2**22
+        self.Constant_us_per_nF = float(self._cfg.Constant_us_per_nF_n28) / 2**28
 
         # boost internal state
         self.V_input_uV: float = 0.0
@@ -180,7 +116,7 @@ class VirtualConverterModel:
         else:
             if input_voltage_uV > self.V_mid_uV:
                 V_diff_uV = input_voltage_uV - self.V_mid_uV
-                V_drop_uV = input_current_nA * self._cfg.R_input_kOhm
+                V_drop_uV = input_current_nA * self.R_input_kOhm
                 if V_drop_uV > V_diff_uV:
                     input_voltage_uV = self.V_mid_uV
                 else:
@@ -222,7 +158,7 @@ class VirtualConverterModel:
             V_mid_prot_uV = max(1.0, self.V_mid_uV)
             P_sum_fW = self.P_inp_fW - self.P_out_fW
             I_mid_nA = P_sum_fW / V_mid_prot_uV
-            dV_mid_uV = I_mid_nA * self._cfg.Constant_us_per_nF
+            dV_mid_uV = I_mid_nA * self.Constant_us_per_nF
             self.V_mid_uV += dV_mid_uV
 
         if self.V_mid_uV > self._cfg.V_intermediate_max_uV:
@@ -290,9 +226,7 @@ class VirtualConverterModel:
             pos_v = self._cfg.LUT_size - 1
         if pos_c >= self._cfg.LUT_size:
             pos_c = self._cfg.LUT_size - 1
-        return self._cfg.LUT_inp_efficiency_n8[pos_v * self._cfg.LUT_size + pos_c] / (
-            2**8
-        )
+        return self._cfg.LUT_inp_efficiency_n8[pos_v][pos_c] / (2**8)
 
     def get_output_inv_efficiency(self, current_nA: float) -> float:
         current_n = int(current_nA / (2**self._cfg.LUT_output_I_min_log2_nA))
