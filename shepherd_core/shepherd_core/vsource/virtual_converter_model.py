@@ -113,6 +113,7 @@ class VirtualConverterModel:
             # direct connection
             self.V_mid_uV = input_voltage_uV
             input_voltage_uV = 0.0
+            # ⤷ input current (& power) is not evaluated
         else:
             if input_voltage_uV > self.V_mid_uV:
                 V_diff_uV = input_voltage_uV - self.V_mid_uV
@@ -168,6 +169,7 @@ class VirtualConverterModel:
             and (self.P_inp_fW > 0.0)
             and (self.V_mid_uV > self.V_input_uV)
         ):
+            # TODO: obfuscated - no "direct connection"?
             self.V_mid_uV = self.V_input_uV
         elif self.V_mid_uV < 1:
             self.V_mid_uV = 1

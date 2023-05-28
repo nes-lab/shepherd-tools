@@ -12,6 +12,7 @@ from typing import Optional
 
 from shepherd_core import CalibrationEmulator
 
+from ..data_models import EnergyDType
 from ..data_models import VirtualSource
 from ..data_models.content.virtual_harvester import HarvesterPRUConfig
 from ..data_models.content.virtual_source import ConverterPRUConfig
@@ -40,20 +41,22 @@ class VirtualSourceModel:
             cnv_config, self._cal_pru
         )
 
-        hrv_config = HarvesterPRUConfig.from_vhrv(self.cfg_src.harvester, for_emu=True)
+        hrv_config = HarvesterPRUConfig.from_vhrv(
+            self.cfg_src.harvester, for_emu=True, dtype_inp=EnergyDType.ivsample
+        )
         self.hrv: VirtualHarvesterModel = VirtualHarvesterModel(hrv_config)
 
         self.W_inp_fWs: float = 0.0
         self.W_out_fWs: float = 0.0
 
-    def iterate_sampling(self, V_inp_uV: int = 0, I_inp_nA: int = 0, A_out_nA: int = 0):
+    def iterate_sampling(self, V_inp_uV: int = 0, I_inp_nA: int = 0, I_out_nA: int = 0):
         """
         TEST-SIMPLIFICATION - code below is not part of pru-code,
         but in part sample_emulator() in sampling.c
 
         :param V_inp_uV:
         :param I_inp_nA:
-        :param A_out_nA:
+        :param I_out_nA:
         :return:
         """
         V_inp_uV, I_inp_nA = self.hrv.iv_sample(V_inp_uV, I_inp_nA)
@@ -61,7 +64,7 @@ class VirtualSourceModel:
         P_inp_fW = self.cnv.calc_inp_power(V_inp_uV, I_inp_nA)
 
         # fake ADC read
-        A_out_raw = self._cal_emu.adc_C_A.si_to_raw(A_out_nA * 10**-9)
+        A_out_raw = self._cal_emu.adc_C_A.si_to_raw(I_out_nA * 10**-9)
 
         P_out_fW = self.cnv.calc_out_power(A_out_raw)
         self.cnv.update_cap_storage()

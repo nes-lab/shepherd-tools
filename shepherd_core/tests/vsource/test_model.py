@@ -1,4 +1,5 @@
 import pytest
+from pytest import approx
 
 from shepherd_core import CalibrationEmulator
 from shepherd_core.data_models import VirtualHarvester
@@ -27,7 +28,7 @@ def test_vsource_hrv_min(hrv_name: str) -> None:
     hrv_config = VirtualHarvester(name=hrv_name)
     hrv_pru = HarvesterPRUConfig.from_vhrv(hrv_config)
     _ = VirtualHarvesterModel(hrv_pru)
-    # TODO: more
+    # TODO: do more
 
 
 src_list = [
@@ -54,38 +55,87 @@ def c_leak_fWs(src: VirtualSourceModel, iterations: int) -> float:
 
 @pytest.mark.parametrize("src_name", src_list)
 def test_vsource_vsrc_min(src_name: str) -> None:
-    _ = src_model(src_name)
+    src = src_model(src_name)
+    src.iterate_sampling()
 
 
 def test_vsource_vsrc_static1() -> None:
+    iterations = 2_000
     src = src_model("BQ25504")
-    for _ in range(0, 2000):
+    for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=3_000_000, I_inp_nA=0)
     assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs > c_leak_fWs(src, 2000 - 10)
-    assert src.W_out_fWs < c_leak_fWs(src, 2000 + 10)
+    assert src.W_out_fWs == approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
 
 
 def test_vsource_vsrc_static2() -> None:
+    iterations = 2_000
     src = src_model("BQ25504")
-    for _ in range(0, 2000):
+    for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=0, I_inp_nA=3_000_000)
     assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs > c_leak_fWs(src, 2000 - 10)
-    assert src.W_out_fWs < c_leak_fWs(src, 2000 + 10)
+    assert src.W_out_fWs == approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
 
 
-@pytest.mark.parametrize("src_name", src_list)
-def test_vsource_add_charge(src_name: str) -> None:
+@pytest.mark.parametrize("src_name", src_list[2:])
+def test_vsource_charge(src_name: str) -> None:
+    iterations = 4_000
     src = src_model(src_name)
-    for _ in range(0, 1000):
-        src.iterate_sampling(V_inp_uV=1_000_000, I_inp_nA=1_000_000)
-    for _ in range(0, 1000):
-        src.iterate_sampling(V_inp_uV=2_000_000, I_inp_nA=1_000_000)
-    for _ in range(0, 1000):
-        src.iterate_sampling(V_inp_uV=3_000_000, I_inp_nA=1_000_000)
+    for v_mV in range(iterations):
+        src.iterate_sampling(V_inp_uV=v_mV * 1000, I_inp_nA=1_000_000)
     v_out = src.iterate_sampling(V_inp_uV=1_000_000, I_inp_nA=1_000_000)
-    # assert src.W_inp_fWs > 0.0
-    assert src.W_out_fWs >= 0.0
+    assert src.W_inp_fWs > 0.0
+    assert src.W_out_fWs == approx(c_leak_fWs(src, iterations), rel=0.12, abs=1e-3)
     assert v_out > 0.0
-    # TODO: more
+
+
+@pytest.mark.parametrize("src_name", src_list[4:])
+def test_vsource_drain(src_name: str) -> None:
+    iterations = 4_000
+    src = src_model(src_name)
+    for c_uA in range(iterations):
+        src.iterate_sampling(I_out_nA=c_uA * 1000)
+    v_out = src.iterate_sampling()
+    assert src.W_inp_fWs == 0.0
+    assert src.W_out_fWs > c_leak_fWs(src, iterations)
+    assert v_out >= 0.0
+
+
+def test_vsource_vsrc_over_voltage() -> None:
+    iterations = 100
+    src = src_model("BQ25504")
+    for _ in range(iterations):
+        src.iterate_sampling(V_inp_uV=10 * 10**6, I_inp_nA=3_000_000)
+    assert src.cnv.V_input_uV <= 5 * 10**6
+    assert src.W_inp_fWs > 0.0
+
+
+def test_vsource_vsrc_over_current() -> None:
+    iterations = 100
+    src = src_model("BQ25504")
+    for _ in range(iterations):
+        src.iterate_sampling(V_inp_uV=5 * 10**6, I_inp_nA=100 * 10**6)
+    assert src.W_inp_fWs > 0.0
+
+
+def test_vsource_vsrc_cycle() -> None:
+    iterations = 2000
+    src = src_model("BQ25504s")
+
+    for _ in range(iterations):
+        src.iterate_sampling(V_inp_uV=5 * 10**6, I_inp_nA=4 * 10**6)
+    v_out = src.iterate_sampling()
+    assert v_out > 0
+
+    for _ in range(iterations):
+        src.iterate_sampling(I_out_nA=40 * 10**6)
+    v_out = src.iterate_sampling()
+    assert v_out == 0
+
+    for _ in range(iterations):
+        src.iterate_sampling(V_inp_uV=5 * 10**6, I_inp_nA=4 * 10**6)
+    v_out = src.iterate_sampling()
+    assert v_out > 0
+
+    assert src.W_out_fWs > 3 * c_leak_fWs(src, iterations)
+    assert src.W_inp_fWs > src.W_out_fWs

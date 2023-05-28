@@ -35,7 +35,7 @@ class AlgorithmDType(str, Enum):
 
 class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     """A Harvester is needed when the file-based energy environment
-    of the virtual source is not already supplied as ivsamples
+    of the virtual source is not already supplied as ivsample
     TODO: Should be named -Config internally
     """
 
@@ -154,6 +154,10 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     def get_datatype(self) -> EnergyDType:
         return algo_to_dtype[self.algorithm]
 
+    def calc_window_size(self, for_emu: bool, dtype_inp: EnergyDType) -> int:
+        value = self.window_duration_n if for_emu else self.samples_n
+        return value if dtype_inp != EnergyDType.ivsample else 0
+
 
 u32 = conint(ge=0, lt=2**32)
 
@@ -211,12 +215,18 @@ class HarvesterPRUConfig(ShpModel):
     # ⤷ for DAC to settle
 
     @classmethod
-    def from_vhrv(cls, data: VirtualHarvester, for_emu: bool = False):
+    def from_vhrv(
+        cls,
+        data: VirtualHarvester,
+        for_emu: bool = False,
+        dtype_inp: EnergyDType = EnergyDType.ivsample,
+    ):
+        # TODO: use dtype properly in shepherd
         interval_ms, duration_ms = data.calc_timings_ms(for_emu)
         return cls(
             algorithm=data.calc_algorithm_num(for_emu),
             hrv_mode=data.calc_hrv_mode(for_emu),
-            window_size=data.window_duration_n if for_emu else data.samples_n,
+            window_size=data.calc_window_size(for_emu, dtype_inp),
             voltage_uV=data.voltage_mV * 10**3,
             voltage_min_uV=data.voltage_min_mV * 10**3,
             voltage_max_uV=data.voltage_max_mV * 10**3,
