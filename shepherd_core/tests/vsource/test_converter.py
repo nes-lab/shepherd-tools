@@ -1,35 +1,16 @@
+from pathlib import Path
+from typing import Optional
+
 import pytest
 from pytest import approx
 
+from shepherd_core import BaseReader
 from shepherd_core import CalibrationEmulator
-from shepherd_core.data_models import VirtualHarvester
+from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models import VirtualSource
-from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
-from shepherd_core.vsource import VirtualHarvesterModel
 from shepherd_core.vsource import VirtualSourceModel
 
 # virtual_converter_model gets tested below with vsrc_model
-
-hrv_list = [
-    "ivcurve",
-    "iv1000",
-    "isc_voc",
-    "cv20",
-    "mppt_voc",
-    "mppt_bq",
-    "mppt_bq_solar",
-    "mppt_po",
-    "mppt_opt",
-]
-
-
-@pytest.mark.parametrize("hrv_name", hrv_list)
-def test_vsource_hrv_min(hrv_name: str) -> None:
-    hrv_config = VirtualHarvester(name=hrv_name)
-    hrv_pru = HarvesterPRUConfig.from_vhrv(hrv_config)
-    _ = VirtualHarvesterModel(hrv_pru)
-    # TODO: do more
-
 
 src_list = [
     "neutral",
@@ -43,10 +24,20 @@ src_list = [
 ]
 
 
-def src_model(name: str) -> VirtualSourceModel:
+def src_model(
+    name: str,
+    dtype_in: EnergyDType = EnergyDType.ivsample,
+    window_size: Optional[int] = None,
+) -> VirtualSourceModel:
     src_config = VirtualSource(name=name)
     cal_emu = CalibrationEmulator()
-    return VirtualSourceModel(src_config, cal_emu, log_intermediate=True)
+    return VirtualSourceModel(
+        src_config,
+        cal_emu,
+        log_intermediate=True,
+        dtype_in=dtype_in,
+        window_size=window_size,
+    )
 
 
 def c_leak_fWs(src: VirtualSourceModel, iterations: int) -> float:
@@ -139,3 +130,35 @@ def test_vsource_vsrc_cycle() -> None:
 
     assert src.W_out_fWs > 3 * c_leak_fWs(src, iterations)
     assert src.W_inp_fWs > src.W_out_fWs
+
+
+def test_vsource_vsrc_create_files(file_ivcurve: Path, file_ivsample: Path) -> None:
+    pass
+
+
+@pytest.mark.parametrize("src_name", src_list)
+def test_vsource_vsrc_sim_curve(src_name: str, file_ivcurve: Path) -> None:
+    with BaseReader(file_ivcurve) as file:
+        window_size = file.get_window_samples()
+        dtype = file.get_datatype()
+        src = src_model("BQ25504s", dtype_in=dtype, window_size=window_size)
+        for _t, _v, _i in file.read_buffers():
+            length = max(_v.size, _i.size)
+            for _n in range(length):
+                src.iterate_sampling(
+                    V_inp_uV=_v[_n] * 10**6, I_inp_nA=_i[_n] * 10**9
+                )
+
+
+@pytest.mark.parametrize("src_name", src_list)
+def test_vsource_vsrc_sim_sample(src_name: str, file_ivsample: Path) -> None:
+    with BaseReader(file_ivsample) as file:
+        window_size = file.get_window_samples()
+        dtype = file.get_datatype()
+        src = src_model("BQ25504s", dtype_in=dtype, window_size=window_size)
+        for _t, _v, _i in file.read_buffers():
+            length = max(_v.size, _i.size)
+            for _n in range(length):
+                src.iterate_sampling(
+                    V_inp_uV=_v[_n] * 10**6, I_inp_nA=_i[_n] * 10**9
+                )

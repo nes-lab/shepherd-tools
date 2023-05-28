@@ -29,6 +29,8 @@ class VirtualSourceModel:
         vsrc: Optional[VirtualSource],
         cal_emu: CalibrationEmulator,
         log_intermediate: bool = False,
+        dtype_in: EnergyDType = EnergyDType.ivsample,
+        window_size: Optional[int] = None,
     ):
         self._cal_emu: CalibrationEmulator = cal_emu
         self._cal_pru: PruCalibration = PruCalibration(cal_emu)
@@ -42,8 +44,12 @@ class VirtualSourceModel:
         )
 
         hrv_config = HarvesterPRUConfig.from_vhrv(
-            self.cfg_src.harvester, for_emu=True, dtype_inp=EnergyDType.ivsample
+            self.cfg_src.harvester,
+            for_emu=True,
+            dtype_inp=dtype_in,
+            window_size=window_size,
         )
+
         self.hrv: VirtualHarvesterModel = VirtualHarvesterModel(hrv_config)
 
         self.W_inp_fWs: float = 0.0

@@ -156,6 +156,8 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
 
     def calc_window_size(self, for_emu: bool, dtype_inp: EnergyDType) -> int:
         value = self.window_duration_n if for_emu else self.samples_n
+        # TODO: more correct -> value if dtype == ivcurve else 0 !
+        #  Also: for_emu and dtype not in (ivcurce, ivsample) == raise
         return value if dtype_inp != EnergyDType.ivsample else 0
 
 
@@ -220,13 +222,16 @@ class HarvesterPRUConfig(ShpModel):
         data: VirtualHarvester,
         for_emu: bool = False,
         dtype_inp: EnergyDType = EnergyDType.ivsample,
+        window_size: Optional[u32] = None,
     ):
         # TODO: use dtype properly in shepherd
         interval_ms, duration_ms = data.calc_timings_ms(for_emu)
         return cls(
             algorithm=data.calc_algorithm_num(for_emu),
             hrv_mode=data.calc_hrv_mode(for_emu),
-            window_size=data.calc_window_size(for_emu, dtype_inp),
+            window_size=window_size
+            if window_size is not None
+            else data.calc_window_size(for_emu, dtype_inp),
             voltage_uV=data.voltage_mV * 10**3,
             voltage_min_uV=data.voltage_min_mV * 10**3,
             voltage_max_uV=data.voltage_max_mV * 10**3,
