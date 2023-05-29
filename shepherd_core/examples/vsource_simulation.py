@@ -67,8 +67,8 @@ for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_li
 
         # store sim-results
         vcaps[i] = [
-            src.cnv.get_V_intermediate_uV() / 1e6,
-            V_out_uV / 1e6,
+            src.cnv.get_V_intermediate_uV() * 1e-6,
+            V_out_uV * 1e-6,
             src.cnv.get_power_good(),
         ]
 

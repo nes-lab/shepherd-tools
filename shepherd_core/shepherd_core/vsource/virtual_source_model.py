@@ -46,7 +46,7 @@ class VirtualSourceModel:
         hrv_config = HarvesterPRUConfig.from_vhrv(
             self.cfg_src.harvester,
             for_emu=True,
-            dtype_inp=dtype_in,
+            dtype_in=dtype_in,
             window_size=window_size,
         )
 
@@ -65,7 +65,7 @@ class VirtualSourceModel:
         :param I_out_nA:
         :return:
         """
-        V_inp_uV, I_inp_nA = self.hrv.iv_sample(V_inp_uV, I_inp_nA)
+        V_inp_uV, I_inp_nA = self.hrv.ivcurve_sample(V_inp_uV, I_inp_nA)
 
         P_inp_fW = self.cnv.calc_inp_power(V_inp_uV, I_inp_nA)
 

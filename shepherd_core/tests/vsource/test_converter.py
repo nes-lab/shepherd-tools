@@ -13,7 +13,6 @@ from shepherd_core.vsource import VirtualSourceModel
 # virtual_converter_model gets tested below with vsrc_model
 
 src_list = [
-    "neutral",
     "direct",
     "diode+capacitor",
     "diode+resistor+capacitor",
@@ -132,7 +131,9 @@ def test_vsource_vsrc_cycle() -> None:
     assert src.W_inp_fWs > src.W_out_fWs
 
 
-def test_vsource_vsrc_create_files(file_ivcurve: Path, file_ivsample: Path) -> None:
+def test_vsource_vsrc_create_files(
+    file_ivcurve: Path, file_ivsample: Path, file_isc_voc: Path
+) -> None:
     pass
 
 

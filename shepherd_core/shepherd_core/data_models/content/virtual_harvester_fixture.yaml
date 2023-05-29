@@ -86,6 +86,13 @@
     voltage_mV: 3300
 
 - model: VirtualHarvester
+  id: 1032
+  fields:
+    name: cv10
+    inherit_from: cv20
+    voltage_mV: 1000
+
+- model: VirtualHarvester
   id: 1040
   fields:
     name: mppt_voc

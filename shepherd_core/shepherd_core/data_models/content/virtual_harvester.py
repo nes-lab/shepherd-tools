@@ -44,13 +44,8 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     algorithm: AlgorithmDType
     # ⤷ used to harvest energy
 
-    samples_n: conint(ge=8, le=2_000) = 8  # TODO: min was 16, TEST
+    samples_n: conint(ge=8, le=2_000) = 8
     # ⤷ for & of ivcurve (and more?`)
-    window_duration_n: Optional[conint(ge=1)] = None
-    # ⤷ gets calculated on-demand if needed
-    # TODO: verify that this works ->
-    #  if window_duration_n is zero (set from datalog-reader) they should
-    #  stay zero to disable hrv-routine during emulation
 
     voltage_mV: confloat(ge=0, le=5_000) = 2_500
     # ⤷ starting-point for some algorithms (mppt_po)
@@ -108,11 +103,6 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
             10**3 * cal.dac_V_Hrv.raw_to_si(4), values["voltage_step_mV"]
         )
 
-        if values.get("window_duration_n") is None:
-            values["window_duration_n"] = values["samples_n"] * (
-                1 + values["wait_cycles"]
-            )
-
         return values
 
     def calc_hrv_mode(self, for_emu: bool) -> int:
@@ -154,11 +144,17 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     def get_datatype(self) -> EnergyDType:
         return algo_to_dtype[self.algorithm]
 
-    def calc_window_size(self, for_emu: bool, dtype_inp: EnergyDType) -> int:
-        value = self.window_duration_n if for_emu else self.samples_n
-        # TODO: more correct -> value if dtype == ivcurve else 0 !
-        #  Also: for_emu and dtype not in (ivcurce, ivsample) == raise
-        return value if dtype_inp != EnergyDType.ivsample else 0
+    def calc_window_size(self, for_emu: bool, dtype_in: EnergyDType) -> int:
+        if for_emu:
+            if dtype_in == EnergyDType.ivcurve:
+                return self.samples_n * (1 + self.wait_cycles)
+            elif dtype_in == EnergyDType.ivsample:
+                return 0
+            # isc_voc: 2 * (1 + wait_cycles), noqa
+            raise ValueError("Not Implemented")
+        else:
+            # only used by ivcurve algo (in ADC-Mode)
+            return self.samples_n
 
 
 u32 = conint(ge=0, lt=2**32)
@@ -221,9 +217,11 @@ class HarvesterPRUConfig(ShpModel):
         cls,
         data: VirtualHarvester,
         for_emu: bool = False,
-        dtype_inp: EnergyDType = EnergyDType.ivsample,
+        dtype_in: EnergyDType = EnergyDType.ivsample,
         window_size: Optional[u32] = None,
     ):
+        if for_emu and dtype_in not in [EnergyDType.ivsample, EnergyDType.ivcurve]:
+            raise ValueError("Not Implemented")
         # TODO: use dtype properly in shepherd
         interval_ms, duration_ms = data.calc_timings_ms(for_emu)
         return cls(
@@ -231,7 +229,7 @@ class HarvesterPRUConfig(ShpModel):
             hrv_mode=data.calc_hrv_mode(for_emu),
             window_size=window_size
             if window_size is not None
-            else data.calc_window_size(for_emu, dtype_inp),
+            else data.calc_window_size(for_emu, dtype_in),
             voltage_uV=data.voltage_mV * 10**3,
             voltage_min_uV=data.voltage_min_mV * 10**3,
             voltage_max_uV=data.voltage_max_mV * 10**3,
