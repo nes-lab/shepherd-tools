@@ -144,12 +144,17 @@ class VirtualHarvesterModel:
                     self.voltage_set_uV -= self.volt_step_uV
                 self.volt_step_uV *= 2
             else:
-                self.is_rising = not self.is_rising
-                self.volt_step_uV = self._cfg.voltage_step_uV
-                if self.is_rising:
-                    self.voltage_set_uV += self.volt_step_uV
+                if (power_now <= 0) and (self.voltage_set_uV > 0):
+                    self.is_rising = True
+                    self.volt_step_uV = self._cfg.voltage_step_uV
+                    self.voltage_set_uV -= self.voltage_step_x4_uV
                 else:
-                    self.voltage_set_uV -= self.volt_step_uV
+                    self.is_rising = not self.is_rising
+                    self.volt_step_uV = self._cfg.voltage_step_uV
+                    if self.is_rising:
+                        self.voltage_set_uV += self.volt_step_uV
+                    else:
+                        self.voltage_set_uV -= self.volt_step_uV
 
             self.power_last = power_now
 
@@ -159,6 +164,10 @@ class VirtualHarvesterModel:
                 self.volt_step_uV = self._cfg.voltage_step_uV
             if self.voltage_set_uV <= self._cfg.voltage_min_uV:
                 self.voltage_set_uV = self._cfg.voltage_min_uV
+                self.is_rising = True
+                self.volt_step_uV = self._cfg.voltage_step_uV
+            if self.voltage_set_uV <= self._cfg.voltage_step_uV:
+                self.voltage_set_uV = self._cfg.voltage_step_uV
                 self.is_rising = True
                 self.volt_step_uV = self._cfg.voltage_step_uV
 

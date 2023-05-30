@@ -13,7 +13,9 @@ fixtures = Fixtures(fixture_path, "EnergyEnvironment")
 
 class EnergyDType(str, Enum):
     ivsample = "ivsample"
+    ivsamples = "ivsample"
     ivcurve = "ivcurve"
+    ivcurves = "ivcurve"
     isc_voc = "isc_voc"
 
 

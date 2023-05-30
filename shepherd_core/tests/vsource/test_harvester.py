@@ -47,13 +47,12 @@ def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
 def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
     with BaseReader(file_ivcurve) as file:
-        window_size = file.get_window_samples()
         hrv_config = VirtualHarvester(name=hrv_name)
         hrv_pru = HarvesterPRUConfig.from_vhrv(
             hrv_config,
             for_emu=True,
-            dtype_in=EnergyDType.ivcurve,
-            window_size=window_size,
+            dtype_in=file.get_datatype(),
+            window_size=file.get_window_samples(),
         )
         hrv = VirtualHarvesterModel(hrv_pru)
         for _t, _v, _i in file.read_buffers():
@@ -65,10 +64,16 @@ def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
 
 
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
-def test_vsource_hrv_fail_isc_voc(hrv_name: str, file_isc_voc) -> None:
+def test_vsource_hrv_fail_isc_voc(hrv_name: str) -> None:
     # not implemented ATM
     with pytest.raises(ValueError):
         hrv_config = VirtualHarvester(name=hrv_name)
         _ = HarvesterPRUConfig.from_vhrv(
             hrv_config, for_emu=True, dtype_in=EnergyDType.isc_voc
         )
+
+
+def test_vsource_hrv_fail_unknown_type() -> None:
+    with pytest.raises(KeyError):
+        hrv_config = VirtualHarvester(name="mppt_voc")
+        _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in="xyz")

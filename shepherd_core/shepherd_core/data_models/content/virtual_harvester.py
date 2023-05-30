@@ -2,6 +2,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 from typing import Tuple
+from typing import Union
 
 from pydantic import confloat
 from pydantic import conint
@@ -217,9 +218,11 @@ class HarvesterPRUConfig(ShpModel):
         cls,
         data: VirtualHarvester,
         for_emu: bool = False,
-        dtype_in: EnergyDType = EnergyDType.ivsample,
+        dtype_in: Union[str, EnergyDType] = EnergyDType.ivsample,
         window_size: Optional[u32] = None,
     ):
+        if isinstance(dtype_in, str):
+            dtype_in = EnergyDType[dtype_in]
         if for_emu and dtype_in not in [EnergyDType.ivsample, EnergyDType.ivcurve]:
             raise ValueError("Not Implemented")
         # TODO: use dtype properly in shepherd
