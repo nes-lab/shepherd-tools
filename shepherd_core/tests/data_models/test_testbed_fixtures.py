@@ -15,38 +15,38 @@ from shepherd_core.data_models.testbed.testbed import fixtures as fix_testbed
 # ⤷ TasteBad avoids pytest-warning
 
 
-def test_testbed_fixture_cape():
+def test_testbed_fixture_cape() -> None:
     for fix in fix_cape:
         Cape(name=fix["name"])
         Cape(id=fix["id"])
 
 
-def test_testbed_fixture_gpio():
+def test_testbed_fixture_gpio() -> None:
     for fix in fix_gpio:
         GPIO(name=fix["name"])
         GPIO(id=fix["id"])
 
 
-def test_testbed_fixture_mcu():
+def test_testbed_fixture_mcu() -> None:
     for fix in fix_mcu:
         MCU(name=fix["name"])
         mcu = MCU(id=fix["id"])
         Firmware(name=mcu.fw_name_default)
 
 
-def test_testbed_fixture_observer():
+def test_testbed_fixture_observer() -> None:
     for fix in fix_observer:
         Observer(name=fix["name"])
         Observer(id=fix["id"])
 
 
-def test_testbed_fixture_target():
+def test_testbed_fixture_target() -> None:
     for fix in fix_target:
         Target(name=fix["name"])
         Target(id=fix["id"])
 
 
-def test_testbed_fixture_tb():
+def test_testbed_fixture_tb() -> None:
     for fix in fix_testbed:
         TasteBad(name=fix["name"])
         TasteBad(id=fix["id"])

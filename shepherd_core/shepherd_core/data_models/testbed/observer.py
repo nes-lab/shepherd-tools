@@ -8,9 +8,9 @@ from pydantic import confloat
 from pydantic import constr
 from pydantic import root_validator
 
-from ..base.content import id_int
-from ..base.content import name_str
-from ..base.content import safe_str
+from ..base.content import IdInt
+from ..base.content import NameStr
+from ..base.content import SafeStr
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 from .cape import Cape
@@ -20,22 +20,22 @@ from .target import Target
 fixture_path = Path(__file__).resolve().with_name("observer_fixture.yaml")
 fixtures = Fixtures(fixture_path, "observer")
 
-mac_str = constr(max_length=17, regex=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
+MACStr = constr(max_length=17, regex=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
 
 
 class Observer(ShpModel, title="Shepherd-Sheep"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: id_int  # noqa: A003
-    name: name_str
-    description: safe_str
-    comment: Optional[safe_str] = None
+    id: IdInt  # noqa: A003
+    name: NameStr
+    description: SafeStr
+    comment: Optional[SafeStr] = None
 
     ip: IPvAnyAddress
-    mac: mac_str
+    mac: MACStr
 
-    room: name_str
-    eth_port: name_str
+    room: NameStr
+    eth_port: NameStr
 
     latitude: confloat(ge=-90, le=90) = 51.026573  # cfaed
     longitude: confloat(ge=-180, le=180) = 13.723291
@@ -53,18 +53,19 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values, _ = fixtures.inheritance(values)
         return values
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        has_cape = values["cape"] is not None
-        has_target = (values["target_a"] is not None) or (
-            values["target_b"] is not None
+        has_cape = values.get("cape") is not None
+        has_target = (values.get("target_a") is not None) or (
+            values.get("target_b") is not None
         )
         if not has_cape and has_target:
             raise ValueError(
-                f"Observer '{values['name']}' is faulty " f"-> has targets but no cape"
+                f"Observer '{values.get('name')}' is faulty "
+                f"-> has targets but no cape"
             )
         return values
 
@@ -73,6 +74,15 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
             return TargetPort.A
         if self.target_b is not None and target_id == self.target_b.id:
             return TargetPort.B
+        raise ValueError(
+            f"Target-ID {target_id} was not found in Observer '{self.name}'"
+        )
+
+    def get_target(self, target_id: int) -> Target:
+        if self.target_a is not None and target_id == self.target_a.id:
+            return self.target_a
+        if self.target_b is not None and target_id == self.target_b.id:
+            return self.target_b
         raise ValueError(
             f"Target-ID {target_id} was not found in Observer '{self.name}'"
         )

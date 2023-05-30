@@ -7,10 +7,10 @@ from pydantic import Field
 from pydantic import conlist
 from pydantic import root_validator
 
+from ..base.content import IdInt
+from ..base.content import NameStr
+from ..base.content import SafeStr
 from ..base.content import id_default
-from ..base.content import id_int
-from ..base.content import name_str
-from ..base.content import safe_str
 from ..base.shepherd import ShpModel
 from ..testbed.target import Target
 from ..testbed.testbed import Testbed
@@ -23,17 +23,17 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     emulating Energy Environments for Target Nodes"""
 
     # General Properties
-    id: id_int = Field(  # noqa: A003
+    id: IdInt = Field(  # noqa: A003
         description="Unique ID",
         default_factory=id_default,
     )
-    name: name_str
-    description: Optional[safe_str] = Field(description="Required for public instances")
-    comment: Optional[safe_str] = None
+    name: NameStr
+    description: Optional[SafeStr] = Field(description="Required for public instances")
+    comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access, TODO
-    owner_id: Optional[id_int] = 5472  # UUID?
+    owner_id: Optional[IdInt] = 5472  # UUID?
 
     # feedback
     email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account
@@ -54,10 +54,10 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         return values
 
     @staticmethod
-    def validate_targets(values: dict):
+    def validate_targets(values: dict) -> None:
         target_ids = []
         custom_ids = []
-        for _config in values["target_configs"]:
+        for _config in values.get("target_configs"):
             for _id in _config.target_IDs:
                 target_ids.append(_id)
                 Target(id=_id)
@@ -74,9 +74,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             )
 
     @staticmethod
-    def validate_observers(values: dict):
+    def validate_observers(values: dict) -> None:
         target_ids = []
-        for _config in values["target_configs"]:
+        for _config in values.get("target_configs"):
             for _id in _config.target_IDs:
                 target_ids.append(_id)
 
@@ -101,6 +101,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         for _config in self.target_configs:
             if target_id in _config.target_IDs:
                 return _config
+        # .. gets already caught in target_config .. but keep:
         raise ValueError(
             f"Target-ID {target_id} was not found in Experiment '{self.name}'"
         )

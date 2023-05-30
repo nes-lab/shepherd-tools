@@ -57,6 +57,16 @@
 
 - title in class might be rubbish
 
+- Warn about tricky syntax
+  - defining sub-data-models in an experiment in python:
+    - experiments-default: don't mention argument in init
+    - trace-default: init trace with empty argument list
+    - disable: init with "None"
+  - defining experiment in yaml:
+    - experiment-default: don't mention it
+    - trace-default: NOT POSSIBLE, right?
+    - disable: init with "null" OR just mention parameter but keep it empty
+
 ## Pydantic-Pitfalls (<v2)
 
 - ``@root_validator`` does not get an extra ``@classmethod``

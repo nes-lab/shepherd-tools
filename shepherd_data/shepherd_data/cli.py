@@ -12,6 +12,7 @@ import click
 
 from shepherd_core import get_verbose_level
 from shepherd_core import set_verbose_level
+from shepherd_core.commons import samplerate_sps_default
 
 from . import Reader
 from . import Writer
@@ -123,8 +124,8 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                     verbose=verbose_level >= 2,
                 ) as shpw:
                     shpw["ds_factor"] = ds_factor
-                    shpw.set_hostname(shpr.get_hostname())
-                    shpw.set_config(shpr.get_config())
+                    shpw.store_hostname(shpr.get_hostname())
+                    shpw.store_config(shpr.get_config())
                     shpr.downsample(
                         shpr.ds_time, shpw.ds_time, ds_factor=ds_factor, is_time=True
                     )
@@ -197,7 +198,8 @@ def downsample(
     """Creates an array of downsampling-files from file
     or directory containing shepherd-recordings"""
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
-        ds_factor = int(Reader.samplerate_sps_default / sample_rate)
+        ds_factor = int(samplerate_sps_default / sample_rate)
+        # TODO: shouldn't current sps be based on file rather than default?
     if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
         ds_list = [ds_factor]
     else:
@@ -226,8 +228,8 @@ def downsample(
                     verbose=verbose_level >= 2,
                 ) as shpw:
                     shpw["ds_factor"] = _factor
-                    shpw.set_hostname(shpr.get_hostname())
-                    shpw.set_config(shpr.get_config())
+                    shpw.store_hostname(shpr.get_hostname())
+                    shpw.store_config(shpr.get_config())
                     shpr.downsample(
                         shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True
                     )

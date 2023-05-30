@@ -12,12 +12,12 @@ from tqdm import trange
 import shepherd_data as shp
 
 if __name__ == "__main__":
-    file_path = Path("./hrv_sawtooth_1h.h5")
+    file_path = Path("./hrv_sawtooth_10min.h5")
 
-    with shp.Writer(file_path, compression=1) as file:
-        file.set_hostname("artificial")
+    with shp.Writer(file_path) as file:
+        file.store_hostname("artificial")
         duration_s = 60
-        repetitions = 60
+        repetitions = 10
         timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
 
         # values in SI units

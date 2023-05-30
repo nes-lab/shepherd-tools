@@ -29,6 +29,8 @@ if __name__ == "__main__":
                 if dset not in elements["data"]:
                     continue
 
+            # TODO: add missing calibration or retrieve older version
+
             # datasets with unequal size
             ds_time_size = fh.h5file["data"]["time"].shape[0]
             for dset in ["current", "voltage"]:
@@ -92,5 +94,5 @@ if __name__ == "__main__":
                 print(" -> will set hostname = SheepX")
                 fh.__exit__()
                 with shp.Writer(fpath, modify_existing=True) as fw:
-                    fw.set_hostname("SheepX")
+                    fw.store_hostname("SheepX")
                 fh.__enter__()

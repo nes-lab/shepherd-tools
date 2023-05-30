@@ -8,17 +8,17 @@ from shepherd_core.data_models import Firmware
 from shepherd_core.data_models import TargetConfig
 from shepherd_core.data_models import VirtualHarvester
 from shepherd_core.data_models import VirtualSource
-from shepherd_core.data_models.task import TestbedTasks
+from shepherd_core.data_models.task import TestbedTasks as TasteBadTasks
 
 
-def test_task_generation_file():
+def test_task_generation_file(tmp_path: Path) -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
     xp1 = Experiment.from_file(path)
-    tb_tasks = TestbedTasks.from_xp(xp1)
-    tb_tasks.to_file(Path("tbt1.yaml"))
+    tb_tasks = TasteBadTasks.from_xp(xp1)
+    tb_tasks.to_file(tmp_path / "tbt1.yaml")
 
 
-def test_task_generation_script():
+def test_task_generation_script(tmp_path: Path) -> None:
     hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
 
     target_cfgs = [
@@ -48,5 +48,5 @@ def test_task_generation_script():
         target_configs=target_cfgs,
     )
 
-    tb_tasks = TestbedTasks.from_xp(xperi)
-    tb_tasks.to_file(Path("tbt2.yaml"))
+    tb_tasks = TasteBadTasks.from_xp(xperi)
+    tb_tasks.to_file(tmp_path / "tbt2.yaml")

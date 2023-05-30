@@ -1,38 +1,20 @@
+import os
+import subprocess
 from pathlib import Path
 
-from shepherd_core.data_models.content import VirtualSource
-from shepherd_core.data_models.experiment import Experiment
-from shepherd_core.data_models.task import EmulationTask
-from shepherd_core.data_models.testbed.testbed import Testbed as TasteBad
-
-from .conftest import load_yaml
-
-# ⤷ TasteBad avoids pytest-warning
+import pytest
 
 
-def test_example_emu():
-    data_dict = load_yaml("example_config_emulator.yml")
-    EmulationTask(**data_dict["parameters"])
+@pytest.fixture
+def example_path() -> Path:
+    path = Path(__file__).absolute().parent.parent / "examples"
+    os.chdir(path)
+    return path
 
 
-def test_example_exp_recommended():
-    # new way
-    path = Path(__file__).with_name("example_config_experiment.yaml")
-    Experiment.from_file(path)
+examples = ["model_tester.py", "vsource_simulation.py", "vharvester_simulation.py"]
 
 
-def test_example_exp():
-    # non-optimal / old way
-    data_dict = load_yaml("example_config_experiment_alternative.yaml")
-    Experiment(**data_dict)
-
-
-def test_example_tb():
-    data_dict = load_yaml("example_config_testbed.yml")
-    print(data_dict)
-    TasteBad(**data_dict)
-
-
-def test_example_vsrc():
-    data_dict = load_yaml("example_config_virtsource.yml")
-    VirtualSource(**data_dict["VirtualSource"])
+@pytest.mark.parametrize("file", examples)
+def test_example_scripts(example_path: Path, file: str) -> None:
+    subprocess.call(f"python {example_path / file}", shell=True)

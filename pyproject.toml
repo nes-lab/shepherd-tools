@@ -74,8 +74,9 @@ extend-ignore = [
 ]
 
 per-file-ignores = """
-# asserts (in tests are ok), also allow print() instead of logger
-*/tests/*: SCS108, S101, T201
+# asserts (in tests are ok), also allow print() instead of logger,
+# also allow executing scripts
+*/tests/*: SCS108, S101, T201, S404, S602, SCS103, SIM117
 # allow print()
 */examples/*: T201
 """

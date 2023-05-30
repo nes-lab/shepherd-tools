@@ -5,10 +5,10 @@ Might be exchanged by shepherds py-model of pru-harvesters
 import numpy as np
 import pandas as pd
 
-from shepherd_core.calibration import T_calc
+from shepherd_core import Calc_t
 
 
-def iv_model(voltages: T_calc, coeffs: pd.Series) -> T_calc:
+def iv_model(voltages: Calc_t, coeffs: pd.Series) -> Calc_t:
     """Simple diode based model of a solar panel IV curve.
 
     Args:

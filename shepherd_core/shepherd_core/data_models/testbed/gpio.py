@@ -6,9 +6,9 @@ from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 
-from ..base.content import id_int
-from ..base.content import name_str
-from ..base.content import safe_str
+from ..base.content import IdInt
+from ..base.content import NameStr
+from ..base.content import SafeStr
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 
@@ -28,10 +28,10 @@ class Direction(str, Enum):
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component"""
 
-    id: id_int  # noqa: A003
-    name: name_str
-    description: Optional[safe_str] = None
-    comment: Optional[safe_str] = None
+    id: IdInt  # noqa: A003
+    name: NameStr
+    description: Optional[SafeStr] = None
+    comment: Optional[SafeStr] = None
 
     direction: Direction = Direction.Input
     dir_switch: Optional[constr(max_length=32)]
@@ -47,14 +47,14 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values, _ = fixtures.inheritance(values)
         return values
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
         # ensure that either pru or sys is used, otherwise instance is considered faulty
-        no_pru = (values["reg_pru"] is None) or (values["pin_pru"] is None)
-        no_sys = (values["reg_sys"] is None) or (values["pin_sys"] is None)
+        no_pru = (values.get("reg_pru") is None) or (values.get("pin_pru") is None)
+        no_sys = (values.get("reg_sys") is None) or (values.get("pin_sys") is None)
         if no_pru and no_sys:
             raise ValueError(
                 f"GPIO-Instance is faulty -> it needs to use pru or sys, content: {values}"

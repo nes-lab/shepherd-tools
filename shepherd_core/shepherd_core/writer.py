@@ -5,15 +5,22 @@ import logging
 import math
 from itertools import product
 from pathlib import Path
+from typing import Any
 from typing import Optional
 from typing import Union
 
 import h5py
 import numpy as np
 import yaml
+from pydantic import validate_arguments
 
-from .calibration import cal_default
-from .calibration import si_to_raw
+from .commons import samplerate_sps_default
+from .data_models.base.calibration import CalibrationEmulator as CalEmu
+from .data_models.base.calibration import CalibrationHarvester as CalHrv
+from .data_models.base.calibration import CalibrationSeries as CalSeries
+from .data_models.content.energy_environment import EnergyDType
+from .data_models.task import Compression
+from .data_models.task.emulation import c_translate
 from .reader import BaseReader
 
 
@@ -35,6 +42,14 @@ def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
 class BaseWriter(BaseReader):
     """Stores data for Shepherd in HDF5 format
 
+    Choose lossless compression filter
+     - lzf:  low to moderate compression, VERY fast, no options
+             -> 20 % cpu overhead for half the filesize
+     - gzip: good compression, moderate speed, select level from 1-9, default is 4
+             -> lower levels seem fine
+             -> _algo=number instead of "gzip" is read as compression level for gzip
+     -> comparison / benchmarks https://www.h5py.org/lzf/
+
     Args:
         file_path: (Path) Name of the HDF5 file that data will be written to
         mode: (str) Indicates if this is data from harvester or emulator
@@ -49,70 +64,52 @@ class BaseWriter(BaseReader):
         verbose: (bool) provides more info instead of just warnings / errors
     """
 
-    # choose lossless compression filter
-    # - lzf:  low to moderate compression, VERY fast, no options
-    #         -> 20 % cpu overhead for half the filesize
-    # - gzip: good compression, moderate speed, select level from 1-9, default is 4
-    #         -> lower levels seem fine
-    #         -> _algo=number instead of "gzip" is read as compression level for gzip
-    # -> comparison / benchmarks https://www.h5py.org/lzf/
     comp_default: int = 1
     mode_default: str = "harvester"
-    datatype_default: str = "ivsample"
+    datatype_default: str = EnergyDType.ivsample.name
 
     _chunk_shape: tuple = (BaseReader.samples_per_buffer,)
 
+    @validate_arguments
     def __init__(
         self,
         file_path: Path,
         mode: Optional[str] = None,
         datatype: Optional[str] = None,
         window_samples: Optional[int] = None,
-        cal_data: Optional[dict] = None,
+        cal_data: Union[CalSeries, CalEmu, CalHrv, None] = None,
+        compression: Compression = Compression.default,
         modify_existing: bool = False,
-        compression: Union[None, str, int] = "default",
+        force_overwrite: bool = False,
         verbose: Optional[bool] = True,
     ):
-        file_path = Path(file_path)
         self._modify = modify_existing
+        self._compression = c_translate[compression.value]
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Writer")
         # -> logger gets configured in reader()
 
-        if self._modify or not file_path.exists():
-            self._file_path: Path = file_path
-            self._logger.info("Storing data to   '%s'", self._file_path)
+        if self._modify or force_overwrite or not file_path.exists():
+            self.file_path: Path = file_path
+            self._logger.info("Storing data to   '%s'", self.file_path)
+        elif file_path.exists() and not file_path.is_file():
+            raise TypeError(f"Path is not a file ({file_path})")
         else:
             base_dir = file_path.resolve().parents[0]
-            self._file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
+            self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
             self._logger.warning(
-                "File %s already exists -> " "storing under %s instead",
+                "File '%s' already exists -> " "storing under '%s' instead",
                 file_path,
-                self._file_path.name,
+                self.file_path.name,
             )
 
-        if not isinstance(mode, (str, type(None))):
-            raise TypeError(f"Can't handle type '{type(mode)}' for mode [str, None]")
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
             raise ValueError(
                 f"Can't handle mode '{mode}' " f"(choose one of {self.mode_dtype_dict})"
             )
-        if not isinstance(window_samples, (int, type(None))):
-            raise TypeError(
-                f"Can't handle type '{type(window_samples)}' for window_samples [int, None]"
-            )
-        if not isinstance(cal_data, (dict, type(None))):
-            raise TypeError(
-                f"Can't handle type '{type(cal_data)}' for cal_data [dict, None]"
-            )
 
-        if not isinstance(datatype, (str, type(None))):
-            raise TypeError(
-                f"Can't handle type '{type(datatype)}' for datatype [str, None]"
-            )
-
-        _dtypes = self.mode_dtype_dict[self.mode_default if (mode is None) else mode]
+        _dtypes = self.mode_dtype_dict[mode if mode else self.mode_default]
         if isinstance(datatype, str) and datatype not in _dtypes:
             raise ValueError(
                 f"Can't handle value '{datatype}' of datatype "
@@ -121,14 +118,10 @@ class BaseWriter(BaseReader):
 
         if self._modify:
             self._mode = mode
-            self._cal = (
-                cal_data if isinstance(cal_data, dict) else cal_default
-            )  # TODO: switch to pydantic
             self._datatype = datatype
             self._window_samples = window_samples
         else:
             self._mode = mode if isinstance(mode, str) else self.mode_default
-            self._cal = cal_data if isinstance(cal_data, dict) else cal_default
             self._datatype = (
                 datatype if isinstance(datatype, str) else self.datatype_default
             )
@@ -136,17 +129,26 @@ class BaseWriter(BaseReader):
                 window_samples if isinstance(window_samples, int) else 0
             )
 
-        if compression in [None, "lzf", 1]:  # order of recommendation
-            self._compression_algo = compression
+        if isinstance(cal_data, (CalEmu, CalHrv)):
+            self._cal = CalSeries.from_cal(cal_data)
+        elif isinstance(cal_data, CalSeries):
+            self._cal = cal_data
         else:
-            self._compression_algo = self.comp_default
+            self._cal = CalSeries()
 
         # open file
         if self._modify:
-            self.h5file = h5py.File(self._file_path, "r+")  # = rw
+            self.h5file = h5py.File(self.file_path, "r+")  # = rw
         else:
-            self.h5file = h5py.File(self._file_path, "w")  # write, truncate if exist
+            self.h5file = h5py.File(self.file_path, "w")
+            # ⤷ write, truncate if exist
             self._create_skeleton()
+
+        # show key parameters for h5-performance
+        settings = list(self.h5file.id.get_access_plist().get_cache())
+        self._logger.debug(
+            "H5Py Cache_setting=%s (_mdc, _nslots, _nbytes, _w0)", settings
+        )
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
         if isinstance(self._mode, str) and self._mode in self.mode_dtype_dict:
@@ -162,14 +164,13 @@ class BaseWriter(BaseReader):
 
         if isinstance(self._window_samples, int):
             self.h5file["data"].attrs["window_samples"] = self._window_samples
+        if datatype == EnergyDType.ivcurve and (self._window_samples in [None, 0]):
+            raise ValueError("Window Size argument needed for ivcurve-Datatype")
 
-        if self._cal is not None:
-            for channel, parameter in product(
-                ["current", "voltage"], ["gain", "offset"]
-            ):
-                self.h5file["data"][channel].attrs[parameter] = self._cal[channel][
-                    parameter
-                ]
+        # include cal-data
+        for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
+            self.h5file["data"][ds].attrs[param] = self._cal[ds][param]
+
         super().__init__(file_path=None, verbose=verbose)
 
     def __enter__(self):
@@ -201,69 +202,70 @@ class BaseWriter(BaseReader):
         """
         # Store voltage and current samples in the data group,
         # both are stored as 4 Byte unsigned int
-        gp_data = self.h5file.create_group("data")
+        grp_data = self.h5file.create_group("data")
         # the size of window_samples-attribute in harvest-data indicates ivcurves as input
         # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
-        gp_data.attrs["window_samples"] = 0
+        grp_data.attrs["window_samples"] = 0
 
-        gp_data.create_dataset(
+        grp_data.create_dataset(
             "time",
             (0,),
             dtype="u8",
             maxshape=(None,),
             chunks=self._chunk_shape,
-            compression=self._compression_algo,
+            compression=self._compression,
         )
-        gp_data["time"].attrs["unit"] = "ns"
-        gp_data["time"].attrs["description"] = "system time [ns]"
+        grp_data["time"].attrs["unit"] = "s"
+        grp_data["time"].attrs[
+            "description"
+        ] = "system time [s] = value * gain + (offset)"
 
-        gp_data.create_dataset(
+        grp_data.create_dataset(
             "current",
             (0,),
             dtype="u4",
             maxshape=(None,),
             chunks=self._chunk_shape,
-            compression=self._compression_algo,
+            compression=self._compression,
         )
-        gp_data["current"].attrs["unit"] = "A"
-        gp_data["current"].attrs["description"] = "current [A] = value * gain + offset"
+        grp_data["current"].attrs["unit"] = "A"
+        grp_data["current"].attrs["description"] = "current [A] = value * gain + offset"
 
-        gp_data.create_dataset(
+        grp_data.create_dataset(
             "voltage",
             (0,),
             dtype="u4",
             maxshape=(None,),
             chunks=self._chunk_shape,
-            compression=self._compression_algo,
+            compression=self._compression,
         )
-        gp_data["voltage"].attrs["unit"] = "V"
-        gp_data["voltage"].attrs["description"] = "voltage [V] = value * gain + offset"
+        grp_data["voltage"].attrs["unit"] = "V"
+        grp_data["voltage"].attrs["description"] = "voltage [V] = value * gain + offset"
 
     def append_iv_data_raw(
         self,
-        timestamp_ns: Union[np.ndarray, float, int],
+        timestamp: Union[np.ndarray, float, int],
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:
         """Writes raw data to database
 
         Args:
-            timestamp_ns: just start of buffer or whole ndarray
+            timestamp: just start of buffer or whole ndarray
             voltage: ndarray as raw unsigned integers
             current: ndarray as raw unsigned integers
         """
         len_new = min(voltage.size, current.size)
 
-        if isinstance(timestamp_ns, float):
-            timestamp_ns = int(timestamp_ns)
-        if isinstance(timestamp_ns, int):
+        if isinstance(timestamp, float):
+            timestamp = int(timestamp)
+        if isinstance(timestamp, int):
             time_series_ns = self.sample_interval_ns * np.arange(len_new).astype("u8")
-            timestamp_ns = timestamp_ns + time_series_ns
-        if isinstance(timestamp_ns, np.ndarray):
-            len_new = min(len_new, timestamp_ns.size)
+            timestamp = timestamp + time_series_ns
+        if isinstance(timestamp, np.ndarray):
+            len_new = min(len_new, timestamp.size)
         else:
-            self._logger.error("timestamp-data was not usable")
-            return
+            raise ValueError("timestamp-data was not usable")
 
         len_old = self.ds_time.shape[0]
 
@@ -273,7 +275,7 @@ class BaseWriter(BaseReader):
         self.ds_current.resize((len_old + len_new,))
 
         # append new data
-        self.ds_time[len_old : len_old + len_new] = timestamp_ns[:len_new]
+        self.ds_time[len_old : len_old + len_new] = timestamp[:len_new]
         self.ds_voltage[len_old : len_old + len_new] = voltage[:len_new]
         self.ds_current[len_old : len_old + len_new] = current[:len_new]
 
@@ -293,9 +295,9 @@ class BaseWriter(BaseReader):
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
         """
-        timestamp = timestamp * 10**9
-        voltage = si_to_raw(voltage, self._cal["voltage"])
-        current = si_to_raw(current, self._cal["current"])
+        timestamp = self._cal.time.si_to_raw(timestamp)
+        voltage = self._cal.voltage.si_to_raw(voltage)
+        current = self._cal.current.si_to_raw(current)
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def _align(self) -> None:
@@ -304,7 +306,7 @@ class BaseWriter(BaseReader):
         n_buff = self.ds_time.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
         if size_new < self.ds_time.size:
-            if self.samplerate_sps < 95_000:
+            if self.samplerate_sps != samplerate_sps_default:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(
@@ -315,29 +317,20 @@ class BaseWriter(BaseReader):
             self.ds_voltage.resize((size_new,))
             self.ds_current.resize((size_new,))
 
-    def __setitem__(self, key: str, item):  # type: ignore
+    def __setitem__(self, key: str, item: Any):
         """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
         return self.h5file.attrs.__setitem__(key, item)
 
-    def set_config(self, data: dict) -> None:
+    def store_config(self, data: dict) -> None:
         """Important Step to get a self-describing Output-File
-
+        TODO: use data-model?
         :param data: from virtual harvester or converter / source
         """
         self.h5file["data"].attrs["config"] = yaml.safe_dump(
             data, default_flow_style=False, sort_keys=False
         )
-        if "window_samples" in data:
-            self.set_window_samples(data["window_samples"])
 
-    def set_window_samples(self, samples: int = 0) -> None:
-        """parameter essential for ivcurves
-
-        :param samples: length of window / voltage sweep
-        """
-        self.h5file["data"].attrs["window_samples"] = samples
-
-    def set_hostname(self, name: str) -> None:
+    def store_hostname(self, name: str) -> None:
         """option to distinguish the host, target or data-source in the testbed
             -> perfect for plotting later
 

@@ -1,0 +1,29 @@
+model: CalibrationCape
+comment: sheep0
+fields:
+  emulator:
+    adc_C_A:  # faulty 1
+      gain: 512
+      offset: -128000
+    adc_C_B:
+      gain: 2.2306053900482405
+      offset: -0.0026222400965270985
+    dac_V_A: # faulty 2
+      gain: 7.6
+      offset: 128000000
+    dac_V_B:
+      gain: 7.63173766566708e-05
+      offset: -0.0010936558576905009
+  harvester:
+    adc_C_Hrv: # faulty 1
+      gain: 512
+      offset: 128000
+    adc_V_Sense: # faulty 2
+      gain: 512000
+      offset: 7.75784958272352e-05
+    dac_V_Sim:
+      gain: 7.630261527071238e-05
+      offset: 0.0004594023208512876
+    dac_V_Hrv:
+      gain: 7.62877291921811e-05
+      offset: 0.000281481899873981

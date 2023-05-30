@@ -1,6 +1,8 @@
 import hashlib
 import pathlib
+from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from typing import Union
 
 import yaml
@@ -20,7 +22,16 @@ yaml.add_representer(pathlib.Path, repr_str)
 
 
 class ShpModel(BaseModel):
-    """Pre-configured Pydantic Base-Model (specifically for shepherd)"""
+    """Pre-configured Pydantic Base-Model (specifically for shepherd)
+
+    Inheritable Features:
+    - constant / frozen, hashable .get_hash()
+    - safe / limited custom types
+    - string-representation str(ShpModel)
+    - accessible as class (model.var) and dict (model[var])
+    - yaml-support with type-safe .from_file() & .to_file()
+    - schema cls.schema() can also be stored to yaml with .dump_schema()
+    """
 
     _min_dict: dict = {}
 
@@ -37,20 +48,31 @@ class ShpModel(BaseModel):
         use_enum_values = True  # cleaner export of enum-fields
         allow_inf_nan = False  # float without +-inf or NaN
         underscore_attrs_are_private = True  # allows using them
-
         # Options:
         # - https://docs.pydantic.dev/usage/schema/#field-customization
         # - https://docs.pydantic.dev/usage/model_config/
         # "fields["name"].description = ... should be usable to modify model
 
+    def __repr__(self) -> str:
+        return str(self.dict())
+
+    def __getitem__(self, key):
+        return self.__getattribute__(key)
+
     @classmethod
-    def dump_schema(cls, path: Union[str, Path]):
+    def dump_schema(cls, path: Union[str, Path]) -> None:
+        # TODO: rename to schema_to_file(), if needed at all
         model_dict = cls.schema()
         model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
         with open(Path(path).with_suffix(".yaml"), "w") as f:
             f.write(model_yaml)
 
-    def to_file(self, path: Union[str, Path], minimal: bool = False):
+    def to_file(
+        self,
+        path: Union[str, Path],
+        minimal: bool = False,
+        comment: Optional[str] = None,
+    ) -> Path:
         if minimal:
             model_dict = self._min_dict
         else:
@@ -58,6 +80,8 @@ class ShpModel(BaseModel):
         model_wrap = Wrapper(
             model=type(self).__name__,
             id=model_dict.get("id"),
+            comment=comment,
+            created=datetime.now(),
             fields=model_dict,
         )
         model_yaml = yaml.dump(
@@ -78,7 +102,7 @@ class ShpModel(BaseModel):
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.model != cls.__name__:
-            raise ValueError("Model in file does not match the used one")
+            raise ValueError("Model in file does not match the requirement")
         return cls(**shp_wrap.fields)
 
     @classmethod  # @root_validator(pre=True, allow_reuse=True)

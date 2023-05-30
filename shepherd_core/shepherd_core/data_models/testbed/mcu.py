@@ -6,9 +6,9 @@ from pydantic import confloat
 from pydantic import conint
 from pydantic import root_validator
 
-from ..base.content import id_int
-from ..base.content import name_str
-from ..base.content import safe_str
+from ..base.content import IdInt
+from ..base.content import NameStr
+from ..base.content import SafeStr
 from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 
@@ -27,13 +27,13 @@ class ProgrammerProtocol(str, Enum):
 class MCU(ShpModel, title="Microcontroller of the Target Node"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: id_int  # noqa: A003
-    name: name_str
-    description: safe_str
-    comment: Optional[safe_str] = None
+    id: IdInt  # noqa: A003
+    name: NameStr
+    description: SafeStr
+    comment: Optional[SafeStr] = None
 
-    platform: name_str
-    core: name_str
+    platform: NameStr
+    core: NameStr
     prog_protocol: ProgrammerProtocol
     prog_voltage: confloat(ge=1, le=5) = 3
     prog_datarate: conint(gt=0, le=1_000_000) = 500_000
@@ -47,5 +47,5 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
     @root_validator(pre=True)
     def from_fixture(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values, _ = fixtures.inheritance(values)
         return values

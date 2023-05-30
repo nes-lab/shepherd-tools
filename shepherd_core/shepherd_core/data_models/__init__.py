@@ -1,3 +1,6 @@
+from .base.calibration import CalibrationCape
+from .base.calibration import CalibrationEmulator
+from .base.calibration import CalibrationHarvester
 from .base.calibration import CalibrationPair
 from .base.calibration import CalibrationSeries
 from .base.content import ContentModel
@@ -21,6 +24,9 @@ from .experiment.target_config import TargetConfig
 
 __all__ = [
     # Core
+    "CalibrationCape",
+    "CalibrationEmulator",
+    "CalibrationHarvester",
     "CalibrationSeries",
     "CalibrationPair",
     "ContentModel",
