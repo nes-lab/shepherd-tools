@@ -107,7 +107,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict) -> dict:
+    def query_database(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)

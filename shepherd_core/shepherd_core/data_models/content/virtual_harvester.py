@@ -69,7 +69,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict) -> dict:
+    def query_database(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         if values["name"] == "neutral":

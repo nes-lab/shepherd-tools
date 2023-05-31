@@ -1,7 +1,7 @@
 ---
 model: CalMeasurementCape
 comment: sheep0
-fields:
+parameters:
   emulator:
     adc_C_A: # should trigger faulty correlation
     - reference_si: 1.0e-05

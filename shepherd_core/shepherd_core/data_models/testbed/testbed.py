@@ -38,7 +38,7 @@ class Testbed(ShpModel):
     # TODO: one BBone is currently time-keeper
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict) -> dict:
+    def query_database(cls, values: dict) -> dict:
         values = fixtures.lookup(values)  # TODO: load from url
         values, _ = fixtures.inheritance(values)
         return values

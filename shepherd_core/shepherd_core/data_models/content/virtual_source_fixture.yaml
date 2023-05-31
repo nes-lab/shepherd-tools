@@ -4,8 +4,8 @@
 # - -> it is encouraged to omit redundant parameters
 ---
 - model: VirtualSource
-  id: 1000
-  fields:
+  parameters:
+    id: 1000
     name: neutral
     description: Direct feed-through of energy environment with no converter (allows on-off-patters)
     # General Config
@@ -74,15 +74,15 @@
     created: 2022-12-12 12:12:12
 
 - model: VirtualSource
-  id: 1010
-  fields:
+  parameters:
+    id: 1010
     name: direct
     inherit_from: neutral
     # Note: current input has no influence
 
 - model: VirtualSource
-  id: 1011
-  fields:
+  parameters:
+    id: 1011
     name: diode+capacitor
     description: Simple Converter based on diode and buffer capacitor
     inherit_from: neutral
@@ -90,28 +90,28 @@
     C_intermediate_uF: 10  # primary storage-Cap
 
 - model: VirtualSource
-  id: 1012
-  fields:
+  parameters:
+    id: 1012
     name: dio_cap # simpler naming
     inherit_from: diode+capacitor
 
 - model: VirtualSource
-  id: 1013
-  fields:
+  parameters:
+    id: 1013
     name: diode+resistor+capacitor
     description: Simple Converter based on diode, current limiting resistor and buffer capacitor
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
 - model: VirtualSource
-  id: 1014
-  fields:
+  parameters:
+    id: 1014
     name: dio_res_cap # simpler naming
     inherit_from: diode+resistor+capacitor
 
 - model: VirtualSource
-  id: 1020
-  fields:
+  parameters:
+    id: 1020
     name: BQ25504
     description: TI BQ25504 with integrated boost-converter
     inherit_from: neutral # to complete undefined vars
@@ -158,22 +158,22 @@
     LUT_input_I_min_log2_nA: 13 # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA
 
 - model: VirtualSource
-  id: 1021
-  fields:
+  parameters:
+    id: 1021
     name: BQ25504s # Version with Schmitt-Trigger
     description: TI BQ25504 with Schmitt-Trigger for a faster power-good-signal
     inherit_from: BQ25504
     immediate_pwr_good_signal: true
 
 - model: VirtualSource
-  id: 1022
-  fields:
+  parameters:
+    id: 1022
     name: BQ25504-Schmitt
     inherit_from: BQ25504s
 
 - model: VirtualSource
-  id: 1030
-  fields:
+  parameters:
+    id: 1030
     name: BQ25570
     description: TI BQ25570 with integrated boost- & buck-converter
     inherit_from: BQ25504 # inherit Input-LUT that is similar enough
@@ -210,20 +210,20 @@
     LUT_output_I_min_log2_nA: 10  # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
 - model: VirtualSource
-  id: 1031
-  fields:
+  parameters:
+    id: 1031
     name: BQ25570s
     description: TI BQ25570 with Schmitt-Trigger for a faster power-good-signal
     inherit_from: BQ25570
     immediate_pwr_good_signal: true
 
 - model: VirtualSource
-  id: 1032
-  fields:
+  parameters:
+    id: 1032
     name: BQ25570-Schmitt
     inherit_from: BQ25570s
 - model: VirtualSource
-  id: 1033
-  fields:
+  parameters:
+    id: 1033
     name: default
     inherit_from: BQ25570s

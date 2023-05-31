@@ -45,7 +45,7 @@ class ShpModel(BaseModel):
         max_anystr_length = 512
         # ⤷ local str-length constraints overrule global ones!
         anystr_strip_whitespace = True  # strip leading & trailing whitespaces
-        use_enum_values = True  # cleaner export of enum-fields
+        use_enum_values = True  # cleaner export of enum-parameters
         allow_inf_nan = False  # float without +-inf or NaN
         underscore_attrs_are_private = True  # allows using them
         # Options:
@@ -79,10 +79,9 @@ class ShpModel(BaseModel):
             model_dict = self.dict()
         model_wrap = Wrapper(
             model=type(self).__name__,
-            id=model_dict.get("id"),
             comment=comment,
             created=datetime.now(),
-            fields=model_dict,
+            parameters=model_dict,
         )
         model_yaml = yaml.dump(
             model_wrap.dict(), default_flow_style=False, sort_keys=False
@@ -103,7 +102,7 @@ class ShpModel(BaseModel):
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.model != cls.__name__:
             raise ValueError("Model in file does not match the requirement")
-        return cls(**shp_wrap.fields)
+        return cls(**shp_wrap.parameters)
 
     @classmethod  # @root_validator(pre=True, allow_reuse=True)
     def pre_snitch(cls, values):  # TODO: useless

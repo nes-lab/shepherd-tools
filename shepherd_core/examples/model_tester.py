@@ -26,7 +26,7 @@ from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 
-# generate description for all parameters / fields -> base for web-forms
+# generate description for all parameters -> base for web-forms
 Experiment.dump_schema("experiment_schema.yaml")
 
 # Defining an Experiment in Python

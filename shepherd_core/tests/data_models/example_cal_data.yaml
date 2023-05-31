@@ -1,6 +1,6 @@
 model: CalibrationCape
 comment: sheep0
-fields:
+parameters:
   emulator:
     adc_C_A:
       gain: 2.2306053900482405e-07

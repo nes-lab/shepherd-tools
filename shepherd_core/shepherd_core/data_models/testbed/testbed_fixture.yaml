@@ -1,6 +1,6 @@
 - model: testbed
-  id: 1337
-  fields:
+  parameters:
+    id: 1337
     name: shepherd_tud_nes
     description: "Shepherd Testbed of the NES Lab Group at TU Dresden, Germany"
     shared_storage: true

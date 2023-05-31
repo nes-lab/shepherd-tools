@@ -1,6 +1,6 @@
 - model: EnergyEnvironment
-  id: 1001
-  fields:
+  parameters:
+    id: 1001
     name: SolarSunny
     description: Sunny Day with 4 sq-cm Solar Cell
     data_path: eenv/group/user/solar_4h_new.h5
@@ -16,8 +16,8 @@
     created: 2022-12-12 12:12:12
 
 - model: EnergyEnvironment
-  id: 1002
-  fields:
+  parameters:
+    id: 1002
     name: ThermoelectricWashingMachine
     description: Energy harvested from side of machine during washing  & tumbling
     data_path: eenv/group/user/thermoelectric_1h_wash.h5
@@ -33,8 +33,8 @@
     created: 2022-12-12 12:12:12
 
 - model: EnergyEnvironment
-  id: 666
-  fields:
+  parameters:
+    id: 666
     name: nuclear
     description: Energy harvested
     data_path: eenv/group/user/thermoelectric_1h_wash.h5

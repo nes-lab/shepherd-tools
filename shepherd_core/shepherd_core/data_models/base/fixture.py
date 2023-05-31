@@ -31,15 +31,12 @@ class Fixtures:
                 fwrap = Wrapper(**fixture)
                 if fwrap.model.lower() != model_name.lower():
                     continue
-                if "name" not in fwrap.fields:
+                if "name" not in fwrap.parameters:
                     continue
-                name = str(fwrap.fields["name"]).lower()
-                if "id" not in fwrap.fields:
-                    fwrap.fields["id"] = fwrap.id
-                _id = fwrap.fields["id"]
-                data = (
-                    fwrap.fields
-                )  # TODO: could get easier if not model_name but class used
+                name = str(fwrap.parameters["name"]).lower()
+                _id = fwrap.parameters["id"]
+                data = fwrap.parameters
+                # ⤷ TODO: could get easier if not model_name but class used
                 self.elements_by_name[name] = data
                 self.elements_by_id[_id] = data
         # for iterator
