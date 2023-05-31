@@ -6,8 +6,8 @@ from shepherd_core.data_models import EnergyEnvironment
 from shepherd_core.data_models import Experiment
 from shepherd_core.data_models import Firmware
 from shepherd_core.data_models import TargetConfig
-from shepherd_core.data_models import VirtualHarvester
-from shepherd_core.data_models import VirtualSource
+from shepherd_core.data_models import VirtualHarvesterConfig
+from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models.task import TestbedTasks as TasteBadTasks
 
 
@@ -19,7 +19,7 @@ def test_task_generation_file(tmp_path: Path) -> None:
 
 
 def test_task_generation_script(tmp_path: Path) -> None:
-    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
 
     target_cfgs = [
         # first init similar to yaml
@@ -35,7 +35,7 @@ def test_task_generation_script(tmp_path: Path) -> None:
             target_IDs=list(range(2001, 2005)),
             custom_IDs=list(range(7, 18)),
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-            virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+            virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
             firmware1=Firmware(name="nrf52_demo_rf"),
             firmware2=Firmware(name="msp430_deep_sleep"),
         ),

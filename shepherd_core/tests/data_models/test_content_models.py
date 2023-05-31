@@ -5,8 +5,8 @@ from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import FirmwareDType
-from shepherd_core.data_models.content import VirtualHarvester
-from shepherd_core.data_models.content import VirtualSource
+from shepherd_core.data_models.content import VirtualHarvesterConfig
+from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
 from shepherd_core.data_models.testbed import MCU
 
@@ -50,7 +50,7 @@ def test_content_model_fw_min() -> None:
 
 
 def test_content_model_hrv_min() -> None:
-    hrv = VirtualHarvester(
+    hrv = VirtualHarvesterConfig(
         id=9999,
         name="whatever",
         owner="jane",
@@ -62,21 +62,21 @@ def test_content_model_hrv_min() -> None:
 
 def test_content_model_hrv_neutral() -> None:
     with pytest.raises(ValueError):
-        _ = VirtualHarvester(name="neutral")
+        _ = VirtualHarvesterConfig(name="neutral")
 
 
 @pytest.mark.parametrize("name", ["iv110", "cv24", "mppt_voc", "mppt_po"])
 def test_content_model_hrv_by_name(name: str) -> None:
-    _ = VirtualHarvester(name=name)
+    _ = VirtualHarvesterConfig(name=name)
 
 
 @pytest.mark.parametrize("uid", [1013, 1020, 1032, 1044, 1045, 1046])
 def test_content_model_hrv_by_id(uid: int) -> None:
-    _ = VirtualHarvester(id=uid)
+    _ = VirtualHarvesterConfig(id=uid)
 
 
 def test_content_model_hrv_steps() -> None:
-    hrv = VirtualHarvester(
+    hrv = VirtualHarvesterConfig(
         name="ivcurves", voltage_min_mV=1000, voltage_max_mV=4000, samples_n=11
     )
     assert hrv.voltage_step_mV == 300
@@ -84,35 +84,37 @@ def test_content_model_hrv_steps() -> None:
 
 def test_content_model_hrv_faulty_voltage0() -> None:
     with pytest.raises(ValidationError):
-        _ = VirtualHarvester(name="iv110", voltage_max_mV=5001)
+        _ = VirtualHarvesterConfig(name="iv110", voltage_max_mV=5001)
     with pytest.raises(ValidationError):
-        _ = VirtualHarvester(name="iv110", voltage_min_mV=-1)
+        _ = VirtualHarvesterConfig(name="iv110", voltage_min_mV=-1)
 
 
 def test_content_model_hrv_faulty_voltage1() -> None:
     with pytest.raises(ValueError):
-        _ = VirtualHarvester(name="iv110", voltage_min_mV=4001, voltage_max_mV=4000)
+        _ = VirtualHarvesterConfig(
+            name="iv110", voltage_min_mV=4001, voltage_max_mV=4000
+        )
 
 
 def test_content_model_hrv_faulty_voltage2() -> None:
     with pytest.raises(ValueError):
-        _ = VirtualHarvester(name="iv110", voltage_mV=4001, voltage_max_mV=4000)
+        _ = VirtualHarvesterConfig(name="iv110", voltage_mV=4001, voltage_max_mV=4000)
 
 
 def test_content_model_hrv_faulty_voltage3() -> None:
     with pytest.raises(ValueError):
-        _ = VirtualHarvester(name="iv110", voltage_mV=4000, voltage_min_mV=4001)
+        _ = VirtualHarvesterConfig(name="iv110", voltage_mV=4000, voltage_min_mV=4001)
 
 
 @pytest.mark.parametrize("name", ["ivcurves", "iv1000", "isc_voc"])
 def test_content_model_hrv_faulty_emu(name: str) -> None:
-    hrv = VirtualHarvester(name=name)
+    hrv = VirtualHarvesterConfig(name=name)
     with pytest.raises(ValueError):
-        _ = VirtualSource(name="dio_cap", harvester=hrv)
+        _ = VirtualSourceConfig(name="dio_cap", harvester=hrv)
 
 
 def test_content_model_src_min() -> None:
-    VirtualSource(
+    VirtualSourceConfig(
         id=9999,
         name="new_src",
         owner="jane",
@@ -121,7 +123,7 @@ def test_content_model_src_min() -> None:
 
 
 def test_content_model_src_force_warning() -> None:
-    src = VirtualSource(
+    src = VirtualSourceConfig(
         name="BQ25570",
         C_output_uF=200,
         C_intermediate_uF=100,
@@ -131,7 +133,7 @@ def test_content_model_src_force_warning() -> None:
 
 
 def test_content_model_src_force_other_hysteresis1() -> None:
-    src = VirtualSource(
+    src = VirtualSourceConfig(
         name="BQ25570",
         V_intermediate_enable_threshold_mV=4000,
         V_intermediate_disable_threshold_mV=3999,
@@ -142,7 +144,7 @@ def test_content_model_src_force_other_hysteresis1() -> None:
 
 
 def test_content_model_src_force_other_hysteresis2() -> None:
-    src = VirtualSource(
+    src = VirtualSourceConfig(
         name="BQ25570",
         V_intermediate_enable_threshold_mV=1000,
         V_intermediate_disable_threshold_mV=999,

@@ -7,7 +7,7 @@
 This Repo contains python packages for the [shepherd](https://github.com/orgua/shepherd)-testbed
 
 - `/shepherd_core` bundles functionality that is used by multiple tools
-- `/shepherd_data` holds the datalib that is design for users of the testbed
+- `/shepherd_data` holds the datalib that is designed for users of the testbed
 
 ---
 

@@ -8,7 +8,7 @@
 from pathlib import Path
 
 from shepherd_core import BaseReader
-from shepherd_core.data_models import VirtualHarvester
+from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
 from shepherd_core.vsource import VirtualHarvesterModel
 from shepherd_data import ivonne
@@ -55,7 +55,7 @@ with BaseReader(file_ivcurve, verbose=False) as file:
 for hrv_name in hrv_list:
     E_out_Ws = 0.0
     with BaseReader(file_ivcurve, verbose=False) as file:
-        hrv_config = VirtualHarvester(name=hrv_name)
+        hrv_config = VirtualHarvesterConfig(name=hrv_name)
         hrv_pru = HarvesterPRUConfig.from_vhrv(
             hrv_config,
             for_emu=True,

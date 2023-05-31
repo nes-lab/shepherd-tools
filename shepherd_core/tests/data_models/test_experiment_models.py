@@ -4,8 +4,8 @@ from datetime import timedelta
 import pytest
 from pydantic import ValidationError
 
-from shepherd_core.data_models import VirtualHarvester
-from shepherd_core.data_models import VirtualSource
+from shepherd_core.data_models import VirtualHarvesterConfig
+from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.experiment import Experiment
@@ -62,7 +62,7 @@ def test_experiment_model_exp_yaml_comparison() -> None:
 
 
 def test_experiment_model_exp_collision_target_id() -> None:
-    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(
             target_IDs=[3001, 3002, 3003, 2001],  # <- collision
@@ -75,7 +75,7 @@ def test_experiment_model_exp_collision_target_id() -> None:
             target_IDs=list(range(2001, 2005)),  # <- collision
             custom_IDs=list(range(7, 18)),  # note: longer list is OK
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-            virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+            virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
             firmware1=Firmware(name="nrf52_demo_rf"),
             firmware2=Firmware(name="msp430_deep_sleep"),
         ),
@@ -90,7 +90,7 @@ def test_experiment_model_exp_collision_target_id() -> None:
 
 
 def test_experiment_model_exp_collision_custom_id() -> None:
-    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(
             target_IDs=[3001, 3002, 3003],
@@ -103,7 +103,7 @@ def test_experiment_model_exp_collision_custom_id() -> None:
             target_IDs=list(range(2001, 2005)),
             custom_IDs=list(range(7, 18)),  # <- collision
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-            virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+            virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
             firmware1=Firmware(name="nrf52_demo_rf"),
             firmware2=Firmware(name="msp430_deep_sleep"),
         ),
@@ -118,13 +118,13 @@ def test_experiment_model_exp_collision_custom_id() -> None:
 
 
 def test_experiment_model_exp_collision_observer() -> None:
-    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(
             target_IDs=[2005, 3001],  # <- both on same observer
             custom_IDs=list(range(7, 18)),
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-            virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+            virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
             firmware1=Firmware(name="nrf52_demo_rf"),
             firmware2=Firmware(name="msp430_deep_sleep"),
         ),
@@ -139,7 +139,7 @@ def test_experiment_model_exp_collision_observer() -> None:
 
 
 def test_experiment_model_exp_missing_target() -> None:
-    hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+    hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     with pytest.raises(ValidationError):
         # should raise ValueError in Experiment
         # buts gets already caught in target_config
@@ -148,7 +148,9 @@ def test_experiment_model_exp_missing_target() -> None:
                 target_IDs=[1234567],  # <- not existent
                 custom_IDs=list(range(7, 18)),
                 energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-                virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+                virtual_source=VirtualSourceConfig(
+                    name="BQ25570-Schmitt", harvester=hrv
+                ),
                 firmware1=Firmware(name="nrf52_demo_rf"),
                 firmware2=Firmware(name="msp430_deep_sleep"),
             ),

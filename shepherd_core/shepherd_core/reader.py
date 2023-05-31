@@ -38,11 +38,11 @@ class BaseReader:
 
     mode_dtype_dict = {
         "harvester": [
-            EnergyDType.ivsample.name,
-            EnergyDType.ivcurve.name,
-            EnergyDType.isc_voc.name,
+            EnergyDType.ivsample,
+            EnergyDType.ivcurve,
+            EnergyDType.isc_voc,
         ],
-        "emulator": [EnergyDType.ivsample.name],
+        "emulator": [EnergyDType.ivsample],
     }
 
     @validate_arguments
@@ -218,10 +218,13 @@ class BaseReader:
             return self.h5file.attrs["hostname"]
         return "unknown"
 
-    def get_datatype(self) -> str:
-        if "datatype" in self.h5file["data"].attrs:
-            return self.h5file["data"].attrs["datatype"]
-        return ""
+    def get_datatype(self) -> Optional[EnergyDType]:
+        try:
+            if "datatype" in self.h5file["data"].attrs:
+                return EnergyDType[self.h5file["data"].attrs["datatype"]]
+            return None
+        except KeyError:
+            return None
 
     def get_hrv_config(self) -> dict:
         """essential info for harvester

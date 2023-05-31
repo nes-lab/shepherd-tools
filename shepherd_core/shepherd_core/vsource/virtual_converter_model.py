@@ -16,6 +16,7 @@ import math
 from typing import Optional
 
 from shepherd_core import CalibrationEmulator
+from shepherd_core.data_models.content.virtual_source import LUT_SIZE
 from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
 
 
@@ -224,17 +225,17 @@ class VirtualConverterModel:
         current_n = int(current_nA / (2**self._cfg.LUT_input_I_min_log2_nA))
         pos_v = int(voltage_n) if (voltage_n > 0) else 0  # V-Scale is Linear!
         pos_c = int(math.log2(current_n)) if (current_n > 0) else 0
-        if pos_v >= self._cfg.LUT_size:
-            pos_v = self._cfg.LUT_size - 1
-        if pos_c >= self._cfg.LUT_size:
-            pos_c = self._cfg.LUT_size - 1
+        if pos_v >= LUT_SIZE:
+            pos_v = LUT_SIZE - 1
+        if pos_c >= LUT_SIZE:
+            pos_c = LUT_SIZE - 1
         return self._cfg.LUT_inp_efficiency_n8[pos_v][pos_c] / (2**8)
 
     def get_output_inv_efficiency(self, current_nA: float) -> float:
         current_n = int(current_nA / (2**self._cfg.LUT_output_I_min_log2_nA))
         pos_c = int(math.log2(current_n)) if (current_n > 0) else 0
-        if pos_c >= self._cfg.LUT_size:
-            pos_c = self._cfg.LUT_size - 1
+        if pos_c >= LUT_SIZE:
+            pos_c = LUT_SIZE - 1
         return self._cfg.LUT_out_inv_efficiency_n4[pos_c] / (2**4)
 
     def set_P_input_fW(self, value: float) -> None:

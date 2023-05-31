@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from shepherd_core import CalibrationEmulator
-from shepherd_core.data_models import VirtualSource
+from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.vsource import VirtualSourceModel
 
 # config simulation
@@ -41,7 +41,7 @@ for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_li
     ts = np.arange(0, samples * 10e-6, 10e-6)
     vcaps = np.empty((samples, 3))
 
-    src_config = VirtualSource(name=vs_name)
+    src_config = VirtualSourceConfig(name=vs_name)
     cal_emu = CalibrationEmulator()
     src = VirtualSourceModel(src_config, cal_emu, log_intermediate=True)
 

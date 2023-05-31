@@ -6,7 +6,9 @@ from typing import Optional
 from pydantic import root_validator
 
 from ..base.shepherd import ShpModel
-from ..content.virtual_harvester import VirtualHarvester
+from ..content.virtual_harvester import VirtualHarvesterConfig
+from ..experiment.observer_features import PowerTracing
+from ..experiment.observer_features import SystemLogging
 from .emulation import Compression
 
 
@@ -36,9 +38,12 @@ class HarvestTask(ShpModel):
     use_cal_default: bool = False
     # ⤷ Use default calibration values, skip loading from EEPROM
 
-    virtual_harvester: VirtualHarvester = VirtualHarvester(name="mppt_opt")
+    virtual_harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
     # ⤷ Choose one of the predefined virtual harvesters
     #   or configure a new one
+
+    power_tracing: Optional[PowerTracing] = PowerTracing()
+    sys_logging: Optional[SystemLogging] = SystemLogging()
 
     # TODO: there is an unused DAC-Output patched to the harvesting-port
 

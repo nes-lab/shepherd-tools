@@ -8,7 +8,7 @@ from ..base.content import IdInt
 from ..base.shepherd import ShpModel
 from ..content.energy_environment import EnergyEnvironment
 from ..content.firmware import Firmware
-from ..content.virtual_source import VirtualSource
+from ..content.virtual_source import VirtualSourceConfig
 from ..testbed.target import IdInt16
 from ..testbed.target import Target
 from .observer_features import GpioActuation
@@ -24,7 +24,7 @@ class TargetConfig(ShpModel, title="Target Config"):
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
 
     energy_env: EnergyEnvironment  # alias: input
-    virtual_source: VirtualSource = VirtualSource(name="neutral")
+    virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
     target_delays: Optional[conlist(item_type=conint(ge=0), min_items=1, max_items=64)]
     # ⤷ individual starting times -> allows to use the same environment
 

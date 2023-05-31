@@ -7,7 +7,7 @@ from pytest import approx
 from shepherd_core import BaseReader
 from shepherd_core import CalibrationEmulator
 from shepherd_core.data_models import EnergyDType
-from shepherd_core.data_models import VirtualSource
+from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.vsource import VirtualSourceModel
 
 # virtual_converter_model gets tested below with vsrc_model
@@ -28,7 +28,7 @@ def src_model(
     dtype_in: EnergyDType = EnergyDType.ivsample,
     window_size: Optional[int] = None,
 ) -> VirtualSourceModel:
-    src_config = VirtualSource(name=name)
+    src_config = VirtualSourceConfig(name=name)
     cal_emu = CalibrationEmulator()
     return VirtualSourceModel(
         src_config,

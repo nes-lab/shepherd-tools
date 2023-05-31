@@ -2,7 +2,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 from typing import Tuple
-from typing import Union
 
 from pydantic import confloat
 from pydantic import conint
@@ -34,10 +33,9 @@ class AlgorithmDType(str, Enum):
     optimal = "mppt_opt"
 
 
-class VirtualHarvester(ContentModel, title="Config for the Harvester"):
+class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     """A Harvester is needed when the file-based energy environment
     of the virtual source is not already supplied as ivsample
-    TODO: Should be named -Config internally
     """
 
     # General Metadata & Ownership -> ContentModel
@@ -145,7 +143,9 @@ class VirtualHarvester(ContentModel, title="Config for the Harvester"):
     def get_datatype(self) -> EnergyDType:
         return algo_to_dtype[self.algorithm]
 
-    def calc_window_size(self, for_emu: bool, dtype_in: EnergyDType) -> int:
+    def calc_window_size(
+        self, for_emu: bool, dtype_in: Optional[EnergyDType] = EnergyDType.ivsample
+    ) -> int:
         if for_emu:
             if dtype_in == EnergyDType.ivcurve:
                 return self.samples_n * (1 + self.wait_cycles)
@@ -189,10 +189,11 @@ algo_to_dtype = {
 
 class HarvesterPRUConfig(ShpModel):
     """
-    Kernel-Task -> Map settings-list to internal state-vars struct ConverterConfig
+    Map settings-list to internal state-vars struct HarvesterConfig
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw
+      - ordering is intentional and in sync with shepherd/commons.h
     """
 
     algorithm: u32
@@ -216,9 +217,9 @@ class HarvesterPRUConfig(ShpModel):
     @classmethod
     def from_vhrv(
         cls,
-        data: VirtualHarvester,
+        data: VirtualHarvesterConfig,
         for_emu: bool = False,
-        dtype_in: Union[str, EnergyDType] = EnergyDType.ivsample,
+        dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
         window_size: Optional[u32] = None,
     ):
         if isinstance(dtype_in, str):

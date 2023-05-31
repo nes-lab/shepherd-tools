@@ -11,13 +11,13 @@ from .. import ShpModel
 from ..base.content import ContentModel
 from ..base.fixture import Fixtures
 from .virtual_harvester import HarvesterPRUConfig
-from .virtual_harvester import VirtualHarvester
+from .virtual_harvester import VirtualHarvesterConfig
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "VirtualSource")
 
 
-class VirtualSource(ContentModel, title="Config for the virtual Source"):
+class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     """The virtual Source uses the energy environment (file)
     for supplying the Target Node during the experiment.
     If not already done, the energy will be harvested and then converted.
@@ -25,7 +25,6 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
       buck-boost-combinations,
       a simple diode + resistor and
       an intermediate buffer capacitor.
-      TODO: Should be named -Config internally
       TODO: I,V,R should be in regular unit (V, A, Ohm)
     """
 
@@ -38,7 +37,7 @@ class VirtualSource(ContentModel, title="Config for the virtual Source"):
 
     interval_startup_delay_drain_ms: confloat(ge=0, le=10_000) = 0
 
-    harvester: VirtualHarvester = VirtualHarvester(name="mppt_opt")
+    harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
 
     V_input_max_mV: confloat(ge=0, le=10_000) = 10_000
     I_input_max_mA: confloat(ge=0, le=4.29e3) = 4_200
@@ -238,6 +237,14 @@ lut_o = conlist(u32, min_items=LUT_SIZE, max_items=LUT_SIZE)
 
 
 class ConverterPRUConfig(ShpModel):
+    """
+    Map settings-list to internal state-vars struct ConverterConfig
+    NOTE:
+      - yaml is based on si-units like nA, mV, ms, uF
+      - c-code and py-copy is using nA, uV, ns, nF, fW, raw
+      - ordering is intentional and in sync with shepherd/commons.h
+    """
+
     converter_mode: u32
     interval_startup_delay_drain_n: u32
 
@@ -273,10 +280,9 @@ class ConverterPRUConfig(ShpModel):
     LUT_output_I_min_log2_nA: u32
     LUT_inp_efficiency_n8: lut_i
     LUT_out_inv_efficiency_n4: lut_o
-    LUT_size: u32 = LUT_SIZE
 
     @classmethod
-    def from_vsrc(cls, data: VirtualSource, log_intermediate_node: bool = False):
+    def from_vsrc(cls, data: VirtualSourceConfig, log_intermediate_node: bool = False):
         states = data.calc_internal_states()
         return cls(
             # General

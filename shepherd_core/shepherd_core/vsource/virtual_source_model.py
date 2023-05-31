@@ -13,7 +13,7 @@ from typing import Optional
 from shepherd_core import CalibrationEmulator
 
 from ..data_models import EnergyDType
-from ..data_models import VirtualSource
+from ..data_models import VirtualSourceConfig
 from ..data_models.content.virtual_harvester import HarvesterPRUConfig
 from ..data_models.content.virtual_source import ConverterPRUConfig
 from .virtual_converter_model import PruCalibration
@@ -26,7 +26,7 @@ class VirtualSourceModel:
 
     def __init__(
         self,
-        vsrc: Optional[VirtualSource],
+        vsrc: Optional[VirtualSourceConfig],
         cal_emu: CalibrationEmulator,
         log_intermediate: bool = False,
         dtype_in: EnergyDType = EnergyDType.ivsample,
@@ -35,7 +35,7 @@ class VirtualSourceModel:
         self._cal_emu: CalibrationEmulator = cal_emu
         self._cal_pru: PruCalibration = PruCalibration(cal_emu)
 
-        self.cfg_src = VirtualSource() if vsrc is None else vsrc
+        self.cfg_src = VirtualSourceConfig() if vsrc is None else vsrc
         cnv_config = ConverterPRUConfig.from_vsrc(
             self.cfg_src, log_intermediate_node=log_intermediate
         )

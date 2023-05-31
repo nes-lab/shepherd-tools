@@ -11,8 +11,8 @@ from .content.energy_environment import EnergyDType
 from .content.energy_environment import EnergyEnvironment
 from .content.firmware import Firmware
 from .content.firmware import FirmwareDType
-from .content.virtual_harvester import VirtualHarvester
-from .content.virtual_source import VirtualSource
+from .content.virtual_harvester import VirtualHarvesterConfig
+from .content.virtual_source import VirtualSourceConfig
 from .experiment.experiment import Experiment
 from .experiment.observer_features import GpioActuation
 from .experiment.observer_features import GpioEvent
@@ -46,6 +46,6 @@ __all__ = [
     "GpioLevel",
     "EnergyEnvironment",
     "EnergyDType",
-    "VirtualSource",
-    "VirtualHarvester",
+    "VirtualSourceConfig",
+    "VirtualHarvesterConfig",
 ]
