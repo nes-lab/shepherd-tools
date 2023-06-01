@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import Optional
+
 from .base.calibration import CalibrationCape
 from .base.calibration import CalibrationEmulator
 from .base.calibration import CalibrationHarvester
@@ -48,4 +51,20 @@ __all__ = [
     "EnergyDType",
     "VirtualSourceConfig",
     "VirtualHarvesterConfig",
+    # test-container & placeholder
+    "fixtures",
 ]
+
+
+class FixtureSet:
+
+    def __init__(self):
+        self.path = Path(__file__) / "fixtures"
+
+    def load(self, path: Optional[Path] = None) -> None:
+        if path:
+            self.path = path
+        print(self.path)
+
+
+fixtures = FixtureSet()

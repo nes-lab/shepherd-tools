@@ -14,7 +14,7 @@ from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvesterConfig
 
 fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
-fixtures = Fixtures(fixture_path, "VirtualSource")
+fixtures = Fixtures(fixture_path, "VirtualSourceConfig")
 
 
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):

@@ -16,7 +16,7 @@ from ..base.shepherd import ShpModel
 from .energy_environment import EnergyDType
 
 fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
-fixtures = Fixtures(fixture_path, "VirtualHarvester")
+fixtures = Fixtures(fixture_path, "VirtualHarvesterConfig")
 
 
 class AlgorithmDType(str, Enum):
