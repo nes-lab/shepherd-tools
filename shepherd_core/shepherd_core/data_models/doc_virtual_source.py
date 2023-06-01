@@ -9,7 +9,7 @@ from shepherd_core.data_models import Fixtures
 from shepherd_core.data_models import ShpModel
 
 from .. import logger
-from .content import VirtualHarvester
+from .content import VirtualHarvesterConfig
 
 fixture_path = Path(__file__).resolve().with_name("content/virtual_source_fixture.yaml")
 fixtures = Fixtures(fixture_path, "content.VirtualSource")
@@ -50,9 +50,9 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
         le=10e3,
     )
 
-    harvester: VirtualHarvester = Field(
+    harvester: VirtualHarvesterConfig = Field(
         description="Only active / needed if input is 'ivcurves'",
-        default=VirtualHarvester(name="mppt_opt"),
+        default=VirtualHarvesterConfig(name="mppt_opt"),
     )
 
     V_input_max_mV: float = Field(
@@ -224,7 +224,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
     )
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict) -> dict:
+    def query_database(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)

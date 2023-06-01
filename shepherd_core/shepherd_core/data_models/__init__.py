@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import Optional
+
 from .base.calibration import CalibrationCape
 from .base.calibration import CalibrationEmulator
 from .base.calibration import CalibrationHarvester
@@ -11,8 +14,8 @@ from .content.energy_environment import EnergyDType
 from .content.energy_environment import EnergyEnvironment
 from .content.firmware import Firmware
 from .content.firmware import FirmwareDType
-from .content.virtual_harvester import VirtualHarvester
-from .content.virtual_source import VirtualSource
+from .content.virtual_harvester import VirtualHarvesterConfig
+from .content.virtual_source import VirtualSourceConfig
 from .experiment.experiment import Experiment
 from .experiment.observer_features import GpioActuation
 from .experiment.observer_features import GpioEvent
@@ -46,6 +49,20 @@ __all__ = [
     "GpioLevel",
     "EnergyEnvironment",
     "EnergyDType",
-    "VirtualSource",
-    "VirtualHarvester",
+    "VirtualSourceConfig",
+    "VirtualHarvesterConfig",
+    # test-container & placeholder
+    "fixtures",
 ]
+
+
+class FixtureSet:
+    def __init__(self):
+        self.path = Path(__file__) / "fixtures"
+
+    def load(self, path: Optional[Path] = None) -> None:
+        if path:
+            self.path = path
+
+
+fixtures = FixtureSet()

@@ -42,7 +42,7 @@ class Cape(ShpModel, title="Shepherd-Cape"):
         return self.name
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict) -> dict:
+    def query_database(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, _ = fixtures.inheritance(values)
         return values

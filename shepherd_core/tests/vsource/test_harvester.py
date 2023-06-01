@@ -4,7 +4,7 @@ import pytest
 
 from shepherd_core import BaseReader
 from shepherd_core.data_models import EnergyDType
-from shepherd_core.data_models import VirtualHarvester
+from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
 from shepherd_core.vsource import VirtualHarvesterModel
 
@@ -23,7 +23,7 @@ hrv_list = [
 
 @pytest.mark.parametrize("hrv_name", hrv_list)
 def test_vsource_hrv_min(hrv_name: str) -> None:
-    hrv_config = VirtualHarvester(name=hrv_name)
+    hrv_config = VirtualHarvesterConfig(name=hrv_name)
     hrv_pru = HarvesterPRUConfig.from_vhrv(hrv_config)
     _ = VirtualHarvesterModel(hrv_pru)
 
@@ -38,7 +38,7 @@ def test_vsource_hrv_create_files(
 def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
     # the first algos are not usable for ivcurve
     with pytest.raises(ValueError):
-        hrv_config = VirtualHarvester(name=hrv_name)
+        hrv_config = VirtualHarvesterConfig(name=hrv_name)
         _ = HarvesterPRUConfig.from_vhrv(
             hrv_config, for_emu=True, dtype_in=EnergyDType.ivcurve
         )
@@ -47,7 +47,7 @@ def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
 def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
     with BaseReader(file_ivcurve) as file:
-        hrv_config = VirtualHarvester(name=hrv_name)
+        hrv_config = VirtualHarvesterConfig(name=hrv_name)
         hrv_pru = HarvesterPRUConfig.from_vhrv(
             hrv_config,
             for_emu=True,
@@ -67,7 +67,7 @@ def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
 def test_vsource_hrv_fail_isc_voc(hrv_name: str) -> None:
     # not implemented ATM
     with pytest.raises(ValueError):
-        hrv_config = VirtualHarvester(name=hrv_name)
+        hrv_config = VirtualHarvesterConfig(name=hrv_name)
         _ = HarvesterPRUConfig.from_vhrv(
             hrv_config, for_emu=True, dtype_in=EnergyDType.isc_voc
         )
@@ -75,5 +75,5 @@ def test_vsource_hrv_fail_isc_voc(hrv_name: str) -> None:
 
 def test_vsource_hrv_fail_unknown_type() -> None:
     with pytest.raises(KeyError):
-        hrv_config = VirtualHarvester(name="mppt_voc")
+        hrv_config = VirtualHarvesterConfig(name="mppt_voc")
         _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in="xyz")

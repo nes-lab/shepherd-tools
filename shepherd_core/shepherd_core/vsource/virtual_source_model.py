@@ -13,7 +13,7 @@ from typing import Optional
 from shepherd_core import CalibrationEmulator
 
 from ..data_models import EnergyDType
-from ..data_models import VirtualSource
+from ..data_models import VirtualSourceConfig
 from ..data_models.content.virtual_harvester import HarvesterPRUConfig
 from ..data_models.content.virtual_source import ConverterPRUConfig
 from .virtual_converter_model import PruCalibration
@@ -26,7 +26,7 @@ class VirtualSourceModel:
 
     def __init__(
         self,
-        vsrc: Optional[VirtualSource],
+        vsrc: Optional[VirtualSourceConfig],
         cal_emu: CalibrationEmulator,
         log_intermediate: bool = False,
         dtype_in: EnergyDType = EnergyDType.ivsample,
@@ -35,7 +35,7 @@ class VirtualSourceModel:
         self._cal_emu: CalibrationEmulator = cal_emu
         self._cal_pru: PruCalibration = PruCalibration(cal_emu)
 
-        self.cfg_src = VirtualSource() if vsrc is None else vsrc
+        self.cfg_src = VirtualSourceConfig() if vsrc is None else vsrc
         cnv_config = ConverterPRUConfig.from_vsrc(
             self.cfg_src, log_intermediate_node=log_intermediate
         )
@@ -73,11 +73,11 @@ class VirtualSourceModel:
         A_out_raw = self._cal_emu.adc_C_A.si_to_raw(I_out_nA * 10**-9)
 
         P_out_fW = self.cnv.calc_out_power(A_out_raw)
-        self.cnv.update_cap_storage()
+        V_mid_uV = self.cnv.update_cap_storage()
         V_out_raw = self.cnv.update_states_and_output()
         V_out_uV = int(self._cal_emu.dac_V_A.raw_to_si(V_out_raw) * 10**6)
 
         self.W_inp_fWs += P_inp_fW
         self.W_out_fWs += P_out_fW
 
-        return V_out_uV
+        return V_mid_uV if self.cnv.get_state_log_intermediate() else V_out_uV

@@ -44,7 +44,7 @@
 ## TODO
 
 - establish internal variables ``_var``
-- descriptions to fields (docstring on sub-models)
+- descriptions to parameters (docstring on sub-models)
 - @kai
   - firmwares
   - programmer-ports determine IC
@@ -104,7 +104,7 @@ from shepherd_core.data_models import ShpModel
 fixtures = Fixtures(Path("fix.yaml"), "testbed.target")
 class Target(ShpModel, title="Target Node (DuT)"):
     @root_validator(pre=True)
-    def from_fixture(cls, values: Union[dict, str, int]):
+    def query_database(cls, values: Union[dict, str, int]):
         values = fixtures.lookup(values)
         values, chain = fixtures.inheritance(values)
         return values

@@ -1,8 +1,8 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 # cape v2.4
 - model: gpio
-  id: 1000
-  fields:
+  parameters:
+    id: 1000
     name: GPIO0
     # description:
     # comment:
@@ -13,8 +13,8 @@
     reg_sys: 26
     pin_sys: P8_14
 - model: gpio
-  id: 1001
-  fields:
+  parameters:
+    id: 1001
     name: GPIO1
     direction: IO
     dir_switch: DIR1
@@ -23,8 +23,8 @@
     reg_sys: 27
     pin_sys: P8_17
 - model: gpio
-  id: 1002
-  fields:
+  parameters:
+    id: 1002
     name: GPIO2
     direction: IO
     dir_switch: DIR1
@@ -33,8 +33,8 @@
     reg_sys: 46
     pin_sys: P8_16
 - model: gpio
-  id: 1003
-  fields:
+  parameters:
+    id: 1003
     name: GPIO3
     direction: IO
     dir_switch: DIR1
@@ -43,8 +43,8 @@
     reg_sys: 47
     pin_sys: P8_15
 - model: gpio
-  id: 1004
-  fields:
+  parameters:
+    id: 1004
     name: GPIO4
     direction: IN
     reg_pru: r31_04
@@ -52,8 +52,8 @@
     reg_sys: 61
     pin_sys: P8_26
 - model: gpio
-  id: 1005
-  fields:
+  parameters:
+    id: 1005
     name: GPIO5
     direction: IN
     reg_pru: r31_05
@@ -61,8 +61,8 @@
     reg_sys: 80
     pin_sys: P8_36
 - model: gpio
-  id: 1006
-  fields:
+  parameters:
+    id: 1006
     name: GPIO6
     direction: IN
     reg_pru: r31_06
@@ -70,8 +70,8 @@
     reg_sys: 81
     pin_sys: P8_34
 - model: gpio
-  id: 1007
-  fields:
+  parameters:
+    id: 1007
     name: GPIO7
     description: alias UART_RX
     direction: IN
@@ -80,8 +80,8 @@
     reg_sys: 14
     pin_sys: P9_26
 - model: gpio
-  id: 1008
-  fields:
+  parameters:
+    id: 1008
     name: GPIO8
     description: alias UART_TX
     direction: IO
@@ -91,24 +91,24 @@
     reg_sys: 15
     pin_sys: P9_24
 - model: gpio
-  id: 1009
-  fields:
+  parameters:
+    id: 1009
     name: BAT_OK
     description: signal from vSource (PRU) to target
     direction: OUT
     reg_pru: r30_09
     pin_pru: P8_29
 - model: gpio
-  id: 2000
-  fields:
+  parameters:
+    id: 2000
     name: PRG1_CLK
     description: alias JTAG_TCK
     direction: OUT
     reg_sys: 5
     pin_sys: P9_17
 - model: gpio
-  id: 2001
-  fields:
+  parameters:
+    id: 2001
     name: PRG1_IO
     description: alias JTAG_TDI
     direction: IO
@@ -116,16 +116,16 @@
     reg_sys: 4
     pin_sys: P9_18
 - model: gpio
-  id: 2010
-  fields:
+  parameters:
+    id: 2010
     name: PRG2_CLK
     description: alias JTAG_TDO
     direction: OUT
     reg_sys: 8
     pin_sys: P8_35
 - model: gpio
-  id: 2011
-  fields:
+  parameters:
+    id: 2011
     name: PRG2_IO
     description: alias JTAG_TMS
     direction: IO
@@ -133,32 +133,32 @@
     reg_sys: 9
     pin_sys: P8_33
 - model: gpio
-  id: 3000
-  fields:
+  parameters:
+    id: 3000
     name: DIR1
     description: changes direction of GPIO[0:3]
     direction: OUT
     reg_sys: 78
     pin_sys: P8_37
 - model: gpio
-  id: 3001
-  fields:
+  parameters:
+    id: 3001
     name: DIR2
     description: changes direction of GPIO8
     direction: OUT
     reg_sys: 79
     pin_sys: P8_38
 - model: gpio
-  id: 3002
-  fields:
+  parameters:
+    id: 3002
     name: PDIR1
     description: changes direction PRG1_IO
     direction: OUT
     reg_sys: 10
     pin_sys: P8_31
 - model: gpio
-  id: 3003
-  fields:
+  parameters:
+    id: 3003
     name: PDIR2
     description: changes direction PRG2_IO
     direction: OUT

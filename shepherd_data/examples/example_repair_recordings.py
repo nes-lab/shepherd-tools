@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 
 import shepherd_data as shp
+from shepherd_core.data_models import EnergyDType
 
 if __name__ == "__main__":
     flist = os.listdir("./")
@@ -70,8 +71,8 @@ if __name__ == "__main__":
             datatype = fh.get_datatype()
             if datatype not in shp.Reader.mode_dtype_dict[mode]:
                 datatype = shp.Writer.datatype_default
-                if "curv" in fh.get_datatype():
-                    datatype = "ivcurve"
+                if "curv" in str(fh.get_datatype()):
+                    datatype = EnergyDType.ivcurve
                 print(f" -> will set datatype = {datatype}")
                 fh.__exit__()
                 with shp.Writer(fpath, datatype=datatype, modify_existing=True) as fw:
@@ -80,7 +81,7 @@ if __name__ == "__main__":
 
             # missing window_samples
             if "window_samples" not in fh.h5file["data"].attrs.keys():
-                if datatype == "ivcurve":
+                if datatype == EnergyDType.ivcurve:
                     print("Window size missing, but ivcurves detected -> no repair")
                     continue
                 print(" -> will set window size = 0")

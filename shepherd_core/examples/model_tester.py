@@ -17,20 +17,23 @@ How to define an experiment:
     - submittable through web-interface
 
 """
-
+from shepherd_core.data_models import fixtures
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
-from shepherd_core.data_models.content import VirtualHarvester
-from shepherd_core.data_models.content import VirtualSource
+from shepherd_core.data_models.content import VirtualHarvesterConfig
+from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 
-# generate description for all parameters / fields -> base for web-forms
+# generate description for all parameters -> base for web-forms
 Experiment.dump_schema("experiment_schema.yaml")
 
+# allow to query models by name/id (demo-dataset)
+fixtures.load()
+
 # Defining an Experiment in Python
-hrv = VirtualHarvester(name="mppt_bq_thermoelectric")
+hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
 
 target_cfgs = [
     # first Instance similar to yaml-syntax
@@ -46,7 +49,7 @@ target_cfgs = [
         target_IDs=list(range(2001, 2005)),
         custom_IDs=list(range(7, 18)),  # note: longer list is OK
         energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-        virtual_source=VirtualSource(name="BQ25570-Schmitt", harvester=hrv),
+        virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
         firmware1=Firmware(name="nrf52_demo_rf"),
         firmware2=Firmware(name="msp430_deep_sleep"),
     ),

@@ -1,71 +1,71 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 - model: cape
-  id: 1001
-  fields:
+  parameters:
+    id: 1001
     name: cape1
     version: v2.4
     description: ID=1270053
     created: 2022-12-12
     calibrated: 2022-12-12
 - model: cape
-  id: 1002
-  fields:
+  parameters:
+    id: 1002
     name: cape2
     version: v2.4
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
 - model: cape
-  id: 1003
-  fields:
+  parameters:
+    id: 1003
     name: cape3
     version: v2.4
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
 - model: cape
-  id: 1004
-  fields:
+  parameters:
+    id: 1004
     name: cape4
     version: v2.4
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
 - model: cape
-  id: 1005
-  fields:
+  parameters:
+    id: 1005
     name: cape5
     version: v2.4
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
 - model: cape
-  id: 1006
-  fields:
+  parameters:
+    id: 1006
     name: cape6
     version: v2.4
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
 - model: cape
-  id: 1011
-  fields:
+  parameters:
+    id: 1011
     name: cape11
     version: v2.4
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
 - model: cape
-  id: 1012
-  fields:
+  parameters:
+    id: 1012
     name: cape12
     version: v2.4
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
 - model: cape
-  id: 1013
-  fields:
+  parameters:
+    id: 1013
     name: cape13
     version: v2.4
     description: virtual

@@ -14,7 +14,7 @@ from shepherd_core.data_models.testbed import Testbed
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
-from ..content.virtual_source import VirtualSource
+from ..content.virtual_source import VirtualSourceConfig
 from ..experiment.experiment import Experiment
 from ..experiment.observer_features import GpioActuation
 from ..experiment.observer_features import GpioTracing
@@ -77,7 +77,9 @@ class EmulationTask(ShpModel):
     #   - "main" will mirror main target voltage
 
     # sub-elements, could be partly moved to emulation
-    virtual_source: VirtualSource = VirtualSource(name="neutral")  # {"name": "neutral"}
+    virtual_source: VirtualSourceConfig = VirtualSourceConfig(
+        name="neutral"
+    )  # {"name": "neutral"}
     # ⤷ Use the desired setting for the virtual source,
     #   provide parameters or name like BQ25570
 

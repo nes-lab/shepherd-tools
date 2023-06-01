@@ -66,7 +66,7 @@ class BaseWriter(BaseReader):
 
     comp_default: int = 1
     mode_default: str = "harvester"
-    datatype_default: str = EnergyDType.ivsample.name
+    datatype_default: str = EnergyDType.ivsample
 
     _chunk_shape: tuple = (BaseReader.samples_per_buffer,)
 
@@ -75,7 +75,7 @@ class BaseWriter(BaseReader):
         self,
         file_path: Path,
         mode: Optional[str] = None,
-        datatype: Optional[str] = None,
+        datatype: Union[str, EnergyDType, None] = None,
         window_samples: Optional[int] = None,
         cal_data: Union[CalSeries, CalEmu, CalHrv, None] = None,
         compression: Compression = Compression.default,
@@ -110,7 +110,9 @@ class BaseWriter(BaseReader):
             )
 
         _dtypes = self.mode_dtype_dict[mode if mode else self.mode_default]
-        if isinstance(datatype, str) and datatype not in _dtypes:
+        if isinstance(datatype, str):
+            datatype = EnergyDType[datatype]
+        if isinstance(datatype, EnergyDType) and datatype not in _dtypes:
             raise ValueError(
                 f"Can't handle value '{datatype}' of datatype "
                 f"(choose one of {_dtypes})"
@@ -123,7 +125,7 @@ class BaseWriter(BaseReader):
         else:
             self._mode = mode if isinstance(mode, str) else self.mode_default
             self._datatype = (
-                datatype if isinstance(datatype, str) else self.datatype_default
+                datatype if isinstance(datatype, EnergyDType) else self.datatype_default
             )
             self._window_samples = (
                 window_samples if isinstance(window_samples, int) else 0
@@ -155,10 +157,10 @@ class BaseWriter(BaseReader):
             self.h5file.attrs["mode"] = self._mode
 
         if (
-            isinstance(self._datatype, str)
+            isinstance(self._datatype, EnergyDType)
             and self._datatype in self.mode_dtype_dict[self.get_mode()]
         ):
-            self.h5file["data"].attrs["datatype"] = self._datatype
+            self.h5file["data"].attrs["datatype"] = self._datatype.name
         elif not self._modify:
             self._logger.error("datatype invalid? '%s' not written", self._datatype)
 

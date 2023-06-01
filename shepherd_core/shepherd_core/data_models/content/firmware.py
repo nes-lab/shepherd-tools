@@ -31,7 +31,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
     data_type: FirmwareDType
 
     @root_validator(pre=True)
-    def from_fixture(cls, values: dict) -> dict:
+    def query_database(cls, values: dict) -> dict:
         values = fixtures.lookup(values)
         values, _ = fixtures.inheritance(values)
         return values

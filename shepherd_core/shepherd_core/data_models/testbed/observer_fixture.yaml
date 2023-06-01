@@ -1,7 +1,7 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 - model: observer
-  id: 1001
-  fields:
+  parameters:
+    id: 1001
     name: sheep01
     ip: 192.168.165.195
     mac: 18:62:E4:E4:41:8D
@@ -16,8 +16,8 @@
       name: T_nRF52_2021_001
     created: 2022-12-12 12:12:12
 - model: observer
-  id: 1002
-  fields:
+  parameters:
+    id: 1002
     name: sheep02
     ip: 192.168.165.196
     mac: 18:62:E4:D0:DE:3F
@@ -32,8 +32,8 @@
       name: T_nRF52_2021_002
     created: 2022-12-12 12:12:12
 - model: observer
-  id: 1003
-  fields:
+  parameters:
+    id: 1003
     name: sheep03
     ip: 192.168.165.197
     mac: 18:62:E4:D0:9E:6A
@@ -48,8 +48,8 @@
       name: T_nRF52_2021_003
     created: 2022-12-12 12:12:12
 - model: observer
-  id: 1004
-  fields:
+  parameters:
+    id: 1004
     name: sheep04
     ip: 192.168.165.198
     mac: 18:62:E4:D0:61:4D
@@ -64,8 +64,8 @@
       name: T_nRF52_2021_004
     created: 2022-12-12 12:12:12
 - model: observer
-  id: 1011
-  fields:
+  parameters:
+    id: 1011
     name: sheep11
     ip: 192.168.165.211
     mac: 18:62:E4:D0:61:4E
@@ -82,8 +82,8 @@
       name: T_nRF52_FRAM_2023_001
     created: 2022-12-12 12:12:12
 - model: observer
-  id: 1012
-  fields:
+  parameters:
+    id: 1012
     name: sheep12
     ip: 192.168.165.212
     mac: 18:62:E4:D0:61:4F
@@ -98,8 +98,8 @@
       name: T_nRF52_FRAM_2023_002
     created: 2022-12-12 12:12:12
 - model: observer
-  id: 1013
-  fields:
+  parameters:
+    id: 1013
     name: sheep13
     ip: 192.168.165.213
     mac: 18:62:E4:D0:61:50
