@@ -33,7 +33,7 @@ def src_model(
     return VirtualSourceModel(
         src_config,
         cal_emu,
-        log_intermediate=True,
+        log_intermediate=False,
         dtype_in=dtype_in,
         window_size=window_size,
     )
