@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from shepherd_core import CalibrationEmulator
-from shepherd_core.data_models import VirtualSourceConfig, fixtures
+from shepherd_core.data_models import VirtualSourceConfig
+from shepherd_core.data_models import fixtures
 from shepherd_core.vsource import VirtualSourceModel
 
 # config simulation

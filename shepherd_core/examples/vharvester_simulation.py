@@ -8,7 +8,8 @@
 from pathlib import Path
 
 from shepherd_core import BaseReader
-from shepherd_core.data_models import VirtualHarvesterConfig, fixtures
+from shepherd_core.data_models import VirtualHarvesterConfig
+from shepherd_core.data_models import fixtures
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
 from shepherd_core.vsource import VirtualHarvesterModel
 from shepherd_data import ivonne
