@@ -31,6 +31,8 @@ class EnergyEnvironment(ContentModel):
     energy_Ws: PositiveFloat
     valid: bool = False
 
+    # TODO: scale up/down voltage/current
+
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
         values = fixtures.lookup(values)

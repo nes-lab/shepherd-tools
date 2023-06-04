@@ -42,7 +42,7 @@ class HarvestTask(ShpModel):
     # ⤷ Choose one of the predefined virtual harvesters
     #   or configure a new one
 
-    power_tracing: Optional[PowerTracing] = PowerTracing()
+    power_tracing: PowerTracing = PowerTracing()
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
     # TODO: there is an unused DAC-Output patched to the harvesting-port

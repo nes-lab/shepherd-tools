@@ -19,8 +19,11 @@ fixtures = Fixtures(fixture_path, "mcu")
 class ProgrammerProtocol(str, Enum):
     SWD = "SWD"
     swd = "SWD"
+    SBW = "SBW"
     sbw = "SBW"
+    JTAG = "JTAG"
     jtag = "JTAG"
+    UART = "UART"
     uart = "UART"
 
 
