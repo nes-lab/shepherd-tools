@@ -1,6 +1,7 @@
 import hashlib
 import pathlib
 from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 from typing import Union
@@ -19,6 +20,7 @@ def repr_str(dumper, data):
 yaml.add_representer(pathlib.PosixPath, repr_str)
 yaml.add_representer(pathlib.WindowsPath, repr_str)
 yaml.add_representer(pathlib.Path, repr_str)
+yaml.add_representer(timedelta, repr_str)
 
 
 class ShpModel(BaseModel):
@@ -86,6 +88,7 @@ class ShpModel(BaseModel):
         model_yaml = yaml.dump(
             model_wrap.dict(), default_flow_style=False, sort_keys=False
         )
+        # TODO: handle directory
         model_path = Path(path).with_suffix(".yaml")
         with open(model_path, "w") as f:
             f.write(model_yaml)
