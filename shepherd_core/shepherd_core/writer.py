@@ -3,6 +3,7 @@ Writer that inherits from Reader-Baseclass
 """
 import logging
 import math
+import pathlib
 from itertools import product
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,16 @@ from .data_models.content.energy_environment import EnergyDType
 from .data_models.task import Compression
 from .data_models.task.emulation import c_translate
 from .reader import BaseReader
+
+
+# copy of core/models/base/shepherd - needed also here
+def repr_str(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
+
+
+yaml.add_representer(pathlib.PosixPath, repr_str)
+yaml.add_representer(pathlib.WindowsPath, repr_str)
+yaml.add_representer(pathlib.Path, repr_str)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
