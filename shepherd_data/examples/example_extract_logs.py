@@ -2,7 +2,7 @@
 script iterates through this directory and analyzes hdf5-files
 - prints cpu-utilization and data-rate
 - saves logging-info to files
-- saves metadata to datasets and the file itself to yml
+- saves metadata to datasets and the file itself to yaml
 
 CLI-Version of this is:
 shepherd-data extract-meta file_or_dir

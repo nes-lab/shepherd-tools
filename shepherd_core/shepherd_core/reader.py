@@ -50,7 +50,7 @@ class BaseReader:
         if not hasattr(self, "file_path"):
             self.file_path: Optional[Path] = None
             if isinstance(file_path, (Path, str)):
-                self.file_path = Path(file_path)
+                self.file_path = Path(file_path).resolve()
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Reader")
@@ -518,14 +518,14 @@ class BaseReader:
         :return: structure of that node with everything inside it
         """
         if isinstance(self.file_path, Path):
-            yml_path = Path(self.file_path).absolute().with_suffix(".yml")
-            if yml_path.exists():
-                self._logger.info("%s already exists, will skip", yml_path)
+            yaml_path = Path(self.file_path).resolve().with_suffix(".yaml")
+            if yaml_path.exists():
+                self._logger.info("%s already exists, will skip", yaml_path)
                 return {}
             metadata = self.get_metadata(
                 node
             )  # {"h5root": self.get_metadata(self.h5file)}
-            with open(yml_path, "w", encoding="utf-8-sig") as yfd:
+            with open(yaml_path, "w", encoding="utf-8-sig") as yfd:
                 yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
         else:
             metadata = {}

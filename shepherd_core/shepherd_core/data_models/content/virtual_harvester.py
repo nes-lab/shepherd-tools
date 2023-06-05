@@ -60,7 +60,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     interval_ms: confloat(ge=0.01, le=1_000_000) = 100
     # ⤷ between start of measurements (ie. V_OC)
     duration_ms: confloat(ge=0.01, le=1_000_000) = 0.1
-    # ⤷ of measurement
+    # ⤷ of (open voltage) measurement
     rising: bool = True
     # ⤷ direction of sawtooth
 

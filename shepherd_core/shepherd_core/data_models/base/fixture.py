@@ -19,7 +19,7 @@ class Fixtures:
     """Current implementation of a file-based database"""
 
     def __init__(self, file_path: Path, model_name: str):
-        self.path: Path = file_path
+        self.path: Path = file_path.resolve()
         self.name: str = model_name
         self.elements_by_name: dict = {}
         self.elements_by_id: dict = {}

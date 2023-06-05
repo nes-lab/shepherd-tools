@@ -9,7 +9,7 @@ from shepherd_data import mppt
 
 @pytest.fixture
 def example_path() -> Path:
-    here = Path(__file__).absolute().parent
+    here = Path(__file__).resolve().parent
     return here.parent / "examples"
 
 

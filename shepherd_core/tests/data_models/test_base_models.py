@@ -63,7 +63,7 @@ def test_base_model_cal_cape_bytestr() -> None:
 
 def test_base_model_cal_cape_example(tmp_path: Path) -> None:
     cal0 = CalMeasurementCape()
-    path1 = Path(__file__).absolute().with_name("example_cal_data.yaml")
+    path1 = Path(__file__).resolve().with_name("example_cal_data.yaml")
     cal1 = CalibrationCape.from_file(path1)
     path2 = tmp_path / "cal_data_new.yaml"
     cal1.to_file(path2)
@@ -73,14 +73,14 @@ def test_base_model_cal_cape_example(tmp_path: Path) -> None:
 
 
 def test_base_model_cal_hrv_fault() -> None:
-    path = Path(__file__).absolute().with_name("example_cal_data_faulty.yaml")
+    path = Path(__file__).resolve().with_name("example_cal_data_faulty.yaml")
     cal = CalibrationCape.from_file(path)
     with pytest.raises(ValueError):
         _ = cal.harvester.export_for_sysfs()
 
 
 def test_base_model_cal_emu_fault() -> None:
-    path = Path(__file__).absolute().with_name("example_cal_data_faulty.yaml")
+    path = Path(__file__).resolve().with_name("example_cal_data_faulty.yaml")
     cal = CalibrationCape.from_file(path)
     with pytest.raises(ValueError):
         _ = cal.emulator.export_for_sysfs()
@@ -94,7 +94,7 @@ def test_base_model_cal_meas_min() -> None:
 
 
 def test_base_model_cal_meas_example() -> None:
-    path1 = Path(__file__).absolute().with_name("example_cal_meas.yaml")
+    path1 = Path(__file__).resolve().with_name("example_cal_meas.yaml")
     cm1 = CalMeasurementCape.from_file(path1)
     cal1 = cm1.to_cal()
     cal2 = CalibrationCape()
@@ -102,13 +102,13 @@ def test_base_model_cal_meas_example() -> None:
 
 
 def test_base_model_cal_meas_fault_correlation() -> None:
-    path = Path(__file__).absolute().with_name("example_cal_meas_faulty1.yaml")
+    path = Path(__file__).resolve().with_name("example_cal_meas_faulty1.yaml")
     with pytest.raises(ValueError):
         _ = CalMeasurementCape.from_file(path)
 
 
 def test_base_model_cal_meas_fault_no_pairs() -> None:
-    path = Path(__file__).absolute().with_name("example_cal_meas_faulty2.yaml")
+    path = Path(__file__).resolve().with_name("example_cal_meas_faulty2.yaml")
     with pytest.raises(ValidationError):
         _ = CalMeasurementCape.from_file(path)
 

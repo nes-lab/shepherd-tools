@@ -66,7 +66,7 @@ class ShpModel(BaseModel):
         # TODO: rename to schema_to_file(), if needed at all
         model_dict = cls.schema()
         model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
-        with open(Path(path).with_suffix(".yaml"), "w") as f:
+        with open(Path(path).resolve().with_suffix(".yaml"), "w") as f:
             f.write(model_yaml)
 
     def to_file(
@@ -89,7 +89,7 @@ class ShpModel(BaseModel):
             model_wrap.dict(), default_flow_style=False, sort_keys=False
         )
         # TODO: handle directory
-        model_path = Path(path).with_suffix(".yaml")
+        model_path = Path(path).resolve().with_suffix(".yaml")
         with open(model_path, "w") as f:
             f.write(model_yaml)
         return model_path
@@ -100,7 +100,7 @@ class ShpModel(BaseModel):
 
     @classmethod
     def from_file(cls, path: Union[str, Path]):
-        with open(Path(path)) as shp_file:
+        with open(Path(path).resolve()) as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.model != cls.__name__:

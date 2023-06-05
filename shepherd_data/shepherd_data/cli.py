@@ -27,7 +27,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
     - if existing file: list with 1 element
     - or else: empty list
     """
-    data_path = Path(data_path).absolute()
+    data_path = Path(data_path).resolve()
     h5files = []
     if data_path.is_file() and data_path.suffix == ".h5":
         h5files.append(data_path)

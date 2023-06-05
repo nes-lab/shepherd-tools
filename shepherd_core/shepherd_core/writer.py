@@ -102,7 +102,7 @@ class BaseWriter(BaseReader):
         # -> logger gets configured in reader()
 
         if self._modify or force_overwrite or not file_path.exists():
-            self.file_path: Path = file_path
+            self.file_path: Path = file_path.resolve()
             self._logger.info("Storing data to   '%s'", self.file_path)
         elif file_path.exists() and not file_path.is_file():
             raise TypeError(f"Path is not a file ({file_path})")

@@ -44,7 +44,7 @@ class Reader:
     ):
         self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
-        self.file_path = Path(file_path)
+        self.file_path = Path(file_path).resolve()
         self.samplerate_sps: int = 50
         if samplerate_sps is not None:
             self.samplerate_sps = samplerate_sps

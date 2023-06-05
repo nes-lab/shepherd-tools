@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture
 def example_path() -> Path:
-    path = Path(__file__).absolute().parent.parent / "examples"
+    path = Path(__file__).resolve().parent.parent / "examples"
     os.chdir(path)
     return path
 
