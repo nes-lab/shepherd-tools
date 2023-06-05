@@ -201,10 +201,10 @@ class BaseWriter(BaseReader):
         self._align()
         self._refresh_file_stats()
         self._logger.info(
-            "closing hdf5 file, %s s iv-data, size = %s MiB, rate = %s KiB/s",
+            "closing hdf5 file, %.1f s iv-data, size = %.3f MiB, rate = %.0f KiB/s",
             self.runtime_s,
-            round(self.file_size / 2**20, 3),
-            round(self.data_rate / 2**10),
+            self.file_size / 2**20,
+            self.data_rate / 2**10,
         )
         self.is_valid()
         self.h5file.close()
@@ -330,7 +330,7 @@ class BaseWriter(BaseReader):
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(
-                "aligning with buffer-size, discarding last %s entries",
+                "aligning with buffer-size, discarding last %d entries",
                 self.ds_time.size - size_new,
             )
             self.ds_time.resize((size_new,))

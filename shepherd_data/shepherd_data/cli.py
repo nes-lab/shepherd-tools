@@ -114,7 +114,7 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
             # will create a downsampled h5-file (if not existing) and then saving to csv
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
             if not ds_file.exists():
-                logger.info("Downsampling '%s' by factor x%s ...", file.name, ds_factor)
+                logger.info("Downsampling '%s' by factor x%f ...", file.name, ds_factor)
                 with Writer(
                     ds_file,
                     mode=shpr.get_mode(),
@@ -212,13 +212,14 @@ def downsample(
             for _factor in ds_list:
                 if shpr.ds_time.shape[0] / _factor < 1000:
                     logger.warning(
-                        "will skip downsampling for %s because resulting sample-size is too small"
+                        "will skip downsampling for %s because resulting sample-size is too small",
+                        file.name,
                     )
                     break
                 ds_file = file.with_suffix(f".downsampled_x{round(_factor)}.h5")
                 if ds_file.exists():
                     continue
-                logger.info("Downsampling '%s' by factor x%s ...", file.name, _factor)
+                logger.info("Downsampling '%s' by factor x%f ...", file.name, _factor)
                 with Writer(
                     ds_file,
                     mode=shpr.get_mode(),

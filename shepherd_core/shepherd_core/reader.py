@@ -112,17 +112,17 @@ class BaseReader:
             # file opened by this reader
             self._logger.info(
                 "Reading data from '%s'\n"
-                "\t- runtime %s s\n"
+                "\t- runtime %.1f s\n"
                 "\t- mode = %s\n"
-                "\t- window_size = %s\n"
-                "\t- size = %s MiB\n"
-                "\t- rate = %s KiB/s",
+                "\t- window_size = %d\n"
+                "\t- size = %.3f MiB\n"
+                "\t- rate = %.0f KiB/s",
                 self.file_path,
                 self.runtime_s,
                 self.get_mode(),
                 self.get_window_samples(),
-                round(self.file_size / 2**20),
-                round(self.data_rate / 2**10),
+                self.file_size / 2**20,
+                self.data_rate / 2**10,
             )
 
     def __enter__(self):
