@@ -51,6 +51,9 @@ class HarvestTask(ShpModel):
     def post_validation(cls, values: dict) -> dict:
         # TODO: limit paths
         has_start = values.get("time_start") is not None
-        if has_start and values["time_start"] < datetime.utcnow():
+        if has_start and values["time_start"].tzinfo is None:
+            # add local timezone-data
+            values["time_start"] = values["time_start"].astimezone()
+        if has_start and values["time_start"] < datetime.now().astimezone():
             raise ValueError("Start-Time for Harvest can't be in the past.")
         return values

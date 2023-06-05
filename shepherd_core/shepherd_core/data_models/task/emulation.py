@@ -92,7 +92,10 @@ class EmulationTask(ShpModel):
     def post_validation(cls, values: dict) -> dict:
         # TODO: limit paths
         has_start = values.get("time_start") is not None
-        if has_start and values.get("time_start") < datetime.utcnow():
+        # add local timezone-data
+        if has_start and values["time_start"].tzinfo is None:
+            values["time_start"] = values["time_start"].astimezone()
+        if has_start and values.get("time_start") < datetime.now().astimezone():
             raise ValueError("Start-Time for Emulation can't be in the past.")
         if isinstance(values.get("voltage_aux"), str) and values.get(
             "voltage_aux"
