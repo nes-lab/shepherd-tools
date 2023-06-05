@@ -4,6 +4,7 @@ Writer that inherits from Reader-Baseclass
 import logging
 import math
 import pathlib
+from datetime import timedelta
 from itertools import product
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,7 @@ import h5py
 import numpy as np
 import yaml
 from pydantic import validate_arguments
+from yaml import SafeDumper
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
@@ -26,13 +28,18 @@ from .reader import BaseReader
 
 
 # copy of core/models/base/shepherd - needed also here
-def repr_str(dumper, data):
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
+def path2str(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
-yaml.add_representer(pathlib.PosixPath, repr_str)
-yaml.add_representer(pathlib.WindowsPath, repr_str)
-yaml.add_representer(pathlib.Path, repr_str)
+def time2int(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:int", str(data.seconds))
+
+
+yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
+yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
+yaml.add_representer(pathlib.Path, path2str, SafeDumper)
+yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:

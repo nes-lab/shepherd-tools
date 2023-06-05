@@ -9,18 +9,23 @@ from typing import Union
 import yaml
 from pydantic import BaseModel
 from pydantic import Extra
+from yaml import SafeDumper
 
 from .wrapper import Wrapper
 
 
-def repr_str(dumper, data):
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
+def path2str(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
-yaml.add_representer(pathlib.PosixPath, repr_str)
-yaml.add_representer(pathlib.WindowsPath, repr_str)
-yaml.add_representer(pathlib.Path, repr_str)
-yaml.add_representer(timedelta, repr_str)
+def time2int(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:int", str(data.seconds))
+
+
+yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
+yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
+yaml.add_representer(pathlib.Path, path2str, SafeDumper)
+yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 class ShpModel(BaseModel):
@@ -65,7 +70,9 @@ class ShpModel(BaseModel):
     def dump_schema(cls, path: Union[str, Path]) -> None:
         # TODO: rename to schema_to_file(), if needed at all
         model_dict = cls.schema()
-        model_yaml = yaml.dump(model_dict, default_flow_style=False, sort_keys=False)
+        model_yaml = yaml.safe_dump(
+            model_dict, default_flow_style=False, sort_keys=False
+        )
         with open(Path(path).resolve().with_suffix(".yaml"), "w") as f:
             f.write(model_yaml)
 
@@ -85,7 +92,7 @@ class ShpModel(BaseModel):
             created=datetime.now(),
             parameters=model_dict,
         )
-        model_yaml = yaml.dump(
+        model_yaml = yaml.safe_dump(
             model_wrap.dict(), default_flow_style=False, sort_keys=False
         )
         # TODO: handle directory
