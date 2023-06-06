@@ -4,6 +4,7 @@ Writer that inherits from Reader-Baseclass
 import logging
 import math
 import pathlib
+from datetime import timedelta
 from itertools import product
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,7 @@ import h5py
 import numpy as np
 import yaml
 from pydantic import validate_arguments
+from yaml import SafeDumper
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
@@ -26,13 +28,18 @@ from .reader import BaseReader
 
 
 # copy of core/models/base/shepherd - needed also here
-def repr_str(dumper, data):
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
+def path2str(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
-yaml.add_representer(pathlib.PosixPath, repr_str)
-yaml.add_representer(pathlib.WindowsPath, repr_str)
-yaml.add_representer(pathlib.Path, repr_str)
+def time2int(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:int", str(data.seconds))
+
+
+yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
+yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
+yaml.add_representer(pathlib.Path, path2str, SafeDumper)
+yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
@@ -102,7 +109,7 @@ class BaseWriter(BaseReader):
         # -> logger gets configured in reader()
 
         if self._modify or force_overwrite or not file_path.exists():
-            self.file_path: Path = file_path
+            self.file_path: Path = file_path.resolve()
             self._logger.info("Storing data to   '%s'", self.file_path)
         elif file_path.exists() and not file_path.is_file():
             raise TypeError(f"Path is not a file ({file_path})")
@@ -194,10 +201,10 @@ class BaseWriter(BaseReader):
         self._align()
         self._refresh_file_stats()
         self._logger.info(
-            "closing hdf5 file, %s s iv-data, size = %s MiB, rate = %s KiB/s",
+            "closing hdf5 file, %.1f s iv-data, size = %.3f MiB, rate = %.0f KiB/s",
             self.runtime_s,
-            round(self.file_size / 2**20, 3),
-            round(self.data_rate / 2**10),
+            self.file_size / 2**20,
+            self.data_rate / 2**10,
         )
         self.is_valid()
         self.h5file.close()
@@ -323,7 +330,7 @@ class BaseWriter(BaseReader):
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(
-                "aligning with buffer-size, discarding last %s entries",
+                "aligning with buffer-size, discarding last %d entries",
                 self.ds_time.size - size_new,
             )
             self.ds_time.resize((size_new,))

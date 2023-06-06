@@ -50,7 +50,7 @@ class BaseReader:
         if not hasattr(self, "file_path"):
             self.file_path: Optional[Path] = None
             if isinstance(file_path, (Path, str)):
-                self.file_path = Path(file_path)
+                self.file_path = Path(file_path).resolve()
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Reader")
@@ -112,17 +112,17 @@ class BaseReader:
             # file opened by this reader
             self._logger.info(
                 "Reading data from '%s'\n"
-                "\t- runtime %s s\n"
+                "\t- runtime %.1f s\n"
                 "\t- mode = %s\n"
-                "\t- window_size = %s\n"
-                "\t- size = %s MiB\n"
-                "\t- rate = %s KiB/s",
+                "\t- window_size = %d\n"
+                "\t- size = %.3f MiB\n"
+                "\t- rate = %.0f KiB/s",
                 self.file_path,
                 self.runtime_s,
                 self.get_mode(),
                 self.get_window_samples(),
-                round(self.file_size / 2**20),
-                round(self.data_rate / 2**10),
+                self.file_size / 2**20,
+                self.data_rate / 2**10,
             )
 
     def __enter__(self):
@@ -231,7 +231,7 @@ class BaseReader:
         :return: config-dict directly for vHarvester to be used during emulation
         """
         return {
-            "dtype": self.get_datatype(),
+            "datatype": self.get_datatype(),
             "window_samples": self.get_window_samples(),
         }
 
@@ -473,7 +473,7 @@ class BaseReader:
         metadata: Dict[str, dict] = {}
         if isinstance(node, h5py.Dataset) and not minimal:
             metadata["_dataset_info"] = {
-                "dtype": str(node.dtype),
+                "datatype": str(node.dtype),
                 "shape": str(node.shape),
                 "chunks": str(node.chunks),
                 "compression": str(node.compression),
@@ -518,14 +518,14 @@ class BaseReader:
         :return: structure of that node with everything inside it
         """
         if isinstance(self.file_path, Path):
-            yml_path = Path(self.file_path).absolute().with_suffix(".yml")
-            if yml_path.exists():
-                self._logger.info("%s already exists, will skip", yml_path)
+            yaml_path = Path(self.file_path).resolve().with_suffix(".yaml")
+            if yaml_path.exists():
+                self._logger.info("%s already exists, will skip", yaml_path)
                 return {}
             metadata = self.get_metadata(
                 node
             )  # {"h5root": self.get_metadata(self.h5file)}
-            with open(yml_path, "w", encoding="utf-8-sig") as yfd:
+            with open(yaml_path, "w", encoding="utf-8-sig") as yfd:
                 yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
         else:
             metadata = {}

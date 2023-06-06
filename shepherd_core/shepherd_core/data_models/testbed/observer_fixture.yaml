@@ -1,5 +1,5 @@
 --- # add with >>> python manage.py loaddata <fixturename>
-- model: observer
+- datatype: observer
   parameters:
     id: 1001
     name: sheep01
@@ -15,7 +15,7 @@
     target_a:
       name: T_nRF52_2021_001
     created: 2022-12-12 12:12:12
-- model: observer
+- datatype: observer
   parameters:
     id: 1002
     name: sheep02
@@ -31,7 +31,7 @@
     target_a:
       name: T_nRF52_2021_002
     created: 2022-12-12 12:12:12
-- model: observer
+- datatype: observer
   parameters:
     id: 1003
     name: sheep03
@@ -47,7 +47,7 @@
     target_a:
       name: T_nRF52_2021_003
     created: 2022-12-12 12:12:12
-- model: observer
+- datatype: observer
   parameters:
     id: 1004
     name: sheep04
@@ -63,7 +63,7 @@
     target_a:
       name: T_nRF52_2021_004
     created: 2022-12-12 12:12:12
-- model: observer
+- datatype: observer
   parameters:
     id: 1011
     name: sheep11
@@ -81,7 +81,7 @@
     target_b:
       name: T_nRF52_FRAM_2023_001
     created: 2022-12-12 12:12:12
-- model: observer
+- datatype: observer
   parameters:
     id: 1012
     name: sheep12
@@ -97,7 +97,7 @@
     target_b:
       name: T_nRF52_FRAM_2023_002
     created: 2022-12-12 12:12:12
-- model: observer
+- datatype: observer
   parameters:
     id: 1013
     name: sheep13

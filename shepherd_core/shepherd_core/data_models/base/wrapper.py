@@ -13,7 +13,7 @@ class Wrapper(BaseModel):
     all models with dynamic typecasting
     """
 
-    model: str
+    datatype: str
     # ⤷ model-name
     comment: Optional[SafeStrClone]
     created: Optional[datetime]

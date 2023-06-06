@@ -44,7 +44,7 @@ class Reader:
     ):
         self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
-        self.file_path = Path(file_path)
+        self.file_path = Path(file_path).resolve()
         self.samplerate_sps: int = 50
         if samplerate_sps is not None:
             self.samplerate_sps = samplerate_sps
@@ -68,13 +68,13 @@ class Reader:
         self._refresh_file_stats()
         self._logger.info(
             "Reading data from '%s'\n"
-            "\t- runtime = %s s\n"
-            "\t- size = %s KiB\n"
-            "\t- rate = %s KiB/s",
+            "\t- runtime = %d s\n"
+            "\t- size = %.3f KiB\n"
+            "\t- rate = %.3f KiB/s",
             self.file_path,
             self.runtime_s,
-            round(self.file_size / 2**10, 3),
-            round(self.data_rate / 2**10, 3),
+            self.file_size / 2**10,
+            self.data_rate / 2**10,
         )
         return self
 
@@ -106,7 +106,7 @@ class Reader:
         if self._df is None:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self._logger.info("  -> gets trimmed to %s s", duration_s)
+            self._logger.info("  -> gets trimmed to %f s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -182,7 +182,7 @@ class Reader:
         if self._df is None:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self._logger.info("  -> gets trimmed to %s s", duration_s)
+            self._logger.info("  -> gets trimmed to %f s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )
@@ -246,7 +246,7 @@ class Reader:
         if self._df is None:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
-            self._logger.info("  -> gets trimmed to %s s", duration_s)
+            self._logger.info("  -> gets trimmed to %f s", duration_s)
             df_elements_n = min(
                 self._df.shape[0], int(duration_s * self.samplerate_sps)
             )

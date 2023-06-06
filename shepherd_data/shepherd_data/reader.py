@@ -397,7 +397,7 @@ class Reader(BaseReader):
 
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = self.file_path.absolute().with_suffix(
+        plot_path = self.file_path.resolve().with_suffix(
             f".plot_{start_str}_to_{end_str}.png"
         )
         if plot_path.exists():
@@ -424,7 +424,7 @@ class Reader(BaseReader):
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
         plot_path = (
             Path(plot_path)
-            .absolute()
+            .resolve()
             .with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
         )
         if plot_path.exists():

@@ -60,7 +60,7 @@ def test_cli_plot_file_min(data_h5: Path) -> None:
 def test_cli_plot_dir_min(tmp_path: Path) -> None:
     file1_path = generate_h5_file(tmp_path, "hrv_file1.h5")
     file2_path = generate_h5_file(tmp_path, "hrv_file2.h5")
-    res = CliRunner().invoke(cli, ["-vvv", "plot", str(tmp_path.absolute())])
+    res = CliRunner().invoke(cli, ["-vvv", "plot", str(tmp_path.resolve())])
     assert res.exit_code == 0
     assert file1_path.with_suffix(
         ".plot_0s000_to_10s000.png"

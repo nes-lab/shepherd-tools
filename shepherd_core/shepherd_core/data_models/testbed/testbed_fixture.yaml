@@ -1,4 +1,4 @@
-- model: testbed
+- datatype: testbed
   parameters:
     id: 1337
     name: shepherd_tud_nes

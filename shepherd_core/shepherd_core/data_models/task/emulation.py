@@ -7,6 +7,7 @@ from typing import Optional
 from typing import Union
 
 from pydantic import confloat
+from pydantic import conint
 from pydantic import root_validator
 from pydantic import validate_arguments
 
@@ -88,11 +89,17 @@ class EmulationTask(ShpModel):
     gpio_actuation: Optional[GpioActuation] = None
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
+    verbose: conint(ge=0, le=4) = 2
+    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
+
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
         # TODO: limit paths
         has_start = values.get("time_start") is not None
-        if has_start and values.get("time_start") < datetime.utcnow():
+        # add local timezone-data
+        if has_start and values["time_start"].tzinfo is None:
+            values["time_start"] = values["time_start"].astimezone()
+        if has_start and values.get("time_start") < datetime.now().astimezone():
             raise ValueError("Start-Time for Emulation can't be in the past.")
         if isinstance(values.get("voltage_aux"), str) and values.get(
             "voltage_aux"

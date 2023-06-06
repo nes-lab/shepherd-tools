@@ -1,5 +1,5 @@
 ---
-model: CalMeasurementCape
+datatype: CalMeasurementCape
 comment: sheep0
 parameters:
   emulator:

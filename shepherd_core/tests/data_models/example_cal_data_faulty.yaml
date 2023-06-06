@@ -1,4 +1,4 @@
-model: CalibrationCape
+datatype: CalibrationCape
 comment: sheep0
 parameters:
   emulator:

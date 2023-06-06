@@ -15,7 +15,7 @@ def test_reader_metadata(data_h5: Path) -> None:
         assert sfr.is_valid()
 
         meta_data_a = sfr.save_metadata()
-        meta_path = data_h5.with_suffix(".yml")
+        meta_path = data_h5.resolve().with_suffix(".yaml")
         assert meta_path.exists()
         with open(meta_path) as meta_file:
             meta_data_b = yaml.safe_load(meta_file)
@@ -36,7 +36,7 @@ def test_reader_open(tmp_path: Path) -> None:
     with pytest.raises(TypeError):
         Reader(file_path=None)
 
-    tmp_file = tmp_path / "data.h5"
+    tmp_file = (tmp_path / "data.h5").resolve()
 
     with pytest.raises(FileNotFoundError):
         Reader(file_path=tmp_file)

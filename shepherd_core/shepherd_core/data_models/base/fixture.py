@@ -19,7 +19,7 @@ class Fixtures:
     """Current implementation of a file-based database"""
 
     def __init__(self, file_path: Path, model_name: str):
-        self.path: Path = file_path
+        self.path: Path = file_path.resolve()
         self.name: str = model_name
         self.elements_by_name: dict = {}
         self.elements_by_id: dict = {}
@@ -29,7 +29,7 @@ class Fixtures:
                 if not isinstance(fixture, dict):
                     continue
                 fwrap = Wrapper(**fixture)
-                if fwrap.model.lower() != model_name.lower():
+                if fwrap.datatype.lower() != model_name.lower():
                     continue
                 if "name" not in fwrap.parameters:
                     continue

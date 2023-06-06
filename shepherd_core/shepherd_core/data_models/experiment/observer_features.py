@@ -1,3 +1,4 @@
+from datetime import timedelta
 from enum import Enum
 from typing import Optional
 
@@ -23,7 +24,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
 
     # time
     delay: conint(ge=0) = 0
-    duration: Optional[conint(ge=0)] = None  # will be max
+    duration: conint(ge=0) = timedelta(days=200).seconds
 
     # post-processing
     calculate_power: bool = False
@@ -57,7 +58,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
     # time
     delay: conint(ge=0) = 0  # seconds
-    duration: Optional[conint(ge=0)] = None  # = max
+    duration: conint(ge=0) = timedelta(days=200).seconds
 
     # post-processing,
     uart_decode: bool = False  # todo: is currently done online by system-service

@@ -84,7 +84,7 @@ def test_experiment_model_exp_collision_target_id() -> None:
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
-            time_start=datetime.utcnow() + timedelta(minutes=30),
+            time_start=datetime.now() + timedelta(minutes=30),
             target_configs=target_cfgs,
         )
 
@@ -112,7 +112,7 @@ def test_experiment_model_exp_collision_custom_id() -> None:
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
-            time_start=datetime.utcnow() + timedelta(minutes=30),
+            time_start=datetime.now() + timedelta(minutes=30),
             target_configs=target_cfgs,
         )
 
@@ -133,7 +133,7 @@ def test_experiment_model_exp_collision_observer() -> None:
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
-            time_start=datetime.utcnow() + timedelta(minutes=30),
+            time_start=datetime.now() + timedelta(minutes=30),
             target_configs=target_cfgs,
         )
 

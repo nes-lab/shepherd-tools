@@ -1,5 +1,5 @@
 ---
-model: Experiment
+datatype: Experiment
 parameters:
   id: 4567
   name: meaningful Test-Name

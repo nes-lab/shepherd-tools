@@ -1,6 +1,6 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 # cape v2.4
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1000
     name: GPIO0
@@ -12,7 +12,7 @@
     pin_pru: P8_45
     reg_sys: 26
     pin_sys: P8_14
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1001
     name: GPIO1
@@ -22,7 +22,7 @@
     pin_pru: P8_46
     reg_sys: 27
     pin_sys: P8_17
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1002
     name: GPIO2
@@ -32,7 +32,7 @@
     pin_pru: P8_43
     reg_sys: 46
     pin_sys: P8_16
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1003
     name: GPIO3
@@ -42,7 +42,7 @@
     pin_pru: P8_44
     reg_sys: 47
     pin_sys: P8_15
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1004
     name: GPIO4
@@ -51,7 +51,7 @@
     pin_pru: P8_41
     reg_sys: 61
     pin_sys: P8_26
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1005
     name: GPIO5
@@ -60,7 +60,7 @@
     pin_pru: P8_42
     reg_sys: 80
     pin_sys: P8_36
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1006
     name: GPIO6
@@ -69,7 +69,7 @@
     pin_pru: P8_39
     reg_sys: 81
     pin_sys: P8_34
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1007
     name: GPIO7
@@ -79,7 +79,7 @@
     pin_pru: P8_40
     reg_sys: 14
     pin_sys: P9_26
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1008
     name: GPIO8
@@ -90,7 +90,7 @@
     pin_pru: P8_27
     reg_sys: 15
     pin_sys: P9_24
-- model: gpio
+- datatype: gpio
   parameters:
     id: 1009
     name: BAT_OK
@@ -98,7 +98,7 @@
     direction: OUT
     reg_pru: r30_09
     pin_pru: P8_29
-- model: gpio
+- datatype: gpio
   parameters:
     id: 2000
     name: PRG1_CLK
@@ -106,7 +106,7 @@
     direction: OUT
     reg_sys: 5
     pin_sys: P9_17
-- model: gpio
+- datatype: gpio
   parameters:
     id: 2001
     name: PRG1_IO
@@ -115,7 +115,7 @@
     dir_switch: PDIR1
     reg_sys: 4
     pin_sys: P9_18
-- model: gpio
+- datatype: gpio
   parameters:
     id: 2010
     name: PRG2_CLK
@@ -123,7 +123,7 @@
     direction: OUT
     reg_sys: 8
     pin_sys: P8_35
-- model: gpio
+- datatype: gpio
   parameters:
     id: 2011
     name: PRG2_IO
@@ -132,7 +132,7 @@
     dir_switch: PDIR2
     reg_sys: 9
     pin_sys: P8_33
-- model: gpio
+- datatype: gpio
   parameters:
     id: 3000
     name: DIR1
@@ -140,7 +140,7 @@
     direction: OUT
     reg_sys: 78
     pin_sys: P8_37
-- model: gpio
+- datatype: gpio
   parameters:
     id: 3001
     name: DIR2
@@ -148,7 +148,7 @@
     direction: OUT
     reg_sys: 79
     pin_sys: P8_38
-- model: gpio
+- datatype: gpio
   parameters:
     id: 3002
     name: PDIR1
@@ -156,7 +156,7 @@
     direction: OUT
     reg_sys: 10
     pin_sys: P8_31
-- model: gpio
+- datatype: gpio
   parameters:
     id: 3003
     name: PDIR2

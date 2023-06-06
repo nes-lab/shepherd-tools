@@ -1,6 +1,7 @@
 import struct
 from typing import Callable
 from typing import Generator
+from typing import Optional
 from typing import TypeVar
 from typing import Union
 
@@ -156,7 +157,9 @@ class CalibrationCape(ShpModel):
     harvester: CalibrationHarvester = CalibrationHarvester()
     emulator: CalibrationEmulator = CalibrationEmulator()
 
-    #
+    cape: Optional[str] = None
+    host: Optional[str] = None
+
     @classmethod
     def from_bytestr(cls, data: bytes):
         """Instantiates calibration data based on byte string.
@@ -167,7 +170,7 @@ class CalibrationCape(ShpModel):
         Returns:
             CalibrationCape object with extracted calibration data.
         """
-        dv = cls().dict()
+        dv = cls().dict(include={"harvester", "emulator"})
         lw = list(dict_generator(dv))
         values = struct.unpack(">" + len(lw) * "d", data)
         # ⤷ X => double float, big endian
@@ -183,7 +186,7 @@ class CalibrationCape(ShpModel):
         Returns:
             Byte string representation of calibration values.
         """
-        lw = list(dict_generator(self.dict()))
+        lw = list(dict_generator(self.dict(include={"harvester", "emulator"})))
         values = [walk[-1] for walk in lw]
         return struct.pack(">" + len(lw) * "d", *values)
 
