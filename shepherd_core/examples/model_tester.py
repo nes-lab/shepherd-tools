@@ -27,7 +27,7 @@ from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 
 # generate description for all parameters -> base for web-forms
-Experiment.dump_schema("experiment_schema.yaml")
+Experiment.schema_to_file("experiment_schema.yaml")
 
 # allow to query models by name/id (demo-dataset)
 fixtures.load()
@@ -63,7 +63,7 @@ xperi1 = Experiment(
 )
 
 # Safe, reload and compare content
-xperi1.to_file("experiment_from_py.yaml")
+xperi1.to_file("experiment_from_py.yaml", minimal=False)
 xperi2 = Experiment.from_file("experiment_from_py.yaml")
 print(f"xp1 hash: {xperi1.get_hash()}")
 print(f"xp2 hash: {xperi2.get_hash()}")

@@ -1,0 +1,30 @@
+model: Experiment
+parameters:
+  id: 4567
+  name: meaningful Test-Name
+  time_start: 2033-03-13 14:15:16
+  target_configs:
+  - target_IDs: [3001, 3002, 3003]
+    custom_IDs: [0, 1, 2]
+    energy_env:
+      name: SolarSunny
+    virtual_source:
+      name: diode+capacitor
+    firmware1:
+      name: nrf52_demo_rf
+  - target_IDs:
+      - 2001
+      - 2002
+      - 2003
+      - 2004
+    custom_IDs: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    energy_env:
+      name: ThermoelectricWashingMachine
+    virtual_source:
+      name: BQ25570-Schmitt
+      harvester:
+        name: mppt_bq_thermoelectric
+    firmware1:
+      name: nrf52_demo_rf
+    firmware2:
+      name: msp430_deep_sleep
