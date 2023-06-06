@@ -144,7 +144,7 @@ def test_base_model_content_public_all() -> None:
 
 def test_base_model_shepherd_scheme(tmp_path) -> None:
     os.chdir(tmp_path)
-    ContentModel.dump_schema(tmp_path / "schema.yaml")
+    ContentModel.schema_to_file(tmp_path / "schema.yaml")
 
 
 def test_base_model_shepherd_min(tmp_path) -> None:
