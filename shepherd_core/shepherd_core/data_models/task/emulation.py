@@ -7,6 +7,7 @@ from typing import Optional
 from typing import Union
 
 from pydantic import confloat
+from pydantic import conint
 from pydantic import root_validator
 from pydantic import validate_arguments
 
@@ -87,6 +88,9 @@ class EmulationTask(ShpModel):
     gpio_tracing: Optional[GpioTracing] = GpioTracing()
     gpio_actuation: Optional[GpioActuation] = None
     sys_logging: Optional[SystemLogging] = SystemLogging()
+
+    verbose: conint(ge=0, le=4) = 2
+    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:

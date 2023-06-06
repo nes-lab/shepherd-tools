@@ -3,6 +3,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 
+from pydantic import conint
 from pydantic import root_validator
 
 from ..base.shepherd import ShpModel
@@ -44,6 +45,9 @@ class HarvestTask(ShpModel):
 
     power_tracing: PowerTracing = PowerTracing()
     sys_logging: Optional[SystemLogging] = SystemLogging()
+
+    verbose: conint(ge=0, le=4) = 2
+    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
     # TODO: there is an unused DAC-Output patched to the harvesting-port
 

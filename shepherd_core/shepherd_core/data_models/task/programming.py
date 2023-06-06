@@ -30,6 +30,9 @@ class ProgrammingTask(ShpModel):
 
     simulate: bool = False
 
+    verbose: conint(ge=0, le=4) = 2
+    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
+
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
         if values.get("firmware_file").suffix.lower() != ".hex":

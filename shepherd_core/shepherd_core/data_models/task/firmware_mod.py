@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Optional
 from typing import Union
 
+from pydantic import conint
 from pydantic import constr
 from pydantic import root_validator
 from pydantic import validate_arguments
@@ -24,6 +25,9 @@ class FirmwareModTask(ShpModel):
     data_type: FirmwareDType
     custom_id: Optional[IdInt16]
     firmware_file: Path
+
+    verbose: conint(ge=0, le=4) = 2
+    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
