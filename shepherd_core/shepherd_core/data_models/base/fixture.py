@@ -29,7 +29,7 @@ class Fixtures:
                 if not isinstance(fixture, dict):
                     continue
                 fwrap = Wrapper(**fixture)
-                if fwrap.model.lower() != model_name.lower():
+                if fwrap.datatype.lower() != model_name.lower():
                     continue
                 if "name" not in fwrap.parameters:
                     continue

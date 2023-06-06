@@ -1,5 +1,5 @@
 --- # add with >>> python manage.py loaddata <fixturename>
-- model: mcu
+- datatype: mcu
   parameters:
     id: 1001
     name: nRF52
@@ -8,7 +8,7 @@
     core: nRF52840
     prog_protocol: SWD
     fw_name_default: nrf52_demo_rf
-- model: mcu
+- datatype: mcu
   parameters:
     id: 1002
     name: MSP430FR

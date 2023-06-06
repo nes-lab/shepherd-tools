@@ -75,11 +75,18 @@ class CalMeasurementCape(ShpModel):
     harvester: Optional[CalMeasurementHarvester]
     emulator: Optional[CalMeasurementEmulator]
 
+    cape: Optional[str] = None
+    host: Optional[str] = None
+
     def to_cal(self) -> CalibrationCape:
         dv = self.dict()
         dcal = CalibrationCape().dict()
         # TODO: is it helpful to default wrong / missing values?
         for key, value in dv.items():
-            if value is not None:
-                dcal[key] = self[key].to_cal()
+            if key in ["harvester", "emulator"]:
+                if value is not None:
+                    dcal[key] = self[key].to_cal()
+            else:
+                dcal[key] = self[key]
+
         return CalibrationCape(**dcal)

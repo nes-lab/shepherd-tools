@@ -1,5 +1,5 @@
 ---
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 1001
     name: nrf52_open4group
@@ -10,7 +10,7 @@
     visible2group: true
     visible2all: false
     created: 2022-12-12 12:12:12
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 1002
     name: msp430_open4group
@@ -21,7 +21,7 @@
     visible2group: true
     visible2all: false
     created: 2022-12-12 12:12:12
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 2000
     name: nrf52_demo_rf
@@ -30,7 +30,7 @@
     data_type: path_elf
     visible2all: true
     inherit_from: nrf52_open4group
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 2001
     name: nrf52_spi_radio
@@ -39,7 +39,7 @@
     data_type: path_elf
     visible2all: true
     inherit_from: nrf52_open4group
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 2002
     name: nrf52_testable
@@ -47,7 +47,7 @@
     data: name.elf
     data_type: path_elf
     inherit_from: nrf52_open4group
-- model: firmware
+- datatype: firmware
   parameters:
     id: 2003
     name: nrf52_conn_test_tx
@@ -55,7 +55,7 @@
     data: name.elf
     data_type: path_elf
     inherit_from: nrf52_open4group
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 3000
     name: msp430_deep_sleep
@@ -64,7 +64,7 @@
     data_type: path_elf
     visible2all: true
     inherit_from: msp430_open4group
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 3001
     name: msp430_spi_fram
@@ -73,7 +73,7 @@
     data_type: path_elf
     visible2all: true
     inherit_from: msp430_open4group
-- model: Firmware
+- datatype: Firmware
   parameters:
     id: 3002
     name: msp430_testable

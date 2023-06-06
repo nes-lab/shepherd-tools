@@ -231,7 +231,7 @@ class BaseReader:
         :return: config-dict directly for vHarvester to be used during emulation
         """
         return {
-            "dtype": self.get_datatype(),
+            "datatype": self.get_datatype(),
             "window_samples": self.get_window_samples(),
         }
 
@@ -473,7 +473,7 @@ class BaseReader:
         metadata: Dict[str, dict] = {}
         if isinstance(node, h5py.Dataset) and not minimal:
             metadata["_dataset_info"] = {
-                "dtype": str(node.dtype),
+                "datatype": str(node.dtype),
                 "shape": str(node.shape),
                 "chunks": str(node.chunks),
                 "compression": str(node.compression),

@@ -90,7 +90,7 @@ class ShpModel(BaseModel):
         model_dict = self.dict(exclude_unset=minimal, exclude_defaults=minimal)
         #
         model_wrap = Wrapper(
-            model=type(self).__name__,
+            datatype=type(self).__name__,
             comment=comment,
             created=datetime.now(),
             parameters=model_dict,
@@ -112,7 +112,7 @@ class ShpModel(BaseModel):
         with open(Path(path).resolve()) as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
-        if shp_wrap.model != cls.__name__:
+        if shp_wrap.datatype != cls.__name__:
             raise ValueError("Model in file does not match the requirement")
         return cls(**shp_wrap.parameters)
 

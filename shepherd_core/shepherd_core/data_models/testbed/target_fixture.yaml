@@ -1,5 +1,5 @@
 ---
-- model: target
+- datatype: target
   parameters:
     id: 1002
     name: target_nRF52_v21r0
@@ -10,7 +10,7 @@
       name: nRF52
     mcu2: null
     created: 2022-12-12 12:12:12
-- model: target
+- datatype: target
   parameters:
     id: 1003
     name: target_nRF52_FRAM_v10r0
@@ -22,42 +22,42 @@
     mcu2:
       name: MSP430FR
     created: 2022-12-12 12:12:12
-- model: target
+- datatype: target
   parameters:
     id: 2001
     name: T_nRF52_2021_001  # replace with proper name
     inherit_from: target_nRF52_v21r0
-- model: target
+- datatype: target
   parameters:
     id: 2002
     name: T_nRF52_2021_002
     inherit_from: target_nRF52_v21r0
-- model: target
+- datatype: target
   parameters:
     id: 2003
     name: T_nRF52_2021_003
     inherit_from: target_nRF52_v21r0
-- model: target
+- datatype: target
   parameters:
     id: 2004
     name: T_nRF52_2021_004
     inherit_from: target_nRF52_v21r0
-- model: target
+- datatype: target
   parameters:
     id: 2005
     name: T_nRF52_2021_005
     inherit_from: target_nRF52_v21r0
-- model: target
+- datatype: target
   parameters:
     id: 3001
     name: T_nRF52_FRAM_2023_001
     inherit_from: target_nRF52_FRAM_v10r0
-- model: target
+- datatype: target
   parameters:
     id: 3002
     name: T_nRF52_FRAM_2023_002
     inherit_from: target_nRF52_FRAM_v10r0
-- model: target
+- datatype: target
   parameters:
     id: 3003
     name: T_nRF52_FRAM_2023_003

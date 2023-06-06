@@ -1,5 +1,5 @@
 --- # add with >>> python manage.py loaddata <fixturename>
-- model: cape
+- datatype: cape
   parameters:
     id: 1001
     name: cape1
@@ -7,7 +7,7 @@
     description: ID=1270053
     created: 2022-12-12
     calibrated: 2022-12-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1002
     name: cape2
@@ -15,7 +15,7 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1003
     name: cape3
@@ -23,7 +23,7 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1004
     name: cape4
@@ -31,7 +31,7 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1005
     name: cape5
@@ -39,7 +39,7 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1006
     name: cape6
@@ -47,7 +47,7 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1011
     name: cape11
@@ -55,7 +55,7 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1012
     name: cape12
@@ -63,7 +63,7 @@
     description: virtual
     created: 2023-11-12
     calibrated: 2023-11-12
-- model: cape
+- datatype: cape
   parameters:
     id: 1013
     name: cape13

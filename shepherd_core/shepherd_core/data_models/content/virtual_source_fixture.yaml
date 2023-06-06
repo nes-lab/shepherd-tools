@@ -3,7 +3,7 @@
 # - base for neutral fallback values if provided yml is sparse
 # - -> it is encouraged to omit redundant parameters
 ---
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1000
     name: neutral
@@ -73,14 +73,14 @@
     visible2all: true
     created: 2022-12-12 12:12:12
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1010
     name: direct
     inherit_from: neutral
     # Note: current input has no influence
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1011
     name: diode+capacitor
@@ -89,13 +89,13 @@
     V_input_drop_mV: 300  # simulate input-diode
     C_intermediate_uF: 10  # primary storage-Cap
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1012
     name: dio_cap # simpler naming
     inherit_from: diode+capacitor
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1013
     name: diode+resistor+capacitor
@@ -103,13 +103,13 @@
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1014
     name: dio_res_cap # simpler naming
     inherit_from: diode+resistor+capacitor
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1020
     name: BQ25504
@@ -157,7 +157,7 @@
     LUT_input_V_min_log2_uV: 17 # example: 2^7 = 128 uV -> array[0] is for inputs < 128 uV
     LUT_input_I_min_log2_nA: 13 # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1021
     name: BQ25504s # Version with Schmitt-Trigger
@@ -165,13 +165,13 @@
     inherit_from: BQ25504
     immediate_pwr_good_signal: true
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1022
     name: BQ25504-Schmitt
     inherit_from: BQ25504s
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1030
     name: BQ25570
@@ -209,7 +209,7 @@
     LUT_output_efficiency: [ 0.40, 0.50, 0.60, 0.73, 0.82, 0.86, 0.88, 0.90, 0.91, 0.92, 0.93, 0.92] # array[12] depending on output_current
     LUT_output_I_min_log2_nA: 10  # example: 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1031
     name: BQ25570s
@@ -217,12 +217,12 @@
     inherit_from: BQ25570
     immediate_pwr_good_signal: true
 
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1032
     name: BQ25570-Schmitt
     inherit_from: BQ25570s
-- model: VirtualSourceConfig
+- datatype: VirtualSourceConfig
   parameters:
     id: 1033
     name: default

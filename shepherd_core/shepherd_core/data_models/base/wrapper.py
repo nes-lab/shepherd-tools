@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
+from pydantic import conint
 from pydantic import constr
 
 SafeStrClone = constr(regex=r"^[ -~]+$")
@@ -13,7 +14,7 @@ class Wrapper(BaseModel):
     all models with dynamic typecasting
     """
 
-    model: str
+    datatype: str
     # ⤷ model-name
     comment: Optional[SafeStrClone]
     created: Optional[datetime]
