@@ -1,7 +1,8 @@
 ---
 datatype: CalMeasurementCape
-comment: sheep0
 parameters:
+  host: sheep0
+  cape: xyz1
   emulator:
     adc_C_A:
     - reference_si: 1.0e-05
