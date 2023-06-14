@@ -43,7 +43,7 @@ jobs:
         working-directory: "./shepherd_data"
 
       - name: Install core-package 🧱
-        run: pip install .[test]
+        run: pip install .[test,elf]
         working-directory: "./shepherd_core"
       - name: Install data-package 🧱
         run: pip install .[test]
@@ -75,7 +75,7 @@ jobs:
           pip install pylint pylint-exit
 
       - name: Install Core-Package 🧱
-        run: pip install .[test,dev]
+        run: pip install .[test,dev,elf]
         working-directory: "./shepherd_core"
       - name: Install Data-Package 🧱
         run: pip install .[test,dev]
