@@ -102,8 +102,6 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
-        if values.get("delay") and values["delay"].total_seconds() < 0:
-            raise ValueError("Delay can't be negative.")
         if not values.get("gpio").user_controllable():
             raise ValueError(
                 f"GPIO '{values.get('gpio').name}' in actuation-event not controllable by user"

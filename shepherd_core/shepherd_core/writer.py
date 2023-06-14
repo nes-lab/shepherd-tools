@@ -33,7 +33,9 @@ def path2str(dumper, data):
 
 
 def time2int(dumper, data):
-    return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
+    return dumper.represent_scalar(
+        "tag:yaml.org,2002:int", str(int(data.total_seconds()))
+    )
 
 
 yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
