@@ -22,7 +22,7 @@ def test_sym_reading(path_elf: Path) -> None:
 def test_sym_mod(path_elf: Path, tmp_path: Path) -> None:
     value = 0xCAFE
     sym = "SHEPHERD_NODE_ID"
-    path_new = tmp_path.with_name(path_elf.name)
+    path_new = tmp_path.with_name(path_elf.name).resolve()
     shutil.copy(path_elf, path_new)
     path_gen = fw_tools.modify_symbol_value(path_new, sym, value, overwrite=False)
     assert path_gen.is_file()
@@ -37,7 +37,7 @@ def test_sym_mod(path_elf: Path, tmp_path: Path) -> None:
 def test_sym_mod_overwrite(path_elf: Path, tmp_path: Path) -> None:
     value = 0xCAFE
     sym = "SHEPHERD_NODE_ID"
-    path_new = tmp_path.with_name(path_elf.name)
+    path_new = tmp_path.with_name(path_elf.name).resolve()
     shutil.copy(path_elf, path_new)
     path_gen = fw_tools.modify_symbol_value(path_new, sym, value, overwrite=True)
     assert path_gen.is_file()
@@ -51,7 +51,7 @@ def test_sym_mod_overwrite(path_elf: Path, tmp_path: Path) -> None:
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_id_mod(path_elf: Path, tmp_path: Path) -> None:
     value = 0xCAFE
-    path_new = tmp_path.with_name(path_elf.name)
+    path_new = tmp_path.with_name(path_elf.name).resolve()
     shutil.copy(path_elf, path_new)
     path_gen = fw_tools.modify_uid(path_new, value)
     assert path_gen.as_posix() == path_new.as_posix()

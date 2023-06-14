@@ -6,12 +6,16 @@ from .patcher import find_symbol
 from .patcher import modify_symbol_value
 from .patcher import modify_uid
 from .patcher import read_symbol
+from .patcher import read_uid
 
 __all__ = [
-    "modify_symbol_value",
+    # patcher
+    "read_uid",
     "modify_uid",
+    "modify_symbol_value",
     "find_symbol",
     "read_symbol",
+    # converter
     "elf_to_hex",
     "file_to_base64",
     "base64_to_file",

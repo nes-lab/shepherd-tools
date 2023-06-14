@@ -7,6 +7,8 @@ from pwnlib.elf import ELF
 from pydantic import conint
 from pydantic import validate_arguments
 
+from ..commons import uid_len_default
+from ..commons import uid_str_default
 from ..logger import logger as log
 
 
@@ -38,7 +40,9 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
 
 
 @validate_arguments
-def read_symbol(file_elf: Path, symbol: str, length: int = 2) -> Optional[int]:
+def read_symbol(
+    file_elf: Path, symbol: str, length: int = uid_len_default
+) -> Optional[int]:
     """interpreted as int"""
     if not find_symbol(file_elf, symbol):
         return None
@@ -48,11 +52,15 @@ def read_symbol(file_elf: Path, symbol: str, length: int = 2) -> Optional[int]:
     return int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
 
 
+def read_uid(file_elf: Path) -> Optional[int]:
+    return read_symbol(file_elf, symbol=uid_str_default, length=uid_len_default)
+
+
 @validate_arguments
 def modify_symbol_value(
     file_elf: Path,
     symbol: str,
-    value: conint(ge=0, lt=2**16),
+    value: conint(ge=0, lt=2 ** (8 * uid_len_default)),
     overwrite: bool = False,
 ) -> Optional[Path]:
     """replaces value of symbol in ELF-File, hardcoded for uint16_t (2 byte)
@@ -64,9 +72,12 @@ def modify_symbol_value(
         return None
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]
-    value_raw = elf.read(address=addr, count=2)[-2:]  # msp produces 4b instead of 2
+    value_raw = elf.read(address=addr, count=uid_len_default)[-uid_len_default:]
+    # cutting needed -> msp produces 4b instead of 2
     value_old = int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
-    value_raw = value.to_bytes(length=2, byteorder=elf.endian, signed=False)
+    value_raw = value.to_bytes(
+        length=uid_len_default, byteorder=elf.endian, signed=False
+    )
     elf.write(address=addr, data=value_raw)
     if overwrite:
         file_new = file_elf
@@ -86,5 +97,5 @@ def modify_symbol_value(
 
 def modify_uid(file_elf: Path, value: int) -> Optional[Path]:
     return modify_symbol_value(
-        file_elf, symbol="SHEPHERD_NODE_ID", value=value, overwrite=True
+        file_elf, symbol=uid_str_default, value=value, overwrite=True
     )
