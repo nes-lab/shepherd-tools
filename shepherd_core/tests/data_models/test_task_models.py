@@ -87,7 +87,7 @@ def test_task_model_hrv_duration() -> None:
         output_path="./here",
         duration=42,
     )
-    assert hrv.duration.seconds == 42
+    assert hrv.duration.total_seconds() == 42
 
 
 def test_task_model_hrv_too_late() -> None:

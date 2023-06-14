@@ -51,6 +51,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     def post_validation(cls, values: dict) -> dict:
         cls.validate_targets(values)
         cls.validate_observers(values)
+        if values.get("duration") and values["duration"].total_seconds() < 0:
+            raise ValueError("Duration of experiment can't be negative.")
         return values
 
     @staticmethod

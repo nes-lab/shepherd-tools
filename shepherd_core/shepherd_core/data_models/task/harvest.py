@@ -60,4 +60,6 @@ class HarvestTask(ShpModel):
             values["time_start"] = values["time_start"].astimezone()
         if has_start and values["time_start"] < datetime.now().astimezone():
             raise ValueError("Start-Time for Harvest can't be in the past.")
+        if values.get("duration") and values["duration"].total_seconds() < 0:
+            raise ValueError("Task-Duration can't be negative.")
         return values
