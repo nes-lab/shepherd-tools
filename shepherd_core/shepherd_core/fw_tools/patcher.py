@@ -82,7 +82,9 @@ def modify_symbol_value(
     if overwrite:
         file_new = file_elf
     else:
-        file_new = file_elf.with_name(file_elf.stem + "_" + str(value) + file_elf.suffix)
+        file_new = file_elf.with_name(
+            file_elf.stem + "_" + str(value) + file_elf.suffix
+        )
         # could be simplified, but py3.8-- doesn't know .with_stem()
     elf.save(path=file_new)
     elf.close()
