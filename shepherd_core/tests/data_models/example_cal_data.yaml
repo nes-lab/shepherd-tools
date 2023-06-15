@@ -1,6 +1,7 @@
 datatype: CalibrationCape
-comment: sheep0
 parameters:
+  host: sheep0
+  cape: xyz1
   emulator:
     adc_C_A:
       gain: 2.2306053900482405e-07

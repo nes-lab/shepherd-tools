@@ -12,7 +12,12 @@ def example_path() -> Path:
     return path
 
 
-examples = ["model_tester.py", "vsource_simulation.py", "vharvester_simulation.py"]
+examples = [
+    "model_tester.py",
+    "vsource_simulation.py",
+    "vharvester_simulation.py",
+    "firmware_modification.py",
+]
 
 
 @pytest.mark.parametrize("file", examples)

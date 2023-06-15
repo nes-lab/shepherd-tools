@@ -23,8 +23,8 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     #            this also includes current!
 
     # time
-    delay: conint(ge=0) = 0
-    duration: conint(ge=0) = timedelta(days=200).seconds
+    delay: timedelta = 0  # seconds
+    duration: Optional[timedelta] = None  # till EOF
 
     # post-processing
     calculate_power: bool = False
@@ -35,6 +35,11 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
 
     @root_validator(pre=False)
     def post_validation(cls, values: dict) -> dict:
+        if values.get("delay") and values["delay"].total_seconds() < 0:
+            raise ValueError("Delay can't be negative.")
+        if values.get("duration") and values["duration"].total_seconds() < 0:
+            raise ValueError("Duration can't be negative.")
+
         discard_all = values.get("discard_current") and values.get("discard_voltage")
         if not values.get("calculate_power") and discard_all:
             raise ValueError(
@@ -57,8 +62,8 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     # ⤷ TODO: list of GPIO to build mask, one of both should be internal
 
     # time
-    delay: conint(ge=0) = 0  # seconds
-    duration: conint(ge=0) = timedelta(days=200).seconds
+    delay: timedelta = 0  # seconds
+    duration: Optional[timedelta] = None  # till EOF
 
     # post-processing,
     uart_decode: bool = False  # todo: is currently done online by system-service
@@ -70,6 +75,10 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     def post_validation(cls, values: dict) -> dict:
         if values.get("mask") == 0:
             raise ValueError("Error in config -> tracing enabled but mask is 0")
+        if values.get("delay") and values["delay"].total_seconds() < 0:
+            raise ValueError("Delay can't be negative.")
+        if values.get("duration") and values["duration"].total_seconds() < 0:
+            raise ValueError("Duration can't be negative.")
         return values
 
 

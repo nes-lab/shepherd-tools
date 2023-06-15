@@ -33,7 +33,9 @@ def path2str(dumper, data):
 
 
 def time2int(dumper, data):
-    return dumper.represent_scalar("tag:yaml.org,2002:int", str(data.seconds))
+    return dumper.represent_scalar(
+        "tag:yaml.org,2002:int", str(int(data.total_seconds()))
+    )
 
 
 yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
@@ -96,13 +98,16 @@ class BaseWriter(BaseReader):
         datatype: Union[str, EnergyDType, None] = None,
         window_samples: Optional[int] = None,
         cal_data: Union[CalSeries, CalEmu, CalHrv, None] = None,
-        compression: Compression = Compression.default,
+        compression: Optional[Compression] = Compression.default,
         modify_existing: bool = False,
         force_overwrite: bool = False,
         verbose: Optional[bool] = True,
     ):
         self._modify = modify_existing
-        self._compression = c_translate[compression.value]
+        if compression is not None:
+            self._compression = c_translate[compression.value]
+        else:
+            self._compression = None
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Writer")

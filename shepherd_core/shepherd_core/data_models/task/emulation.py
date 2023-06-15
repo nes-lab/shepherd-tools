@@ -101,6 +101,8 @@ class EmulationTask(ShpModel):
             values["time_start"] = values["time_start"].astimezone()
         if has_start and values.get("time_start") < datetime.now().astimezone():
             raise ValueError("Start-Time for Emulation can't be in the past.")
+        if values.get("duration") and values["duration"].total_seconds() < 0:
+            raise ValueError("Task-Duration can't be negative.")
         if isinstance(values.get("voltage_aux"), str) and values.get(
             "voltage_aux"
         ) not in [

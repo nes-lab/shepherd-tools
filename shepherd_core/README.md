@@ -15,3 +15,12 @@ Users probably want to use the [datalib](https://pypi.org/project/shepherd_data)
 **Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
 
 ---
+
+This library allows to
+
+- read and write shepherds h5-files
+- create experiments (all data-models included)
+- simulate the virtual source
+- work with target-firmwares
+
+see [examples](/examples) for more details.

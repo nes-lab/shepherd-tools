@@ -74,7 +74,8 @@ class Testbed(ShpModel):
             raise ValueError("Target used more than once in Testbed")
         if len(eth_ports) > len(set(eth_ports)):
             raise ValueError("Observers-Ethernet-Port used more than once in Testbed")
-
+        if values.get("prep_duration") and values["prep_duration"].total_seconds() < 0:
+            raise ValueError("Task-Duration can't be negative.")
         if not values.get("shared_storage"):
             raise ValueError("Only shared-storage-option is implemented")
         return values

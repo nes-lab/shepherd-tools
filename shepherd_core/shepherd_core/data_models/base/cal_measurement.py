@@ -58,7 +58,7 @@ class CalMeasurementHarvester(ShpModel):
 
 
 class CalMeasurementEmulator(ShpModel):
-    dac_V_A: CalMeasPairs
+    dac_V_A: CalMeasPairs  # TODO: why not V_dac_A or V_dac_a
     dac_V_B: CalMeasPairs
     adc_C_A: CalMeasPairs
     adc_C_B: CalMeasPairs
