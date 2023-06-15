@@ -73,7 +73,7 @@ def modify_symbol_value(
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]
     value_raw = elf.read(address=addr, count=uid_len_default)[-uid_len_default:]
-    # cutting needed -> msp produces 4b instead of 2
+    # ⤷ cutting needed -> msp produces 4b instead of 2
     value_old = int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
     value_raw = value.to_bytes(
         length=uid_len_default, byteorder=elf.endian, signed=False
@@ -82,7 +82,8 @@ def modify_symbol_value(
     if overwrite:
         file_new = file_elf
     else:
-        file_new = file_elf.with_stem(file_elf.stem + "_" + str(value))
+        file_new = file_elf.with_name(file_elf.stem + "_" + str(value) + file_elf.suffix)
+        # could be simplified, but py3.8-- doesn't know .with_stem()
     elf.save(path=file_new)
     elf.close()
     log.debug(
