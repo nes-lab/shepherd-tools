@@ -12,6 +12,7 @@ from shepherd_core.data_models.content import VirtualHarvesterConfig
 from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
 from shepherd_core.data_models.testbed import MCU
+
 from .conftest import files_elf
 
 

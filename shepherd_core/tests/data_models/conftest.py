@@ -10,4 +10,6 @@ def load_yaml(file: str) -> dict:
 
 
 names_elf = ["build_msp.elf", "build_nrf.elf"]
-files_elf = [Path(__file__).parent.parent.resolve() / "fw_tools" / name for name in names_elf]
+files_elf = [
+    Path(__file__).parent.parent.resolve() / "fw_tools" / name for name in names_elf
+]
