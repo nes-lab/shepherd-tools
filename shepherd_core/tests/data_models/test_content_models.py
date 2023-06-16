@@ -1,6 +1,9 @@
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
+from shepherd_core import fw_tools
 from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
@@ -9,6 +12,7 @@ from shepherd_core.data_models.content import VirtualHarvesterConfig
 from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
 from shepherd_core.data_models.testbed import MCU
+from .conftest import files_elf
 
 
 def test_content_model_ee_min1() -> None:
@@ -44,6 +48,28 @@ def test_content_model_fw_min() -> None:
         mcu=MCU(name="nRF52"),
         data="xyz",
         data_type=FirmwareDType.base64_hex,
+        owner="Obelix",
+        group="Gaul",
+    )
+
+
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_content_model_fw_from_elf(path_elf: Path) -> None:
+    Firmware.from_firmware(
+        file=path_elf,
+        name="dome",
+        owner="Obelix",
+        group="Gaul",
+    )
+
+
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_content_model_fw_from_hex(path_elf: Path, tmp_path: Path) -> None:
+    path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
+    path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
+    Firmware.from_firmware(
+        file=path_hex,
+        name="dome",
         owner="Obelix",
         group="Gaul",
     )
