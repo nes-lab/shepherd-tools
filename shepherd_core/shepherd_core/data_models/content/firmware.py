@@ -43,8 +43,10 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     mcu: MCU
 
-    data: Union[constr(min_length=3, max_length=1_000_000), Path]
+    data: Union[constr(min_length=3, max_length=8_000_000), Path]
     data_type: FirmwareDType
+
+    # TODO: a data-hash would be awesome
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
