@@ -77,9 +77,7 @@ class EmulationTask(ShpModel):
     #   - "main" will mirror main target voltage
 
     # sub-elements, could be partly moved to emulation
-    virtual_source: VirtualSourceConfig = VirtualSourceConfig(
-        name="neutral"
-    )  # {"name": "neutral"}
+    virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
     # ⤷ Use the desired setting for the virtual source,
     #   provide parameters or name like BQ25570
 

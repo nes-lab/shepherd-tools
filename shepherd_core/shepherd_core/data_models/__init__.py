@@ -4,7 +4,6 @@ from .base.calibration import CalibrationHarvester
 from .base.calibration import CalibrationPair
 from .base.calibration import CalibrationSeries
 from .base.content import ContentModel
-from .base.fixture import Fixture
 from .base.shepherd import ShpModel
 from .base.wrapper import Wrapper
 from .content.energy_environment import EnergyDType
@@ -31,7 +30,6 @@ __all__ = [
     "CalibrationPair",
     "ContentModel",
     "ShpModel",
-    "Fixture",
     "Wrapper",
     # User Content
     "Experiment",

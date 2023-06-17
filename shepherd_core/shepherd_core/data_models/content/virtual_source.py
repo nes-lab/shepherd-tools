@@ -32,9 +32,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     interval_startup_delay_drain_ms: confloat(ge=0, le=10_000) = 0
 
-    harvester: VirtualHarvesterConfig = {
-        "name": "mppt_opt"
-    }  # VirtualHarvesterConfig(name="mppt_opt")
+    harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
 
     V_input_max_mV: confloat(ge=0, le=10_000) = 10_000
     I_input_max_mA: confloat(ge=0, le=4.29e3) = 4_200
@@ -105,9 +103,8 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        model_name = type(cls).__name__
-        values = tb_client.query(model_name, values.get("id"), values.get("name"))
-        values, chain = tb_client.inheritance(model_name, values)
+        values = tb_client.query(cls.__name__, values.get("id"), values.get("name"))
+        values, chain = tb_client.inheritance(cls.__name__, values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values
 

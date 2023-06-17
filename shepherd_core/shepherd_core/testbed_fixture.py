@@ -6,8 +6,8 @@ from typing import Optional
 
 import yaml
 
-from ...logger import logger
-from .wrapper import Wrapper
+from .data_models.base.wrapper import Wrapper
+from .logger import logger
 
 # Proposed field-name:
 # - inheritance
@@ -161,7 +161,7 @@ class Fixtures:
 
     def __init__(self, file_path: Optional[Path] = None):
         if file_path is None:
-            self.file_path = Path(__file__).parent.parent.resolve()
+            self.file_path = Path(__file__).parent.resolve() / "data_models"
         else:
             self.file_path = file_path
         self.components: Dict[str, Fixture] = {}
@@ -189,7 +189,7 @@ class Fixtures:
         fix_type = data.datatype.lower()
         if self.components.get(fix_type) is None:
             self.components[fix_type] = Fixture(model_type=fix_type)
-        self[fix_type].insert(data)
+        self.components[fix_type].insert(data)
 
     def __getitem__(self, key) -> Fixture:
         key = key.lower()
@@ -206,7 +206,7 @@ class Fixtures:
 
 def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> list:
     if recursion_depth == 0:
-        suffix = suffix.lower()
+        suffix = suffix.lower().split(".")[-1]
     dir_items = os.scandir(start_path)
     recursion_depth += 1
     files = []

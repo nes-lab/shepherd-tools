@@ -47,9 +47,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        model_name = type(cls).__name__
-        values = tb_client.query(model_name, values.get("id"), values.get("name"))
-        values, _ = tb_client.inheritance(model_name, values)
+        values = tb_client.query(cls.__name__, values.get("id"), values.get("name"))
+        values, _ = tb_client.inheritance(cls.__name__, values)
         return values
 
     @classmethod

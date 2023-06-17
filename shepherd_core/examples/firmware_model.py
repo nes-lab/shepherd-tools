@@ -4,6 +4,7 @@
 """
 from pathlib import Path
 
+from shepherd_core import TestbedClient
 from shepherd_core import fw_tools
 from shepherd_core.data_models import Firmware
 from shepherd_core.data_models import FirmwareDType
@@ -32,13 +33,8 @@ fw2 = Firmware.from_firmware(
 
 # store embedded data with .extract_firmware(path)
 
-# Option 3 - fully automatic (with login), TODO
+# Option 3 - fully automatic (with login),
 
-"""
-
-fw3 = Firmware.from_firmware(
-    file=path_elf,
-    name="msp_deep_sleep"
-)
-
-"""
+tb_client = TestbedClient()
+# tb_client.connect(token="your_private_login_token")
+# fw3 = Firmware.from_firmware(file=path_elf, name="msp_deep_sleep")

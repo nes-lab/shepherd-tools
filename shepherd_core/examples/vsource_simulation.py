@@ -37,8 +37,13 @@ src_list = [
 I_mcu_sleep_A = 200e-9
 I_mcu_active_A = 1e-3
 
-# allow to query models by name/id (demo-dataset)
-tb_client = TestbedClient(server="demo_fixture")
+# for online-queries the lib can be connected to the testbed-server
+# NOTE: there are 3 states:
+#    - unconnected -> demo-fixture is queried (locally)
+#    - connected -> publicly available data is queried online
+#    - logged in with token -> also private data is queried online
+tb_client = TestbedClient()
+# tb_client.connect()
 
 for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_list):
     # prepare simulation
