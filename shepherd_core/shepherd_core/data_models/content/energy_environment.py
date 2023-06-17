@@ -4,11 +4,8 @@ from pathlib import Path
 from pydantic import PositiveFloat
 from pydantic import root_validator
 
+from ...testbed_client import tb_client
 from ..base.content import ContentModel
-from ..base.fixture import Fixtures
-
-fixture_path = Path(__file__).resolve().with_name("energy_environment_fixture.yaml")
-fixtures = Fixtures(fixture_path, "EnergyEnvironment")
 
 
 class EnergyDType(str, Enum):
@@ -35,6 +32,7 @@ class EnergyEnvironment(ContentModel):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = fixtures.lookup(values)
-        values, _ = fixtures.inheritance(values)
+        model_name = type(cls).__name__
+        values = tb_client.query(model_name, values.get("id"), values.get("name"))
+        values, _ = tb_client.inheritance(model_name, values)
         return values

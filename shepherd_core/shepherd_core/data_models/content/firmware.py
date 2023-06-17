@@ -8,12 +8,9 @@ from pydantic import root_validator
 from pydantic import validate_arguments
 
 from ... import fw_tools
+from ...testbed_client import tb_client
 from ..base.content import ContentModel
-from ..base.fixture import Fixtures
 from ..testbed.mcu import MCU
-
-fixture_path = Path(__file__).resolve().with_name("firmware_fixture.yaml")
-fixtures = Fixtures(fixture_path, "firmware")
 
 
 class FirmwareDType(str, Enum):
@@ -50,8 +47,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = fixtures.lookup(values)
-        values, _ = fixtures.inheritance(values)
+        model_name = type(cls).__name__
+        values = tb_client.query(model_name, values.get("id"), values.get("name"))
+        values, _ = tb_client.inheritance(model_name, values)
         return values
 
     @classmethod

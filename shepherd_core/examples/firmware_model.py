@@ -33,3 +33,12 @@ fw2 = Firmware.from_firmware(
 # store embedded data with .extract_firmware(path)
 
 # Option 3 - fully automatic (with login), TODO
+
+"""
+
+fw3 = Firmware.from_firmware(
+    file=path_elf,
+    name="msp_deep_sleep"
+)
+
+"""

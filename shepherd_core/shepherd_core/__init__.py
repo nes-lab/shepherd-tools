@@ -16,6 +16,7 @@ from .logger import get_verbose_level
 from .logger import logger
 from .logger import set_verbose_level
 from .reader import BaseReader
+from .testbed_client import TestbedClient
 from .writer import BaseWriter
 
 __version__ = "2023.6.5"
@@ -33,4 +34,5 @@ __all__ = [
     "CalibrationPair",
     "Calc_t",
     "Compression",
+    "TestbedClient",
 ]

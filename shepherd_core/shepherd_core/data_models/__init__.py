@@ -1,13 +1,10 @@
-from pathlib import Path
-from typing import Optional
-
 from .base.calibration import CalibrationCape
 from .base.calibration import CalibrationEmulator
 from .base.calibration import CalibrationHarvester
 from .base.calibration import CalibrationPair
 from .base.calibration import CalibrationSeries
 from .base.content import ContentModel
-from .base.fixture import Fixtures
+from .base.fixture import Fixture
 from .base.shepherd import ShpModel
 from .base.wrapper import Wrapper
 from .content.energy_environment import EnergyDType
@@ -34,7 +31,7 @@ __all__ = [
     "CalibrationPair",
     "ContentModel",
     "ShpModel",
-    "Fixtures",
+    "Fixture",
     "Wrapper",
     # User Content
     "Experiment",
@@ -51,18 +48,4 @@ __all__ = [
     "EnergyDType",
     "VirtualSourceConfig",
     "VirtualHarvesterConfig",
-    # test-container & placeholder
-    "fixtures",
 ]
-
-
-class FixtureSet:
-    def __init__(self):
-        self.path = Path(__file__) / "fixtures"
-
-    def load(self, path: Optional[Path] = None) -> None:
-        if path:
-            self.path = path
-
-
-fixtures = FixtureSet()

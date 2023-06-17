@@ -98,10 +98,12 @@ What does not work:
 from pathlib import Path
 from typing import Union
 from pydantic import root_validator
-from shepherd_core.data_models import Fixtures
+from shepherd_core.data_models import Fixture
 from shepherd_core.data_models import ShpModel
 
-fixtures = Fixtures(Path("fix.yaml"), "testbed.target")
+fixtures = Fixture(Path("fix.yaml"), "testbed.target")
+
+
 class Target(ShpModel, title="Target Node (DuT)"):
     @root_validator(pre=True)
     def query_database(cls, values: Union[dict, str, int]):

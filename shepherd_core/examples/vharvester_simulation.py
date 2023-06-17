@@ -8,8 +8,8 @@
 from pathlib import Path
 
 from shepherd_core import BaseReader
+from shepherd_core import TestbedClient
 from shepherd_core.data_models import VirtualHarvesterConfig
-from shepherd_core.data_models import fixtures
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
 from shepherd_core.vsource import VirtualHarvesterModel
 from shepherd_data import ivonne
@@ -53,7 +53,7 @@ with BaseReader(file_ivcurve, verbose=False) as file:
     )
 
 # allow to query models by name/id (demo-dataset)
-fixtures.load()
+tb_client = TestbedClient(server="demo_fixture")
 
 # Simulation
 for hrv_name in hrv_list:

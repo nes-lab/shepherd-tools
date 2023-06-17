@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from pydantic import confloat
 from pydantic import conint
 from pydantic import conlist
@@ -7,14 +5,11 @@ from pydantic import root_validator
 
 from ...commons import samplerate_sps_default
 from ...logger import logger
+from ...testbed_client import tb_client
 from .. import ShpModel
 from ..base.content import ContentModel
-from ..base.fixture import Fixtures
 from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvesterConfig
-
-fixture_path = Path(__file__).resolve().with_name("virtual_source_fixture.yaml")
-fixtures = Fixtures(fixture_path, "VirtualSourceConfig")
 
 
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
@@ -37,7 +32,9 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     interval_startup_delay_drain_ms: confloat(ge=0, le=10_000) = 0
 
-    harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
+    harvester: VirtualHarvesterConfig = {
+        "name": "mppt_opt"
+    }  # VirtualHarvesterConfig(name="mppt_opt")
 
     V_input_max_mV: confloat(ge=0, le=10_000) = 10_000
     I_input_max_mA: confloat(ge=0, le=4.29e3) = 4_200
@@ -108,8 +105,9 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        model_name = type(cls).__name__
+        values = tb_client.query(model_name, values.get("id"), values.get("name"))
+        values, chain = tb_client.inheritance(model_name, values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values
 

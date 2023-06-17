@@ -6,12 +6,12 @@ from pydantic import conlist
 from pydantic import root_validator
 
 from .. import logger
-from ..data_models import Fixtures
+from ..data_models import Fixture
 from ..data_models import ShpModel
 from .content import VirtualHarvesterConfig
 
 fixture_path = Path(__file__).resolve().with_name("content/virtual_source_fixture.yaml")
-fixtures = Fixtures(fixture_path, "content.VirtualSource")
+fixtures = Fixture(fixture_path, "content.VirtualSource")
 
 
 @DeprecationWarning

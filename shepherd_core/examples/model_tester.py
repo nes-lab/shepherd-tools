@@ -17,7 +17,7 @@ How to define an experiment:
     - submittable through web-interface
 
 """
-from shepherd_core.data_models import fixtures
+from shepherd_core import TestbedClient
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import VirtualHarvesterConfig
@@ -30,7 +30,7 @@ from shepherd_core.data_models.task import TestbedTasks
 Experiment.schema_to_file("experiment_schema.yaml")
 
 # allow to query models by name/id (demo-dataset)
-fixtures.load()
+tb_client = TestbedClient(server="demo_fixture")
 
 # Defining an Experiment in Python
 hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")

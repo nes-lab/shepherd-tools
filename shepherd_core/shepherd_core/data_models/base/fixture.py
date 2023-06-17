@@ -1,5 +1,7 @@
 import copy
+import os
 from pathlib import Path
+from typing import Dict
 from typing import Optional
 
 import yaml
@@ -15,41 +17,40 @@ from .wrapper import Wrapper
 # - based_on
 
 
-class Fixtures:
+class Fixture:
     """Current implementation of a file-based database"""
 
-    def __init__(self, file_path: Path, model_name: str):
-        self.path: Path = file_path.resolve()
-        self.name: str = model_name
+    def __init__(self, model_type: str):
+        self.model_type: str = model_type.lower()
         self.elements_by_name: dict = {}
         self.elements_by_id: dict = {}
-        with open(self.path) as fix_data:
-            fixtures = yaml.safe_load(fix_data)
-            for fixture in fixtures:
-                if not isinstance(fixture, dict):
-                    continue
-                fwrap = Wrapper(**fixture)
-                if fwrap.datatype.lower() != model_name.lower():
-                    continue
-                if "name" not in fwrap.parameters:
-                    continue
-                name = str(fwrap.parameters["name"]).lower()
-                _id = fwrap.parameters["id"]
-                data = fwrap.parameters
-                # ⤷ TODO: could get easier if not model_name but class used
-                self.elements_by_name[name] = data
-                self.elements_by_id[_id] = data
-        # for iterator
+        # Iterator reset
         self._iter_index: int = 0
+        self._iter_list: list = list(self.elements_by_name.values())
+
+    def insert(self, data: Wrapper) -> None:
+        # ⤷ TODO: could get easier
+        #    - when not model_name but class used
+        #    - use doubleref name->id->data (safes RAM)
+        if data.datatype.lower() != self.model_type.lower():
+            return
+        if "name" not in data.parameters:
+            return
+        name = str(data.parameters["name"]).lower()
+        _id = data.parameters["id"]
+        data = data.parameters
+        self.elements_by_name[name] = data
+        self.elements_by_id[_id] = data
+        # update iterator
         self._iter_list: list = list(self.elements_by_name.values())
 
     def __getitem__(self, key) -> dict:
         key = key.lower()
-        if key.lower() in self.elements_by_name:
-            return self.elements_by_name[key.lower()]
+        if key in self.elements_by_name:
+            return self.elements_by_name[key]
         if key in self.elements_by_id:
             return self.elements_by_id[key]
-        raise ValueError(f"{self.name} '{key}' not found!")
+        raise ValueError(f"{self.model_type} '{key}' not found!")
 
     def __iter__(self):
         self._iter_index = 0
@@ -90,7 +91,7 @@ class Fixtures:
                     )
                 chain.append(base_name)
             fixture_base = copy.copy(self[fixture_name])
-            logger.debug("'%s' will inherit from '%s'", self.name, fixture_name)
+            logger.debug("'%s' will inherit from '%s'", self.model_type, fixture_name)
             fixture_base["name"] = fixture_name
             chain.append(fixture_name)
             base_dict, chain = self.inheritance(values=fixture_base, chain=chain)
@@ -123,7 +124,7 @@ class Fixtures:
 
         return values, chain
 
-    def lookup(self, values: dict) -> dict:
+    def lookup_to_remove(self, values: dict) -> dict:  # TODO
         """init by name/id for none existing instances raise Exception"""
         if len(values) == 1 and list(values.keys())[0] in ["id", "name"]:
             value = list(values.values())[0]
@@ -133,9 +134,94 @@ class Fixtures:
                 values = {"id": value}
             else:
                 raise ValueError(
-                    f"Initialization of {self.name} by name or ID failed - {values} is unknown!"
+                    f"Initialization of {self.model_type} by name or ID failed - "
+                    f"{values} is unknown!"
                 )
         return values
 
-    def load_from_testbed(self):
-        pass  # TODO
+    def query_id(self, _id: int):
+        if isinstance(_id, int) and _id in self.elements_by_id:
+            return self.elements_by_id[_id]
+        else:
+            raise ValueError(
+                f"Initialization of {self.model_type} by ID failed - {_id} is unknown!"
+            )
+
+    def query_name(self, name: str):
+        if isinstance(name, str) and name.lower() in self.elements_by_name:
+            return self.elements_by_name[name.lower()]
+        else:
+            raise ValueError(
+                f"Initialization of {self.model_type} by name failed - {name} is unknown!"
+            )
+
+
+class Fixtures:
+    suffix = ".yaml"
+
+    def __init__(self, file_path: Optional[Path] = None):
+        if file_path is None:
+            self.file_path = Path(__file__).parent.parent.resolve()
+        else:
+            self.file_path = file_path
+        self.components: Dict[str, Fixture] = {}
+
+        if self.file_path.is_file():
+            files = [self.file_path]
+        elif self.file_path.is_dir():
+            files = get_files(self.file_path, self.suffix)
+        else:
+            raise ValueError("Path must either be file or directory (or empty)")
+
+        for file in files:
+            self.insert_file(file)
+
+    def insert_file(self, file: Path):
+        with open(file) as fd:
+            fixtures = yaml.safe_load(fd)
+            for fixture in fixtures:
+                if not isinstance(fixture, dict):
+                    continue
+                fix_wrap = Wrapper(**fixture)
+                self.insert_model(fix_wrap)
+
+    def insert_model(self, data: Wrapper):
+        fix_type = data.datatype.lower()
+        if self.components.get(fix_type) is None:
+            self.components[fix_type] = Fixture(model_type=fix_type)
+        self[fix_type].insert(data)
+
+    def __getitem__(self, key) -> Fixture:
+        key = key.lower()
+        if key in self.components:
+            return self.components[key]
+        raise ValueError(f"Component '{key}' not found!")
+
+    def keys(self):  # -> _dict_keys[Any, Any]:
+        return self.components.keys()
+
+    def to_file(self, file: Path):
+        raise RuntimeError("Not Implemented, TODO")
+
+
+def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> list:
+    if recursion_depth == 0:
+        suffix = suffix.lower()
+    dir_items = os.scandir(start_path)
+    recursion_depth += 1
+    files = []
+
+    for item in dir_items:
+        if item.is_dir():
+            files += get_files(item.path, suffix, recursion_depth)
+            continue
+        else:
+            item_name = str(item.name).lower()
+            item_ext = item_name.split(".")[-1]
+            if item_ext == suffix and item_ext != item_name:
+                files.append(item.path)
+            if suffix == "" and item_ext == item_name:
+                files.append(item.path)
+    if recursion_depth == 1 and len(files) > 0:
+        logger.debug(" -> got %s files with the suffix '%s'", len(files), suffix)
+    return files
