@@ -10,11 +10,11 @@ from pydantic import constr
 from pydantic import root_validator
 from pydantic import validate_arguments
 
-from .data_models.base.content import IdInt
-from .data_models.base.content import NameStr
-from .data_models.base.content import SafeStr
-from .data_models.base.content import id_default
-from .data_models.base.shepherd import ShpModel
+from ..data_models.base.content import IdInt
+from ..data_models.base.content import NameStr
+from ..data_models.base.content import SafeStr
+from ..data_models.base.content import id_default
+from ..data_models.base.shepherd import ShpModel
 
 
 @validate_arguments

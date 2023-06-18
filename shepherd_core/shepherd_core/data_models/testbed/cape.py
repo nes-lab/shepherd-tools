@@ -39,6 +39,5 @@ class Cape(ShpModel, title="Shepherd-Cape"):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = tb_client.query(cls.__name__, values.get("id"), values.get("name"))
-        values, _ = tb_client.inheritance(cls.__name__, values)
+        values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values

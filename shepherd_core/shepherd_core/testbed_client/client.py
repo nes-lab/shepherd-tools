@@ -5,11 +5,11 @@ from typing import Union
 import requests
 from pydantic import validate_arguments
 
-from .commons import testbed_server_default
-from .data_models.base.shepherd import ShpModel
-from .data_models.base.wrapper import Wrapper
-from .testbed_fixture import Fixtures
-from .testbed_user import User
+from ..commons import testbed_server_default
+from ..data_models.base.shepherd import ShpModel
+from ..data_models.base.wrapper import Wrapper
+from .fixtures import Fixtures
+from .user_model import User
 
 
 class TestbedClient:
@@ -71,7 +71,19 @@ class TestbedClient:
             self._fixtures.insert_model(wrap)
         return True
 
-    def query(
+    def query_ids(self, model_type: str) -> list:
+        if self._connected:
+            raise RuntimeError("Not Implemented, TODO")
+        else:
+            return list(self._fixtures[model_type].elements_by_id.keys())
+
+    def query_names(self, model_type: str) -> list:
+        if self._connected:
+            raise RuntimeError("Not Implemented, TODO")
+        else:
+            return list(self._fixtures[model_type].elements_by_name.keys())
+
+    def query_item(
         self, model_type: str, uid: Optional[int] = None, name: Optional[str] = None
     ) -> dict:
         if self._connected:
@@ -101,13 +113,34 @@ class TestbedClient:
             return True
         return False
 
-    def inheritance(self, model_type: str, values: dict) -> (dict, list):
+    def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
         if self._connected:
             raise RuntimeError("Not Implemented, TODO")
         else:
             return self._fixtures[model_type].inheritance(values)
 
-    def add_account_data(self, values: dict) -> dict:
+    def try_completing_model(self, model_type: str, values: dict) -> (dict, list):
+        """init by name/id, for none existing instances raise Exception"""
+        if len(values) == 1 and list(values.keys())[0] in ["id", "name"]:
+            value = list(values.values())[0]
+            if (
+                isinstance(value, str)
+                and value.lower() in self._fixtures[model_type].elements_by_name
+            ):
+                values = self.query_item(model_type, name=value)
+            elif (
+                isinstance(value, int)
+                and value in self._fixtures[model_type].elements_by_id
+            ):
+                # TODO: still depending on _fixture
+                values = self.query_item(model_type, uid=value)
+            else:
+                raise ValueError(
+                    f"Query {model_type} by name / ID failed - " f"{values} is unknown!"
+                )
+        return self.try_inheritance(model_type, values)
+
+    def fill_in_user_data(self, values: dict) -> dict:
         if self._user:
             if values.get("owner"):
                 values["owner"] = self._user.name

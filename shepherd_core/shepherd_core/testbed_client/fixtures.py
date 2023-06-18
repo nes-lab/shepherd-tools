@@ -6,8 +6,8 @@ from typing import Optional
 
 import yaml
 
-from .data_models.base.wrapper import Wrapper
-from .logger import logger
+from ..data_models.base.wrapper import Wrapper
+from ..logger import logger
 
 # Proposed field-name:
 # - inheritance
@@ -22,8 +22,8 @@ class Fixture:
 
     def __init__(self, model_type: str):
         self.model_type: str = model_type.lower()
-        self.elements_by_name: dict = {}
-        self.elements_by_id: dict = {}
+        self.elements_by_name: Dict[str, dict] = {}
+        self.elements_by_id: Dict[int, dict] = {}
         # Iterator reset
         self._iter_index: int = 0
         self._iter_list: list = list(self.elements_by_name.values())
@@ -100,6 +100,7 @@ class Fixture:
                 base_dict[key] = value
             values = base_dict
 
+        # TODO: everything after this not needed anymore?!?
         elif "name" in values and values.get("name").lower() in self.elements_by_name:
             fixture_name = values.get("name").lower()
             fixture_base = copy.copy(self.elements_by_name[fixture_name])
@@ -124,22 +125,7 @@ class Fixture:
 
         return values, chain
 
-    def lookup_to_remove(self, values: dict) -> dict:  # TODO
-        """init by name/id for none existing instances raise Exception"""
-        if len(values) == 1 and list(values.keys())[0] in ["id", "name"]:
-            value = list(values.values())[0]
-            if isinstance(value, str) and value.lower() in self.elements_by_name:
-                values = {"name": value}
-            elif isinstance(value, int) and value in self.elements_by_id:
-                values = {"id": value}
-            else:
-                raise ValueError(
-                    f"Initialization of {self.model_type} by name or ID failed - "
-                    f"{values} is unknown!"
-                )
-        return values
-
-    def query_id(self, _id: int):
+    def query_id(self, _id: int) -> dict:
         if isinstance(_id, int) and _id in self.elements_by_id:
             return self.elements_by_id[_id]
         else:
@@ -161,7 +147,7 @@ class Fixtures:
 
     def __init__(self, file_path: Optional[Path] = None):
         if file_path is None:
-            self.file_path = Path(__file__).parent.resolve() / "data_models"
+            self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
         else:
             self.file_path = file_path
         self.components: Dict[str, Fixture] = {}

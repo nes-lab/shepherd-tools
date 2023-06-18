@@ -22,7 +22,7 @@ fw1 = Firmware(
     group="test",
 )
 
-# Option 2 - semi-automatic
+# Option 2 - semi-automatic -> MCU and data-type get derived
 
 fw2 = Firmware.from_firmware(
     file=path_elf,
@@ -33,8 +33,11 @@ fw2 = Firmware.from_firmware(
 
 # store embedded data with .extract_firmware(path)
 
-# Option 3 - fully automatic (with login),
+# Option 3 - fully automatic (with login) -> owner and group get prefilled
 
 tb_client = TestbedClient()
-# tb_client.connect(token="your_private_login_token")
-# fw3 = Firmware.from_firmware(file=path_elf, name="msp_deep_sleep")
+do_connect = False
+
+if do_connect:
+    tb_client.connect(token="your_personal_login_token")  # noqa: S106
+    fw3 = Firmware.from_firmware(file=path_elf, name="msp_deep_sleep")

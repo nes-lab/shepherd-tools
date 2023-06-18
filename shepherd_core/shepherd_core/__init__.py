@@ -16,7 +16,8 @@ from .logger import get_verbose_level
 from .logger import logger
 from .logger import set_verbose_level
 from .reader import BaseReader
-from .testbed_client import TestbedClient
+from .testbed_client.client import TestbedClient
+from .testbed_client.client import tb_client
 from .writer import BaseWriter
 
 __version__ = "2023.6.5"
@@ -35,4 +36,5 @@ __all__ = [
     "Calc_t",
     "Compression",
     "TestbedClient",
+    "tb_client",  # using this (instead of the Class) is the cleaner, but less pythonic way
 ]

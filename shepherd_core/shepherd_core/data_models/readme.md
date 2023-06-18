@@ -105,11 +105,11 @@ fixtures = Fixture(Path("fix.yaml"), "testbed.target")
 
 
 class Target(ShpModel, title="Target Node (DuT)"):
-    @root_validator(pre=True)
-    def query_database(cls, values: Union[dict, str, int]):
-        values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
-        return values
+  @root_validator(pre=True)
+  def query_database(cls, values: Union[dict, str, int]):
+    values = fixtures.try_completing_model(values)
+    values, chain = fixtures.try_inheritance(values)
+    return values
 ```
 
 what might work:

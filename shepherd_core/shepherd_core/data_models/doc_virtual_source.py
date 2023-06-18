@@ -224,7 +224,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values = fixtures.try_completing_model(values)
+        values, chain = fixtures.try_inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values

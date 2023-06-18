@@ -103,8 +103,8 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = tb_client.query(cls.__name__, values.get("id"), values.get("name"))
-        values, chain = tb_client.inheritance(cls.__name__, values)
+        values, chain = tb_client.try_completing_model(cls.__name__, values)
+        values = tb_client.fill_in_user_data(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values
 
