@@ -1,5 +1,4 @@
 from enum import Enum
-from pathlib import Path
 from typing import Optional
 from typing import Tuple
 
@@ -9,14 +8,11 @@ from pydantic import root_validator
 
 from ...commons import samplerate_sps_default
 from ...logger import logger
+from ...testbed_client import tb_client
 from ..base.calibration import CalibrationHarvester
 from ..base.content import ContentModel
-from ..base.fixture import Fixtures
 from ..base.shepherd import ShpModel
 from .energy_environment import EnergyDType
-
-fixture_path = Path(__file__).resolve().with_name("virtual_harvester_fixture.yaml")
-fixtures = Fixtures(fixture_path, "VirtualHarvesterConfig")
 
 
 class AlgorithmDType(str, Enum):
@@ -70,8 +66,8 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values, chain = tb_client.try_completing_model(cls.__name__, values)
+        values = tb_client.fill_in_user_data(values)
         if values["name"] == "neutral":
             # TODO: same test is later done in calc_algorithm_num() again
             raise ValueError("Resulting Harvester can't be neutral")

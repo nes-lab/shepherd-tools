@@ -15,9 +15,9 @@ Compromises:
 import math
 from typing import Optional
 
-from shepherd_core import CalibrationEmulator
-from shepherd_core.data_models.content.virtual_source import LUT_SIZE
-from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
+from ..data_models import CalibrationEmulator
+from ..data_models.content.virtual_source import LUT_SIZE
+from ..data_models.content.virtual_source import ConverterPRUConfig
 
 
 class PruCalibration:

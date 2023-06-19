@@ -15,6 +15,13 @@ This Repo contains python packages for the [shepherd](https://github.com/orgua/s
 
 **Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
 
+# Installation
+
+The Library is available via PyPI and can be installed with
+
+```shell
+  pip install shepherd-data
+```
 
 ## Release-Procedure
 

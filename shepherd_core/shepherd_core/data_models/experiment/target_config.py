@@ -22,6 +22,7 @@ class TargetConfig(ShpModel, title="Target Config"):
     target_IDs: conlist(item_type=IdInt, min_items=1, max_items=64)
     custom_IDs: Optional[conlist(item_type=IdInt16, min_items=1, max_items=64)]
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
+    #   if no custom ID is provided, the original ID of target is used
 
     energy_env: EnergyEnvironment  # alias: input
     virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")

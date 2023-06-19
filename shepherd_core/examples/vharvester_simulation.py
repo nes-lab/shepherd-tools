@@ -8,8 +8,8 @@
 from pathlib import Path
 
 from shepherd_core import BaseReader
+from shepherd_core import TestbedClient
 from shepherd_core.data_models import VirtualHarvesterConfig
-from shepherd_core.data_models import fixtures
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
 from shepherd_core.vsource import VirtualHarvesterModel
 from shepherd_data import ivonne
@@ -34,6 +34,14 @@ hrv_list = [
     "mppt_opt",
 ]
 
+# for online-queries the lib can be connected to the testbed-server
+# NOTE: there are 3 states:
+#    - unconnected -> demo-fixture is queried (locally)
+#    - connected -> publicly available data is queried online
+#    - logged in with token -> also private data is queried online
+tb_client = TestbedClient()
+# tb_client.connect()
+
 # convert IVonne to IVCurve
 if not file_ivcurve.exists():
     with ivonne.Reader(file_ivonne) as db:
@@ -51,9 +59,6 @@ with BaseReader(file_ivcurve, verbose=False) as file:
         f"\tI_in_max = {I_in_max * 1e3:.3f} mA\n"
         f"\twindow_size = {window_size} n\n",
     )
-
-# allow to query models by name/id (demo-dataset)
-fixtures.load()
 
 # Simulation
 for hrv_name in hrv_list:

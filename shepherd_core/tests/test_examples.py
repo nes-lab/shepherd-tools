@@ -17,6 +17,7 @@ examples = [
     "vsource_simulation.py",
     "vharvester_simulation.py",
     "firmware_modification.py",
+    "firmware_model.py",
 ]
 
 

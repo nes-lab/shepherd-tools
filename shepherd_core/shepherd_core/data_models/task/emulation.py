@@ -11,8 +11,6 @@ from pydantic import conint
 from pydantic import root_validator
 from pydantic import validate_arguments
 
-from shepherd_core.data_models.testbed import Testbed
-
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
 from ..content.virtual_source import VirtualSourceConfig
@@ -21,6 +19,7 @@ from ..experiment.observer_features import GpioActuation
 from ..experiment.observer_features import GpioTracing
 from ..experiment.observer_features import PowerTracing
 from ..experiment.observer_features import SystemLogging
+from ..testbed import Testbed
 from ..testbed.cape import TargetPort
 
 
@@ -78,9 +77,7 @@ class EmulationTask(ShpModel):
     #   - "main" will mirror main target voltage
 
     # sub-elements, could be partly moved to emulation
-    virtual_source: VirtualSourceConfig = VirtualSourceConfig(
-        name="neutral"
-    )  # {"name": "neutral"}
+    virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
     # ⤷ Use the desired setting for the virtual source,
     #   provide parameters or name like BQ25570
 

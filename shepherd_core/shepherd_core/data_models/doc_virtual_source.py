@@ -5,14 +5,13 @@ from pydantic import confloat
 from pydantic import conlist
 from pydantic import root_validator
 
-from shepherd_core.data_models import Fixtures
-from shepherd_core.data_models import ShpModel
-
 from .. import logger
+from ..data_models import Fixture
+from ..data_models import ShpModel
 from .content import VirtualHarvesterConfig
 
 fixture_path = Path(__file__).resolve().with_name("content/virtual_source_fixture.yaml")
-fixtures = Fixtures(fixture_path, "content.VirtualSource")
+fixtures = Fixture(fixture_path, "content.VirtualSource")
 
 
 @DeprecationWarning
@@ -225,7 +224,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
-        values = fixtures.lookup(values)
-        values, chain = fixtures.inheritance(values)
+        values = fixtures.try_completing_model(values)
+        values, chain = fixtures.try_inheritance(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values

@@ -10,8 +10,7 @@ NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 """
 from typing import Optional
 
-from shepherd_core import CalibrationEmulator
-
+from ..data_models import CalibrationEmulator
 from ..data_models import EnergyDType
 from ..data_models import VirtualSourceConfig
 from ..data_models.content.virtual_harvester import HarvesterPRUConfig
