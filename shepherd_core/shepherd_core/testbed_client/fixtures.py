@@ -100,7 +100,7 @@ class Fixture:
                 base_dict[key] = value
             values = base_dict
 
-        # TODO: everything after this not needed anymore?!?
+        # TODO: cleanup and simplify - use fill_mode() and line up with web-interface
         elif "name" in values and values.get("name").lower() in self.elements_by_name:
             fixture_name = values.get("name").lower()
             fixture_base = copy.copy(self.elements_by_name[fixture_name])
@@ -124,6 +124,14 @@ class Fixture:
                 values = fixture_base
 
         return values, chain
+
+    @staticmethod
+    def fill_model(model: dict, base: dict) -> dict:
+        base = copy.copy(base)
+        for key, value in model.items():
+            # keep previous entries
+            base[key] = value
+        return base
 
     def query_id(self, _id: int) -> dict:
         if isinstance(_id, int) and _id in self.elements_by_id:

@@ -19,8 +19,36 @@ Users probably want to use the [datalib](https://pypi.org/project/shepherd_data)
 This library allows to
 
 - read and write shepherds h5-files
-- create experiments (all data-models included)
-- simulate the virtual source
+- create, read, write and convert experiments for the testbed (all data-models included)
+- simulate the virtual source, including virtual harvesters
+- connect and query the testbed via a webclient (TestbedClient)
 - work with target-firmwares
+  - embed, modify, verify, convert
+  - **Note**: working with ELF-files requires external dependencies, see ``Installation``-Chapter
 
 see [examples](/examples) for more details.
+
+# Installation
+
+The Library is available via PyPI and can be installed with
+
+```shell
+  pip install shepherd-core
+
+  # or for the full experience
+  pip install shepherd-data
+```
+
+If you are working with ``.elf``-files (embedding into experiments) you make "objcopy" accessible to python. In Ubuntu, you can either install ``build-essential`` or ``binutils-$ARCH`` with arch being ``msp430`` or ``arm-none-eabi`` for the nRF52.
+
+```shell
+  sudo apt install build-essential
+```
+
+For more advanced work with ``.elf``-files (modify value of symbols / target-ID) you should install
+
+```shell
+  pip install shepherd-core[elf]
+```
+
+and also make sure the prereqs for the [pwntools](https://docs.pwntools.com/en/stable/install.html) are met.
