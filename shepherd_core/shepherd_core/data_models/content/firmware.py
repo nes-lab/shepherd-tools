@@ -21,8 +21,15 @@ class FirmwareDType(str, Enum):
 
 
 suffix_to_DType: dict = {
+    # derived from wikipedia
     ".hex": FirmwareDType.base64_hex,
+    ".ihex": FirmwareDType.base64_hex,
+    ".ihx": FirmwareDType.base64_hex,
     ".elf": FirmwareDType.base64_elf,
+    ".bin": FirmwareDType.base64_elf,
+    ".o": FirmwareDType.base64_elf,
+    ".out": FirmwareDType.base64_elf,
+    ".so": FirmwareDType.base64_elf,
 }
 
 arch_to_mcu: dict = {
@@ -90,9 +97,15 @@ class Firmware(ContentModel, title="Firmware of Target"):
         if file.is_dir():
             file = file / self.name
         if self.data_type == FirmwareDType.base64_elf:
-            fw_tools.base64_to_file(self.data, file.with_suffix(".elf"))
+            file = file.with_suffix(".elf")
+            fw_tools.base64_to_file(self.data, file)
         elif self.data_type == FirmwareDType.base64_hex:
-            fw_tools.base64_to_file(self.data, file.with_suffix(".hex"))
+            file = file.with_suffix(".hex")
+            fw_tools.base64_to_file(self.data, file)
         elif isinstance(self.data, Path):
+            if self.data_type == FirmwareDType.path_elf:
+                file = file.with_suffix(".elf")
+            elif self.data_type == FirmwareDType.path_hex:
+                file = file.with_suffix(".hex")
             shutil.copy(self.data, file)
         return file

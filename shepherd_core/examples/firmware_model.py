@@ -14,7 +14,7 @@ path_elf = Path(__file__).parent.parent / "tests/fw_tools/build_msp.elf"
 # Option 1 - fully manual
 
 fw1 = Firmware(
-    name="msp_deep_sleep",
+    name="msp_deep_sleep1",
     data=fw_tools.file_to_base64(path_elf),
     data_type=FirmwareDType.base64_elf,
     mcu={"name": "MSP430FR"},
@@ -26,12 +26,15 @@ fw1 = Firmware(
 
 fw2 = Firmware.from_firmware(
     file=path_elf,
-    name="msp_deep_sleep",
+    name="msp_deep_sleep2",
     owner="example",
     group="test",
 )
 
-# store embedded data with .extract_firmware(path)
+# store embedded data
+path_elf2 = fw2.extract_firmware(Path(__file__).parent)
+print(f"stored firmware to '{path_elf2.name}'")
+
 
 # Option 3 - fully automatic (with login) -> owner and group get prefilled
 
@@ -40,4 +43,4 @@ do_connect = False
 
 if do_connect:
     tb_client.connect(token="your_personal_login_token")  # noqa: S106
-    fw3 = Firmware.from_firmware(file=path_elf, name="msp_deep_sleep")
+    fw3 = Firmware.from_firmware(file=path_elf, name="msp_deep_sleep3")

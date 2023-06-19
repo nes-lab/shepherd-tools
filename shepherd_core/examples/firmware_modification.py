@@ -16,9 +16,9 @@ path_elf = Path(__file__).with_name("firmware_msp.elf")
 # make local copy to play with
 shutil.copy(path_src, path_elf)
 
-print(f"UID old = {fw_tools.read_uid(path_elf)}")
+print(f"UID old = 0x{fw_tools.read_uid(path_elf):X}")
 fw_tools.modify_uid(path_elf, 0xCAFE)
-print(f"UID new = {fw_tools.read_uid(path_elf)}")
+print(f"UID new = 0x{fw_tools.read_uid(path_elf):X}")
 
 path_hex = fw_tools.elf_to_hex(path_elf)
 
