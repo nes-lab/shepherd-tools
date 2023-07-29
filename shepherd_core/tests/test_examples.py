@@ -14,6 +14,7 @@ def example_path() -> Path:
 
 examples = [
     "model_tester.py",
+    "uart_decode_waveform.py",
     "vsource_simulation.py",
     "vharvester_simulation.py",
     "firmware_modification.py",
