@@ -12,6 +12,7 @@ from .data_models.base.calibration import CalibrationHarvester
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.task import Compression
+from .inventory import Inventory
 from .logger import get_verbose_level
 from .logger import logger
 from .logger import set_verbose_level
@@ -20,7 +21,7 @@ from .testbed_client.client import TestbedClient
 from .testbed_client.client import tb_client
 from .writer import BaseWriter
 
-__version__ = "2023.7.1"
+__version__ = "2023.8.1"
 
 __all__ = [
     "BaseReader",
@@ -37,4 +38,5 @@ __all__ = [
     "Compression",
     "TestbedClient",
     "tb_client",  # using this (instead of the Class) is the cleaner, but less pythonic way
+    "Inventory",
 ]

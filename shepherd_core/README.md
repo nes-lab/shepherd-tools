@@ -53,3 +53,9 @@ For more advanced work with ``.elf``-files (modify value of symbols / target-ID)
 ```
 
 and also make sure the prereqs for the [pwntools](https://docs.pwntools.com/en/stable/install.html) are met.
+
+For creating an inventory of the host-system you should install
+
+```shell
+  pip install shepherd-core[inventory]
+```

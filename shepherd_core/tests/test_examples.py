@@ -13,6 +13,7 @@ def example_path() -> Path:
 
 
 examples = [
+    "inventory.py",
     "model_tester.py",
     "uart_decode_waveform.py",
     "vsource_simulation.py",
