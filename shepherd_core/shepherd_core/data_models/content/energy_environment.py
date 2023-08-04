@@ -1,5 +1,6 @@
 from enum import Enum
 from pathlib import Path
+from typing import Optional
 
 from pydantic import PositiveFloat
 from pydantic import root_validator
@@ -29,6 +30,12 @@ class EnergyEnvironment(ContentModel):
     valid: bool = False
 
     # TODO: scale up/down voltage/current
+
+    # additional descriptive metadata
+    light_source: Optional[str] = None
+    weather_conditions: Optional[str] = None
+    indoor: Optional[bool] = None
+    location: Optional[str] = None
 
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
