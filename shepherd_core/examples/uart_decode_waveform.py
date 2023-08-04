@@ -13,7 +13,7 @@ txt = uwd.get_text()
 # print(txt)
 
 print("t_init=", timeit("Uart(trace)", globals=globals(), number=1000))
-print("t_symb=", timeit("uwd.get_symbols(True)", globals=globals(), number=1000))
+print("t_symb=", timeit("uwd.get_symbols(True)", globals=globals(), number=100)*10)
 print("t_line=", timeit("uwd.get_lines(True)", globals=globals(), number=1000))
 print("t_text=", timeit("uwd.get_text(True)", globals=globals(), number=1000))
 # Results:
