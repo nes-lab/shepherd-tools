@@ -27,7 +27,7 @@ This library allows to
   - **Note**: working with ELF-files requires external dependencies, see ``Installation``-Chapter
 - decode waveforms -> uart
 
-see [examples](/examples) for more details.
+see [examples](./examples) for more details.
 
 # Installation
 
