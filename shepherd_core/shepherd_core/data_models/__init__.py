@@ -46,4 +46,4 @@ __all__ = [
     "EnergyDType",
     "VirtualSourceConfig",
     "VirtualHarvesterConfig",
-]
+]  # TODO: for pydantic 2 add @classmethod after @root_validator for cleaner type-checking

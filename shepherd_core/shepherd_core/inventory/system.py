@@ -52,9 +52,8 @@ class SystemInventory(ShpModel):
         }
 
         with suppress(FileNotFoundError):
-            model_dict["ptp"] = subprocess.run(  # noqa: S607, S603
-                ["ptp4l", "-v"]
-            ).stdout  # noqa: S607, S603
+            ret = subprocess.run(["/usr/sbin/ptp4l", "-v"])  # noqa: S603
+            model_dict["ptp"] = ret.stdout
             # alternative: check_output - seems to be lighter
 
         return cls(**model_dict)

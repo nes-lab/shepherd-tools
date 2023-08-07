@@ -35,7 +35,10 @@ Experiment.schema_to_file("experiment_schema.yaml")
 #    - connected -> publicly available data is queried online
 #    - logged in with token -> also private data is queried online
 tb_client = TestbedClient()
-# tb_client.connect()
+do_connect = False
+
+if do_connect:
+    tb_client.connect()
 
 # Defining an Experiment in Python
 hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")

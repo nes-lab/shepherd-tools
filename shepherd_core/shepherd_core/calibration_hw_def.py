@@ -37,8 +37,7 @@ def adc_current_to_raw(current: float) -> int:
     val_adc = G_INST_AMP * R_SHT * current
     # digital value according to ADC gain
     val_raw = int(val_adc * (2**M_ADC) / (G_ADC_I * V_REF_ADC))
-    val_raw = min(max(val_raw, 0), 2**M_ADC - 1)
-    return val_raw
+    return min(max(val_raw, 0), 2**M_ADC - 1)
 
 
 def adc_raw_to_current(value: int) -> float:
@@ -52,8 +51,7 @@ def adc_raw_to_current(value: int) -> float:
 def adc_voltage_to_raw(voltage: float) -> int:
     # digital value according to ADC gain
     val_raw = int(voltage * (2**M_ADC) / (G_ADC_V * V_REF_ADC))
-    val_raw = min(max(val_raw, 0), 2**M_ADC - 1)
-    return val_raw
+    return min(max(val_raw, 0), 2**M_ADC - 1)
 
 
 def adc_raw_to_voltage(value: int) -> float:
@@ -69,5 +67,4 @@ def dac_raw_to_voltage(value: int) -> float:
 
 def dac_voltage_to_raw(voltage: float) -> int:
     val_raw = int(voltage * (2**M_DAC) / (V_REF_DAC * G_DAC))
-    val_raw = min(max(val_raw, 0), 2**M_DAC - 1)
-    return val_raw
+    return min(max(val_raw, 0), 2**M_DAC - 1)

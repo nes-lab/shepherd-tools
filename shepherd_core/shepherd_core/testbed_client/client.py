@@ -74,27 +74,23 @@ class TestbedClient:
     def query_ids(self, model_type: str) -> list:
         if self._connected:
             raise RuntimeError("Not Implemented, TODO")
-        else:
-            return list(self._fixtures[model_type].elements_by_id.keys())
+        return list(self._fixtures[model_type].elements_by_id.keys())
 
     def query_names(self, model_type: str) -> list:
         if self._connected:
             raise RuntimeError("Not Implemented, TODO")
-        else:
-            return list(self._fixtures[model_type].elements_by_name.keys())
+        return list(self._fixtures[model_type].elements_by_name.keys())
 
     def query_item(
         self, model_type: str, uid: Optional[int] = None, name: Optional[str] = None
     ) -> dict:
         if self._connected:
             raise RuntimeError("Not Implemented, TODO")
-        else:
-            if uid:
-                return self._fixtures[model_type].query_id(uid)
-            if name:
-                return self._fixtures[model_type].query_name(name)
-            else:
-                raise ValueError("Query needs either uid or name of object")
+        if uid:
+            return self._fixtures[model_type].query_id(uid)
+        if name:
+            return self._fixtures[model_type].query_name(name)
+        raise ValueError("Query needs either uid or name of object")
 
     def _query_session_key(self) -> bool:
         if self._server:
@@ -116,8 +112,7 @@ class TestbedClient:
     def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
         if self._connected:
             raise RuntimeError("Not Implemented, TODO")
-        else:
-            return self._fixtures[model_type].inheritance(values)
+        return self._fixtures[model_type].inheritance(values)
 
     def try_completing_model(self, model_type: str, values: dict) -> (dict, list):
         """init by name/id, for none existing instances raise Exception"""

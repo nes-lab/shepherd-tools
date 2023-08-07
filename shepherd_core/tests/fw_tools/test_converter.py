@@ -11,8 +11,7 @@ from .conftest import files_elf
 def path_hex(tmp_path: Path) -> Path:
     path_elf = files_elf[0]
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
-    path_gen = fw_tools.elf_to_hex(path_elf, path_hex)
-    return path_gen
+    return fw_tools.elf_to_hex(path_elf, path_hex)
 
 
 @pytest.mark.parametrize("path_elf", files_elf)

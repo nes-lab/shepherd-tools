@@ -40,7 +40,10 @@ hrv_list = [
 #    - connected -> publicly available data is queried online
 #    - logged in with token -> also private data is queried online
 tb_client = TestbedClient()
-# tb_client.connect()
+do_connect = False
+
+if do_connect:
+    tb_client.connect()
 
 # convert IVonne to IVCurve
 if not file_ivcurve.exists():
