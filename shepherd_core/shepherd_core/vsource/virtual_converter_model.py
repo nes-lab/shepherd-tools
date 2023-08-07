@@ -31,7 +31,7 @@ class PruCalibration:
         # TODO: add feature "negative residue compensation" to here
 
     def conv_adc_raw_to_uV(self, voltage_raw: int) -> float:
-        raise RuntimeError("This Fn should not been used")
+        raise RuntimeError(f"This Fn should not been used (val={voltage_raw})")
 
     def conv_uV_to_dac_raw(self, voltage_uV: float) -> int:
         dac_raw = self.cal.dac_V_A.si_to_raw(float(voltage_uV) / (10**6))
@@ -115,16 +115,15 @@ class VirtualConverterModel:
             self.V_mid_uV = input_voltage_uV
             input_voltage_uV = 0.0
             # ⤷ input current (& power) is not evaluated
-        else:
-            if input_voltage_uV > self.V_mid_uV:
-                V_diff_uV = input_voltage_uV - self.V_mid_uV
-                V_drop_uV = input_current_nA * self.R_input_kOhm
-                if V_drop_uV > V_diff_uV:
-                    input_voltage_uV = self.V_mid_uV
-                else:
-                    input_voltage_uV -= V_drop_uV
+        elif input_voltage_uV > self.V_mid_uV:
+            V_diff_uV = input_voltage_uV - self.V_mid_uV
+            V_drop_uV = input_current_nA * self.R_input_kOhm
+            if V_drop_uV > V_diff_uV:
+                input_voltage_uV = self.V_mid_uV
             else:
-                input_voltage_uV = 0.0
+                input_voltage_uV -= V_drop_uV
+        else:
+            input_voltage_uV = 0.0
 
         if self.enable_boost:
             eta_inp = self.get_input_efficiency(input_voltage_uV, input_current_nA)
@@ -185,19 +184,17 @@ class VirtualConverterModel:
             if self.is_outputting:
                 if self.V_mid_uV < self.V_disable_output_threshold_uV:
                     self.is_outputting = False
-            else:
-                if self.V_mid_uV >= self.V_enable_output_threshold_uV:
-                    self.is_outputting = True
-                    self.V_mid_uV -= self.dV_enable_output_uV
+            elif self.V_mid_uV >= self.V_enable_output_threshold_uV:
+                self.is_outputting = True
+                self.V_mid_uV -= self.dV_enable_output_uV
 
         if check_thresholds or self._cfg.immediate_pwr_good_signal:
             # generate power-good-signal
             if self.power_good:
                 if self.V_mid_uV <= self._cfg.V_pwr_good_disable_threshold_uV:
                     self.power_good = False
-            else:
-                if self.V_mid_uV >= self._cfg.V_pwr_good_enable_threshold_uV:
-                    self.power_good = self.is_outputting
+            elif self.V_mid_uV >= self._cfg.V_pwr_good_enable_threshold_uV:
+                self.power_good = self.is_outputting
             # set batok pin to state ... TODO?
 
         if self.is_outputting or self.interval_startup_disabled_drain_n > 0:

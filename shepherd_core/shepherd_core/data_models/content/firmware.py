@@ -55,8 +55,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
     @root_validator(pre=True)
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
-        values = tb_client.fill_in_user_data(values)
-        return values
+        return tb_client.fill_in_user_data(values)
 
     @classmethod
     def from_firmware(cls, file: Path, **kwargs):

@@ -29,7 +29,7 @@ class VirtualHarvesterModel:
 
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1
-        # self.settle_steps: int = 0  # adc_ivcurve, noqa: E800
+        # self.settle_steps: int = 0  # adc_ivcurve, noqa: E800, ERA001
         self.interval_step: int = 2**30
 
         self.is_rising: bool = (self._cfg.hrv_mode & (2**1)) != 0
@@ -37,7 +37,7 @@ class VirtualHarvesterModel:
         # PO-Relevant, iv & adc
         self.volt_step_uV: int = self._cfg.voltage_step_uV
 
-        # self.power_last_raw: int = 0  # adc_mppt_po, noqa: E800
+        # self.power_last_raw: int = 0  # adc_mppt_po, noqa: E800, ERA001
 
         # globals for iv_cv
         self.voltage_hold: int = 0
@@ -143,18 +143,17 @@ class VirtualHarvesterModel:
                 else:
                     self.voltage_set_uV -= self.volt_step_uV
                 self.volt_step_uV *= 2
+            elif (power_now <= 0) and (self.voltage_set_uV > 0):
+                self.is_rising = True
+                self.volt_step_uV = self._cfg.voltage_step_uV
+                self.voltage_set_uV -= self.voltage_step_x4_uV
             else:
-                if (power_now <= 0) and (self.voltage_set_uV > 0):
-                    self.is_rising = True
-                    self.volt_step_uV = self._cfg.voltage_step_uV
-                    self.voltage_set_uV -= self.voltage_step_x4_uV
+                self.is_rising = not self.is_rising
+                self.volt_step_uV = self._cfg.voltage_step_uV
+                if self.is_rising:
+                    self.voltage_set_uV += self.volt_step_uV
                 else:
-                    self.is_rising = not self.is_rising
-                    self.volt_step_uV = self._cfg.voltage_step_uV
-                    if self.is_rising:
-                        self.voltage_set_uV += self.volt_step_uV
-                    else:
-                        self.voltage_set_uV -= self.volt_step_uV
+                    self.voltage_set_uV -= self.volt_step_uV
 
             self.power_last = power_now
 

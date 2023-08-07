@@ -26,7 +26,7 @@ repos:
       - id: isort
 
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
 
@@ -42,13 +42,13 @@ repos:
       - id: text-unicode-replacement-char
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.6.0
+    rev: v3.10.1
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
 
   - repo: https://github.com/pycqa/flake8
-    rev: 5.0.4
+    rev: 6.1.0
     hooks:
       - id: flake8
         additional_dependencies:
@@ -109,7 +109,7 @@ repos:
 #        exclude: \.(sch|brd|lbr)$
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.34.0
+    rev: v0.35.0
     hooks:
       - id: markdownlint
         args: ["--disable", "MD013"] # ignore line length

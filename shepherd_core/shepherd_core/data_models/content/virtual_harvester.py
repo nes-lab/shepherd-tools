@@ -110,7 +110,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
                 f"[{self.name}] Select valid harvest-algorithm for emulator, "
                 f"current usage = {self.algorithm}",
             )
-        elif num < algo_to_num["isc_voc"]:
+        if num < algo_to_num["isc_voc"]:
             raise ValueError(
                 f"[{self.name}] Select valid harvest-algorithm for harvester, "
                 f"current usage = {self.algorithm}",
@@ -145,13 +145,13 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         if for_emu:
             if dtype_in == EnergyDType.ivcurve:
                 return self.samples_n * (1 + self.wait_cycles)
-            elif dtype_in == EnergyDType.ivsample:
+            if dtype_in == EnergyDType.ivsample:
                 return 0
             # isc_voc: 2 * (1 + wait_cycles), noqa
             raise ValueError("Not Implemented")
-        else:
-            # only used by ivcurve algo (in ADC-Mode)
-            return self.samples_n
+
+        # only used by ivcurve algo (in ADC-Mode)
+        return self.samples_n
 
 
 u32 = conint(ge=0, lt=2**32)

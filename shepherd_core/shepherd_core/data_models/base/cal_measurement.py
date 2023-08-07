@@ -12,7 +12,7 @@ from .. import CalibrationHarvester
 from .. import CalibrationPair
 from .shepherd import ShpModel
 
-# TODO: move to shepherd_data to remove scipy-dependency
+# TODO: move to shepherd_data to remove scipy-dependency from _core
 
 
 class CalMeasurementPair(ShpModel):

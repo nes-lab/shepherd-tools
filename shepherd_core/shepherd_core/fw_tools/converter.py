@@ -18,10 +18,10 @@ def elf_to_hex(file_elf: Path, file_hex: Optional[Path] = None) -> Path:
     #  (hex of nRF / msp identical between the 3 $arch-versions)
     try:
         ret = subprocess.run(cmd)  # noqa: S603
-    except FileNotFoundError:
+    except FileNotFoundError as err:
         raise RuntimeError(
             "Objcopy not found -> are binutils or build-essential installed?"
-        )
+        ) from err
     if ret.returncode != 0:
         raise RuntimeError("Objcopy failed to convert ELF to iHEX")
     return file_hex

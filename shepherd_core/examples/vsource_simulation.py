@@ -43,7 +43,10 @@ I_mcu_active_A = 1e-3
 #    - connected -> publicly available data is queried online
 #    - logged in with token -> also private data is queried online
 tb_client = TestbedClient()
-# tb_client.connect()
+do_connect = False
+
+if do_connect:
+    tb_client.connect()
 
 for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_list):
     # prepare simulation

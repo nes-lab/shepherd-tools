@@ -2,6 +2,7 @@ import copy
 import os
 from pathlib import Path
 from typing import Dict
+from typing import List
 from typing import Optional
 
 import yaml
@@ -136,18 +137,16 @@ class Fixture:
     def query_id(self, _id: int) -> dict:
         if isinstance(_id, int) and _id in self.elements_by_id:
             return self.elements_by_id[_id]
-        else:
-            raise ValueError(
-                f"Initialization of {self.model_type} by ID failed - {_id} is unknown!"
-            )
+        raise ValueError(
+            f"Initialization of {self.model_type} by ID failed - {_id} is unknown!"
+        )
 
     def query_name(self, name: str):
         if isinstance(name, str) and name.lower() in self.elements_by_name:
             return self.elements_by_name[name.lower()]
-        else:
-            raise ValueError(
-                f"Initialization of {self.model_type} by name failed - {name} is unknown!"
-            )
+        raise ValueError(
+            f"Initialization of {self.model_type} by name failed - {name} is unknown!"
+        )
 
 
 class Fixtures:
@@ -195,10 +194,10 @@ class Fixtures:
         return self.components.keys()
 
     def to_file(self, file: Path):
-        raise RuntimeError("Not Implemented, TODO")
+        raise RuntimeError(f"Not Implemented, TODO (val={file})")
 
 
-def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> list:
+def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> List[Path]:
     if recursion_depth == 0:
         suffix = suffix.lower().split(".")[-1]
     dir_items = os.scandir(start_path)
@@ -207,15 +206,16 @@ def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> list:
 
     for item in dir_items:
         if item.is_dir():
-            files += get_files(item.path, suffix, recursion_depth)
+            files += get_files(Path(item.path), suffix, recursion_depth)
             continue
-        else:
-            item_name = str(item.name).lower()
-            item_ext = item_name.split(".")[-1]
-            if item_ext == suffix and item_ext != item_name:
-                files.append(item.path)
-            if suffix == "" and item_ext == item_name:
-                files.append(item.path)
+
+        item_name = str(item.name).lower()
+        item_ext = item_name.split(".")[-1]
+        if item_ext == suffix and item_ext != item_name:
+            files.append(Path(item.path))
+        if suffix == "" and item_ext == item_name:
+            files.append(Path(item.path))
+
     if recursion_depth == 1 and len(files) > 0:
         logger.debug(" -> got %s files with the suffix '%s'", len(files), suffix)
     return files

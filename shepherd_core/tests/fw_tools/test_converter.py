@@ -7,6 +7,13 @@ from shepherd_core import fw_tools
 from .conftest import files_elf
 
 
+@pytest.fixture()
+def path_hex(tmp_path: Path) -> Path:
+    path_elf = files_elf[0]
+    path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
+    return fw_tools.elf_to_hex(path_elf, path_hex)
+
+
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_elf_to_hex(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()

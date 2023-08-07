@@ -42,3 +42,10 @@ def file_ivsample(file_ivonne: Path) -> Path:
             tr_opt = mppt.OptimalTracker()
             db.convert_2_ivsamples(path, tracker=tr_opt, duration_s=1)
     return path
+
+
+@pytest.fixture
+def file_cleanup(file_isc_voc: Path, file_ivcurve: Path, file_ivsample: Path) -> None:
+    os.remove(file_isc_voc)
+    os.remove(file_ivcurve)
+    os.remove(file_ivsample)

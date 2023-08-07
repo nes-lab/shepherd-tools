@@ -25,8 +25,9 @@ This library allows to
 - work with target-firmwares
   - embed, modify, verify, convert
   - **Note**: working with ELF-files requires external dependencies, see ``Installation``-Chapter
+- decode waveforms -> uart
 
-see [examples](/examples) for more details.
+see [examples](./examples) for more details.
 
 # Installation
 
@@ -52,3 +53,9 @@ For more advanced work with ``.elf``-files (modify value of symbols / target-ID)
 ```
 
 and also make sure the prereqs for the [pwntools](https://docs.pwntools.com/en/stable/install.html) are met.
+
+For creating an inventory of the host-system you should install
+
+```shell
+  pip install shepherd-core[inventory]
+```

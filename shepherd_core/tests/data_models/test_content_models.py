@@ -76,6 +76,83 @@ def test_content_model_fw_from_hex(path_elf: Path, tmp_path: Path) -> None:
     )
 
 
+def test_content_model_fw_from_hex_failing(tmp_path) -> None:
+    path_hex = tmp_path / "some.hex"
+    with open(path_hex, "w") as fd:
+        fd.write("something")
+    with pytest.raises(ValueError):
+        Firmware.from_firmware(
+            file=path_hex,
+            name="dome",
+            owner="Obelix",
+            group="Gaul",
+        )
+
+
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_content_model_fw_extract_elf_to_dir(path_elf: Path, tmp_path: Path) -> None:
+    fw = Firmware.from_firmware(
+        file=path_elf,
+        name="dome",
+        owner="Obelix",
+        group="Gaul",
+    )
+    file = fw.extract_firmware(tmp_path)
+    assert file.is_file()
+    assert file.exists()
+
+
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_content_model_fw_extract_hex_to_dir(path_elf: Path, tmp_path: Path) -> None:
+    path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
+    path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
+    fw = Firmware.from_firmware(
+        file=path_hex,
+        name="dome",
+        owner="Obelix",
+        group="Gaul",
+    )
+    file = fw.extract_firmware(tmp_path)
+    assert file.is_file()
+    assert file.exists()
+
+
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_content_model_fw_extract_path_elf_to_dir(
+    path_elf: Path, tmp_path: Path
+) -> None:
+    fw = Firmware(
+        data=path_elf,
+        data_type=FirmwareDType.path_elf,
+        mcu={"name": "MSP430FR"},
+        name="dome",
+        owner="Obelix",
+        group="Gaul",
+    )
+    file = fw.extract_firmware(tmp_path)
+    assert file.is_file()
+    assert file.exists()
+
+
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_content_model_fw_extract_path_hex_to_dir(
+    path_elf: Path, tmp_path: Path
+) -> None:
+    path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
+    path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
+    fw = Firmware(
+        data=path_hex,
+        data_type=FirmwareDType.path_hex,
+        mcu={"name": "MSP430FR"},
+        name="dome",
+        owner="Obelix",
+        group="Gaul",
+    )
+    file = fw.extract_firmware(tmp_path)
+    assert file.is_file()
+    assert file.exists()
+
+
 def test_content_model_hrv_min() -> None:
     hrv = VirtualHarvesterConfig(
         id=9999,

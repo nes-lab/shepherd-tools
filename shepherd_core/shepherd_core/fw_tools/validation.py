@@ -63,6 +63,12 @@ def is_hex_nrf52(file: Path) -> bool:
     return False
 
 
+# TODO: elf-workflow needs work -> construct experiments without external dependencies
+#  - remove conversion to hex
+#  - use elftools to verify magic-bytes and similar things done for the hex
+#  https://github.com/eliben/pyelftools/wiki/User's-guide
+
+
 @validate_arguments
 def is_elf(file: Path) -> bool:
     if not os.path.isfile(file):
