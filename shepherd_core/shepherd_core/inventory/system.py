@@ -4,7 +4,13 @@ import time
 from contextlib import suppress
 from typing import Optional
 
-import psutil
+try:
+    import psutil
+
+    psutil_support = True
+except ImportError:
+    psutil_support = False
+
 from pydantic.types import PositiveInt
 
 from ..data_models import ShpModel
@@ -35,13 +41,20 @@ class SystemInventory(ShpModel):
 
     @classmethod
     def collect(cls):
-        ifs1 = psutil.net_if_addrs().items()
-        ifs2 = {
-            name: (_if[1].address, _if[0].address) for name, _if in ifs1 if len(_if) > 1
-        }
+        if psutil_support:
+            ifs1 = psutil.net_if_addrs().items()
+            ifs2 = {
+                name: (_if[1].address, _if[0].address)
+                for name, _if in ifs1
+                if len(_if) > 1
+            }
+            uptime = time.time() - psutil.boot_time()
+        else:
+            ifs2 = {}
+            uptime = 0
 
         model_dict = {
-            "uptime": time.time() - psutil.boot_time(),
+            "uptime": uptime,
             "system": platform.system(),
             "release": platform.release(),
             "version": platform.version(),
