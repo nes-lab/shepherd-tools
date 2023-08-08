@@ -28,7 +28,7 @@ class PythonInventory(ShpModel):
             "pydantic",
             "yaml",
             "shepherd_core",
-            "shepherd",
+            "shepherd_sheep",
         ]
 
         for module_name in module_names:
