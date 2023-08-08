@@ -7,10 +7,16 @@ from pydantic import constr
 from pydantic import root_validator
 from pydantic import validate_arguments
 
-from ... import fw_tools
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
 from ..testbed.mcu import MCU
+
+try:
+    from ... import fw_tools
+
+    elf_support = True
+except ImportError:
+    elf_support = False
 
 
 class FirmwareDType(str, Enum):
@@ -63,6 +69,10 @@ class Firmware(ContentModel, title="Firmware of Target"):
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually
         """
+        if not elf_support:
+            raise RuntimeError(
+                "Please install functionality with 'pip install shepherd_core[elf] -U'"
+            )
         kwargs["data"] = fw_tools.file_to_base64(file)
         if "data_type" not in kwargs:
             kwargs["data_type"] = suffix_to_DType[file.suffix.lower()]
@@ -93,6 +103,10 @@ class Firmware(ContentModel, title="Firmware of Target"):
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """
+        if not elf_support:
+            raise RuntimeError(
+                "Please install functionality with 'pip install shepherd_core[elf] -U'"
+            )
         if file.is_dir():
             file = file / self.name
         if self.data_type == FirmwareDType.base64_elf:
