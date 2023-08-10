@@ -1,8 +1,8 @@
 from datetime import datetime
 from pathlib import Path
+from typing import List
 from typing import Optional
 
-from pydantic import EmailStr
 from pydantic import validate_arguments
 
 from ..base.content import IdInt
@@ -35,9 +35,6 @@ class ObserverTasks(ShpModel):
     # MAIN PROCESS
     emulation: Optional[EmulationTask]
 
-    # POST PROCESS
-    email: Optional[EmailStr]
-
     # post_copy / cleanup, Todo: could also just intake emuTask
     #  - delete firmwares
     #  - decode uart
@@ -67,5 +64,17 @@ class ObserverTasks(ShpModel):
             fw1_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
             fw2_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
             emulation=EmulationTask.from_xp(xp, tb, tgt_id, root_path),
-            email=xp.email_results,
         )
+
+    def get_tasks(self) -> List[ShpModel]:
+        task_names = ["fw1_mod", "fw2_mod", "fw1_prog", "fw2_prog", "emulation"]
+        tasks = []
+
+        for task_name in task_names:
+            if not hasattr(self, task_name):
+                continue
+            task = getattr(self, task_name)
+            if task is None:
+                continue
+            tasks.append(task)
+        return tasks

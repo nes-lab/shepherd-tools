@@ -1,5 +1,6 @@
 from typing import Optional
 
+from pydantic import EmailStr
 from pydantic import conlist
 from pydantic import validate_arguments
 
@@ -16,6 +17,9 @@ class TestbedTasks(ShpModel):
     name: NameStr
     observer_tasks: conlist(item_type=ObserverTasks, min_items=1, max_items=64)
 
+    # POST PROCESS
+    email: Optional[EmailStr]
+
     @classmethod
     @validate_arguments
     def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None):
@@ -24,4 +28,10 @@ class TestbedTasks(ShpModel):
             tb = Testbed(name="shepherd_tud_nes")
         tgt_ids = xp.get_target_ids()
         obs_tasks = [ObserverTasks.from_xp(xp, tb, _id) for _id in tgt_ids]
-        return cls(name=xp.name, observer_tasks=obs_tasks)
+        return cls(name=xp.name, observer_tasks=obs_tasks, email=xp.email_results)
+
+    def get_observer_tasks(self, observer) -> Optional[ObserverTasks]:
+        for tasks in self.observer_tasks:
+            if observer in tasks.observer:
+                return tasks
+        return None
