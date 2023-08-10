@@ -1,7 +1,7 @@
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import constr
 from pydantic import root_validator
@@ -10,6 +10,7 @@ from pydantic import validate_arguments
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
 from ..testbed.mcu import MCU
+from ... import logger
 
 try:
     from ... import fw_tools
@@ -44,6 +45,61 @@ arch_to_mcu: dict = {
     "arm": {"name": "nrf52"},
     "nrf52": {"name": "nrf52"},
 }
+
+
+@validate_arguments
+def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path: Path) -> Path:
+    """
+    - base64-string will be transformed into file
+    - if data is a path the file will be copied to the destination
+    """
+    if not elf_support:
+        raise RuntimeError(
+            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+        )
+    if data_type == FirmwareDType.base64_elf:
+        file = file_path.with_suffix(".elf")
+        fw_tools.base64_to_file(data, file)
+    elif data_type == FirmwareDType.base64_hex:
+        file = file_path.with_suffix(".hex")
+        fw_tools.base64_to_file(data, file)
+    elif isinstance(data, Path):
+        if data_type == FirmwareDType.path_elf:
+            file = file_path.with_suffix(".elf")
+        elif data_type == FirmwareDType.path_hex:
+            file = file_path.with_suffix(".hex")
+        else:
+            raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
+        shutil.copy(data, file_path)
+    else:
+        raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
+    return file
+
+
+def modify_firmware(file_path: Path, custom_id: Optional[int] = None) -> None:
+    if custom_id is None:
+        return
+    if not elf_support:
+        raise RuntimeError(
+            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+        )
+    id_old = fw_tools.read_uid(file_path)
+    fw_tools.modify_uid(file_path, custom_id)
+    id_new = fw_tools.read_uid(file_path)
+    logger.debug("FW-Mod: UID changed from 0x%X to 0x%X", id_old, id_new)
+
+
+def firmware_to_hex(file_path: Path) -> Path:
+    if file_path.suffix == ".elf":
+        if not elf_support:
+            raise RuntimeError(
+                "Please install functionality with 'pip install shepherd_core[elf] -U'"
+            )
+        return fw_tools.elf_to_hex(file_path)
+    elif file_path.suffix == ".hex":
+        return file_path
+    else:
+        raise ValueError("FW2Hex: unknown suffix '%s', it should be .elf or .hex", file_path.suffix)
 
 
 class Firmware(ContentModel, title="Firmware of Target"):
@@ -103,22 +159,6 @@ class Firmware(ContentModel, title="Firmware of Target"):
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """
-        if not elf_support:
-            raise RuntimeError(
-                "Please install functionality with 'pip install shepherd_core[elf] -U'"
-            )
         if file.is_dir():
             file = file / self.name
-        if self.data_type == FirmwareDType.base64_elf:
-            file = file.with_suffix(".elf")
-            fw_tools.base64_to_file(self.data, file)
-        elif self.data_type == FirmwareDType.base64_hex:
-            file = file.with_suffix(".hex")
-            fw_tools.base64_to_file(self.data, file)
-        elif isinstance(self.data, Path):
-            if self.data_type == FirmwareDType.path_elf:
-                file = file.with_suffix(".elf")
-            elif self.data_type == FirmwareDType.path_hex:
-                file = file.with_suffix(".hex")
-            shutil.copy(self.data, file)
-        return file
+        return extract_firmware(self.data, self.data_type, file)
