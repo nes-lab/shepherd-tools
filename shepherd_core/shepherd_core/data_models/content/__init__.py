@@ -3,8 +3,8 @@ from .energy_environment import EnergyEnvironment
 from .firmware import Firmware
 from .firmware import FirmwareDType
 from .firmware import extract_firmware
-from .firmware import modify_firmware
 from .firmware import firmware_to_hex
+from .firmware import modify_firmware
 from .virtual_harvester import VirtualHarvesterConfig
 from .virtual_source import VirtualSourceConfig
 

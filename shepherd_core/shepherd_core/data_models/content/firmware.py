@@ -1,16 +1,17 @@
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional
+from typing import Union
 
 from pydantic import constr
 from pydantic import root_validator
 from pydantic import validate_arguments
 
+from ... import logger
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
 from ..testbed.mcu import MCU
-from ... import logger
 
 try:
     from ... import fw_tools
@@ -48,7 +49,9 @@ arch_to_mcu: dict = {
 
 
 @validate_arguments
-def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path: Path) -> Path:
+def extract_firmware(
+    data: Union[str, Path], data_type: FirmwareDType, file_path: Path
+) -> Path:
     """
     - base64-string will be transformed into file
     - if data is a path the file will be copied to the destination
@@ -69,7 +72,9 @@ def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path
         elif data_type == FirmwareDType.path_hex:
             file = file_path.with_suffix(".hex")
         else:
-            raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
+            raise ValueError(
+                "FW-Extraction failed due to unknown datatype '%s'", data_type
+            )
         shutil.copy(data, file_path)
     else:
         raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
@@ -99,7 +104,9 @@ def firmware_to_hex(file_path: Path) -> Path:
     elif file_path.suffix == ".hex":
         return file_path
     else:
-        raise ValueError("FW2Hex: unknown suffix '%s', it should be .elf or .hex", file_path.suffix)
+        raise ValueError(
+            "FW2Hex: unknown suffix '%s', it should be .elf or .hex", file_path.suffix
+        )
 
 
 class Firmware(ContentModel, title="Firmware of Target"):

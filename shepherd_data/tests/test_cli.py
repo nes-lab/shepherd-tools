@@ -1,5 +1,4 @@
 from click.testing import CliRunner
-
 from shepherd_data.cli import cli
 
 

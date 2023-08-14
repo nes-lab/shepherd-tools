@@ -1,8 +1,13 @@
 from pathlib import Path
-from typing import Union, List, Optional
+from typing import List
+from typing import Optional
+from typing import Union
 
 import yaml
 
+from ... import logger
+from .. import ShpModel
+from .. import Wrapper
 from .emulation import Compression
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask
@@ -10,8 +15,6 @@ from .harvest import HarvestTask
 from .observer_tasks import ObserverTasks
 from .programming import ProgrammingTask
 from .testbed_tasks import TestbedTasks
-from .. import ShpModel, Wrapper
-from ... import logger
 
 __all__ = [
     # Hierarchical Order
@@ -29,7 +32,9 @@ __all__ = [
 ]
 
 
-def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = None) -> Wrapper:
+def prepare_task(
+    config: Union[ShpModel, Path, str], observer: Optional[str] = None
+) -> Wrapper:
     """
     - Opens file (from Path or str of Path)
     - wraps task-model
@@ -52,7 +57,9 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
 
     if shp_wrap.datatype == TestbedTasks:
         if observer is None:
-            raise ValueError("Task-Set contained TestbedTasks -> FN needs a observer-name")
+            raise ValueError(
+                "Task-Set contained TestbedTasks -> FN needs a observer-name"
+            )
         tbt = TestbedTasks(**shp_wrap.parameters)
         logger.debug("Loading Testbed-Tasks %s for %s", tbt.name, observer)
         obt = tbt.get_observer_tasks(observer)
@@ -66,9 +73,7 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
 
 
 def extract_tasks(shp_wrap: Wrapper) -> List[ShpModel]:
-    """
-
-    """
+    """ """
     if shp_wrap.datatype == ObserverTasks:
         obt = ObserverTasks(**shp_wrap.parameters)
         content = obt.get_tasks()
