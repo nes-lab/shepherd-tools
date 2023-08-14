@@ -1,10 +1,7 @@
 from .energy_environment import EnergyDType
 from .energy_environment import EnergyEnvironment
 from .firmware import Firmware
-from .firmware import FirmwareDType
-from .firmware import extract_firmware
-from .firmware import firmware_to_hex
-from .firmware import modify_firmware
+from .firmware_datatype import FirmwareDType
 from .virtual_harvester import VirtualHarvesterConfig
 from .virtual_source import VirtualSourceConfig
 
@@ -18,8 +15,4 @@ __all__ = [
     # Enums
     "EnergyDType",
     "FirmwareDType",
-    # helper functions
-    "extract_firmware",
-    "modify_firmware",
-    "firmware_to_hex",
 ]

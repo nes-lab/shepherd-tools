@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from click.testing import CliRunner
+
 from shepherd_data.cli import cli
 
 from .conftest import generate_h5_file

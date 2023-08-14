@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Optional
 
-from pwnlib.elf import ELF
 from pydantic import conint
 from pydantic import validate_arguments
 
@@ -10,11 +9,22 @@ from ..commons import uid_str_default
 from ..logger import logger as log
 from .validation import is_elf
 
+try:
+    from pwnlib.elf import ELF
+
+    elf_support = True
+except ImportError:
+    elf_support = False
+
 
 @validate_arguments
 def find_symbol(file_elf: Path, symbol: str) -> bool:
     if symbol is None or not is_elf(file_elf):
         return False
+    if not elf_support:
+        raise RuntimeError(
+            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+        )
     elf = ELF(path=file_elf)
     try:
         elf.symbols[symbol]
@@ -39,6 +49,10 @@ def read_symbol(
     """interpreted as int"""
     if not find_symbol(file_elf, symbol):
         return None
+    if not elf_support:
+        raise RuntimeError(
+            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+        )
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]
     value_raw = elf.read(address=addr, count=length)[-length:]
@@ -53,6 +67,10 @@ def read_uid(file_elf: Path) -> Optional[int]:
 def read_arch(file_elf: Path) -> Optional[str]:
     if not is_elf(file_elf):
         return None
+    if not elf_support:
+        raise RuntimeError(
+            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+        )
     elf = ELF(path=file_elf)
     if "exec" in elf.elftype.lower():
         return elf.arch.lower()
@@ -74,6 +92,10 @@ def modify_symbol_value(
     """
     if not find_symbol(file_elf, symbol):
         return None
+    if not elf_support:
+        raise RuntimeError(
+            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+        )
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]
     value_raw = elf.read(address=addr, count=uid_len_default)[-uid_len_default:]

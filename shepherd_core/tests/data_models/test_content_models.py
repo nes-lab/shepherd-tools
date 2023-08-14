@@ -98,8 +98,8 @@ def test_content_model_fw_extract_elf_to_dir(path_elf: Path, tmp_path: Path) -> 
         group="Gaul",
     )
     file = fw.extract_firmware(tmp_path)
-    assert file.is_file()
     assert file.exists()
+    assert file.is_file()
 
 
 @pytest.mark.parametrize("path_elf", files_elf)
@@ -113,14 +113,15 @@ def test_content_model_fw_extract_hex_to_dir(path_elf: Path, tmp_path: Path) -> 
         group="Gaul",
     )
     file = fw.extract_firmware(tmp_path)
-    assert file.is_file()
     assert file.exists()
+    assert file.is_file()
 
 
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_content_model_fw_extract_path_elf_to_dir(
     path_elf: Path, tmp_path: Path
 ) -> None:
+    assert path_elf.exists()
     fw = Firmware(
         data=path_elf,
         data_type=FirmwareDType.path_elf,
@@ -130,8 +131,8 @@ def test_content_model_fw_extract_path_elf_to_dir(
         group="Gaul",
     )
     file = fw.extract_firmware(tmp_path)
-    assert file.is_file()
     assert file.exists()
+    assert file.is_file()
 
 
 @pytest.mark.parametrize("path_elf", files_elf)
@@ -140,6 +141,7 @@ def test_content_model_fw_extract_path_hex_to_dir(
 ) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
     path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
+    assert path_hex.exists()
     fw = Firmware(
         data=path_hex,
         data_type=FirmwareDType.path_hex,
@@ -149,8 +151,8 @@ def test_content_model_fw_extract_path_hex_to_dir(
         group="Gaul",
     )
     file = fw.extract_firmware(tmp_path)
-    assert file.is_file()
     assert file.exists()
+    assert file.is_file()
 
 
 def test_content_model_hrv_min() -> None:

@@ -1,5 +1,3 @@
-import shutil
-from enum import Enum
 from pathlib import Path
 from typing import Optional
 from typing import Union
@@ -8,25 +6,12 @@ from pydantic import constr
 from pydantic import root_validator
 from pydantic import validate_arguments
 
+from ... import fw_tools
 from ... import logger
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
 from ..testbed.mcu import MCU
-
-try:
-    from ... import fw_tools
-
-    elf_support = True
-except ImportError:
-    elf_support = False
-
-
-class FirmwareDType(str, Enum):
-    base64_hex = "hex"
-    base64_elf = "elf"
-    path_hex = "path_hex"
-    path_elf = "path_elf"
-
+from .firmware_datatype import FirmwareDType
 
 suffix_to_DType: dict = {
     # derived from wikipedia
@@ -48,67 +33,6 @@ arch_to_mcu: dict = {
 }
 
 
-@validate_arguments
-def extract_firmware(
-    data: Union[str, Path], data_type: FirmwareDType, file_path: Path
-) -> Path:
-    """
-    - base64-string will be transformed into file
-    - if data is a path the file will be copied to the destination
-    """
-    if not elf_support:
-        raise RuntimeError(
-            "Please install functionality with 'pip install shepherd_core[elf] -U'"
-        )
-    if data_type == FirmwareDType.base64_elf:
-        file = file_path.with_suffix(".elf")
-        fw_tools.base64_to_file(data, file)
-    elif data_type == FirmwareDType.base64_hex:
-        file = file_path.with_suffix(".hex")
-        fw_tools.base64_to_file(data, file)
-    elif isinstance(data, Path):
-        if data_type == FirmwareDType.path_elf:
-            file = file_path.with_suffix(".elf")
-        elif data_type == FirmwareDType.path_hex:
-            file = file_path.with_suffix(".hex")
-        else:
-            raise ValueError(
-                "FW-Extraction failed due to unknown datatype '%s'", data_type
-            )
-        shutil.copy(data, file_path)
-    else:
-        raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
-    return file
-
-
-def modify_firmware(file_path: Path, custom_id: Optional[int] = None) -> None:
-    if custom_id is None:
-        return
-    if not elf_support:
-        raise RuntimeError(
-            "Please install functionality with 'pip install shepherd_core[elf] -U'"
-        )
-    id_old = fw_tools.read_uid(file_path)
-    fw_tools.modify_uid(file_path, custom_id)
-    id_new = fw_tools.read_uid(file_path)
-    logger.debug("FW-Mod: UID changed from 0x%X to 0x%X", id_old, id_new)
-
-
-def firmware_to_hex(file_path: Path) -> Path:
-    if file_path.suffix == ".elf":
-        if not elf_support:
-            raise RuntimeError(
-                "Please install functionality with 'pip install shepherd_core[elf] -U'"
-            )
-        return fw_tools.elf_to_hex(file_path)
-    elif file_path.suffix == ".hex":
-        return file_path
-    else:
-        raise ValueError(
-            "FW2Hex: unknown suffix '%s', it should be .elf or .hex", file_path.suffix
-        )
-
-
 class Firmware(ContentModel, title="Firmware of Target"):
     """meta-data representation of a data-component"""
 
@@ -118,6 +42,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     data: Union[constr(min_length=3, max_length=8_000_000), Path]
     data_type: FirmwareDType
+    data_hash: Optional[str] = None
 
     # TODO: a data-hash would be awesome
 
@@ -132,10 +57,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually
         """
-        if not elf_support:
-            raise RuntimeError(
-                "Please install functionality with 'pip install shepherd_core[elf] -U'"
-            )
+        # TODO: use new determine_type() & determine_arch() and also allow to not embed
+        kwargs["data_hash"] = fw_tools.file_to_hash(file)
         kwargs["data"] = fw_tools.file_to_base64(file)
         if "data_type" not in kwargs:
             kwargs["data_type"] = suffix_to_DType[file.suffix.lower()]
@@ -168,4 +91,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
         """
         if file.is_dir():
             file = file / self.name
-        return extract_firmware(self.data, self.data_type, file)
+        file_new = fw_tools.extract_firmware(self.data, self.data_type, file)
+        if self.data_hash is not None:
+            hash_new = fw_tools.file_to_hash(file_new)
+            if self.data_hash != hash_new:
+                logger.warning("FW-Hash does not match after extraction!")
+        return file_new

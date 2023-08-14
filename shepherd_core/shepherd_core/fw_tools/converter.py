@@ -1,30 +1,29 @@
 import base64
 import hashlib
-import subprocess  # noqa: S404
+import shutil
 from pathlib import Path
-from typing import Optional
+from typing import Union
 
 from pydantic import validate_arguments
 
+from ..data_models.content.firmware_datatype import FirmwareDType
+from .converter_elf import elf_to_hex
+from .validation import is_elf
+from .validation import is_hex
+
 
 @validate_arguments
-def elf_to_hex(file_elf: Path, file_hex: Optional[Path] = None) -> Path:
-    if not file_elf.is_file():
+def firmware_to_hex(file_path: Path) -> Path:
+    if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
-    if not file_hex:
-        file_hex = file_elf.resolve().with_suffix(".hex")
-    cmd = ["objcopy", "-O", "ihex", file_elf.resolve().as_posix(), file_hex.as_posix()]
-    # TODO: observe - maybe $ARCH-Versions of objcopy are needed
-    #  (hex of nRF / msp identical between the 3 $arch-versions)
-    try:
-        ret = subprocess.run(cmd)  # noqa: S603
-    except FileNotFoundError as err:
-        raise RuntimeError(
-            "Objcopy not found -> are binutils or build-essential installed?"
-        ) from err
-    if ret.returncode != 0:
-        raise RuntimeError("Objcopy failed to convert ELF to iHEX")
-    return file_hex
+    if is_elf(file_path):
+        return elf_to_hex(file_path)
+    elif is_hex(file_path):
+        return file_path
+    else:
+        raise ValueError(
+            "FW2Hex: unknown file '%s', it should be ELF or HEX", file_path.name
+        )
 
 
 @validate_arguments
@@ -50,3 +49,32 @@ def file_to_hash(file_path: Path) -> str:
     with open(file_path.resolve(), "rb") as file:
         file_content = file.read()
     return hashlib.sha3_224(file_content).hexdigest()
+
+
+@validate_arguments
+def extract_firmware(
+    data: Union[str, Path], data_type: FirmwareDType, file_path: Path
+) -> Path:
+    """
+    - base64-string will be transformed into file
+    - if data is a path the file will be copied to the destination
+    """
+    if data_type == FirmwareDType.base64_elf:
+        file = file_path.with_suffix(".elf")
+        base64_to_file(data, file)
+    elif data_type == FirmwareDType.base64_hex:
+        file = file_path.with_suffix(".hex")
+        base64_to_file(data, file)
+    elif isinstance(data, Path):
+        if data_type == FirmwareDType.path_elf:
+            file = file_path.with_suffix(".elf")
+        elif data_type == FirmwareDType.path_hex:
+            file = file_path.with_suffix(".hex")
+        else:
+            raise ValueError(
+                "FW-Extraction failed due to unknown datatype '%s'", data_type
+            )
+        shutil.copy(data, file)
+    else:
+        raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
+    return file

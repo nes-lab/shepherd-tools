@@ -22,10 +22,32 @@ def test_elf_to_hex(path_elf: Path, tmp_path: Path) -> None:
     assert path_hex.as_posix() == path_gen.as_posix()
 
 
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_firmware_to_hex_w_elf(path_elf: Path) -> None:
+    path_gen = fw_tools.firmware_to_hex(path_elf)
+    assert path_gen.exists
+    assert path_gen.suffix == ".hex"
+
+
+def test_firmware_to_hex_w_hex(path_hex: Path) -> None:
+    path_gen = fw_tools.firmware_to_hex(path_hex)
+    assert path_gen.exists
+    assert path_gen.suffix == ".hex"
+    assert path_gen.as_posix() == path_hex.as_posix()
+
+
+def test_firmware_to_hex_w_fail() -> None:
+    path_some = Path(__file__).parent / "conftest.py"
+    with pytest.raises(ValueError):
+        _ = fw_tools.firmware_to_hex(path_some)
+
+
 def test_hash() -> None:
     hash_a = fw_tools.file_to_hash(files_elf[0])
     hash_b = fw_tools.file_to_hash(files_elf[1])
+    hash_c = fw_tools.file_to_hash(files_elf[1])
     assert hash_a != hash_b
+    assert hash_b == hash_c
 
 
 @pytest.mark.parametrize("path_elf", files_elf)
@@ -38,3 +60,6 @@ def test_base64(path_elf: Path, tmp_path: Path) -> None:
     hash_a = fw_tools.file_to_hash(path_elf)
     hash_b = fw_tools.file_to_hash(path_b)
     assert hash_a == hash_b
+
+
+# extract_firmware() is indirectly tested with Firmware-Class
