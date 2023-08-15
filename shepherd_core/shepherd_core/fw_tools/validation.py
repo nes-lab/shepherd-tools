@@ -5,14 +5,21 @@ import os
 import tempfile
 from pathlib import Path
 
-from elftools.common.exceptions import ELFError
 from intelhex import IntelHex
 from intelhex import IntelHexError
-from pwnlib.elf import ELF
 from pydantic import validate_arguments
 
+from ..data_models.content.firmware_datatype import FirmwareDType
 from ..logger import logger
-from . import elf_to_hex
+from .converter_elf import elf_to_hex
+
+try:
+    from elftools.common.exceptions import ELFError
+    from pwnlib.elf import ELF
+
+    elf_support = True
+except ImportError:
+    elf_support = False
 
 
 @validate_arguments
@@ -71,6 +78,10 @@ def is_hex_nrf52(file: Path) -> bool:
 
 @validate_arguments
 def is_elf(file: Path) -> bool:
+    if not elf_support:
+        raise RuntimeError(
+            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+        )
     if not os.path.isfile(file):
         return False
     try:
@@ -101,3 +112,30 @@ def is_elf_nrf52(file: Path) -> bool:
                 return True
         return False
     return False
+
+
+def determine_type(file: Path) -> FirmwareDType:
+    if not file.is_file():
+        raise ValueError("Fn needs an existing file as input")
+    if is_hex(file):
+        return FirmwareDType.path_hex
+    elif is_elf(file):
+        return FirmwareDType.path_elf
+    raise ValueError("Type of file '%s' could not be determined", file.name)
+
+
+def determine_arch(file: Path) -> str:
+    file_t = determine_type(file)
+    if file_t == FirmwareDType.path_elf:
+        if is_elf_nrf52(file):
+            return "nrf52"
+        elif is_elf_msp430(file):
+            return "msp430"
+        raise ValueError("Arch of ELF '%s' could not be determined", file.name)
+    elif file_t == FirmwareDType.path_hex:
+        if is_hex_nrf52(file):
+            return "nrf52"
+        elif is_hex_msp430(file):
+            return "msp430"
+        raise ValueError("Arch of HEX '%s' could not be determined", file.name)
+    raise ValueError("Arch of file '%s' could not be determined", file.name)

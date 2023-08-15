@@ -4,6 +4,8 @@ import time
 from contextlib import suppress
 from typing import Optional
 
+from .. import logger
+
 try:
     import psutil
 
@@ -52,6 +54,11 @@ class SystemInventory(ShpModel):
         else:
             ifs2 = {}
             uptime = 0
+            logger.warning(
+                "Inventory-Parameters will be missing. "
+                "Please install functionality with "
+                "'pip install shepherd_core[inventory] -U'"
+            )
 
         model_dict = {
             "uptime": uptime,

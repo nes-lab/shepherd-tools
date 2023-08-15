@@ -1,30 +1,17 @@
-import shutil
-from enum import Enum
 from pathlib import Path
+from typing import Optional
 from typing import Union
 
 from pydantic import constr
 from pydantic import root_validator
 from pydantic import validate_arguments
 
+from ... import fw_tools
+from ... import logger
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
 from ..testbed.mcu import MCU
-
-try:
-    from ... import fw_tools
-
-    elf_support = True
-except ImportError:
-    elf_support = False
-
-
-class FirmwareDType(str, Enum):
-    base64_hex = "hex"
-    base64_elf = "elf"
-    path_hex = "path_hex"
-    path_elf = "path_elf"
-
+from .firmware_datatype import FirmwareDType
 
 suffix_to_DType: dict = {
     # derived from wikipedia
@@ -55,6 +42,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     data: Union[constr(min_length=3, max_length=8_000_000), Path]
     data_type: FirmwareDType
+    data_hash: Optional[str] = None
 
     # TODO: a data-hash would be awesome
 
@@ -69,10 +57,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually
         """
-        if not elf_support:
-            raise RuntimeError(
-                "Please install functionality with 'pip install shepherd_core[elf] -U'"
-            )
+        # TODO: use new determine_type() & determine_arch() and also allow to not embed
+        kwargs["data_hash"] = fw_tools.file_to_hash(file)
         kwargs["data"] = fw_tools.file_to_base64(file)
         if "data_type" not in kwargs:
             kwargs["data_type"] = suffix_to_DType[file.suffix.lower()]
@@ -103,22 +89,11 @@ class Firmware(ContentModel, title="Firmware of Target"):
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """
-        if not elf_support:
-            raise RuntimeError(
-                "Please install functionality with 'pip install shepherd_core[elf] -U'"
-            )
         if file.is_dir():
             file = file / self.name
-        if self.data_type == FirmwareDType.base64_elf:
-            file = file.with_suffix(".elf")
-            fw_tools.base64_to_file(self.data, file)
-        elif self.data_type == FirmwareDType.base64_hex:
-            file = file.with_suffix(".hex")
-            fw_tools.base64_to_file(self.data, file)
-        elif isinstance(self.data, Path):
-            if self.data_type == FirmwareDType.path_elf:
-                file = file.with_suffix(".elf")
-            elif self.data_type == FirmwareDType.path_hex:
-                file = file.with_suffix(".hex")
-            shutil.copy(self.data, file)
-        return file
+        file_new = fw_tools.extract_firmware(self.data, self.data_type, file)
+        if self.data_hash is not None:
+            hash_new = fw_tools.file_to_hash(file_new)
+            if self.data_hash != hash_new:
+                logger.warning("FW-Hash does not match after extraction!")
+        return file_new
