@@ -1,4 +1,5 @@
 from .converter import base64_to_file
+from .converter import base64_to_hash
 from .converter import extract_firmware
 from .converter import file_to_base64
 from .converter import file_to_hash
@@ -32,6 +33,7 @@ __all__ = [
     "file_to_base64",
     "base64_to_file",
     "file_to_hash",
+    "base64_to_hash",
     "extract_firmware",
     "firmware_to_hex",
     # validation

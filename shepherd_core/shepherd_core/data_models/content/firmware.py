@@ -83,6 +83,22 @@ class Firmware(ContentModel, title="Firmware of Target"):
                 kwargs["mcu"] = arch_to_mcu[arch]
         return cls(**kwargs)
 
+    def compare_hash(self, path: Optional[Path] = None) -> bool:
+        if self.data_hash is None:
+            return True
+
+        match = True
+        if path is not None and path.is_file():
+            hash_new = fw_tools.file_to_hash(path)
+            match = self.data_hash == hash_new
+        else:
+            hash_new = fw_tools.base64_to_hash(self.data)
+            match = self.data_hash == hash_new
+
+        if not match:
+            logger.warning("FW-Hash does not match with stored value!")
+        return match
+
     @validate_arguments
     def extract_firmware(self, file: Path) -> Path:
         """stores embedded data in file
@@ -92,8 +108,5 @@ class Firmware(ContentModel, title="Firmware of Target"):
         if file.is_dir():
             file = file / self.name
         file_new = fw_tools.extract_firmware(self.data, self.data_type, file)
-        if self.data_hash is not None:
-            hash_new = fw_tools.file_to_hash(file_new)
-            if self.data_hash != hash_new:
-                logger.warning("FW-Hash does not match after extraction!")
+        self.compare_hash(file_new)
         return file_new

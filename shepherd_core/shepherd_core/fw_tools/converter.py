@@ -52,6 +52,12 @@ def file_to_hash(file_path: Path) -> str:
 
 
 @validate_arguments
+def base64_to_hash(content: str) -> str:
+    file_content = base64.b64decode(content)
+    return hashlib.sha3_224(file_content).hexdigest()
+
+
+@validate_arguments
 def extract_firmware(
     data: Union[str, Path], data_type: FirmwareDType, file_path: Path
 ) -> Path:
