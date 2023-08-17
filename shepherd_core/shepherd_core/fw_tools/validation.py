@@ -80,7 +80,8 @@ def is_hex_nrf52(file: Path) -> bool:
 def is_elf(file: Path) -> bool:
     if not elf_support:
         raise RuntimeError(
-            "Please install functionality with 'pip install shepherd_core[elf] -U'"
+            "Please install functionality with "
+            "'pip install shepherd_core[elf] -U' first"
         )
     if not os.path.isfile(file):
         return False

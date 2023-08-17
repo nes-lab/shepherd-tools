@@ -87,7 +87,6 @@ class Firmware(ContentModel, title="Firmware of Target"):
         if self.data_hash is None:
             return True
 
-        match = True
         if path is not None and path.is_file():
             hash_new = fw_tools.file_to_hash(path)
             match = self.data_hash == hash_new

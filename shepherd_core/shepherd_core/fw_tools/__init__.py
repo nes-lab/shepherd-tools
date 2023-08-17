@@ -1,3 +1,6 @@
+import sys
+from unittest.mock import MagicMock
+
 from .converter import base64_to_file
 from .converter import base64_to_hash
 from .converter import extract_firmware
@@ -46,3 +49,21 @@ __all__ = [
     "determine_type",
     "determine_arch",
 ]
+
+
+# replace missing dependencies from elf-only pwntools
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+
+MOCK_MODULES = [
+    "socks",  # general lib-init / context-init
+    # general troublemaker on beaglebone
+    "capstone",
+    "paramiko",
+    "unicorn",
+    "cffi",
+]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)

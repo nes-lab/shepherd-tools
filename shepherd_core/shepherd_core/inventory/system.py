@@ -57,7 +57,7 @@ class SystemInventory(ShpModel):
             logger.warning(
                 "Inventory-Parameters will be missing. "
                 "Please install functionality with "
-                "'pip install shepherd_core[inventory] -U'"
+                "'pip install shepherd_core[inventory] -U' first"
             )
 
         model_dict = {
