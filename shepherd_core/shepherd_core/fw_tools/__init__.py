@@ -1,5 +1,24 @@
-import sys
-from unittest.mock import MagicMock
+try:
+    from pwnlib.elf import ELF  # noqa: F401
+except ImportError:
+    # replace missing dependencies from elf-only pwntools
+    import sys
+    from unittest.mock import MagicMock
+
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            return MagicMock()
+
+    MOCK_MODULES = [
+        "socks",  # general lib-init / context-init
+        # troublemaker on bbone and/or windows
+        "capstone",
+        "paramiko",
+        "unicorn",
+        "cffi",
+    ]
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 from .converter import base64_to_file
 from .converter import base64_to_hash
@@ -49,21 +68,3 @@ __all__ = [
     "determine_type",
     "determine_arch",
 ]
-
-
-# replace missing dependencies from elf-only pwntools
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-
-MOCK_MODULES = [
-    "socks",  # general lib-init / context-init
-    # general troublemaker on beaglebone
-    "capstone",
-    "paramiko",
-    "unicorn",
-    "cffi",
-]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
