@@ -18,8 +18,12 @@ try:
     from pwnlib.elf import ELF
 
     elf_support = True
-except ImportError:
+except ImportError as e:
     elf_support = False
+    elf_error_text = (
+        "Please install functionality with 'pip install shepherd_core[elf] -U' first, "
+        f"underlying exception: {e.msg}"
+    )
 
 
 @validate_arguments
@@ -79,9 +83,7 @@ def is_hex_nrf52(file: Path) -> bool:
 @validate_arguments
 def is_elf(file: Path) -> bool:
     if not elf_support:
-        raise RuntimeError(
-            "Please install functionality with 'pip install shepherd_core[elf] -U'"
-        )
+        raise RuntimeError(elf_error_text)
     if not os.path.isfile(file):
         return False
     try:

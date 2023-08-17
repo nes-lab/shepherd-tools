@@ -1,4 +1,27 @@
+try:
+    from pwnlib.elf import ELF  # noqa: F401
+except ImportError:
+    # replace missing dependencies from elf-only pwntools
+    import sys
+    from unittest.mock import MagicMock
+
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            return MagicMock()
+
+    MOCK_MODULES = [
+        "socks",  # general lib-init / context-init
+        # troublemaker on bbone and/or windows
+        "capstone",
+        "paramiko",
+        "unicorn",
+        "cffi",
+    ]
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 from .converter import base64_to_file
+from .converter import base64_to_hash
 from .converter import extract_firmware
 from .converter import file_to_base64
 from .converter import file_to_hash
@@ -32,6 +55,7 @@ __all__ = [
     "file_to_base64",
     "base64_to_file",
     "file_to_hash",
+    "base64_to_hash",
     "extract_firmware",
     "firmware_to_hex",
     # validation

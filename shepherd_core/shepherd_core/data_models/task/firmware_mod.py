@@ -11,6 +11,7 @@ from pydantic import validate_arguments
 from ...logger import logger
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
+from ..content.firmware import Firmware
 from ..content.firmware import FirmwareDType
 from ..experiment.experiment import Experiment
 from ..testbed import Testbed
@@ -67,3 +68,15 @@ class FirmwareModTask(ShpModel):
             custom_id=fw_id,
             firmware_file=copy.copy(fw_path),
         )
+
+    @classmethod
+    @validate_arguments
+    def from_firmware(cls, fw: Firmware, **kwargs):
+        kwargs["data"] = fw.data
+        kwargs["data_type"] = fw.data_type
+        fw.compare_hash()
+        path = kwargs.get("firmware_file")
+        if path is not None and path.is_dir():
+            path_new: Path = path / fw.name
+            kwargs["firmware_file"] = path_new.with_suffix(".hex")
+        return cls(**kwargs)

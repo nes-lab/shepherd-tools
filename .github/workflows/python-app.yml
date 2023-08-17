@@ -44,7 +44,7 @@ jobs:
         working-directory: "./shepherd_data"
 
       - name: Install core-package 🧱
-        run: pip install .[test,elf]
+        run: pip install .[test,elf,inventory]
         working-directory: "./shepherd_core"
       - name: Install data-package 🧱
         run: pip install .[test]
