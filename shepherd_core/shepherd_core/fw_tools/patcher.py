@@ -13,10 +13,11 @@ try:
     from pwnlib.elf import ELF
 
     elf_support = True
-except ImportError:
+except ImportError as e:
     elf_support = False
     elf_error_text = (
-        "Please install functionality with 'pip install shepherd_core[elf] -U' first"
+        "Please install functionality with 'pip install shepherd_core[elf] -U' first, "
+        f"underlying exception: {e.msg}"
     )
 
 
