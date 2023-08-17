@@ -1,5 +1,11 @@
 # History of Changes
 
+## v2023.08.4
+
+- add and use fw-helper-fn: compare_hash(), base64_to_hash()
+- allow to generate fw-mod from fw-model
+- cleanup import-system for pwntools (dependencies caused trouble on windows & BBone)
+
 ## v2023.08.3
 
 - improve handling of uninstalled sub-modules (elf, inventory)
