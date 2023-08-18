@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 from typing import Union
 
+import zstandard as zstd
 from pydantic import validate_arguments
 
 from ..data_models.content.firmware_datatype import FirmwareDType
@@ -14,6 +15,7 @@ from .validation import is_hex
 
 @validate_arguments
 def firmware_to_hex(file_path: Path) -> Path:
+    """Generic converter that handles ELF & HEX"""
     if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
     if is_elf(file_path):
@@ -28,16 +30,26 @@ def firmware_to_hex(file_path: Path) -> Path:
 
 @validate_arguments
 def file_to_base64(file_path: Path) -> str:
+    """Compress and encode content of file
+    - base64 adds ~33 % overhead
+    - zstd compression ~ 1:3
+    """
     if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
     with open(file_path.resolve(), "rb") as file:
         file_content = file.read()
-    return base64.b64encode(file_content).decode("ascii")
+    file_cmpress = zstd.ZstdCompressor(level=20).compress(file_content)
+    return base64.b64encode(file_cmpress).decode("ascii")
 
 
 @validate_arguments
 def base64_to_file(content: str, file_path: Path) -> None:
-    file_content = base64.b64decode(content)
+    """DeCompress and decode Content of file
+    - base64 adds ~33 % overhead
+    - zstd compression ~ 1:3
+    """
+    file_cmpress = base64.b64decode(content)
+    file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
     with open(file_path.resolve(), "wb") as file:
         file.write(file_content)
 
@@ -53,7 +65,8 @@ def file_to_hash(file_path: Path) -> str:
 
 @validate_arguments
 def base64_to_hash(content: str) -> str:
-    file_content = base64.b64decode(content)
+    file_cmpress = base64.b64decode(content)
+    file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
     return hashlib.sha3_224(file_content).hexdigest()
 
 
