@@ -20,6 +20,7 @@ from ..data_models.base.shepherd import ShpModel
 @validate_arguments
 def hash_password(pw: constr(min_length=20, max_length=100)) -> bytes:
     # TODO: add salt of testbed -> this fn should be part of Testbed-Object
+    # NOTE: 1M Iterations need 25s on beaglebone
     return pbkdf2_hmac(
         "sha512",
         password=pw.encode("utf-8"),
@@ -44,7 +45,8 @@ class User(ShpModel):
     group: NameStr
     email: EmailStr
 
-    pw_hash: SecretBytes = hash_password("this_will_become_a_salted_slow_hash")
+    pw_hash: Optional[SecretBytes] = None
+    # ⤷ = hash_password("this_will_become_a_salted_slow_hash") -> slowed BBB down
     # ⤷ TODO (min_length=128, max_length=512)
 
     token: SecretStr
