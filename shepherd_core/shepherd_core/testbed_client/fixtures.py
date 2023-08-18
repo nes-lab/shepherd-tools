@@ -1,6 +1,6 @@
 import copy
 import os
-import pickle
+import pickle  # noqa: S403
 from pathlib import Path
 from typing import Dict
 from typing import List
@@ -159,12 +159,13 @@ class Fixtures:
         else:
             self.file_path = file_path
         self.components: Dict[str, Fixture] = {}
-        save_path = file_path / "fixtures.pickle"
+        save_path = self.file_path / "fixtures.pickle"
 
         if save_path.exists():
             # speedup
             with open(save_path, "rb", -1) as fd:
-                self.components = pickle.load(fd)
+                self.components = pickle.load(fd)  # noqa: S301
+            logger.debug(" -> found & used pickled fixtures")
         else:
             if self.file_path.is_file():
                 files = [self.file_path]
