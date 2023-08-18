@@ -90,7 +90,6 @@ class ShpModel(BaseModel):
         comment: documentation
         """
         model_dict = self.dict(exclude_unset=minimal, exclude_defaults=minimal)
-        #
         model_wrap = Wrapper(
             datatype=type(self).__name__,
             comment=comment,
