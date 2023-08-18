@@ -9,7 +9,7 @@ from shepherd_core import BaseWriter as Writer
 
 from .reader import Reader
 
-__version__ = "2023.8.5"
+__version__ = "2023.8.6"
 
 __all__ = [
     "Reader",
