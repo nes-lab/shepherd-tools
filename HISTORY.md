@@ -1,5 +1,19 @@
 # History of Changes
 
+
+## v2023.08.6
+
+- add zstd-compression for embedded fw
+- derive fw-name if not provided
+- speedup on BBone from 47s to 16s
+  - hash-default-value in user-model took 25s
+  - loading fixtures took 6 s (now pickled on first use)
+  - TODO: switch to pydantic V2 (loading datamodels still takes 14s)
+
+## v2023.08.5
+
+- ELF-support by default
+
 ## v2023.08.4
 
 - add and use fw-helper-fn: compare_hash(), base64_to_hash()
