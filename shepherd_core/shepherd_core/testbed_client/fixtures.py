@@ -1,5 +1,6 @@
 import copy
 import os
+import pickle
 from pathlib import Path
 from typing import Dict
 from typing import List
@@ -158,16 +159,25 @@ class Fixtures:
         else:
             self.file_path = file_path
         self.components: Dict[str, Fixture] = {}
+        save_path = file_path / "fixtures.pickle"
 
-        if self.file_path.is_file():
-            files = [self.file_path]
-        elif self.file_path.is_dir():
-            files = get_files(self.file_path, self.suffix)
+        if save_path.exists():
+            # speedup
+            with open(save_path, "rb", -1) as fd:
+                self.components = pickle.load(fd)
         else:
-            raise ValueError("Path must either be file or directory (or empty)")
+            if self.file_path.is_file():
+                files = [self.file_path]
+            elif self.file_path.is_dir():
+                files = get_files(self.file_path, self.suffix)
+            else:
+                raise ValueError("Path must either be file or directory (or empty)")
 
-        for file in files:
-            self.insert_file(file)
+            for file in files:
+                self.insert_file(file)
+
+            with open(save_path, "wb", -1) as fd:
+                pickle.dump(self.components, fd)
 
     def insert_file(self, file: Path):
         with open(file) as fd:
