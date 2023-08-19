@@ -1,10 +1,10 @@
 import copy
 from pathlib import Path
 
-from pydantic import confloat
-from pydantic import conint
-from pydantic import root_validator
-from pydantic import validate_arguments
+from pydantic import Field
+from pydantic import model_validator
+from pydantic import validate_call
+from typing_extensions import Annotated
 
 from ..base.content import IdInt
 from ..base.content import SafeStr
@@ -24,23 +24,23 @@ class ProgrammingTask(ShpModel):
     mcu_port: MCUPort = 1
     mcu_type: SafeStr
     # ⤷ for later
-    voltage: confloat(ge=1, lt=5) = 3
-    datarate: conint(gt=0, le=1_000_000) = 500_000
+    voltage: Annotated[float, Field(ge=1, lt=5)] = 3
+    datarate: Annotated[int, Field(gt=0, le=1_000_000)] = 500_000
     protocol: ProgrammerProtocol
 
     simulate: bool = False
 
-    verbose: conint(ge=0, le=4) = 2
+    verbose: Annotated[int, Field(ge=0, le=4)] = 2
     # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
-        if values.get("firmware_file").suffix.lower() != ".hex":
-            ValueError(f"Firmware is not intel-.hex ('{values['firmware_file']}')")
-        return values
+    @model_validator(mode="after")
+    def post_validation(self):
+        if self.firmware_file.suffix.lower() != ".hex":
+            ValueError(f"Firmware is not intel-.hex ('{self.firmware_file}')")
+        return self
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_xp(
         cls,
         xp: Experiment,

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Union
 
 import zstandard as zstd
-from pydantic import validate_arguments
+from pydantic import validate_call
 
 from ..data_models.content.firmware_datatype import FirmwareDType
 from .converter_elf import elf_to_hex
@@ -13,7 +13,7 @@ from .validation import is_elf
 from .validation import is_hex
 
 
-@validate_arguments
+@validate_call
 def firmware_to_hex(file_path: Path) -> Path:
     """Generic converter that handles ELF & HEX"""
     if not file_path.is_file():
@@ -28,7 +28,7 @@ def firmware_to_hex(file_path: Path) -> Path:
         )
 
 
-@validate_arguments
+@validate_call
 def file_to_base64(file_path: Path) -> str:
     """Compress and encode content of file
     - base64 adds ~33 % overhead
@@ -42,7 +42,7 @@ def file_to_base64(file_path: Path) -> str:
     return base64.b64encode(file_cmpress).decode("ascii")
 
 
-@validate_arguments
+@validate_call
 def base64_to_file(content: str, file_path: Path) -> None:
     """DeCompress and decode Content of file
     - base64 adds ~33 % overhead
@@ -54,7 +54,7 @@ def base64_to_file(content: str, file_path: Path) -> None:
         file.write(file_content)
 
 
-@validate_arguments
+@validate_call
 def file_to_hash(file_path: Path) -> str:
     if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
@@ -63,14 +63,14 @@ def file_to_hash(file_path: Path) -> str:
     return hashlib.sha3_224(file_content).hexdigest()
 
 
-@validate_arguments
+@validate_call
 def base64_to_hash(content: str) -> str:
     file_cmpress = base64.b64decode(content)
     file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
     return hashlib.sha3_224(file_content).hexdigest()
 
 
-@validate_arguments
+@validate_call
 def extract_firmware(
     data: Union[str, Path], data_type: FirmwareDType, file_path: Path
 ) -> Path:

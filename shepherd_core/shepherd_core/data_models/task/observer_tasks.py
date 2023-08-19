@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List
 from typing import Optional
 
-from pydantic import validate_arguments
+from pydantic import validate_call
 
 from ..base.content import IdInt
 from ..base.content import NameStr
@@ -27,13 +27,13 @@ class ObserverTasks(ShpModel):
     abort_on_error: bool
 
     # fw mod, store as hex-file and program
-    fw1_mod: Optional[FirmwareModTask]
-    fw2_mod: Optional[FirmwareModTask]
-    fw1_prog: Optional[ProgrammingTask]
-    fw2_prog: Optional[ProgrammingTask]
+    fw1_mod: Optional[FirmwareModTask] = None
+    fw2_mod: Optional[FirmwareModTask] = None
+    fw1_prog: Optional[ProgrammingTask] = None
+    fw2_prog: Optional[ProgrammingTask] = None
 
     # MAIN PROCESS
-    emulation: Optional[EmulationTask]
+    emulation: Optional[EmulationTask] = None
 
     # post_copy / cleanup, Todo: could also just intake emuTask
     #  - delete firmwares
@@ -42,7 +42,7 @@ class ObserverTasks(ShpModel):
     #  - zip it
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt):
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")

@@ -8,7 +8,7 @@ from typing import Union
 import numpy as np
 from numpy.typing import NDArray
 from pydantic import PositiveFloat
-from pydantic import validate_arguments
+from pydantic import validate_call
 
 from ...calibration_hw_def import adc_current_to_raw
 from ...calibration_hw_def import adc_voltage_to_raw
@@ -170,7 +170,7 @@ class CalibrationCape(ShpModel):
         Returns:
             CalibrationCape object with extracted calibration data.
         """
-        dv = cls().dict(include={"harvester", "emulator"})
+        dv = cls().model_dump(include={"harvester", "emulator"})
         lw = list(dict_generator(dv))
         values = struct.unpack(">" + len(lw) * "d", data)
         # ⤷ X => double float, big endian
@@ -186,7 +186,7 @@ class CalibrationCape(ShpModel):
         Returns:
             Byte string representation of calibration values.
         """
-        lw = list(dict_generator(self.dict(include={"harvester", "emulator"})))
+        lw = list(dict_generator(self.model_dump(include={"harvester", "emulator"})))
         values = [walk[-1] for walk in lw]
         return struct.pack(">" + len(lw) * "d", *values)
 
@@ -200,7 +200,7 @@ class CalibrationSeries(ShpModel):
     # ⤷ default = nanoseconds
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_cal(
         cls,
         cal: Union[CalibrationHarvester, CalibrationEmulator],

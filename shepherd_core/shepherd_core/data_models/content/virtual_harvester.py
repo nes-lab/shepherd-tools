@@ -2,9 +2,9 @@ from enum import Enum
 from typing import Optional
 from typing import Tuple
 
-from pydantic import confloat
-from pydantic import conint
-from pydantic import root_validator
+from pydantic import Field
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from ...commons import samplerate_sps_default
 from ...logger import logger
@@ -39,32 +39,33 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     algorithm: AlgorithmDType
     # ⤷ used to harvest energy
 
-    samples_n: conint(ge=8, le=2_000) = 8
+    samples_n: Annotated[int, Field(ge=8, le=2_000)] = 8
     # ⤷ for & of ivcurve (and more?`)
 
-    voltage_mV: confloat(ge=0, le=5_000) = 2_500
+    voltage_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_500
     # ⤷ starting-point for some algorithms (mppt_po)
-    voltage_min_mV: confloat(ge=0, le=5_000) = 0
-    voltage_max_mV: confloat(ge=0, le=5_000) = 5_000
-    current_limit_uA: confloat(ge=1, le=50_000) = 50_000
+    voltage_min_mV: Annotated[float, Field(ge=0, le=5_000)] = 0
+    voltage_max_mV: Annotated[float, Field(ge=0, le=5_000)] = 5_000
+    current_limit_uA: Annotated[float, Field(ge=1, le=50_000)] = 50_000
     # ⤷ allows to keep trajectory in special region (or constant current tracking)
     # ⤷ boundary for detecting open circuit in emulated version (working on IV-Curves)
-    voltage_step_mV: Optional[confloat(ge=1, le=1_000_000)] = None
+    voltage_step_mV: Optional[Annotated[float, Field(ge=1, le=1_000_000)]] = None
 
-    setpoint_n: confloat(ge=0, le=1.0) = 0.70
+    setpoint_n: Annotated[float, Field(ge=0, le=1.0)] = 0.70
     # ⤷ ie. for mppt_voc
-    interval_ms: confloat(ge=0.01, le=1_000_000) = 100
+    interval_ms: Annotated[float, Field(ge=0.01, le=1_000_000)] = 100
     # ⤷ between start of measurements (ie. V_OC)
-    duration_ms: confloat(ge=0.01, le=1_000_000) = 0.1
+    duration_ms: Annotated[float, Field(ge=0.01, le=1_000_000)] = 0.1
     # ⤷ of (open voltage) measurement
     rising: bool = True
     # ⤷ direction of sawtooth
 
     # Underlying recorder
-    wait_cycles: conint(ge=0, le=100) = 1
+    wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values, chain = tb_client.try_completing_model(cls.__name__, values)
         values = tb_client.fill_in_user_data(values)
@@ -72,33 +73,35 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
             # TODO: same test is later done in calc_algorithm_num() again
             raise ValueError("Resulting Harvester can't be neutral")
         logger.debug("VHrv-Inheritances: %s", chain)
-        return values
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
-        if values.get("voltage_min_mV") > values.get("voltage_max_mV"):
-            raise ValueError("Voltage min > max")
-        if values.get("voltage_mV") < values.get("voltage_min_mV"):
-            raise ValueError("Voltage below min")
-        if values.get("voltage_mV") > values.get("voltage_max_mV"):
-            raise ValueError("Voltage above max")
-
+        # post corrections -> should be in separate validator
         cal = CalibrationHarvester()  # todo: as argument?
-        values["current_limit_uA"] = max(
-            10**6 * cal.adc_C_Hrv.raw_to_si(4), values["current_limit_uA"]
-        )
+        c_limit = values.get("current_limit_uA", 50_000)  # cls.current_limit_uA)
+        values["current_limit_uA"] = max(10**6 * cal.adc_C_Hrv.raw_to_si(4), c_limit)
 
         if values.get("voltage_step_mV") is None:
             # algo includes min & max!
-            values["voltage_step_mV"] = abs(
-                values["voltage_max_mV"] - values["voltage_min_mV"]
-            ) / (values["samples_n"] - 1)
+            v_max = values.get("voltage_max_mV", 5_000)  # cls.voltage_max_mV)
+            v_min = values.get("voltage_min_mV", 0)  # cls.voltage_min_mV)
+            samples_n = values.get("samples_n", 8)  # cls.samples_n) TODO
+            values["voltage_step_mV"] = abs(v_max - v_min) / (samples_n - 1)
 
         values["voltage_step_mV"] = max(
             10**3 * cal.dac_V_Hrv.raw_to_si(4), values["voltage_step_mV"]
         )
 
         return values
+
+    @model_validator(mode="after")
+    def post_validation(self):
+        if self.voltage_min_mV > self.voltage_max_mV:
+            raise ValueError("Voltage min > max")
+        if self.voltage_mV < self.voltage_min_mV:
+            raise ValueError("Voltage below min")
+        if self.voltage_mV > self.voltage_max_mV:
+            raise ValueError("Voltage above max")
+
+        return self
 
     def calc_hrv_mode(self, for_emu: bool) -> int:
         return 1 * int(for_emu) + 2 * self.rising
@@ -154,7 +157,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return self.samples_n
 
 
-u32 = conint(ge=0, lt=2**32)
+u32 = Annotated[int, Field(ge=0, lt=2**32)]
 
 
 # Currently implemented harvesters
@@ -230,13 +233,13 @@ class HarvesterPRUConfig(ShpModel):
             window_size=window_size
             if window_size is not None
             else data.calc_window_size(for_emu, dtype_in),
-            voltage_uV=data.voltage_mV * 10**3,
-            voltage_min_uV=data.voltage_min_mV * 10**3,
-            voltage_max_uV=data.voltage_max_mV * 10**3,
-            voltage_step_uV=data.voltage_step_mV * 10**3,
-            current_limit_nA=data.current_limit_uA * 10**3,
-            setpoint_n8=min(255, data.setpoint_n * 2**8),
-            interval_n=interval_ms * samplerate_sps_default * 1e-3,
-            duration_n=duration_ms * samplerate_sps_default * 1e-3,
+            voltage_uV=round(data.voltage_mV * 10**3),
+            voltage_min_uV=round(data.voltage_min_mV * 10**3),
+            voltage_max_uV=round(data.voltage_max_mV * 10**3),
+            voltage_step_uV=round(data.voltage_step_mV * 10**3),
+            current_limit_nA=round(data.current_limit_uA * 10**3),
+            setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
+            interval_n=round(interval_ms * samplerate_sps_default * 1e-3),
+            duration_n=round(duration_ms * samplerate_sps_default * 1e-3),
             wait_cycles_n=data.wait_cycles,
         )

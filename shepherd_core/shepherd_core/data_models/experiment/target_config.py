@@ -1,8 +1,9 @@
+from typing import List
 from typing import Optional
 
-from pydantic import conint
-from pydantic import conlist
-from pydantic import root_validator
+from pydantic import Field
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
@@ -19,33 +20,37 @@ from .observer_features import PowerTracing
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration for Target Nodes (DuT)"""
 
-    target_IDs: conlist(item_type=IdInt, min_items=1, max_items=64)
-    custom_IDs: Optional[conlist(item_type=IdInt16, min_items=1, max_items=64)]
+    target_IDs: Annotated[List[IdInt], Field(min_length=1, max_length=64)]
+    custom_IDs: Optional[
+        Annotated[List[IdInt16], Field(min_length=1, max_length=64)]
+    ] = None
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
     #   if no custom ID is provided, the original ID of target is used
 
     energy_env: EnergyEnvironment  # alias: input
     virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
-    target_delays: Optional[conlist(item_type=conint(ge=0), min_items=1, max_items=64)]
+    target_delays: Optional[
+        Annotated[List[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=64)]
+    ] = None
     # ⤷ individual starting times -> allows to use the same environment
 
     firmware1: Firmware
     firmware2: Optional[Firmware] = None
 
-    power_tracing: Optional[PowerTracing]
-    gpio_tracing: Optional[GpioTracing]
-    gpio_actuation: Optional[GpioActuation]
+    power_tracing: Optional[PowerTracing] = None
+    gpio_tracing: Optional[GpioTracing] = None
+    gpio_actuation: Optional[GpioActuation] = None
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
-        if not values.get("energy_env").valid:
+    @model_validator(mode="after")
+    def post_validation(self):
+        if not self.energy_env.valid:
             raise ValueError(
-                f"EnergyEnv '{values['energy_env'].name}' for target must be valid"
+                f"EnergyEnv '{self.energy_env.name}' for target must be valid"
             )
-        for _id in values.get("target_IDs"):
+        for _id in self.target_IDs:
             target = Target(id=_id)
             for mcu_num in [1, 2]:
-                val_fw = values.get(f"firmware{mcu_num}")
+                val_fw = getattr(self, f"firmware{mcu_num}")
                 has_fw = val_fw is not None
                 tgt_mcu = target[f"mcu{mcu_num}"]
                 has_mcu = tgt_mcu is not None
@@ -65,15 +70,15 @@ class TargetConfig(ShpModel, title="Target Config"):
                         f"is incompatible (={tgt_mcu.name})"
                     )
 
-        c_ids = values.get("custom_IDs")
-        t_ids = values.get("target_IDs")
+        c_ids = self.custom_IDs
+        t_ids = self.target_IDs
         if c_ids is not None and (len(set(c_ids)) < len(set(t_ids))):
             raise ValueError(
                 f"Provided custom IDs {c_ids} not enough "
                 f"to cover target range {t_ids}"
             )
         # TODO: if custom ids present, firmware must be ELF
-        return values
+        return self
 
     def get_custom_id(self, target_id: int) -> Optional[int]:
         if self.custom_IDs is not None and target_id in self.target_IDs:

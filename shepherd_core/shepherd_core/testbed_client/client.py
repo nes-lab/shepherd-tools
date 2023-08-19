@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from typing import Union
 
-from pydantic import validate_arguments
+from pydantic import validate_call
 
 from ..commons import testbed_server_default
 from ..data_models.base.shepherd import ShpModel
@@ -35,7 +35,7 @@ class TestbedClient:
     def __del__(self):
         TestbedClient._instance = None
 
-    @validate_arguments
+    @validate_call
     def connect(
         self, server: Optional[str] = None, token: Union[str, Path, None] = None
     ) -> bool:

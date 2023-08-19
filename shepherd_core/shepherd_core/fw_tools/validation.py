@@ -7,7 +7,7 @@ from pathlib import Path
 
 from intelhex import IntelHex
 from intelhex import IntelHexError
-from pydantic import validate_arguments
+from pydantic import validate_call
 
 from ..data_models.content.firmware_datatype import FirmwareDType
 from ..logger import logger
@@ -26,7 +26,7 @@ except ImportError as e:
     )
 
 
-@validate_arguments
+@validate_call
 def is_hex(file: Path):
     try:
         _ = IntelHex(file.as_posix())
@@ -80,7 +80,7 @@ def is_hex_nrf52(file: Path) -> bool:
 #  https://github.com/eliben/pyelftools/wiki/User's-guide
 
 
-@validate_arguments
+@validate_call
 def is_elf(file: Path) -> bool:
     if not elf_support:
         raise RuntimeError(elf_error_text)

@@ -6,9 +6,10 @@ from pydantic import EmailStr
 from pydantic import Field
 from pydantic import SecretBytes
 from pydantic import SecretStr
-from pydantic import constr
-from pydantic import root_validator
-from pydantic import validate_arguments
+from pydantic import StringConstraints
+from pydantic import model_validator
+from pydantic import validate_call
+from typing_extensions import Annotated
 
 from ..data_models.base.content import IdInt
 from ..data_models.base.content import NameStr
@@ -17,8 +18,10 @@ from ..data_models.base.content import id_default
 from ..data_models.base.shepherd import ShpModel
 
 
-@validate_arguments
-def hash_password(pw: constr(min_length=20, max_length=100)) -> bytes:
+@validate_call
+def hash_password(
+    pw: Annotated[str, StringConstraints(min_length=20, max_length=100)]
+) -> bytes:
     # TODO: add salt of testbed -> this fn should be part of Testbed-Object
     # NOTE: 1M Iterations need 25s on beaglebone
     return pbkdf2_hmac(
@@ -52,13 +55,13 @@ class User(ShpModel):
     token: SecretStr
     # ⤷ TODO (min_length=128), request with: token.get_secret_value()
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         # TODO:
-        return values
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
+        # post correction
         if values.get("token") is None:
             values["token"] = "shepherd_token_" + secrets.token_urlsafe(nbytes=128)
+
         return values

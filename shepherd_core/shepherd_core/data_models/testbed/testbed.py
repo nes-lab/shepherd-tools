@@ -1,10 +1,12 @@
 from datetime import timedelta
 from pathlib import Path
+from typing import List
 from typing import Optional
 
+from pydantic import Field
 from pydantic import HttpUrl
-from pydantic import conlist
-from pydantic import root_validator
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from ...testbed_client import tb_client
 from ..base.content import IdInt
@@ -22,9 +24,9 @@ class Testbed(ShpModel):
     description: SafeStr
     comment: Optional[SafeStr] = None
 
-    url: Optional[HttpUrl]
+    url: Optional[HttpUrl] = None
 
-    observers: conlist(item_type=Observer, min_items=1, max_items=64)
+    observers: Annotated[List[Observer], Field(min_length=1, max_length=64)]
 
     shared_storage: bool = True
     data_on_server: Path
@@ -34,20 +36,21 @@ class Testbed(ShpModel):
     prep_duration: timedelta = timedelta(minutes=5)
     # TODO: one BBone is currently time-keeper
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
+    @model_validator(mode="after")
+    def post_validation(self):
         observers = []
         ips = []
         macs = []
         capes = []
         targets = []
         eth_ports = []
-        for _obs in values.get("observers"):
+        for _obs in self.observers:
             observers.append(_obs.id)
             ips.append(_obs.ip)
             macs.append(_obs.mac)
@@ -70,11 +73,11 @@ class Testbed(ShpModel):
             raise ValueError("Target used more than once in Testbed")
         if len(eth_ports) > len(set(eth_ports)):
             raise ValueError("Observers-Ethernet-Port used more than once in Testbed")
-        if values.get("prep_duration") and values["prep_duration"].total_seconds() < 0:
+        if self.prep_duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
-        if not values.get("shared_storage"):
+        if not self.shared_storage:
             raise ValueError("Only shared-storage-option is implemented")
-        return values
+        return self
 
     def get_observer(self, target_id: int) -> Observer:
         for _observer in self.observers:

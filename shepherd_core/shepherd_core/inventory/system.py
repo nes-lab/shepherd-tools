@@ -13,6 +13,7 @@ try:
 except ImportError:
     psutil_support = False
 
+from pydantic import ConfigDict
 from pydantic.types import PositiveInt
 
 from ..data_models import ShpModel
@@ -20,7 +21,7 @@ from ..data_models import ShpModel
 
 class SystemInventory(ShpModel):
     uptime: PositiveInt
-    # seconds
+    # ⤷ seconds
 
     system: str
     release: str
@@ -34,12 +35,11 @@ class SystemInventory(ShpModel):
     hostname: str
 
     interfaces: dict = {}
-    # tuple with
+    # ⤷ tuple with
     #   ip IPvAnyAddress
     #   mac MACStr
 
-    class Config:
-        min_anystr_length = 0
+    model_config = ConfigDict(str_min_length=0)
 
     @classmethod
     def collect(cls):
@@ -61,7 +61,7 @@ class SystemInventory(ShpModel):
             )
 
         model_dict = {
-            "uptime": uptime,
+            "uptime": round(uptime),
             "system": platform.system(),
             "release": platform.release(),
             "version": platform.version(),

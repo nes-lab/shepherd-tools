@@ -164,13 +164,13 @@ def test_base_model_shepherd_fault_load_other(tmp_path) -> None:
 
 def test_base_model_shepherd_fault_mutation() -> None:
     content = ContentModel(name="tricky", owner="peter", group="work")
-    with pytest.raises(TypeError):
+    with pytest.raises(ValidationError):
         content.name = "whatever"
 
 
 def test_base_model_shepherd_fault_short_str() -> None:
     with pytest.raises(ValidationError):
-        _ = ContentModel(name="sho", owner="peter", group="work")
+        _ = ContentModel(name="", owner="peter", group="work")
 
 
 def test_base_model_shepherd_fault_long_str() -> None:

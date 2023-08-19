@@ -3,16 +3,17 @@ from pathlib import Path
 from typing import Optional
 from typing import Union
 
-from pydantic import conint
-from pydantic import constr
-from pydantic import root_validator
-from pydantic import validate_arguments
+from pydantic import Field
+from pydantic import model_validator
+from pydantic import validate_call
+from typing_extensions import Annotated
 
 from ...logger import logger
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
 from ..content.firmware import Firmware
 from ..content.firmware import FirmwareDType
+from ..content.firmware import FirmwareStr
 from ..experiment.experiment import Experiment
 from ..testbed import Testbed
 from ..testbed.target import IdInt16
@@ -22,27 +23,27 @@ from ..testbed.target import MCUPort
 class FirmwareModTask(ShpModel):
     """Config for Task that adds the custom ID to the firmware & stores it into a file"""
 
-    data: Union[constr(min_length=3, max_length=8_000_000), Path]
+    data: Union[FirmwareStr, Path]
     data_type: FirmwareDType
-    custom_id: Optional[IdInt16]
+    custom_id: Optional[IdInt16] = None
     firmware_file: Path
 
-    verbose: conint(ge=0, le=4) = 2
+    verbose: Annotated[int, Field(ge=0, le=4)] = 2
     # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
-        if values.get("data_type") in [
+    @model_validator(mode="after")
+    def post_validation(self):
+        if self.data_type in [
             FirmwareDType.base64_hex,
             FirmwareDType.path_hex,
         ]:
             logger.warning(
                 "Firmware is scheduled to get custom-ID but is not in elf-format"
             )
-        return values
+        return self
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_xp(
         cls,
         xp: Experiment,
@@ -70,7 +71,7 @@ class FirmwareModTask(ShpModel):
         )
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_firmware(cls, fw: Firmware, **kwargs):
         kwargs["data"] = fw.data
         kwargs["data_type"] = fw.data_type

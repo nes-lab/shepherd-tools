@@ -2,9 +2,10 @@ from pathlib import Path
 from typing import Optional
 from typing import Union
 
-from pydantic import constr
-from pydantic import root_validator
-from pydantic import validate_arguments
+from pydantic import StringConstraints
+from pydantic import model_validator
+from pydantic import validate_call
+from typing_extensions import Annotated
 
 from ... import fw_tools
 from ... import logger
@@ -32,6 +33,8 @@ arch_to_mcu: dict = {
     "nrf52": {"name": "nrf52"},
 }
 
+FirmwareStr = Annotated[str, StringConstraints(min_length=3, max_length=8_000_000)]
+
 
 class Firmware(ContentModel, title="Firmware of Target"):
     """meta-data representation of a data-component"""
@@ -40,13 +43,14 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     mcu: MCU
 
-    data: Union[constr(min_length=3, max_length=8_000_000), Path]
+    data: Union[FirmwareStr, Path]
     data_type: FirmwareDType
     data_hash: Optional[str] = None
 
     # TODO: a data-hash would be awesome
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return tb_client.fill_in_user_data(values)
@@ -101,7 +105,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             logger.warning("FW-Hash does not match with stored value!")
         return match
 
-    @validate_arguments
+    @validate_call
     def extract_firmware(self, file: Path) -> Path:
         """stores embedded data in file
         - file-suffix is derived from data-type and adapted

@@ -1,7 +1,8 @@
-from pydantic import confloat
-from pydantic import conint
-from pydantic import conlist
-from pydantic import root_validator
+from typing import List
+
+from pydantic import Field
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from ...commons import samplerate_sps_default
 from ...logger import logger
@@ -10,6 +11,12 @@ from .. import ShpModel
 from ..base.content import ContentModel
 from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvesterConfig
+
+# Custom Types
+LUT_SIZE: int = 12
+NormedNum = Annotated[float, Field(ge=0.0, le=1.0)]
+LUT1D = Annotated[List[NormedNum], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
+LUT2D = Annotated[List[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
@@ -30,89 +37,82 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     enable_buck: bool = False
     # ⤷ if false -> v_output = v_intermediate
 
-    interval_startup_delay_drain_ms: confloat(ge=0, le=10_000) = 0
+    interval_startup_delay_drain_ms: Annotated[float, Field(ge=0, le=10_000)] = 0
 
     harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
 
-    V_input_max_mV: confloat(ge=0, le=10_000) = 10_000
-    I_input_max_mA: confloat(ge=0, le=4.29e3) = 4_200
-    V_input_drop_mV: confloat(ge=0, le=4.29e6) = 0
+    V_input_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
+    I_input_max_mA: Annotated[float, Field(ge=0, le=4.29e3)] = 4_200
+    V_input_drop_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 0
     # ⤷ simulate input-diode
-    R_input_mOhm: confloat(ge=0, le=4.29e6) = 0
+    R_input_mOhm: Annotated[float, Field(ge=0, le=4.29e6)] = 0
     # ⤷ resistance only active with disabled boost, range [1 mOhm; 1MOhm]
 
     # primary storage-Cap
-    C_intermediate_uF: confloat(ge=0, le=100_000) = 0
-    V_intermediate_init_mV: confloat(ge=0, le=10_000) = 3_000
+    C_intermediate_uF: Annotated[float, Field(ge=0, le=100_000)] = 0
+    V_intermediate_init_mV: Annotated[float, Field(ge=0, le=10_000)] = 3_000
     # ⤷ allow a proper / fast startup
-    I_intermediate_leak_nA: confloat(ge=0, le=4.29e9) = 0
+    I_intermediate_leak_nA: Annotated[float, Field(ge=0, le=4.29e9)] = 0
 
-    V_intermediate_enable_threshold_mV: confloat(ge=0, le=10_000) = 1
+    V_intermediate_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 1
     # ⤷ target gets connected (hysteresis-combo with next value)
-    V_intermediate_disable_threshold_mV: confloat(ge=0, le=10_000) = 0
+    V_intermediate_disable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 0
     # ⤷ target gets disconnected
-    interval_check_thresholds_ms: confloat(ge=0, le=4.29e3) = 0
+    interval_check_thresholds_ms: Annotated[float, Field(ge=0, le=4.29e3)] = 0
     # ⤷ some ICs (BQ) check every 64 ms if output should be disconnected
 
     # pwr-good: target is informed on output-pin (hysteresis) -> for intermediate voltage
-    V_pwr_good_enable_threshold_mV: confloat(ge=0, le=10_000) = 2_800
-    V_pwr_good_disable_threshold_mV: confloat(ge=0, le=10_000) = 2200
+    V_pwr_good_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2_800
+    V_pwr_good_disable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2200
     immediate_pwr_good_signal: bool = True
     # ⤷ 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 
     # final (always last) stage to compensate undetectable current spikes
     # when enabling power for target
-    C_output_uF: confloat(ge=0, le=4.29e6) = 1.0
+    C_output_uF: Annotated[float, Field(ge=0, le=4.29e6)] = 1.0
 
     # Extra
-    V_output_log_gpio_threshold_mV: confloat(ge=0, le=4.29e6) = 1_400
+    V_output_log_gpio_threshold_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 1_400
     # ⤷ min voltage needed to enable recording changes in gpio-bank
 
     # Boost Converter
-    V_input_boost_threshold_mV: confloat(ge=0, le=10_000) = 0
+    V_input_boost_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 0
     # ⤷ min input-voltage for the boost converter to work
-    V_intermediate_max_mV: confloat(ge=0, le=10_000) = 10_000
+    V_intermediate_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
     # ⤷ boost converter shuts off
 
-    LUT_input_efficiency: conlist(
-        item_type=conlist(confloat(ge=0.0, le=1.0), min_items=12, max_items=12),
-        min_items=12,
-        max_items=12,
-    ) = 12 * [12 * [1.00]]
+    LUT_input_efficiency: LUT2D = 12 * [12 * [1.00]]
     # ⤷ rows are current -> first row a[V=0][:]
     # input-LUT[12][12] depending on array[inp_voltage][log(inp_current)],
     # influence of cap-voltage is not implemented
-    LUT_input_V_min_log2_uV: conint(ge=0, le=20) = 0
+    LUT_input_V_min_log2_uV: Annotated[int, Field(ge=0, le=20)] = 0
     # ⤷ 2^7 = 128 uV -> LUT[0][:] is for inputs < 128 uV
-    LUT_input_I_min_log2_nA: conint(ge=0, le=20) = 0
+    LUT_input_I_min_log2_nA: Annotated[int, Field(ge=0, le=20)] = 0
     # ⤷ 2^8 = 256 nA -> LUT[:][0] is for inputs < 256 nA
 
     # Buck Converter
-    V_output_mV: confloat(ge=0, le=5_000) = 2_400
-    V_buck_drop_mV: confloat(ge=0, le=5_000) = 0
+    V_output_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_400
+    V_buck_drop_mV: Annotated[float, Field(ge=0, le=5_000)] = 0
     # ⤷ simulate LDO min voltage differential or output-diode
 
-    LUT_output_efficiency: conlist(
-        item_type=confloat(ge=0.0, le=1.0),
-        min_items=12,
-        max_items=12,
-    ) = 12 * [1.00]
+    LUT_output_efficiency: LUT1D = 12 * [1.00]
     # ⤷ array[12] depending on output_current
-    LUT_output_I_min_log2_nA: conint(ge=0, le=20) = 0
+    LUT_output_I_min_log2_nA: Annotated[int, Field(ge=0, le=20)] = 0
     # ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values, chain = tb_client.try_completing_model(cls.__name__, values)
         values = tb_client.fill_in_user_data(values)
         logger.debug("VSrc-Inheritances: %s", chain)
         return values
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
+    @model_validator(mode="after")
+    def post_validation(self):
         # trigger stricter test of harv-parameters
-        HarvesterPRUConfig.from_vhrv(values.get("harvester"), for_emu=True)
-        return values
+        HarvesterPRUConfig.from_vhrv(self.harvester, for_emu=True)
+        return self
 
     def calc_internal_states(self) -> dict:
         """
@@ -220,15 +220,16 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         return int((10**3 * (2**28)) // (C_cap_uF * samplerate_sps_default))
 
 
-u32 = conint(ge=0, lt=2**32)
-u8 = conint(ge=0, lt=2**8)
-LUT_SIZE: int = 12
-lut_i = conlist(
-    item_type=conlist(u8, min_items=LUT_SIZE, max_items=LUT_SIZE),
-    min_items=LUT_SIZE,
-    max_items=LUT_SIZE,
-)
-lut_o = conlist(u32, min_items=LUT_SIZE, max_items=LUT_SIZE)
+u32 = Annotated[int, Field(ge=0, lt=2**32)]
+u8 = Annotated[int, Field(ge=0, lt=2**8)]
+lut_i = Annotated[
+    List[Annotated[List[u8], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]],
+    Field(
+        min_length=LUT_SIZE,
+        max_length=LUT_SIZE,
+    ),
+]
+lut_o = Annotated[List[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
 class ConverterPRUConfig(ShpModel):
@@ -282,32 +283,42 @@ class ConverterPRUConfig(ShpModel):
         return cls(
             # General
             converter_mode=data.calc_converter_mode(log_intermediate_node),
-            interval_startup_delay_drain_n=data.interval_startup_delay_drain_ms
-            * samplerate_sps_default
-            * 1e-3,
-            V_input_max_uV=data.V_input_max_mV * 1e3,
-            I_input_max_nA=data.I_input_max_mA * 1e6,
-            V_input_drop_uV=data.V_input_drop_mV * 1e3,
-            R_input_kOhm_n22=data.R_input_mOhm * (1e-6 * 2**22),
+            interval_startup_delay_drain_n=round(
+                data.interval_startup_delay_drain_ms * samplerate_sps_default * 1e-3
+            ),
+            V_input_max_uV=round(data.V_input_max_mV * 1e3),
+            I_input_max_nA=round(data.I_input_max_mA * 1e6),
+            V_input_drop_uV=round(data.V_input_drop_mV * 1e3),
+            R_input_kOhm_n22=round(data.R_input_mOhm * (1e-6 * 2**22)),
             Constant_us_per_nF_n28=data.calc_cap_constant_us_per_nF_n28(),
-            V_intermediate_init_uV=data.V_intermediate_init_mV * 1e3,
-            I_intermediate_leak_nA=data.I_intermediate_leak_nA,
-            V_enable_output_threshold_uV=states["V_enable_output_threshold_mV"] * 1e3,
-            V_disable_output_threshold_uV=states["V_disable_output_threshold_mV"] * 1e3,
-            dV_enable_output_uV=states["dV_enable_output_mV"] * 1e3,
-            interval_check_thresholds_n=data.interval_check_thresholds_ms
-            * samplerate_sps_default
-            * 1e-3,
-            V_pwr_good_enable_threshold_uV=data.V_pwr_good_enable_threshold_mV * 1e3,
-            V_pwr_good_disable_threshold_uV=data.V_pwr_good_disable_threshold_mV * 1e3,
+            V_intermediate_init_uV=round(data.V_intermediate_init_mV * 1e3),
+            I_intermediate_leak_nA=round(data.I_intermediate_leak_nA),
+            V_enable_output_threshold_uV=round(
+                states["V_enable_output_threshold_mV"] * 1e3
+            ),
+            V_disable_output_threshold_uV=round(
+                states["V_disable_output_threshold_mV"] * 1e3
+            ),
+            dV_enable_output_uV=round(states["dV_enable_output_mV"] * 1e3),
+            interval_check_thresholds_n=round(
+                data.interval_check_thresholds_ms * samplerate_sps_default * 1e-3
+            ),
+            V_pwr_good_enable_threshold_uV=round(
+                data.V_pwr_good_enable_threshold_mV * 1e3
+            ),
+            V_pwr_good_disable_threshold_uV=round(
+                data.V_pwr_good_disable_threshold_mV * 1e3
+            ),
             immediate_pwr_good_signal=data.immediate_pwr_good_signal,
-            V_output_log_gpio_threshold_uV=data.V_output_log_gpio_threshold_mV * 1e3,
+            V_output_log_gpio_threshold_uV=round(
+                data.V_output_log_gpio_threshold_mV * 1e3
+            ),
             # Boost-Converter
-            V_input_boost_threshold_uV=data.V_input_boost_threshold_mV * 1e3,
-            V_intermediate_max_uV=data.V_intermediate_max_mV * 1e3,
+            V_input_boost_threshold_uV=round(data.V_input_boost_threshold_mV * 1e3),
+            V_intermediate_max_uV=round(data.V_intermediate_max_mV * 1e3),
             # Buck-Converter
-            V_output_uV=data.V_output_mV * 1e3,
-            V_buck_drop_uV=data.V_buck_drop_mV * 1e3,
+            V_output_uV=round(data.V_output_mV * 1e3),
+            V_buck_drop_uV=round(data.V_buck_drop_mV * 1e3),
             # LUTs
             LUT_input_V_min_log2_uV=data.LUT_input_V_min_log2_uV,
             LUT_input_I_min_log2_nA=data.LUT_input_I_min_log2_nA,
