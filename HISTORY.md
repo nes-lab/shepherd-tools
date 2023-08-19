@@ -1,6 +1,19 @@
 # History of Changes
 
 
+## v2023.08.7
+
+- move to pydantic V2 with `bump-pydantic`
+  - disadvantage 1: min-string-size for models had to be reduced from 4 to 1, due to different local overwriting-rules
+  - disadvantage 2: its 60% slower on BBone
+
+```Shell
+sudo python3 -X importtime -c 'from shepherd_core.data_models.task import EmulationTask' 2> importtime.log
+#  8.4 s on v2023.8.6, pydantic 1.10
+# 13.9 s on v2023.8.7, pydantic 2.2.1, core 2.6.1
+# 13.7 s with defer_build=True -> triggers bug?
+```
+
 ## v2023.08.6
 
 - add zstd-compression for embedded fw
@@ -12,7 +25,6 @@
   - scipy.stats takes 4.4 s to import in cal_measurement
   - requests takes 1.3 s to import in testbed_client
   - next slowest external module are: numpy 1.5 s, pwnlib.elf 1.4 s
-  - TODO: switch to pydantic V2 (loading datamodels still dominant)
 
 ## v2023.08.5
 
