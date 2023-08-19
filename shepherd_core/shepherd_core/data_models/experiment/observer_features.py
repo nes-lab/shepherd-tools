@@ -61,7 +61,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     gpios: Optional[
         Annotated[List[GPIO], Field(min_length=1, max_length=10)]
     ] = None  # = all
-    # ⤷ TODO: list of GPIO to build mask, one of both should be internal
+    # ⤷ TODO: list of GPIO to build mask, one of both should be internal / computed field
 
     # time
     delay: timedelta = 0  # seconds

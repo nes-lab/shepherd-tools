@@ -92,8 +92,10 @@ class EmulationTask(ShpModel):
     @model_validator(mode="before")
     @classmethod
     def pre_correction(cls, values: dict) -> dict:
-        # add local timezone-data
+        # convert & add local timezone-data
         has_time = values.get("time_start") is not None
+        if has_time and isinstance(values["time_start"], (int, float)):
+            values["time_start"] = datetime.fromtimestamp(values["time_start"])
         if has_time and isinstance(values["time_start"], str):
             values["time_start"] = datetime.fromisoformat(values["time_start"])
         if has_time and values["time_start"].tzinfo is None:
