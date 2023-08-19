@@ -8,6 +8,9 @@
 - speedup on BBone from 47s to 16s
   - hash-default-value in user-model took 25s
   - loading fixtures took 6 s (now pickled on first use)
+  - scipy.stats takes 4.4 s to import in cal_measurement
+  - requests takes 1.3 s to import in testbed_client
+  - next slowest external module are: numpy 1.5 s, pwnlib.elf 1.4 s
   - TODO: switch to pydantic V2 (loading datamodels still takes 14s)
 
 ## v2023.08.5

@@ -4,7 +4,6 @@ import numpy as np
 from pydantic import PositiveFloat
 from pydantic import conlist
 from pydantic import validate_arguments
-from scipy import stats
 
 from .. import CalibrationCape
 from .. import CalibrationEmulator
@@ -25,6 +24,8 @@ CalMeasPairs = conlist(item_type=CalMeasurementPair, min_items=2)
 
 @validate_arguments
 def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
+    from scipy import stats  # here due to massive delay
+
     x = np.empty(len(data))
     y = np.empty(len(data))
     for i, pair in enumerate(data):
