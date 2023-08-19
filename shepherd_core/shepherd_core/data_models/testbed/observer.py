@@ -61,13 +61,10 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     @model_validator(mode="after")
     def post_validation(self):
         has_cape = self.cape is not None
-        has_target = (self.target_a is not None) or (
-            self.target_b is not None
-        )
+        has_target = (self.target_a is not None) or (self.target_b is not None)
         if not has_cape and has_target:
             raise ValueError(
-                f"Observer '{self.name}' is faulty "
-                f"-> has targets but no cape"
+                f"Observer '{self.name}' is faulty " f"-> has targets but no cape"
             )
         return self
 

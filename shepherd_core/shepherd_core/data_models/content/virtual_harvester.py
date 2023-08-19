@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional
 from typing import Tuple
 
-from pydantic import Field, ConfigDict
+from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
 
@@ -77,9 +77,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         # post corrections -> should be in separate validator
         cal = CalibrationHarvester()  # todo: as argument?
         c_limit = values.get("current_limit_uA", 50_000)  # cls.current_limit_uA)
-        values["current_limit_uA"] = max(
-            10**6 * cal.adc_C_Hrv.raw_to_si(4), c_limit
-        )
+        values["current_limit_uA"] = max(10**6 * cal.adc_C_Hrv.raw_to_si(4), c_limit)
 
         if values.get("voltage_step_mV") is None:
             # algo includes min & max!

@@ -2,8 +2,6 @@ from typing import List
 from typing import Optional
 
 from pydantic import ConfigDict
-from pydantic import Field
-from typing_extensions import Annotated
 
 from ..data_models import ShpModel
 

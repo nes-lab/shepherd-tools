@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from pydantic import Field, ConfigDict
+from pydantic import Field
 from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Annotated
@@ -54,7 +54,8 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
         no_sys = (self.reg_sys is None) or (self.pin_sys is None)
         if no_pru and no_sys:
             raise ValueError(
-                f"GPIO-Instance is faulty -> it needs to use pru or sys, content: {self.model_dump()}"
+                "GPIO-Instance is faulty -> "
+                f"it needs to use pru or sys, content: {self.model_dump()}"
             )
         return self
 

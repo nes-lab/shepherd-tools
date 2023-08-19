@@ -29,7 +29,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         default_factory=id_default,
     )
     name: NameStr
-    description: Annotated[Optional[SafeStr], Field(description="Required for public instances")] = None
+    description: Annotated[
+        Optional[SafeStr], Field(description="Required for public instances")
+    ] = None
     comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
 

@@ -33,7 +33,9 @@ class ContentModel(ShpModel):
         default_factory=id_default,
     )
     name: NameStr
-    description: Annotated[Optional[SafeStr], Field(description="Required when public")] = None
+    description: Annotated[
+        Optional[SafeStr], Field(description="Required when public")
+    ] = None
     comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
 

@@ -11,8 +11,9 @@ from typing_extensions import Annotated
 from ...logger import logger
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
-from ..content.firmware import Firmware, FirmwareStr
+from ..content.firmware import Firmware
 from ..content.firmware import FirmwareDType
+from ..content.firmware import FirmwareStr
 from ..experiment.experiment import Experiment
 from ..testbed import Testbed
 from ..testbed.target import IdInt16

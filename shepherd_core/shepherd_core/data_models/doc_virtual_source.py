@@ -1,15 +1,14 @@
 from pathlib import Path
-from typing import List
 
 from pydantic import Field
 from pydantic import model_validator
-from typing_extensions import Annotated
 
-from .content.virtual_source import LUT1D, LUT2D
 from .. import logger
 from ..data_models import Fixture
 from ..data_models import ShpModel
 from .content import VirtualHarvesterConfig
+from .content.virtual_source import LUT1D
+from .content.virtual_source import LUT2D
 
 fixture_path = Path(__file__).resolve().with_name("content/virtual_source_fixture.yaml")
 fixtures = Fixture(fixture_path, "content.VirtualSource")
