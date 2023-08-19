@@ -3,6 +3,7 @@ try:
 except ImportError:
     # replace missing dependencies from elf-only pwntools
     import sys
+    from importlib.util import find_spec
     from unittest.mock import MagicMock
 
     class Mock(MagicMock):
@@ -12,11 +13,16 @@ except ImportError:
 
     MOCK_MODULES = [
         "socks",  # general lib-init / context-init
+        "serial",
         # troublemaker on bbone and/or windows
         "capstone",
         "paramiko",
         "unicorn",
         "cffi",
+    ]
+    # only update when module is not avail
+    MOCK_MODULES = [
+        mod_name for mod_name in MOCK_MODULES if find_spec(mod_name) is None
     ]
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
