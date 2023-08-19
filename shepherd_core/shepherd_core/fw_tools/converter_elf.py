@@ -2,12 +2,12 @@ import subprocess  # noqa: S404
 from pathlib import Path
 from typing import Optional
 
-from pydantic import validate_arguments
+from pydantic import validate_call
 
 # extra src-file necessary to prevent circular import
 
 
-@validate_arguments
+@validate_call
 def elf_to_hex(file_elf: Path, file_hex: Optional[Path] = None) -> Path:
     if not file_elf.is_file():
         raise ValueError("Fn needs an existing file as input")

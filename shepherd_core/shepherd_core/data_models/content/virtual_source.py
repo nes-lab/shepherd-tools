@@ -224,13 +224,13 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 u32 = Annotated[int, Field(ge=0, lt=2**32)]
 u8 = Annotated[int, Field(ge=0, lt=2**8)]
 lut_i = Annotated[
-    List[Annotated[List[u8], Field(min_items=LUT_SIZE, max_items=LUT_SIZE)]],
+    List[Annotated[List[u8], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]],
     Field(
-        min_items=LUT_SIZE,
-        max_items=LUT_SIZE,
+        min_length=LUT_SIZE,
+        max_length=LUT_SIZE,
     ),
 ]
-lut_o = Annotated[List[u32], Field(min_items=LUT_SIZE, max_items=LUT_SIZE)]
+lut_o = Annotated[List[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
 class ConverterPRUConfig(ShpModel):
@@ -284,32 +284,32 @@ class ConverterPRUConfig(ShpModel):
         return cls(
             # General
             converter_mode=data.calc_converter_mode(log_intermediate_node),
-            interval_startup_delay_drain_n=data.interval_startup_delay_drain_ms
+            interval_startup_delay_drain_n=round(data.interval_startup_delay_drain_ms
             * samplerate_sps_default
-            * 1e-3,
-            V_input_max_uV=data.V_input_max_mV * 1e3,
-            I_input_max_nA=data.I_input_max_mA * 1e6,
-            V_input_drop_uV=data.V_input_drop_mV * 1e3,
-            R_input_kOhm_n22=data.R_input_mOhm * (1e-6 * 2**22),
+            * 1e-3),
+            V_input_max_uV=round(data.V_input_max_mV * 1e3),
+            I_input_max_nA=round(data.I_input_max_mA * 1e6),
+            V_input_drop_uV=round(data.V_input_drop_mV * 1e3),
+            R_input_kOhm_n22=round(data.R_input_mOhm * (1e-6 * 2**22)),
             Constant_us_per_nF_n28=data.calc_cap_constant_us_per_nF_n28(),
-            V_intermediate_init_uV=data.V_intermediate_init_mV * 1e3,
-            I_intermediate_leak_nA=data.I_intermediate_leak_nA,
-            V_enable_output_threshold_uV=states["V_enable_output_threshold_mV"] * 1e3,
-            V_disable_output_threshold_uV=states["V_disable_output_threshold_mV"] * 1e3,
-            dV_enable_output_uV=states["dV_enable_output_mV"] * 1e3,
-            interval_check_thresholds_n=data.interval_check_thresholds_ms
+            V_intermediate_init_uV=round(data.V_intermediate_init_mV * 1e3),
+            I_intermediate_leak_nA=round(data.I_intermediate_leak_nA),
+            V_enable_output_threshold_uV=round(states["V_enable_output_threshold_mV"] * 1e3),
+            V_disable_output_threshold_uV=round(states["V_disable_output_threshold_mV"] * 1e3),
+            dV_enable_output_uV=round(states["dV_enable_output_mV"] * 1e3),
+            interval_check_thresholds_n=round(data.interval_check_thresholds_ms
             * samplerate_sps_default
-            * 1e-3,
-            V_pwr_good_enable_threshold_uV=data.V_pwr_good_enable_threshold_mV * 1e3,
-            V_pwr_good_disable_threshold_uV=data.V_pwr_good_disable_threshold_mV * 1e3,
+            * 1e-3),
+            V_pwr_good_enable_threshold_uV=round(data.V_pwr_good_enable_threshold_mV * 1e3),
+            V_pwr_good_disable_threshold_uV=round(data.V_pwr_good_disable_threshold_mV * 1e3),
             immediate_pwr_good_signal=data.immediate_pwr_good_signal,
-            V_output_log_gpio_threshold_uV=data.V_output_log_gpio_threshold_mV * 1e3,
+            V_output_log_gpio_threshold_uV=round(data.V_output_log_gpio_threshold_mV * 1e3),
             # Boost-Converter
-            V_input_boost_threshold_uV=data.V_input_boost_threshold_mV * 1e3,
-            V_intermediate_max_uV=data.V_intermediate_max_mV * 1e3,
+            V_input_boost_threshold_uV=round(data.V_input_boost_threshold_mV * 1e3),
+            V_intermediate_max_uV=round(data.V_intermediate_max_mV * 1e3),
             # Buck-Converter
-            V_output_uV=data.V_output_mV * 1e3,
-            V_buck_drop_uV=data.V_buck_drop_mV * 1e3,
+            V_output_uV=round(data.V_output_mV * 1e3),
+            V_buck_drop_uV=round(data.V_buck_drop_mV * 1e3),
             # LUTs
             LUT_input_V_min_log2_uV=data.LUT_input_V_min_log2_uV,
             LUT_input_I_min_log2_nA=data.LUT_input_I_min_log2_nA,

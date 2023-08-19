@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic import Field
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ..commons import uid_len_default
@@ -22,7 +22,7 @@ except ImportError as e:
     )
 
 
-@validate_arguments
+@validate_call
 def find_symbol(file_elf: Path, symbol: str) -> bool:
     if symbol is None or not is_elf(file_elf):
         return False
@@ -45,7 +45,7 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
     return True
 
 
-@validate_arguments
+@validate_call
 def read_symbol(
     file_elf: Path, symbol: str, length: int = uid_len_default
 ) -> Optional[int]:
@@ -77,7 +77,7 @@ def read_arch(file_elf: Path) -> Optional[str]:
     return None
 
 
-@validate_arguments
+@validate_call
 def modify_symbol_value(
     file_elf: Path,
     symbol: str,

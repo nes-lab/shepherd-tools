@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import EmailStr
 from pydantic import Field
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ..base.content import NameStr
@@ -23,7 +23,7 @@ class TestbedTasks(ShpModel):
     email: Optional[EmailStr] = None
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None):
         if tb is None:
             # TODO: just for testing OK

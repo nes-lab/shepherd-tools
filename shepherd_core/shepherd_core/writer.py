@@ -14,7 +14,7 @@ from typing import Union
 import h5py
 import numpy as np
 import yaml
-from pydantic import validate_arguments
+from pydantic import validate_call
 from yaml import SafeDumper
 
 from .commons import samplerate_sps_default
@@ -90,7 +90,7 @@ class BaseWriter(BaseReader):
 
     _chunk_shape: tuple = (BaseReader.samples_per_buffer,)
 
-    @validate_arguments
+    @validate_call
     def __init__(
         self,
         file_path: Path,

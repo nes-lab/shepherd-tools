@@ -58,7 +58,7 @@ class ShpModel(BaseModel):
 
     def __repr__(self) -> str:
         """string-representation allows print(model)"""
-        return str(self.dict(exclude_unset=True, exclude_defaults=True))
+        return str(self.model_dump(exclude_unset=True, exclude_defaults=True))
 
     def __getitem__(self, key):
         """allows dict access -> model["key"], in addition to model.key"""
@@ -113,4 +113,4 @@ class ShpModel(BaseModel):
         return cls(**shp_wrap.parameters)
 
     def get_hash(self):
-        return hashlib.sha3_224(str(self.dict()).encode("utf-8")).hexdigest()
+        return hashlib.sha3_224(str(self.model_dump()).encode("utf-8")).hexdigest()

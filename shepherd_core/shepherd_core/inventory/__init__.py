@@ -29,9 +29,9 @@ class Inventory(PythonInventory, SystemInventory, TargetInventory):
     @classmethod
     def collect(cls):
         # one by one for more precise error messages
-        pid = PythonInventory.collect().dict(exclude_unset=True, exclude_defaults=True)
-        sid = SystemInventory.collect().dict(exclude_unset=True, exclude_defaults=True)
-        tid = TargetInventory.collect().dict(exclude_unset=True, exclude_defaults=True)
+        pid = PythonInventory.collect().model_dump(exclude_unset=True, exclude_defaults=True)
+        sid = SystemInventory.collect().model_dump(exclude_unset=True, exclude_defaults=True)
+        tid = TargetInventory.collect().model_dump(exclude_unset=True, exclude_defaults=True)
         model = {**pid, **sid, **tid}
         return cls(**model)
 
@@ -47,8 +47,8 @@ class InventoryList(ShpModel):
         if path.is_dir():
             path = path / "inventory.yaml"
         with open(path.as_posix(), "w") as fd:
-            fd.write(", ".join(self.items[0].dict().keys()) + "\r\n")
+            fd.write(", ".join(self.items[0].model_dump().keys()) + "\r\n")
             for item in self.items:
-                content = list(item.dict().values())
+                content = list(item.model_dump().values())
                 content = ["" if value is None else str(value) for value in content]
                 fd.write(", ".join(content) + "\r\n")

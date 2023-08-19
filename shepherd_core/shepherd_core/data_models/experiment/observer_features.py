@@ -59,7 +59,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     mask: Annotated[int, Field(ge=0, lt=2**10)] = 0b11_1111_1111  # all
     # ⤷ TODO: custom mask not implemented
     gpios: Optional[
-        Annotated[List[GPIO], Field(min_items=1, max_items=10)]
+        Annotated[List[GPIO], Field(min_length=1, max_length=10)]
     ] = None  # = all
     # ⤷ TODO: list of GPIO to build mask, one of both should be internal
 

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pydantic import Field
 from pydantic import model_validator
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ..base.content import IdInt
@@ -40,7 +40,7 @@ class ProgrammingTask(ShpModel):
         return self
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_xp(
         cls,
         xp: Experiment,

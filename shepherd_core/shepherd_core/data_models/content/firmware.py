@@ -4,7 +4,7 @@ from typing import Union
 
 from pydantic import StringConstraints
 from pydantic import model_validator
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ... import fw_tools
@@ -105,7 +105,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             logger.warning("FW-Hash does not match with stored value!")
         return match
 
-    @validate_arguments
+    @validate_call
     def extract_firmware(self, file: Path) -> Path:
         """stores embedded data in file
         - file-suffix is derived from data-type and adapted

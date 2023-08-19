@@ -17,7 +17,7 @@ from typing import Union
 import h5py
 import numpy as np
 import yaml
-from pydantic import validate_arguments
+from pydantic import validate_call
 from tqdm import trange
 
 from .commons import samplerate_sps_default
@@ -45,7 +45,7 @@ class BaseReader:
         "emulator": [EnergyDType.ivsample],
     }
 
-    @validate_arguments
+    @validate_call
     def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
         if not hasattr(self, "file_path"):
             self.file_path: Optional[Path] = None
@@ -99,7 +99,7 @@ class BaseReader:
 
         # retrieve cal-data
         if not hasattr(self, "_cal"):
-            cal_dict = CalibrationSeries().dict()
+            cal_dict = CalibrationSeries().model_dump()
             for ds, param in product(
                 ["current", "voltage", "time"], ["gain", "offset"]
             ):

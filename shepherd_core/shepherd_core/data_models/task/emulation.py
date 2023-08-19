@@ -8,7 +8,7 @@ from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ..base.content import IdInt
@@ -89,14 +89,18 @@ class EmulationTask(ShpModel):
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
     # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
+    @model_validator(mode="before")
+    @classmethod
+    def pre_correction(cls, values: dict) -> dict:
+        # add local timezone-data
+        if values.get("time_start") is not None and values["time_start"].tzinfo is None:
+            values["time_start"] = values["time_start"].astimezone()
+        return values
+
     @model_validator(mode="after")
     def post_validation(self):
         # TODO: limit paths
-        has_start = self.time_start is not None
-        # add local timezone-data
-        if has_start and self.time_start.tzinfo is None:
-            self.time_start = self.time_start.astimezone()
-        if has_start and self.time_start < datetime.now().astimezone():
+        if self.time_start is not None and self.time_start < datetime.now().astimezone():
             raise ValueError("Start-Time for Emulation can't be in the past.")
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
@@ -112,7 +116,7 @@ class EmulationTask(ShpModel):
         return self
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path):
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)

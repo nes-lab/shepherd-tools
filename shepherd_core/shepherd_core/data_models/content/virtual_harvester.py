@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional
 from typing import Tuple
 
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from pydantic import model_validator
 from typing_extensions import Annotated
 
@@ -64,6 +64,8 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
+    model_config = ConfigDict(str_min_length=2)
+
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict) -> dict:
@@ -73,6 +75,25 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
             # TODO: same test is later done in calc_algorithm_num() again
             raise ValueError("Resulting Harvester can't be neutral")
         logger.debug("VHrv-Inheritances: %s", chain)
+
+        # post corrections -> should be in separate validator
+        cal = CalibrationHarvester()  # todo: as argument?
+        c_limit = values.get("current_limit_uA", 50_000)  # cls.current_limit_uA)
+        values["current_limit_uA"] = max(
+            10**6 * cal.adc_C_Hrv.raw_to_si(4), c_limit
+        )
+
+        if values.get("voltage_step_mV") is None:
+            # algo includes min & max!
+            v_max = values.get("voltage_max_mV", 5_000)  # cls.voltage_max_mV)
+            v_min = values.get("voltage_min_mV", 0)  # cls.voltage_min_mV)
+            samples_n = values.get("samples_n", 8)  # cls.samples_n) TODO
+            values["voltage_step_mV"] = abs(v_max - v_min) / (samples_n - 1)
+
+        values["voltage_step_mV"] = max(
+            10**3 * cal.dac_V_Hrv.raw_to_si(4), values["voltage_step_mV"]
+        )
+
         return values
 
     @model_validator(mode="after")
@@ -84,22 +105,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         if self.voltage_mV > self.voltage_max_mV:
             raise ValueError("Voltage above max")
 
-        cal = CalibrationHarvester()  # todo: as argument?
-        self.current_limit_uA = max(
-            10**6 * cal.adc_C_Hrv.raw_to_si(4), self.current_limit_uA
-        )
-
-        if self.voltage_step_mV is None:
-            # algo includes min & max!
-            self.voltage_step_mV = abs(
-                self.voltage_max_mV - self.voltage_min_mV
-            ) / (self.samples_n - 1)
-
-        self.voltage_step_mV = max(
-            10**3 * cal.dac_V_Hrv.raw_to_si(4), self.voltage_step_mV
-        )
-
-        return self  # TODO: after-validator should not modify
+        return self
 
     def calc_hrv_mode(self, for_emu: bool) -> int:
         return 1 * int(for_emu) + 2 * self.rising
@@ -231,13 +237,13 @@ class HarvesterPRUConfig(ShpModel):
             window_size=window_size
             if window_size is not None
             else data.calc_window_size(for_emu, dtype_in),
-            voltage_uV=data.voltage_mV * 10**3,
-            voltage_min_uV=data.voltage_min_mV * 10**3,
-            voltage_max_uV=data.voltage_max_mV * 10**3,
-            voltage_step_uV=data.voltage_step_mV * 10**3,
-            current_limit_nA=data.current_limit_uA * 10**3,
-            setpoint_n8=min(255, data.setpoint_n * 2**8),
-            interval_n=interval_ms * samplerate_sps_default * 1e-3,
-            duration_n=duration_ms * samplerate_sps_default * 1e-3,
+            voltage_uV=round(data.voltage_mV * 10**3),
+            voltage_min_uV=round(data.voltage_min_mV * 10**3),
+            voltage_max_uV=round(data.voltage_max_mV * 10**3),
+            voltage_step_uV=round(data.voltage_step_mV * 10**3),
+            current_limit_nA=round(data.current_limit_uA * 10**3),
+            setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
+            interval_n=round(interval_ms * samplerate_sps_default * 1e-3),
+            duration_n=round(duration_ms * samplerate_sps_default * 1e-3),
             wait_cycles_n=data.wait_cycles,
         )

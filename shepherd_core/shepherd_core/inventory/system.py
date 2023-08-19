@@ -61,7 +61,7 @@ class SystemInventory(ShpModel):
             )
 
         model_dict = {
-            "uptime": uptime,
+            "uptime": round(uptime),
             "system": platform.system(),
             "release": platform.release(),
             "version": platform.version(),

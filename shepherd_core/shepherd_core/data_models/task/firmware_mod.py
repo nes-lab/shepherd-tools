@@ -5,7 +5,7 @@ from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ...logger import logger
@@ -42,7 +42,7 @@ class FirmwareModTask(ShpModel):
         return self
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_xp(
         cls,
         xp: Experiment,
@@ -70,7 +70,7 @@ class FirmwareModTask(ShpModel):
         )
 
     @classmethod
-    @validate_arguments
+    @validate_call
     def from_firmware(cls, fw: Firmware, **kwargs):
         kwargs["data"] = fw.data
         kwargs["data_type"] = fw.data_type

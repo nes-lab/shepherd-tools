@@ -44,15 +44,14 @@ class Target(ShpModel, title="Target Node (DuT)"):
     @classmethod
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
-        return values
 
-    @model_validator(mode="after")
-    def post_correction(self):
-        if isinstance(self.mcu1, str):
-            self.mcu1 = MCU(name=self.mcu1)
+        # post correction
+        if isinstance(values.get("mcu1"), str):
+            values["mcu1"] = MCU(name=values["mcu1"])
             # ⤷ this will raise if default is faulty
-        if isinstance(self.mcu2, str):
-            self.mcu2 = MCU(name=self.mcu2)
-        if self.fw_id is None:
-            self.fw_id = self.id % 2**16
-        return self
+        if isinstance(values.get("mcu2"), str):
+            values["mcu2"] = MCU(name=values["mcu2"])
+        if values.get("fw_id") is None:
+            values["fw_id"] = values.get("id") % 2**16
+
+        return values

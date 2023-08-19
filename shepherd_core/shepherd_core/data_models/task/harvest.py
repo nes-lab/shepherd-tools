@@ -52,14 +52,18 @@ class HarvestTask(ShpModel):
 
     # TODO: there is an unused DAC-Output patched to the harvesting-port
 
+    @model_validator(mode="before")
+    @classmethod
+    def pre_correction(cls, values: dict) -> dict:
+        # add local timezone-data
+        if values.get("time_start") is not None and values["time_start"].tzinfo is None:
+            values["time_start"] = values["time_start"].astimezone()
+        return values
+
     @model_validator(mode="after")
     def post_validation(self):
         # TODO: limit paths
-        has_start = self.time_start is not None
-        if has_start and self.time_start.tzinfo is None:
-            # add local timezone-data
-            self.time_start = self.time_start.astimezone()
-        if has_start and self.time_start < datetime.now().astimezone():
+        if self.time_start is not None and self.time_start < datetime.now().astimezone():
             raise ValueError("Start-Time for Harvest can't be in the past.")
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")

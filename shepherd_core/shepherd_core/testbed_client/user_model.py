@@ -8,7 +8,7 @@ from pydantic import SecretBytes
 from pydantic import SecretStr
 from pydantic import StringConstraints
 from pydantic import model_validator
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ..data_models.base.content import IdInt
@@ -18,7 +18,7 @@ from ..data_models.base.content import id_default
 from ..data_models.base.shepherd import ShpModel
 
 
-@validate_arguments
+@validate_call
 def hash_password(
     pw: Annotated[str, StringConstraints(min_length=20, max_length=100)]
 ) -> bytes:
@@ -59,10 +59,9 @@ class User(ShpModel):
     @classmethod
     def query_database(cls, values: dict) -> dict:
         # TODO:
-        return values
 
-    @model_validator(mode="after")
-    def post_validation(self):
-        if self.token is None:
-            self.token = "shepherd_token_" + secrets.token_urlsafe(nbytes=128)
-        return self
+        # post correction
+        if values.get("token") is None:
+            values["token"] = "shepherd_token_" + secrets.token_urlsafe(nbytes=128)
+
+        return values

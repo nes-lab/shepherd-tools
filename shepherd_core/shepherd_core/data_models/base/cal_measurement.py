@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 from pydantic import Field
 from pydantic import PositiveFloat
-from pydantic import validate_arguments
+from pydantic import validate_call
 from typing_extensions import Annotated
 
 from .. import CalibrationCape
@@ -21,10 +21,10 @@ class CalMeasurementPair(ShpModel):
     reference_si: float = 0
 
 
-CalMeasPairs = Annotated[List[CalMeasurementPair], Field(min_items=2)]
+CalMeasPairs = Annotated[List[CalMeasurementPair], Field(min_length=2)]
 
 
-@validate_arguments
+@validate_call
 def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
     from scipy import stats  # here due to massive delay
 
@@ -53,8 +53,8 @@ class CalMeasurementHarvester(ShpModel):
     adc_C_Hrv: CalMeasPairs
 
     def to_cal(self) -> CalibrationHarvester:
-        dv = self.dict()
-        dcal = CalibrationHarvester().dict()
+        dv = self.model_dump()
+        dcal = CalibrationHarvester().model_dump()
         for key in dv.keys():
             dcal[key] = meas_to_cal(self[key], f"hrv_{key}")
         return CalibrationHarvester(**dcal)
@@ -67,8 +67,8 @@ class CalMeasurementEmulator(ShpModel):
     adc_C_B: CalMeasPairs
 
     def to_cal(self) -> CalibrationEmulator:
-        dv = self.dict()
-        dcal = CalibrationEmulator().dict()
+        dv = self.model_dump()
+        dcal = CalibrationEmulator().model_dump()
         for key in dv.keys():
             dcal[key] = meas_to_cal(self[key], f"emu_{key}")
         return CalibrationEmulator(**dcal)
@@ -82,8 +82,8 @@ class CalMeasurementCape(ShpModel):
     host: Optional[str] = None
 
     def to_cal(self) -> CalibrationCape:
-        dv = self.dict()
-        dcal = CalibrationCape().dict()
+        dv = self.model_dump()
+        dcal = CalibrationCape().model_dump()
         # TODO: is it helpful to default wrong / missing values?
         for key, value in dv.items():
             if key in ["harvester", "emulator"]:
