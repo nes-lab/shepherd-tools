@@ -21,6 +21,7 @@ fw1 = Firmware(
     owner="example",
     group="test",
 )
+fw1.to_file(Path(__file__).parent / "firmware.yaml")
 
 # Option 2 - semi-automatic -> MCU and data-type get derived
 

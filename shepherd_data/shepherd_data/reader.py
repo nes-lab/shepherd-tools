@@ -11,7 +11,6 @@ from typing import Union
 import h5py
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy import signal
 from tqdm import trange
 
 from shepherd_core import BaseReader
@@ -129,6 +128,8 @@ class Reader(BaseReader):
         :param is_time: time is not really downsamples, but just decimated
         :return: downsampled h5-dataset or numpy-array
         """
+        from scipy import signal  # here due to massive delay
+
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Downsampling-Function was not written for IVCurves")
         ds_factor = max(1, math.floor(ds_factor))

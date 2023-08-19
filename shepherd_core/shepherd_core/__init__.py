@@ -21,7 +21,7 @@ from .testbed_client.client import TestbedClient
 from .testbed_client.client import tb_client
 from .writer import BaseWriter
 
-__version__ = "2023.8.5"
+__version__ = "2023.8.6"
 
 __all__ = [
     "BaseReader",

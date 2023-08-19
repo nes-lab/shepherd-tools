@@ -81,6 +81,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
                 raise ValueError("File is not a ELF for nRF52")
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
+
+        if "name" not in kwargs:
+            kwargs["name"] = file.name
         return cls(**kwargs)
 
     def compare_hash(self, path: Optional[Path] = None) -> bool:

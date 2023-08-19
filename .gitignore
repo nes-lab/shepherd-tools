@@ -4,9 +4,15 @@ dist/
 *.egg-info/
 __pycache__
 
+# files below should only be added manually after consideration
 *.h5
 *.yml
 *.yaml
 *.png
 *.csv
 *.log
+
+*.hex
+*.elf
+*.pickle
+.coverage

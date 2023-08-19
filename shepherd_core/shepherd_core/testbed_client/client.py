@@ -1,8 +1,8 @@
+from importlib import import_module
 from pathlib import Path
 from typing import Optional
 from typing import Union
 
-import requests
 from pydantic import validate_arguments
 
 from ..commons import testbed_server_default
@@ -23,6 +23,7 @@ class TestbedClient:
             self._key: Optional[str] = None
             self._fixtures: Optional[Fixtures] = Fixtures()
             self._connected: bool = False
+            self._req = None
         if "server" in kwargs or "token" in kwargs:
             self.connect(**kwargs)
 
@@ -52,6 +53,8 @@ class TestbedClient:
             self._server = server.lower()
 
         if self._server:
+            self._req = import_module("requests")  # here due to slow startup
+
             # extended connection-test:
             self._query_session_key()
             self._connected = True
@@ -65,7 +68,7 @@ class TestbedClient:
             parameters=data.dict(),
         )
         if self._connected:
-            r = requests.post(self._server + "/add", data=wrap.json(), timeout=2)
+            r = self._req.post(self._server + "/add", data=wrap.json(), timeout=2)
             r.raise_for_status()
         else:
             self._fixtures.insert_model(wrap)
@@ -94,7 +97,7 @@ class TestbedClient:
 
     def _query_session_key(self) -> bool:
         if self._server:
-            r = requests.get(self._server + "/session_key", timeout=2)
+            r = self._req.get(self._server + "/session_key", timeout=2)
             r.raise_for_status()
             self._key = r.json()["value"]  # TODO: not finished
             return True
@@ -102,7 +105,7 @@ class TestbedClient:
 
     def _query_user_data(self) -> bool:
         if self._server:
-            r = requests.get(self._server + "/user?token=" + self._token, timeout=2)
+            r = self._req.get(self._server + "/user?token=" + self._token, timeout=2)
             # TODO: possibly a security nightmare (send via json or encrypted via public key?)
             r.raise_for_status()
             self._user = User(**r.json())
