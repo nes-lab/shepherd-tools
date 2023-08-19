@@ -56,14 +56,18 @@ class HarvestTask(ShpModel):
     @classmethod
     def pre_correction(cls, values: dict) -> dict:
         # add local timezone-data
-        if values.get("time_start") is not None and values["time_start"].tzinfo is None:
+        has_time = values.get("time_start") is not None
+        if has_time and isinstance(values["time_start"], str):
+            values["time_start"] = datetime.fromisoformat(values["time_start"])
+        if has_time and values["time_start"].tzinfo is None:
             values["time_start"] = values["time_start"].astimezone()
         return values
 
     @model_validator(mode="after")
     def post_validation(self):
         # TODO: limit paths
-        if self.time_start is not None and self.time_start < datetime.now().astimezone():
+        has_time = self.time_start is not None
+        if has_time and self.time_start < datetime.now().astimezone():
             raise ValueError("Start-Time for Harvest can't be in the past.")
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")

@@ -33,13 +33,13 @@ class ContentModel(ShpModel):
         default_factory=id_default,
     )
     name: NameStr
-    description: Optional[SafeStr] = Field(description="Required when public")
+    description: Annotated[Optional[SafeStr], Field(description="Required when public")] = None
     comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access
     owner: NameStr
-    group: NameStr = Field(description="University or Subgroup")
+    group: Annotated[NameStr, Field(description="University or Subgroup")]
     visible2group: bool = False
     visible2all: bool = False
 

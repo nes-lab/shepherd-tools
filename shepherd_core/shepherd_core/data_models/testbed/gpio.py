@@ -38,8 +38,6 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
     reg_sys: Optional[Annotated[int, Field(ge=0)]] = None
     pin_sys: Optional[Annotated[str, StringConstraints(max_length=10)]] = None
 
-    model_config = ConfigDict(str_min_length=2)
-
     def __str__(self):
         return self.name
 

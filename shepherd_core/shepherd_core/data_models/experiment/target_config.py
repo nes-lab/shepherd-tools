@@ -1,7 +1,7 @@
 from typing import List
 from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from pydantic import model_validator
 from typing_extensions import Annotated
 

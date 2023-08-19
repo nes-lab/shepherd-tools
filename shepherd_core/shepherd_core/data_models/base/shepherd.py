@@ -48,7 +48,8 @@ class ShpModel(BaseModel):
         extra="forbid",  # no unnamed attributes allowed
         validate_default=True,
         validate_assignment=True,  # not relevant for the frozen model
-        str_min_length=4,  # force more meaningful descriptors
+        str_min_length=1,  # force more meaningful descriptors,
+        # ⤷ TODO: was 4 but localizing constraints works different with pydantic2
         str_max_length=512,
         # ⤷ local str-length constraints overrule global ones!
         str_strip_whitespace=True,  # strip leading & trailing whitespaces

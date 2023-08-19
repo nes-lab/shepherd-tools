@@ -64,8 +64,6 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
-    model_config = ConfigDict(str_min_length=2)
-
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict) -> dict:

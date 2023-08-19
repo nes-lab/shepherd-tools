@@ -46,11 +46,12 @@ class Target(ShpModel, title="Target Node (DuT)"):
         values, _ = tb_client.try_completing_model(cls.__name__, values)
 
         # post correction
-        if isinstance(values.get("mcu1"), str):
-            values["mcu1"] = MCU(name=values["mcu1"])
-            # ⤷ this will raise if default is faulty
-        if isinstance(values.get("mcu2"), str):
-            values["mcu2"] = MCU(name=values["mcu2"])
+        for _mcu in ["mcu1", "mcu2"]:
+            if isinstance(values.get(_mcu), str):
+                values[_mcu] = MCU(name=values[_mcu])
+                # ⤷ this will raise if default is faulty
+            elif isinstance(values.get(_mcu), dict):
+                values[_mcu] = MCU(**values[_mcu])
         if values.get("fw_id") is None:
             values["fw_id"] = values.get("id") % 2**16
 
