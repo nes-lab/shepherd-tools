@@ -50,11 +50,13 @@ class ShpModel(BaseModel):
         validate_assignment=True,  # not relevant for the frozen model
         str_min_length=1,  # force more meaningful descriptors,
         # ⤷ TODO: was 4 but localizing constraints works different with pydantic2
+        #       - might be solvable with "use_enum_values=True"
         str_max_length=512,
         # ⤷ local str-length constraints overrule global ones!
         str_strip_whitespace=True,  # strip leading & trailing whitespaces
         use_enum_values=True,  # cleaner export of enum-parameters
         allow_inf_nan=False,  # float without +-inf or NaN
+        defer_build=True,
     )
 
     def __repr__(self) -> str:
