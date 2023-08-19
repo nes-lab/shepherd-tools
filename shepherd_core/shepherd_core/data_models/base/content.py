@@ -3,18 +3,20 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field
-from pydantic import conint
-from pydantic import constr
-from pydantic import root_validator
+from pydantic import StringConstraints
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from .shepherd import ShpModel
 
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
-IdInt = conint(ge=0, lt=2**128)
-NameStr = constr(max_length=32, regex=r'^[^<>:;,?"*|\/\\]+$')
+IdInt = Annotated[int, Field(ge=0, lt=2**128)]
+NameStr = Annotated[
+    str, StringConstraints(max_length=32, pattern=r'^[^<>:;,?"*|\/\\]+$')
+]
 # ⤷ Regex = FileSystem-Compatible ASCII
-SafeStr = constr(regex=r"^[ -~]+$")
+SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ Regex = All Printable ASCII-Characters with Space
 
 
@@ -44,12 +46,12 @@ class ContentModel(ShpModel):
     def __str__(self):
         return self.name
 
-    @root_validator(pre=False)
-    def content_validation(cls, values: dict) -> dict:
-        is_visible = values.get("visible2group") or values.get("visible2all")
-        if is_visible and values.get("description") is None:
+    @model_validator(mode="after")
+    def content_validation(self):
+        is_visible = self.visible2group or self.visible2all
+        if is_visible and self.description is None:
             raise ValueError(
                 "Public instances require a description "
                 "(check visible2*- and description-field)"
             )
-        return values
+        return self

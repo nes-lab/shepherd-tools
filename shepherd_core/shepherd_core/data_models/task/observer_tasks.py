@@ -27,13 +27,13 @@ class ObserverTasks(ShpModel):
     abort_on_error: bool
 
     # fw mod, store as hex-file and program
-    fw1_mod: Optional[FirmwareModTask]
-    fw2_mod: Optional[FirmwareModTask]
-    fw1_prog: Optional[ProgrammingTask]
-    fw2_prog: Optional[ProgrammingTask]
+    fw1_mod: Optional[FirmwareModTask] = None
+    fw2_mod: Optional[FirmwareModTask] = None
+    fw1_prog: Optional[ProgrammingTask] = None
+    fw2_prog: Optional[ProgrammingTask] = None
 
     # MAIN PROCESS
-    emulation: Optional[EmulationTask]
+    emulation: Optional[EmulationTask] = None
 
     # post_copy / cleanup, Todo: could also just intake emuTask
     #  - delete firmwares

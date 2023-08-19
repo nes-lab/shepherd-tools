@@ -4,8 +4,10 @@
     - hardware-config
 """
 from pathlib import Path
+from typing import List
 
-from pydantic.types import conlist
+from pydantic import Field
+from typing_extensions import Annotated
 
 from ..data_models import ShpModel
 from .python import PythonInventory
@@ -35,7 +37,7 @@ class Inventory(PythonInventory, SystemInventory, TargetInventory):
 
 
 class InventoryList(ShpModel):
-    items: conlist(item_type=Inventory, min_items=1)
+    items: Annotated[List[Inventory], Field(min_length=1)]
 
     def to_csv(self, path: Path) -> None:
         """TODO: pretty messed up (raw lists and dicts for sub-elements)

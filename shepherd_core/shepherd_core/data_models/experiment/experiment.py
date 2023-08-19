@@ -1,11 +1,12 @@
 from datetime import datetime
 from datetime import timedelta
+from typing import List
 from typing import Optional
 
 from pydantic import EmailStr
 from pydantic import Field
-from pydantic import conlist
-from pydantic import root_validator
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from ..base.content import IdInt
 from ..base.content import NameStr
@@ -36,7 +37,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     owner_id: Optional[IdInt] = 5472  # UUID?
 
     # feedback
-    email_results: Optional[EmailStr]  # TODO: can be bool, as its linked to account
+    email_results: Optional[EmailStr] = None
+    # ⤷ TODO: can be bool, as its linked to account
     sys_logging: SystemLogging = SystemLogging(dmesg=True, ptp=False, shepherd=True)
 
     # schedule
@@ -45,21 +47,21 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     abort_on_error: bool = False
 
     # targets
-    target_configs: conlist(item_type=TargetConfig, min_items=1, max_items=64)
+    target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=64)]
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
-        cls.validate_targets(values)
-        cls.validate_observers(values)
-        if values.get("duration") and values["duration"].total_seconds() < 0:
+    @model_validator(mode="after")
+    def post_validation(self):
+        self.validate_targets(self.target_configs)
+        self.validate_observers(self.target_configs)
+        if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration of experiment can't be negative.")
-        return values
+        return self
 
     @staticmethod
-    def validate_targets(values: dict) -> None:
+    def validate_targets(configs: List[TargetConfig]) -> None:
         target_ids = []
         custom_ids = []
-        for _config in values.get("target_configs"):
+        for _config in configs:
             for _id in _config.target_IDs:
                 target_ids.append(_id)
                 Target(id=_id)
@@ -76,9 +78,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             )
 
     @staticmethod
-    def validate_observers(values: dict) -> None:
+    def validate_observers(configs: List[TargetConfig]) -> None:
         target_ids = []
-        for _config in values.get("target_configs"):
+        for _config in configs:
             for _id in _config.target_IDs:
                 target_ids.append(_id)
 

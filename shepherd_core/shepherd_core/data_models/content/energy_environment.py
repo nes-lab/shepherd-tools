@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic import PositiveFloat
-from pydantic import root_validator
+from pydantic import model_validator
 
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
@@ -37,7 +37,8 @@ class EnergyEnvironment(ContentModel):
     indoor: Optional[bool] = None
     location: Optional[str] = None
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return tb_client.fill_in_user_data(values)

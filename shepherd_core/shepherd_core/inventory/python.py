@@ -3,6 +3,8 @@ from contextlib import suppress
 from importlib import import_module
 from typing import Optional
 
+from pydantic import ConfigDict
+
 from ..data_models import ShpModel
 
 
@@ -15,9 +17,7 @@ class PythonInventory(ShpModel):
     yaml: Optional[str] = None
     shepherd_core: Optional[str] = None
     shepherd_sheep: Optional[str] = None
-
-    class Config:
-        min_anystr_length = 0
+    model_config = ConfigDict(str_min_length=0)
 
     @classmethod
     def collect(cls):

@@ -1,9 +1,11 @@
+from typing import List
 from typing import Optional
 
 import numpy as np
+from pydantic import Field
 from pydantic import PositiveFloat
-from pydantic import conlist
 from pydantic import validate_arguments
+from typing_extensions import Annotated
 
 from .. import CalibrationCape
 from .. import CalibrationEmulator
@@ -19,7 +21,7 @@ class CalMeasurementPair(ShpModel):
     reference_si: float = 0
 
 
-CalMeasPairs = conlist(item_type=CalMeasurementPair, min_items=2)
+CalMeasPairs = Annotated[List[CalMeasurementPair], Field(min_items=2)]
 
 
 @validate_arguments
@@ -73,8 +75,8 @@ class CalMeasurementEmulator(ShpModel):
 
 
 class CalMeasurementCape(ShpModel):
-    harvester: Optional[CalMeasurementHarvester]
-    emulator: Optional[CalMeasurementEmulator]
+    harvester: Optional[CalMeasurementHarvester] = None
+    emulator: Optional[CalMeasurementEmulator] = None
 
     cape: Optional[str] = None
     host: Optional[str] = None

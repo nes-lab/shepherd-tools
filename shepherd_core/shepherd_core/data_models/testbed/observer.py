@@ -3,9 +3,9 @@ from typing import Optional
 
 from pydantic import Field
 from pydantic import IPvAnyAddress
-from pydantic import confloat
-from pydantic import constr
-from pydantic import root_validator
+from pydantic import StringConstraints
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from ...testbed_client import tb_client
 from ..base.content import IdInt
@@ -16,7 +16,12 @@ from .cape import Cape
 from .cape import TargetPort
 from .target import Target
 
-MACStr = constr(max_length=17, regex=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
+MACStr = Annotated[
+    str,
+    StringConstraints(
+        max_length=17, pattern=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+    ),
+]
 
 
 class Observer(ShpModel, title="Shepherd-Sheep"):
@@ -33,36 +38,38 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     room: NameStr
     eth_port: NameStr
 
-    latitude: confloat(ge=-90, le=90) = 51.026573  # cfaed
-    longitude: confloat(ge=-180, le=180) = 13.723291
+    latitude: Annotated[float, Field(ge=-90, le=90)] = 51.026573
+    longitude: Annotated[float, Field(ge=-180, le=180)] = 13.723291
+    # ⤷ cfaed-floor
 
-    cape: Optional[Cape]
-    target_a: Optional[Target]
+    cape: Optional[Cape] = None
+    target_a: Optional[Target] = None
     target_b: Optional[Target] = None
 
     created: datetime = Field(default_factory=datetime.now)
-    alive_last: Optional[datetime]
+    alive_last: Optional[datetime] = None
 
     def __str__(self):
         return self.name
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
-        has_cape = values.get("cape") is not None
-        has_target = (values.get("target_a") is not None) or (
-            values.get("target_b") is not None
+    @model_validator(mode="after")
+    def post_validation(self):
+        has_cape = self.cape is not None
+        has_target = (self.target_a is not None) or (
+            self.target_b is not None
         )
         if not has_cape and has_target:
             raise ValueError(
-                f"Observer '{values.get('name')}' is faulty "
+                f"Observer '{self.name}' is faulty "
                 f"-> has targets but no cape"
             )
-        return values
+        return self
 
     def get_target_port(self, target_id: int) -> TargetPort:
         if self.target_a is not None and target_id == self.target_a.id:

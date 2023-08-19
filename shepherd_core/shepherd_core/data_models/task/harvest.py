@@ -3,8 +3,9 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 
-from pydantic import conint
-from pydantic import root_validator
+from pydantic import Field
+from pydantic import model_validator
+from typing_extensions import Annotated
 
 from ..base.shepherd import ShpModel
 from ..content.virtual_harvester import VirtualHarvesterConfig
@@ -46,20 +47,20 @@ class HarvestTask(ShpModel):
     power_tracing: PowerTracing = PowerTracing()
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
-    verbose: conint(ge=0, le=4) = 2
+    verbose: Annotated[int, Field(ge=0, le=4)] = 2
     # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
     # TODO: there is an unused DAC-Output patched to the harvesting-port
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
+    @model_validator(mode="after")
+    def post_validation(self):
         # TODO: limit paths
-        has_start = values.get("time_start") is not None
-        if has_start and values["time_start"].tzinfo is None:
+        has_start = self.time_start is not None
+        if has_start and self.time_start.tzinfo is None:
             # add local timezone-data
-            values["time_start"] = values["time_start"].astimezone()
-        if has_start and values["time_start"] < datetime.now().astimezone():
+            self.time_start = self.time_start.astimezone()
+        if has_start and self.time_start < datetime.now().astimezone():
             raise ValueError("Start-Time for Harvest can't be in the past.")
-        if values.get("duration") and values["duration"].total_seconds() < 0:
+        if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
-        return values
+        return self

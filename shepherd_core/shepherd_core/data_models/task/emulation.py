@@ -6,10 +6,10 @@ from pathlib import Path
 from typing import Optional
 from typing import Union
 
-from pydantic import confloat
-from pydantic import conint
-from pydantic import root_validator
+from pydantic import Field
+from pydantic import model_validator
 from pydantic import validate_arguments
+from typing_extensions import Annotated
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
@@ -41,7 +41,7 @@ class EmulationTask(ShpModel):
     # General config
     input_path: Path
     # ⤷ hdf5 file containing harvesting data
-    output_path: Optional[Path]
+    output_path: Optional[Path] = None
     # ⤷ dir- or file-path for storing the recorded data:
     #   - providing a directory -> file is named emu_timestamp.h5
     #   - for a complete path the filename is not changed except it exists and
@@ -70,7 +70,7 @@ class EmulationTask(ShpModel):
     pwr_port: TargetPort = TargetPort.A
     # ⤷ chosen port will be current-monitored (main, connected to virtual Source),
     #   the other port is aux
-    voltage_aux: Union[confloat(ge=0, le=4.5), str] = 0
+    voltage_aux: Union[Annotated[float, Field(ge=0, le=4.5)], str] = 0
     # ⤷ aux_voltage options:
     #   - 0-4.5 for specific const Voltage (0 V = disabled),
     #   - "buffer" will output intermediate voltage (storage cap of vsource),
@@ -86,32 +86,30 @@ class EmulationTask(ShpModel):
     gpio_actuation: Optional[GpioActuation] = None
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
-    verbose: conint(ge=0, le=4) = 2
+    verbose: Annotated[int, Field(ge=0, le=4)] = 2
     # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
-    @root_validator(pre=False)
-    def post_validation(cls, values: dict) -> dict:
+    @model_validator(mode="after")
+    def post_validation(self):
         # TODO: limit paths
-        has_start = values.get("time_start") is not None
+        has_start = self.time_start is not None
         # add local timezone-data
-        if has_start and values["time_start"].tzinfo is None:
-            values["time_start"] = values["time_start"].astimezone()
-        if has_start and values.get("time_start") < datetime.now().astimezone():
+        if has_start and self.time_start.tzinfo is None:
+            self.time_start = self.time_start.astimezone()
+        if has_start and self.time_start < datetime.now().astimezone():
             raise ValueError("Start-Time for Emulation can't be in the past.")
-        if values.get("duration") and values["duration"].total_seconds() < 0:
+        if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
-        if isinstance(values.get("voltage_aux"), str) and values.get(
-            "voltage_aux"
-        ) not in [
+        if isinstance(self.voltage_aux, str) and self.voltage_aux not in [
             "main",
             "buffer",
         ]:
             raise ValueError(
                 "Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'."
             )
-        if values.get("gpio_actuation") is not None:
+        if self.gpio_actuation is not None:
             raise ValueError("GPIO Actuation not yet implemented!")
-        return values
+        return self
 
     @classmethod
     @validate_arguments

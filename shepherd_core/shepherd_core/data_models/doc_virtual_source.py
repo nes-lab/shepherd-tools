@@ -1,10 +1,11 @@
 from pathlib import Path
+from typing import List
 
 from pydantic import Field
-from pydantic import confloat
-from pydantic import conlist
-from pydantic import root_validator
+from pydantic import model_validator
+from typing_extensions import Annotated
 
+from .content.virtual_source import LUT1D, LUT2D
 from .. import logger
 from ..data_models import Fixture
 from ..data_models import ShpModel
@@ -168,11 +169,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
         le=10_000,
     )
 
-    LUT_input_efficiency: conlist(
-        item_type=conlist(confloat(ge=0.0, le=1.0), min_items=12, max_items=12),
-        min_items=12,
-        max_items=12,
-    ) = Field(
+    LUT_input_efficiency: LUT2D = Field(
         description="# input-array[12][12] depending on "
         "array[inp_voltage][log(inp_current)], "
         "influence of cap-voltage is not implemented",
@@ -206,11 +203,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
         le=5_000,
     )
 
-    LUT_output_efficiency: conlist(
-        item_type=confloat(ge=0.0, le=1.0),
-        min_items=12,
-        max_items=12,
-    ) = Field(
+    LUT_output_efficiency: LUT1D = Field(
         description="Output-Array[12] depending on output_current. In & Output is linear",
         default=12 * [1.00],
     )
@@ -222,7 +215,8 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
         le=20,
     )
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values = fixtures.try_completing_model(values)
         values, chain = fixtures.try_inheritance(values)

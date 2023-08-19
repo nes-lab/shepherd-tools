@@ -1,16 +1,17 @@
+from typing import List
 from typing import Optional
 
-from pydantic import conlist
+from pydantic import ConfigDict
+from pydantic import Field
+from typing_extensions import Annotated
 
 from ..data_models import ShpModel
 
 
 class TargetInventory(ShpModel):
     cape: Optional[str] = None
-    targets: conlist(item_type=str) = []
-
-    class Config:
-        min_anystr_length = 0
+    targets: List[str] = []
+    model_config = ConfigDict(str_min_length=0)
 
     @classmethod
     def collect(cls):

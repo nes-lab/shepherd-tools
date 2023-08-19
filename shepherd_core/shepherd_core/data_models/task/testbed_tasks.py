@@ -1,8 +1,10 @@
+from typing import List
 from typing import Optional
 
 from pydantic import EmailStr
-from pydantic import conlist
+from pydantic import Field
 from pydantic import validate_arguments
+from typing_extensions import Annotated
 
 from ..base.content import NameStr
 from ..base.shepherd import ShpModel
@@ -15,10 +17,10 @@ class TestbedTasks(ShpModel):
     """Collection of tasks for all observers included in experiment"""
 
     name: NameStr
-    observer_tasks: conlist(item_type=ObserverTasks, min_items=1, max_items=64)
+    observer_tasks: Annotated[List[ObserverTasks], Field(min_length=1, max_length=64)]
 
     # POST PROCESS
-    email: Optional[EmailStr]
+    email: Optional[EmailStr] = None
 
     @classmethod
     @validate_arguments

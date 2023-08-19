@@ -5,7 +5,7 @@ from typing import Optional
 from typing import Union
 
 from pydantic import Field
-from pydantic import root_validator
+from pydantic import model_validator
 
 from ...testbed_client import tb_client
 from ..base.content import IdInt
@@ -37,7 +37,8 @@ class Cape(ShpModel, title="Shepherd-Cape"):
     def __str__(self):
         return self.name
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values

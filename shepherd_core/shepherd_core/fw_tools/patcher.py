@@ -1,8 +1,9 @@
 from pathlib import Path
 from typing import Optional
 
-from pydantic import conint
+from pydantic import Field
 from pydantic import validate_arguments
+from typing_extensions import Annotated
 
 from ..commons import uid_len_default
 from ..commons import uid_str_default
@@ -80,7 +81,7 @@ def read_arch(file_elf: Path) -> Optional[str]:
 def modify_symbol_value(
     file_elf: Path,
     symbol: str,
-    value: conint(ge=0, lt=2 ** (8 * uid_len_default)),
+    value: Annotated[int, Field(ge=0, lt=2 ** (8 * uid_len_default))],
     overwrite: bool = False,
 ) -> Optional[Path]:
     """replaces value of symbol in ELF-File, hardcoded for uint16_t (2 byte)
