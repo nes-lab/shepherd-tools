@@ -3,6 +3,7 @@ from .base.calibration import CalibrationEmulator
 from .base.calibration import CalibrationHarvester
 from .base.calibration import CalibrationPair
 from .base.calibration import CalibrationSeries
+from .base.calibration import CapeData
 from .base.content import ContentModel
 from .base.shepherd import ShpModel
 from .base.wrapper import Wrapper
@@ -23,6 +24,7 @@ from .experiment.target_config import TargetConfig
 
 __all__ = [
     # Core
+    "CapeData",
     "CalibrationCape",
     "CalibrationEmulator",
     "CalibrationHarvester",
