@@ -2,7 +2,8 @@
 datatype: CalMeasurementCape
 parameters:
   host: sheep0
-  cape: xyz1
+  cape:
+    serial_number: A123
   emulator:
     adc_C_A:
     - reference_si: 1.0e-05

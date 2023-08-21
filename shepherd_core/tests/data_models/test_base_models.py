@@ -11,7 +11,17 @@ from shepherd_core.data_models.base.calibration import CalibrationEmulator
 from shepherd_core.data_models.base.calibration import CalibrationHarvester
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
+from shepherd_core.data_models.base.calibration import CapeData
 from shepherd_core.data_models.base.content import ContentModel
+
+
+def test_base_model_cape_data() -> None:
+    CapeData(serial_number="xyz1")
+
+
+def test_base_model_cape_data_fail() -> None:
+    with pytest.raises(ValueError):
+        CapeData()
 
 
 def test_base_model_cal_pair_conv() -> None:
@@ -58,6 +68,13 @@ def test_base_model_cal_cape_bytestr() -> None:
     cal1 = CalibrationCape()
     cb = cal1.to_bytestr()
     cal2 = CalibrationCape.from_bytestr(cb)
+    assert cal1.get_hash() == cal2.get_hash()
+
+
+def test_base_model_cal_cape_bytestr_with_cape_data() -> None:
+    cal1 = CalibrationCape(cape=CapeData(serial_number="123"))
+    cb = cal1.to_bytestr()
+    cal2 = CalibrationCape.from_bytestr(cb, cal1.cape)
     assert cal1.get_hash() == cal2.get_hash()
 
 

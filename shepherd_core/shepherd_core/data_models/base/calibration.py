@@ -192,7 +192,7 @@ class CalibrationCape(ShpModel):
     emulator: CalibrationEmulator = CalibrationEmulator()
 
     @classmethod
-    def from_bytestr(cls, data: bytes, cape: Optional[CapeData]):
+    def from_bytestr(cls, data: bytes, cape: Optional[CapeData] = None):
         """Instantiates calibration data based on byte string.
         This is mainly used to deserialize data read from an EEPROM memory.
 
