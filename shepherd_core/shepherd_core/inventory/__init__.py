@@ -43,7 +43,7 @@ class Inventory(PythonInventory, SystemInventory, TargetInventory):
 
 
 class InventoryList(ShpModel):
-    items: Annotated[List[Inventory], Field(min_length=1)]
+    elements: Annotated[List[Inventory], Field(min_length=1)]
 
     def to_csv(self, path: Path) -> None:
         """TODO: pretty messed up (raw lists and dicts for sub-elements)
@@ -53,8 +53,8 @@ class InventoryList(ShpModel):
         if path.is_dir():
             path = path / "inventory.yaml"
         with open(path.as_posix(), "w") as fd:
-            fd.write(", ".join(self.items[0].model_dump().keys()) + "\r\n")
-            for item in self.items:
+            fd.write(", ".join(self.elements[0].model_dump().keys()) + "\r\n")
+            for item in self.elements:
                 content = list(item.model_dump().values())
                 content = ["" if value is None else str(value) for value in content]
                 fd.write(", ".join(content) + "\r\n")

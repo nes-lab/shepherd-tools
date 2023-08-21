@@ -1,4 +1,5 @@
 import struct
+from datetime import date
 from typing import Callable
 from typing import Generator
 from typing import Optional
@@ -7,7 +8,10 @@ from typing import Union
 
 import numpy as np
 from numpy.typing import NDArray
+from pydantic import Field
 from pydantic import PositiveFloat
+from pydantic import conbytes
+from pydantic import constr
 from pydantic import validate_call
 
 from ...calibration_hw_def import adc_current_to_raw
@@ -146,6 +150,33 @@ class CalibrationEmulator(ShpModel):
         return cal_set
 
 
+class CapeData(ShpModel):
+    """Representation of Beaglebone Cape information
+        -> just provide serial-number on creation
+
+    According to BeagleBone specifications, each cape should host an EEPROM
+    that contains some standardized information about the type of cape,
+    manufacturer, version etc.
+
+    `See<https://github.com/beagleboard/beaglebone-black/wiki/System-Reference-Manual#824_EEPROM_Data_Format>`_
+    """
+
+    header: conbytes(max_length=4) = b"\xAA\x55\x33\xEE"
+    eeprom_revision: constr(max_length=2) = "A2"
+    board_name: constr(max_length=32) = "BeagleBone SHEPHERD2 Cape"
+    version: constr(max_length=4) = "24B0"
+    manufacturer: constr(max_length=16) = "NES TU DRESDEN"
+    part_number: constr(max_length=16) = "BB-SHPRD"
+
+    serial_number: constr(max_length=12)
+
+    cal_date: constr(max_length=12) = Field(default_factory=date.today().isoformat)
+
+    def __repr__(self) -> str:
+        """string-representation allows print(model)"""
+        return str(self.model_dump())
+
+
 class CalibrationCape(ShpModel):
     """Represents calibration data of shepherd cape.
     Defines the format of calibration data and provides convenient functions
@@ -154,19 +185,20 @@ class CalibrationCape(ShpModel):
     YAML: .to_file() and .from_file() already in ShpModel
     """
 
+    cape: Optional[CapeData] = None
+    host: Optional[str] = None
+
     harvester: CalibrationHarvester = CalibrationHarvester()
     emulator: CalibrationEmulator = CalibrationEmulator()
 
-    cape: Optional[str] = None
-    host: Optional[str] = None
-
     @classmethod
-    def from_bytestr(cls, data: bytes):
+    def from_bytestr(cls, data: bytes, cape: Optional[CapeData] = None):
         """Instantiates calibration data based on byte string.
         This is mainly used to deserialize data read from an EEPROM memory.
 
         Args:
             data: Byte string containing calibration data.
+            cape: data can be supplied
         Returns:
             CalibrationCape object with extracted calibration data.
         """
@@ -177,6 +209,7 @@ class CalibrationCape(ShpModel):
         for _i, walk in enumerate(lw):
             # hardcoded fixed depth ... bad but easy
             dv[walk[0]][walk[1]][walk[2]] = float(values[_i])
+        dv["cape"] = cape
         return cls(**dv)
 
     def to_bytestr(self) -> bytes:

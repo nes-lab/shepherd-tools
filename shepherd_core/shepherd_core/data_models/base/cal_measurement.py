@@ -11,6 +11,7 @@ from .. import CalibrationCape
 from .. import CalibrationEmulator
 from .. import CalibrationHarvester
 from .. import CalibrationPair
+from .calibration import CapeData
 from .shepherd import ShpModel
 
 # TODO: move to shepherd_data to remove scipy-dependency from _core
@@ -75,11 +76,11 @@ class CalMeasurementEmulator(ShpModel):
 
 
 class CalMeasurementCape(ShpModel):
+    cape: Optional[CapeData] = None
+    host: Optional[str] = None
+
     harvester: Optional[CalMeasurementHarvester] = None
     emulator: Optional[CalMeasurementEmulator] = None
-
-    cape: Optional[str] = None
-    host: Optional[str] = None
 
     def to_cal(self) -> CalibrationCape:
         dv = self.model_dump()

@@ -67,6 +67,15 @@ class ShpModel(BaseModel):
         """allows dict access -> model["key"], in addition to model.key"""
         return self.__getattribute__(key)
 
+    def keys(self):
+        """Fn of dict"""
+        return self.model_dump().keys()
+
+    def items(self):
+        """Fn of dict"""
+        for key in self.keys():
+            yield key, self[key]
+
     @classmethod
     def schema_to_file(cls, path: Union[str, Path]) -> None:
         """store schema to yaml (for frontend-generators)"""

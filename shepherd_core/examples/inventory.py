@@ -18,5 +18,5 @@ inv = Inventory.collect()
 print(f"Complete Inventory: {inv}")
 inv.to_file("inventory.yaml", minimal=True, comment="just a test")
 
-inl = InventoryList(items=[inv])
+inl = InventoryList(elements=[inv])
 inl.to_csv(Path(__file__).parent / "inventory.csv")
