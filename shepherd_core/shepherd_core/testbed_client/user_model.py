@@ -49,11 +49,12 @@ class User(ShpModel):
     email: EmailStr
 
     pw_hash: Optional[SecretBytes] = None
-    # ⤷ = hash_password("this_will_become_a_salted_slow_hash") -> slowed BBB down
+    # ⤷ was hash_password("this_will_become_a_salted_slow_hash") -> slowed BBB down
     # ⤷ TODO (min_length=128, max_length=512)
 
     token: SecretStr
     # ⤷ TODO (min_length=128), request with: token.get_secret_value()
+    active: bool = False
 
     @model_validator(mode="before")
     @classmethod
