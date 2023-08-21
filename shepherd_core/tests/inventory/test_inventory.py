@@ -19,5 +19,5 @@ def test_collect_data(inv: Callable) -> None:
 
 def test_inventorize(tmp_path: Path) -> None:
     inv = Inventory.collect()
-    inl = InventoryList(items=[inv])
+    inl = InventoryList(elements=[inv])
     inl.to_csv(tmp_path / "some.csv")
