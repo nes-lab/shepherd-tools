@@ -22,6 +22,17 @@ This Python Module eases the handling of hdf5-recordings used by the [shepherd](
 pip3 install shepherd-data
 ```
 
+### PIP - Online from GitHub
+
+For install directly from GitHub-Sources (here `dev`-branch):
+
+```Shell
+pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U
+pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_data -U
+```
+
+**Advantage**: test unreleased version, skip manual cloning
+
 ### PIP - Offline
 
 - clone repository
@@ -32,7 +43,7 @@ pip3 install shepherd-data
 git clone https://github.com/orgua/shepherd-datalib
 cd .\shepherd-datalib
 
-pip3 install ./
+pip3 install ./ -U
 ```
 
 ## Development
@@ -62,9 +73,11 @@ pipenv install --dev pytest
 ### running Testbench
 
 - run pytest
+- alternative: 
 
 ```shell
 pytest
+pytest --stepwise
 ```
 
 ### code coverage (with pytest)
