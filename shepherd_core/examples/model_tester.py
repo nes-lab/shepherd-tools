@@ -52,7 +52,7 @@ target_cfgs = [
         virtual_source={"name": "diode+capacitor"},
         firmware1={"name": "nrf52_demo_rf"},
     ),
-    # second Instance fully object-oriented (preferred)
+    # second Instance fully object-oriented (recommended)
     TargetConfig(
         target_IDs=list(range(2001, 2005)),
         custom_IDs=list(range(7, 18)),  # note: longer list is OK
