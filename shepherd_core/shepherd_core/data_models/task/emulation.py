@@ -106,8 +106,12 @@ class EmulationTask(ShpModel):
     def post_validation(self):
         # TODO: limit paths
         has_time = self.time_start is not None
-        if has_time and self.time_start < datetime.now().astimezone():
-            raise ValueError("Start-Time for Emulation can't be in the past.")
+        time_now = datetime.now().astimezone()
+        if has_time and self.time_start < time_now:
+            raise ValueError(
+                "Start-Time for Emulation can't be in the past "
+                f"('{self.time_start}' vs '{time_now}'."
+            )
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
         if isinstance(self.voltage_aux, str) and self.voltage_aux not in [
