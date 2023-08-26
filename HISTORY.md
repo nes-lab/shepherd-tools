@@ -1,6 +1,15 @@
 # History of Changes
 
 
+## v2023.08.8
+
+- further fixes for datetimes
+- make shpModel even more like a dict
+- fix name-collisions
+- add CapeData from Sheep
+- extend User.active
+- add output_paths to task-sets and make them compatible with prepare_tasks() & extract_tasks()
+
 ## v2023.08.7
 
 - move to pydantic V2 with `bump-pydantic`
