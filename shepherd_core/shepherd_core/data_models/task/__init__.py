@@ -89,7 +89,9 @@ def extract_tasks(shp_wrap: Wrapper, no_task_sets: bool = True) -> List[ShpModel
         content = [ProgrammingTask(**shp_wrap.parameters)]
     elif shp_wrap.datatype == TestbedTasks.__name__:
         if no_task_sets:
-            raise ValueError("Model in Wrapper was TestbedTasks -> Task-Sets not allowed!")
+            raise ValueError(
+                "Model in Wrapper was TestbedTasks -> Task-Sets not allowed!"
+            )
         content = [TestbedTasks(**shp_wrap.parameters)]
     else:
         raise ValueError("Extractor had unknown task: %s", shp_wrap.datatype)
