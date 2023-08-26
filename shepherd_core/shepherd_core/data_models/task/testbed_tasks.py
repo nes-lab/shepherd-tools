@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import EmailStr
 from pydantic import Field
+from pydantic import computed_field
 from pydantic import validate_call
 from typing_extensions import Annotated
 
@@ -34,6 +35,13 @@ class TestbedTasks(ShpModel):
 
     def get_observer_tasks(self, observer) -> Optional[ObserverTasks]:
         for tasks in self.observer_tasks:
-            if observer in tasks.observer:
+            if observer == tasks.observer:
                 return tasks
         return None
+
+    @computed_field
+    def output_paths(self) -> dict:
+        values = {}
+        for obt in self.observer_tasks:
+            values = {**values, **obt.output_paths}
+        return values
