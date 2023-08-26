@@ -33,6 +33,7 @@ class TargetConfig(ShpModel, title="Target Config"):
         Annotated[List[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=64)]
     ] = None
     # ⤷ individual starting times -> allows to use the same environment
+    # TODO: delays not used ATM
 
     firmware1: Firmware
     firmware2: Optional[Firmware] = None

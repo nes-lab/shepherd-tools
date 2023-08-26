@@ -28,6 +28,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         description="Unique ID",
         default_factory=id_default,
     )
+    # ⤷ TODO: automatic ID is problematic for identification by hash
     name: NameStr
     description: Annotated[
         Optional[SafeStr], Field(description="Required for public instances")

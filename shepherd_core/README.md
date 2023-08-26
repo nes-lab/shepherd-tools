@@ -40,6 +40,13 @@ The Library is available via PyPI and can be installed with
   pip install shepherd-data
 ```
 
+for bleeding-edge-features or dev-work it is possible to install directly from GitHub-Sources (here `dev`-branch):
+
+```Shell
+pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U
+```
+
+
 If you are working with ``.elf``-files (embedding into experiments) you make "objcopy" accessible to python. In Ubuntu, you can either install ``build-essential`` or ``binutils-$ARCH`` with arch being ``msp430`` or ``arm-none-eabi`` for the nRF52.
 
 ```shell

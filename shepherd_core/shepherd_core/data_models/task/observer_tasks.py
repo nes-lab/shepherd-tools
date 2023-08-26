@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List
 from typing import Optional
 
+from pydantic import computed_field
 from pydantic import validate_call
 
 from ..base.content import IdInt
@@ -78,3 +79,12 @@ class ObserverTasks(ShpModel):
                 continue
             tasks.append(task)
         return tasks
+
+    @computed_field
+    def output_paths(self) -> dict:
+        values = {}
+        if isinstance(self.emulation, EmulationTask):
+            if self.emulation.output_path is None:
+                raise ValueError("Emu-Task should have a valid output-path")
+            values[self.observer] = self.emulation.output_path
+        return values

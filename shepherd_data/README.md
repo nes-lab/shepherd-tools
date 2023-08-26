@@ -19,7 +19,7 @@ This Python Module eases the handling of hdf5-recordings used by the [shepherd](
 ### PIP - Online
 
 ```shell
-pip3 install shepherd-data
+pip3 install shepherd-data -U
 ```
 
 ### PIP - Offline
@@ -32,7 +32,7 @@ pip3 install shepherd-data
 git clone https://github.com/orgua/shepherd-datalib
 cd .\shepherd-datalib
 
-pip3 install ./
+pip3 install ./ -U
 ```
 
 ## Development
@@ -62,9 +62,11 @@ pipenv install --dev pytest
 ### running Testbench
 
 - run pytest
+- alternative:
 
 ```shell
 pytest
+pytest --stepwise
 ```
 
 ### code coverage (with pytest)
