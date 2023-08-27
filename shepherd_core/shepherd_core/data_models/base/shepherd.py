@@ -61,7 +61,12 @@ class ShpModel(BaseModel):
 
     def __repr__(self) -> str:
         """string-representation allows print(model)"""
-        return str(self.model_dump(exclude_unset=True, exclude_defaults=True))
+        content = yaml.safe_dump(
+            self.model_dump(exclude_unset=True, exclude_defaults=True),
+            default_flow_style=False,
+            sort_keys=False,
+        )
+        return str(content)
 
     def __getitem__(self, key):
         """allows dict access -> model["key"], in addition to model.key"""
