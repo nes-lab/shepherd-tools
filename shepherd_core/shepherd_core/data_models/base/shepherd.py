@@ -2,6 +2,7 @@ import hashlib
 import pathlib
 from datetime import datetime
 from datetime import timedelta
+from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Optional
 from typing import Union
@@ -9,7 +10,6 @@ from typing import Union
 import yaml
 from pydantic import BaseModel
 from pydantic import ConfigDict
-from pydantic import IPvAnyAddress
 from yaml import SafeDumper
 
 from .wrapper import Wrapper
@@ -25,11 +25,15 @@ def time2int(dumper, data):
     )
 
 
+def generic2str(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
+
+
 yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.Path, path2str, SafeDumper)
 yaml.add_representer(timedelta, time2int, SafeDumper)
-yaml.add_representer(IPvAnyAddress, path2str, SafeDumper)
+yaml.add_representer(IPv4Address, generic2str, SafeDumper)
 
 
 class ShpModel(BaseModel):
