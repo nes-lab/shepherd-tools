@@ -9,6 +9,7 @@ from typing import Union
 import yaml
 from pydantic import BaseModel
 from pydantic import ConfigDict
+from pydantic import IPvAnyAddress
 from yaml import SafeDumper
 
 from .wrapper import Wrapper
@@ -28,6 +29,7 @@ yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.Path, path2str, SafeDumper)
 yaml.add_representer(timedelta, time2int, SafeDumper)
+yaml.add_representer(IPvAnyAddress, path2str, SafeDumper)
 
 
 class ShpModel(BaseModel):
@@ -61,6 +63,12 @@ class ShpModel(BaseModel):
 
     def __repr__(self) -> str:
         """string-representation allows print(model)"""
+        name = type(self).__name__
+        content = self.model_dump(exclude_unset=True, exclude_defaults=True)
+        return f"{name}({content})"
+
+    def __str__(self) -> str:
+        """string-representation allows str(model)"""
         content = yaml.safe_dump(
             self.model_dump(exclude_unset=True, exclude_defaults=True),
             default_flow_style=False,
