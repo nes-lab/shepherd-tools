@@ -9,9 +9,10 @@ from pathlib import Path
 import numpy as np
 from tqdm import trange
 
-from shepherd_core import BaseWriter as ShpWriter
 from shepherd_core import BaseReader as ShpReader
-from shepherd_core.data_models import EnergyEnvironment, EnergyDType
+from shepherd_core import BaseWriter as ShpWriter
+from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models import EnergyEnvironment
 from shepherd_core.logger import logger
 
 if __name__ == "__main__":
@@ -36,9 +37,15 @@ if __name__ == "__main__":
             with ShpWriter(file_path) as file:
                 file.store_hostname("artificial")
                 # values in SI units
-                timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
-                voltage_vector = np.linspace(_v, _v, int(file.samplerate_sps * duration_s))
-                current_vector = np.linspace(_c, _c, int(file.samplerate_sps * duration_s))
+                timestamp_vector = np.arange(
+                    0.0, duration_s, file.sample_interval_ns / 1e9
+                )
+                voltage_vector = np.linspace(
+                    _v, _v, int(file.samplerate_sps * duration_s)
+                )
+                current_vector = np.linspace(
+                    _c, _c, int(file.samplerate_sps * duration_s)
+                )
 
                 for idx in trange(repetitions, desc="generate"):
                     timestamps = idx * duration_s + timestamp_vector
@@ -56,7 +63,7 @@ if __name__ == "__main__":
                 description=f"Artificial static Energy Environment, {v_str}, {c_str}, {t_str}",
                 data_path=file_path,
                 data_type=EnergyDType.ivsample,
-                duration=duration_s*repetitions,
+                duration=duration_s * repetitions,
                 energy_Ws=energy,
                 valid=True,
                 indoor=True,
@@ -65,4 +72,4 @@ if __name__ == "__main__":
                 group="NES Lab",
                 visible2group=True,
                 visible2all=True,
-            ).to_file(meta_path)
+            ).to_file(meta_path, minimal=False)
