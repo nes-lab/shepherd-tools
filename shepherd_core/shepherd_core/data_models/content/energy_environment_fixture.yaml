@@ -2,7 +2,7 @@
   parameters:
     id: 1001
     name: SolarSunny
-    description: Sunny Day with 4 sq-cm Solar Cell
+    description: !MOCKUP! Sunny Day with 4 sq-cm Solar Cell
     data_path: eenv/group/user/solar_4h_new.h5
     data_type: ivsample
     duration: 14400
@@ -19,7 +19,7 @@
   parameters:
     id: 1002
     name: ThermoelectricWashingMachine
-    description: Energy harvested from side of machine during washing  & tumbling
+    description: !MOCKUP! Energy harvested from side of machine during washing  & tumbling
     data_path: eenv/group/user/thermoelectric_1h_wash.h5
     data_type: ivcurve
     duration: 3600
@@ -36,7 +36,7 @@
   parameters:
     id: 666
     name: nuclear
-    description: Energy harvested
+    description: !MOCKUP! Energy harvested
     data_path: eenv/group/user/thermoelectric_1h_wash.h5
     data_type: ivcurve
     duration: 3600
