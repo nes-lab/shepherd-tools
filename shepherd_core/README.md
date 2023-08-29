@@ -5,14 +5,16 @@
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Documentation**: [](https://orgua.github.io/shepherd/user/getting_started.html)
+
 **Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
+
 **Main Project**: [https://github.com/orgua/shepherd](https://github.com/orgua/shepherd)
 
 ---
 
 This Python Module is designed as a library and bundles data-models and file-access-routines for the shepherd-testbed, that are used by several codebases.
 
-Later users probably want to use the [datalib](https://pypi.org/project/shepherd_data).
+For postprocessing shepherds h5-files users want to use [shepherd_data](https://pypi.org/project/shepherd_data).
 
 ## Features
 
@@ -27,7 +29,7 @@ Later users probably want to use the [datalib](https://pypi.org/project/shepherd
 - decode waveforms (gpio-state & timestamp) to UART
 - create an inventory (used versions of software, hardware)
 
-See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details. Most functionality is showcases there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a trafficbench-experiment that's used to derive the link-matrix.
+See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details. Most functionality is showcased there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a trafficbench-experiment that's used to derive the link-matrix.
 
 ### Data-Models in Detail
 
