@@ -4,17 +4,17 @@
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml)
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-**Documentation**: [](https://orgua.github.io/shepherd/user/getting_started.html)
+**Documentation**: <https://orgua.github.io/shepherd/user/getting_started.html>
 
-**Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
+**Source Code**: <https://github.com/orgua/shepherd-datalib>
 
-**Main Project**: [https://github.com/orgua/shepherd](https://github.com/orgua/shepherd)
+**Main Project**: <https://github.com/orgua/shepherd>
 
 ---
 
 This Python Module is designed as a library and bundles data-models and file-access-routines for the shepherd-testbed, that are used by several codebases.
 
-For postprocessing shepherds h5-files users want to use [shepherd_data](https://pypi.org/project/shepherd_data).
+For postprocessing shepherds .h5-files users want to use [shepherd_data](https://pypi.org/project/shepherd_data).
 
 ## Features
 
@@ -46,7 +46,7 @@ See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core
   - fixtures support inheritance
 - models support
   - auto-completion with neutral / sensible values
-  - complex and custom datatypes (ie. PositiveInt, lists-checks on length)
+  - complex and custom datatypes (i.e. PositiveInt, lists-checks on length)
   - checking of inputs and type-casting
   - generate their own schema (for web-forms)
   - pre-validation
@@ -64,11 +64,11 @@ The Library is available via PyPI and can be installed with
 ```shell
   pip install shepherd-core
 
-  # or for the full experience
+  # or for the full experience (includes core)
   pip install shepherd-data
 ```
 
-for bleeding-edge-features or dev-work it is possible to install directly from GitHub-Sources (here `dev`-branch):
+For bleeding-edge-features or dev-work it is possible to install directly from GitHub-Sources (here `dev`-branch):
 
 ```Shell
 pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U
