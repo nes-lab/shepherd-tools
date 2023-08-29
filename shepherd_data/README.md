@@ -1,18 +1,18 @@
-# Shepherd - Data
+# Data Module
 
 [![PyPiVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml)
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+**Documentation**: <https://orgua.github.io/shepherd/external/shepherd_data.html>
+
+**Source Code**: <https://github.com/orgua/shepherd-datalib>
+
+**Main Project**: <https://github.com/orgua/shepherd>
+
+---
+
 This Python Module eases the handling of hdf5-recordings used by the [shepherd](https://github.com/orgua/shepherd)-testbed. Users can read, validate and create files and also extract, down-sample and plot information.
-
----
-
-**Main Project**: [https://github.com/orgua/shepherd](https://github.com/orgua/shepherd)
-
-**Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
-
----
 
 ## Installation
 
@@ -22,64 +22,10 @@ This Python Module eases the handling of hdf5-recordings used by the [shepherd](
 pip3 install shepherd-data -U
 ```
 
-### PIP - Offline
-
-- clone repository
-- navigate shell into directory
-- install local module
-
-```shell
-git clone https://github.com/orgua/shepherd-datalib
-cd .\shepherd-datalib
-
-pip3 install ./ -U
-```
-
-## Development
-
-### PipEnv
-
-- clone repository
-- navigate shell into directory
-- install environment
-- activate shell
-- optional
-  - update pipenv (optional)
-  - add special packages with `-dev` switch
-
+For bleeding-edge-features or dev-work it is possible to install directly from GitHub-Sources (here `dev`-branch):
 
 ```Shell
-git clone https://github.com/orgua/shepherd-datalib
-cd .\shepherd-datalib
-
-pipenv install --dev
-pipenv shell
-
-pipenv update
-pipenv install --dev pytest
-```
-
-### running Testbench
-
-- run pytest
-- alternative:
-
-```shell
-pytest
-pytest --stepwise
-```
-
-### code coverage (with pytest)
-
-- run coverage
-- check results (in browser `./htmlcov/index.html`)
-
-```shell
-coverage run -m pytest
-
-coverage html
-# or simpler
-coverage report
+pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_data -U
 ```
 
 ## Programming Interface

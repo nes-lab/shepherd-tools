@@ -1,10 +1,10 @@
-# Shepherd - Core
+# Core Library
 
 [![PyPiVersion](https://img.shields.io/pypi/v/shepherd_core.svg)](https://pypi.org/project/shepherd_core)
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml)
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-**Documentation**: <https://orgua.github.io/shepherd/user/getting_started.html>
+**Documentation**: <https://orgua.github.io/shepherd/external/shepherd_core.html>
 
 **Source Code**: <https://github.com/orgua/shepherd-datalib>
 
@@ -29,7 +29,7 @@ For postprocessing shepherds .h5-files users want to use [shepherd_data](https:/
 - decode waveforms (gpio-state & timestamp) to UART
 - create an inventory (used versions of software, hardware)
 
-See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details. Most functionality is showcased there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a trafficbench-experiment that's used to derive the link-matrix.
+See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a trafficbench-experiment that's used to derive the link-matrix.
 
 ### Data-Models in Detail
 
@@ -62,10 +62,10 @@ See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core
 The Library is available via PyPI and can be installed with
 
 ```shell
-  pip install shepherd-core
+  pip install shepherd-core -U
 
   # or for the full experience (includes core)
-  pip install shepherd-data
+  pip install shepherd-data -U
 ```
 
 For bleeding-edge-features or dev-work it is possible to install directly from GitHub-Sources (here `dev`-branch):
@@ -92,4 +92,50 @@ For creating an inventory of the host-system you should install
 
 ```shell
   pip install shepherd-core[inventory]
+```
+
+## Development
+
+### PipEnv
+
+- clone repository
+- navigate shell into directory
+- install environment
+- activate shell
+- optional
+  - update pipenv (optional)
+  - add special packages with `-dev` switch
+
+```Shell
+git clone https://github.com/orgua/shepherd-datalib
+cd .\shepherd-datalib
+
+pipenv install --dev
+pipenv shell
+
+pipenv update
+pipenv install --dev pytest
+```
+
+### running Testbench
+
+- run pytest in ``_core``- or ``_data``-subdirectory
+- alternative
+
+```shell
+pytest
+pytest --stepwise
+```
+
+### code coverage (with pytest)
+
+- run coverage in ``_core``- or ``_data``-subdirectory
+- check results (in browser `./htmlcov/index.html`)
+
+```shell
+coverage run -m pytest
+
+coverage html
+# or simpler
+coverage report
 ```
