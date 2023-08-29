@@ -49,6 +49,12 @@
     inherit_from: target_nRF52_v21r0
 - datatype: target
   parameters:
+    id: 3000
+    name: T_nRF52_FRAM_2023_000
+    comment: used for dev-work, not in TB
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
     id: 3001
     name: T_nRF52_FRAM_2023_001
     inherit_from: target_nRF52_FRAM_v10r0
@@ -61,4 +67,54 @@
   parameters:
     id: 3003
     name: T_nRF52_FRAM_2023_003
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3004
+    name: T_nRF52_FRAM_2023_004
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3005
+    name: T_nRF52_FRAM_2023_005
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3006
+    name: T_nRF52_FRAM_2023_006
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3007
+    name: T_nRF52_FRAM_2023_007
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3008
+    name: T_nRF52_FRAM_2023_008
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3009
+    name: T_nRF52_FRAM_2023_009
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3010
+    name: T_nRF52_FRAM_2023_010
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3011
+    name: T_nRF52_FRAM_2023_011
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3012
+    name: T_nRF52_FRAM_2023_012
+    inherit_from: target_nRF52_FRAM_v10r0
+- datatype: target
+  parameters:
+    id: 3013
+    name: T_nRF52_FRAM_2023_013
     inherit_from: target_nRF52_FRAM_v10r0
