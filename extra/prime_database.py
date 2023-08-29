@@ -1,6 +1,6 @@
 """
 script will:
-- clean Models from temporary data
+- clean Models from temporary data (if wanted)
 - copy models to content-dir of core-lib
 """
 from datetime import datetime
@@ -10,6 +10,7 @@ from typing import Optional
 import yaml
 
 from shepherd_core.data_models import FirmwareDType
+from shepherd_core.data_models import ShpModel
 from shepherd_core.data_models import Wrapper
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
@@ -17,25 +18,19 @@ from shepherd_core.logger import logger
 from shepherd_core.testbed_client.fixtures import get_files
 
 
-def get_fw(path: Path) -> Optional[Firmware]:
+def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
     try:
-        return Firmware.from_file(path)
-    except ValueError:
-        return None
-
-
-def get_eenv(path: Path) -> Optional[EnergyEnvironment]:
-    try:
-        return EnergyEnvironment.from_file(path)
+        return _model.from_file(path)
     except ValueError:
         return None
 
 
 if __name__ == "__main__":
+    # config
+    do_cleanup: bool = False
+
     path_here = Path(__file__).parent.absolute()
-    path_db = (
-        path_here.parent / "shepherd_core" / "shepherd_core" / "data_models" / "content"
-    )
+    path_db = path_here.parent / "shepherd_core/shepherd_core/data_models/content"
 
     if not path_db.exists() or not path_db.is_dir():
         logger.error("Path to db must exist and be a directory!")
@@ -45,19 +40,21 @@ if __name__ == "__main__":
     fixtures = []
 
     for file in files:
-        model_fw = get_fw(file)
-        model_ee = get_eenv(file)
+        model_fw = load_model(Firmware, file)
+        model_ee = load_model(EnergyEnvironment, file)
 
         model = None
         if model_fw is not None:
             data = model_fw.model_dump()
-            data["data"] = "generic_path.elf"
-            data["data_type"] = FirmwareDType.path_elf
-            data["data_hash"] = None
+            if do_cleanup:
+                data["data"] = "generic_path.elf"
+                data["data_type"] = FirmwareDType.path_elf
+                data["data_hash"] = None
             model = Firmware(**data)
         if model_ee is not None:
             data = model_ee.model_dump()
-            data["data_path"] = "generic_path.h5"
+            if do_cleanup:
+                data["data_path"] = "generic_path.h5"
             model = EnergyEnvironment(**data)
 
         if model is not None:

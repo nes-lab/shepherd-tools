@@ -18,8 +18,8 @@ from shepherd_core.logger import logger
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     # Config
-    voltages_V = [2.0, 2.8, 3.3]
-    currents_A = [1e-3, 5e-3, 10e-3, 50e-3]
+    voltages_V = [3.3, 2.8, 2.0]
+    currents_A = [50e-3, 10e-3, 5e-3, 1e-3]
     duration_s = 60
     repetitions = 60
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
             EnergyEnvironment(
                 name=name,
                 description=f"Artificial static Energy Environment, {v_str}, {c_str}, {t_str}",
-                data_path=file_path,
+                data_path=file_path.absolute().as_posix(),
                 data_type=EnergyDType.ivsample,
                 duration=duration_s * repetitions,
                 energy_Ws=energy,
