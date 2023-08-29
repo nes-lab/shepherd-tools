@@ -47,8 +47,6 @@ class Firmware(ContentModel, title="Firmware of Target"):
     data_type: FirmwareDType
     data_hash: Optional[str] = None
 
-    # TODO: a data-hash would be awesome
-
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict) -> dict:

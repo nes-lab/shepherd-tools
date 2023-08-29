@@ -1,31 +1,5 @@
 ## Datastructure
 
-### Features
-
-- new orchestration ``/data-models`` with focus on remote shepherd-testbed
-- classes of sub-models
-  - ``/base``: base-classes, configuration and -functionality for all models
-  - ``/testbed``: meta-data representation of all testbed-components
-  - ``/content``: reusable meta-data for fw, h5 and vsrc-definitions
-  - ``/experiment``: configuration-models including sub-systems
-  - ``/task``: digestible configs for shepherd-herd or -sheep
-- fixtures selectable by name & ID
-- fixtures support inheritance
-- behavior controlled by ``ShpModel``
-- models support
-  - auto-completion with neutral / sensible values
-  - complex and custom datatypes (ie. PositiveInt, lists checks on length)
-  - checking of inputs and type-casting
-  - generate their own schema (for web-forms)
-  - pre-validation where possible
-  - load/store to yaml with typecheck through wrapper
-  - documentation
-- experiment-definition should be secure
-  - types are limited in size (str)
-  - exposes no internal paths
-- experiments can be transformed to task-sets (``TestbedTasks.from_xp()``)
-
-
 ### experiment-structure
 
 - basics
@@ -66,10 +40,6 @@
     - experiment-default: don't mention it
     - trace-default: NOT POSSIBLE, right?
     - disable: init with "null" OR just mention parameter but keep it empty
-
-## Pydantic-Pitfalls (<v2)
-
-- ``@root_validator`` does not get an extra ``@classmethod``
 
 ### add documentation after creation -> avoid Field()
 
