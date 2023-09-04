@@ -23,7 +23,9 @@ if __name__ == "__main__":
     # ⤷ already includes embedded-firmware-models
     path_meta = path_here / "content" / "metadata_fw.yaml"
 
+    logger.into("Downloading latest release")
     data = urlopen(link).read()  # noqa: S310
+    logger.into("Unpacking Archive")
     with ZipFile(BytesIO(data), "r") as zip_ref:
         zip_ref.extractall(path_here)
 
@@ -53,5 +55,6 @@ if __name__ == "__main__":
                     visible2group=True,
                     visible2all=True,
                 ).to_file(path_elf.with_suffix(".yaml"))
+                logger.info("saved FW %s", path_elf)
             else:
                 logger.error("FW not found, will skip: %s", path_elf.as_posix())
