@@ -23,9 +23,9 @@ if __name__ == "__main__":
     # ⤷ already includes embedded-firmware-models
     path_meta = path_here / "content" / "metadata_fw.yaml"
 
-    logger.into("Downloading latest release")
+    logger.info("Downloading latest release")
     data = urlopen(link).read()  # noqa: S310
-    logger.into("Unpacking Archive")
+    logger.info("Unpacking Archive")
     with ZipFile(BytesIO(data), "r") as zip_ref:
         zip_ref.extractall(path_here)
 
