@@ -76,7 +76,7 @@ if __name__ == "__main__":
     # generate pwr-supply
     generate_lab_vsrc(path_pwr)
 
-    # Programmer Tasks: basics are TargetPort=A
+    # Programmer Tasks
     nrf = {
         "target_port": TargetPort.A,
         "mcu_port": 1,
@@ -97,6 +97,48 @@ if __name__ == "__main__":
     _msp_test = Pt(firmware_file=path_cnt / "msp430_testable/build.elf", **msp)
     _msp_sleep = Pt(firmware_file=path_cnt / "msp430_deep_sleep/build.elf", **msp)
 
+    # Self-test both ICs
+    obs_def = {
+        "observer": "sheep0",
+        "owner_id": 123,
+        "time_prep": datetime.now(),
+        "root_path": path_rec,
+        "abort_on_error": False,
+    }
+    # Target Device-Test 1
+    ObserverTasks(
+        **obs_def,
+        fw1_prog=_nrf_test,
+        fw2_prog=_msp_test,
+        emulation=EmulationTask(
+            input_path=path_pwr,
+            output_path=path_rec / "target_device_test1.h5",
+            power_tracing=None,
+        ),
+    ).to_file(path_cfg / "target_device_test1")
+    # Target Device-Test 2
+    ObserverTasks(
+        **obs_def,
+        fw1_prog=_nrf_send,
+        fw2_prog=_msp_sleep,
+        emulation=EmulationTask(
+            input_path=path_pwr,
+            output_path=path_rec / "target_device_test2.h5",
+            power_tracing=None,
+        ),
+    ).to_file(path_cfg / "target_device_test2")
+    # Target Device-Test 3
+    ObserverTasks(
+        **obs_def,
+        fw1_prog=_nrf_sleep,
+        fw2_prog=_msp_sleep,
+        emulation=EmulationTask(
+            input_path=path_pwr,
+            output_path=path_rec / "target_device_test3.h5",
+            power_tracing=None,
+        ),
+    ).to_file(path_cfg / "target_device_test3")
+
     # RF-Survey
     xp1 = Experiment(
         name="rf_survey",
@@ -116,45 +158,3 @@ if __name__ == "__main__":
         ],
     )
     TestbedTasks.from_xp(xp1).to_file(path_here / "content/tb_tasks_rf_survey")
-
-    # Self-test both ICs
-    obs_def = {
-        "observer": "sheep0",
-        "owner_id": 123,
-        "time_prep": datetime.now(),
-        "root_path": path_rec,
-        "abort_on_error": False,
-    }
-    # Target Device-Test 1
-    ObserverTasks(
-        **obs_def,
-        fw1_prog=_nrf_test,
-        fw2_prog=_msp_test,
-        emulation=EmulationTask(
-            input_path=path_pwr,
-            output_path=path_rec / "tgt_test1_.h5",
-            power_tracing=None,
-        ),
-    ).to_file(path_cfg / "test_target1")
-    # Target Device-Test 2
-    ObserverTasks(
-        **obs_def,
-        fw1_prog=_nrf_send,
-        fw2_prog=_msp_sleep,
-        emulation=EmulationTask(
-            input_path=path_pwr,
-            output_path=path_rec / "tgt_test2_.h5",
-            power_tracing=None,
-        ),
-    ).to_file(path_cfg / "test_target2")
-    # Target Device-Test 3
-    ObserverTasks(
-        **obs_def,
-        fw1_prog=_nrf_sleep,
-        fw2_prog=_msp_sleep,
-        emulation=EmulationTask(
-            input_path=path_pwr,
-            output_path=path_rec / "tgt_test3_.h5",
-            power_tracing=None,
-        ),
-    ).to_file(path_cfg / "test_target3")

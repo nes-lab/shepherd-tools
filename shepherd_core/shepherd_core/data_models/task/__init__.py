@@ -55,7 +55,7 @@ def prepare_task(
     else:
         raise ValueError("had unknown input: %s", type(config))
 
-    if shp_wrap.datatype == TestbedTasks:
+    if shp_wrap.datatype == TestbedTasks.__name__:
         if observer is None:
             logger.debug(
                 "Task-Set contained TestbedTasks & no observer was provided "
@@ -76,7 +76,7 @@ def prepare_task(
 
 def extract_tasks(shp_wrap: Wrapper, no_task_sets: bool = True) -> List[ShpModel]:
     """ """
-    if shp_wrap.datatype == ObserverTasks:
+    if shp_wrap.datatype == ObserverTasks.__name__:
         obt = ObserverTasks(**shp_wrap.parameters)
         content = obt.get_tasks()
     elif shp_wrap.datatype == EmulationTask.__name__:
