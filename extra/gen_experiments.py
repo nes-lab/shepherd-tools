@@ -80,22 +80,22 @@ if __name__ == "__main__":
     nrf = {
         "target_port": TargetPort.A,
         "mcu_port": 1,
-        "mcu_type": "nRF52",
+        "mcu_type": "nRF52".lower(),
         "protocol": ProgrammerProtocol.SWD,
     }
-    _nrf_test = Pt(firmware_file=path_cnt / "nrf52_testable/build.elf", **nrf)
-    _nrf_send = Pt(firmware_file=path_cnt / "nrf52_rf_test/build.elf", **nrf)
-    _nrf_sleep = Pt(firmware_file=path_cnt / "nrf52_deep_sleep/build.elf", **nrf)
-    _nrf_survey = Pt(firmware_file=path_cnt / "nrf52_rf_survey/build.elf", **nrf)
+    _nrf_test = Pt(firmware_file=path_cnt / "nrf52_testable/build.hex", **nrf)
+    _nrf_send = Pt(firmware_file=path_cnt / "nrf52_rf_test/build.hex", **nrf)
+    _nrf_sleep = Pt(firmware_file=path_cnt / "nrf52_deep_sleep/build.hex", **nrf)
+    _nrf_survey = Pt(firmware_file=path_cnt / "nrf52_rf_survey/build.hex", **nrf)
 
     msp = {
         "target_port": TargetPort.A,
         "mcu_port": 2,
-        "mcu_type": "MSP430FR",
+        "mcu_type": "MSP430".lower(),
         "protocol": ProgrammerProtocol.SBW,
     }
-    _msp_test = Pt(firmware_file=path_cnt / "msp430_testable/build.elf", **msp)
-    _msp_sleep = Pt(firmware_file=path_cnt / "msp430_deep_sleep/build.elf", **msp)
+    _msp_test = Pt(firmware_file=path_cnt / "msp430_testable/build.hex", **msp)
+    _msp_sleep = Pt(firmware_file=path_cnt / "msp430_deep_sleep/build.hex", **msp)
 
     # Self-test both ICs
     obs_def = {
