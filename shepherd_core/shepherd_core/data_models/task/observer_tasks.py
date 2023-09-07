@@ -23,7 +23,7 @@ class ObserverTasks(ShpModel):
     owner_id: IdInt
 
     # PRE PROCESS
-    time_prep: datetime
+    time_prep: datetime  # TODO: should be optional
     root_path: Path
     abort_on_error: bool
 
@@ -80,7 +80,7 @@ class ObserverTasks(ShpModel):
             tasks.append(task)
         return tasks
 
-    @computed_field
+    @computed_field(repr=False)
     def output_paths(self) -> dict:
         values = {}
         if isinstance(self.emulation, EmulationTask):

@@ -39,7 +39,7 @@ class TestbedTasks(ShpModel):
                 return tasks
         return None
 
-    @computed_field
+    @computed_field(repr=False)
     def output_paths(self) -> dict:
         values = {}
         for obt in self.observer_tasks:
