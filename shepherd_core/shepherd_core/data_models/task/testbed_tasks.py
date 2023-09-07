@@ -23,8 +23,6 @@ class TestbedTasks(ShpModel):
     # POST PROCESS
     email: Optional[EmailStr] = None
 
-    output_paths: Optional[List[Path]] = None
-
     @classmethod
     @validate_call
     def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None):
@@ -33,14 +31,10 @@ class TestbedTasks(ShpModel):
             tb = Testbed(name="shepherd_tud_nes")
         tgt_ids = xp.get_target_ids()
         obs_tasks = [ObserverTasks.from_xp(xp, tb, _id) for _id in tgt_ids]
-        paths = {}
-        for obt in obs_tasks:
-            paths = {**paths, **obt.get_output_paths()}
         return cls(
             name=xp.name,
             observer_tasks=obs_tasks,
             email=xp.email_results,
-            output_paths=paths,
         )
 
     def get_observer_tasks(self, observer) -> Optional[ObserverTasks]:
