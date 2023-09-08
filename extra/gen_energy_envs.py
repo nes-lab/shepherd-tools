@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
         meta_path = file_path.with_suffix(".yaml")
         if meta_path.exists():
-            logger.info("File exists, will skip: %s", meta_path.name)
+            logger.info("File exists, will skip generation of: %s", meta_path.name)
         else:
             with ShpReader(file_path) as file:
                 energy = file.energy()

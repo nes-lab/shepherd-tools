@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
+from shepherd_core import BaseReader as ShpReader
 from shepherd_core import BaseWriter as ShpWriter
 from shepherd_core import TestbedClient
 from shepherd_core.data_models.task import EmulationTask
@@ -19,24 +20,24 @@ from shepherd_core.logger import logger
 
 def generate_lab_vsrc(path: Path):
     # Config
-    voltage_V = 3.0
-    current_A = 50e-3
+    _V = 3.0
+    _A = 50e-3
     duration_s = 60
 
     if path.exists():
-        logger.info("File exists, will skip: %s", path.name)
-    else:
-        with ShpWriter(path) as file:
-            file.store_hostname("artificial")
-            # values in SI units
-            timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
-            voltage_vector = np.linspace(
-                voltage_V, voltage_V, int(file.samplerate_sps * duration_s)
-            )
-            current_vector = np.linspace(
-                current_A, current_A, int(file.samplerate_sps * duration_s)
-            )
-            file.append_iv_data_si(timestamp_vector, voltage_vector, current_vector)
+        logger.info("File exists, will skip generating: %s", path.name)
+        return
+
+    with ShpWriter(path) as file:
+        file.store_hostname("artificial")
+        # values in SI units
+        timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
+        voltage_vector = np.linspace(_V, _V, int(file.samplerate_sps * duration_s))
+        current_vector = np.linspace(_A, _A, int(file.samplerate_sps * duration_s))
+        file.append_iv_data_si(timestamp_vector, voltage_vector, current_vector)
+    with ShpReader(path) as file:
+        logger.info("Energy-Statistic of Env: %f", file.energy())
+        file.save_metadata()
 
 
 if __name__ == "__main__":
@@ -62,7 +63,7 @@ if __name__ == "__main__":
     ]
 
     for p_nrf, p_msp, name in tests:
-        path = ObserverTasks(
+        _path = ObserverTasks(
             observer="sheep0",
             owner_id=123,
             time_prep=datetime.now(),
@@ -89,4 +90,4 @@ if __name__ == "__main__":
                 enable_io=True,
             ),
         ).to_file(path_cfg / name)
-        logger.info("Wrote: %s", path.as_posix())
+        logger.info("Wrote: %s", _path.as_posix())
