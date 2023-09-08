@@ -26,13 +26,13 @@ def test_elf_to_hex(path_elf: Path, tmp_path: Path) -> None:
 def test_firmware_to_hex_w_elf(path_elf: Path) -> None:
     path_gen = fw_tools.firmware_to_hex(path_elf)
     assert path_gen.exists
-    assert path_gen.suffix == ".hex"
+    assert path_gen.suffix.lower() == ".hex"
 
 
 def test_firmware_to_hex_w_hex(path_hex: Path) -> None:
     path_gen = fw_tools.firmware_to_hex(path_hex)
     assert path_gen.exists
-    assert path_gen.suffix == ".hex"
+    assert path_gen.suffix.lower() == ".hex"
     assert path_gen.as_posix() == path_hex.as_posix()
 
 

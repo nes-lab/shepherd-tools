@@ -9,6 +9,8 @@ from typing_extensions import Annotated
 from ..base.content import IdInt
 from ..base.content import SafeStr
 from ..base.shepherd import ShpModel
+from ..content.firmware import suffix_to_DType
+from ..content.firmware_datatype import FirmwareDType
 from ..experiment.experiment import Experiment
 from ..testbed.cape import TargetPort
 from ..testbed.mcu import ProgrammerProtocol
@@ -35,7 +37,8 @@ class ProgrammingTask(ShpModel):
 
     @model_validator(mode="after")
     def post_validation(self):
-        if self.firmware_file.suffix.lower() != ".hex":
+        d_type = suffix_to_DType.get(self.firmware_file.suffix.lower())
+        if d_type != FirmwareDType.base64_hex:
             ValueError(f"Firmware is not intel-.hex ('{self.firmware_file}')")
         return self
 

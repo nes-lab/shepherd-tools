@@ -29,13 +29,13 @@ def path_to_flist(data_path: Path) -> List[Path]:
     """
     data_path = Path(data_path).resolve()
     h5files = []
-    if data_path.is_file() and data_path.suffix == ".h5":
+    if data_path.is_file() and data_path.suffix.lower() == ".h5":
         h5files.append(data_path)
     elif data_path.is_dir():
         flist = os.listdir(data_path)
         for file in flist:
             fpath = data_path / str(file)
-            if not fpath.is_file() or ".h5" != fpath.suffix:
+            if not fpath.is_file() or ".h5" != fpath.suffix.lower():
                 continue
             h5files.append(fpath)
     return h5files
