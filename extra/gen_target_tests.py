@@ -86,7 +86,8 @@ if __name__ == "__main__":
             emulation=EmulationTask(
                 input_path=path_pwr,
                 output_path=path_rec / (name + ".h5"),
-                power_tracing=None,
+                duration=30,
+                # power_tracing=None,
                 enable_io=True,
             ),
         ).to_file(path_cfg / name)
