@@ -38,7 +38,19 @@ pipenv update
 pipenv install --dev pytest
 ```
 
-### running Testbench
+### Update dynamic Fixtures
+
+When external dependencies ([Target-Lib](https://github.com/orgua/shepherd-targets/)) change, the fixtures should be updated.
+
+```shell
+python3 extra/gen_firmwares.py
+python3 extra/gen_energy_envs.py
+python3 extra/prime_database.py
+# commit the updated 'shepherd_core/shepherd_core/data_models/content/_external_fixtures.yaml'
+# delete (optional) 'extra/content'
+```
+
+### Running Testbench
 
 - run pytest in ``_core``- or ``_data``-subdirectory
 - alternative (below) is running from failed test to next fail
@@ -63,14 +75,19 @@ coverage report
 
 ## Release-Procedure
 
-- increase version number in __init__.py of both packages
-- install and run pre-commit for QA-Checks, see steps below
+- increase version number in ``__init__.py`` of both packages
+- install and run ``pre-commit`` for QA-Checks, see steps below
 - every commit get automatically tested by GitHub
-- put together a release on GitHub - the tag should match current version-number
-- GitHub automatically pushes the release to pypi
+- update changelog in ``HISTORY.md``
+- add tag to commit - reflecting current version number - i.e. ``v23.9.0``
+- move code from dev-branch to main by PR
+- GitHub automatically creates a release & pushes the release to pypi
+- update release-text with latest Changelog
 
 ```shell
 pip3 install pre-commit
+# or better
+pipenv shell
 
 pre-commit run --all-files
 
@@ -80,8 +97,8 @@ ruff check .
 
 # inside sub-modules unittests
 cd shepherd_core
-pytest
-# when developers add code they should make sure its covered by testsuite
+pytest --stepwise
+# when developers add code they should make sure its covered by the testsuite
 coverage run -m pytest
 coverage html
 ```
