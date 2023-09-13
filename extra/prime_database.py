@@ -27,7 +27,7 @@ def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
 
 if __name__ == "__main__":
     # config
-    do_cleanup: bool = False
+    do_cleanup: bool = True
 
     path_here = Path(__file__).parent.absolute()
     path_db = path_here.parent / "shepherd_core/shepherd_core/data_models/content"

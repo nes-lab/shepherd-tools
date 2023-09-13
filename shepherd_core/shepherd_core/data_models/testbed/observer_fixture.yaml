@@ -6,6 +6,7 @@
     ip: 10.0.0.20
     mac: 18:00:C0:FF:EE:77
     room: at-home
+    eth_port: unimatrix_zero_one
     description: lab / dev
     longitude: 0
     latitude: 0
