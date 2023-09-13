@@ -43,18 +43,21 @@ class CalibrationPair(ShpModel):
     gain: PositiveFloat
     offset: float = 0
 
-    def raw_to_si(self, values_raw: Calc_t) -> Calc_t:
-        """Helper to convert between physical units and raw unsigned integers"""
+    def raw_to_si(self, values_raw: Calc_t, allow_negative: bool = True) -> Calc_t:
+        """Convert between physical units and raw unsigned integers"""
         values_si = values_raw * self.gain + self.offset
-        if isinstance(values_si, np.ndarray):
-            values_si[values_si < 0.0] = 0.0
-            # if pyright still complains, cast with .astype(float)
-        else:
-            values_si = float(max(values_si, 0.0))
+        if not allow_negative:
+            if isinstance(values_si, np.ndarray):
+                values_si[values_si < 0.0] = 0.0
+                # if pyright still complains, cast with .astype(float)
+            else:
+                values_si = float(max(values_si, 0.0))
+        elif not isinstance(values_si, np.ndarray):
+            values_si = float(values_si)
         return values_si
 
     def si_to_raw(self, values_si: Calc_t) -> Calc_t:
-        """Helper to convert between physical units and raw unsigned integers"""
+        """Convert between physical units and raw unsigned integers"""
         values_raw = (values_si - self.offset) / self.gain
         if isinstance(values_raw, np.ndarray):
             values_raw[values_raw < 0.0] = 0.0
