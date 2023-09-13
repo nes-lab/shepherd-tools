@@ -1,6 +1,22 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 - datatype: observer
   parameters:
+    id: 1000
+    name: sheep0
+    ip: 10.0.0.20
+    mac: 18:00:C0:FF:EE:77
+    room: at-home
+    eth_port: unimatrix_zero_one
+    description: lab / dev
+    longitude: 0
+    latitude: 0
+    cape:
+      name: cape5
+    target_a:
+      name: T_nRF52_FRAM_2023_000
+    created: 2022-12-12 12:12:12
+- datatype: observer
+  parameters:
     id: 1001
     name: sheep01
     ip: 192.168.165.195

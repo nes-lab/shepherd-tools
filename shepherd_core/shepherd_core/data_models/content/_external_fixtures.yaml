@@ -1,0 +1,231 @@
+- datatype: EnergyEnvironment
+  created: 2023-09-13 21:01:52.283932
+  parameters:
+    id: 11615904126704905940
+    name: eenv_static_3300mV_50mA_3600s
+    description: Artificial static Energy Environment, 3300mV, 50mA, 3600s
+    comment: null
+    created: 2023-08-28 23:46:21.264086
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    data_path: generic_path.h5
+    data_type: ivsample
+    duration: 3600.0
+    energy_Ws: 594.0000000000022
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: Firmware
+  created: 2023-09-13 21:01:52.452379
+  parameters:
+    id: 3000
+    name: msp430_deep_sleep
+    description: practically turned off MCU with the lowest possible consumption
+    comment: null
+    created: 2022-12-12 12:12:12
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1002
+      name: MSP430FR
+      description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
+      comment: null
+      platform: MSP430
+      core: MSP430FR5962
+      prog_protocol: SBW
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: msp430_deep_sleep
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null
+- datatype: Firmware
+  created: 2023-09-13 21:01:52.563531
+  parameters:
+    id: 3001
+    name: msp430_spi_fram
+    description: riotee implementation to use MSP as a flash storage
+    comment: null
+    created: 2022-12-12 12:12:12
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1002
+      name: MSP430FR
+      description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
+      comment: null
+      platform: MSP430
+      core: MSP430FR5962
+      prog_protocol: SBW
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: msp430_deep_sleep
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null
+- datatype: Firmware
+  created: 2023-09-13 21:01:52.724552
+  parameters:
+    id: 3002
+    name: msp430_testable
+    description: switches on all shared gpio one by one (verification after assembly)
+    comment: null
+    created: 2022-12-12 12:12:12
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1002
+      name: MSP430FR
+      description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
+      comment: null
+      platform: MSP430
+      core: MSP430FR5962
+      prog_protocol: SBW
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: msp430_deep_sleep
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null
+- datatype: Firmware
+  created: 2023-09-13 21:01:52.904289
+  parameters:
+    id: 7163917825449888392
+    name: nrf52_deep_sleep
+    description: practically turned off MCU with the lowest possible consumption
+    comment: null
+    created: 2023-09-13 21:01:52.815691
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1001
+      name: nRF52
+      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      comment: null
+      platform: nRF52
+      core: nRF52840
+      prog_protocol: SWD
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: nrf52_demo_rf
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null
+- datatype: Firmware
+  created: 2023-09-13 21:01:53.161755
+  parameters:
+    id: 2000
+    name: nrf52_demo_rf
+    description: A simple demo that sends BLE packets when energy budget allows it
+    comment: null
+    created: 2022-12-12 12:12:12
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1001
+      name: nRF52
+      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      comment: null
+      platform: nRF52
+      core: nRF52840
+      prog_protocol: SWD
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: nrf52_demo_rf
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null
+- datatype: Firmware
+  created: 2023-09-13 21:01:53.456222
+  parameters:
+    id: 3174430733058172825
+    name: nrf52_rf_survey
+    description: Link Matrix Generator - TX-Unit - sends packet with every possible
+      P_TX, loops until stopped
+    comment: null
+    created: 2023-09-13 21:01:53.308666
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1001
+      name: nRF52
+      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      comment: null
+      platform: nRF52
+      core: nRF52840
+      prog_protocol: SWD
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: nrf52_demo_rf
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null
+- datatype: Firmware
+  created: 2023-09-13 21:01:53.696099
+  parameters:
+    id: 16381936580724580968
+    name: nrf52_rf_test
+    description: sends out 1 BLE-Packet per second (verify with an app like 'RaMBLE')
+    comment: null
+    created: 2023-09-13 21:01:53.575861
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1001
+      name: nRF52
+      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      comment: null
+      platform: nRF52
+      core: nRF52840
+      prog_protocol: SWD
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: nrf52_demo_rf
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null
+- datatype: Firmware
+  created: 2023-09-13 21:01:53.955639
+  parameters:
+    id: 2002
+    name: nrf52_testable
+    description: watches all gpio and reports with UART messages (verification after
+      assembly)
+    comment: null
+    created: 2022-12-12 12:12:12
+    owner: Ingmar
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    mcu:
+      id: 1001
+      name: nRF52
+      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      comment: null
+      platform: nRF52
+      core: nRF52840
+      prog_protocol: SWD
+      prog_voltage: 3.0
+      prog_datarate: 500000
+      fw_name_default: nrf52_demo_rf
+    data: generic_path.elf
+    data_type: path_elf
+    data_hash: null

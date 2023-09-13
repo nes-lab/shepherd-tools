@@ -9,6 +9,8 @@ from typing_extensions import Annotated
 from ..base.content import IdInt
 from ..base.content import SafeStr
 from ..base.shepherd import ShpModel
+from ..content.firmware import suffix_to_DType
+from ..content.firmware_datatype import FirmwareDType
 from ..experiment.experiment import Experiment
 from ..testbed.cape import TargetPort
 from ..testbed.mcu import ProgrammerProtocol
@@ -23,7 +25,7 @@ class ProgrammingTask(ShpModel):
     target_port: TargetPort = TargetPort.A
     mcu_port: MCUPort = 1
     mcu_type: SafeStr
-    # ⤷ for later
+    # ⤷ must be either "nrf52" or "msp430" ATM, TODO: clean xp to tasks
     voltage: Annotated[float, Field(ge=1, lt=5)] = 3
     datarate: Annotated[int, Field(gt=0, le=1_000_000)] = 500_000
     protocol: ProgrammerProtocol
@@ -35,7 +37,8 @@ class ProgrammingTask(ShpModel):
 
     @model_validator(mode="after")
     def post_validation(self):
-        if self.firmware_file.suffix.lower() != ".hex":
+        d_type = suffix_to_DType.get(self.firmware_file.suffix.lower())
+        if d_type != FirmwareDType.base64_hex:
             ValueError(f"Firmware is not intel-.hex ('{self.firmware_file}')")
         return self
 

@@ -2,6 +2,7 @@ import hashlib
 import pathlib
 from datetime import datetime
 from datetime import timedelta
+from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Optional
 from typing import Union
@@ -24,10 +25,15 @@ def time2int(dumper, data):
     )
 
 
+def generic2str(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
+
+
 yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.Path, path2str, SafeDumper)
 yaml.add_representer(timedelta, time2int, SafeDumper)
+yaml.add_representer(IPv4Address, generic2str, SafeDumper)
 
 
 class ShpModel(BaseModel):
@@ -61,7 +67,18 @@ class ShpModel(BaseModel):
 
     def __repr__(self) -> str:
         """string-representation allows print(model)"""
-        return str(self.model_dump(exclude_unset=True, exclude_defaults=True))
+        name = type(self).__name__
+        content = self.model_dump(exclude_unset=True, exclude_defaults=True)
+        return f"{name}({content})"
+
+    def __str__(self) -> str:
+        """string-representation allows str(model)"""
+        content = yaml.safe_dump(
+            self.model_dump(exclude_unset=True, exclude_defaults=True),
+            default_flow_style=False,
+            sort_keys=False,
+        )
+        return str(content)
 
     def __getitem__(self, key):
         """allows dict access -> model["key"], in addition to model.key"""

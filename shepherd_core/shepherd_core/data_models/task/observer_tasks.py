@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import List
 from typing import Optional
 
-from pydantic import computed_field
 from pydantic import validate_call
 
 from ..base.content import IdInt
@@ -23,7 +22,7 @@ class ObserverTasks(ShpModel):
     owner_id: IdInt
 
     # PRE PROCESS
-    time_prep: datetime
+    time_prep: datetime  # TODO: should be optional
     root_path: Path
     abort_on_error: bool
 
@@ -80,8 +79,7 @@ class ObserverTasks(ShpModel):
             tasks.append(task)
         return tasks
 
-    @computed_field
-    def output_paths(self) -> dict:
+    def get_output_paths(self) -> dict:
         values = {}
         if isinstance(self.emulation, EmulationTask):
             if self.emulation.output_path is None:

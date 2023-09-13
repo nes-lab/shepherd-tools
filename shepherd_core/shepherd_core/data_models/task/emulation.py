@@ -62,7 +62,8 @@ class EmulationTask(ShpModel):
     use_cal_default: bool = False
     # ⤷ Use default calibration values, skip loading from EEPROM
 
-    enable_io: bool = False  # TODO: direction of pins!
+    enable_io: bool = False
+    # TODO: direction of pins! also it seems error-prone when only setting _tracing
     # ⤷ Switch the GPIO level converter to targets on/off
     #   pre-req for sampling gpio,
     io_port: TargetPort = TargetPort.A

@@ -14,6 +14,7 @@ from matplotlib import pyplot as plt
 from tqdm import trange
 
 from shepherd_core import BaseReader
+from shepherd_core.logger import logger
 
 # import samplerate  # TODO: just a test-fn for now
 
@@ -402,6 +403,7 @@ class Reader(BaseReader):
             f".plot_{start_str}_to_{end_str}.png"
         )
         if plot_path.exists():
+            self._logger.warning("Plot exists, will skip & not overwrite!")
             return
         self._logger.info("Plot generated, will be saved to '%s'", plot_path.name)
         fig = self.assemble_plot(data, width, height)
@@ -429,6 +431,7 @@ class Reader(BaseReader):
             .with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
         )
         if plot_path.exists():
+            logger.warning("Plot exists, will skip & not overwrite!")
             return None
         fig = Reader.assemble_plot(data, width, height)
         plt.savefig(plot_path)
