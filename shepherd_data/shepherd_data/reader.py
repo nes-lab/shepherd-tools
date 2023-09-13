@@ -13,8 +13,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import trange
 
-from shepherd_core.logger import logger
 from shepherd_core import BaseReader
+from shepherd_core.logger import logger
 
 # import samplerate  # TODO: just a test-fn for now
 

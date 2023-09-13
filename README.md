@@ -41,7 +41,7 @@ pipenv install --dev pytest
 ### running Testbench
 
 - run pytest in ``_core``- or ``_data``-subdirectory
-- alternative
+- alternative (below) is running from failed test to next fail
 
 ```shell
 pytest

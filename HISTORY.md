@@ -1,5 +1,17 @@
 # History of Changes
 
+## v2023.09.0
+
+- allow negative values when converting raw to SI-units
+- lift restriction for pandas < v2
+- update dependencies and fix incompats & warnings
+- warn when files are not overwritten
+- create data-generators for the testbed (./extra)
+- improve file-handling
+- bugfixes for task-handling
+- update documentation
+- update IPv4-representation
+- extend model with more representation-types (yaml, str, dict, ...)
 
 ## v2023.08.8
 
