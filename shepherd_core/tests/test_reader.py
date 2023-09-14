@@ -5,8 +5,8 @@ import h5py
 import pytest
 import yaml
 
-from shepherd_core import BaseReader as Reader
-from shepherd_core import BaseWriter as Writer
+from shepherd_core import Reader as Reader
+from shepherd_core import Writer as Writer
 
 
 def test_reader_metadata(data_h5: Path) -> None:

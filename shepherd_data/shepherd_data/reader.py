@@ -13,13 +13,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import trange
 
-from shepherd_core import BaseReader
+from shepherd_core import Reader as CoreReader
 from shepherd_core.logger import logger
 
 # import samplerate  # TODO: just a test-fn for now
 
 
-class Reader(BaseReader):
+class Reader(CoreReader):
     """Sequentially Reads shepherd-data from HDF5 file.
 
     Args:

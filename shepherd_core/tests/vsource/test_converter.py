@@ -4,8 +4,8 @@ from typing import Optional
 import pytest
 from pytest import approx
 
-from shepherd_core import BaseReader
 from shepherd_core import CalibrationEmulator
+from shepherd_core import Reader
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.vsource import VirtualSourceModel
@@ -139,7 +139,7 @@ def test_vsource_vsrc_create_files(
 
 @pytest.mark.parametrize("src_name", src_list)
 def test_vsource_vsrc_sim_curve(src_name: str, file_ivcurve: Path) -> None:
-    with BaseReader(file_ivcurve) as file:
+    with Reader(file_ivcurve) as file:
         window_size = file.get_window_samples()
         dtype = file.get_datatype()
         src = src_model("BQ25504s", dtype_in=dtype, window_size=window_size)
@@ -153,7 +153,7 @@ def test_vsource_vsrc_sim_curve(src_name: str, file_ivcurve: Path) -> None:
 
 @pytest.mark.parametrize("src_name", src_list)
 def test_vsource_vsrc_sim_sample(src_name: str, file_ivsample: Path) -> None:
-    with BaseReader(file_ivsample) as file:
+    with Reader(file_ivsample) as file:
         window_size = file.get_window_samples()
         dtype = file.get_datatype()
         src = src_model("BQ25504s", dtype_in=dtype, window_size=window_size)

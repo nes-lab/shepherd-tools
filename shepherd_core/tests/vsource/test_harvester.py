@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from shepherd_core import BaseReader
+from shepherd_core import Reader
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
@@ -46,7 +46,7 @@ def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
 
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
 def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
-    with BaseReader(file_ivcurve) as file:
+    with Reader(file_ivcurve) as file:
         hrv_config = VirtualHarvesterConfig(name=hrv_name)
         hrv_pru = HarvesterPRUConfig.from_vhrv(
             hrv_config,

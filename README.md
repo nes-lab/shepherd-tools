@@ -79,10 +79,11 @@ coverage report
 - install and run ``pre-commit`` for QA-Checks, see steps below
 - every commit get automatically tested by GitHub
 - update changelog in ``HISTORY.md``
-- add tag to commit - reflecting current version number - i.e. ``v23.9.0``
 - move code from dev-branch to main by PR
+- add tag to commit - reflecting current version number - i.e. ``v23.9.0``
 - GitHub automatically creates a release & pushes the release to pypi
 - update release-text with latest Changelog
+- rebase dev-branch
 
 ```shell
 pip3 install pre-commit

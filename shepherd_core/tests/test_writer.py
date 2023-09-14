@@ -5,8 +5,8 @@ from typing import Union
 import numpy as np
 import pytest
 
-from shepherd_core import BaseReader as Reader
-from shepherd_core import BaseWriter as Writer
+from shepherd_core import Reader
+from shepherd_core import Writer
 from shepherd_core.data_models import CalibrationEmulator as CalEmu
 from shepherd_core.data_models import CalibrationHarvester as CalHrv
 from shepherd_core.data_models import CalibrationSeries as CalSeries

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import numpy as np
 
-from shepherd_core import BaseReader as ShpReader
-from shepherd_core import BaseWriter as ShpWriter
+from shepherd_core import Reader as ShpReader
 from shepherd_core import TestbedClient
+from shepherd_core import Writer as ShpWriter
 from shepherd_core.data_models.task import EmulationTask
 from shepherd_core.data_models.task import ObserverTasks
 from shepherd_core.data_models.task import ProgrammingTask

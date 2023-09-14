@@ -7,7 +7,7 @@
 """
 from pathlib import Path
 
-from shepherd_core import BaseReader
+from shepherd_core import Reader
 from shepherd_core import TestbedClient
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
@@ -51,7 +51,7 @@ if not file_ivcurve.exists():
         db.convert_2_ivcurves(file_ivcurve, duration_s=sim_duration)
 
 # Input Statistics
-with BaseReader(file_ivcurve, verbose=False) as file:
+with Reader(file_ivcurve, verbose=False) as file:
     window_size = file.get_window_samples()
     I_in_max = 0.0
     for _t, _v, _i in file.read_buffers():
@@ -66,7 +66,7 @@ with BaseReader(file_ivcurve, verbose=False) as file:
 # Simulation
 for hrv_name in hrv_list:
     E_out_Ws = 0.0
-    with BaseReader(file_ivcurve, verbose=False) as file:
+    with Reader(file_ivcurve, verbose=False) as file:
         hrv_config = VirtualHarvesterConfig(name=hrv_name)
         hrv_pru = HarvesterPRUConfig.from_vhrv(
             hrv_config,
