@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  run-unittests:
+    uses: ./.github/workflows/python-app.yml
+  release-firmware:
+    runs-on: ubuntu-latest
+    needs:
+      - run-unittests
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
