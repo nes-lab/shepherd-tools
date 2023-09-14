@@ -9,8 +9,8 @@ from pathlib import Path
 import numpy as np
 from tqdm import trange
 
-from shepherd_core import BaseReader as ShpReader
-from shepherd_core import BaseWriter as ShpWriter
+from shepherd_core import Reader as ShpReader
+from shepherd_core import Writer as ShpWriter
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models import EnergyEnvironment
 from shepherd_core.logger import logger

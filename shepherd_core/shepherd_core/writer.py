@@ -24,7 +24,7 @@ from .data_models.base.calibration import CalibrationSeries as CalSeries
 from .data_models.content.energy_environment import EnergyDType
 from .data_models.task import Compression
 from .data_models.task.emulation import c_translate
-from .reader import BaseReader
+from .reader import Reader
 
 
 # copy of core/models/base/shepherd - needed also here
@@ -59,7 +59,7 @@ def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
         counter += 1
 
 
-class BaseWriter(BaseReader):
+class Writer(Reader):
     """Stores data for Shepherd in HDF5 format
 
     Choose lossless compression filter
@@ -88,7 +88,7 @@ class BaseWriter(BaseReader):
     mode_default: str = "harvester"
     datatype_default: str = EnergyDType.ivsample
 
-    _chunk_shape: tuple = (BaseReader.samples_per_buffer,)
+    _chunk_shape: tuple = (Reader.samples_per_buffer,)
 
     @validate_call
     def __init__(

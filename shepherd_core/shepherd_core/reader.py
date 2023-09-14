@@ -26,7 +26,7 @@ from .data_models.base.calibration import CalibrationSeries
 from .data_models.content.energy_environment import EnergyDType
 
 
-class BaseReader:
+class Reader:
     """Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
@@ -461,7 +461,6 @@ class BaseReader:
         self, node: Union[h5py.Dataset, h5py.Group, None] = None, minimal: bool = False
     ) -> Dict[str, dict]:
         """recursive FN to capture the structure of the file
-        TODO: port to BaseReader (.data_dimediffs(), _dset_statistics())
         :param node: starting node, leave free to go through whole file
         :param minimal: just provide a bare tree (much faster)
         :return: structure of that node with everything inside it

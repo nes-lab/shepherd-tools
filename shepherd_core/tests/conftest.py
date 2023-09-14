@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from shepherd_core import BaseWriter as Writer
+from shepherd_core import Writer as Writer
 
 
 def generate_h5_file(file_path: Path, file_name: str = "harvest_example.h5") -> Path:

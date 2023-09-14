@@ -16,16 +16,16 @@ from .inventory import Inventory
 from .logger import get_verbose_level
 from .logger import logger
 from .logger import set_verbose_level
-from .reader import BaseReader
+from .reader import Reader
 from .testbed_client.client import TestbedClient
 from .testbed_client.client import tb_client
-from .writer import BaseWriter
+from .writer import Writer
 
-__version__ = "2023.9.0"
+__version__ = "2023.9.1"
 
 __all__ = [
-    "BaseReader",
-    "BaseWriter",
+    "Reader",
+    "Writer",
     "get_verbose_level",
     "set_verbose_level",
     "logger",

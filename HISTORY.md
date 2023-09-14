@@ -1,5 +1,9 @@
 # History of Changes
 
+## v2023.9.1
+
+- breaking change: cores BaseReader and BaseWriter just become Reader & Writer
+
 ## v2023.09.0
 
 - allow negative values when converting raw to SI-units
