@@ -11,7 +11,7 @@ from typing import Optional
 import click
 
 from shepherd_core import get_verbose_level
-from shepherd_core import set_verbose_level
+from shepherd_core import increase_verbose_level
 from shepherd_core.commons import samplerate_sps_default
 
 from . import Reader
@@ -45,8 +45,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
 @click.option(
     "-v",
     "--verbose",
-    count=True,
-    default=0,
+    is_flag=True,
     help="4 Levels [0..3](Error, Warning, Info, Debug)",
 )
 @click.option(
@@ -55,9 +54,10 @@ def path_to_flist(data_path: Path) -> List[Path]:
     help="Prints version-info at start (combinable with -v)",
 )
 @click.pass_context  # TODO: is the ctx-type correct?
-def cli(ctx: click.Context, verbose: int, version: bool) -> None:
+def cli(ctx: click.Context, verbose: bool, version: bool) -> None:
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder"""
-    set_verbose_level(verbose)
+    if verbose:
+        increase_verbose_level(3)
     if version:
         logger.info("Shepherd-Data v%s", __version__)
         logger.debug("Python v%s", sys.version)

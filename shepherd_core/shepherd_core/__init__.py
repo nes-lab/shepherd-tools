@@ -15,7 +15,7 @@ from .data_models.task import Compression
 from .inventory import Inventory
 from .logger import get_verbose_level
 from .logger import logger
-from .logger import set_verbose_level
+from .logger import increase_verbose_level
 from .reader import Reader
 from .testbed_client.client import TestbedClient
 from .testbed_client.client import tb_client
@@ -27,7 +27,7 @@ __all__ = [
     "Reader",
     "Writer",
     "get_verbose_level",
-    "set_verbose_level",
+    "increase_verbose_level",
     "logger",
     "CalibrationCape",
     "CalibrationSeries",
