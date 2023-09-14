@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   run-unittests:
-    uses: ./.github/workflows/python-app.yml
+    uses: ./.github/workflows/python_app.yml
   release-firmware:
     runs-on: ubuntu-latest
     needs:
