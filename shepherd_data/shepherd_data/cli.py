@@ -43,8 +43,8 @@ def path_to_flist(data_path: Path) -> List[Path]:
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"], "obj": {}})
 @click.option(
-    "-v",
     "--verbose",
+    "-v",
     is_flag=True,
     help="4 Levels [0..3](Error, Warning, Info, Debug)",
 )

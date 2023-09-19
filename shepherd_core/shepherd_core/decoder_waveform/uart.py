@@ -18,7 +18,7 @@ https://sigrok.org/wiki/Protocol_decoder:Uart
 """
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 
@@ -41,7 +41,7 @@ class BitOrder(str, Enum):
 class Uart:
     def __init__(
         self,
-        path: Path,
+        content: Union[Path, np.ndarray],
         baud_rate: Optional[int] = None,
         frame_length: Optional[int] = 8,
         inversion: Optional[bool] = None,
@@ -54,16 +54,19 @@ class Uart:
           (some detectors still missing)
         """
 
-        self.events_sig: np.ndarray = np.loadtxt(
-            path.as_posix(), delimiter=",", skiprows=1
-        )
-        # TODO: if float fails load as str -
-        #  cast first col as np.datetime64 with ns-resolution, convert to delta
+        if isinstance(content, Path):
+            self.events_sig: np.ndarray = np.loadtxt(
+                content.as_posix(), delimiter=",", skiprows=1
+            )
+            # TODO: if float fails load as str -
+            #  cast first col as np.datetime64 with ns-resolution, convert to delta
+        else:
+            self.events_sig = content
 
         # verify table
         if self.events_sig.shape[1] != 2:
             raise TypeError(
-                "Input file should have 2 rows, comma-separated -> timestamp & digital value"
+                "Input file should have 2 rows -> (comma-separated) timestamp & value"
             )
         if self.events_sig.shape[0] < 8:
             raise TypeError("Input file is too short (< state-changes)")
