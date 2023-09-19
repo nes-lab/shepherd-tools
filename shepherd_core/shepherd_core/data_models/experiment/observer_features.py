@@ -57,7 +57,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
     # initial recording
     mask: Annotated[int, Field(ge=0, lt=2**10)] = 0b11_1111_1111  # all
-    # ⤷ TODO: custom mask not implemented
+    # ⤷ TODO: custom mask not implemented in PRU, ATM
     gpios: Optional[
         Annotated[List[GPIO], Field(min_length=1, max_length=10)]
     ] = None  # = all
@@ -68,7 +68,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     duration: Optional[timedelta] = None  # till EOF
 
     # post-processing,
-    uart_decode: bool = False  # todo: is currently done online by system-service
+    uart_decode: bool = False  # todo: is currently done online in userspace
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: Annotated[int, Field(ge=2_400, le=921_600)] = 115_200
     # TODO: add a "discard_gpio" (if only uart is wanted)
