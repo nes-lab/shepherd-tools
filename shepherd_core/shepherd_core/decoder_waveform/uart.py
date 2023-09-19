@@ -48,8 +48,10 @@ class Uart:
         parity: Optional[Parity] = Parity.no,
         bit_order: Optional[BitOrder] = BitOrder.lsb_first,
     ):
-        """Provide a file with two columns: timestamp and signal (can be analog).
-        parameters that are None get auto-detected (some detectors still missing)
+        """Provide a file with two columns:
+        - timestamp (seconds with fraction) and signal (can be analog).
+        - class-parameters that are None (above) get auto-detected
+          (some detectors still missing)
         """
 
         self.events_sig: np.ndarray = np.loadtxt(
@@ -167,9 +169,9 @@ class Uart:
         """analyze the smallest step"""
         events = self.events_sig[:1000, :]  # speedup for large datasets
         dur_steps = events[1:, 0] - events[:-1, 0]
-        min_step = dur_steps[dur_steps > 0].min()
+        def_step = np.percentile(dur_steps[dur_steps > 0], 10)
         mean_tick = dur_steps[
-            (dur_steps >= min_step) & (dur_steps <= 1.33 * min_step)
+            (dur_steps >= 0.66 * def_step) & (dur_steps <= 1.33 * def_step)
         ].mean()
         return round(1 / mean_tick)
 
