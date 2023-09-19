@@ -38,7 +38,7 @@ def set_log_verbose_level(log_: logging.Logger, verbose: int) -> None:
 
 def increase_verbose_level(verbose: int) -> None:
     global verbose_level
-    if verbose > verbose_level:
+    if verbose >= verbose_level:
         verbose_level = min(max(verbose, 0), 3)
         set_log_verbose_level(logger, verbose_level)
 
