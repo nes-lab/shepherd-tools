@@ -1,5 +1,9 @@
 # History of Changes
 
+## v2023.9.4
+
+- update fixtures with real testbed-data
+
 ## v2023.9.3
 
 - uart-decoder: baudrate-detection more robust
