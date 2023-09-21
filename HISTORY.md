@@ -7,6 +7,7 @@
 - generators: enable rec of uart
 - refactor verbosity-system
 - GitHubWorkflow refactoring
+- add waveform-extraction for shepherd-data - cmd: extract-uart
 
 ## v2023.9.2
 

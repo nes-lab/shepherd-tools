@@ -18,7 +18,8 @@ https://sigrok.org/wiki/Protocol_decoder:Uart
 """
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
+from typing import Union
 
 import numpy as np
 

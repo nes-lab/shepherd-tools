@@ -4,6 +4,7 @@ Command definitions for CLI
 import logging
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import List
 from typing import Optional
@@ -13,6 +14,7 @@ import click
 from shepherd_core import get_verbose_level
 from shepherd_core import increase_verbose_level
 from shepherd_core.commons import samplerate_sps_default
+from shepherd_core.decoder_waveform import waveform_to_uart
 
 from . import Reader
 from . import Writer
@@ -171,6 +173,36 @@ def extract_meta(in_data: Path, separator: str) -> None:
                 shpr.save_log(shpr["exceptions"])
             if "uart" in elements:
                 shpr.save_log(shpr["uart"])
+
+
+@cli.command(
+    short_help="Extracts uart from gpio-trace in file or directory containing shepherd-recordings"
+)
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
+def extract_uart(in_data: Path) -> None:
+    """Extracts uart from gpio-trace in file or directory containing shepherd-recordings"""
+    files = path_to_flist(in_data)
+    verbose_level = get_verbose_level()
+    for file in files:
+        logger.info("Extracting uart from gpio-trace from from '%s' ...", file.name)
+        with Reader(file, verbose=verbose_level >= 2) as shpr:
+            # TODO: move into separate fn OR add to h5-file and use .save_log(), ALSO TEST
+            lines = waveform_to_uart(shpr)
+            # TODO: could also add parameter to get symbols
+            log_path = Path(in_data).with_suffix(".wf2uart.log")
+            if log_path.exists():
+                logger.warning("%s already exists, will skip", log_path)
+                continue
+
+            with open(log_path, "w") as log_file:
+                for line in lines:
+                    try:
+                        timestamp = datetime.utcfromtimestamp(float(line[0]))
+                        log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
+                        log_file.write(f"\t{str.encode(line[1])}")
+                        log_file.write("\n")
+                    except TypeError:
+                        continue
 
 
 @cli.command(
