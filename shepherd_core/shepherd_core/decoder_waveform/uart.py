@@ -19,6 +19,7 @@ https://sigrok.org/wiki/Protocol_decoder:Uart
 from enum import Enum
 from pathlib import Path
 from typing import Optional
+from typing import Union
 
 import numpy as np
 
@@ -41,27 +42,32 @@ class BitOrder(str, Enum):
 class Uart:
     def __init__(
         self,
-        path: Path,
+        content: Union[Path, np.ndarray],
         baud_rate: Optional[int] = None,
         frame_length: Optional[int] = 8,
         inversion: Optional[bool] = None,
         parity: Optional[Parity] = Parity.no,
         bit_order: Optional[BitOrder] = BitOrder.lsb_first,
     ):
-        """Provide a file with two columns: timestamp and signal (can be analog).
-        parameters that are None get auto-detected (some detectors still missing)
+        """Provide a file with two columns:
+        - timestamp (seconds with fraction) and signal (can be analog).
+        - class-parameters that are None (above) get auto-detected
+          (some detectors still missing)
         """
 
-        self.events_sig: np.ndarray = np.loadtxt(
-            path.as_posix(), delimiter=",", skiprows=1
-        )
-        # TODO: if float fails load as str -
-        #  cast first col as np.datetime64 with ns-resolution, convert to delta
+        if isinstance(content, Path):
+            self.events_sig: np.ndarray = np.loadtxt(
+                content.as_posix(), delimiter=",", skiprows=1
+            )
+            # TODO: if float fails load as str -
+            #  cast first col as np.datetime64 with ns-resolution, convert to delta
+        else:
+            self.events_sig = content
 
         # verify table
         if self.events_sig.shape[1] != 2:
             raise TypeError(
-                "Input file should have 2 rows, comma-separated -> timestamp & digital value"
+                "Input file should have 2 rows -> (comma-separated) timestamp & value"
             )
         if self.events_sig.shape[0] < 8:
             raise TypeError("Input file is too short (< state-changes)")
@@ -167,9 +173,9 @@ class Uart:
         """analyze the smallest step"""
         events = self.events_sig[:1000, :]  # speedup for large datasets
         dur_steps = events[1:, 0] - events[:-1, 0]
-        min_step = dur_steps[dur_steps > 0].min()
+        def_step = np.percentile(dur_steps[dur_steps > 0], 10)
         mean_tick = dur_steps[
-            (dur_steps >= min_step) & (dur_steps <= 1.33 * min_step)
+            (dur_steps >= 0.66 * def_step) & (dur_steps <= 1.33 * def_step)
         ].mean()
         return round(1 / mean_tick)
 

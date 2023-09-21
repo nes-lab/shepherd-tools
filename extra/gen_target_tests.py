@@ -2,6 +2,7 @@
 
 
 """
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -10,6 +11,7 @@ import numpy as np
 from shepherd_core import Reader as ShpReader
 from shepherd_core import TestbedClient
 from shepherd_core import Writer as ShpWriter
+from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models.task import EmulationTask
 from shepherd_core.data_models.task import ObserverTasks
 from shepherd_core.data_models.task import ProgrammingTask
@@ -41,9 +43,12 @@ def generate_lab_vsrc(path: Path):
 
 
 if __name__ == "__main__":
-    path_cfg = Path("/etc/shepherd/")
-    path_rec = Path("/var/shepherd/recordings/")
     path_here = Path(__file__).parent.absolute()
+    if sys.platform.startswith("linux"):
+        path_cfg = Path("/etc/shepherd/")
+    else:
+        path_cfg = path_here / "content/"
+    path_rec = Path("/var/shepherd/recordings/")
     path_cnt = path_here / "content/"
     path_pwr = path_here / "content/lab_pwr_src.h5"
 
@@ -88,6 +93,10 @@ if __name__ == "__main__":
                 output_path=path_rec / (name + ".h5"),
                 duration=30,
                 enable_io=True,
+                gpio_tracing=GpioTracing(
+                    uart_decode=True,  # enables logging uart from userspace
+                    uart_baudrate=115_200,
+                ),
             ),
         ).to_file(path_cfg / name)
         logger.info("Wrote: %s", _path.as_posix())

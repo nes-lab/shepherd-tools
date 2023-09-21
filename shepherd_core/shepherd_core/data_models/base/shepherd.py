@@ -113,7 +113,7 @@ class ShpModel(BaseModel):
         minimal: stores minimal set (filters out unset & default parameters)
         comment: documentation
         """
-        model_dict = self.model_dump(exclude_unset=minimal, exclude_defaults=minimal)
+        model_dict = self.model_dump(exclude_unset=minimal)
         model_wrap = Wrapper(
             datatype=type(self).__name__,
             comment=comment,

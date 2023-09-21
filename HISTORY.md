@@ -1,6 +1,15 @@
 # History of Changes
 
-## v2023.9.1
+## v2023.9.3
+
+- uart-decoder: baudrate-detection more robust
+- shpModel: change export to make sure set-parameters get exported
+- generators: enable rec of uart
+- refactor verbosity-system
+- GitHubWorkflow refactoring
+- add waveform-extraction for shepherd-data - cmd: extract-uart
+
+## v2023.9.2
 
 - breaking change: cores BaseReader and BaseWriter just become Reader & Writer
 

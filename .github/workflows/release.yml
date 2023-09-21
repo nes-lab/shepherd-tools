@@ -1,8 +1,8 @@
-name: Release
+name: Release tagged Commit
 
 on:
   push:
-    branches: [ main ]
+    # branches: [ main ]  # this is handled as OR (push to main OR tagged)
     tags:
       - 'v*.*.*'
 
@@ -12,7 +12,7 @@ permissions:
 jobs:
   run-unittests:
     uses: ./.github/workflows/python_app.yml
-  release-firmware:
+  release:
     runs-on: ubuntu-latest
     needs:
       - run-unittests
