@@ -39,7 +39,7 @@ if __name__ == "__main__":
                 energy_env=EnergyEnvironment(name="eenv_static_3300mV_50mA_3600s"),
                 virtual_source=VirtualSourceConfig(name="direct"),
                 firmware1=FW.from_firmware(path_cnt / "nrf52_rf_survey/build.elf"),
-                firmware2=FW.from_firmware(path_cnt / "msp430_deep_sleep/build.elf"),
+                firmware2=FW(name="msp430_deep_sleep"),
                 power_tracing=None,
                 gpio_tracing=GpioTracing(
                     uart_decode=True,  # enables logging uart from userspace
