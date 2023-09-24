@@ -14,7 +14,6 @@ import click
 from shepherd_core import get_verbose_level
 from shepherd_core import increase_verbose_level
 from shepherd_core.commons import samplerate_sps_default
-from shepherd_core.decoder_waveform import waveform_to_uart
 
 from . import Reader
 from . import Writer
@@ -78,7 +77,7 @@ def validate(in_data: Path) -> None:
     for file in files:
         logger.info("Validating '%s' ...", file.name)
         valid_file = True
-        with Reader(file, verbose=verbose_level >= 2) as shpr:
+        with Reader(file, verbose=verbose_level > 2) as shpr:
             valid_file &= shpr.is_valid()
             valid_file &= shpr.check_timediffs()
             valid_dir &= valid_file
@@ -112,7 +111,7 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
         logger.info("DS-Factor was invalid was reset to 1'000")
     for file in files:
         logger.info("Extracting IV-Samples from '%s' ...", file.name)
-        with Reader(file, verbose=verbose_level >= 2) as shpr:
+        with Reader(file, verbose=verbose_level > 2) as shpr:
             # will create a downsampled h5-file (if not existing) and then saving to csv
             ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
             if not ds_file.exists():
@@ -123,7 +122,7 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                     datatype=shpr.get_datatype(),
                     window_samples=shpr.get_window_samples(),
                     cal_data=shpr.get_calibration_data(),
-                    verbose=verbose_level >= 2,
+                    verbose=verbose_level > 2,
                 ) as shpw:
                     shpw["ds_factor"] = ds_factor
                     shpw.store_hostname(shpr.get_hostname())
@@ -138,7 +137,7 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                         shpr.ds_current, shpw.ds_current, ds_factor=ds_factor
                     )
 
-            with Reader(ds_file, verbose=verbose_level >= 2) as shpd:
+            with Reader(ds_file, verbose=verbose_level > 2) as shpd:
                 shpd.save_csv(shpd["data"], separator)
 
 
@@ -159,7 +158,7 @@ def extract_meta(in_data: Path, separator: str) -> None:
     verbose_level = get_verbose_level()
     for file in files:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
-        with Reader(file, verbose=verbose_level >= 2) as shpr:
+        with Reader(file, verbose=verbose_level > 2) as shpr:
             elements = shpr.save_metadata()
 
             if "sysutil" in elements:
@@ -185,11 +184,11 @@ def extract_uart(in_data: Path) -> None:
     verbose_level = get_verbose_level()
     for file in files:
         logger.info("Extracting uart from gpio-trace from from '%s' ...", file.name)
-        with Reader(file, verbose=verbose_level >= 2) as shpr:
+        with Reader(file, verbose=verbose_level > 2) as shpr:
             # TODO: move into separate fn OR add to h5-file and use .save_log(), ALSO TEST
-            lines = waveform_to_uart(shpr)
-            # TODO: could also add parameter to get symbols
-            log_path = Path(in_data).with_suffix(".wf2uart.log")
+            lines = shpr.gpio_to_uart()
+            # TODO: could also add parameter to get symbols instead of lines
+            log_path = Path(file).with_suffix(".uart_from_wf.log")
             if log_path.exists():
                 logger.warning("%s already exists, will skip", log_path)
                 continue
@@ -203,6 +202,29 @@ def extract_uart(in_data: Path) -> None:
                         log_file.write("\n")
                     except TypeError:
                         continue
+
+
+@cli.command(
+    short_help="Extracts gpio-trace from file or directory containing shepherd-recordings"
+)
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
+@click.option(
+    "--separator",
+    "-s",
+    default=";",
+    type=click.STRING,
+    help="Set an individual csv-separator",
+)
+def extract_gpio(in_data: Path, separator: str) -> None:
+    """Extracts uart from gpio-trace in file or directory containing shepherd-recordings"""
+    files = path_to_flist(in_data)
+    verbose_level = get_verbose_level()
+    for file in files:
+        logger.info("Extracting gpio-trace from from '%s' ...", file.name)
+        with Reader(file, verbose=verbose_level > 2) as shpr:
+            wfs = shpr.gpio_to_waveforms()
+            for name, wf in wfs.items():
+                shpr.waveform_to_csv(name, wf, separator)
 
 
 @cli.command(
@@ -240,7 +262,7 @@ def downsample(
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     for file in files:
-        with Reader(file, verbose=verbose_level >= 2) as shpr:
+        with Reader(file, verbose=verbose_level > 2) as shpr:
             for _factor in ds_list:
                 if shpr.ds_time.shape[0] / _factor < 1000:
                     logger.warning(
@@ -258,7 +280,7 @@ def downsample(
                     datatype=shpr.get_datatype(),
                     window_samples=shpr.get_window_samples(),
                     cal_data=shpr.get_calibration_data(),
-                    verbose=verbose_level >= 2,
+                    verbose=verbose_level > 2,
                 ) as shpw:
                     shpw["ds_factor"] = _factor
                     shpw.store_hostname(shpr.get_hostname())
@@ -323,7 +345,7 @@ def plot(
     data = []
     for file in files:
         logger.info("Generating plot for '%s' ...", file.name)
-        with Reader(file, verbose=verbose_level >= 2) as shpr:
+        with Reader(file, verbose=verbose_level > 2) as shpr:
             if multiplot:
                 data.append(shpr.generate_plot_data(start, end, relative_ts=True))
             else:
