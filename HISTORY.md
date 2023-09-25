@@ -1,5 +1,10 @@
 # History of Changes
 
+## v2023.9.5
+
+- fix workflows
+- latest pydantic-update 2.4 brings some speed improvement for sheep (<10%)
+
 ## v2023.9.4
 
 - update fixtures with real testbed-data

@@ -77,7 +77,8 @@ coverage report
 
 - increase version number in ``__init__.py`` of both packages
 - install and run ``pre-commit`` for QA-Checks, see steps below
-- every commit get automatically tested by GitHub
+- run unittests from both packages locally
+  - additionally every commit gets automatically tested by GitHub workflows
 - update changelog in ``HISTORY.md``
 - move code from dev-branch to main by PR
 - add tag to commit - reflecting current version number - i.e. ``v23.9.0``
