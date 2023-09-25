@@ -121,3 +121,15 @@
     name: nRF52_FRAM_018
     comment: Test3 21nA sleep, nrf was miss-aligned -> hot air rework
     description: LabPrototype
+
+- datatype: target
+  parameters:
+    id: 1001
+    name: target_nRF52_01
+    version: v2.1r0
+    description: single target PCB, v2.1r0
+    comment: ONLY VIRTUAL - NOT REAL
+    mcu1:
+      name: nRF52
+    mcu2: null
+    created: 2022-12-12 12:12:12

@@ -91,9 +91,9 @@ class TestbedClient:
     ) -> dict:
         if self._connected:
             raise RuntimeError("Not Implemented, TODO")
-        if uid:
+        if uid is not None:
             return self._fixtures[model_type].query_id(uid)
-        if name:
+        if name is not None:
             return self._fixtures[model_type].query_name(name)
         raise ValueError("Query needs either uid or name of object")
 

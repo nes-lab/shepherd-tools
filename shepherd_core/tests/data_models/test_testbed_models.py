@@ -72,7 +72,7 @@ def test_testbed_model_observer_min() -> None:
         mac="FF:FF:FF:FF:FF:FF",
         room="IIE72",
         eth_port="375b2",
-        cape=Cape(name="cape3"),
+        cape=Cape(name="cape53"),
     )
     print(obs)
 
@@ -114,7 +114,7 @@ def test_testbed_model_observer_fault_target() -> None:
         mac="FF:FF:FF:FF:FF:FF",
         room="IIE72",
         eth_port="375b2",
-        cape=Cape(name="cape3"),
+        cape=Cape(name="cape53"),
         target_a=Target(id=3),
         target_b=Target(id=2),
     )

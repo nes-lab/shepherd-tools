@@ -15,7 +15,7 @@
     cape:
       name: cape60
     target_a:
-      name: T_nRF52_FRAM_2023_000
+      name: nRF52_FRAM_018
     created: 2022-12-12 12:12:12
     active: false
 - datatype: observer
@@ -87,6 +87,8 @@
       name: cape55
     target_a:
       name: nRF52_FRAM_005
+    target_b:
+      name: target_nRF52_01  # ONLY VIRTUAL - for unittests
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:

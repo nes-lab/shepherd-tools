@@ -24,7 +24,7 @@ def test_task_generation_script(tmp_path: Path) -> None:
     target_cfgs = [
         # first init similar to yaml
         TargetConfig(
-            target_IDs=list(range(3001, 3004)),
+            target_IDs=list(range(1, 4)),
             custom_IDs=list(range(0, 3)),
             energy_env={"name": "SolarSunny"},
             virtual_source={"name": "diode+capacitor"},
@@ -32,7 +32,7 @@ def test_task_generation_script(tmp_path: Path) -> None:
         ),
         # second Instance fully object-oriented
         TargetConfig(
-            target_IDs=list(range(2001, 2005)),
+            target_IDs=list(range(6, 9)),
             custom_IDs=list(range(7, 18)),
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
             virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
