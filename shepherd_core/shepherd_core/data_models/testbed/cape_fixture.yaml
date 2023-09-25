@@ -1,73 +1,93 @@
---- # add with >>> python manage.py loaddata <fixturename>
+---
+
+# more human-readable test-protocol @
+# https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
 - datatype: cape
   parameters:
-    id: 1001
-    name: cape1
-    version: v2.4
-    description: ID=1270053
-    created: 2022-12-12
-    calibrated: 2022-12-12
+    id: 1270051
+    name: cape51
+    version: v2.4b
+    description: full version with Hrv & Emu, modded gpio,emu,hrv
+    created: 2022-10-07
+    calibrated: 2023-09-21
 - datatype: cape
   parameters:
-    id: 1002
-    name: cape2
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270052
+    name: cape52
 - datatype: cape
   parameters:
-    id: 1003
-    name: cape3
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270053
+    name: cape53
+    description: full version with Hrv & Emu, partially modded
+    comment: 1st Lab Prototype, burned VReg -> currently defective
+    active: false
 - datatype: cape
   parameters:
-    id: 1004
-    name: cape4
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270054
+    name: cape54
 - datatype: cape
   parameters:
-    id: 1005
-    name: cape5
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270055
+    name: cape55
+    comment: Target-Port B, C-Meas failed on first Cal
 - datatype: cape
   parameters:
-    id: 1006
-    name: cape6
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270056
+    name: cape56
 - datatype: cape
   parameters:
-    id: 1011
-    name: cape11
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270057
+    name: cape57
+    comment: 2nd Lab Prototype, has stackable headers
 - datatype: cape
   parameters:
-    id: 1012
-    name: cape12
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270058
+    name: cape58
 - datatype: cape
   parameters:
-    id: 1013
-    name: cape13
-    version: v2.4
-    description: virtual
-    created: 2023-11-12
-    calibrated: 2023-11-12
+    inherit_from: cape51
+    id: 1270059
+    name: cape59
+    comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    inherit_from: cape51
+    id: 1270060
+    name: cape60
+    comment: 3rd Lab Prototype
+- datatype: cape
+  parameters:
+    inherit_from: cape51
+    id: 1270061
+    name: cape61
+    comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    inherit_from: cape51
+    id: 1270062
+    name: cape62
+- datatype: cape
+  parameters:
+    inherit_from: cape51
+    id: 1270063
+    name: cape63
+    comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    inherit_from: cape51
+    id: 1270064
+    name: cape64
+    comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    inherit_from: cape51
+    id: 1270065
+    name: cape65
+    comment: only 220u/440uF on 5V

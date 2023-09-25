@@ -1,7 +1,9 @@
---- # add with >>> python manage.py loaddata <fixturename>
+---
+# observer-cape-target-relation: https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
+# network data: https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/ethernet_MAC_addresses_bbones.ods
 - datatype: observer
   parameters:
-    id: 1000
+    id: 0
     name: sheep0
     ip: 10.0.0.20
     mac: 18:00:C0:FF:EE:77
@@ -11,121 +13,176 @@
     longitude: 0
     latitude: 0
     cape:
-      name: cape5
+      name: cape60
     target_a:
       name: T_nRF52_FRAM_2023_000
     created: 2022-12-12 12:12:12
+    active: false
 - datatype: observer
   parameters:
-    id: 1001
+    id: 1
     name: sheep01
-    ip: 192.168.165.195
+    ip: 192.168.165.201
     mac: 18:62:E4:E4:41:8D
-    room: II69
-    eth_port: II65_S3_B_10
-    description: test-deployment, not final
-    longitude: 13.723073
-    latitude: 51.026566
+    room: II56
+    eth_port: J24
+    description: mid on west-side
     cape:
-      name: cape1
+      name: cape51
     target_a:
-      name: T_nRF52_2021_001
-    created: 2022-12-12 12:12:12
+      name: nRF52_FRAM_001
+    created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
-    id: 1002
+    id: 2
     name: sheep02
-    ip: 192.168.165.196
+    ip: 192.168.165.202
     mac: 18:62:E4:D0:DE:3F
-    room: II69
-    eth_port: II65_S3_B_12
-    description: test-deployment, not final
-    longitude: 13.723076
-    latitude: 51.026554
+    room: II57
+    eth_port: J6
+    description: mid on east-side
     cape:
-      name: cape2
+      name: cape52
     target_a:
-      name: T_nRF52_2021_002
-    created: 2022-12-12 12:12:12
+      name: nRF52_FRAM_002
+    created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
-    id: 1003
+    id: 3
     name: sheep03
-    ip: 192.168.165.197
+    ip: 192.168.165.203
     mac: 18:62:E4:D0:9E:6A
-    room: II69
-    eth_port: II65_S3_B_14
-    description: test-deployment, not final
-    longitude: 13.723080
-    latitude: 51.026543
+    room: II59
+    eth_port: I14
+    description: north-west-corner
     cape:
-      name: cape3
+      name: cape63
     target_a:
-      name: T_nRF52_2021_003
-    created: 2022-12-12 12:12:12
+      name: nRF52_FRAM_003
+    created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
-    id: 1004
+    id: 4
     name: sheep04
-    ip: 192.168.165.198
+    ip: 192.168.165.204
     mac: 18:62:E4:D0:61:4D
-    room: II71
-    eth_port: II65_S3_C_4
-    description: test-deployment, not final
-    longitude: 13.722991
-    latitude: 51.026536
+    room: II61
+    eth_port: H18
+    description: mid on east-side
     cape:
-      name: cape4
+      name: cape54
     target_a:
-      name: T_nRF52_2021_004
-    created: 2022-12-12 12:12:12
+      name: nRF52_FRAM_004
+    created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
-    id: 1011
+    id: 5
+    name: sheep05
+    ip: 192.168.165.205
+    mac: 18:62:E4:E3:6E:13
+    room: II62
+    eth_port: H14
+    description: mid on south-side
+    cape:
+      name: cape55
+    target_a:
+      name: nRF52_FRAM_005
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    id: 6
+    name: sheep06
+    ip: 192.168.165.206
+    mac: 18:62:E4:D0:AF:0B
+    room: II64
+    eth_port: L14
+    description: mid on north-side
+    cape:
+      name: cape56
+    target_a:
+      name: nRF52_FRAM_006
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    id: 7
+    name: sheep07
+    ip: 192.168.165.207
+    mac: 18:62:E4:E4:39:D7
+    room: II66
+    eth_port: A20
+    description: mid on west-side
+    cape:
+      name: cape64
+    target_a:
+      name: nRF52_FRAM_017
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    id: 8
+    name: sheep08
+    ip: 192.168.165.208
+    mac: 18:62:E4:D0:E5:FB
+    room: II69
+    eth_port: B10
+    description: north-east-corner
+    cape:
+      name: cape58
+    target_a:
+      name: nRF52_FRAM_016
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    id: 9
+    name: sheep09
+    ip: 192.168.165.209
+    mac: 18:62:E4:D0:D4:A9
+    room: II71
+    eth_port: C4
+    description: south-east-corner
+    cape:
+      name: cape59
+    target_a:
+      name: nRF52_FRAM_009
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    id: 10
+    name: sheep10
+    ip: 192.168.165.210
+    mac: 18:62:E4:E4:24:C5
+    room: II74
+    eth_port: C20
+    description: mid on east-side
+    cape:
+      name: cape65
+    target_a:
+      name: nRF52_FRAM_010
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    id: 11
     name: sheep11
     ip: 192.168.165.211
-    mac: 18:62:E4:D0:61:4E
-    room: II71
-    eth_port: II65_S3_C_6
-    description: test-deployment, not final
-    longitude: 13.722991
-    latitude: 51.026536
+    mac: 18:62:E4:E4:0E:5D
+    room: II75
+    eth_port: D10
+    description: mid on west-side
     cape:
-      name: cape11
+      name: cape61
     target_a:
-      name: T_nRF52_2021_005
-    target_b:
-      name: T_nRF52_FRAM_2023_001
-    created: 2022-12-12 12:12:12
+      name: nRF52_FRAM_011
+    created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
-    id: 1012
+    id: 12
     name: sheep12
-    ip: 192.168.165.212
-    mac: 18:62:E4:D0:61:4F
-    room: II71
-    eth_port: II65_S3_C_8
-    description: test-deployment, not final
-    longitude: 13.722991
-    latitude: 51.026536
+    ip: 192.168.165.196
+    mac: 18:62:E4:D0:AA:F7
+    room: II59
+    eth_port: I10
+    description: south-west-corner
     cape:
-      name: cape12
-    target_b:
-      name: T_nRF52_FRAM_2023_002
-    created: 2022-12-12 12:12:12
-- datatype: observer
-  parameters:
-    id: 1013
-    name: sheep13
-    ip: 192.168.165.213
-    mac: 18:62:E4:D0:61:50
-    room: II71
-    eth_port: II65_S3_C_10
-    description: test-deployment, not final
-    longitude: 13.722991
-    latitude: 51.026536
-    cape:
-      name: cape13
-    target_b:
-      name: T_nRF52_FRAM_2023_003
-    created: 2022-12-12 12:12:12
+      name: cape62
+    target_a:
+      name: nRF52_FRAM_014
+    created: 2023-09-22 12:12:12

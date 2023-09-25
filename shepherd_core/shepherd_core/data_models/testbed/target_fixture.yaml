@@ -1,120 +1,123 @@
 ---
+# more human-readable test-protocol @
+# https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Target_pre-deployment-tests.xlsx
 - datatype: target
   parameters:
-    id: 1002
-    name: target_nRF52_v21r0
-    version: v2.1r0
-    description: single target PCB, v2.1r0
-    comment: ONLY VIRTUAL - NOT REAL
-    mcu1:
-      name: nRF52
-    mcu2: null
-    created: 2022-12-12 12:12:12
-- datatype: target
-  parameters:
-    id: 1003
-    name: target_nRF52_FRAM_v10r0
-    version: v1.0r0
-    description: nRF52 & MSP430, v1.0r0
-    comment: ONLY VIRTUAL - NOT REAL
+    id: 6
+    name: nRF52_FRAM_001
+    version: v1.0
+    description: nRF52 as MCU + Radio, MSP430FR as SPI-FRAM or additional MCU
+    comment: Test3 21nA sleep, msp-programming was flaky before -> monitor!
+    created: 2023-04-12
     mcu1:
       name: nRF52
     mcu2:
       name: MSP430FR
-    created: 2022-12-12 12:12:12
 - datatype: target
   parameters:
-    id: 2001
-    name: T_nRF52_2021_001  # replace with proper name
-    inherit_from: target_nRF52_v21r0
+    inherit_from: nRF52_FRAM_001
+    id: 5
+    name: nRF52_FRAM_002
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 2002
-    name: T_nRF52_2021_002
-    inherit_from: target_nRF52_v21r0
+    inherit_from: nRF52_FRAM_001
+    id: 3
+    name: nRF52_FRAM_003
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 2003
-    name: T_nRF52_2021_003
-    inherit_from: target_nRF52_v21r0
+    inherit_from: nRF52_FRAM_001
+    id: 2
+    name: nRF52_FRAM_004
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 2004
-    name: T_nRF52_2021_004
-    inherit_from: target_nRF52_v21r0
+    inherit_from: nRF52_FRAM_001
+    id: 1
+    name: nRF52_FRAM_005
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 2005
-    name: T_nRF52_2021_005
-    inherit_from: target_nRF52_v21r0
+    inherit_from: nRF52_FRAM_001
+    id: 7
+    name: nRF52_FRAM_006
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 3000
-    name: T_nRF52_FRAM_2023_000
-    comment: used for dev-work, not in TB
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 1307
+    name: nRF52_FRAM_007
+    comment: msp-programming is failing -> defective
+    active: false
 - datatype: target
   parameters:
-    id: 3001
-    name: T_nRF52_FRAM_2023_001
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 1308
+    name: nRF52_FRAM_008
+    comment: msp-programming is failing -> defective
+    active: false
 - datatype: target
   parameters:
-    id: 3002
-    name: T_nRF52_FRAM_2023_002
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 10
+    name: nRF52_FRAM_009
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 3003
-    name: T_nRF52_FRAM_2023_003
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 11
+    name: nRF52_FRAM_010
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 3004
-    name: T_nRF52_FRAM_2023_004
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 12
+    name: nRF52_FRAM_011
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 3005
-    name: T_nRF52_FRAM_2023_005
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 1312
+    name: nRF52_FRAM_012
+    comment: msp-programming is failing -> defective
+    active: false
 - datatype: target
   parameters:
-    id: 3006
-    name: T_nRF52_FRAM_2023_006
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 1313
+    name: nRF52_FRAM_013
+    comment: Test3 15nA sleep, Test1 fails - several cleanings -> defective
+    active: false
 - datatype: target
   parameters:
-    id: 3007
-    name: T_nRF52_FRAM_2023_007
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 4
+    name: nRF52_FRAM_014
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 3008
-    name: T_nRF52_FRAM_2023_008
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 1315
+    name: nRF52_FRAM_015
+    comment: Test3 19nA sleep, Test1 fails - several cleanings - gpio error on nrf-side -> defective
+    active: false
 - datatype: target
   parameters:
-    id: 3009
-    name: T_nRF52_FRAM_2023_009
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 9
+    name: nRF52_FRAM_016
+    comment: Test3 21nA sleep
 - datatype: target
   parameters:
-    id: 3010
-    name: T_nRF52_FRAM_2023_010
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 8
+    name: nRF52_FRAM_017
+    comment: Test3 21nA sleep, nrf was miss-aligned -> hot air rework
 - datatype: target
   parameters:
-    id: 3011
-    name: T_nRF52_FRAM_2023_011
-    inherit_from: target_nRF52_FRAM_v10r0
-- datatype: target
-  parameters:
-    id: 3012
-    name: T_nRF52_FRAM_2023_012
-    inherit_from: target_nRF52_FRAM_v10r0
-- datatype: target
-  parameters:
-    id: 3013
-    name: T_nRF52_FRAM_2023_013
-    inherit_from: target_nRF52_FRAM_v10r0
+    inherit_from: nRF52_FRAM_001
+    id: 18
+    name: nRF52_FRAM_018
+    comment: Test3 21nA sleep, nrf was miss-aligned -> hot air rework
+    description: LabPrototype
