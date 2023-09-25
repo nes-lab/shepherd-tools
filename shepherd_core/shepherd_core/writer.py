@@ -81,7 +81,7 @@ class Writer(Reader):
         modify_existing: (bool) explicitly enable modifying existing file
             otherwise a unique name will be found
         compression: (str) use either None, lzf or "1" (gzips compression level)
-        verbose: (bool) provides more info instead of just warnings / errors
+        verbose: (bool) provides more debug-info
     """
 
     comp_default: int = 1

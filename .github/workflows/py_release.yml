@@ -1,17 +1,15 @@
 name: Release tagged Commit
 
 on:
-  push:
-    # branches: [ main ]  # this is handled as OR (push to main OR tagged)
-    tags:
-      - 'v*.*.*'
+  workflow_call:
+    branches: [ main ]
 
 permissions:
   contents: write
 
 jobs:
   run-unittests:
-    uses: ./.github/workflows/python_app.yml
+    uses: ./.github/workflows/py_unittest.yml
   release:
     runs-on: ubuntu-latest
     needs:

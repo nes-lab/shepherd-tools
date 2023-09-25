@@ -24,6 +24,7 @@ from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.content.energy_environment import EnergyDType
+from .decoder_waveform import Uart
 
 
 class Reader:
@@ -31,7 +32,7 @@ class Reader:
 
     Args:
         file_path: Path of hdf5 file containing shepherd data with iv-samples, iv-curves or isc&voc
-        verbose: more info during usage, 'None' skips the setter
+        verbose: more debug-info during usage, 'None' skips the setter
     """
 
     samples_per_buffer: int = 10_000
@@ -55,7 +56,7 @@ class Reader:
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Reader")
         if verbose is not None:
-            self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
+            self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
         if not hasattr(self, "samplerate_sps"):
             self.samplerate_sps: int = samplerate_sps_default
@@ -529,3 +530,77 @@ class Reader:
         else:
             metadata = {}
         return metadata
+
+    def get_gpio_pin_num(self, name: str) -> Optional[int]:
+        # reverse lookup in a 2D-dict: key1 are pin_num, key2 are descriptor-names
+        if "gpio" not in self.h5file:
+            return None
+        descriptions = yaml.safe_load(self.h5file["gpio"]["value"].attrs["description"])
+        for desc_name, desc in descriptions.items():
+            if name in desc["name"]:
+                return int(desc_name)
+        return None
+
+    @staticmethod
+    def get_filter_for_redundant_states(data: np.ndarray) -> np.ndarray:
+        """input is 1D state-vector, kep only first from identical & sequential states
+        algo: create an offset-by-one vector and compare against original
+        """
+        if len(data.shape) > 1:
+            ValueError("Array must be 1D")
+        data_1 = np.concatenate(([not data[0]], data[:-1]))
+        return data != data_1
+
+    def gpio_to_waveforms(self, name: Optional[str] = None) -> dict:
+        waveforms: dict[str, np.ndarray] = {}
+        if "gpio" not in self.h5file:
+            return waveforms
+
+        gpio_ts = self.h5file["gpio"]["time"]
+        gpio_vs = self.h5file["gpio"]["value"]
+
+        if name is None:
+            descriptions = yaml.safe_load(
+                self.h5file["gpio"]["value"].attrs["description"]
+            )
+            pin_dict = {value["name"]: key for key, value in descriptions.items()}
+        else:
+            pin_dict = {name: self.get_gpio_pin_num(name)}
+
+        for pin_name, pin_num in pin_dict.items():
+            gpio_ps = (gpio_vs[:] & (0b1 << pin_num)) > 0
+            gpio_f = self.get_filter_for_redundant_states(gpio_ps)
+            waveforms[pin_name] = np.column_stack((gpio_ts[gpio_f], gpio_ps[gpio_f]))
+            self._logger.debug(
+                "GPIO '%s' has %d state-changes (includes initial state)",
+                pin_name,
+                sum(gpio_f),
+            )
+        return waveforms
+
+    def waveform_to_csv(
+        self, pin_name: str, pin_wf: np.ndarray, separator: str = ","
+    ) -> None:
+        path_csv = self.file_path.with_suffix(f".waveform.{pin_name}.csv")
+        if path_csv.exists():
+            self._logger.warning("%s already exists, will skip", path_csv)
+            return
+        with open(path_csv, "w") as csv:
+            csv.write(f"timestamp [s],{pin_name}\n")
+            for row in pin_wf:
+                csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")
+
+    def gpio_to_uart(self) -> Optional[np.ndarray]:
+        wfs = self.gpio_to_waveforms("uart")
+        if len(wfs) < 1:
+            return None
+        pin_name, pin_wf = wfs.popitem()
+
+        write_to_file = False
+        if write_to_file:
+            self.waveform_to_csv(pin_name, pin_wf)
+
+        gpio_wf = pin_wf.astype(float)
+        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
+
+        return Uart(gpio_wf).get_lines()

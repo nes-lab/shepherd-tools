@@ -1,5 +1,16 @@
 # History of Changes
 
+## v2023.9.4
+
+- update fixtures with real testbed-data
+- refine testbed-models
+  - objects with active=False can't be used in experiment
+  - target.id is now used as selector and is also encouraged to be dynamic to shape the testbed (see layout-map in doc)
+- integrate gpio-decoder into reader
+  - .gpio_to_waveforms()
+  - .gpio_to_uart()
+- rework GitHub workflow to all release and publish by tagging a commit
+
 ## v2023.9.3
 
 - uart-decoder: baudrate-detection more robust

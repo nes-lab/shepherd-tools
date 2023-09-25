@@ -28,12 +28,13 @@ class Target(ShpModel, title="Target Node (DuT)"):
 
     comment: Optional[SafeStr] = None
 
+    active: bool = True
     created: datetime = Field(default_factory=datetime.now)
 
-    fw_id: Optional[IdInt16] = None
+    testbed_id: Optional[IdInt16] = None
+    # ⤷ is derived from ID (targets are still selected by id!)
     mcu1: Union[MCU, NameStr]
     mcu2: Union[MCU, NameStr, None] = None
-    #
 
     # TODO programming pins per mcu should be here (or better in Cape)
 
@@ -52,7 +53,7 @@ class Target(ShpModel, title="Target Node (DuT)"):
                 # ⤷ this will raise if default is faulty
             elif isinstance(values.get(_mcu), dict):
                 values[_mcu] = MCU(**values[_mcu])
-        if values.get("fw_id") is None:
-            values["fw_id"] = values.get("id") % 2**16
+        if values.get("testbed_id") is None:
+            values["testbed_id"] = values.get("id") % 2**16
 
         return values

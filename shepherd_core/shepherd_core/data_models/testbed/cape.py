@@ -31,6 +31,7 @@ class Cape(ShpModel, title="Shepherd-Cape"):
     comment: Optional[SafeStr] = None
     # TODO: wake_interval, calibration
 
+    active: bool = True
     created: Union[date, datetime] = Field(default_factory=datetime.now)
     calibrated: Union[date, datetime, None] = None
 

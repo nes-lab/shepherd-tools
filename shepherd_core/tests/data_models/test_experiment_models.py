@@ -27,7 +27,7 @@ def test_experiment_model_exp_min() -> None:
         name="mex per",
         target_configs=[
             TargetConfig(
-                target_IDs=[3001],
+                target_IDs=[1],
                 energy_env=EnergyEnvironment(name="SolarSunny"),
                 firmware1=Firmware(name="nrf52_demo_rf"),
             )
@@ -45,7 +45,7 @@ def test_experiment_model_exp_yaml_comparison() -> None:
     exp1 = Experiment(**exp1_data)
 
     target_cfgs = TargetConfig(
-        target_IDs=list(range(2001, 2005)),
+        target_IDs=list(range(1, 5)),
         custom_IDs=list(range(0, 4)),
         energy_env={"name": "SolarSunny"},
         virtual_source={"name": "diode+capacitor"},
@@ -65,14 +65,14 @@ def test_experiment_model_exp_collision_target_id() -> None:
     hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(
-            target_IDs=[3001, 3002, 3003, 2001],  # <- collision
+            target_IDs=[1, 2, 3],  # <- collision
             custom_IDs=[0, 1, 2, 3],
             energy_env={"name": "SolarSunny"},
             virtual_source={"name": "diode+capacitor"},
             firmware1={"name": "nrf52_demo_rf"},
         ),
         TargetConfig(
-            target_IDs=list(range(2001, 2005)),  # <- collision
+            target_IDs=list(range(1, 5)),  # <- collision
             custom_IDs=list(range(7, 18)),  # note: longer list is OK
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
             virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
@@ -93,14 +93,14 @@ def test_experiment_model_exp_collision_custom_id() -> None:
     hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(
-            target_IDs=[3001, 3002, 3003],
+            target_IDs=[1, 2, 3],
             custom_IDs=[0, 1, 7],  # <- collision
             energy_env={"name": "SolarSunny"},
             virtual_source={"name": "diode+capacitor"},
             firmware1={"name": "nrf52_demo_rf"},
         ),
         TargetConfig(
-            target_IDs=list(range(2001, 2005)),
+            target_IDs=list(range(1, 5)),
             custom_IDs=list(range(7, 18)),  # <- collision
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
             virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
@@ -121,7 +121,7 @@ def test_experiment_model_exp_collision_observer() -> None:
     hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(
-            target_IDs=[2005, 3001],  # <- both on same observer
+            target_IDs=[1, 1001],  # <- both on same observer
             custom_IDs=list(range(7, 18)),
             energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
             virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
@@ -218,33 +218,33 @@ def test_experiment_model_syslogging_min() -> None:
 
 def test_experiment_model_tgt_cfg_min1() -> None:
     cfg = TargetConfig(
-        target_IDs=[3001],
+        target_IDs=[1],
         energy_env=EnergyEnvironment(name="SolarSunny"),
         firmware1=Firmware(name="nrf52_demo_rf"),
     )
     for _id in cfg.target_IDs:
         Target(id=_id)
-    assert cfg.get_custom_id(3001) is None
+    assert cfg.get_custom_id(1) is None
 
 
 def test_experiment_model_tgt_cfg_min2() -> None:
     cfg = TargetConfig(
-        target_IDs=[3001, 3002],
+        target_IDs=[1, 2],
         custom_IDs=[7, 9],
         energy_env=EnergyEnvironment(name="SolarSunny"),
         firmware1=Firmware(name="nrf52_demo_rf"),
     )
     for _id in cfg.target_IDs:
         Target(id=_id)
-    assert cfg.get_custom_id(3001) == 7
-    assert cfg.get_custom_id(3002) == 9
-    assert cfg.get_custom_id(3003) is None
+    assert cfg.get_custom_id(1) == 7
+    assert cfg.get_custom_id(2) == 9
+    assert cfg.get_custom_id(3) is None
 
 
 def test_experiment_model_tgt_cfg_fault_valid_ee() -> None:
     with pytest.raises(ValueError):
         _ = TargetConfig(
-            target_IDs=[3001],
+            target_IDs=[1],
             energy_env=EnergyEnvironment(name="nuclear"),
             firmware1=Firmware(name="nrf52_demo_rf"),
         )
@@ -253,7 +253,7 @@ def test_experiment_model_tgt_cfg_fault_valid_ee() -> None:
 def test_experiment_model_tgt_cfg_fault_firmware1() -> None:
     with pytest.raises(ValueError):
         _ = TargetConfig(
-            target_IDs=[3001],  # is nRF
+            target_IDs=[1],  # is nRF
             energy_env=EnergyEnvironment(name="SolarSunny"),
             firmware1=Firmware(name="msp430_spi_fram"),
         )
@@ -262,7 +262,7 @@ def test_experiment_model_tgt_cfg_fault_firmware1() -> None:
 def test_experiment_model_tgt_cfg_fault_firmware2() -> None:
     with pytest.raises(ValueError):
         _ = TargetConfig(
-            target_IDs=[3001],  # is nRF
+            target_IDs=[1],  # is nRF
             energy_env=EnergyEnvironment(name="SolarSunny"),
             firmware1=Firmware(name="nrf52_demo_rf"),
             firmware2=Firmware(name="nrf52_demo_rf"),
@@ -272,7 +272,7 @@ def test_experiment_model_tgt_cfg_fault_firmware2() -> None:
 def test_experiment_model_tgt_cfg_fault_custom_ids() -> None:
     with pytest.raises(ValueError):
         _ = TargetConfig(
-            target_IDs=[3001, 3002, 3003],
+            target_IDs=[1, 2, 3],
             custom_IDs=[0, 1],  # not enough
             energy_env=EnergyEnvironment(name="SolarSunny"),
             firmware1=Firmware(name="nrf52_demo_rf"),
