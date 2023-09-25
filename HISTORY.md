@@ -1,6 +1,6 @@
 # History of Changes
 
-## v2023.9.5
+## v2023.9.6
 
 - fix workflows
 - latest pydantic-update 2.4 brings some speed improvement for sheep (<10%)

@@ -22,6 +22,8 @@ permissions:
 jobs:
   run-release:
     uses: ./.github/workflows/py_release.yml
+    permissions:
+      contents: write
 
   deploy:
 
