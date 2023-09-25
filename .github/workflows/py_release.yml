@@ -2,7 +2,6 @@ name: Release tagged Commit
 
 on:
   workflow_call:
-    branches: [ main ]
 
 permissions:
   contents: write
