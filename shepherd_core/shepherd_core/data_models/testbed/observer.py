@@ -42,6 +42,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     longitude: Annotated[float, Field(ge=-180, le=180)] = 13.723291
     # ⤷ cfaed-floor
 
+    active: bool = True
     cape: Optional[Cape] = None
     target_a: Optional[Target] = None
     target_b: Optional[Target] = None
@@ -68,20 +69,37 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
             )
         return self
 
+    def has_target(self, target_id: int) -> bool:
+        if (
+            self.target_a is not None
+            and target_id == self.target_a.id
+            and self.target_a.active
+        ):
+            return True
+        if (
+            self.target_b is not None
+            and target_id == self.target_b.id
+            and self.target_b.active
+        ):
+            return True
+        return False
+
     def get_target_port(self, target_id: int) -> TargetPort:
-        if self.target_a is not None and target_id == self.target_a.id:
-            return TargetPort.A
-        if self.target_b is not None and target_id == self.target_b.id:
-            return TargetPort.B
+        if self.has_target(target_id):
+            if self.target_a is not None and target_id == self.target_a.id:
+                return TargetPort.A
+            if self.target_b is not None and target_id == self.target_b.id:
+                return TargetPort.B
         raise ValueError(
             f"Target-ID {target_id} was not found in Observer '{self.name}'"
         )
 
     def get_target(self, target_id: int) -> Target:
-        if self.target_a is not None and target_id == self.target_a.id:
-            return self.target_a
-        if self.target_b is not None and target_id == self.target_b.id:
-            return self.target_b
+        if self.has_target(target_id):
+            if self.target_a is not None and target_id == self.target_a.id:
+                return self.target_a
+            if self.target_b is not None and target_id == self.target_b.id:
+                return self.target_b
         raise ValueError(
             f"Target-ID {target_id} was not found in Observer '{self.name}'"
         )

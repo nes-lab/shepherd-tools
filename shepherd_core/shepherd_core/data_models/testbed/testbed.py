@@ -81,11 +81,10 @@ class Testbed(ShpModel):
 
     def get_observer(self, target_id: int) -> Observer:
         for _observer in self.observers:
-            has_tgt_a = _observer.target_a is not None
-            if has_tgt_a and target_id == _observer.target_a.id:
-                return _observer
-            has_tgt_b = _observer.target_b is not None
-            if has_tgt_b and target_id == _observer.target_b.id:
+            if not _observer.active or not _observer.cape.active:
+                # skip decommissioned setups
+                continue
+            if _observer.has_target(target_id):
                 return _observer
         raise ValueError(
             f"Target-ID {target_id} was not found in Testbed '{self.name}'"

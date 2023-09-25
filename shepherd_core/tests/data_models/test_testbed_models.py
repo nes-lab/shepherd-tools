@@ -87,7 +87,7 @@ def test_testbed_model_observer_fault_cape_a() -> None:
             mac="FF:FF:FF:FF:FF:FF",
             room="IIE72",
             eth_port="375b2",
-            target_a=Target(id=2003),
+            target_a=Target(id=3),
         )
 
 
@@ -101,7 +101,7 @@ def test_testbed_model_observer_fault_cape_b() -> None:
             mac="FF:FF:FF:FF:FF:FF",
             room="IIE72",
             eth_port="375b2",
-            target_b=Target(id=2003),
+            target_b=Target(id=3),
         )
 
 
@@ -115,13 +115,13 @@ def test_testbed_model_observer_fault_target() -> None:
         room="IIE72",
         eth_port="375b2",
         cape=Cape(name="cape3"),
-        target_a=Target(id=2003),
-        target_b=Target(id=2002),
+        target_a=Target(id=3),
+        target_b=Target(id=2),
     )
-    obs.get_target(2002)
-    obs.get_target(2003)
-    obs.get_target_port(2002)
-    obs.get_target_port(2003)
+    obs.get_target(2)
+    obs.get_target(3)
+    obs.get_target_port(2)
+    obs.get_target_port(3)
     with pytest.raises(ValueError):
         obs.get_target_port(123456)
     with pytest.raises(ValueError):

@@ -61,7 +61,7 @@ class FirmwareModTask(ShpModel):
         fw_id = tgt_cfg.get_custom_id(tgt_id)
         if fw_id is None:
             obs = tb.get_observer(tgt_id)
-            fw_id = obs.get_target(tgt_id).fw_id
+            fw_id = obs.get_target(tgt_id).testbed_id
 
         return cls(
             data=fw.data,

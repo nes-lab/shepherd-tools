@@ -46,7 +46,7 @@ hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
 target_cfgs = [
     # first Instance similar to yaml-syntax
     TargetConfig(
-        target_IDs=[3001, 3002, 3003],
+        target_IDs=[9, 10, 11],
         custom_IDs=[0, 1, 2],
         energy_env={"name": "SolarSunny"},
         virtual_source={"name": "diode+capacitor"},
@@ -54,7 +54,7 @@ target_cfgs = [
     ),
     # second Instance fully object-oriented (recommended)
     TargetConfig(
-        target_IDs=list(range(2001, 2005)),
+        target_IDs=list(range(1, 5)),
         custom_IDs=list(range(7, 18)),  # note: longer list is OK
         energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
         virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
