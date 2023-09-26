@@ -40,8 +40,11 @@ class ContentModel(ShpModel):
     created: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access
-    owner: NameStr
-    group: Annotated[NameStr, Field(description="University or Subgroup")]
+    owner: Optional[NameStr] = None
+    group: Annotated[
+        Optional[NameStr], Field(description="University or Subgroup")
+    ] = None
+    # ⤷ TODO: optional for now, less restrictive
     visible2group: bool = False
     visible2all: bool = False
 
