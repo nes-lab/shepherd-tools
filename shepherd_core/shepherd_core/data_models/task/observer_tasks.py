@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
 from typing import List
 from typing import Optional
@@ -47,8 +48,14 @@ class ObserverTasks(ShpModel):
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
 
+        t_start = (
+            xp.time_start
+            if isinstance(xp.time_start, datetime)
+            else datetime.now().astimezone() + timedelta(minutes=3)
+        )  # TODO: this is messed up, just a hotfix
+
         obs = tb.get_observer(tgt_id)
-        xp_dir = "experiment/" + xp.time_start.strftime("%Y-%m-%d_%H:%M:%S")
+        xp_dir = "experiment/" + xp.name + "_" + t_start.strftime("%Y-%m-%d_%H:%M:%S")
         root_path = tb.data_on_observer / xp_dir
 
         fw_paths = [root_path / f"fw{_i}_{obs.name}.hex" for _i in [1, 2]]
@@ -56,7 +63,7 @@ class ObserverTasks(ShpModel):
         return cls(
             observer=obs.name,
             owner_id=xp.owner_id,
-            time_prep=xp.time_start - tb.prep_duration,
+            time_prep=t_start - tb.prep_duration,
             root_path=root_path,
             abort_on_error=xp.abort_on_error,
             fw1_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
