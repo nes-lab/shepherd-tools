@@ -20,16 +20,12 @@ from shepherd_core.data_models.testbed import TargetPort
 from shepherd_core.logger import logger
 
 
-def generate_lab_vsrc(path: Path):
-    # Config
+def generate_lab_vsrc(path: Path, duration_s: float = 60):
     _V = 3.0
     _A = 50e-3
-    duration_s = 60
-
     if path.exists():
         logger.info("File exists, will skip generating: %s", path.name)
         return
-
     with ShpWriter(path) as file:
         file.store_hostname("artificial")
         # values in SI units
