@@ -142,10 +142,18 @@ class TestbedClient:
 
     def fill_in_user_data(self, values: dict) -> dict:
         if self._user:
+            # TODO: this looks wrong, should have "is None", why not always overwrite?
             if values.get("owner"):
                 values["owner"] = self._user.name
             if values.get("group"):
                 values["group"] = self._user.group
+
+        # hotfix until testbed.client is working, TODO
+        if values.get("owner") is None:
+            values["owner"] = "unknown"
+        if values.get("group") is None:
+            values["group"] = "unknown"
+
         return values
 
 
