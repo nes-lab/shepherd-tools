@@ -26,17 +26,21 @@ def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
 
 
 if __name__ == "__main__":
-    # config
-    do_cleanup: bool = True
-
     path_here = Path(__file__).parent.absolute()
     path_db = path_here.parent / "shepherd_core/shepherd_core/data_models/content"
+    path_server = Path("/var/shepherd/")
+    #  ⤷ can be derived from tb.data_on_server
 
     if not path_db.exists() or not path_db.is_dir():
         logger.error("Path to db must exist and be a directory!")
         exit(1)
 
-    files = get_files(path_here / "content", ".yaml")
+    if Path("/var/shepherd/").exists():
+        path_content = Path("/var/shepherd/content/")
+    else:
+        path_content = path_here / "content/"
+
+    files = get_files(path_content, ".yaml")
     fixtures = []
 
     for file in files:
@@ -46,15 +50,21 @@ if __name__ == "__main__":
         model = None
         if model_fw is not None:
             data = model_fw.model_dump()
-            if do_cleanup:
-                data["data"] = "generic_path.elf"
-                data["data_type"] = FirmwareDType.path_elf
-                data["data_hash"] = None
+            if isinstance(data["data"], Path):
+                data["data"] = data["data"].as_posix()
+            path_pos = data["data"].find("/content/")
+            path_new = path_server.as_posix() + data["data"][path_pos:]
+            data["data"] = path_new
+            data["data_type"] = FirmwareDType.path_elf
+            data["data_hash"] = None
+            data["data_local"] = False
             model = Firmware(**data)
         if model_ee is not None:
             data = model_ee.model_dump()
-            if do_cleanup:
-                data["data_path"] = "generic_path.h5"
+            path_pos = data["data_path"].as_posix().find("/content/")
+            path_new = path_server.as_posix() + data["data_path"].as_posix()[path_pos:]
+            data["data_path"] = path_new
+            data["data_local"] = False
             model = EnergyEnvironment(**data)
 
         if model is not None:

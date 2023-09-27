@@ -5,6 +5,7 @@ script will:
 - it assumes sub-dirs in the same dir with ./build.elf in it
 """
 import os
+import shutil
 from io import BytesIO
 from pathlib import Path
 from urllib.request import urlopen
@@ -17,17 +18,23 @@ from shepherd_core.logger import logger
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
+    if Path("/var/shepherd/").exists():
+        path_content = Path("/var/shepherd/content/fw/nes_lab/")
+    else:
+        path_content = path_here / "content/fw/nes_lab/"
 
     # config
     link = "https://github.com/orgua/shepherd-targets/releases/latest/download/firmwares.zip"
     # ⤷ already includes embedded-firmware-models
-    path_meta = path_here / "content" / "metadata_fw.yaml"
+    path_meta = path_content / "metadata_fw.yaml"
 
     logger.info("Downloading latest release")
     data = urlopen(link).read()  # noqa: S310
     logger.info("Unpacking Archive")
     with ZipFile(BytesIO(data), "r") as zip_ref:
-        zip_ref.extractall(path_here)
+        zip_ref.extractall(path_here / "temp")
+
+    shutil.move(path_here / "temp/content", path_content)
 
     if not path_meta.exists():
         logger.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
@@ -36,7 +43,7 @@ if __name__ == "__main__":
             metadata = yaml.safe_load(file_meta)["metadata"]
 
         for _fw, _descr in metadata.items():
-            path_fw = path_here / "content" / _fw
+            path_fw = path_content / _fw
             files_elf = [each for each in os.listdir(path_fw) if each.endswith(".elf")]
 
             if len(files_elf) > 1:
@@ -48,10 +55,11 @@ if __name__ == "__main__":
             if path_elf.exists():
                 Firmware.from_firmware(
                     file=path_elf,
+                    embed=False,
                     name=_fw,
                     description=_descr,
                     owner="Ingmar",
-                    group="NES Lab",
+                    group="NES_Lab",
                     visible2group=True,
                     visible2all=True,
                 ).to_file(path_elf.with_suffix(".yaml"))

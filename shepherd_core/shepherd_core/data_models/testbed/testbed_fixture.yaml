@@ -5,7 +5,8 @@
     description: "Shepherd Testbed of the NES Lab Group at TU Dresden, Germany"
     shared_storage: true
     data_on_server: /mnt/shp_data/
-    data_on_observer: /opt/shepherd/
+    data_on_observer: /var/shepherd/
+    #
     observers:
       - name: sheep01
       - name: sheep02
