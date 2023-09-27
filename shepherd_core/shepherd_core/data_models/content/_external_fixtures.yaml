@@ -1,26 +1,181 @@
 - datatype: EnergyEnvironment
-  created: 2023-09-13 21:01:52.283932
+  created: 2023-09-27 19:51:44.779899
   parameters:
-    id: 11615904126704905940
-    name: eenv_static_3300mV_50mA_3600s
-    description: Artificial static Energy Environment, 3300mV, 50mA, 3600s
+    id: 2639560972524229652
+    name: eenv_static_2000mV_10mA_3600s
+    description: Artificial static Energy Environment, 2000mV, 10mA, 3600s
     comment: null
-    created: 2023-08-28 23:46:21.264086
+    created: 2023-09-27 19:27:02.177941
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: generic_path.h5
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_10mA_3600s.h5
     data_type: ivsample
+    data_local: false
     duration: 3600.0
-    energy_Ws: 594.0000000000022
+    energy_Ws: 72.00000003599966
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: EnergyEnvironment
+  created: 2023-09-27 19:51:44.783398
+  parameters:
+    id: 9823394105967169626
+    name: eenv_static_2000mV_1mA_3600s
+    description: Artificial static Energy Environment, 2000mV, 1mA, 3600s
+    comment: null
+    created: 2023-09-27 19:28:37.291941
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_1mA_3600s.h5
+    data_type: ivsample
+    data_local: false
+    duration: 3600.0
+    energy_Ws: 7.200000003599944
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: EnergyEnvironment
+  created: 2023-09-27 19:51:44.786899
+  parameters:
+    id: 3900615675169501222
+    name: eenv_static_2000mV_50mA_3600s
+    description: Artificial static Energy Environment, 2000mV, 50mA, 3600s
+    comment: null
+    created: 2023-09-27 19:26:18.621440
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_50mA_3600s.h5
+    data_type: ivsample
+    data_local: false
+    duration: 3600.0
+    energy_Ws: 360.00000018000185
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: EnergyEnvironment
+  created: 2023-09-27 19:51:44.790399
+  parameters:
+    id: 14796673729431137386
+    name: eenv_static_2000mV_5mA_3600s
+    description: Artificial static Energy Environment, 2000mV, 5mA, 3600s
+    comment: null
+    created: 2023-09-27 19:27:48.976440
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_5mA_3600s.h5
+    data_type: ivsample
+    data_local: false
+    duration: 3600.0
+    energy_Ws: 36.00000001799983
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: EnergyEnvironment
+  created: 2023-09-27 19:51:44.793899
+  parameters:
+    id: 6648482606607441403
+    name: eenv_static_3000mV_10mA_3600s
+    description: Artificial static Energy Environment, 3000mV, 10mA, 3600s
+    comment: null
+    created: 2023-09-27 19:24:02.885439
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_10mA_3600s.h5
+    data_type: ivsample
+    data_local: false
+    duration: 3600.0
+    energy_Ws: 107.999999999999
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: EnergyEnvironment
+  created: 2023-09-27 19:51:44.796898
+  parameters:
+    id: 13566000951043177991
+    name: eenv_static_3000mV_1mA_3600s
+    description: Artificial static Energy Environment, 3000mV, 1mA, 3600s
+    comment: null
+    created: 2023-09-27 19:25:32.729442
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_1mA_3600s.h5
+    data_type: ivsample
+    data_local: false
+    duration: 3600.0
+    energy_Ws: 10.799999999999885
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: EnergyEnvironment
+  created: 2023-09-27 19:51:44.800400
+  parameters:
+    id: 7977778327156610158
+    name: eenv_static_3000mV_50mA_3600s
+    description: Artificial static Energy Environment, 3000mV, 50mA, 3600s
+    comment: null
+    created: 2023-09-27 19:23:18.980940
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_50mA_3600s.h5
+    data_type: ivsample
+    data_local: false
+    duration: 3600.0
+    energy_Ws: 539.9999999999999
+    valid: true
+    light_source: null
+    weather_conditions: null
+    indoor: true
+    location: Lab-VSrc
+- datatype: EnergyEnvironment
+  created: 2023-09-27 19:51:44.803899
+  parameters:
+    id: 4900162978999238419
+    name: eenv_static_3000mV_5mA_3600s
+    description: Artificial static Energy Environment, 3000mV, 5mA, 3600s
+    comment: null
+    created: 2023-09-27 19:24:47.092941
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_5mA_3600s.h5
+    data_type: ivsample
+    data_local: false
+    duration: 3600.0
+    energy_Ws: 53.9999999999995
     valid: true
     light_source: null
     weather_conditions: null
     indoor: true
     location: Lab-VSrc
 - datatype: Firmware
-  created: 2023-09-13 21:01:52.452379
+  created: 2023-09-27 19:51:44.816899
   parameters:
     id: 3000
     name: msp430_deep_sleep
@@ -28,7 +183,7 @@
     comment: null
     created: 2022-12-12 12:12:12
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -42,11 +197,12 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: msp430_deep_sleep
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/msp430_deep_sleep/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
 - datatype: Firmware
-  created: 2023-09-13 21:01:52.563531
+  created: 2023-09-27 19:51:44.820399
   parameters:
     id: 3001
     name: msp430_spi_fram
@@ -54,7 +210,7 @@
     comment: null
     created: 2022-12-12 12:12:12
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -68,11 +224,12 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: msp430_deep_sleep
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/msp430_spi_fram/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
 - datatype: Firmware
-  created: 2023-09-13 21:01:52.724552
+  created: 2023-09-27 19:51:44.823899
   parameters:
     id: 3002
     name: msp430_testable
@@ -80,7 +237,7 @@
     comment: null
     created: 2022-12-12 12:12:12
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -94,11 +251,12 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: msp430_deep_sleep
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/msp430_testable/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
 - datatype: Firmware
-  created: 2023-09-13 21:01:52.904289
+  created: 2023-09-27 19:51:44.827399
   parameters:
     id: 7163917825449888392
     name: nrf52_deep_sleep
@@ -106,7 +264,7 @@
     comment: null
     created: 2023-09-13 21:01:52.815691
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -120,11 +278,12 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: nrf52_demo_rf
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/nrf52_deep_sleep/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
 - datatype: Firmware
-  created: 2023-09-13 21:01:53.161755
+  created: 2023-09-27 19:51:44.831400
   parameters:
     id: 2000
     name: nrf52_demo_rf
@@ -132,7 +291,7 @@
     comment: null
     created: 2022-12-12 12:12:12
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -146,11 +305,12 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: nrf52_demo_rf
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/nrf52_demo_rf/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
 - datatype: Firmware
-  created: 2023-09-13 21:01:53.456222
+  created: 2023-09-27 19:51:44.834899
   parameters:
     id: 3174430733058172825
     name: nrf52_rf_survey
@@ -159,7 +319,7 @@
     comment: null
     created: 2023-09-13 21:01:53.308666
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -173,11 +333,12 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: nrf52_demo_rf
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/nrf52_rf_survey/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
 - datatype: Firmware
-  created: 2023-09-13 21:01:53.696099
+  created: 2023-09-27 19:51:44.838398
   parameters:
     id: 16381936580724580968
     name: nrf52_rf_test
@@ -185,7 +346,7 @@
     comment: null
     created: 2023-09-13 21:01:53.575861
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -199,11 +360,12 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: nrf52_demo_rf
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/nrf52_rf_test/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
 - datatype: Firmware
-  created: 2023-09-13 21:01:53.955639
+  created: 2023-09-27 19:51:44.841899
   parameters:
     id: 2002
     name: nrf52_testable
@@ -212,7 +374,7 @@
     comment: null
     created: 2022-12-12 12:12:12
     owner: Ingmar
-    group: NES Lab
+    group: NES_Lab
     visible2group: true
     visible2all: true
     mcu:
@@ -226,6 +388,7 @@
       prog_voltage: 3.0
       prog_datarate: 500000
       fw_name_default: nrf52_demo_rf
-    data: generic_path.elf
+    data: /var/shepherd/content/fw/nes_lab/nrf52_testable/build.elf
     data_type: path_elf
     data_hash: null
+    data_local: false
