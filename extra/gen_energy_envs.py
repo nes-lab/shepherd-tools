@@ -3,6 +3,7 @@ script will:
 - generate static environments
 - saves energy-env to yaml
 """
+import os
 from itertools import product
 from pathlib import Path
 
@@ -17,19 +18,25 @@ from shepherd_core.logger import logger
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
+    if Path("/var/shepherd/").exists():
+        path_content = Path("/var/shepherd/content/eenv/nes_lab/")
+    else:
+        path_content = path_here / "content/eenv/nes_lab/"
     # Config
-    voltages_V = [3.3, 2.8, 2.0]
+    voltages_V = [3.0, 2.0]
     currents_A = [50e-3, 10e-3, 5e-3, 1e-3]
     duration_s = 60
     repetitions = 60
+
+    if not path_content.exists():
+        os.makedirs(path_content)
 
     for _v, _c in product(voltages_V, currents_A):
         v_str = f"{round(_v * 1000)}mV"
         c_str = f"{round(_c * 1000)}mA"
         t_str = f"{round(duration_s*repetitions)}s"
         name = f"eenv_static_{v_str}_{c_str}_{t_str}"
-        file_path = path_here / "content" / f"{name}.h5"
-        # TODO: subfolders! /content/group/owner/
+        file_path = path_content / f"{name}.h5"
 
         if file_path.exists():
             logger.info("File exists, will skip: %s", file_path.name)
@@ -69,7 +76,7 @@ if __name__ == "__main__":
                 indoor=True,
                 location="Lab-VSrc",
                 owner="Ingmar",
-                group="NES Lab",
+                group="NES_Lab",
                 visible2group=True,
                 visible2all=True,
             ).to_file(meta_path, minimal=False)
