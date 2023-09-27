@@ -1,6 +1,8 @@
 import copy
 import os
 import pickle  # noqa: S403
+from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
 from typing import Dict
 from typing import List
@@ -150,6 +152,14 @@ class Fixture:
         )
 
 
+def file_older_than(file: Path, delta: timedelta):
+    cutoff = datetime.utcnow() - delta
+    mtime = datetime.utcfromtimestamp(os.path.getmtime(file))
+    if mtime < cutoff:
+        return True
+    return False
+
+
 class Fixtures:
     suffix = ".yaml"
 
@@ -161,7 +171,7 @@ class Fixtures:
         self.components: Dict[str, Fixture] = {}
         save_path = self.file_path / "fixtures.pickle"
 
-        if save_path.exists():
+        if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)):
             # speedup
             with open(save_path, "rb", -1) as fd:
                 self.components = pickle.load(fd)  # noqa: S301
