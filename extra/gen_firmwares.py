@@ -28,16 +28,16 @@ if __name__ == "__main__":
     # ⤷ already includes embedded-firmware-models
     path_meta = path_content / "metadata_fw.yaml"
 
-    #if not path_content.exists():
+    # if not path_content.exists():
     #    os.makedirs(path_content)
 
     logger.info("Downloading latest release")
     data = urlopen(link).read()  # noqa: S310
     logger.info("Unpacking Archive")
     with ZipFile(BytesIO(data), "r") as zip_ref:
-        zip_ref.extractall(path_here/"temp")
+        zip_ref.extractall(path_here / "temp")
 
-    shutil.move(path_here/"temp/content", path_content)
+    shutil.move(path_here / "temp/content", path_content)
 
     if not path_meta.exists():
         logger.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())

@@ -133,7 +133,7 @@ class EmulationTask(ShpModel):
         tgt_cfg = xp.get_target_config(tgt_id)
 
         return cls(
-            input_path=tb.data_on_observer / tgt_cfg.energy_env.data_path,
+            input_path=tgt_cfg.energy_env.data_path,
             output_path=root_path / f"emu_{obs.name}.h5",
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
