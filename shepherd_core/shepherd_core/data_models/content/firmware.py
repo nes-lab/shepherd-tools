@@ -46,6 +46,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
     data: Union[FirmwareStr, Path]
     data_type: FirmwareDType
     data_hash: Optional[str] = None
+    data_local: bool = True
+    # ⤷ signals that file has to be copied to testbed
 
     @model_validator(mode="before")
     @classmethod
@@ -54,14 +56,20 @@ class Firmware(ContentModel, title="Firmware of Target"):
         return tb_client.fill_in_user_data(values)
 
     @classmethod
-    def from_firmware(cls, file: Path, **kwargs):
+    def from_firmware(cls, file: Path, embed: bool = True, **kwargs):
         """embeds firmware and tries to fill parameters
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually
         """
         # TODO: use new determine_type() & determine_arch() and also allow to not embed
         kwargs["data_hash"] = fw_tools.file_to_hash(file)
-        kwargs["data"] = fw_tools.file_to_base64(file)
+        if embed:
+            kwargs["data"] = fw_tools.file_to_base64(file)
+            kwargs["data_local"] = False
+        else:
+            kwargs["data"] = Path(file).as_posix()
+            kwargs["data_local"] = True
+
         if "data_type" not in kwargs:
             kwargs["data_type"] = suffix_to_DType[file.suffix.lower()]
 
