@@ -84,7 +84,7 @@ def extract_firmware(
     elif data_type == FirmwareDType.base64_hex:
         file = file_path.with_suffix(".hex")
         base64_to_file(data, file)
-    elif isinstance(data, Path):
+    elif isinstance(data, (Path, str)):
         if data_type == FirmwareDType.path_elf:
             file = file_path.with_suffix(".elf")
         elif data_type == FirmwareDType.path_hex:
@@ -95,5 +95,5 @@ def extract_firmware(
             )
         shutil.copy(data, file)
     else:
-        raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
+        raise ValueError("FW-Extraction failed due to unknown data-type '%s'", type(data))
     return file
