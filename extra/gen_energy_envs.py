@@ -19,24 +19,24 @@ from shepherd_core.logger import logger
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     if Path("/var/shepherd/").exists():
-        path_content = Path("/var/shepherd/content/eenv/nes_lab/")
+        path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
     else:
-        path_content = path_here / "content/eenv/nes_lab/"
+        path_eenv = path_here / "content/eenv/nes_lab/"
     # Config
     voltages_V = [3.0, 2.0]
     currents_A = [50e-3, 10e-3, 5e-3, 1e-3]
     duration_s = 60
     repetitions = 60
 
-    if not path_content.exists():
-        os.makedirs(path_content)
+    if not path_eenv.exists():
+        os.makedirs(path_eenv)
 
     for _v, _c in product(voltages_V, currents_A):
         v_str = f"{round(_v * 1000)}mV"
         c_str = f"{round(_c * 1000)}mA"
         t_str = f"{round(duration_s*repetitions)}s"
         name = f"eenv_static_{v_str}_{c_str}_{t_str}"
-        file_path = path_content / f"{name}.h5"
+        file_path = path_eenv / f"{name}.h5"
 
         if file_path.exists():
             logger.info("File exists, will skip: %s", file_path.name)

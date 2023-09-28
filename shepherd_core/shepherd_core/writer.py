@@ -3,6 +3,7 @@ Writer that inherits from Reader-Baseclass
 """
 import logging
 import math
+import os
 import pathlib
 from datetime import timedelta
 from itertools import product
@@ -165,6 +166,8 @@ class Writer(Reader):
         if self._modify:
             self.h5file = h5py.File(self.file_path, "r+")  # = rw
         else:
+            if not self.file_path.parent.exists():
+                os.makedirs(self.file_path.parent)
             self.h5file = h5py.File(self.file_path, "w")
             # ⤷ write, truncate if exist
             self._create_skeleton()

@@ -41,25 +41,25 @@ def generate_lab_vsrc(path: Path, duration_s: float = 60):
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     if Path("/etc/shepherd/").exists():
-        path_cfg = Path("/etc/shepherd/")
+        path_task = Path("/var/shepherd/content/task/nes_lab/")
     else:
-        path_cfg = path_here / "content/"
+        path_task = path_here / "content/"
     if Path("/var/shepherd/").exists():
-        path_content = Path("/var/shepherd/content/eenv/nes_lab/")
+        path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
     else:
-        path_content = path_here / "content/eenv/nes_lab/"
+        path_eenv = path_here / "content/eenv/nes_lab/"
     path_rec = Path("/var/shepherd/recordings/")
-    path_pwr = path_content / "lab_pwr_src.h5"
+    path_pwr = path_eenv / "lab_pwr_src.h5"
 
     tb_client = TestbedClient()
     do_connect = False
     if do_connect:
         tb_client.connect()
 
-    if not path_content.exists():
-        os.makedirs(path_content)
-    if not path_cfg.exists():
-        os.makedirs(path_cfg)
+    if not path_eenv.exists():
+        os.makedirs(path_eenv)
+    if not path_task.exists():
+        os.makedirs(path_task)
 
     # generate pwr-supply
     generate_lab_vsrc(path_pwr)
@@ -67,9 +67,9 @@ if __name__ == "__main__":
 
     # Self-test both ICs
     tests = [
-        ("nrf52_testable", "msp430_testable", "target_device_test1"),
-        ("nrf52_rf_test", "msp430_deep_sleep", "target_device_test2"),
-        ("nrf52_deep_sleep", "msp430_deep_sleep", "target_device_test3"),
+        ("nrf52_testable", "msp430_testable", "target_device_test1_sheep0"),
+        ("nrf52_rf_test", "msp430_deep_sleep", "target_device_test2_sheep0"),
+        ("nrf52_deep_sleep", "msp430_deep_sleep", "target_device_test3_sheep0"),
     ]
 
     for p_nrf, p_msp, name in tests:
@@ -80,14 +80,14 @@ if __name__ == "__main__":
             root_path=path_rec,
             abort_on_error=False,
             fw1_prog=ProgrammingTask(
-                firmware_file=path_content / p_nrf / "build.hex",
+                firmware_file=path_eenv / p_nrf / "build.hex",
                 target_port=TargetPort.A,
                 mcu_port=1,
                 mcu_type="nRF52".lower(),
                 protocol=ProgrammerProtocol.SWD,
             ),
             fw2_prog=ProgrammingTask(
-                firmware_file=path_content / p_msp / "build.hex",
+                firmware_file=path_eenv / p_msp / "build.hex",
                 target_port=TargetPort.A,
                 mcu_port=2,
                 mcu_type="MSP430FR".lower(),
@@ -103,5 +103,5 @@ if __name__ == "__main__":
                     uart_baudrate=115_200,
                 ),
             ),
-        ).to_file(path_cfg / name)
+        ).to_file(path_task / name)
         logger.info("Wrote: %s", _path.as_posix())

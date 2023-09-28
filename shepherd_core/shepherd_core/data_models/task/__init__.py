@@ -5,9 +5,9 @@ from typing import Union
 
 import yaml
 
-from ... import logger
-from .. import ShpModel
-from .. import Wrapper
+from ...logger import logger
+from ..base.shepherd import ShpModel
+from ..base.wrapper import Wrapper
 from .emulation import Compression
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask

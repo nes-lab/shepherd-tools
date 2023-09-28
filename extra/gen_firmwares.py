@@ -19,14 +19,14 @@ from shepherd_core.logger import logger
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     if Path("/var/shepherd/").exists():
-        path_content = Path("/var/shepherd/content/fw/nes_lab/")
+        path_fw = Path("/var/shepherd/content/fw/nes_lab/")
     else:
-        path_content = path_here / "content/fw/nes_lab/"
+        path_fw = path_here / "content/fw/nes_lab/"
 
     # config
     link = "https://github.com/orgua/shepherd-targets/releases/latest/download/firmwares.zip"
     # ⤷ already includes embedded-firmware-models
-    path_meta = path_content / "metadata_fw.yaml"
+    path_meta = path_fw / "metadata_fw.yaml"
 
     logger.info("Downloading latest release")
     data = urlopen(link).read()  # noqa: S310
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     with ZipFile(BytesIO(data), "r") as zip_ref:
         zip_ref.extractall(path_here / "temp")
 
-    shutil.move(path_here / "temp/content", path_content)
+    shutil.move(path_here / "temp/content", path_fw)
 
     if not path_meta.exists():
         logger.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
@@ -43,14 +43,14 @@ if __name__ == "__main__":
             metadata = yaml.safe_load(file_meta)["metadata"]
 
         for _fw, _descr in metadata.items():
-            path_fw = path_content / _fw
-            files_elf = [each for each in os.listdir(path_fw) if each.endswith(".elf")]
+            path_sub = path_fw / _fw
+            files_elf = [each for each in os.listdir(path_sub) if each.endswith(".elf")]
 
             if len(files_elf) > 1:
                 logger.warning(
                     "More than one .ELF in directory -> will use first of %s", files_elf
                 )
-            path_elf = path_fw / files_elf[0]
+            path_elf = path_sub / files_elf[0]
 
             if path_elf.exists():
                 Firmware.from_firmware(

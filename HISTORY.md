@@ -1,8 +1,19 @@
 # History of Changes
 
+## v2023.9.8
+
+- new example and generators
+- lots of small bugfixes
+
 ## v2023.9.7
 
-
+- refine content-paths and path-handling of the testbed
+- rework data-generators in '/extra'
+- testbed-client - add ownership-data if none was provided
+- observer-task now has optional start-time and the other models can react to that
+- update content-fixtures
+- file-based content now has a local-flag to show it has to be copied to the testbed
+- discard older fixture-buffer (1 day)
 
 ## v2023.9.6
 

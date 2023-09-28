@@ -8,7 +8,7 @@ from pydantic import validate_call
 from typing_extensions import Annotated
 
 from ... import fw_tools
-from ... import logger
+from ...logger import logger
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
 from ..testbed.mcu import MCU

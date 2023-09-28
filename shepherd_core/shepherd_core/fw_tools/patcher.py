@@ -7,7 +7,7 @@ from typing_extensions import Annotated
 
 from ..commons import uid_len_default
 from ..commons import uid_str_default
-from ..logger import logger as log
+from ..logger import logger
 from .validation import is_elf
 
 try:
@@ -32,9 +32,9 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
     try:
         elf.symbols[symbol]
     except KeyError:
-        log.debug("Symbol '%s' not found in ELF-File %s", symbol, file_elf.name)
+        logger.debug("Symbol '%s' not found in ELF-File %s", symbol, file_elf.name)
         return False
-    log.debug(
+    logger.debug(
         "Symbol '%s' found in ELF-File %s, arch=%s, order=%s",
         symbol,
         file_elf.name,
@@ -73,7 +73,7 @@ def read_arch(file_elf: Path) -> Optional[str]:
     elf = ELF(path=file_elf)
     if "exec" in elf.elftype.lower():
         return elf.arch.lower()
-    log.error("ELF is not Executable")
+    logger.error("ELF is not Executable")
     return None
 
 
@@ -111,7 +111,7 @@ def modify_symbol_value(
         # could be simplified, but py3.8-- doesn't know .with_stem()
     elf.save(path=file_new)
     elf.close()
-    log.debug(
+    logger.debug(
         "Value of Symbol '%s' modified: %s -> %s @%s",
         symbol,
         hex(value_old),

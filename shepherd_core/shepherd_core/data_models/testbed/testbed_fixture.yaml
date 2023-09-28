@@ -4,9 +4,10 @@
     name: shepherd_tud_nes
     description: "Shepherd Testbed of the NES Lab Group at TU Dresden, Germany"
     shared_storage: true
-    data_on_server: /mnt/shp_data/
+    data_on_server: /var/shepherd/
     data_on_observer: /var/shepherd/
-    #
+    # ./content as read-only for the sheep, shared with server
+    # ./experiments on the sheep map to ./experiments/sheep##/ on the server
     observers:
       - name: sheep01
       - name: sheep02
