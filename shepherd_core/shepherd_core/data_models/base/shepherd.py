@@ -1,4 +1,5 @@
 import hashlib
+import os
 import pathlib
 from datetime import datetime
 from datetime import timedelta
@@ -127,6 +128,8 @@ class ShpModel(BaseModel):
         )
         # TODO: handle directory
         model_path = Path(path).resolve().with_suffix(".yaml")
+        if not model_path.parent.exists():
+            os.makedirs(model_path.parent)
         with open(model_path, "w") as f:
             f.write(model_yaml)
         return model_path

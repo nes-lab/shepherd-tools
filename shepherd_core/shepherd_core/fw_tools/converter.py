@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import os
 import shutil
 from pathlib import Path
 from typing import Union
@@ -50,6 +51,8 @@ def base64_to_file(content: str, file_path: Path) -> None:
     """
     file_cmpress = base64.b64decode(content)
     file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
+    if not file_path.parent.exists():
+        os.makedirs(file_path.parent)
     with open(file_path.resolve(), "wb") as file:
         file.write(file_content)
 
@@ -93,7 +96,11 @@ def extract_firmware(
             raise ValueError(
                 "FW-Extraction failed due to unknown datatype '%s'", data_type
             )
+        if not file.parent.exists():
+            os.makedirs(file.parent)
         shutil.copy(data, file)
     else:
-        raise ValueError("FW-Extraction failed due to unknown data-type '%s'", type(data))
+        raise ValueError(
+            "FW-Extraction failed due to unknown data-type '%s'", type(data)
+        )
     return file

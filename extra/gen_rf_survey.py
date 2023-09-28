@@ -10,7 +10,6 @@ from shepherd_core import logger
 from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware as FW
-from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
