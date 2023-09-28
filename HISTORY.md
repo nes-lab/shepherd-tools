@@ -1,5 +1,10 @@
 # History of Changes
 
+## v2023.9.8
+
+- new example and generators
+- lots of small bugfixes
+
 ## v2023.9.7
 
 - refine content-paths and path-handling of the testbed

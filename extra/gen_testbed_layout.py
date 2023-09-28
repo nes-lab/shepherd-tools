@@ -3,6 +3,7 @@ Allows to cross-check the relations between observer, cape and targets in each t
 """
 from pathlib import Path
 
+from shepherd_core import logger
 from shepherd_core.data_models.testbed import Target
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.testbed_client.fixtures import Fixtures
@@ -10,7 +11,8 @@ from shepherd_core.testbed_client.fixtures import Fixtures
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     separator = "; "  # excel parses this as table, but not ","?!?
-    with open(path_here / "content/testbed_layout.csv", "w") as csv:
+    path_csv = path_here / "content/testbed_layout.csv"
+    with open(path_csv, "w") as csv:
         elements = [
             "tb_id",
             "tb_name",
@@ -55,3 +57,4 @@ if __name__ == "__main__":
                 ]
                 string = separator.join(elements)
                 csv.write(string + "\n")
+    logger.info("Wrote: %s", path_csv.as_posix())

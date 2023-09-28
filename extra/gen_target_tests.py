@@ -67,9 +67,9 @@ if __name__ == "__main__":
 
     # Self-test both ICs
     tests = [
-        ("nrf52_testable", "msp430_testable", "target_device_test1"),
-        ("nrf52_rf_test", "msp430_deep_sleep", "target_device_test2"),
-        ("nrf52_deep_sleep", "msp430_deep_sleep", "target_device_test3"),
+        ("nrf52_testable", "msp430_testable", "target_device_test1_sheep0"),
+        ("nrf52_rf_test", "msp430_deep_sleep", "target_device_test2_sheep0"),
+        ("nrf52_deep_sleep", "msp430_deep_sleep", "target_device_test3_sheep0"),
     ]
 
     for p_nrf, p_msp, name in tests:
