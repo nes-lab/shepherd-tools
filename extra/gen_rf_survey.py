@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 from shepherd_core import TestbedClient
+from shepherd_core import logger
 from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware as FW
@@ -45,7 +46,6 @@ if __name__ == "__main__":
                 target_IDs=list(range(1, 13)),
                 custom_IDs=list(range(0, 32)),  # note: longer list is OK
                 energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
-                virtual_source=VirtualSourceConfig(name="direct"),
                 firmware1=FW.from_firmware(
                     file=path_fw / "nrf52_rf_survey/build.elf",
                     embed=False,
@@ -61,4 +61,5 @@ if __name__ == "__main__":
             )
         ],
     )
-    TestbedTasks.from_xp(xp1).to_file(path_task / "tasks_rf_survey")
+    path_ret = TestbedTasks.from_xp(xp1).to_file(path_task / "tasks_rf_survey")
+    logger.info("Wrote: %s", path_ret.as_posix())
