@@ -12,7 +12,8 @@ How to define an experiment:
 from pathlib import Path
 
 from shepherd_core import TestbedClient
-from shepherd_core.data_models import FirmwareDType, GpioTracing
+from shepherd_core.data_models import FirmwareDType
+from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.experiment import Experiment

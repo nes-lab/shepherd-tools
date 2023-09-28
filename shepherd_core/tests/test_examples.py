@@ -13,13 +13,14 @@ def example_path() -> Path:
 
 
 examples = [
-    "inventory.py",
+    "experiment_generic.py",
     "experiment_models.py",
-    "uart_decode_waveform.py",
-    "vsource_simulation.py",
-    "vharvester_simulation.py",
-    "firmware_modification.py",
     "firmware_model.py",
+    "firmware_modification.py",
+    "inventory.py",
+    "uart_decode_waveform.py",
+    "vharvester_simulation.py",
+    "vsource_simulation.py",
 ]
 
 
