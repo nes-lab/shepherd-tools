@@ -16,7 +16,7 @@ from shepherd_core.logger import logger
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
-    if Path("/etc/shepherd/").exists():
+    if Path("/var/shepherd/").exists():
         path_task = Path("/var/shepherd/content/task/nes_lab/")
     else:
         path_task = path_here / "content/"

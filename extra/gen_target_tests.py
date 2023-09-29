@@ -40,13 +40,11 @@ def generate_lab_vsrc(path: Path, duration_s: float = 60):
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
-    if Path("/etc/shepherd/").exists():
-        path_task = Path("/var/shepherd/content/task/nes_lab/")
-    else:
-        path_task = path_here / "content/"
     if Path("/var/shepherd/").exists():
+        path_task = Path("/var/shepherd/content/task/nes_lab/")
         path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
     else:
+        path_task = path_here / "content/"
         path_eenv = path_here / "content/eenv/nes_lab/"
     path_rec = Path("/var/shepherd/recordings/")
     path_pwr = path_eenv / "lab_pwr_src.h5"
