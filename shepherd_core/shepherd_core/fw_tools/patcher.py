@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Optional
 
@@ -104,7 +103,11 @@ def modify_symbol_value(
     value_raw = value.to_bytes(
         length=uid_len_default, byteorder=elf.endian, signed=False
     )
-    elf.write(address=addr, data=value_raw)
+    try:
+        elf.write(address=addr, data=value_raw)
+    except AttributeError:
+        logger.debug("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
+        return None
     if overwrite:
         file_new = file_elf
     else:
