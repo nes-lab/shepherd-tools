@@ -9,7 +9,7 @@ chromalog.basicConfig(format="%(message)s")
 logger = logging.getLogger("SHPCore")
 queue = multiprocessing.Queue(-1)
 logger.addHandler(logging.handlers.QueueHandler(queue))
-logger.addHandler(logging.StreamHandler(sys.stdout))
+# logger-addHandler, logging-StreamHandler, sys-stdout
 
 verbose_level: int = 2
 
