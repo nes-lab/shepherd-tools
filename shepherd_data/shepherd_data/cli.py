@@ -166,6 +166,8 @@ def extract_meta(in_data: Path, separator: str) -> None:
             if "timesync" in elements:
                 shpr.save_csv(shpr["timesync"], separator)
 
+            if "shepherd-log" in elements:
+                shpr.save_log(shpr["shepherd-log"])
             if "dmesg" in elements:
                 shpr.save_log(shpr["dmesg"])
             if "exceptions" in elements:
