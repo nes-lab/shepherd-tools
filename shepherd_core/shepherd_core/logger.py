@@ -1,7 +1,6 @@
-import io
 import logging
-import multiprocessing
 import logging.handlers
+import multiprocessing
 import sys
 
 import chromalog

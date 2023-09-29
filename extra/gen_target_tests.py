@@ -12,6 +12,7 @@ from shepherd_core import Reader as ShpReader
 from shepherd_core import TestbedClient
 from shepherd_core import Writer as ShpWriter
 from shepherd_core.data_models import GpioTracing
+from shepherd_core.data_models import PowerTracing
 from shepherd_core.data_models.task import EmulationTask
 from shepherd_core.data_models.task import ObserverTasks
 from shepherd_core.data_models.task import ProgrammingTask
@@ -100,6 +101,7 @@ if __name__ == "__main__":
                 output_path=path_rec / (name + ".h5"),
                 duration=30,
                 enable_io=True,
+                power_tracing=PowerTracing(),
                 gpio_tracing=GpioTracing(
                     uart_decode=True,  # enables logging uart from userspace
                     uart_baudrate=115_200,
