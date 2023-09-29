@@ -31,8 +31,10 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
         raise RuntimeError(elf_error_text)
     elf = ELF(path=file_elf)
     try:
-        elf.symbols[symbol]
+        addr = elf.symbols[symbol]
     except KeyError:
+        addr = None
+    if addr is None:
         logger.debug("Symbol '%s' not found in ELF-File %s", symbol, file_elf.name)
         return False
     logger.debug(
@@ -102,10 +104,6 @@ def modify_symbol_value(
     value_raw = value.to_bytes(
         length=uid_len_default, byteorder=elf.endian, signed=False
     )
-    if addr is None:
-        # TODO: this should be earlier, but elf.read() does not complain
-        logging.error("Modifier failed: Address for Symbol '%s' in .ELF was not found")
-        return None
     elf.write(address=addr, data=value_raw)
     if overwrite:
         file_new = file_elf
