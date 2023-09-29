@@ -106,7 +106,7 @@ def modify_symbol_value(
     try:
         elf.write(address=addr, data=value_raw)
     except AttributeError:
-        logger.debug("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
+        logger.warning("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
         return None
     if overwrite:
         file_new = file_elf
