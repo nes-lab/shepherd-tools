@@ -1,10 +1,16 @@
+import io
 import logging
+import multiprocessing
+import logging.handlers
+import sys
 
 import chromalog
 
 chromalog.basicConfig(format="%(message)s")
 logger = logging.getLogger("SHPCore")
-logger.addHandler(logging.NullHandler())
+queue = multiprocessing.Queue(-1)
+logger.addHandler(logging.handlers.QueueHandler(queue))
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 verbose_level: int = 2
 
@@ -41,6 +47,14 @@ def increase_verbose_level(verbose: int) -> None:
     if verbose >= verbose_level:
         verbose_level = min(max(verbose, 0), 3)
         set_log_verbose_level(logger, verbose_level)
+
+
+def get_message_queue() -> multiprocessing.Queue:
+    """
+    read & delete with queue.get() -> element.message is the text
+    len is queue.qsize()
+    """
+    return queue
 
 
 increase_verbose_level(2)
