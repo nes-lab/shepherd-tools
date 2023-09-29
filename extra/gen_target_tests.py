@@ -43,9 +43,11 @@ if __name__ == "__main__":
     if Path("/var/shepherd/").exists():
         path_task = Path("/var/shepherd/content/task/nes_lab/")
         path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
+        path_fw = Path("/var/shepherd/content/fw/nes_lab/")
     else:
         path_task = path_here / "content/"
         path_eenv = path_here / "content/eenv/nes_lab/"
+        path_fw = path_here / "content/fw/nes_lab/"
     path_rec = Path("/var/shepherd/recordings/")
     path_pwr = path_eenv / "lab_pwr_src.h5"
 
@@ -58,6 +60,8 @@ if __name__ == "__main__":
         os.makedirs(path_eenv)
     if not path_task.exists():
         os.makedirs(path_task)
+    if not path_fw.exists():
+        os.makedirs(path_fw)
 
     # generate pwr-supply
     generate_lab_vsrc(path_pwr)
@@ -78,14 +82,14 @@ if __name__ == "__main__":
             root_path=path_rec,
             abort_on_error=False,
             fw1_prog=ProgrammingTask(
-                firmware_file=path_eenv / p_nrf / "build.hex",
+                firmware_file=path_fw / p_nrf / "build.hex",
                 target_port=TargetPort.A,
                 mcu_port=1,
                 mcu_type="nRF52".lower(),
                 protocol=ProgrammerProtocol.SWD,
             ),
             fw2_prog=ProgrammingTask(
-                firmware_file=path_eenv / p_msp / "build.hex",
+                firmware_file=path_fw / p_msp / "build.hex",
                 target_port=TargetPort.A,
                 mcu_port=2,
                 mcu_type="MSP430FR".lower(),
