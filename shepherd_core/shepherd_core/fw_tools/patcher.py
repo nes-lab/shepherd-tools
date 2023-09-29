@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -101,6 +102,10 @@ def modify_symbol_value(
     value_raw = value.to_bytes(
         length=uid_len_default, byteorder=elf.endian, signed=False
     )
+    if addr is None:
+        # TODO: this should be earlier, but elf.read() does not complain
+        logging.error("Modifier failed: Address for Symbol '%s' in .ELF was not found")
+        return None
     elf.write(address=addr, data=value_raw)
     if overwrite:
         file_new = file_elf
