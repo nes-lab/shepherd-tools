@@ -26,6 +26,11 @@ suffix_to_DType: dict = {
     ".so": FirmwareDType.base64_elf,
 }
 
+base64_to_path_DType: dict = {
+    FirmwareDType.base64_hex: FirmwareDType.path_hex,
+    FirmwareDType.base64_elf: FirmwareDType.path_elf,
+}
+
 arch_to_mcu: dict = {
     "em_msp430": {"name": "msp430fr"},
     "msp430": {"name": "msp430fr"},
@@ -68,6 +73,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             kwargs["data_local"] = False
         else:
             kwargs["data"] = Path(file).as_posix()
+            kwargs["data_type"] = Path(file).as_posix()
             kwargs["data_local"] = True
 
         if "data_type" not in kwargs:
@@ -91,6 +97,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
                 raise ValueError("File is not a ELF for nRF52")
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
+
+        if not embed:
+            kwargs["data_type"] = base64_to_path_DType[kwargs["data_type"]]
 
         if "name" not in kwargs:
             kwargs["name"] = file.name
