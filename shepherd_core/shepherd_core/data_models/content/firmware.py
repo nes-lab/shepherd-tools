@@ -93,7 +93,6 @@ class Firmware(ContentModel, title="Firmware of Target"):
             kwargs["data_local"] = False
         else:
             kwargs["data"] = Path(file).as_posix()
-            kwargs["data_type"] = Path(file).as_posix()
             kwargs["data_local"] = True
 
         if "data_type" not in kwargs:
