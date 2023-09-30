@@ -55,7 +55,7 @@ class ObserverTasks(ShpModel):
         )  # TODO: this is messed up, just a hotfix
 
         obs = tb.get_observer(tgt_id)
-        xp_dir = "experiments/" + xp.name + "_" + t_start.strftime("%Y-%m-%d_%H:%M:%S")
+        xp_dir = "experiments/" + xp.name + "_" + t_start.strftime("%Y-%m-%d_%H-%M-%S")
         root_path = tb.data_on_observer / xp_dir
 
         fw_paths = [root_path / f"fw{_i}_{obs.name}.hex" for _i in [1, 2]]
