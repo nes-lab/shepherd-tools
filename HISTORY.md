@@ -2,7 +2,11 @@
 
 ## v2023.9.9
 
-- bugfix-release
+- lots of bugfix
+- validate data vs data_type on firmware
+- offer example for generic experiment definitions
+- shepherd_data: also export stdout-log
+
 
 ## v2023.9.8
 

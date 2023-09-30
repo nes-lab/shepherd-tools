@@ -160,7 +160,8 @@ def extract_meta(in_data: Path, separator: str) -> None:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
         with Reader(file, verbose=verbose_level > 2) as shpr:
             elements = shpr.save_metadata()
-
+            # TODO: add default exports (user-centric) and allow specifying --all or specific ones
+            # TODO: could also be combined with other extractors (just have one)
             if "sysutil" in elements:
                 shpr.save_csv(shpr["sysutil"], separator)
             if "timesync" in elements:
