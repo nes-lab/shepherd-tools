@@ -58,6 +58,26 @@ class Firmware(ContentModel, title="Firmware of Target"):
     @classmethod
     def query_database(cls, values: dict) -> dict:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
+        # crosscheck type with actual data
+        _type = values.get("data_type")
+        if _type in [
+            FirmwareDType.base64_hex,
+            FirmwareDType.base64_elf,
+        ]:
+            try:
+                _hash = fw_tools.base64_to_hash(values.get("data"))
+            except ValueError:
+                raise ValueError("Embedded Firmware seems to be faulty")
+            if values.get("data_hash") is not None and _hash != values.get("data_hash"):
+                raise ValueError("Embedded Firmware and Hash do not match!")
+        elif _type in [
+            FirmwareDType.path_hex,
+            FirmwareDType.path_elf,
+        ]:
+            try:
+                _ = Path(values.get("data"))
+            except (SyntaxError, NameError):
+                raise ValueError("Firmware-Path is invalid")
         return tb_client.fill_in_user_data(values)
 
     @classmethod
