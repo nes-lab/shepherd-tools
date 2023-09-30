@@ -13,7 +13,7 @@ def example_path() -> Path:
 
 
 examples = [
-    "experiment_generic.py",
+    "experiment_generic_var1.py",
     "experiment_models.py",
     "firmware_model.py",
     "firmware_modification.py",
