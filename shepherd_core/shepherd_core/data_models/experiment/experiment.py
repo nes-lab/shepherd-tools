@@ -52,6 +52,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # targets
     target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=64)]
 
+    # TODO: we probably need to remember the lib-version for content &| experiment
+
     @model_validator(mode="after")
     def post_validation(self):
         self.validate_targets(self.target_configs)
