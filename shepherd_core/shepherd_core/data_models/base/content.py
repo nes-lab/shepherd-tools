@@ -45,6 +45,8 @@ class ContentModel(ShpModel):
     visible2group: bool = False
     visible2all: bool = False
 
+    # TODO: we probably need to remember the lib-version for content &| experiment
+
     def __str__(self):
         return self.name
 

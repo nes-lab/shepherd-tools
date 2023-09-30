@@ -42,12 +42,28 @@ def test_content_model_ee_min2() -> None:
     )
 
 
-def test_content_model_fw_min() -> None:
+def test_content_model_fw_faulty() -> None:
+    with pytest.raises(ValueError):
+        Firmware(
+            id=9999,
+            name="dome",
+            mcu=MCU(name="nRF52"),
+            data="xyz",
+            data_type=FirmwareDType.base64_hex,
+            owner="Obelix",
+            group="Gaul",
+        )
+
+
+@pytest.mark.parametrize("path_elf", files_elf)
+def test_content_model_fw_min(path_elf: Path, tmp_path: Path) -> None:
+    path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
+    path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
     Firmware(
         id=9999,
         name="dome",
         mcu=MCU(name="nRF52"),
-        data="xyz",
+        data=fw_tools.file_to_base64(path_hex),
         data_type=FirmwareDType.base64_hex,
         owner="Obelix",
         group="Gaul",

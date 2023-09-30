@@ -42,7 +42,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # feedback
     email_results: Optional[EmailStr] = None
     # ⤷ TODO: can be bool, as its linked to account
-    sys_logging: SystemLogging = SystemLogging(dmesg=True, ptp=False, shepherd=True)
+    sys_logging: SystemLogging = SystemLogging(dmesg=True, ptp=True, shepherd=True)
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP
@@ -51,6 +51,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     # targets
     target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=64)]
+
+    # TODO: we probably need to remember the lib-version for content &| experiment
 
     @model_validator(mode="after")
     def post_validation(self):

@@ -10,13 +10,14 @@ from shepherd_core.data_models import EnergyEnvironment
 from shepherd_core.data_models import Experiment
 from shepherd_core.data_models import Firmware
 from shepherd_core.data_models import GpioTracing
+from shepherd_core.data_models import PowerTracing
 from shepherd_core.data_models import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.logger import logger
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
-    if Path("/etc/shepherd/").exists():
+    if Path("/var/shepherd/").exists():
         path_task = Path("/var/shepherd/content/task/nes_lab/")
     else:
         path_task = path_here / "content/"
@@ -47,6 +48,7 @@ if __name__ == "__main__":
                     energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
                     firmware1=Firmware(name=fw_nrf),
                     firmware2=Firmware(name=fw_msp),
+                    power_tracing=PowerTracing(),
                     gpio_tracing=GpioTracing(
                         uart_decode=True,  # enables logging uart from userspace
                         uart_baudrate=115_200,

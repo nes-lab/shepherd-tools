@@ -1,7 +1,10 @@
 """
 
-How to define an experiment:
-    - good workaround for missing tb-client
+How-to for defining an experiment:
+    - recommended approach for missing testbed-client
+    - variants
+        - var1 - references a server-path for the firmware
+        - var2 - embeds local firmware in yaml (elf-support is linux-only)
     - assumption:
         - start ASAP,
         - no custom IDs,
@@ -58,13 +61,14 @@ xp = Experiment(
         ),
     ],
 )
-xp.to_file("experiment_generic.yaml", minimal=True)
+xp.to_file("experiment_generic_var1.yaml")
 
 # Create a tasks-list for the testbed
 tb_tasks = TestbedTasks.from_xp(xp)
-tb_tasks.to_file("experiment_generic_tbt.yaml")
+tb_tasks.to_file("experiment_generic_var1_tbt.yaml")
 
-# copy to server:
-#   scp ./experiment_generic_tbt.yaml user@shepherd.cfaed.tu-dresden.de:/var/shepherd/content/
-# run with herd:
-#   shepherd-herd --verbose run --attach /var/shepherd/content/experiment_generic_tbt.yaml
+# next steps:
+# - copy to server:
+#   scp ./experiment_generic_varX_tbt.yaml user@shepherd.cfaed.tu-dresden.de:/var/shepherd/content/
+# - run with herd-tool:
+#   shepherd-herd --verbose run --attach /var/shepherd/content/experiment_generic_varX_tbt.yaml
