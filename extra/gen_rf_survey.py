@@ -37,11 +37,11 @@ if __name__ == "__main__":
     xp1 = Experiment(
         name="rf_survey",
         comment="generate link-matrix",
-        duration=4 * 60,
+        duration=8 * 60,
         target_configs=[
             TargetConfig(
                 target_IDs=list(range(1, 13)),
-                custom_IDs=list(range(0, 32)),  # note: longer list is OK
+                custom_IDs=list(range(1, 32)),  # note: traffic bench expects node 1 as root-node
                 energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
                 firmware1=FW.from_firmware(
                     file=path_fw / "nrf52_rf_survey/build.elf",
