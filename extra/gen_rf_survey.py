@@ -52,7 +52,8 @@ if __name__ == "__main__":
                 firmware2=FW(name="msp430_deep_sleep"),
                 power_tracing=None,
                 gpio_tracing=GpioTracing(
-                    uart_decode=True,  # enables logging uart from userspace
+                    duration=0,  # this affects only the gpio-tracing itself
+                    uart_decode=True,  # hackjob: enables logging uart from userspace
                     uart_baudrate=115_200,
                 ),
             )

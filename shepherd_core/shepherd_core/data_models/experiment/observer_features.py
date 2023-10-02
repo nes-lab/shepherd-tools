@@ -68,7 +68,9 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     duration: Optional[timedelta] = None  # till EOF
 
     # post-processing,
-    uart_decode: bool = False  # todo: is currently done online in userspace
+    uart_decode: bool = False
+    # todo: quickfix - uart-log currently done online in userspace
+    # NOTE: gpio-tracing currently shows rather big - but rare - "blind" windows (~1-4us)
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: Annotated[int, Field(ge=2_400, le=921_600)] = 115_200
     # TODO: add a "discard_gpio" (if only uart is wanted)
