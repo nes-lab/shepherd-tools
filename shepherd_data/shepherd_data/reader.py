@@ -74,10 +74,11 @@ class Reader(CoreReader):
                 csv_file.write("\n")
         return h5_group["time"][:].shape[0]
 
-    def save_log(self, h5_group: h5py.Group) -> int:
+    def save_log(self, h5_group: h5py.Group, add_timestamp: bool = True) -> int:
         """save dataset in group as log, optimal for logged dmesg and exceptions
 
         :param h5_group: can be external
+        :param add_timestamp: can be external
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
@@ -99,8 +100,9 @@ class Reader(CoreReader):
                 "Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name
             )
             for idx, time_ns in enumerate(h5_group["time"][:]):
-                timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
-                log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
+                if add_timestamp:
+                    timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
+                    log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
                 for key in datasets:
                     try:
                         message = str(h5_group[key][idx])
