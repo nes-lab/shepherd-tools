@@ -56,6 +56,7 @@ class FirmwareModTask(ShpModel):
 
         fw = tgt_cfg.firmware1 if mcu_port == 1 else tgt_cfg.firmware2
         if fw is None:
+            # TODO: if target has default fw -> use that! otherwise no sleep is flashed
             return None
 
         fw_id = tgt_cfg.get_custom_id(tgt_id)
