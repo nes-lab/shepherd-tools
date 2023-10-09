@@ -162,19 +162,15 @@ def extract_meta(in_data: Path, separator: str) -> None:
             elements = shpr.save_metadata()
             # TODO: add default exports (user-centric) and allow specifying --all or specific ones
             # TODO: could also be combined with other extractors (just have one)
-            if "sysutil" in elements:
-                shpr.save_csv(shpr["sysutil"], separator)
-            if "timesync" in elements:
-                shpr.save_csv(shpr["timesync"], separator)
-
-            if "shepherd-log" in elements:
-                shpr.save_log(shpr["shepherd-log"])
-            if "dmesg" in elements:
-                shpr.save_log(shpr["dmesg"])
-            if "exceptions" in elements:
-                shpr.save_log(shpr["exceptions"])
-            if "uart" in elements:
-                shpr.save_log(shpr["uart"])
+            # TODO remove deprecated: timesync; "shepherd-log", "dmesg", "exceptions"
+            for element in ["ptp", "sysutil", "timesync"]:
+                if element in elements:
+                    shpr.save_csv(shpr[element], separator)
+            logs_depr = ["shepherd-log", "dmesg", "exceptions"]
+            logs = ["sheep", "kernel", "phc2sys", "uart"]
+            for element in logs + logs_depr:
+                if element in elements:
+                    shpr.save_log(shpr[element])
 
 
 @cli.command(
