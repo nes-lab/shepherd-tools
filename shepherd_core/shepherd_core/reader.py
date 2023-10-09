@@ -160,14 +160,13 @@ class Reader:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
         TODO: reconstruct - start/end mark samples and
-              each call can request a certain number of samples
+            each call can request a certain number of samples
 
         Args:
             :param start_n: (int) Index of first buffer to be read
             :param end_n: (int) Index of last buffer to be read
             :param is_raw: (bool) output original data, not transformed to SI-Units
-        Yields:
-            Buffers between start and end (tuple with time, voltage, current)
+        Yields: Buffers between start and end (tuple with time, voltage, current)
         """
         if end_n is None:
             end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)

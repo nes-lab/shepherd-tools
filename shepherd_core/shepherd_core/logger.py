@@ -60,3 +60,5 @@ increase_verbose_level(2)
 # %-05d pad left (left aligned)
 # %06.2f    6chars float, including dec point, with 2 chars after
 # %.5s  truncate to 5 chars
+#
+# %% for a percent character

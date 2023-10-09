@@ -136,6 +136,7 @@ class SystemLogging(ShpModel, title="Config for System-Logging"):
     dmesg: bool = True
     ptp: bool = True
     shepherd: bool = True
+    # TODO: rename to kernel, timesync, sheep
 
 
 # TODO: some more interaction would be good
