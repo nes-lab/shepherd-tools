@@ -17,7 +17,7 @@ if __name__ == "__main__":
     flist = os.listdir("./")
     for file in flist:
         fpath = Path(file)
-        if not fpath.is_file() or ".h5" != fpath.suffix.lower():
+        if not fpath.is_file() or fpath.suffix.lower() != ".h5":
             continue
         print(f"Analyzing '{fpath.name}' ...")
         with shp.Reader(fpath, verbose=False) as fh:
