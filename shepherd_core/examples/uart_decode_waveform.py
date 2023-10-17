@@ -13,12 +13,18 @@ lne = uwd.get_lines()
 txt = uwd.get_text()
 logger.info(txt)
 
-print("t_init\t", timeit("Uart(trace)", globals=globals(), number=1000))
-print("t_symb\t", timeit("uwd.get_symbols(True)", globals=globals(), number=100) * 10)
-print("t_line\t", timeit("uwd.get_lines(True)", globals=globals(), number=1000))
-print("t_text\t", timeit("uwd.get_text(True)", globals=globals(), number=1000))
-# Results:
-# t_init  5.8   [ms/run]
-# t_symb  70.4  [!!!!!]
-# t_line  3.9
-# t_text  0.1
+do_analysis = False
+if do_analysis:
+    l0 = timeit("Uart(trace)", globals=globals(), number=1000)
+    l1 = timeit("uwd.get_symbols(force_redo=True)", globals=globals(), number=100)
+    l2 = timeit("uwd.get_lines(force_redo=True)", globals=globals(), number=1000)
+    l3 = timeit("uwd.get_text(force_redo=True)", globals=globals(), number=1000)
+    print("t_init\t", l0)
+    print("t_symb\t", l1 * 10)
+    print("t_line\t", l2)
+    print("t_text\t", l3)
+    # Results:
+    # t_init  5.8   [ms/run]
+    # t_symb  70.4  [!!!!!]
+    # t_line  3.9
+    # t_text  0.1

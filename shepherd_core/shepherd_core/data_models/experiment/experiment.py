@@ -50,7 +50,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     abort_on_error: bool = False
 
     # targets
-    target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=64)]
+    target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=128)]
 
     # TODO: we probably need to remember the lib-version for content &| experiment
 

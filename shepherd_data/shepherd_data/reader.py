@@ -28,7 +28,7 @@ class Reader(CoreReader):
     """
 
     def __init__(self, file_path: Optional[Path], *, verbose: Optional[bool] = True):
-        super().__init__(file_path, verbose)
+        super().__init__(file_path, verbose=verbose)
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
         """extract numerical data via csv

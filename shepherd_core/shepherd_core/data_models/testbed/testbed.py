@@ -26,7 +26,7 @@ class Testbed(ShpModel):
 
     url: Optional[HttpUrl] = None
 
-    observers: Annotated[List[Observer], Field(min_length=1, max_length=64)]
+    observers: Annotated[List[Observer], Field(min_length=1, max_length=128)]
 
     shared_storage: bool = True
     data_on_server: Path

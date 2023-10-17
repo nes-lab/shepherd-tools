@@ -17,7 +17,7 @@ class TestbedTasks(ShpModel):
     """Collection of tasks for all observers included in experiment"""
 
     name: NameStr
-    observer_tasks: Annotated[List[ObserverTasks], Field(min_length=1, max_length=64)]
+    observer_tasks: Annotated[List[ObserverTasks], Field(min_length=1, max_length=128)]
 
     # POST PROCESS
     email: Optional[EmailStr] = None
