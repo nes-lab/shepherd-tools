@@ -4,6 +4,7 @@
 
 - supported python is now 3.8 - 3.12
 - lots of linting, more pythonic style and interface-improvements
+- add timezone to datetime-objects
 
 ## v2023.9.9
 

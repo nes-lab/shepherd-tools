@@ -1,5 +1,4 @@
 import struct
-from datetime import date
 from typing import Callable
 from typing import Generator
 from typing import Optional
@@ -18,6 +17,7 @@ from ...calibration_hw_def import adc_current_to_raw
 from ...calibration_hw_def import adc_voltage_to_raw
 from ...calibration_hw_def import dac_voltage_to_raw
 from .shepherd import ShpModel
+from .timezone import local_iso_date
 
 Calc_t = TypeVar("Calc_t", NDArray[np.float64], float)
 
@@ -173,7 +173,8 @@ class CapeData(ShpModel):
 
     serial_number: constr(max_length=12)
 
-    cal_date: constr(max_length=12) = Field(default_factory=date.today().isoformat)
+    cal_date: constr(max_length=12) = Field(default_factory=local_iso_date)
+    # ⤷ produces something like '2023-01-01'
 
     def __repr__(self) -> str:
         """string-representation allows print(model)"""

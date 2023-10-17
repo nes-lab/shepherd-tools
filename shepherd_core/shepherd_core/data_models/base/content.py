@@ -8,6 +8,7 @@ from pydantic import model_validator
 from typing_extensions import Annotated
 
 from .shepherd import ShpModel
+from .timezone import local_now
 
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
@@ -21,7 +22,7 @@ SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 
 
 def id_default() -> int:
-    time_stamp = str(datetime.now()).encode("utf-8")
+    time_stamp = str(local_now()).encode("utf-8")
     time_hash = hashlib.sha3_224(time_stamp).hexdigest()[-16:]
     return int(time_hash, 16)
 

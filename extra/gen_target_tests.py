@@ -2,7 +2,6 @@
 
 
 """
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +9,7 @@ import numpy as np
 from shepherd_core import Reader as ShpReader
 from shepherd_core import TestbedClient
 from shepherd_core import Writer as ShpWriter
+from shepherd_core import local_now
 from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models import PowerTracing
 from shepherd_core.data_models.task import EmulationTask
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         _path = ObserverTasks(
             observer="sheep0",
             owner_id=123,
-            time_prep=datetime.now(),
+            time_prep=local_now(),
             root_path=path_rec,
             abort_on_error=False,
             fw1_prog=ProgrammingTask(

@@ -11,6 +11,8 @@ from .data_models.base.calibration import CalibrationEmulator
 from .data_models.base.calibration import CalibrationHarvester
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
+from .data_models.base.timezone import local_now
+from .data_models.base.timezone import local_tz
 from .data_models.task import Compression
 from .inventory import Inventory
 from .logger import get_verbose_level
@@ -34,6 +36,8 @@ __all__ = [
     "CalibrationEmulator",
     "CalibrationHarvester",
     "CalibrationPair",
+    "local_tz",
+    "local_now",
     "Calc_t",
     "Compression",
     "TestbedClient",

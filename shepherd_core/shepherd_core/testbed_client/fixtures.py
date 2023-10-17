@@ -11,6 +11,8 @@ from typing import Optional
 import yaml
 from pydantic import validate_call
 
+from ..data_models.base.timezone import local_now
+from ..data_models.base.timezone import local_tz
 from ..data_models.base.wrapper import Wrapper
 from ..logger import logger
 
@@ -154,8 +156,8 @@ class Fixture:
 
 
 def file_older_than(file: Path, delta: timedelta):
-    cutoff = datetime.utcnow() - delta
-    mtime = datetime.utcfromtimestamp(file.stat().st_mtime)
+    cutoff = local_now() - delta
+    mtime = datetime.fromtimestamp(file.stat().st_mtime, tz=local_tz())
     if mtime < cutoff:
         return True
     return False

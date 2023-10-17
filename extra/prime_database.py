@@ -4,12 +4,12 @@ script will:
 - copy models to content-dir of core-lib
 """
 import sys
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 import yaml
 
+from shepherd_core import local_now
 from shepherd_core.data_models import FirmwareDType
 from shepherd_core.data_models import ShpModel
 from shepherd_core.data_models import Wrapper
@@ -72,7 +72,7 @@ if __name__ == "__main__":
             model_dict = model.model_dump()
             model_wrap = Wrapper(
                 datatype=type(model).__name__,
-                created=datetime.now(),
+                created=local_now(),
                 parameters=model_dict,
             )
             fixtures.append(

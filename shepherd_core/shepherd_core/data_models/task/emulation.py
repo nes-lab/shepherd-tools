@@ -13,6 +13,7 @@ from typing_extensions import Annotated
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
+from ..base.timezone import local_tz
 from ..content.virtual_source import VirtualSourceConfig
 from ..experiment.experiment import Experiment
 from ..experiment.observer_features import GpioActuation
@@ -96,7 +97,9 @@ class EmulationTask(ShpModel):
         # convert & add local timezone-data
         has_time = values.get("time_start") is not None
         if has_time and isinstance(values["time_start"], (int, float)):
-            values["time_start"] = datetime.fromtimestamp(values["time_start"])
+            values["time_start"] = datetime.fromtimestamp(
+                values["time_start"], tz=local_tz()
+            )
         if has_time and isinstance(values["time_start"], str):
             values["time_start"] = datetime.fromisoformat(values["time_start"])
         if has_time and values["time_start"].tzinfo is None:

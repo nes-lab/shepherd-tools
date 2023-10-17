@@ -8,6 +8,7 @@ from pydantic import model_validator
 from typing_extensions import Annotated
 
 from ..base.shepherd import ShpModel
+from ..base.timezone import local_tz
 from ..content.virtual_harvester import VirtualHarvesterConfig
 from ..experiment.observer_features import PowerTracing
 from ..experiment.observer_features import SystemLogging
@@ -58,7 +59,9 @@ class HarvestTask(ShpModel):
         # convert & add local timezone-data, TODO: used twice, refactor
         has_time = values.get("time_start") is not None
         if has_time and isinstance(values["time_start"], (int, float)):
-            values["time_start"] = datetime.fromtimestamp(values["time_start"])
+            values["time_start"] = datetime.fromtimestamp(
+                values["time_start"], tz=local_tz()
+            )
         if has_time and isinstance(values["time_start"], str):
             values["time_start"] = datetime.fromisoformat(values["time_start"])
         if has_time and values["time_start"].tzinfo is None:

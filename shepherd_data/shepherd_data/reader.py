@@ -14,6 +14,7 @@ from matplotlib import pyplot as plt
 from tqdm import trange
 
 from shepherd_core import Reader as CoreReader
+from shepherd_core import local_tz
 from shepherd_core.logger import logger
 
 # import samplerate  # noqa: ERA001, TODO: just a test-fn for now
@@ -63,7 +64,7 @@ class Reader(CoreReader):
             )
             csv_file.write(header + "\n")
             for idx, time_ns in enumerate(h5_group["time"][:]):
-                timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
+                timestamp = datetime.fromtimestamp(time_ns / 1e9, tz=local_tz())
                 csv_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"))
                 for key in datasets[1:]:
                     values = h5_group[key][idx]
@@ -99,7 +100,8 @@ class Reader(CoreReader):
             )
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 if add_timestamp:
-                    timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
+                    timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
+                    # ⤷ TODO: these .fromtimestamp would benefit from included TZ
                     log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
                 for key in datasets:
                     try:

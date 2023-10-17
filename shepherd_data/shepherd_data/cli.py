@@ -14,6 +14,7 @@ import click
 
 from shepherd_core import get_verbose_level
 from shepherd_core import increase_verbose_level
+from shepherd_core import local_tz
 from shepherd_core.commons import samplerate_sps_default
 
 from . import Reader
@@ -196,7 +197,9 @@ def extract_uart(in_data: Path) -> None:
             with log_path.open("w") as log_file:
                 for line in lines:
                     with suppress(TypeError):
-                        timestamp = datetime.utcfromtimestamp(float(line[0]))
+                        timestamp = datetime.fromtimestamp(
+                            float(line[0]), tz=local_tz()
+                        )
                         log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
                         log_file.write(f"\t{str.encode(line[1])}")
                         log_file.write("\n")

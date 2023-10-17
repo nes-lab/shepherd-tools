@@ -1,6 +1,5 @@
 import hashlib
 import pathlib
-from datetime import datetime
 from datetime import timedelta
 from ipaddress import IPv4Address
 from pathlib import Path
@@ -12,6 +11,7 @@ from pydantic import BaseModel
 from pydantic import ConfigDict
 from yaml import SafeDumper
 
+from .timezone import local_now
 from .wrapper import Wrapper
 
 
@@ -118,7 +118,7 @@ class ShpModel(BaseModel):
         model_wrap = Wrapper(
             datatype=type(self).__name__,
             comment=comment,
-            created=datetime.now(),
+            created=local_now(),
             parameters=model_dict,
         )
         model_yaml = yaml.safe_dump(

@@ -93,7 +93,7 @@ select = [
     "COM", # flake8-commas
 #    "CPY",  # flake8-copyright
     "C4",   # flake8-comprehensions
-#    "DTZ",  # flake8-datetimez, TODO: activate
+    "DTZ",  # flake8-datetimez, TODO: activate
 #    "D",    # pydocstyle, TODO: activate
     "E",    # pycodestyle errors
     "ERA",  # eradicate commented out code
