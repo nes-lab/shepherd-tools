@@ -278,7 +278,12 @@ class ConverterPRUConfig(ShpModel):
     LUT_out_inv_efficiency_n4: lut_o
 
     @classmethod
-    def from_vsrc(cls, data: VirtualSourceConfig, log_intermediate_node: bool = False):
+    def from_vsrc(
+        cls,
+        data: VirtualSourceConfig,
+        *,
+        log_intermediate_node: bool = False,
+    ):
         states = data.calc_internal_states()
         return cls(
             # General

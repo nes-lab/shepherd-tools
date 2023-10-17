@@ -27,7 +27,7 @@ class Reader(CoreReader):
         verbose: more info during usage, 'None' skips the setter
     """
 
-    def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
+    def __init__(self, file_path: Optional[Path], *, verbose: Optional[bool] = True):
         super().__init__(file_path, verbose)
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
@@ -47,18 +47,17 @@ class Reader(CoreReader):
             self._logger.warning("%s already exists, will skip", csv_path)
             return 0
         datasets = [
-            key if isinstance(h5_group[key], h5py.Dataset) else []
-            for key in h5_group.keys()
+            key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
         ]
         datasets.remove("time")
-        datasets = ["time"] + datasets
+        datasets = ["time", *datasets]
         separator = separator.strip().ljust(2)
         header = [
             h5_group[key].attrs["description"].replace(", ", separator)
             for key in datasets
         ]
         header = separator.join(header)
-        with open(csv_path, "w", encoding="utf-8-sig") as csv_file:
+        with csv_path.open("w", encoding="utf-8-sig") as csv_file:
             self._logger.info(
                 "CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name
             )
@@ -74,7 +73,7 @@ class Reader(CoreReader):
                 csv_file.write("\n")
         return h5_group["time"][:].shape[0]
 
-    def save_log(self, h5_group: h5py.Group, add_timestamp: bool = True) -> int:
+    def save_log(self, h5_group: h5py.Group, *, add_timestamp: bool = True) -> int:
         """save dataset in group as log, optimal for logged dmesg and exceptions
 
         :param h5_group: can be external
@@ -91,11 +90,10 @@ class Reader(CoreReader):
             self._logger.warning("%s already exists, will skip", log_path)
             return 0
         datasets = [
-            key if isinstance(h5_group[key], h5py.Dataset) else []
-            for key in h5_group.keys()
+            key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
         ]
         datasets.remove("time")
-        with open(log_path, "w", encoding="utf-8-sig") as log_file:
+        with log_path.open("w", encoding="utf-8-sig") as log_file:
             self._logger.info(
                 "Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name
             )
@@ -119,6 +117,7 @@ class Reader(CoreReader):
         start_n: int = 0,
         end_n: Optional[int] = None,
         ds_factor: float = 5,
+        *,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
         """Warning: only valid for IV-Stream, not IV-Curves
@@ -201,6 +200,7 @@ class Reader(CoreReader):
         start_n: int = 0,
         end_n: Optional[int] = None,
         samplerate_dst: float = 1000,
+        *,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
         """
@@ -301,13 +301,14 @@ class Reader(CoreReader):
         self,
         start_s: Optional[float] = None,
         end_s: Optional[float] = None,
-        relative_ts: bool = True,
+        *,
+        relative_timestamp: bool = True,
     ) -> Dict:
         """provides down-sampled iv-data that can be feed into plot_to_file()
 
         :param start_s: time in seconds, relative to start of recording
         :param end_s: time in seconds, relative to start of recording
-        :param relative_ts: treat
+        :param relative_timestamp: treat
         :return: down-sampled size of ~ self.max_elements
         """
         if self.get_datatype() == "ivcurve":
@@ -345,7 +346,7 @@ class Reader(CoreReader):
             "start_s": start_s,
             "end_s": end_s,
         }
-        if relative_ts:
+        if relative_timestamp:
             data["time"] = data["time"] - self._cal.time.raw_to_si(self.ds_time[0])
         return data
 

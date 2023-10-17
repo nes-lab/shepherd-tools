@@ -103,10 +103,10 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
         return self
 
-    def calc_hrv_mode(self, for_emu: bool) -> int:
+    def calc_hrv_mode(self, *, for_emu: bool) -> int:
         return 1 * int(for_emu) + 2 * self.rising
 
-    def calc_algorithm_num(self, for_emu: bool) -> int:
+    def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num = algo_to_num.get(self.algorithm)
         if for_emu and self.get_datatype() != EnergyDType.ivsample:
             raise ValueError(
@@ -120,7 +120,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
             )
         return num
 
-    def calc_timings_ms(self, for_emu: bool) -> Tuple[float, float]:
+    def calc_timings_ms(self, *, for_emu: bool) -> Tuple[float, float]:
         """factor-in model-internal timing-constraints"""
         window_length = self.samples_n * (1 + self.wait_cycles)
         time_min_ms = (1 + self.wait_cycles) * 1_000 / samplerate_sps_default
@@ -143,7 +143,10 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return algo_to_dtype[self.algorithm]
 
     def calc_window_size(
-        self, for_emu: bool, dtype_in: Optional[EnergyDType] = EnergyDType.ivsample
+        self,
+        dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
+        *,
+        for_emu: bool,
     ) -> int:
         if for_emu:
             if dtype_in == EnergyDType.ivcurve:
@@ -217,22 +220,23 @@ class HarvesterPRUConfig(ShpModel):
     def from_vhrv(
         cls,
         data: VirtualHarvesterConfig,
-        for_emu: bool = False,
         dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
         window_size: Optional[u32] = None,
+        *,
+        for_emu: bool = False,
     ):
         if isinstance(dtype_in, str):
             dtype_in = EnergyDType[dtype_in]
         if for_emu and dtype_in not in [EnergyDType.ivsample, EnergyDType.ivcurve]:
             raise ValueError("Not Implemented")
         # TODO: use dtype properly in shepherd
-        interval_ms, duration_ms = data.calc_timings_ms(for_emu)
+        interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)
         return cls(
-            algorithm=data.calc_algorithm_num(for_emu),
-            hrv_mode=data.calc_hrv_mode(for_emu),
+            algorithm=data.calc_algorithm_num(for_emu=for_emu),
+            hrv_mode=data.calc_hrv_mode(for_emu=for_emu),
             window_size=window_size
             if window_size is not None
-            else data.calc_window_size(for_emu, dtype_in),
+            else data.calc_window_size(dtype_in, for_emu=for_emu),
             voltage_uV=round(data.voltage_mV * 10**3),
             voltage_min_uV=round(data.voltage_min_mV * 10**3),
             voltage_max_uV=round(data.voltage_max_mV * 10**3),

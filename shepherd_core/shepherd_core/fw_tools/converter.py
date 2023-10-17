@@ -21,12 +21,11 @@ def firmware_to_hex(file_path: Path) -> Path:
         raise ValueError("Fn needs an existing file as input")
     if is_elf(file_path):
         return elf_to_hex(file_path)
-    elif is_hex(file_path):
+    if is_hex(file_path):
         return file_path
-    else:
-        raise ValueError(
-            "FW2Hex: unknown file '%s', it should be ELF or HEX", file_path.name
-        )
+    raise ValueError(
+        "FW2Hex: unknown file '%s', it should be ELF or HEX", file_path.name
+    )
 
 
 @validate_call
@@ -37,7 +36,7 @@ def file_to_base64(file_path: Path) -> str:
     """
     if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
-    with open(file_path.resolve(), "rb") as file:
+    with file_path.resolve().open("rb") as file:
         file_content = file.read()
     file_cmpress = zstd.ZstdCompressor(level=20).compress(file_content)
     return base64.b64encode(file_cmpress).decode("ascii")
@@ -53,7 +52,7 @@ def base64_to_file(content: str, file_path: Path) -> None:
     file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
     if not file_path.parent.exists():
         os.makedirs(file_path.parent)
-    with open(file_path.resolve(), "wb") as file:
+    with file_path.resolve().open("wb") as file:
         file.write(file_content)
 
 
@@ -61,7 +60,7 @@ def base64_to_file(content: str, file_path: Path) -> None:
 def file_to_hash(file_path: Path) -> str:
     if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
-    with open(file_path.resolve(), "rb") as file:
+    with file_path.resolve().open("rb") as file:
         file_content = file.read()
     return hashlib.sha3_224(file_content).hexdigest()
 
@@ -97,7 +96,7 @@ def extract_firmware(
                 "FW-Extraction failed due to unknown datatype '%s'", data_type
             )
         if not file.parent.exists():
-            os.makedirs(file.parent)
+            file.parent.mkdir(parents=True)
         shutil.copy(data, file)
     else:
         raise ValueError(

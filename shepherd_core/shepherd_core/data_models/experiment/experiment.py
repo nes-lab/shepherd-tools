@@ -84,15 +84,10 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     @staticmethod
     def validate_observers(configs: List[TargetConfig]) -> None:
-        target_ids = []
-        for _config in configs:
-            for _id in _config.target_IDs:
-                target_ids.append(_id)
+        target_ids = [_id for _config in configs for _id in _config.target_IDs]
 
         testbed = Testbed(name="shepherd_tud_nes")
-        obs_ids = []
-        for _id in target_ids:
-            obs_ids.append(testbed.get_observer(_id).id)
+        obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
         if len(target_ids) > len(set(obs_ids)):
             raise ValueError(
                 "Observer used more than once in Experiment "
@@ -100,17 +95,13 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             )
 
     def get_target_ids(self) -> list:
-        target_ids = []
-        for _config in self.target_configs:
-            for _id in _config.target_IDs:
-                target_ids.append(_id)
-        return target_ids
+        return [_id for _config in self.target_configs for _id in _config.target_IDs]
 
     def get_target_config(self, target_id: int) -> TargetConfig:
         for _config in self.target_configs:
             if target_id in _config.target_IDs:
                 return _config
-        # .. gets already caught in target_config .. but keep:
+        # gets already caught in target_config - but keep:
         raise ValueError(
             f"Target-ID {target_id} was not found in Experiment '{self.name}'"
         )

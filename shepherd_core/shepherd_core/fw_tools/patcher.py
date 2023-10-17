@@ -84,6 +84,7 @@ def modify_symbol_value(
     file_elf: Path,
     symbol: str,
     value: Annotated[int, Field(ge=0, lt=2 ** (8 * uid_len_default))],
+    *,
     overwrite: bool = False,
 ) -> Optional[Path]:
     """replaces value of symbol in ELF-File, hardcoded for uint16_t (2 byte)

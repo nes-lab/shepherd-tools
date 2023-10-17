@@ -52,7 +52,7 @@ class InventoryList(ShpModel):
         """
         if path.is_dir():
             path = path / "inventory.yaml"
-        with open(path.as_posix(), "w") as fd:
+        with path.resolve().open("w") as fd:
             fd.write(", ".join(self.elements[0].model_dump().keys()) + "\r\n")
             for item in self.elements:
                 content = list(item.model_dump().values())

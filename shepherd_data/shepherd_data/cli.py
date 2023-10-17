@@ -4,6 +4,7 @@ Command definitions for CLI
 import logging
 import os
 import sys
+from contextlib import suppress
 from datetime import datetime
 from pathlib import Path
 from typing import List
@@ -55,7 +56,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
     help="Prints version-info at start (combinable with -v)",
 )
 @click.pass_context  # TODO: is the ctx-type correct?
-def cli(ctx: click.Context, verbose: bool, version: bool) -> None:
+def cli(ctx: click.Context, *, verbose: bool, version: bool) -> None:
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder"""
     if verbose:
         increase_verbose_level(3)
@@ -192,15 +193,13 @@ def extract_uart(in_data: Path) -> None:
                 logger.warning("%s already exists, will skip", log_path)
                 continue
 
-            with open(log_path, "w") as log_file:
+            with log_path.open("w") as log_file:
                 for line in lines:
-                    try:
+                    with suppress(TypeError):
                         timestamp = datetime.utcfromtimestamp(float(line[0]))
                         log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
                         log_file.write(f"\t{str.encode(line[1])}")
                         log_file.write("\n")
-                    except TypeError:
-                        continue
 
 
 @cli.command(
@@ -335,6 +334,7 @@ def plot(
     end: Optional[float],
     width: int,
     height: int,
+    *,
     multiplot: bool,
 ) -> None:
     """Plots IV-trace from file or directory containing shepherd-recordings"""
@@ -346,7 +346,9 @@ def plot(
         logger.info("Generating plot for '%s' ...", file.name)
         with Reader(file, verbose=verbose_level > 2) as shpr:
             if multiplot:
-                data.append(shpr.generate_plot_data(start, end, relative_ts=True))
+                data.append(
+                    shpr.generate_plot_data(start, end, relative_timestamp=True)
+                )
             else:
                 shpr.plot_to_file(start, end, width, height)
     if multiplot:

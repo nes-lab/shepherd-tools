@@ -27,14 +27,14 @@ def dict_generator(indict, pre=None) -> Generator[list, None, None]:
     if isinstance(indict, dict):
         for key, value in indict.items():
             if isinstance(value, dict):
-                yield from dict_generator(value, pre + [key])
+                yield from dict_generator(value, [*pre, key])
             elif isinstance(value, (list, tuple)):
                 for v in value:
-                    yield from dict_generator(v, pre + [key])
+                    yield from dict_generator(v, [*pre, key])
             else:
-                yield pre + [key, value]
+                yield [*pre, key, value]
     else:
-        yield pre + [indict]
+        yield [*pre, indict]
 
 
 class CalibrationPair(ShpModel):
@@ -43,7 +43,7 @@ class CalibrationPair(ShpModel):
     gain: PositiveFloat
     offset: float = 0
 
-    def raw_to_si(self, values_raw: Calc_t, allow_negative: bool = True) -> Calc_t:
+    def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
         """Convert between physical units and raw unsigned integers"""
         values_si = values_raw * self.gain + self.offset
         if not allow_negative:
@@ -240,6 +240,7 @@ class CalibrationSeries(ShpModel):
     def from_cal(
         cls,
         cal: Union[CalibrationHarvester, CalibrationEmulator],
+        *,
         emu_port_a: bool = True,
     ):
         if isinstance(cal, CalibrationHarvester):

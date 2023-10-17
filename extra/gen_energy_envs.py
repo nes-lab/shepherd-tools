@@ -3,7 +3,6 @@ script will:
 - generate static environments
 - saves energy-env to yaml
 """
-import os
 from itertools import product
 from pathlib import Path
 
@@ -29,7 +28,7 @@ if __name__ == "__main__":
     repetitions = 60
 
     if not path_eenv.exists():
-        os.makedirs(path_eenv)
+        path_eenv.mkdir(parents=True)
 
     for _v, _c in product(voltages_V, currents_A):
         v_str = f"{round(_v * 1000)}mV"

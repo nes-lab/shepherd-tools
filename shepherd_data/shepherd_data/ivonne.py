@@ -40,6 +40,7 @@ class Reader:
         self,
         file_path: Path,
         samplerate_sps: Optional[int] = None,
+        *,
         verbose: bool = True,
     ):
         self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
@@ -63,7 +64,7 @@ class Reader:
             raise FileNotFoundError(
                 errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
             )
-        with open(self.file_path, "rb") as ifr:
+        with self.file_path.open("rb") as ifr:
             self._df = pickle.load(ifr)  # noqa: S301
         self._refresh_file_stats()
         self._logger.info(

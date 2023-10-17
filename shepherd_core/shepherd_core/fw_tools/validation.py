@@ -1,7 +1,6 @@
 """ TODO: Work in Progress
 
 """
-import os
 import tempfile
 from pathlib import Path
 
@@ -84,7 +83,7 @@ def is_hex_nrf52(file: Path) -> bool:
 def is_elf(file: Path) -> bool:
     if not elf_support:
         raise RuntimeError(elf_error_text)
-    if not os.path.isfile(file):
+    if not file.is_file():
         return False
     try:
         _ = ELF(path=file)
@@ -121,7 +120,7 @@ def determine_type(file: Path) -> FirmwareDType:
         raise ValueError("Fn needs an existing file as input")
     if is_hex(file):
         return FirmwareDType.path_hex
-    elif is_elf(file):
+    if is_elf(file):
         return FirmwareDType.path_elf
     raise ValueError("Type of file '%s' could not be determined", file.name)
 
@@ -131,13 +130,13 @@ def determine_arch(file: Path) -> str:
     if file_t == FirmwareDType.path_elf:
         if is_elf_nrf52(file):
             return "nrf52"
-        elif is_elf_msp430(file):
+        if is_elf_msp430(file):
             return "msp430"
         raise ValueError("Arch of ELF '%s' could not be determined", file.name)
-    elif file_t == FirmwareDType.path_hex:
+    if file_t == FirmwareDType.path_hex:
         if is_hex_nrf52(file):
             return "nrf52"
-        elif is_hex_msp430(file):
+        if is_hex_msp430(file):
             return "msp430"
         raise ValueError("Arch of HEX '%s' could not be determined", file.name)
     raise ValueError("Arch of file '%s' could not be determined", file.name)

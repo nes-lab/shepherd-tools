@@ -5,8 +5,8 @@ import h5py
 import pytest
 import yaml
 
-from shepherd_core import Reader as Reader
-from shepherd_core import Writer as Writer
+from shepherd_core import Reader
+from shepherd_core import Writer
 
 
 def test_reader_metadata(data_h5: Path) -> None:
@@ -17,7 +17,7 @@ def test_reader_metadata(data_h5: Path) -> None:
         meta_data_a = sfr.save_metadata()
         meta_path = data_h5.resolve().with_suffix(".yaml")
         assert meta_path.exists()
-        with open(meta_path) as meta_file:
+        with meta_path.open() as meta_file:
             meta_data_b = yaml.safe_load(meta_file)
             assert len(meta_data_b) == len(meta_data_a)
             assert sys.getsizeof(meta_data_b) == sys.getsizeof(meta_data_a)
@@ -41,7 +41,7 @@ def test_reader_open(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         Reader(file_path=tmp_file)
 
-    with open(tmp_file, "w") as tf:
+    with tmp_file.open("w") as tf:
         tf.write("abc def ghi")
     with pytest.raises(OSError):  # should be TypeError
         Reader(file_path=tmp_file)

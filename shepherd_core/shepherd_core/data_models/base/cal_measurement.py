@@ -56,7 +56,7 @@ class CalMeasurementHarvester(ShpModel):
     def to_cal(self) -> CalibrationHarvester:
         dv = self.model_dump()
         dcal = CalibrationHarvester().model_dump()
-        for key in dv.keys():
+        for key in dv:
             dcal[key] = meas_to_cal(self[key], f"hrv_{key}")
         return CalibrationHarvester(**dcal)
 
@@ -70,7 +70,7 @@ class CalMeasurementEmulator(ShpModel):
     def to_cal(self) -> CalibrationEmulator:
         dv = self.model_dump()
         dcal = CalibrationEmulator().model_dump()
-        for key in dv.keys():
+        for key in dv:
             dcal[key] = meas_to_cal(self[key], f"emu_{key}")
         return CalibrationEmulator(**dcal)
 

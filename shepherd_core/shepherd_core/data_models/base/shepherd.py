@@ -1,5 +1,4 @@
 import hashlib
-import os
 import pathlib
 from datetime import datetime
 from datetime import timedelta
@@ -101,14 +100,15 @@ class ShpModel(BaseModel):
         model_yaml = yaml.safe_dump(
             model_dict, default_flow_style=False, sort_keys=False
         )
-        with open(Path(path).resolve().with_suffix(".yaml"), "w") as f:
+        with Path(path).resolve().with_suffix(".yaml").open("w") as f:
             f.write(model_yaml)
 
     def to_file(
         self,
         path: Union[str, Path],
-        minimal: bool = True,
         comment: Optional[str] = None,
+        *,
+        minimal: bool = True,
     ) -> Path:
         """store data to yaml in a wrapper
         minimal: stores minimal set (filters out unset & default parameters)
@@ -129,15 +129,15 @@ class ShpModel(BaseModel):
         # TODO: handle directory
         model_path = Path(path).resolve().with_suffix(".yaml")
         if not model_path.parent.exists():
-            os.makedirs(model_path.parent)
-        with open(model_path, "w") as f:
+            model_path.parent.mkdir(parents=True)
+        with model_path.open("w") as f:
             f.write(model_yaml)
         return model_path
 
     @classmethod
     def from_file(cls, path: Union[str, Path]):
         """load from yaml"""
-        with open(Path(path).resolve()) as shp_file:
+        with Path(path).open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:

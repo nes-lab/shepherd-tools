@@ -80,7 +80,7 @@ if __name__ == "__main__":
                 fh.__enter__()
 
             # missing window_samples
-            if "window_samples" not in fh.h5file["data"].attrs.keys():
+            if "window_samples" not in fh.h5file["data"].attrs:
                 if datatype == EnergyDType.ivcurve:
                     print("Window size missing, but ivcurves detected -> no repair")
                     continue
@@ -91,7 +91,7 @@ if __name__ == "__main__":
                 fh.__enter__()
 
             # missing hostname
-            if "hostname" not in fh.h5file.attrs.keys():
+            if "hostname" not in fh.h5file.attrs:
                 print(" -> will set hostname = SheepX")
                 fh.__exit__()
                 with shp.Writer(fpath, modify_existing=True) as fw:

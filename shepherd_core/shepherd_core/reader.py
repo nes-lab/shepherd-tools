@@ -6,6 +6,7 @@ import errno
 import logging
 import math
 import os
+from collections import namedtuple
 from itertools import product
 from pathlib import Path
 from typing import Dict
@@ -37,17 +38,19 @@ class Reader:
 
     samples_per_buffer: int = 10_000
 
-    mode_dtype_dict = {
-        "harvester": [
-            EnergyDType.ivsample,
-            EnergyDType.ivcurve,
-            EnergyDType.isc_voc,
-        ],
-        "emulator": [EnergyDType.ivsample],
-    }
+    mode_dtype_dict = namedtuple(
+        {
+            "harvester": [
+                EnergyDType.ivsample,
+                EnergyDType.ivcurve,
+                EnergyDType.isc_voc,
+            ],
+            "emulator": [EnergyDType.ivsample],
+        }
+    )
 
     @validate_call
-    def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
+    def __init__(self, file_path: Optional[Path], *, verbose: Optional[bool] = True):
         if not hasattr(self, "file_path"):
             self.file_path: Optional[Path] = None
             if isinstance(file_path, (Path, str)):
@@ -155,7 +158,11 @@ class Reader:
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
     def read_buffers(
-        self, start_n: int = 0, end_n: Optional[int] = None, is_raw: bool = False
+        self,
+        start_n: int = 0,
+        end_n: Optional[int] = None,
+        *,
+        is_raw: bool = False,
     ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
@@ -241,11 +248,11 @@ class Reader:
         :return: state of validity
         """
         # hard criteria
-        if "data" not in self.h5file.keys():
+        if "data" not in self.h5file:
             self._logger.error("root data-group not found (@Validator)")
             return False
         for attr in ["mode"]:
-            if attr not in self.h5file.attrs.keys():
+            if attr not in self.h5file.attrs:
                 self._logger.error(
                     "attribute '%s' not found in file (@Validator)", attr
                 )
@@ -254,17 +261,17 @@ class Reader:
                 self._logger.error("unsupported mode '%s' (@Validator)", attr)
                 return False
         for attr in ["window_samples", "datatype"]:
-            if attr not in self.h5file["data"].attrs.keys():
+            if attr not in self.h5file["data"].attrs:
                 self._logger.error(
                     "attribute '%s' not found in data-group (@Validator)", attr
                 )
                 return False
         for dset in ["time", "current", "voltage"]:
-            if dset not in self.h5file["data"].keys():
+            if dset not in self.h5file["data"]:
                 self._logger.error("dataset '%s' not found (@Validator)", dset)
                 return False
             for attr in ["gain", "offset"]:
-                if attr not in self.h5file["data"][dset].attrs.keys():
+                if attr not in self.h5file["data"][dset].attrs:
                     self._logger.error(
                         "attribute '%s' not found in dataset '%s' (@Validator)",
                         attr,
@@ -458,7 +465,10 @@ class Reader:
         return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.samples_per_buffer, 6)
 
     def get_metadata(
-        self, node: Union[h5py.Dataset, h5py.Group, None] = None, minimal: bool = False
+        self,
+        node: Union[h5py.Dataset, h5py.Group, None] = None,
+        *,
+        minimal: bool = False,
     ) -> Dict[str, dict]:
         """recursive FN to capture the structure of the file
         :param node: starting node, leave free to go through whole file
@@ -485,7 +495,7 @@ class Reader:
             elif "int" in str(node.dtype):
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
                 # TODO: put this into metadata["_dataset_statistics"] ??
-        for attr in node.attrs.keys():
+        for attr in node.attrs:
             attr_value = node.attrs[attr]
             if isinstance(attr_value, str):
                 with contextlib.suppress(yaml.YAMLError):
@@ -505,7 +515,7 @@ class Reader:
                     "file_size_MiB": round(self.file_size / 2**20, 3),
                     "valid": self.is_valid(),
                 }
-            for item in node.keys():
+            for item in node:
                 metadata[item] = self.get_metadata(node[item], minimal=minimal)
 
         return metadata
@@ -524,7 +534,7 @@ class Reader:
             metadata = self.get_metadata(
                 node
             )  # {"h5root": self.get_metadata(self.h5file)}
-            with open(yaml_path, "w", encoding="utf-8-sig") as yfd:
+            with yaml_path.open("w", encoding="utf-8-sig") as yfd:
                 yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
         else:
             metadata = {}
@@ -584,7 +594,7 @@ class Reader:
         if path_csv.exists():
             self._logger.warning("%s already exists, will skip", path_csv)
             return
-        with open(path_csv, "w") as csv:
+        with path_csv.open("w") as csv:
             csv.write(f"timestamp [s],{pin_name}\n")
             for row in pin_wf:
                 csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")

@@ -2,7 +2,6 @@
 
 
 """
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -58,11 +57,11 @@ if __name__ == "__main__":
         tb_client.connect()
 
     if not path_eenv.exists():
-        os.makedirs(path_eenv)
+        path_eenv.mkdir(parents=True)
     if not path_task.exists():
-        os.makedirs(path_task)
+        path_task.mkdir(parents=True)
     if not path_fw.exists():
-        os.makedirs(path_fw)
+        path_fw.mkdir(parents=True)
 
     # generate pwr-supply
     generate_lab_vsrc(path_pwr)

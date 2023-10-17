@@ -39,7 +39,7 @@ if __name__ == "__main__":
     if not path_meta.exists():
         logger.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
     else:
-        with open(path_meta) as file_meta:
+        with path_meta.open() as file_meta:
             metadata = yaml.safe_load(file_meta)["metadata"]
 
         for _fw, _descr in metadata.items():

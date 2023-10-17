@@ -117,7 +117,7 @@ class Uart:
         self.events_lines: Optional[np.ndarray] = None
         self.text: Optional[str] = None
 
-    def _convert_analog2digital(self, invert: bool = False) -> None:
+    def _convert_analog2digital(self, *, invert: bool = False) -> None:
         """divide dimension in two, divided by mean-value"""
         data = self.events_sig[:, 1]
         mean = np.mean(data)
@@ -193,7 +193,7 @@ class Uart:
         """
         pass
 
-    def get_symbols(self, force_redo: bool = False) -> np.ndarray:
+    def get_symbols(self, *, force_redo: bool = False) -> np.ndarray:
         """
         ways to detect EOF:
         - long pause on HIGH
@@ -252,7 +252,7 @@ class Uart:
         # symbol_events[:, 0] = symbol_events[:, 0].astype(float)  # does not work, noqa: 800
         return self.events_symbols
 
-    def get_lines(self, force_redo: bool = False) -> np.ndarray:
+    def get_lines(self, *, force_redo: bool = False) -> np.ndarray:
         """timestamped symbols to line, cut at \r, \r\n or \n"""
         if force_redo:
             self.events_lines = None
@@ -284,7 +284,7 @@ class Uart:
         self.events_lines = np.concatenate(content).reshape((len(content), 2))
         return self.events_lines
 
-    def get_text(self, force_redo: bool = False) -> str:
+    def get_text(self, *, force_redo: bool = False) -> str:
         """remove timestamps and just return the whole string"""
         if force_redo:
             self.text = None

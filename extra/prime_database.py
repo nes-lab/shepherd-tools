@@ -3,6 +3,7 @@ script will:
 - clean Models from temporary data (if wanted)
 - copy models to content-dir of core-lib
 """
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -33,7 +34,7 @@ if __name__ == "__main__":
 
     if not path_db.exists() or not path_db.is_dir():
         logger.error("Path to db must exist and be a directory!")
-        exit(1)
+        sys.exit(1)
 
     if Path("/var/shepherd/").exists():
         path_content = Path("/var/shepherd/content/")
@@ -79,5 +80,5 @@ if __name__ == "__main__":
             )
 
     model_yaml = yaml.safe_dump(fixtures, default_flow_style=False, sort_keys=False)
-    with open(path_db / "_external_fixtures.yaml", "w") as f:
+    with (path_db / "_external_fixtures.yaml").open("w") as f:
         f.write(model_yaml)

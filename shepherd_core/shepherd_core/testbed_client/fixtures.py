@@ -9,6 +9,7 @@ from typing import List
 from typing import Optional
 
 import yaml
+from pydantic import validate_call
 
 from ..data_models.base.wrapper import Wrapper
 from ..logger import logger
@@ -154,7 +155,7 @@ class Fixture:
 
 def file_older_than(file: Path, delta: timedelta):
     cutoff = datetime.utcnow() - delta
-    mtime = datetime.utcfromtimestamp(os.path.getmtime(file))
+    mtime = datetime.utcfromtimestamp(file.stat().st_mtime)
     if mtime < cutoff:
         return True
     return False
@@ -163,6 +164,7 @@ def file_older_than(file: Path, delta: timedelta):
 class Fixtures:
     suffix = ".yaml"
 
+    @validate_call
     def __init__(self, file_path: Optional[Path] = None):
         if file_path is None:
             self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
@@ -173,7 +175,7 @@ class Fixtures:
 
         if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)):
             # speedup
-            with open(save_path, "rb", -1) as fd:
+            with save_path.open("rb", buffering=-1) as fd:
                 self.components = pickle.load(fd)  # noqa: S301
             logger.debug(" -> found & used pickled fixtures")
         else:
@@ -187,11 +189,12 @@ class Fixtures:
             for file in files:
                 self.insert_file(file)
 
-            with open(save_path, "wb", -1) as fd:
+            with save_path.open("wb", buffering=-1) as fd:
                 pickle.dump(self.components, fd)
 
+    @validate_call
     def insert_file(self, file: Path):
-        with open(file) as fd:
+        with file.open() as fd:
             fixtures = yaml.safe_load(fd)
             for fixture in fixtures:
                 if not isinstance(fixture, dict):

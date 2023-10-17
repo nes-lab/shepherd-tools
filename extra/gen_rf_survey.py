@@ -2,14 +2,13 @@
 
 
 """
-import os
 from pathlib import Path
 
 from shepherd_core import TestbedClient
 from shepherd_core import logger
 from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models.content import EnergyEnvironment
-from shepherd_core.data_models.content import Firmware as FW
+from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
@@ -29,9 +28,9 @@ if __name__ == "__main__":
         tb_client.connect()
 
     if not path_fw.exists():
-        os.makedirs(path_fw)
+        path_fw.mkdir(parents=True)
     if not path_task.exists():
-        os.makedirs(path_task)
+        path_task.mkdir(parents=True)
 
     # RF-Survey
     xp1 = Experiment(
@@ -44,13 +43,13 @@ if __name__ == "__main__":
                 custom_IDs=list(range(1, 32)),
                 # ⤷ note: traffic bench expects node 1 as root-node
                 energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
-                firmware1=FW.from_firmware(
+                firmware1=Firmware.from_firmware(
                     file=path_fw / "nrf52_rf_survey/build.elf",
                     embed=False,
                     owner="Ingmar",
                     group="NES_Lab",
                 ),
-                firmware2=FW(name="msp430_deep_sleep"),
+                firmware2=Firmware(name="msp430_deep_sleep"),
                 power_tracing=None,
                 gpio_tracing=GpioTracing(
                     duration=0,  # this affects only the gpio-tracing itself

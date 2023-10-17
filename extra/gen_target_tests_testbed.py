@@ -2,7 +2,6 @@
 
 
 """
-import os
 from pathlib import Path
 
 from shepherd_core import TestbedClient
@@ -28,7 +27,7 @@ if __name__ == "__main__":
         tb_client.connect()
 
     if not path_task.exists():
-        os.makedirs(path_task)
+        path_task.mkdir(parents=True)
 
     # Self-test both ICs
     tests = [
