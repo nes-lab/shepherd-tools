@@ -23,5 +23,5 @@ def elf_to_hex(file_elf: Path, file_hex: Optional[Path] = None) -> Path:
             "Objcopy not found -> are binutils or build-essential installed?"
         ) from err
     except subprocess.CalledProcessError:
-        raise RuntimeError("Objcopy failed to convert ELF to iHEX")
+        raise RuntimeError("Objcopy failed to convert ELF to iHEX") from None
     return file_hex

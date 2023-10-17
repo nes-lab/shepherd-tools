@@ -8,7 +8,7 @@ from ..data_models import ShpModel
 
 class TargetInventory(ShpModel):
     cape: Optional[str] = None
-    targets: List[str] = []
+    targets: List[str] = []  # noqa: RUF012
 
     model_config = ConfigDict(str_min_length=0)
 

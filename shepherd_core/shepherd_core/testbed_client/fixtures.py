@@ -217,7 +217,8 @@ class Fixtures:
     def keys(self):  # -> _dict_keys[Any, Any]:
         return self.components.keys()
 
-    def to_file(self, file: Path):
+    @staticmethod
+    def to_file(file: Path):
         raise RuntimeError(f"Not Implemented, TODO (val={file})")
 
 
@@ -237,7 +238,7 @@ def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> List[P
         item_ext = item_name.split(".")[-1]
         if item_ext == suffix and item_ext != item_name:
             files.append(Path(item.path))
-        if suffix == "" and item_ext == item_name:
+        if not suffix and item_ext == item_name:
             files.append(Path(item.path))
 
     if recursion_depth == 1 and len(files) > 0:

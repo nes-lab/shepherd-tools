@@ -29,15 +29,17 @@ class VirtualHarvesterModel:
 
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1
-        # self.settle_steps: int = 0  # adc_ivcurve, noqa: E800, ERA001
         self.interval_step: int = 2**30
-
         self.is_rising: bool = (self._cfg.hrv_mode & (2**1)) != 0
 
         # PO-Relevant, iv & adc
         self.volt_step_uV: int = self._cfg.voltage_step_uV
 
-        # self.power_last_raw: int = 0  # adc_mppt_po, noqa: E800, ERA001
+        # adc_ivcurve
+        # self.settle_steps: int = 0  # noqa: ERA001
+
+        # adc_mppt_po
+        # self.power_last_raw: int = 0 # noqa: ERA001
 
         # globals for iv_cv
         self.voltage_hold: int = 0

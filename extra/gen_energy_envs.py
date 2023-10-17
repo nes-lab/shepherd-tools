@@ -33,7 +33,7 @@ if __name__ == "__main__":
     for _v, _c in product(voltages_V, currents_A):
         v_str = f"{round(_v * 1000)}mV"
         c_str = f"{round(_c * 1000)}mA"
-        t_str = f"{round(duration_s*repetitions)}s"
+        t_str = f"{round(duration_s * repetitions)}s"
         name = f"eenv_static_{v_str}_{c_str}_{t_str}"
         file_path = path_eenv / f"{name}.h5"
 

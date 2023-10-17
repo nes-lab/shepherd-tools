@@ -56,7 +56,7 @@ class MPPTracker:
         :param coeffs: ivonne coefficients
         :return:
         """
-        return pd.DataFrame()
+        pass
 
 
 class OpenCircuitTracker(MPPTracker):

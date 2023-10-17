@@ -36,14 +36,13 @@ if do_connect:
 xp = Experiment(
     id="4567",
     name="meaningful_TestName",
-    # time_start="2033-03-13 14:15:16",  # or: datetime.now() + timedelta(minutes=30)
+    # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
     duration=30,
     target_configs=[
         TargetConfig(
-            target_IDs=range(1, 13),
-            # custom_IDs=range(7, 18),  # note: longer list is OK
+            target_IDs=range(7, 13),
+            custom_IDs=range(1, 100),  # note: longer list is OK
             energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
-            # virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt"),
             firmware1=Firmware.from_firmware(
                 file=Path("./firmware_nrf.elf").absolute(),
             ),

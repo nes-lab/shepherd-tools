@@ -34,7 +34,7 @@ class SystemInventory(ShpModel):
 
     hostname: str
 
-    interfaces: dict = {}
+    interfaces: dict = {}  # noqa: RUF012
     # ⤷ tuple with
     #   ip IPvAnyAddress
     #   mac MACStr

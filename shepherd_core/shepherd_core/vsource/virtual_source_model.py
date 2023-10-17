@@ -27,9 +27,10 @@ class VirtualSourceModel:
         self,
         vsrc: Optional[VirtualSourceConfig],
         cal_emu: CalibrationEmulator,
-        log_intermediate: bool = False,
         dtype_in: EnergyDType = EnergyDType.ivsample,
         window_size: Optional[int] = None,
+        *,
+        log_intermediate: bool = False,
     ):
         self._cal_emu: CalibrationEmulator = cal_emu
         self._cal_pru: PruCalibration = PruCalibration(cal_emu)

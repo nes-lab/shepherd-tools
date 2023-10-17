@@ -30,7 +30,7 @@ def set_log_verbose_level(
 
     if verbose < 3:
         # reduce log-overhead when not debugging, also more user-friendly exceptions
-        logging._srcfile = None
+        logging._srcfile = None  # noqa: SLF001
         logging.logThreads = 0
         logging.logProcesses = 0
 
@@ -41,7 +41,7 @@ def set_log_verbose_level(
 
 
 def increase_verbose_level(verbose: int) -> None:
-    global verbose_level
+    global verbose_level  # noqa: PLW0603
     if verbose >= verbose_level:
         verbose_level = min(max(verbose, 0), 3)
         set_log_verbose_level(logger, verbose_level)

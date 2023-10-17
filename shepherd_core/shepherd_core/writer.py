@@ -272,7 +272,7 @@ class Writer(Reader):
 
     def append_iv_data_raw(
         self,
-        timestamp: Union[np.ndarray, float, int],
+        timestamp: Union[np.ndarray, float, int],  # noqa: PYI041
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:

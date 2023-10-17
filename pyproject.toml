@@ -61,8 +61,6 @@ require-plugins = [
 extend-ignore = [
     # black-formatter-specific
     "E203",
-    # open() vs os.open()
-    "SCS109",
     # hideous commas
     "C812",
     "C815",
@@ -88,14 +86,15 @@ statistics = true
 line-length = 100
 select = [
     "A",    # flake8-builtins
-#    "ANN", # flake8-annotations
+#    "ANN", # flake8-annotations, TODO: activate
     "ARG",  # flake8-unused-arguments
     "B",    # Bugbear
     "C",
-#    "COM", # flake8-commas
-    "CPY",  # flake8-copyright
+    "COM", # flake8-commas
+#    "CPY",  # flake8-copyright
     "C4",   # flake8-comprehensions
-#    "DTZ",  # flake8-datetimez
+#    "DTZ",  # flake8-datetimez, TODO: activate
+#    "D",    # pydocstyle, TODO: activate
     "E",    # pycodestyle errors
     "ERA",  # eradicate commented out code
     "F",    # pyflakes
@@ -127,15 +126,21 @@ select = [
     "YTT",  # flake8-2020
 ]
 ignore = [
-    "A003",
-    "N802", "N803", "N806", "N815", "N816",
-    "PLR2004",
-    "N805", # TODO: as long as pydantic < v2 -> see data_models/__init__
+    "N802", "N803", "N806", "N815", "N816", # naming (si-units should stay)
+    "PLR2004", # magic values
+    "TID252", # relative imports from parent
+    "RUF100", # noqa from other linters, TODO: replace flake8, when security is fully ported (S4**)
+    "PLR0904", # complexity
+    "PLR0911", "PLR0912", # complexity
+    "PLR0913", "PLR0915", # complexity
+    "C901", # complexity
+    "E203", # whitespace before ':' (black-default)
+    "ANN101", # self not type-annotated
+    "COM812", # trailing comma, same line
 ]
 target-version = "py38"
 
 [tool.ruff.per-file-ignores]
-"__init__.py" = ["F401"]
 "*/tests/**" = ["ARG", "S"]
 
 [tool.ruff.mccabe]

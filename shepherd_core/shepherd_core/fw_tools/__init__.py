@@ -1,5 +1,7 @@
 try:
-    from pwnlib.elf import ELF  # noqa: F401
+    from importlib.util import find_spec
+
+    find_spec("pwnlib.elf.ELF")
 except ImportError:
     # replace missing dependencies from elf-only pwntools
     import sys

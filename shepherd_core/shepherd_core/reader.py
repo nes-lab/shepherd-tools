@@ -6,9 +6,9 @@ import errno
 import logging
 import math
 import os
-from collections import namedtuple
 from itertools import product
 from pathlib import Path
+from typing import ClassVar
 from typing import Dict
 from typing import Generator
 from typing import List
@@ -38,16 +38,14 @@ class Reader:
 
     samples_per_buffer: int = 10_000
 
-    mode_dtype_dict = namedtuple(
-        {
-            "harvester": [
-                EnergyDType.ivsample,
-                EnergyDType.ivcurve,
-                EnergyDType.isc_voc,
-            ],
-            "emulator": [EnergyDType.ivsample],
-        }
-    )
+    mode_dtype_dict: ClassVar[dict] = {
+        "harvester": [
+            EnergyDType.ivsample,
+            EnergyDType.ivcurve,
+            EnergyDType.isc_voc,
+        ],
+        "emulator": [EnergyDType.ivsample],
+    }
 
     @validate_call
     def __init__(self, file_path: Optional[Path], *, verbose: Optional[bool] = True):
@@ -420,7 +418,7 @@ class Reader:
         }
         return stats
 
-    def data_timediffs(self) -> List[float]:
+    def _data_timediffs(self) -> List[float]:
         """calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
 
@@ -457,7 +455,7 @@ class Reader:
 
         :return: True if OK
         """
-        diffs = self.data_timediffs()
+        diffs = self._data_timediffs()
         if len(diffs) > 1:
             self._logger.warning(
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
@@ -489,7 +487,7 @@ class Reader:
                 "compression_opts": str(node.compression_opts),
             }
             if node.name == "/data/time":
-                metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
+                metadata["_dataset_info"]["time_diffs_s"] = self._data_timediffs()
                 # TODO: already convert to str to calm the typechecker?
                 #  or construct a pydantic-class
             elif "int" in str(node.dtype):

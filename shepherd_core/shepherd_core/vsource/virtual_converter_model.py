@@ -30,7 +30,8 @@ class PruCalibration:
         return self.cal.adc_C_A.raw_to_si(current_raw) * (10**9)
         # TODO: add feature "negative residue compensation" to here
 
-    def conv_adc_raw_to_uV(self, voltage_raw: int) -> float:
+    @staticmethod
+    def conv_adc_raw_to_uV(voltage_raw: int) -> float:
         raise RuntimeError(f"This Fn should not been used (val={voltage_raw})")
 
     def conv_uV_to_dac_raw(self, voltage_uV: float) -> int:
@@ -140,7 +141,7 @@ class VirtualConverterModel:
 
         P_leak_fW = self.V_mid_uV * self._cfg.I_intermediate_leak_nA
         I_out_nA = self._cal.conv_adc_raw_to_nA(current_adc_raw)
-        if self.enable_buck:
+        if self.enable_buck:  # noqa: SIM108
             eta_inv_out = self.get_output_inv_efficiency(I_out_nA)
         else:
             eta_inv_out = 1.0

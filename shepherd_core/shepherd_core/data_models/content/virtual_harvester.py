@@ -173,7 +173,7 @@ algo_to_num = {
     "isc_voc": 2**3,
     "ivcurve": 2**4,
     "cv": 2**8,
-    # "ci": 2**9, # is this desired?
+    # is "ci" desired?
     "mppt_voc": 2**12,
     "mppt_po": 2**13,
     "mppt_opt": 2**14,

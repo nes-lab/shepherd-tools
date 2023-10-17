@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import os
 import shutil
 from pathlib import Path
 from typing import Union
@@ -51,7 +50,7 @@ def base64_to_file(content: str, file_path: Path) -> None:
     file_cmpress = base64.b64decode(content)
     file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
     if not file_path.parent.exists():
-        os.makedirs(file_path.parent)
+        file_path.parent.mkdir(parents=True)
     with file_path.resolve().open("wb") as file:
         file.write(file_content)
 

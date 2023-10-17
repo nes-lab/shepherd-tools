@@ -16,7 +16,7 @@ from tqdm import trange
 from shepherd_core import Reader as CoreReader
 from shepherd_core.logger import logger
 
-# import samplerate  # TODO: just a test-fn for now
+# import samplerate  # noqa: ERA001, TODO: just a test-fn for now
 
 
 class Reader(CoreReader):

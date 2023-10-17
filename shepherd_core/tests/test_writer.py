@@ -112,7 +112,10 @@ def test_writer_faulty_window(h5_path: Path) -> None:
         generate_shp_file(h5_path, mode="harvester", datatype="ivcurve")
     with pytest.raises(ValueError):
         generate_shp_file(
-            h5_path, mode="harvester", datatype="ivcurve", window_samples=0
+            h5_path,
+            mode="harvester",
+            datatype="ivcurve",
+            window_samples=0,
         )
 
 

@@ -34,7 +34,8 @@ def test_base_model_cal_pair_conv() -> None:
 
 def test_base_model_cal_pair_conv2() -> None:
     cal = CalibrationPair(gain=44)
-    val_raw = np.random.randint(low=0, high=2000, size=20)
+    rng = np.random.default_rng()
+    val_raw = rng.integers(low=0, high=2000, size=20)
     val_si = cal.raw_to_si(val_raw)
     val_rbw = cal.si_to_raw(val_si)
     assert val_raw.size == val_rbw.size

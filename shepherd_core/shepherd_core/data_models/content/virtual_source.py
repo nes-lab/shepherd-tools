@@ -198,7 +198,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             ] = self.V_intermediate_disable_threshold_mV
         return values
 
-    def calc_converter_mode(self, log_intermediate_node: bool) -> int:
+    def calc_converter_mode(self, *, log_intermediate_node: bool) -> int:
         """assembles bitmask from discrete values
         log_intermediate_node: record / log virtual intermediate (cap-)voltage and
                             -current (out) instead of output-voltage and -current
@@ -287,7 +287,9 @@ class ConverterPRUConfig(ShpModel):
         states = data.calc_internal_states()
         return cls(
             # General
-            converter_mode=data.calc_converter_mode(log_intermediate_node),
+            converter_mode=data.calc_converter_mode(
+                log_intermediate_node=log_intermediate_node
+            ),
             interval_startup_delay_drain_n=round(
                 data.interval_startup_delay_drain_ms * samplerate_sps_default * 1e-3
             ),
