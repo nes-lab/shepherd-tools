@@ -1,5 +1,4 @@
-"""
-Allows to cross-check the relations between observer, cape and targets in each testbed
+"""Allows to cross-check the relations between observer, cape and targets in each testbed
 """
 from pathlib import Path
 

@@ -38,7 +38,7 @@ class Target(ShpModel, title="Target Node (DuT)"):
 
     # TODO programming pins per mcu should be here (or better in Cape)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @model_validator(mode="before")

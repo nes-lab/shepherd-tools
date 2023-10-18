@@ -6,6 +6,7 @@ from pydantic import Field
 from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from .shepherd import ShpModel
 from .timezone import local_now
@@ -48,11 +49,11 @@ class ContentModel(ShpModel):
 
     # TODO: we probably need to remember the lib-version for content &| experiment
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @model_validator(mode="after")
-    def content_validation(self):
+    def content_validation(self) -> Self:
         is_visible = self.visible2group or self.visible2all
         if is_visible and self.description is None:
             raise ValueError(

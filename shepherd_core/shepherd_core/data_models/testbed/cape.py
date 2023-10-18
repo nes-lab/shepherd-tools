@@ -35,7 +35,7 @@ class Cape(ShpModel, title="Shepherd-Cape"):
     created: Union[date, datetime] = Field(default_factory=datetime.now)
     calibrated: Union[date, datetime, None] = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @model_validator(mode="before")

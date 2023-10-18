@@ -75,8 +75,7 @@ def base64_to_hash(content: str) -> str:
 def extract_firmware(
     data: Union[str, Path], data_type: FirmwareDType, file_path: Path
 ) -> Path:
-    """
-    - base64-string will be transformed into file
+    """- base64-string will be transformed into file
     - if data is a path the file will be copied to the destination
     """
     if data_type == FirmwareDType.base64_elf:

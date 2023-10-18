@@ -1,5 +1,4 @@
-"""
-prototype of a file-reader with various converters
+"""prototype of a file-reader with various converters
 to generate valid shepherd-data for emulation
 
 """
@@ -9,11 +8,13 @@ import math
 import os
 import pickle  # noqa: S403
 from pathlib import Path
+from types import TracebackType
 from typing import Optional
 
 import numpy as np
 import pandas as pd
 from tqdm import trange
+from typing_extensions import Self
 
 from . import Writer
 from .mppt import MPPTracker
@@ -21,12 +22,12 @@ from .mppt import OptimalTracker
 from .mppt import iv_model
 
 
-def get_voc(coeffs: pd.DataFrame):
+def get_voc(coeffs: pd.DataFrame):  # noqa: ANN201
     """Open-circuit voltage of IV curve with given coefficients."""
     return np.log(coeffs["a"] / coeffs["b"] + 1) / coeffs["c"]
 
 
-def get_isc(coeffs: pd.DataFrame):
+def get_isc(coeffs: pd.DataFrame):  # noqa: ANN201
     """Short-circuit current of IV curve with given coefficients."""
     return coeffs["a"]
 
@@ -42,7 +43,7 @@ class Reader:
         samplerate_sps: Optional[int] = None,
         *,
         verbose: bool = True,
-    ):
+    ) -> None:
         self._logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
         self.file_path = Path(file_path).resolve()
@@ -59,7 +60,7 @@ class Reader:
 
         self._df: Optional[pd.DataFrame] = None
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         if not self.file_path.exists():
             raise FileNotFoundError(
                 errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
@@ -79,7 +80,13 @@ class Reader:
         )
         return self
 
-    def __exit__(self, *exc):  # type: ignore
+    def __exit__(
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
+        extra_arg: int = 0,
+    ) -> None:
         pass
 
     def _refresh_file_stats(self) -> None:
@@ -171,7 +178,8 @@ class Reader:
         file and applies the specified MPPT algorithm to extract the corresponding
         voltage and current traces.
 
-        TODO:
+        Todo:
+        ----
             - allow to use harvester-model in shepherd-code
             - generalize and put it into main code
 

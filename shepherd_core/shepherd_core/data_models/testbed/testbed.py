@@ -7,6 +7,7 @@ from pydantic import Field
 from pydantic import HttpUrl
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ...testbed_client import tb_client
 from ..base.content import IdInt
@@ -43,7 +44,7 @@ class Testbed(ShpModel):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         observers = []
         ips = []
         macs = []

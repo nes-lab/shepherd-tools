@@ -51,7 +51,7 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
 def read_symbol(
     file_elf: Path, symbol: str, length: int = uid_len_default
 ) -> Optional[int]:
-    """interpreted as int"""
+    """Interpreted as int"""
     if not find_symbol(file_elf, symbol):
         return None
     if not elf_support:
@@ -87,7 +87,7 @@ def modify_symbol_value(
     *,
     overwrite: bool = False,
 ) -> Optional[Path]:
-    """replaces value of symbol in ELF-File, hardcoded for uint16_t (2 byte)
+    """Replaces value of symbol in ELF-File, hardcoded for uint16_t (2 byte)
     testbed uses FN to patch firmware with custom target-ID
     NOTE: can overwrite provided file
 

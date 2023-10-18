@@ -1,5 +1,4 @@
-"""
-script will:
+"""script will:
 - clean Models from temporary data (if wanted)
 - copy models to content-dir of core-lib
 """

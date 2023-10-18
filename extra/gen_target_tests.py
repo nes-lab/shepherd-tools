@@ -20,7 +20,7 @@ from shepherd_core.data_models.testbed import TargetPort
 from shepherd_core.logger import logger
 
 
-def generate_lab_vsrc(path: Path, duration_s: float = 60):
+def generate_lab_vsrc(path: Path, duration_s: float = 60) -> None:
     _V = 3.0
     _A = 50e-3
     if path.exists():

@@ -1,5 +1,4 @@
-"""
-shepherd.datalib
+"""shepherd.datalib
 ~~~~~
 Provides classes for storing and retrieving sampled IV data to/from
 HDF5 files.

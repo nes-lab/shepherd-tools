@@ -1,5 +1,4 @@
-"""
-this is ported py-version of the pru-code, goals:
+"""this is ported py-version of the pru-code, goals:
 - stay close to original code-base
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
@@ -24,7 +23,7 @@ class VirtualHarvesterModel:
     HRV_MPPT_PO: int = 2**13
     HRV_MPPT_OPT: int = 2**14
 
-    def __init__(self, cfg: HarvesterPRUConfig):
+    def __init__(self, cfg: HarvesterPRUConfig) -> None:
         self._cfg: HarvesterPRUConfig = cfg
 
         # INIT global vars: shared states

@@ -12,6 +12,7 @@ from pydantic import PositiveFloat
 from pydantic import conbytes
 from pydantic import constr
 from pydantic import validate_call
+from typing_extensions import Self
 
 from ...calibration_hw_def import adc_current_to_raw
 from ...calibration_hw_def import adc_voltage_to_raw
@@ -22,10 +23,12 @@ from .timezone import local_iso_date
 Calc_t = TypeVar("Calc_t", NDArray[np.float64], float)
 
 
-def dict_generator(indict, pre=None) -> Generator[list, None, None]:
+def dict_generator(
+    in_dict: Union[dict, list], pre: Optional[list] = None
+) -> Generator[list, None, None]:
     pre = pre[:] if pre else []
-    if isinstance(indict, dict):
-        for key, value in indict.items():
+    if isinstance(in_dict, dict):
+        for key, value in in_dict.items():
             if isinstance(value, dict):
                 yield from dict_generator(value, [*pre, key])
             elif isinstance(value, (list, tuple)):
@@ -34,7 +37,7 @@ def dict_generator(indict, pre=None) -> Generator[list, None, None]:
             else:
                 yield [*pre, key, value]
     else:
-        yield [*pre, indict]
+        yield [*pre, in_dict]
 
 
 class CalibrationPair(ShpModel):
@@ -67,7 +70,7 @@ class CalibrationPair(ShpModel):
         return values_raw
 
     @classmethod
-    def from_fn(cls, fn: Callable):
+    def from_fn(cls, fn: Callable) -> Self:
         offset = fn(0)
         gain_inv = fn(1.0) - offset
         return cls(
@@ -91,8 +94,7 @@ class CalibrationHarvester(ShpModel):
     adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
 
     def export_for_sysfs(self) -> dict:
-        """
-        [scaling according to commons.h]
+        """[scaling according to commons.h]
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
         # ADC-V is handled in uV (micro-volt), gain is shifted by 8 bit
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
@@ -130,8 +132,7 @@ class CalibrationEmulator(ShpModel):
     adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
 
     def export_for_sysfs(self) -> dict:
-        """
-        [scaling according to commons.h]
+        """[scaling according to commons.h]
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
         # ADC-V -> unused by vsrc / emu
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
@@ -196,11 +197,12 @@ class CalibrationCape(ShpModel):
     emulator: CalibrationEmulator = CalibrationEmulator()
 
     @classmethod
-    def from_bytestr(cls, data: bytes, cape: Optional[CapeData] = None):
+    def from_bytestr(cls, data: bytes, cape: Optional[CapeData] = None) -> Self:
         """Instantiates calibration data based on byte string.
         This is mainly used to deserialize data read from an EEPROM memory.
 
         Args:
+        ----
             data: Byte string containing calibration data.
             cape: data can be supplied
         Returns:
@@ -220,7 +222,8 @@ class CalibrationCape(ShpModel):
         """Serializes calibration data to byte string.
         Used to prepare data for writing it to EEPROM.
 
-        Returns:
+        Returns
+        -------
             Byte string representation of calibration values.
         """
         lw = list(dict_generator(self.model_dump(include={"harvester", "emulator"})))
@@ -237,13 +240,13 @@ class CalibrationSeries(ShpModel):
     # ⤷ default = nanoseconds
 
     @classmethod
-    @validate_call
+    @validate_call(validate_return=False)
     def from_cal(
         cls,
         cal: Union[CalibrationHarvester, CalibrationEmulator],
         *,
         emu_port_a: bool = True,
-    ):
+    ) -> Self:
         if isinstance(cal, CalibrationHarvester):
             return cls(voltage=cal.adc_V_Sense, current=cal.dac_V_Hrv)
         if emu_port_a:

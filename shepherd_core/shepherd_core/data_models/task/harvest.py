@@ -6,6 +6,7 @@ from typing import Optional
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.shepherd import ShpModel
 from ..base.timezone import local_tz
@@ -69,7 +70,7 @@ class HarvestTask(ShpModel):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         # TODO: limit paths
         has_time = self.time_start is not None
         time_now = datetime.now().astimezone()

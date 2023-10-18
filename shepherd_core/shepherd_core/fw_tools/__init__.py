@@ -1,3 +1,5 @@
+from typing import Any
+
 try:
     from importlib.util import find_spec
 
@@ -10,7 +12,7 @@ except ImportError:
 
     class Mock(MagicMock):
         @classmethod
-        def __getattr__(cls, name):
+        def __getattr__(cls, name: str) -> Any:
             return MagicMock()
 
     MOCK_MODULES = [

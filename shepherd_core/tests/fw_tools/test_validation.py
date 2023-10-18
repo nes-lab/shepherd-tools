@@ -27,7 +27,7 @@ def test_elf_determination(path_elf: Path) -> None:
 
 
 @pytest.mark.parametrize("path_elf", files_elf)
-def test_hex_detection(path_elf: Path, tmp_path) -> None:
+def test_hex_detection(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
     path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
     assert fw_tools.is_hex(path_hex)
@@ -38,7 +38,7 @@ def test_hex_detection(path_elf: Path, tmp_path) -> None:
 
 
 @pytest.mark.parametrize("path_elf", files_elf)
-def test_hex_determination(path_elf: Path, tmp_path) -> None:
+def test_hex_determination(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
     path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
     assert fw_tools.determine_type(path_hex) == FirmwareDType.path_hex

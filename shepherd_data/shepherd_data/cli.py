@@ -1,5 +1,4 @@
-"""
-Command definitions for CLI
+"""Command definitions for CLI
 """
 import logging
 import os
@@ -25,7 +24,7 @@ logger = logging.getLogger("SHPData.cli")
 
 
 def path_to_flist(data_path: Path) -> List[Path]:
-    """every path gets transformed to a list of paths
+    """Every path gets transformed to a list of paths
     - if directory: list of files inside
     - if existing file: list with 1 element
     - or else: empty list
@@ -251,7 +250,8 @@ def downsample(
     in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]
 ) -> None:
     """Creates an array of downsampling-files from file
-    or directory containing shepherd-recordings"""
+    or directory containing shepherd-recordings
+    """
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
         ds_factor = int(samplerate_sps_default / sample_rate)
         # TODO: shouldn't current sps be based on file rather than default?

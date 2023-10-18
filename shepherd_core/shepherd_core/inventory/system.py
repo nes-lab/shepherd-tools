@@ -4,6 +4,8 @@ import time
 from contextlib import suppress
 from typing import Optional
 
+from typing_extensions import Self
+
 from .. import logger
 
 try:
@@ -42,7 +44,7 @@ class SystemInventory(ShpModel):
     model_config = ConfigDict(str_min_length=0)
 
     @classmethod
-    def collect(cls):
+    def collect(cls) -> Self:
         if psutil_support:
             ifs1 = psutil.net_if_addrs().items()
             ifs2 = {

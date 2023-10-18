@@ -7,6 +7,7 @@ from pydantic import EmailStr
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.content import IdInt
 from ..base.content import NameStr
@@ -21,7 +22,8 @@ from .target_config import TargetConfig
 
 class Experiment(ShpModel, title="Config of an Experiment"):
     """Configuration for Experiments on the Shepherd-Testbed
-    emulating Energy Environments for Target Nodes"""
+    emulating Energy Environments for Target Nodes
+    """
 
     # General Properties
     id: IdInt = Field(  # noqa: A003
@@ -55,7 +57,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # TODO: we probably need to remember the lib-version for content &| experiment
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         self.validate_targets(self.target_configs)
         self.validate_observers(self.target_configs)
         if self.duration and self.duration.total_seconds() < 0:

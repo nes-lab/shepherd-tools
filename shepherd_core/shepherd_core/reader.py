@@ -8,6 +8,8 @@ import math
 import os
 from itertools import product
 from pathlib import Path
+from types import TracebackType
+from typing import Any
 from typing import ClassVar
 from typing import Dict
 from typing import Generator
@@ -20,6 +22,7 @@ import numpy as np
 import yaml
 from pydantic import validate_call
 from tqdm import trange
+from typing_extensions import Self
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationPair
@@ -48,7 +51,12 @@ class Reader:
     }
 
     @validate_call
-    def __init__(self, file_path: Optional[Path], *, verbose: Optional[bool] = True):
+    def __init__(
+        self,
+        file_path: Optional[Path],
+        *,
+        verbose: Optional[bool] = True,
+    ) -> None:
         if not hasattr(self, "file_path"):
             self.file_path: Optional[Path] = None
             if isinstance(file_path, (Path, str)):
@@ -127,14 +135,20 @@ class Reader:
                 self.data_rate / 2**10,
             )
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, *exc):  # type: ignore
+    def __exit__(
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
+        extra_arg: int = 0,
+    ) -> None:
         if self._reader_opened:
             self.h5file.close()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return yaml.safe_dump(
             self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
         )
@@ -333,7 +347,7 @@ class Reader:
             self._logger.warning("Hostname was not set (@Validator)")
         return True
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> Any:
         """returns attribute or (if none found) a handle for a group or dataset (if found)
 
         :param key: attribute, group, dataset

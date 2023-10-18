@@ -160,19 +160,19 @@ def test_base_model_content_public_all() -> None:
 # ContentModel below is used as inheritor of ShpModel
 
 
-def test_base_model_shepherd_scheme(tmp_path) -> None:
+def test_base_model_shepherd_scheme(tmp_path: Path) -> None:
     os.chdir(tmp_path)
     ContentModel.schema_to_file(tmp_path / "schema.yaml")
 
 
-def test_base_model_shepherd_min(tmp_path) -> None:
+def test_base_model_shepherd_min(tmp_path: Path) -> None:
     content = ContentModel(name="tricky", owner="peter", group="work")
     content.to_file(tmp_path / "content1.yaml", minimal=True)
     content.to_file(tmp_path / "content2.yaml", minimal=False)
     # minimal should produce min-set (input dict), but does not work currently
 
 
-def test_base_model_shepherd_fault_load_other(tmp_path) -> None:
+def test_base_model_shepherd_fault_load_other(tmp_path: Path) -> None:
     path = tmp_path / "content.yaml"
     content = ContentModel(name="tricky", owner="peter", group="work")
     content.to_file(path)

@@ -1,5 +1,4 @@
-"""
-Reader-Baseclass
+"""Reader-Baseclass
 """
 import math
 from datetime import datetime
@@ -24,15 +23,21 @@ class Reader(CoreReader):
     """Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
+    ----
         file_path: Path of hdf5 file containing shepherd data with iv-samples, iv-curves or isc&voc
         verbose: more info during usage, 'None' skips the setter
     """
 
-    def __init__(self, file_path: Optional[Path], *, verbose: Optional[bool] = True):
+    def __init__(
+        self,
+        file_path: Optional[Path],
+        *,
+        verbose: Optional[bool] = True,
+    ) -> None:
         super().__init__(file_path, verbose=verbose)
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
-        """extract numerical data via csv
+        """Extract numerical data via csv
 
         :param h5_group: can be external and should probably be downsampled
         :param separator: used between columns
@@ -75,7 +80,7 @@ class Reader(CoreReader):
         return h5_group["time"][:].shape[0]
 
     def save_log(self, h5_group: h5py.Group, *, add_timestamp: bool = True) -> int:
-        """save dataset in group as log, optimal for logged dmesg and exceptions
+        """Save dataset in group as log, optimal for logged dmesg and exceptions
 
         :param h5_group: can be external
         :param add_timestamp: can be external
@@ -205,8 +210,7 @@ class Reader(CoreReader):
         *,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
-        """
-        :param data_src:
+        """:param data_src:
         :param data_dst:
         :param start_n:
         :param end_n:
@@ -306,7 +310,7 @@ class Reader(CoreReader):
         *,
         relative_timestamp: bool = True,
     ) -> Dict:
-        """provides down-sampled iv-data that can be feed into plot_to_file()
+        """Provides down-sampled iv-data that can be feed into plot_to_file()
 
         :param start_s: time in seconds, relative to start of recording
         :param end_s: time in seconds, relative to start of recording
@@ -356,8 +360,7 @@ class Reader(CoreReader):
     def assemble_plot(
         data: Union[dict, list], width: int = 20, height: int = 10
     ) -> plt.Figure:
-        """
-        TODO: add power (if wanted)
+        """TODO: add power (if wanted)
 
         :param data: plottable / down-sampled iv-data with some meta-data
                 -> created with generate_plot_data()
@@ -389,7 +392,7 @@ class Reader(CoreReader):
         width: int = 20,
         height: int = 10,
     ) -> None:
-        """creates (down-sampled) IV-Plot
+        """Creates (down-sampled) IV-Plot
             -> omitting start- and end-time will use the whole duration
 
         :param start_s: time in seconds, relative to start of recording, optional
@@ -420,7 +423,7 @@ class Reader(CoreReader):
     def multiplot_to_file(
         data: list, plot_path: Path, width: int = 20, height: int = 10
     ) -> Optional[Path]:
-        """creates (down-sampled) IV-Multi-Plot
+        """Creates (down-sampled) IV-Multi-Plot
 
         :param data: plottable / down-sampled iv-data with some meta-data
             -> created with generate_plot_data()

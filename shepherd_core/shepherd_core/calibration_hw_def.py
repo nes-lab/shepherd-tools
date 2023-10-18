@@ -1,6 +1,4 @@
-"""
-
-Contains some info about the hardware configuration on the shepherd
+"""Contains some info about the hardware configuration on the shepherd
 cape. Based on these values, one can derive the expected adc readings given
 an input voltage/current or, for emulation, the expected voltage and current
 given the digital code in the DAC.

@@ -1,5 +1,4 @@
-"""
-script will:
+"""script will:
 - generate static environments
 - saves energy-env to yaml
 """

@@ -1,6 +1,4 @@
-"""
-
-this is ported py-version of the pru-code, goals:
+"""this is ported py-version of the pru-code, goals:
 - stay close to original code-base
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
@@ -23,7 +21,7 @@ from ..data_models.content.virtual_source import ConverterPRUConfig
 class PruCalibration:
     """part of calibration.h"""
 
-    def __init__(self, cal_emu: Optional[CalibrationEmulator] = None):
+    def __init__(self, cal_emu: Optional[CalibrationEmulator] = None) -> None:
         self.cal = cal_emu if cal_emu else CalibrationEmulator()
 
     def conv_adc_raw_to_nA(self, current_raw: int) -> float:
@@ -42,7 +40,7 @@ class PruCalibration:
 
 
 class VirtualConverterModel:
-    def __init__(self, cfg: ConverterPRUConfig, cal: PruCalibration):
+    def __init__(self, cfg: ConverterPRUConfig, cal: PruCalibration) -> None:
         self._cal: PruCalibration = cal
         self._cfg: ConverterPRUConfig = cfg
 
@@ -254,10 +252,10 @@ class VirtualConverterModel:
     def get_V_intermediate_uV(self) -> int:
         return round(self.V_mid_uV)
 
-    def get_V_intermediate_raw(self):
+    def get_V_intermediate_raw(self) -> int:
         return round(self._cal.conv_uV_to_dac_raw(self.V_mid_uV))
 
-    def get_power_good(self):
+    def get_power_good(self) -> bool:
         return self.power_good
 
     def get_I_mod_out_nA(self) -> float:

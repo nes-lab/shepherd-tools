@@ -1,5 +1,4 @@
-"""
-script will:
+"""script will:
 - iterate through this directory and
 - try to find and fix errors in hdf5-files / shepherd-recordings
 - old recordings from shepherd 1.x can be made available for v2.x

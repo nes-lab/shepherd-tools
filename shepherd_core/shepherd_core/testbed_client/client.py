@@ -1,9 +1,12 @@
 from importlib import import_module
 from pathlib import Path
 from typing import Optional
+from typing import TypedDict
 from typing import Union
 
 from pydantic import validate_call
+from typing_extensions import Self
+from typing_extensions import Unpack
 
 from ..commons import testbed_server_default
 from ..data_models.base.shepherd import ShpModel
@@ -15,7 +18,7 @@ from .user_model import User
 class TestbedClient:
     _instance = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Unpack[TypedDict]) -> None:
         if not hasattr(self, "_token"):
             self._token: str = "null"
             self._server: Optional[str] = testbed_server_default
@@ -27,12 +30,12 @@ class TestbedClient:
         if "server" in kwargs or "token" in kwargs:
             self.connect(**kwargs)
 
-    def __new__(cls):
+    def __new__(cls) -> Self:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __del__(self):
+    def __del__(self) -> None:
         TestbedClient._instance = None
 
     @validate_call

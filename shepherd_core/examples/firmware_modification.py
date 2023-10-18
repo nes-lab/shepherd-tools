@@ -1,7 +1,7 @@
-""" This example manipulates elf-files and embeds firmware into the data-model
-    Note: make sure to have installed:
-     - shepherd-core[elf] via pip
-     - build-essential or binutils-$ARCH installed
+"""This example manipulates elf-files and embeds firmware into the data-model
+Note: make sure to have installed:
+- shepherd-core[elf] via pip
+- build-essential or binutils-$ARCH installed
 """
 import shutil
 from pathlib import Path

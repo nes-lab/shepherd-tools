@@ -5,6 +5,7 @@ from typing import Tuple
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ...commons import samplerate_sps_default
 from ...logger import logger
@@ -93,7 +94,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if self.voltage_min_mV > self.voltage_max_mV:
             raise ValueError("Voltage min > max")
         if self.voltage_mV < self.voltage_min_mV:
@@ -190,8 +191,7 @@ algo_to_dtype = {
 
 
 class HarvesterPRUConfig(ShpModel):
-    """
-    Map settings-list to internal state-vars struct HarvesterConfig
+    """Map settings-list to internal state-vars struct HarvesterConfig
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw
@@ -224,7 +224,7 @@ class HarvesterPRUConfig(ShpModel):
         window_size: Optional[u32] = None,
         *,
         for_emu: bool = False,
-    ):
+    ) -> Self:
         if isinstance(dtype_in, str):
             dtype_in = EnergyDType[dtype_in]
         if for_emu and dtype_in not in [EnergyDType.ivsample, EnergyDType.ivcurve]:

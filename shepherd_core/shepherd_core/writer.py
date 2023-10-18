@@ -1,5 +1,4 @@
-"""
-Writer that inherits from Reader-Baseclass
+"""Writer that inherits from Reader-Baseclass
 """
 import logging
 import math
@@ -7,6 +6,7 @@ import pathlib
 from datetime import timedelta
 from itertools import product
 from pathlib import Path
+from types import TracebackType
 from typing import Any
 from typing import Optional
 from typing import Union
@@ -15,7 +15,10 @@ import h5py
 import numpy as np
 import yaml
 from pydantic import validate_call
+from typing_extensions import Self
+from yaml import Dumper
 from yaml import SafeDumper
+from yaml import ScalarNode
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
@@ -28,11 +31,13 @@ from .reader import Reader
 
 
 # copy of core/models/base/shepherd - needed also here
-def path2str(dumper, data):
+def path2str(
+    dumper: Dumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
+) -> ScalarNode:
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
-def time2int(dumper, data):
+def time2int(dumper: Dumper, data: timedelta) -> ScalarNode:
     return dumper.represent_scalar(
         "tag:yaml.org,2002:int", str(int(data.total_seconds()))
     )
@@ -45,7 +50,7 @@ yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
-    """finds an unused filename in case it already exists
+    """Finds an unused filename in case it already exists
 
     :param base_path: file-path to test
     :param suffix: file-suffix
@@ -71,6 +76,7 @@ class Writer(Reader):
      -> comparison / benchmarks https://www.h5py.org/lzf/
 
     Args:
+    ----
         file_path: (Path) Name of the HDF5 file that data will be written to
         mode: (str) Indicates if this is data from harvester or emulator
         datatype: (str) choose type: ivsample (most common), ivcurve or isc_voc
@@ -103,7 +109,7 @@ class Writer(Reader):
         modify_existing: bool = False,
         force_overwrite: bool = False,
         verbose: Optional[bool] = True,
-    ):
+    ) -> None:
         self._modify = modify_existing
         if compression is not None:
             self._compression = c_translate[compression.value]
@@ -201,11 +207,17 @@ class Writer(Reader):
 
         super().__init__(file_path=None, verbose=verbose)
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         super().__enter__()
         return self
 
-    def __exit__(self, *exc):  # type: ignore
+    def __exit__(
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
+        extra_arg: int = 0,
+    ) -> None:
         self._align()
         self._refresh_file_stats()
         self._logger.info(
@@ -279,6 +291,7 @@ class Writer(Reader):
         """Writes raw data to database
 
         Args:
+        ----
             timestamp: just start of buffer or whole ndarray
             voltage: ndarray as raw unsigned integers
             current: ndarray as raw unsigned integers
@@ -318,6 +331,7 @@ class Writer(Reader):
            SI-value [SI-Unit] = raw-value * gain + offset,
 
         Args:
+        ----
             timestamp: python timestamp (time.time()) in seconds (si-unit)
                        -> provide start of buffer or whole ndarray
             voltage: ndarray in physical-unit V
@@ -345,9 +359,9 @@ class Writer(Reader):
             self.ds_voltage.resize((size_new,))
             self.ds_current.resize((size_new,))
 
-    def __setitem__(self, key: str, item: Any):
+    def __setitem__(self, key: str, item: Any) -> None:
         """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
-        return self.h5file.attrs.__setitem__(key, item)
+        self.h5file.attrs.__setitem__(key, item)
 
     def store_config(self, data: dict) -> None:
         """Important Step to get a self-describing Output-File
@@ -359,7 +373,7 @@ class Writer(Reader):
         )
 
     def store_hostname(self, name: str) -> None:
-        """option to distinguish the host, target or data-source in the testbed
+        """Option to distinguish the host, target or data-source in the testbed
             -> perfect for plotting later
 
         :param name: something unique, or "artificial" in case of generated content

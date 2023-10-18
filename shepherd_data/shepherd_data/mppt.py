@@ -1,5 +1,4 @@
-"""
-Harvesters, simple and fast approach.
+"""Harvesters, simple and fast approach.
 Might be exchanged by shepherds py-model of pru-harvesters
 """
 import numpy as np
@@ -12,10 +11,12 @@ def iv_model(voltages: Calc_t, coeffs: pd.Series) -> Calc_t:
     """Simple diode based model of a solar panel IV curve.
 
     Args:
+    ----
         :param voltages: Load voltage of the solar panel
         :param coeffs: three generic coefficients
 
     Returns:
+    -------
         Solar current at given load voltage
     """
     currents = float(coeffs["a"]) - float(coeffs["b"]) * (
@@ -29,7 +30,7 @@ def iv_model(voltages: Calc_t, coeffs: pd.Series) -> Calc_t:
     return currents
 
 
-def find_oc(v_arr: np.ndarray, i_arr: np.ndarray, ratio: float = 0.05):
+def find_oc(v_arr: np.ndarray, i_arr: np.ndarray, ratio: float = 0.05) -> np.ndarray:
     """Approximates opencircuit voltage.
 
     Searches last current value that is above a certain ratio of the short-circuit
@@ -45,13 +46,13 @@ class MPPTracker:
     :param pts_per_curve: resolution of internal ivcurve
     """
 
-    def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000):
+    def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000) -> None:
         self.pts_per_curve: int = pts_per_curve
         self.v_max: float = v_max
         self.v_proto: np.ndarray = np.linspace(0, v_max, pts_per_curve)
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
-        """apply harvesting model to input data
+        """Apply harvesting model to input data
 
         :param coeffs: ivonne coefficients
         :return:
@@ -69,7 +70,7 @@ class OpenCircuitTracker(MPPTracker):
 
     def __init__(
         self, v_max: float = 5.0, pts_per_curve: int = 1000, ratio: float = 0.8
-    ):
+    ) -> None:
         super().__init__(v_max, pts_per_curve)
         self.ratio = ratio
 
@@ -97,7 +98,7 @@ class OptimalTracker(MPPTracker):
     :param pts_per_curve: resolution of internal ivcurve
     """
 
-    def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000):
+    def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000) -> None:
         super().__init__(v_max, pts_per_curve)
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:

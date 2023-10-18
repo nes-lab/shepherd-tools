@@ -3,6 +3,7 @@ from typing import List
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ...commons import samplerate_sps_default
 from ...logger import logger
@@ -109,14 +110,13 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         # trigger stricter test of harv-parameters
         HarvesterPRUConfig.from_vhrv(self.harvester, for_emu=True)
         return self
 
     def calc_internal_states(self) -> dict:
-        """
-        compensate for (hard to detect) current-surge of real capacitors
+        """Compensate for (hard to detect) current-surge of real capacitors
         when converter gets turned on -> this can be const value, because
         the converter always turns on with "V_storage_enable_threshold_uV"
         TODO: currently neglecting delay after disabling converter, boost
@@ -199,7 +199,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         return values
 
     def calc_converter_mode(self, *, log_intermediate_node: bool) -> int:
-        """assembles bitmask from discrete values
+        """Assembles bitmask from discrete values
         log_intermediate_node: record / log virtual intermediate (cap-)voltage and
                             -current (out) instead of output-voltage and -current
         """
@@ -213,7 +213,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         )
 
     def calc_cap_constant_us_per_nF_n28(self) -> int:
-        """calc constant to convert capacitor-current to Voltage-delta
+        """Calc constant to convert capacitor-current to Voltage-delta
         dV[uV] = constant[us/nF] * current[nA] = constant[us*V/nAs] * current[nA]
         """
         C_cap_uF = max(self.C_intermediate_uF, 0.001)
@@ -233,8 +233,7 @@ lut_o = Annotated[List[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
 class ConverterPRUConfig(ShpModel):
-    """
-    Map settings-list to internal state-vars struct ConverterConfig
+    """Map settings-list to internal state-vars struct ConverterConfig
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw
@@ -283,7 +282,7 @@ class ConverterPRUConfig(ShpModel):
         data: VirtualSourceConfig,
         *,
         log_intermediate_node: bool = False,
-    ):
+    ) -> Self:
         states = data.calc_internal_states()
         return cls(
             # General

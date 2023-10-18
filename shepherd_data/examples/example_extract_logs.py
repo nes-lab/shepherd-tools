@@ -1,5 +1,4 @@
-"""
-script iterates through this directory and analyzes hdf5-files
+"""script iterates through this directory and analyzes hdf5-files
 - prints cpu-utilization and data-rate
 - saves logging-info to files
 - saves metadata to datasets and the file itself to yaml

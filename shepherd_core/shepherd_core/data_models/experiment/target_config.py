@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
@@ -45,7 +46,7 @@ class TargetConfig(ShpModel, title="Target Config"):
     gpio_actuation: Optional[GpioActuation] = None
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if not self.energy_env.valid:
             raise ValueError(
                 f"EnergyEnv '{self.energy_env.name}' for target must be valid"

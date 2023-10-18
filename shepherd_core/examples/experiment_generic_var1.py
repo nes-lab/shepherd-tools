@@ -1,15 +1,13 @@
-"""
-
-How-to for defining an experiment:
-    - recommended approach for missing testbed-client
-    - variants
-        - var1 - references a server-path for the firmware
-        - var2 - embeds local firmware in yaml (elf-support is linux-only)
-    - assumption:
-        - start ASAP,
-        - no custom IDs,
-        - static Power-Supply
-        - no power-tracing
+"""How-to for defining an experiment:
+- recommended approach for missing testbed-client
+- variants
+- var1 - references a server-path for the firmware
+- var2 - embeds local firmware in yaml (elf-support is linux-only)
+- assumption:
+- start ASAP,
+- no custom IDs,
+- static Power-Supply
+- no power-tracing
 
 """
 from pathlib import Path

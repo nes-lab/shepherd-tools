@@ -10,6 +10,7 @@ from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
@@ -107,7 +108,7 @@ class EmulationTask(ShpModel):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         # TODO: limit paths
         has_time = self.time_start is not None
         time_now = datetime.now().astimezone()
@@ -131,7 +132,9 @@ class EmulationTask(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path):
+    def from_xp(
+        cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path
+    ) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 

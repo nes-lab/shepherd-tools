@@ -1,4 +1,4 @@
-""" TODO: Work in Progress
+"""TODO: Work in Progress
 
 """
 import tempfile
@@ -26,7 +26,7 @@ except ImportError as e:
 
 
 @validate_call
-def is_hex(file: Path):
+def is_hex(file: Path) -> bool:
     try:
         _ = IntelHex(file.as_posix())
     except ValueError:  # parsing
@@ -36,7 +36,7 @@ def is_hex(file: Path):
     return True
 
 
-def is_hex_msp430(file: Path):
+def is_hex_msp430(file: Path) -> bool:
     """Observations:
     - addresses begin at 0x4000
     - value @0xFFFE (IVT) is start_address (of pgm-code)

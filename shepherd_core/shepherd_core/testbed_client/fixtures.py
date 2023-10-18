@@ -4,12 +4,15 @@ import pickle  # noqa: S403
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Union
 
 import yaml
 from pydantic import validate_call
+from typing_extensions import Self
 
 from ..data_models.base.timezone import local_now
 from ..data_models.base.timezone import local_tz
@@ -27,7 +30,7 @@ from ..logger import logger
 class Fixture:
     """Current implementation of a file-based database"""
 
-    def __init__(self, model_type: str):
+    def __init__(self, model_type: str) -> None:
         self.model_type: str = model_type.lower()
         self.elements_by_name: Dict[str, dict] = {}
         self.elements_by_id: Dict[int, dict] = {}
@@ -51,27 +54,29 @@ class Fixture:
         # update iterator
         self._iter_list: list = list(self.elements_by_name.values())
 
-    def __getitem__(self, key) -> dict:
-        key = key.lower()
-        if key in self.elements_by_name:
-            return self.elements_by_name[key]
+    def __getitem__(self, key: Union[str, int]) -> dict:
+        if isinstance(key, str):
+            key = key.lower()
+            if key in self.elements_by_name:
+                return self.elements_by_name[key]
+            key = int(key) if key.isdigit() else None
         if key in self.elements_by_id:
-            return self.elements_by_id[key]
+            return self.elements_by_id[int(key)]
         raise ValueError(f"{self.model_type} '{key}' not found!")
 
-    def __iter__(self):
+    def __iter__(self) -> Self:
         self._iter_index = 0
         self._iter_list = list(self.elements_by_name.values())
         return self
 
-    def __next__(self):
+    def __next__(self) -> Any:
         if self._iter_index < len(self._iter_list):
             member = self._iter_list[self._iter_index]
             self._iter_index += 1
             return member
         raise StopIteration
 
-    def keys(self):  # -> _dict_keys[Any, Any]:
+    def keys(self):  # noqa: ANN201
         return self.elements_by_name.keys()
 
     def refs(self) -> dict:
@@ -147,7 +152,7 @@ class Fixture:
             f"Initialization of {self.model_type} by ID failed - {_id} is unknown!"
         )
 
-    def query_name(self, name: str):
+    def query_name(self, name: str) -> dict:
         if isinstance(name, str) and name.lower() in self.elements_by_name:
             return self.elements_by_name[name.lower()]
         raise ValueError(
@@ -155,7 +160,7 @@ class Fixture:
         )
 
 
-def file_older_than(file: Path, delta: timedelta):
+def file_older_than(file: Path, delta: timedelta) -> bool:
     cutoff = local_now() - delta
     mtime = datetime.fromtimestamp(file.stat().st_mtime, tz=local_tz())
     if mtime < cutoff:
@@ -167,7 +172,7 @@ class Fixtures:
     suffix = ".yaml"
 
     @validate_call
-    def __init__(self, file_path: Optional[Path] = None):
+    def __init__(self, file_path: Optional[Path] = None) -> None:
         if file_path is None:
             self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
         else:
@@ -195,7 +200,7 @@ class Fixtures:
                 pickle.dump(self.components, fd)
 
     @validate_call
-    def insert_file(self, file: Path):
+    def insert_file(self, file: Path) -> None:
         with file.open() as fd:
             fixtures = yaml.safe_load(fd)
             for fixture in fixtures:
@@ -204,23 +209,23 @@ class Fixtures:
                 fix_wrap = Wrapper(**fixture)
                 self.insert_model(fix_wrap)
 
-    def insert_model(self, data: Wrapper):
+    def insert_model(self, data: Wrapper) -> None:
         fix_type = data.datatype.lower()
         if self.components.get(fix_type) is None:
             self.components[fix_type] = Fixture(model_type=fix_type)
         self.components[fix_type].insert(data)
 
-    def __getitem__(self, key) -> Fixture:
+    def __getitem__(self, key: str) -> Fixture:
         key = key.lower()
         if key in self.components:
             return self.components[key]
         raise ValueError(f"Component '{key}' not found!")
 
-    def keys(self):  # -> _dict_keys[Any, Any]:
+    def keys(self):  # noqa: ANN201
         return self.components.keys()
 
     @staticmethod
-    def to_file(file: Path):
+    def to_file(file: Path) -> None:
         raise RuntimeError(f"Not Implemented, TODO (val={file})")
 
 

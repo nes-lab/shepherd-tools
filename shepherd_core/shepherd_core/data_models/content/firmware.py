@@ -1,11 +1,14 @@
 from pathlib import Path
 from typing import Optional
+from typing import TypedDict
 from typing import Union
 
 from pydantic import StringConstraints
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Annotated
+from typing_extensions import Self
+from typing_extensions import Unpack
 
 from ... import fw_tools
 from ...logger import logger
@@ -81,8 +84,14 @@ class Firmware(ContentModel, title="Firmware of Target"):
         return tb_client.fill_in_user_data(values)
 
     @classmethod
-    def from_firmware(cls, file: Path, *, embed: bool = True, **kwargs):
-        """embeds firmware and tries to fill parameters
+    def from_firmware(
+        cls,
+        file: Path,
+        *,
+        embed: bool = True,
+        **kwargs: Unpack[TypedDict],
+    ) -> Self:
+        """Embeds firmware and tries to fill parameters
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually
         """
@@ -141,7 +150,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @validate_call
     def extract_firmware(self, file: Path) -> Path:
-        """stores embedded data in file
+        """Stores embedded data in file
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """

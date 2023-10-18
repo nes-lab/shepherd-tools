@@ -1,5 +1,4 @@
-"""
-UART - Decoder - Features:
+"""UART - Decoder - Features:
 - 1 bit Start (LOW)
 - 1 .. **8** .. 64 bit data-frame
 - **1**, 1.5, 2 bit stop (HIGH) - don't care?
@@ -7,7 +6,8 @@ UART - Decoder - Features:
 - **LSB** / MSB first - detectable with dict-compare - TODO
 - **no** inversion
 
-TODO:
+Todo:
+----
   - detect bitOrder
   - detect dataframe length
   - detect parity
@@ -15,6 +15,7 @@ TODO:
 More Info:
 https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter
 https://sigrok.org/wiki/Protocol_decoder:Uart
+
 """
 from enum import Enum
 from pathlib import Path
@@ -48,13 +49,12 @@ class Uart:
         inversion: Optional[bool] = None,
         parity: Optional[Parity] = Parity.no,
         bit_order: Optional[BitOrder] = BitOrder.lsb_first,
-    ):
+    ) -> None:
         """Provide a file with two columns:
         - timestamp (seconds with fraction) and signal (can be analog).
         - class-parameters that are None (above) get auto-detected
           (some detectors still missing)
         """
-
         if isinstance(content, Path):
             self.events_sig: np.ndarray = np.loadtxt(
                 content.as_posix(), delimiter=",", skiprows=1
@@ -118,7 +118,7 @@ class Uart:
         self.text: Optional[str] = None
 
     def _convert_analog2digital(self, *, invert: bool = False) -> None:
-        """divide dimension in two, divided by mean-value"""
+        """Divide dimension in two, divided by mean-value"""
         data = self.events_sig[:, 1]
         mean = np.mean(data)
         if invert:
@@ -127,7 +127,7 @@ class Uart:
             self.events_sig[:, 1] = data >= mean
 
     def _filter_redundant_states(self) -> None:
-        """sum of two sequential states is always 1 (True + False) if alternating"""
+        """Sum of two sequential states is always 1 (True + False) if alternating"""
         data_0 = self.events_sig[:, 1]
         data_1 = np.concatenate([[not data_0[0]], data_0[:-1]])
         data_f = data_0 + data_1
@@ -141,7 +141,7 @@ class Uart:
             )
 
     def _add_duration(self) -> None:
-        """calculate third column -> duration of state in [baud-ticks]"""
+        """Calculate third column -> duration of state in [baud-ticks]"""
         if self.events_sig.shape[1] > 2:
             logger.warning("Tried to add state-duration, but it seems already present")
             return
@@ -156,7 +156,7 @@ class Uart:
         )
 
     def detect_inversion(self) -> bool:
-        """analyze bit-state during long pauses (unchanged states)
+        """Analyze bit-state during long pauses (unchanged states)
         - pause should be HIGH for non-inverted mode (default)
         - assumes max frame size of 64 bit + x for safety
         """
@@ -170,7 +170,7 @@ class Uart:
         return mean_state < 0.5
 
     def detect_baud_rate(self) -> int:
-        """analyze the smallest step"""
+        """Analyze the smallest step"""
         events = self.events_sig[:1000, :]  # speedup for large datasets
         dur_steps = events[1:, 0] - events[:-1, 0]
         def_step = np.percentile(dur_steps[dur_steps > 0], 10)
@@ -180,7 +180,7 @@ class Uart:
         return round(1 / mean_tick)
 
     def detect_half_stop(self) -> bool:
-        """looks into the spacing between time-steps"""
+        """Looks into the spacing between time-steps"""
         events = self.events_sig[:1000, :]  # speedup for large datasets
         return (
             np.sum((events > 1.333 * self.dur_tick) & (events < 1.667 * self.dur_tick))
@@ -188,14 +188,13 @@ class Uart:
         )
 
     def detect_dataframe_length(self) -> int:
-        """look after longest pauses
+        """Look after longest pauses
         - accumulate steps until a state with uneven step-size is found
         """
         pass
 
     def get_symbols(self, *, force_redo: bool = False) -> np.ndarray:
-        """
-        ways to detect EOF:
+        """Ways to detect EOF:
         - long pause on HIGH
         - off_tick pause on high
         - bit_pos > max
@@ -203,7 +202,6 @@ class Uart:
             - slowest FN -> speedup with numba or parallelization?
             - dset could be divided (long pauses) and threaded for speedup
         """
-
         if force_redo:
             self.events_symbols = None
         if self.events_symbols is not None:
@@ -254,7 +252,7 @@ class Uart:
         return self.events_symbols
 
     def get_lines(self, *, force_redo: bool = False) -> np.ndarray:
-        """timestamped symbols to line, cut at \r, \r\n or \n"""
+        """Timestamped symbols to line, cut at \r, \r\n or \n"""
         if force_redo:
             self.events_lines = None
         if self.events_lines is not None:
@@ -286,7 +284,7 @@ class Uart:
         return self.events_lines
 
     def get_text(self, *, force_redo: bool = False) -> str:
-        """remove timestamps and just return the whole string"""
+        """Remove timestamps and just return the whole string"""
         if force_redo:
             self.text = None
         if self.text is not None:
