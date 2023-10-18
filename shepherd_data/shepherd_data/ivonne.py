@@ -10,12 +10,12 @@ import pickle  # noqa: S403
 from pathlib import Path
 from types import TracebackType
 from typing import Optional
+from typing import Type
 
 import numpy as np
 import pandas as pd
 from tqdm import trange
 from typing_extensions import Self
-from typing import Type
 
 from . import Writer
 from .mppt import MPPTracker

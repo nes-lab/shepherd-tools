@@ -9,6 +9,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import Any
 from typing import Optional
+from typing import Type
 from typing import Union
 
 import h5py
@@ -16,7 +17,6 @@ import numpy as np
 import yaml
 from pydantic import validate_call
 from typing_extensions import Self
-from typing import Type
 from yaml import Dumper
 from yaml import SafeDumper
 from yaml import ScalarNode

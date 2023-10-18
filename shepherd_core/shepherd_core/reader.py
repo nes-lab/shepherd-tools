@@ -15,6 +15,7 @@ from typing import Dict
 from typing import Generator
 from typing import List
 from typing import Optional
+from typing import Type
 from typing import Union
 
 import h5py
@@ -23,7 +24,6 @@ import yaml
 from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
-from typing import Type
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationPair
