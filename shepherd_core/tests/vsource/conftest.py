@@ -46,6 +46,6 @@ def file_ivsample(file_ivonne: Path) -> Path:
 
 @pytest.fixture
 def file_cleanup(file_isc_voc: Path, file_ivcurve: Path, file_ivsample: Path) -> None:
-    os.remove(file_isc_voc)
-    os.remove(file_ivcurve)
-    os.remove(file_ivsample)
+    file_isc_voc.unlink(missing_ok=True)
+    file_ivcurve.unlink(missing_ok=True)
+    file_ivsample.unlink(missing_ok=True)

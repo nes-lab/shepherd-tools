@@ -1,5 +1,4 @@
-"""
-Allows to cross-check the relations between observer, cape and targets in each testbed
+"""Allows to cross-check the relations between observer, cape and targets in each testbed
 """
 from pathlib import Path
 
@@ -12,7 +11,7 @@ if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     separator = "; "  # excel parses this as table, but not ","?!?
     path_csv = path_here / "content/testbed_layout.csv"
-    with open(path_csv, "w") as csv:
+    with path_csv.open("w") as csv:
         elements = [
             "tb_id",
             "tb_name",

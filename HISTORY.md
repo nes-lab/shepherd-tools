@@ -1,5 +1,12 @@
 # History of Changes
 
+## v2023.10.1
+
+- supported python is now 3.8 - 3.12
+- lots of linting, more pythonic style and interface-improvements
+- add timezone to datetime-objects
+- more explicit typing
+
 ## v2023.9.9
 
 - lots of bugfix

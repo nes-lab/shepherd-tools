@@ -1,5 +1,4 @@
-"""
-this is ported py-version of the pru-code, goals:
+"""this is ported py-version of the pru-code, goals:
 - stay close to original code-base
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
@@ -24,20 +23,22 @@ class VirtualHarvesterModel:
     HRV_MPPT_PO: int = 2**13
     HRV_MPPT_OPT: int = 2**14
 
-    def __init__(self, cfg: HarvesterPRUConfig):
+    def __init__(self, cfg: HarvesterPRUConfig) -> None:
         self._cfg: HarvesterPRUConfig = cfg
 
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1
-        # self.settle_steps: int = 0  # adc_ivcurve, noqa: E800, ERA001
         self.interval_step: int = 2**30
-
         self.is_rising: bool = (self._cfg.hrv_mode & (2**1)) != 0
 
         # PO-Relevant, iv & adc
         self.volt_step_uV: int = self._cfg.voltage_step_uV
 
-        # self.power_last_raw: int = 0  # adc_mppt_po, noqa: E800, ERA001
+        # adc_ivcurve
+        # self.settle_steps: int = 0  # noqa: ERA001
+
+        # adc_mppt_po
+        # self.power_last_raw: int = 0 # noqa: ERA001
 
         # globals for iv_cv
         self.voltage_hold: int = 0

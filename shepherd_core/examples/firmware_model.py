@@ -1,6 +1,6 @@
-""" This example shows ways to embed firmware into the data-model
-    Note: the new semi-automatic way to generate a data-model needs pwntools installed
-          or shepherd-core[elf]
+"""This example shows ways to embed firmware into the data-model
+Note: the new semi-automatic way to generate a data-model needs pwntools installed
+or shepherd-core[elf]
 """
 from pathlib import Path
 

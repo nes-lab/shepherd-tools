@@ -8,6 +8,7 @@ from pydantic import Field
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.shepherd import ShpModel
 from ..testbed.gpio import GPIO
@@ -34,7 +35,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     # ⤷ reduce file-size by omitting current / voltage
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if self.delay and self.delay.total_seconds() < 0:
             raise ValueError("Delay can't be negative.")
         if self.duration and self.duration.total_seconds() < 0:
@@ -68,13 +69,15 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     duration: Optional[timedelta] = None  # till EOF
 
     # post-processing,
-    uart_decode: bool = False  # todo: is currently done online in userspace
+    uart_decode: bool = False
+    # todo: quickfix - uart-log currently done online in userspace
+    # NOTE: gpio-tracing currently shows rather big - but rare - "blind" windows (~1-4us)
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: Annotated[int, Field(ge=2_400, le=921_600)] = 115_200
     # TODO: add a "discard_gpio" (if only uart is wanted)
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if self.mask == 0:
             raise ValueError("Error in config -> tracing enabled but mask is 0")
         if self.delay and self.delay.total_seconds() < 0:
@@ -103,7 +106,7 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
     count: Annotated[int, Field(ge=1, le=4096)] = 1
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if not self.gpio.user_controllable():
             raise ValueError(
                 f"GPIO '{self.gpio.name}' in actuation-event not controllable by user"
@@ -134,6 +137,7 @@ class SystemLogging(ShpModel, title="Config for System-Logging"):
     dmesg: bool = True
     ptp: bool = True
     shepherd: bool = True
+    # TODO: rename to kernel, timesync, sheep
 
 
 # TODO: some more interaction would be good

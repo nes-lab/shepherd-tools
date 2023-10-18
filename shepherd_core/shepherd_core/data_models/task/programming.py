@@ -1,10 +1,12 @@
 import copy
 from pathlib import Path
+from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.content import IdInt
 from ..base.content import SafeStr
@@ -36,7 +38,7 @@ class ProgrammingTask(ShpModel):
     # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         d_type = suffix_to_DType.get(self.firmware_file.suffix.lower())
         if d_type != FirmwareDType.base64_hex:
             ValueError(f"Firmware is not intel-.hex ('{self.firmware_file}')")
@@ -51,7 +53,7 @@ class ProgrammingTask(ShpModel):
         tgt_id: IdInt,
         mcu_port: MCUPort,
         fw_path: Path,
-    ):
+    ) -> Optional[Self]:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 

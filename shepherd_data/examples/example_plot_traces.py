@@ -1,5 +1,4 @@
-"""
-script will:
+"""script will:
 - generate plots with various zoom-levels for h5-files
 - NOTE: let the generator- and converter-example run before
 

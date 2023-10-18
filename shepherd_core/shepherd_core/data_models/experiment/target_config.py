@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
@@ -20,9 +21,9 @@ from .observer_features import PowerTracing
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration for Target Nodes (DuT)"""
 
-    target_IDs: Annotated[List[IdInt], Field(min_length=1, max_length=64)]
+    target_IDs: Annotated[List[IdInt], Field(min_length=1, max_length=128)]
     custom_IDs: Optional[
-        Annotated[List[IdInt16], Field(min_length=1, max_length=64)]
+        Annotated[List[IdInt16], Field(min_length=1, max_length=128)]
     ] = None
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
     #   if no custom ID is provided, the original ID of target is used
@@ -30,7 +31,9 @@ class TargetConfig(ShpModel, title="Target Config"):
     energy_env: EnergyEnvironment  # alias: input
     virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
     target_delays: Optional[
-        Annotated[List[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=64)]
+        Annotated[
+            List[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)
+        ]
     ] = None
     # ⤷ individual starting times -> allows to use the same environment
     # TODO: delays not used ATM
@@ -43,7 +46,7 @@ class TargetConfig(ShpModel, title="Target Config"):
     gpio_actuation: Optional[GpioActuation] = None
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if not self.energy_env.valid:
             raise ValueError(
                 f"EnergyEnv '{self.energy_env.name}' for target must be valid"

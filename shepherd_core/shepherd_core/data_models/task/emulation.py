@@ -10,9 +10,11 @@ from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.content import IdInt
 from ..base.shepherd import ShpModel
+from ..base.timezone import local_tz
 from ..content.virtual_source import VirtualSourceConfig
 from ..experiment.experiment import Experiment
 from ..experiment.observer_features import GpioActuation
@@ -63,7 +65,7 @@ class EmulationTask(ShpModel):
     # ⤷ Use default calibration values, skip loading from EEPROM
 
     enable_io: bool = False
-    # TODO: direction of pins! also it seems error-prone when only setting _tracing
+    # TODO: add direction of pins! also it seems error-prone when only setting _tracing
     # ⤷ Switch the GPIO level converter to targets on/off
     #   pre-req for sampling gpio,
     io_port: TargetPort = TargetPort.A
@@ -88,7 +90,7 @@ class EmulationTask(ShpModel):
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
-    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
+    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug, TODO: just bool now, systemwide
 
     @model_validator(mode="before")
     @classmethod
@@ -96,7 +98,9 @@ class EmulationTask(ShpModel):
         # convert & add local timezone-data
         has_time = values.get("time_start") is not None
         if has_time and isinstance(values["time_start"], (int, float)):
-            values["time_start"] = datetime.fromtimestamp(values["time_start"])
+            values["time_start"] = datetime.fromtimestamp(
+                values["time_start"], tz=local_tz()
+            )
         if has_time and isinstance(values["time_start"], str):
             values["time_start"] = datetime.fromisoformat(values["time_start"])
         if has_time and values["time_start"].tzinfo is None:
@@ -104,7 +108,7 @@ class EmulationTask(ShpModel):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         # TODO: limit paths
         has_time = self.time_start is not None
         time_now = datetime.now().astimezone()
@@ -128,7 +132,9 @@ class EmulationTask(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path):
+    def from_xp(
+        cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path
+    ) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 

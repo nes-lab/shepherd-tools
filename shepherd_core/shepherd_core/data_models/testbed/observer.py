@@ -6,6 +6,7 @@ from pydantic import IPvAnyAddress
 from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ...testbed_client import tb_client
 from ..base.content import IdInt
@@ -50,7 +51,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     created: datetime = Field(default_factory=datetime.now)
     alive_last: Optional[datetime] = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @model_validator(mode="before")
@@ -60,7 +61,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         has_cape = self.cape is not None
         has_target = (self.target_a is not None) or (self.target_b is not None)
         if not has_cape and has_target:

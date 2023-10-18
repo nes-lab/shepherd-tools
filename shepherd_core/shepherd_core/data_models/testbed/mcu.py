@@ -40,7 +40,7 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
     fw_name_default: str
     # ⤷ can't be FW-Object (circular import)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @model_validator(mode="before")

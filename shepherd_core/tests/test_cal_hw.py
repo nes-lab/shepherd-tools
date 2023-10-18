@@ -18,7 +18,7 @@ def test_convert_to_raw(fn: Callable) -> None:
     value_prev = -1
     for value in values:
         value_raw = fn(value)
-        assert 0 <= value_raw
+        assert value_raw >= 0
         assert value_raw < 2**18
         assert value_raw >= value_prev
         value_prev = value_raw
@@ -32,7 +32,7 @@ def test_convert_to_si(fn: Callable) -> None:
     value_prev = -1
     for value in values:
         value_si = fn(value)
-        assert 0 <= value_si
+        assert value_si >= 0
         assert value_si <= 6
         assert value_si >= value_prev
         value_prev = value_si

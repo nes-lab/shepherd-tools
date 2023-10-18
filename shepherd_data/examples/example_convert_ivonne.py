@@ -1,5 +1,4 @@
-"""
-this repo contains a recording from ivonne
+"""this repo contains a recording from ivonne
 -> consists of voc & isc with 50 Hz sampling rate
 
 this script converts a IVonne-Recording to shepherd dataformat:

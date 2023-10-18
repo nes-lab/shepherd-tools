@@ -5,6 +5,7 @@ from typing import Tuple
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ...commons import samplerate_sps_default
 from ...logger import logger
@@ -93,7 +94,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if self.voltage_min_mV > self.voltage_max_mV:
             raise ValueError("Voltage min > max")
         if self.voltage_mV < self.voltage_min_mV:
@@ -103,10 +104,10 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
         return self
 
-    def calc_hrv_mode(self, for_emu: bool) -> int:
+    def calc_hrv_mode(self, *, for_emu: bool) -> int:
         return 1 * int(for_emu) + 2 * self.rising
 
-    def calc_algorithm_num(self, for_emu: bool) -> int:
+    def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num = algo_to_num.get(self.algorithm)
         if for_emu and self.get_datatype() != EnergyDType.ivsample:
             raise ValueError(
@@ -120,7 +121,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
             )
         return num
 
-    def calc_timings_ms(self, for_emu: bool) -> Tuple[float, float]:
+    def calc_timings_ms(self, *, for_emu: bool) -> Tuple[float, float]:
         """factor-in model-internal timing-constraints"""
         window_length = self.samples_n * (1 + self.wait_cycles)
         time_min_ms = (1 + self.wait_cycles) * 1_000 / samplerate_sps_default
@@ -143,7 +144,10 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return algo_to_dtype[self.algorithm]
 
     def calc_window_size(
-        self, for_emu: bool, dtype_in: Optional[EnergyDType] = EnergyDType.ivsample
+        self,
+        dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
+        *,
+        for_emu: bool,
     ) -> int:
         if for_emu:
             if dtype_in == EnergyDType.ivcurve:
@@ -170,7 +174,7 @@ algo_to_num = {
     "isc_voc": 2**3,
     "ivcurve": 2**4,
     "cv": 2**8,
-    # "ci": 2**9, # is this desired?
+    # is "ci" desired?
     "mppt_voc": 2**12,
     "mppt_po": 2**13,
     "mppt_opt": 2**14,
@@ -187,8 +191,7 @@ algo_to_dtype = {
 
 
 class HarvesterPRUConfig(ShpModel):
-    """
-    Map settings-list to internal state-vars struct HarvesterConfig
+    """Map settings-list to internal state-vars struct HarvesterConfig
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw
@@ -217,22 +220,23 @@ class HarvesterPRUConfig(ShpModel):
     def from_vhrv(
         cls,
         data: VirtualHarvesterConfig,
-        for_emu: bool = False,
         dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
         window_size: Optional[u32] = None,
-    ):
+        *,
+        for_emu: bool = False,
+    ) -> Self:
         if isinstance(dtype_in, str):
             dtype_in = EnergyDType[dtype_in]
         if for_emu and dtype_in not in [EnergyDType.ivsample, EnergyDType.ivcurve]:
             raise ValueError("Not Implemented")
         # TODO: use dtype properly in shepherd
-        interval_ms, duration_ms = data.calc_timings_ms(for_emu)
+        interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)
         return cls(
-            algorithm=data.calc_algorithm_num(for_emu),
-            hrv_mode=data.calc_hrv_mode(for_emu),
+            algorithm=data.calc_algorithm_num(for_emu=for_emu),
+            hrv_mode=data.calc_hrv_mode(for_emu=for_emu),
             window_size=window_size
             if window_size is not None
-            else data.calc_window_size(for_emu, dtype_in),
+            else data.calc_window_size(dtype_in, for_emu=for_emu),
             voltage_uV=round(data.voltage_mV * 10**3),
             voltage_min_uV=round(data.voltage_min_mV * 10**3),
             voltage_max_uV=round(data.voltage_max_mV * 10**3),

@@ -1,14 +1,14 @@
-"""
-script will:
+"""script will:
 - clean Models from temporary data (if wanted)
 - copy models to content-dir of core-lib
 """
-from datetime import datetime
+import sys
 from pathlib import Path
 from typing import Optional
 
 import yaml
 
+from shepherd_core import local_now
 from shepherd_core.data_models import FirmwareDType
 from shepherd_core.data_models import ShpModel
 from shepherd_core.data_models import Wrapper
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     if not path_db.exists() or not path_db.is_dir():
         logger.error("Path to db must exist and be a directory!")
-        exit(1)
+        sys.exit(1)
 
     if Path("/var/shepherd/").exists():
         path_content = Path("/var/shepherd/content/")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             model_dict = model.model_dump()
             model_wrap = Wrapper(
                 datatype=type(model).__name__,
-                created=datetime.now(),
+                created=local_now(),
                 parameters=model_dict,
             )
             fixtures.append(
@@ -79,5 +79,5 @@ if __name__ == "__main__":
             )
 
     model_yaml = yaml.safe_dump(fixtures, default_flow_style=False, sort_keys=False)
-    with open(path_db / "_external_fixtures.yaml", "w") as f:
+    with (path_db / "_external_fixtures.yaml").open("w") as f:
         f.write(model_yaml)

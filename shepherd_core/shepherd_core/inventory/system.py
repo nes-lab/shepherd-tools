@@ -4,6 +4,8 @@ import time
 from contextlib import suppress
 from typing import Optional
 
+from typing_extensions import Self
+
 from .. import logger
 
 try:
@@ -34,7 +36,7 @@ class SystemInventory(ShpModel):
 
     hostname: str
 
-    interfaces: dict = {}
+    interfaces: dict = {}  # noqa: RUF012
     # ⤷ tuple with
     #   ip IPvAnyAddress
     #   mac MACStr
@@ -42,7 +44,7 @@ class SystemInventory(ShpModel):
     model_config = ConfigDict(str_min_length=0)
 
     @classmethod
-    def collect(cls):
+    def collect(cls) -> Self:
         if psutil_support:
             ifs1 = psutil.net_if_addrs().items()
             ifs2 = {
@@ -72,7 +74,7 @@ class SystemInventory(ShpModel):
         }
 
         with suppress(FileNotFoundError):
-            ret = subprocess.run(["/usr/sbin/ptp4l", "-v"])  # noqa: S603
+            ret = subprocess.run(["/usr/sbin/ptp4l", "-v"], check=False)  # noqa: S603
             model_dict["ptp"] = ret.stdout
             # alternative: check_output - seems to be lighter
 

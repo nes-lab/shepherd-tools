@@ -1,5 +1,4 @@
-"""
-script will:
+"""script will:
 - iterate through this directory and
 - try to find and fix errors in hdf5-files / shepherd-recordings
 - old recordings from shepherd 1.x can be made available for v2.x
@@ -17,7 +16,7 @@ if __name__ == "__main__":
     flist = os.listdir("./")
     for file in flist:
         fpath = Path(file)
-        if not fpath.is_file() or ".h5" != fpath.suffix.lower():
+        if not fpath.is_file() or fpath.suffix.lower() != ".h5":
             continue
         print(f"Analyzing '{fpath.name}' ...")
         with shp.Reader(fpath, verbose=False) as fh:
@@ -80,7 +79,7 @@ if __name__ == "__main__":
                 fh.__enter__()
 
             # missing window_samples
-            if "window_samples" not in fh.h5file["data"].attrs.keys():
+            if "window_samples" not in fh.h5file["data"].attrs:
                 if datatype == EnergyDType.ivcurve:
                     print("Window size missing, but ivcurves detected -> no repair")
                     continue
@@ -91,7 +90,7 @@ if __name__ == "__main__":
                 fh.__enter__()
 
             # missing hostname
-            if "hostname" not in fh.h5file.attrs.keys():
+            if "hostname" not in fh.h5file.attrs:
                 print(" -> will set hostname = SheepX")
                 fh.__exit__()
                 with shp.Writer(fpath, modify_existing=True) as fw:

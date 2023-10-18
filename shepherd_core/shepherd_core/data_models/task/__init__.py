@@ -35,8 +35,7 @@ __all__ = [
 def prepare_task(
     config: Union[ShpModel, Path, str], observer: Optional[str] = None
 ) -> Wrapper:
-    """
-    - Opens file (from Path or str of Path)
+    """- Opens file (from Path or str of Path)
     - wraps task-model
     - and if it's an TestbedTasks it will extract the correct ObserverTask
     """
@@ -44,7 +43,7 @@ def prepare_task(
         config = Path(config)
 
     if isinstance(config, Path):
-        with open(config.resolve()) as shp_file:
+        with config.resolve().open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
     elif isinstance(config, ShpModel):
@@ -74,7 +73,7 @@ def prepare_task(
     return shp_wrap
 
 
-def extract_tasks(shp_wrap: Wrapper, no_task_sets: bool = True) -> List[ShpModel]:
+def extract_tasks(shp_wrap: Wrapper, *, no_task_sets: bool = True) -> List[ShpModel]:
     """ """
     if shp_wrap.datatype == ObserverTasks.__name__:
         obt = ObserverTasks(**shp_wrap.parameters)

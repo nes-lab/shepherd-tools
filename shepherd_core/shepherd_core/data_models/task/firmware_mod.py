@@ -1,12 +1,15 @@
 import copy
 from pathlib import Path
 from typing import Optional
+from typing import TypedDict
 from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Annotated
+from typing_extensions import Self
+from typing_extensions import Unpack
 
 from ...logger import logger
 from ..base.content import IdInt
@@ -32,7 +35,7 @@ class FirmwareModTask(ShpModel):
     # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         if self.data_type in [
             FirmwareDType.base64_hex,
             FirmwareDType.path_hex,
@@ -51,11 +54,12 @@ class FirmwareModTask(ShpModel):
         tgt_id: IdInt,
         mcu_port: MCUPort,
         fw_path: Path,
-    ):
+    ) -> Self:
         tgt_cfg = xp.get_target_config(tgt_id)
 
         fw = tgt_cfg.firmware1 if mcu_port == 1 else tgt_cfg.firmware2
         if fw is None:
+            # TODO: if target has default fw -> use that! otherwise no sleep is flashed
             return None
 
         fw_id = tgt_cfg.get_custom_id(tgt_id)
@@ -71,8 +75,13 @@ class FirmwareModTask(ShpModel):
         )
 
     @classmethod
-    @validate_call
-    def from_firmware(cls, fw: Firmware, **kwargs):
+    def from_firmware(
+        cls,
+        fw: Firmware,
+        **kwargs: Unpack[TypedDict],
+    ) -> Self:
+        if not isinstance(fw, Firmware):
+            raise ValueError("fw-argument must be of type Firmware")
         kwargs["data"] = fw.data
         kwargs["data_type"] = fw.data_type
         fw.compare_hash()

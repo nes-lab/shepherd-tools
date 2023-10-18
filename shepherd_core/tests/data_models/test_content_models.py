@@ -92,9 +92,9 @@ def test_content_model_fw_from_hex(path_elf: Path, tmp_path: Path) -> None:
     )
 
 
-def test_content_model_fw_from_hex_failing(tmp_path) -> None:
+def test_content_model_fw_from_hex_failing(tmp_path: Path) -> None:
     path_hex = tmp_path / "some.hex"
-    with open(path_hex, "w") as fd:
+    with path_hex.open("w") as fd:
         fd.write("something")
     with pytest.raises(ValueError):
         Firmware.from_firmware(

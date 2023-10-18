@@ -1,5 +1,4 @@
-"""
-script iterates through this directory and analyzes hdf5-files
+"""script iterates through this directory and analyzes hdf5-files
 - prints cpu-utilization and data-rate
 - saves logging-info to files
 - saves metadata to datasets and the file itself to yaml
@@ -16,7 +15,7 @@ if __name__ == "__main__":
     flist = os.listdir("./")
     for file in flist:
         fpath = Path(file)
-        if not fpath.is_file() or ".h5" != fpath.suffix:
+        if not fpath.is_file() or fpath.suffix != ".h5":
             continue
 
         with shp.Reader(fpath, verbose=False) as fh:

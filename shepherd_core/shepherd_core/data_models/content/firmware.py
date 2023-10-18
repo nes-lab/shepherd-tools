@@ -1,11 +1,14 @@
 from pathlib import Path
 from typing import Optional
+from typing import TypedDict
 from typing import Union
 
 from pydantic import StringConstraints
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Annotated
+from typing_extensions import Self
+from typing_extensions import Unpack
 
 from ... import fw_tools
 from ...logger import logger
@@ -67,7 +70,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             try:
                 _hash = fw_tools.base64_to_hash(values.get("data"))
             except ValueError:
-                raise ValueError("Embedded Firmware seems to be faulty")
+                raise ValueError("Embedded Firmware seems to be faulty") from None
             if values.get("data_hash") is not None and _hash != values.get("data_hash"):
                 raise ValueError("Embedded Firmware and Hash do not match!")
         elif _type in [
@@ -77,12 +80,18 @@ class Firmware(ContentModel, title="Firmware of Target"):
             try:
                 _ = Path(values.get("data"))
             except (SyntaxError, NameError):
-                raise ValueError("Firmware-Path is invalid")
+                raise ValueError("Firmware-Path is invalid") from None
         return tb_client.fill_in_user_data(values)
 
     @classmethod
-    def from_firmware(cls, file: Path, embed: bool = True, **kwargs):
-        """embeds firmware and tries to fill parameters
+    def from_firmware(
+        cls,
+        file: Path,
+        *,
+        embed: bool = True,
+        **kwargs: Unpack[TypedDict],
+    ) -> Self:
+        """Embeds firmware and tries to fill parameters
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually
         """
@@ -141,7 +150,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @validate_call
     def extract_firmware(self, file: Path) -> Path:
-        """stores embedded data in file
+        """Stores embedded data in file
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """

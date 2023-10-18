@@ -2,8 +2,6 @@
 
 
 """
-import os
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -11,6 +9,7 @@ import numpy as np
 from shepherd_core import Reader as ShpReader
 from shepherd_core import TestbedClient
 from shepherd_core import Writer as ShpWriter
+from shepherd_core import local_now
 from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models import PowerTracing
 from shepherd_core.data_models.task import EmulationTask
@@ -21,7 +20,7 @@ from shepherd_core.data_models.testbed import TargetPort
 from shepherd_core.logger import logger
 
 
-def generate_lab_vsrc(path: Path, duration_s: float = 60):
+def generate_lab_vsrc(path: Path, duration_s: float = 60) -> None:
     _V = 3.0
     _A = 50e-3
     if path.exists():
@@ -58,11 +57,11 @@ if __name__ == "__main__":
         tb_client.connect()
 
     if not path_eenv.exists():
-        os.makedirs(path_eenv)
+        path_eenv.mkdir(parents=True)
     if not path_task.exists():
-        os.makedirs(path_task)
+        path_task.mkdir(parents=True)
     if not path_fw.exists():
-        os.makedirs(path_fw)
+        path_fw.mkdir(parents=True)
 
     # generate pwr-supply
     generate_lab_vsrc(path_pwr)
@@ -79,7 +78,7 @@ if __name__ == "__main__":
         _path = ObserverTasks(
             observer="sheep0",
             owner_id=123,
-            time_prep=datetime.now(),
+            time_prep=local_now(),
             root_path=path_rec,
             abort_on_error=False,
             fw1_prog=ProgrammingTask(

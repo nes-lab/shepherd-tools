@@ -1,5 +1,9 @@
+from typing import Any
+
 try:
-    from pwnlib.elf import ELF  # noqa: F401
+    from importlib.util import find_spec
+
+    find_spec("pwnlib.elf.ELF")
 except ImportError:
     # replace missing dependencies from elf-only pwntools
     import sys
@@ -8,7 +12,7 @@ except ImportError:
 
     class Mock(MagicMock):
         @classmethod
-        def __getattr__(cls, name):
+        def __getattr__(cls, name: str) -> Any:
             return MagicMock()
 
     MOCK_MODULES = [

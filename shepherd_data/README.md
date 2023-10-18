@@ -91,7 +91,6 @@ with sd.Reader("./hrv_sawtooth_1h.h5") as db:
   - `is_valid`
   - `energy()`
   - `check_timediffs()`
-  - `data_timediffs()`
   - `get_metadata()`
   - `save_metadata()`
 

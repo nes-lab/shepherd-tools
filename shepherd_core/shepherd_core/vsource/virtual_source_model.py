@@ -1,6 +1,4 @@
-"""
-
-this is ported py-version of the pru-code, goals:
+"""this is ported py-version of the pru-code, goals:
 - stay close to original code-base
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
@@ -27,10 +25,11 @@ class VirtualSourceModel:
         self,
         vsrc: Optional[VirtualSourceConfig],
         cal_emu: CalibrationEmulator,
-        log_intermediate: bool = False,
         dtype_in: EnergyDType = EnergyDType.ivsample,
         window_size: Optional[int] = None,
-    ):
+        *,
+        log_intermediate: bool = False,
+    ) -> None:
         self._cal_emu: CalibrationEmulator = cal_emu
         self._cal_pru: PruCalibration = PruCalibration(cal_emu)
 
@@ -54,9 +53,10 @@ class VirtualSourceModel:
         self.W_inp_fWs: float = 0.0
         self.W_out_fWs: float = 0.0
 
-    def iterate_sampling(self, V_inp_uV: int = 0, I_inp_nA: int = 0, I_out_nA: int = 0):
-        """
-        TEST-SIMPLIFICATION - code below is not part of pru-code,
+    def iterate_sampling(
+        self, V_inp_uV: int = 0, I_inp_nA: int = 0, I_out_nA: int = 0
+    ) -> int:
+        """TEST-SIMPLIFICATION - code below is not part of pru-code,
         but in part sample_emulator() in sampling.c
 
         :param V_inp_uV:

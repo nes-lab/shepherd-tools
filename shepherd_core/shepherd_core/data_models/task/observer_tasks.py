@@ -5,6 +5,7 @@ from typing import List
 from typing import Optional
 
 from pydantic import validate_call
+from typing_extensions import Self
 
 from ..base.content import IdInt
 from ..base.content import NameStr
@@ -44,7 +45,7 @@ class ObserverTasks(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt):
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt) -> Self:
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
 

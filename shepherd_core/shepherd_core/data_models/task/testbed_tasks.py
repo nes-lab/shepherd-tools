@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..base.content import NameStr
 from ..base.shepherd import ShpModel
@@ -17,14 +18,14 @@ class TestbedTasks(ShpModel):
     """Collection of tasks for all observers included in experiment"""
 
     name: NameStr
-    observer_tasks: Annotated[List[ObserverTasks], Field(min_length=1, max_length=64)]
+    observer_tasks: Annotated[List[ObserverTasks], Field(min_length=1, max_length=128)]
 
     # POST PROCESS
     email: Optional[EmailStr] = None
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None):
+    def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None) -> Self:
         if tb is None:
             # TODO: just for testing OK
             tb = Testbed(name="shepherd_tud_nes")
@@ -36,7 +37,7 @@ class TestbedTasks(ShpModel):
             email=xp.email_results,
         )
 
-    def get_observer_tasks(self, observer) -> Optional[ObserverTasks]:
+    def get_observer_tasks(self, observer: str) -> Optional[ObserverTasks]:
         for tasks in self.observer_tasks:
             if observer == tasks.observer:
                 return tasks

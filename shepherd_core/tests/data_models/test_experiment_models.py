@@ -1,9 +1,9 @@
-from datetime import datetime
 from datetime import timedelta
 
 import pytest
 from pydantic import ValidationError
 
+from shepherd_core import local_now
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models.content import EnergyEnvironment
@@ -84,7 +84,7 @@ def test_experiment_model_exp_collision_target_id() -> None:
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
-            time_start=datetime.now() + timedelta(minutes=30),
+            time_start=local_now() + timedelta(minutes=30),
             target_configs=target_cfgs,
         )
 
@@ -112,7 +112,7 @@ def test_experiment_model_exp_collision_custom_id() -> None:
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
-            time_start=datetime.now() + timedelta(minutes=30),
+            time_start=local_now() + timedelta(minutes=30),
             target_configs=target_cfgs,
         )
 
@@ -133,7 +133,7 @@ def test_experiment_model_exp_collision_observer() -> None:
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
-            time_start=datetime.now() + timedelta(minutes=30),
+            time_start=local_now() + timedelta(minutes=30),
             target_configs=target_cfgs,
         )
 

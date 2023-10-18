@@ -1,13 +1,14 @@
-""" Creates an overview for shepherd-host-machines with:
-    - relevant software-versions
-    - system-parameters
-    - hardware-config
+"""Creates an overview for shepherd-host-machines with:
+- relevant software-versions
+- system-parameters
+- hardware-config
 """
 from pathlib import Path
 from typing import List
 
 from pydantic import Field
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ..data_models import ShpModel
 from .python import PythonInventory
@@ -27,7 +28,7 @@ class Inventory(PythonInventory, SystemInventory, TargetInventory):
     # has all child-parameters
 
     @classmethod
-    def collect(cls):
+    def collect(cls) -> Self:
         # one by one for more precise error messages
         pid = PythonInventory.collect().model_dump(
             exclude_unset=True, exclude_defaults=True
@@ -52,7 +53,7 @@ class InventoryList(ShpModel):
         """
         if path.is_dir():
             path = path / "inventory.yaml"
-        with open(path.as_posix(), "w") as fd:
+        with path.resolve().open("w") as fd:
             fd.write(", ".join(self.elements[0].model_dump().keys()) + "\r\n")
             for item in self.elements:
                 content = list(item.model_dump().values())

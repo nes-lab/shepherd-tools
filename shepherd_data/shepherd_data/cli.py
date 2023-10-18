@@ -1,9 +1,9 @@
-"""
-Command definitions for CLI
+"""Command definitions for CLI
 """
 import logging
 import os
 import sys
+from contextlib import suppress
 from datetime import datetime
 from pathlib import Path
 from typing import List
@@ -13,6 +13,7 @@ import click
 
 from shepherd_core import get_verbose_level
 from shepherd_core import increase_verbose_level
+from shepherd_core import local_tz
 from shepherd_core.commons import samplerate_sps_default
 
 from . import Reader
@@ -23,7 +24,7 @@ logger = logging.getLogger("SHPData.cli")
 
 
 def path_to_flist(data_path: Path) -> List[Path]:
-    """every path gets transformed to a list of paths
+    """Every path gets transformed to a list of paths
     - if directory: list of files inside
     - if existing file: list with 1 element
     - or else: empty list
@@ -36,7 +37,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
         flist = os.listdir(data_path)
         for file in flist:
             fpath = data_path / str(file)
-            if not fpath.is_file() or ".h5" != fpath.suffix.lower():
+            if not fpath.is_file() or fpath.suffix.lower() != ".h5":
                 continue
             h5files.append(fpath)
     return h5files
@@ -55,7 +56,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
     help="Prints version-info at start (combinable with -v)",
 )
 @click.pass_context  # TODO: is the ctx-type correct?
-def cli(ctx: click.Context, verbose: bool, version: bool) -> None:
+def cli(ctx: click.Context, verbose: bool, version: bool) -> None:  # noqa: FBT001
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder"""
     if verbose:
         increase_verbose_level(3)
@@ -162,19 +163,15 @@ def extract_meta(in_data: Path, separator: str) -> None:
             elements = shpr.save_metadata()
             # TODO: add default exports (user-centric) and allow specifying --all or specific ones
             # TODO: could also be combined with other extractors (just have one)
-            if "sysutil" in elements:
-                shpr.save_csv(shpr["sysutil"], separator)
-            if "timesync" in elements:
-                shpr.save_csv(shpr["timesync"], separator)
-
-            if "shepherd-log" in elements:
-                shpr.save_log(shpr["shepherd-log"])
-            if "dmesg" in elements:
-                shpr.save_log(shpr["dmesg"])
-            if "exceptions" in elements:
-                shpr.save_log(shpr["exceptions"])
-            if "uart" in elements:
-                shpr.save_log(shpr["uart"])
+            # TODO remove deprecated: timesync; "shepherd-log", "dmesg", "exceptions"
+            for element in ["ptp", "sysutil", "timesync"]:
+                if element in elements:
+                    shpr.save_csv(shpr[element], separator)
+            logs_depr = ["shepherd-log", "dmesg", "exceptions"]
+            logs = ["sheep", "kernel", "phc2sys", "uart"]
+            for element in logs + logs_depr:
+                if element in elements:
+                    shpr.save_log(shpr[element])
 
 
 @cli.command(
@@ -196,15 +193,15 @@ def extract_uart(in_data: Path) -> None:
                 logger.warning("%s already exists, will skip", log_path)
                 continue
 
-            with open(log_path, "w") as log_file:
+            with log_path.open("w") as log_file:
                 for line in lines:
-                    try:
-                        timestamp = datetime.utcfromtimestamp(float(line[0]))
+                    with suppress(TypeError):
+                        timestamp = datetime.fromtimestamp(
+                            float(line[0]), tz=local_tz()
+                        )
                         log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
                         log_file.write(f"\t{str.encode(line[1])}")
                         log_file.write("\n")
-                    except TypeError:
-                        continue
 
 
 @cli.command(
@@ -253,7 +250,8 @@ def downsample(
     in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]
 ) -> None:
     """Creates an array of downsampling-files from file
-    or directory containing shepherd-recordings"""
+    or directory containing shepherd-recordings
+    """
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
         ds_factor = int(samplerate_sps_default / sample_rate)
         # TODO: shouldn't current sps be based on file rather than default?
@@ -339,7 +337,7 @@ def plot(
     end: Optional[float],
     width: int,
     height: int,
-    multiplot: bool,
+    multiplot: bool,  # noqa: FBT001
 ) -> None:
     """Plots IV-trace from file or directory containing shepherd-recordings"""
     files = path_to_flist(in_data)
@@ -350,7 +348,9 @@ def plot(
         logger.info("Generating plot for '%s' ...", file.name)
         with Reader(file, verbose=verbose_level > 2) as shpr:
             if multiplot:
-                data.append(shpr.generate_plot_data(start, end, relative_ts=True))
+                data.append(
+                    shpr.generate_plot_data(start, end, relative_timestamp=True)
+                )
             else:
                 shpr.plot_to_file(start, end, width, height)
     if multiplot:

@@ -1,5 +1,4 @@
-"""
-script will:
+"""script will:
 - download and extract firmwares from https://github.com/orgua/shepherd-targets/releases
 - generate embedded firmware-models
 - it assumes sub-dirs in the same dir with ./build.elf in it
@@ -39,7 +38,7 @@ if __name__ == "__main__":
     if not path_meta.exists():
         logger.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
     else:
-        with open(path_meta) as file_meta:
+        with path_meta.open() as file_meta:
             metadata = yaml.safe_load(file_meta)["metadata"]
 
         for _fw, _descr in metadata.items():

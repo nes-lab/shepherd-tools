@@ -8,10 +8,14 @@ import math
 import os
 from itertools import product
 from pathlib import Path
+from types import TracebackType
+from typing import Any
+from typing import ClassVar
 from typing import Dict
 from typing import Generator
 from typing import List
 from typing import Optional
+from typing import Type
 from typing import Union
 
 import h5py
@@ -19,6 +23,7 @@ import numpy as np
 import yaml
 from pydantic import validate_call
 from tqdm import trange
+from typing_extensions import Self
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationPair
@@ -37,7 +42,7 @@ class Reader:
 
     samples_per_buffer: int = 10_000
 
-    mode_dtype_dict = {
+    mode_dtype_dict: ClassVar[dict] = {
         "harvester": [
             EnergyDType.ivsample,
             EnergyDType.ivcurve,
@@ -47,7 +52,12 @@ class Reader:
     }
 
     @validate_call
-    def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
+    def __init__(
+        self,
+        file_path: Optional[Path],
+        *,
+        verbose: Optional[bool] = True,
+    ) -> None:
         if not hasattr(self, "file_path"):
             self.file_path: Optional[Path] = None
             if isinstance(file_path, (Path, str)):
@@ -126,14 +136,20 @@ class Reader:
                 self.data_rate / 2**10,
             )
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, *exc):  # type: ignore
+    def __exit__(
+        self,
+        typ: Optional[Type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
+        extra_arg: int = 0,
+    ) -> None:
         if self._reader_opened:
             self.h5file.close()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return yaml.safe_dump(
             self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
         )
@@ -155,19 +171,22 @@ class Reader:
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
     def read_buffers(
-        self, start_n: int = 0, end_n: Optional[int] = None, is_raw: bool = False
+        self,
+        start_n: int = 0,
+        end_n: Optional[int] = None,
+        *,
+        is_raw: bool = False,
     ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
         TODO: reconstruct - start/end mark samples and
-              each call can request a certain number of samples
+            each call can request a certain number of samples
 
         Args:
             :param start_n: (int) Index of first buffer to be read
             :param end_n: (int) Index of last buffer to be read
             :param is_raw: (bool) output original data, not transformed to SI-Units
-        Yields:
-            Buffers between start and end (tuple with time, voltage, current)
+        Yields: Buffers between start and end (tuple with time, voltage, current)
         """
         if end_n is None:
             end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)
@@ -242,11 +261,11 @@ class Reader:
         :return: state of validity
         """
         # hard criteria
-        if "data" not in self.h5file.keys():
+        if "data" not in self.h5file:
             self._logger.error("root data-group not found (@Validator)")
             return False
         for attr in ["mode"]:
-            if attr not in self.h5file.attrs.keys():
+            if attr not in self.h5file.attrs:
                 self._logger.error(
                     "attribute '%s' not found in file (@Validator)", attr
                 )
@@ -255,17 +274,17 @@ class Reader:
                 self._logger.error("unsupported mode '%s' (@Validator)", attr)
                 return False
         for attr in ["window_samples", "datatype"]:
-            if attr not in self.h5file["data"].attrs.keys():
+            if attr not in self.h5file["data"].attrs:
                 self._logger.error(
                     "attribute '%s' not found in data-group (@Validator)", attr
                 )
                 return False
         for dset in ["time", "current", "voltage"]:
-            if dset not in self.h5file["data"].keys():
+            if dset not in self.h5file["data"]:
                 self._logger.error("dataset '%s' not found (@Validator)", dset)
                 return False
             for attr in ["gain", "offset"]:
-                if attr not in self.h5file["data"][dset].attrs.keys():
+                if attr not in self.h5file["data"][dset].attrs:
                     self._logger.error(
                         "attribute '%s' not found in dataset '%s' (@Validator)",
                         attr,
@@ -329,7 +348,7 @@ class Reader:
             self._logger.warning("Hostname was not set (@Validator)")
         return True
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> Any:
         """returns attribute or (if none found) a handle for a group or dataset (if found)
 
         :param key: attribute, group, dataset
@@ -414,7 +433,7 @@ class Reader:
         }
         return stats
 
-    def data_timediffs(self) -> List[float]:
+    def _data_timediffs(self) -> List[float]:
         """calculate list of (unique) time-deltas between buffers [s]
             -> optimized version that only looks at the start of each buffer
 
@@ -451,7 +470,7 @@ class Reader:
 
         :return: True if OK
         """
-        diffs = self.data_timediffs()
+        diffs = self._data_timediffs()
         if len(diffs) > 1:
             self._logger.warning(
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
@@ -459,7 +478,10 @@ class Reader:
         return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.samples_per_buffer, 6)
 
     def get_metadata(
-        self, node: Union[h5py.Dataset, h5py.Group, None] = None, minimal: bool = False
+        self,
+        node: Union[h5py.Dataset, h5py.Group, None] = None,
+        *,
+        minimal: bool = False,
     ) -> Dict[str, dict]:
         """recursive FN to capture the structure of the file
         :param node: starting node, leave free to go through whole file
@@ -480,13 +502,13 @@ class Reader:
                 "compression_opts": str(node.compression_opts),
             }
             if node.name == "/data/time":
-                metadata["_dataset_info"]["time_diffs_s"] = self.data_timediffs()
+                metadata["_dataset_info"]["time_diffs_s"] = self._data_timediffs()
                 # TODO: already convert to str to calm the typechecker?
                 #  or construct a pydantic-class
             elif "int" in str(node.dtype):
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
                 # TODO: put this into metadata["_dataset_statistics"] ??
-        for attr in node.attrs.keys():
+        for attr in node.attrs:
             attr_value = node.attrs[attr]
             if isinstance(attr_value, str):
                 with contextlib.suppress(yaml.YAMLError):
@@ -506,7 +528,7 @@ class Reader:
                     "file_size_MiB": round(self.file_size / 2**20, 3),
                     "valid": self.is_valid(),
                 }
-            for item in node.keys():
+            for item in node:
                 metadata[item] = self.get_metadata(node[item], minimal=minimal)
 
         return metadata
@@ -525,7 +547,7 @@ class Reader:
             metadata = self.get_metadata(
                 node
             )  # {"h5root": self.get_metadata(self.h5file)}
-            with open(yaml_path, "w", encoding="utf-8-sig") as yfd:
+            with yaml_path.open("w", encoding="utf-8-sig") as yfd:
                 yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
         else:
             metadata = {}
@@ -585,7 +607,7 @@ class Reader:
         if path_csv.exists():
             self._logger.warning("%s already exists, will skip", path_csv)
             return
-        with open(path_csv, "w") as csv:
+        with path_csv.open("w") as csv:
             csv.write(f"timestamp [s],{pin_name}\n")
             for row in pin_wf:
                 csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")

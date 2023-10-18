@@ -1,6 +1,4 @@
-"""
-
-this is ported py-version of the pru-code, goals:
+"""this is ported py-version of the pru-code, goals:
 - stay close to original code-base
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
@@ -23,14 +21,15 @@ from ..data_models.content.virtual_source import ConverterPRUConfig
 class PruCalibration:
     """part of calibration.h"""
 
-    def __init__(self, cal_emu: Optional[CalibrationEmulator] = None):
+    def __init__(self, cal_emu: Optional[CalibrationEmulator] = None) -> None:
         self.cal = cal_emu if cal_emu else CalibrationEmulator()
 
     def conv_adc_raw_to_nA(self, current_raw: int) -> float:
         return self.cal.adc_C_A.raw_to_si(current_raw) * (10**9)
         # TODO: add feature "negative residue compensation" to here
 
-    def conv_adc_raw_to_uV(self, voltage_raw: int) -> float:
+    @staticmethod
+    def conv_adc_raw_to_uV(voltage_raw: int) -> float:
         raise RuntimeError(f"This Fn should not been used (val={voltage_raw})")
 
     def conv_uV_to_dac_raw(self, voltage_uV: float) -> int:
@@ -41,7 +40,7 @@ class PruCalibration:
 
 
 class VirtualConverterModel:
-    def __init__(self, cfg: ConverterPRUConfig, cal: PruCalibration):
+    def __init__(self, cfg: ConverterPRUConfig, cal: PruCalibration) -> None:
         self._cal: PruCalibration = cal
         self._cfg: ConverterPRUConfig = cfg
 
@@ -140,7 +139,7 @@ class VirtualConverterModel:
 
         P_leak_fW = self.V_mid_uV * self._cfg.I_intermediate_leak_nA
         I_out_nA = self._cal.conv_adc_raw_to_nA(current_adc_raw)
-        if self.enable_buck:
+        if self.enable_buck:  # noqa: SIM108
             eta_inv_out = self.get_output_inv_efficiency(I_out_nA)
         else:
             eta_inv_out = 1.0
@@ -253,10 +252,10 @@ class VirtualConverterModel:
     def get_V_intermediate_uV(self) -> int:
         return round(self.V_mid_uV)
 
-    def get_V_intermediate_raw(self):
+    def get_V_intermediate_raw(self) -> int:
         return round(self._cal.conv_uV_to_dac_raw(self.V_mid_uV))
 
-    def get_power_good(self):
+    def get_power_good(self) -> bool:
         return self.power_good
 
     def get_I_mod_out_nA(self) -> float:

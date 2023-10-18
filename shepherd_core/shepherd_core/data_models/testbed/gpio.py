@@ -5,6 +5,7 @@ from pydantic import Field
 from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Annotated
+from typing_extensions import Self
 
 from ...testbed_client import tb_client
 from ..base.content import IdInt
@@ -38,7 +39,7 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
     reg_sys: Optional[Annotated[int, Field(ge=0)]] = None
     pin_sys: Optional[Annotated[str, StringConstraints(max_length=10)]] = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @model_validator(mode="before")
@@ -48,7 +49,7 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
         return values
 
     @model_validator(mode="after")
-    def post_validation(self):
+    def post_validation(self) -> Self:
         # ensure that either pru or sys is used, otherwise instance is considered faulty
         no_pru = (self.reg_pru is None) or (self.pin_pru is None)
         no_sys = (self.reg_sys is None) or (self.pin_sys is None)

@@ -1,32 +1,38 @@
 import hashlib
-import os
 import pathlib
-from datetime import datetime
 from datetime import timedelta
 from ipaddress import IPv4Address
 from pathlib import Path
+from typing import Any
+from typing import Generator
 from typing import Optional
 from typing import Union
 
 import yaml
 from pydantic import BaseModel
 from pydantic import ConfigDict
+from typing_extensions import Self
+from yaml import Dumper
 from yaml import SafeDumper
+from yaml import ScalarNode
 
+from .timezone import local_now
 from .wrapper import Wrapper
 
 
-def path2str(dumper, data):
+def path2str(
+    dumper: Dumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
+) -> ScalarNode:
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
-def time2int(dumper, data):
+def time2int(dumper: Dumper, data: timedelta) -> ScalarNode:
     return dumper.represent_scalar(
         "tag:yaml.org,2002:int", str(int(data.total_seconds()))
     )
 
 
-def generic2str(dumper, data):
+def generic2str(dumper: Dumper, data: Any) -> ScalarNode:
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
 
 
@@ -81,36 +87,37 @@ class ShpModel(BaseModel):
         )
         return str(content)
 
-    def __getitem__(self, key):
-        """allows dict access -> model["key"], in addition to model.key"""
+    def __getitem__(self, key: str) -> Any:
+        """Allows dict access -> model["key"], in addition to model.key"""
         return self.__getattribute__(key)
 
-    def keys(self):
+    def keys(self):  # noqa: ANN201
         """Fn of dict"""
         return self.model_dump().keys()
 
-    def items(self):
+    def items(self) -> Generator[tuple, None, None]:
         """Fn of dict"""
         for key in self.keys():
             yield key, self[key]
 
     @classmethod
     def schema_to_file(cls, path: Union[str, Path]) -> None:
-        """store schema to yaml (for frontend-generators)"""
+        """Store schema to yaml (for frontend-generators)"""
         model_dict = cls.model_json_schema()
         model_yaml = yaml.safe_dump(
             model_dict, default_flow_style=False, sort_keys=False
         )
-        with open(Path(path).resolve().with_suffix(".yaml"), "w") as f:
+        with Path(path).resolve().with_suffix(".yaml").open("w") as f:
             f.write(model_yaml)
 
     def to_file(
         self,
         path: Union[str, Path],
-        minimal: bool = True,
         comment: Optional[str] = None,
+        *,
+        minimal: bool = True,
     ) -> Path:
-        """store data to yaml in a wrapper
+        """Store data to yaml in a wrapper
         minimal: stores minimal set (filters out unset & default parameters)
         comment: documentation
         """
@@ -118,7 +125,7 @@ class ShpModel(BaseModel):
         model_wrap = Wrapper(
             datatype=type(self).__name__,
             comment=comment,
-            created=datetime.now(),
+            created=local_now(),
             parameters=model_dict,
         )
         model_yaml = yaml.safe_dump(
@@ -129,20 +136,20 @@ class ShpModel(BaseModel):
         # TODO: handle directory
         model_path = Path(path).resolve().with_suffix(".yaml")
         if not model_path.parent.exists():
-            os.makedirs(model_path.parent)
-        with open(model_path, "w") as f:
+            model_path.parent.mkdir(parents=True)
+        with model_path.open("w") as f:
             f.write(model_yaml)
         return model_path
 
     @classmethod
-    def from_file(cls, path: Union[str, Path]):
-        """load from yaml"""
-        with open(Path(path).resolve()) as shp_file:
+    def from_file(cls, path: Union[str, Path]) -> Self:
+        """Load from yaml"""
+        with Path(path).open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:
             raise ValueError("Model in file does not match the requirement")
         return cls(**shp_wrap.parameters)
 
-    def get_hash(self):
+    def get_hash(self) -> str:
         return hashlib.sha3_224(str(self.model_dump()).encode("utf-8")).hexdigest()

@@ -1,7 +1,7 @@
-from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 
+from shepherd_core import local_now
 from shepherd_core.data_models import EnergyEnvironment
 from shepherd_core.data_models import Experiment
 from shepherd_core.data_models import Firmware
@@ -44,7 +44,7 @@ def test_task_generation_script(tmp_path: Path) -> None:
     xperi = Experiment(
         id="4567",
         name="meaningful Test-Name",
-        time_start=datetime.now() + timedelta(minutes=30),
+        time_start=local_now() + timedelta(minutes=30),
         target_configs=target_cfgs,
     )
 

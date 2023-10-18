@@ -1,15 +1,13 @@
-"""
-
-How-to for defining an experiment:
-    - recommended approach for missing testbed-client
-    - variants
-        - var1 - references a server-path for the firmware
-        - var2 - embeds local firmware in yaml (elf-support is linux-only)
-    - assumption:
-        - start ASAP,
-        - no custom IDs,
-        - static Power-Supply
-        - no power-tracing
+"""How-to for defining an experiment:
+- recommended approach for missing testbed-client
+- variants
+- var1 - references a server-path for the firmware
+- var2 - embeds local firmware in yaml (elf-support is linux-only)
+- assumption:
+- start ASAP,
+- no custom IDs,
+- static Power-Supply
+- no power-tracing
 
 """
 from pathlib import Path
@@ -38,14 +36,13 @@ if do_connect:
 xp = Experiment(
     id="4567",
     name="meaningful_TestName",
-    # time_start="2033-03-13 14:15:16",  # or: datetime.now() + timedelta(minutes=30)
+    # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
     duration=30,
     target_configs=[
         TargetConfig(
-            target_IDs=range(1, 13),
-            # custom_IDs=range(7, 18),  # note: longer list is OK
+            target_IDs=range(7, 13),
+            custom_IDs=range(1, 100),  # note: longer list is OK
             energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
-            # virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt"),
             firmware1=Firmware(
                 name="FW_TestXYZ",
                 data=Path("/var/shepherd/content/fw/nes_lab/nrf52_demo_rf/build.elf"),

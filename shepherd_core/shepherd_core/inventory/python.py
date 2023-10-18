@@ -4,6 +4,7 @@ from importlib import import_module
 from typing import Optional
 
 from pydantic import ConfigDict
+from typing_extensions import Self
 
 from ..data_models import ShpModel
 
@@ -21,7 +22,7 @@ class PythonInventory(ShpModel):
     model_config = ConfigDict(str_min_length=0)
 
     @classmethod
-    def collect(cls):
+    def collect(cls) -> Self:
         model_dict = {"python": platform.python_version()}
         module_names = [
             "numpy",

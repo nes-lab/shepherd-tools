@@ -1,5 +1,4 @@
-"""
-Reader-Baseclass
+"""Reader-Baseclass
 """
 import math
 from datetime import datetime
@@ -14,24 +13,31 @@ from matplotlib import pyplot as plt
 from tqdm import trange
 
 from shepherd_core import Reader as CoreReader
+from shepherd_core import local_tz
 from shepherd_core.logger import logger
 
-# import samplerate  # TODO: just a test-fn for now
+# import samplerate  # noqa: ERA001, TODO: just a test-fn for now
 
 
 class Reader(CoreReader):
     """Sequentially Reads shepherd-data from HDF5 file.
 
     Args:
+    ----
         file_path: Path of hdf5 file containing shepherd data with iv-samples, iv-curves or isc&voc
         verbose: more info during usage, 'None' skips the setter
     """
 
-    def __init__(self, file_path: Optional[Path], verbose: Optional[bool] = True):
-        super().__init__(file_path, verbose)
+    def __init__(
+        self,
+        file_path: Optional[Path],
+        *,
+        verbose: Optional[bool] = True,
+    ) -> None:
+        super().__init__(file_path, verbose=verbose)
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
-        """extract numerical data via csv
+        """Extract numerical data via csv
 
         :param h5_group: can be external and should probably be downsampled
         :param separator: used between columns
@@ -47,24 +53,23 @@ class Reader(CoreReader):
             self._logger.warning("%s already exists, will skip", csv_path)
             return 0
         datasets = [
-            key if isinstance(h5_group[key], h5py.Dataset) else []
-            for key in h5_group.keys()
+            key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
         ]
         datasets.remove("time")
-        datasets = ["time"] + datasets
+        datasets = ["time", *datasets]
         separator = separator.strip().ljust(2)
         header = [
             h5_group[key].attrs["description"].replace(", ", separator)
             for key in datasets
         ]
         header = separator.join(header)
-        with open(csv_path, "w", encoding="utf-8-sig") as csv_file:
+        with csv_path.open("w", encoding="utf-8-sig") as csv_file:
             self._logger.info(
                 "CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name
             )
             csv_file.write(header + "\n")
             for idx, time_ns in enumerate(h5_group["time"][:]):
-                timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
+                timestamp = datetime.fromtimestamp(time_ns / 1e9, tz=local_tz())
                 csv_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"))
                 for key in datasets[1:]:
                     values = h5_group[key][idx]
@@ -74,10 +79,11 @@ class Reader(CoreReader):
                 csv_file.write("\n")
         return h5_group["time"][:].shape[0]
 
-    def save_log(self, h5_group: h5py.Group) -> int:
-        """save dataset in group as log, optimal for logged dmesg and exceptions
+    def save_log(self, h5_group: h5py.Group, *, add_timestamp: bool = True) -> int:
+        """Save dataset in group as log, optimal for logged dmesg and exceptions
 
         :param h5_group: can be external
+        :param add_timestamp: can be external
         :return: number of processed entries
         """
         if h5_group["time"].shape[0] < 1:
@@ -90,17 +96,18 @@ class Reader(CoreReader):
             self._logger.warning("%s already exists, will skip", log_path)
             return 0
         datasets = [
-            key if isinstance(h5_group[key], h5py.Dataset) else []
-            for key in h5_group.keys()
+            key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
         ]
         datasets.remove("time")
-        with open(log_path, "w", encoding="utf-8-sig") as log_file:
+        with log_path.open("w", encoding="utf-8-sig") as log_file:
             self._logger.info(
                 "Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name
             )
             for idx, time_ns in enumerate(h5_group["time"][:]):
-                timestamp = datetime.utcfromtimestamp(time_ns / 1e9)
-                log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
+                if add_timestamp:
+                    timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
+                    # ⤷ TODO: these .fromtimestamp would benefit from included TZ
+                    log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
                 for key in datasets:
                     try:
                         message = str(h5_group[key][idx])
@@ -117,6 +124,7 @@ class Reader(CoreReader):
         start_n: int = 0,
         end_n: Optional[int] = None,
         ds_factor: float = 5,
+        *,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
         """Warning: only valid for IV-Stream, not IV-Curves
@@ -199,10 +207,10 @@ class Reader(CoreReader):
         start_n: int = 0,
         end_n: Optional[int] = None,
         samplerate_dst: float = 1000,
+        *,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
-        """
-        :param data_src:
+        """:param data_src:
         :param data_dst:
         :param start_n:
         :param end_n:
@@ -299,13 +307,14 @@ class Reader(CoreReader):
         self,
         start_s: Optional[float] = None,
         end_s: Optional[float] = None,
-        relative_ts: bool = True,
+        *,
+        relative_timestamp: bool = True,
     ) -> Dict:
-        """provides down-sampled iv-data that can be feed into plot_to_file()
+        """Provides down-sampled iv-data that can be feed into plot_to_file()
 
         :param start_s: time in seconds, relative to start of recording
         :param end_s: time in seconds, relative to start of recording
-        :param relative_ts: treat
+        :param relative_timestamp: treat
         :return: down-sampled size of ~ self.max_elements
         """
         if self.get_datatype() == "ivcurve":
@@ -343,7 +352,7 @@ class Reader(CoreReader):
             "start_s": start_s,
             "end_s": end_s,
         }
-        if relative_ts:
+        if relative_timestamp:
             data["time"] = data["time"] - self._cal.time.raw_to_si(self.ds_time[0])
         return data
 
@@ -351,8 +360,7 @@ class Reader(CoreReader):
     def assemble_plot(
         data: Union[dict, list], width: int = 20, height: int = 10
     ) -> plt.Figure:
-        """
-        TODO: add power (if wanted)
+        """TODO: add power (if wanted)
 
         :param data: plottable / down-sampled iv-data with some meta-data
                 -> created with generate_plot_data()
@@ -384,7 +392,7 @@ class Reader(CoreReader):
         width: int = 20,
         height: int = 10,
     ) -> None:
-        """creates (down-sampled) IV-Plot
+        """Creates (down-sampled) IV-Plot
             -> omitting start- and end-time will use the whole duration
 
         :param start_s: time in seconds, relative to start of recording, optional
@@ -415,7 +423,7 @@ class Reader(CoreReader):
     def multiplot_to_file(
         data: list, plot_path: Path, width: int = 20, height: int = 10
     ) -> Optional[Path]:
-        """creates (down-sampled) IV-Multi-Plot
+        """Creates (down-sampled) IV-Multi-Plot
 
         :param data: plottable / down-sampled iv-data with some meta-data
             -> created with generate_plot_data()
