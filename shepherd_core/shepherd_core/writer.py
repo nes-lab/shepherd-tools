@@ -16,6 +16,7 @@ import numpy as np
 import yaml
 from pydantic import validate_call
 from typing_extensions import Self
+from typing import Type
 from yaml import Dumper
 from yaml import SafeDumper
 from yaml import ScalarNode
@@ -213,7 +214,7 @@ class Writer(Reader):
 
     def __exit__(
         self,
-        typ: Optional[type[BaseException]],
+        typ: Optional[Type[BaseException]],
         exc: Optional[BaseException],
         tb: Optional[TracebackType],
         extra_arg: int = 0,

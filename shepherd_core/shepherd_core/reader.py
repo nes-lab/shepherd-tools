@@ -23,6 +23,7 @@ import yaml
 from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
+from typing import Type
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationPair
@@ -140,7 +141,7 @@ class Reader:
 
     def __exit__(
         self,
-        typ: Optional[type[BaseException]],
+        typ: Optional[Type[BaseException]],
         exc: Optional[BaseException],
         tb: Optional[TracebackType],
         extra_arg: int = 0,

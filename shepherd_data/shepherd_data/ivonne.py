@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from tqdm import trange
 from typing_extensions import Self
+from typing import Type
 
 from . import Writer
 from .mppt import MPPTracker
@@ -82,7 +83,7 @@ class Reader:
 
     def __exit__(
         self,
-        typ: Optional[type[BaseException]],
+        typ: Optional[Type[BaseException]],
         exc: Optional[BaseException],
         tb: Optional[TracebackType],
         extra_arg: int = 0,
