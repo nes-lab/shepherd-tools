@@ -1,6 +1,6 @@
 # History of Changes
 
-## v2023.
+## v2023.10.1
 
 - supported python is now 3.8 - 3.12
 - lots of linting, more pythonic style and interface-improvements
