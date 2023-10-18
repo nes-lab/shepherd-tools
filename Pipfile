@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-shepherd-core = {editable = true, extras = ["elf","dev","test"], path = "shepherd_core/."}
+shepherd-core = {editable = true, extras = ["elf","inventory","dev","test"], path = "shepherd_core/."}
 shepherd-data = {editable = true, extras = ["dev","test"], path = "shepherd_data/."}
 samplerate = "*"
 
