@@ -199,7 +199,7 @@ class Writer(Reader):
 
         if isinstance(self._window_samples, int):
             self.h5file["data"].attrs["window_samples"] = self._window_samples
-        if datatype == EnergyDType.ivcurve and (self._window_samples in [None, 0]):
+        if datatype == EnergyDType.ivcurve and (self._window_samples in {None, 0}):
             raise ValueError("Window Size argument needed for ivcurve-Datatype")
 
         # include cal-data

@@ -124,7 +124,7 @@ class TestbedClient:
 
     def try_completing_model(self, model_type: str, values: dict) -> (dict, list):
         """init by name/id, for none existing instances raise Exception"""
-        if len(values) == 1 and next(iter(values.keys())) in ["id", "name"]:
+        if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             value = next(iter(values.values()))
             if (
                 isinstance(value, str)

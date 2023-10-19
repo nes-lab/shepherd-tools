@@ -119,10 +119,10 @@ class EmulationTask(ShpModel):
             )
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
-        if isinstance(self.voltage_aux, str) and self.voltage_aux not in [
+        if isinstance(self.voltage_aux, str) and self.voltage_aux not in {
             "main",
             "buffer",
-        ]:
+        }:
             raise ValueError(
                 "Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'."
             )

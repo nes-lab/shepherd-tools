@@ -227,7 +227,7 @@ class HarvesterPRUConfig(ShpModel):
     ) -> Self:
         if isinstance(dtype_in, str):
             dtype_in = EnergyDType[dtype_in]
-        if for_emu and dtype_in not in [EnergyDType.ivsample, EnergyDType.ivcurve]:
+        if for_emu and dtype_in not in {EnergyDType.ivsample, EnergyDType.ivcurve}:
             raise ValueError("Not Implemented")
         # TODO: use dtype properly in shepherd
         interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)

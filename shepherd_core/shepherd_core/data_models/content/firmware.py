@@ -63,20 +63,20 @@ class Firmware(ContentModel, title="Firmware of Target"):
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         # crosscheck type with actual data
         _type = values.get("data_type")
-        if _type in [
+        if _type in {
             FirmwareDType.base64_hex,
             FirmwareDType.base64_elf,
-        ]:
+        }:
             try:
                 _hash = fw_tools.base64_to_hash(values.get("data"))
             except ValueError:
                 raise ValueError("Embedded Firmware seems to be faulty") from None
             if values.get("data_hash") is not None and _hash != values.get("data_hash"):
                 raise ValueError("Embedded Firmware and Hash do not match!")
-        elif _type in [
+        elif _type in {
             FirmwareDType.path_hex,
             FirmwareDType.path_elf,
-        ]:
+        }:
             try:
                 _ = Path(values.get("data"))
             except (SyntaxError, NameError):

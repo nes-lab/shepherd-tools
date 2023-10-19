@@ -87,7 +87,7 @@ class CalMeasurementCape(ShpModel):
         dcal = CalibrationCape().model_dump()
         # TODO: is it helpful to default wrong / missing values?
         for key, value in dv.items():
-            if key in ["harvester", "emulator"]:
+            if key in {"harvester", "emulator"}:
                 if value is not None:
                     dcal[key] = self[key].to_cal()
             else:

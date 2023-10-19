@@ -339,7 +339,7 @@ class Reader:
         for dset in ["time", "current", "voltage"]:
             comp = self.h5file["data"][dset].compression
             opts = self.h5file["data"][dset].compression_opts
-            if comp not in [None, "gzip", "lzf"]:
+            if comp not in {None, "gzip", "lzf"}:
                 self._logger.warning(
                     "unsupported compression found (%s != None, lzf, gzip) (@Validator)",
                     comp,

@@ -61,4 +61,4 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
         return self
 
     def user_controllable(self) -> bool:
-        return ("gpio" in self.name.lower()) and (self.direction in ["IO", "OUT"])
+        return ("gpio" in self.name.lower()) and (self.direction in {"IO", "OUT"})
