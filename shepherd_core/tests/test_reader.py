@@ -43,7 +43,7 @@ def test_reader_open(tmp_path: Path) -> None:
 
     with tmp_file.open("w") as tf:
         tf.write("abc def ghi")
-    with pytest.raises(OSError):  # should be TypeError
+    with pytest.raises(TypeError):
         Reader(file_path=tmp_file)
 
 

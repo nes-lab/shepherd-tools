@@ -2,6 +2,8 @@
 
 ## v2023.10.1
 
+- updated extraction of included data
+- improved handling of faulty files
 - supported python is now 3.8 - 3.12
 - lots of linting, more pythonic style and interface-improvements
 - add timezone to datetime-objects
