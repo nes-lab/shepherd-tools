@@ -1,6 +1,7 @@
 # Data Module
 
 [![PyPiVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
+[![image](https://img.shields.io/pypi/pyversions/shepherd_data.svg)](https://pypi.python.org/pypi/shepherd-data)
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/python-app.yml)
 [![CodeStyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
