@@ -68,6 +68,7 @@ extend-ignore = [
     "D100",
     "D102",
     "D103",
+    "G200",
 ]
 
 per-file-ignores = """
