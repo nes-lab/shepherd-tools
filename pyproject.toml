@@ -46,7 +46,6 @@ require-plugins = [
 
     ### Limitations
     "flake8-blind-except",
-    "flake8-logging-format",
     "flake8-print",
 
     ### Documentation

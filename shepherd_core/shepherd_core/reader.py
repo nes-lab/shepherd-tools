@@ -91,8 +91,13 @@ class Reader:
                     errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
                 )
 
-            self.h5file = h5py.File(self.file_path, "r")  # = readonly
-            self._reader_opened = True
+            try:
+                self.h5file = h5py.File(self.file_path, "r")  # = readonly
+                self._reader_opened = True
+            except OSError as _xcp:
+                raise TypeError(
+                    f"Unable to open HDF5-File '{self.file_path.name}'"
+                ) from _xcp
 
             if self.is_valid():
                 self._logger.info("File is available now")
