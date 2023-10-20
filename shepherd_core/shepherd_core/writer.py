@@ -214,9 +214,9 @@ class Writer(Reader):
 
     def __exit__(
         self,
-        typ: Optional[Type[BaseException]],
-        exc: Optional[BaseException],
-        tb: Optional[TracebackType],
+        typ: Optional[Type[BaseException]] = None,
+        exc: Optional[BaseException] = None,
+        tb: Optional[TracebackType] = None,
         extra_arg: int = 0,
     ) -> None:
         self._align()
