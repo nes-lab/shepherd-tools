@@ -1,5 +1,11 @@
 # History of Changes
 
+## v2023.10.2
+
+- fix exit-fn
+- allow checking presence of variables in model (if X in Y)
+- more efficient coding
+
 ## v2023.10.1
 
 - updated extraction of included data
