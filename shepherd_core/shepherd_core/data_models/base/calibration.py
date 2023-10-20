@@ -177,7 +177,7 @@ class CapeData(ShpModel):
     cal_date: constr(max_length=12) = Field(default_factory=local_iso_date)
     # ⤷ produces something like '2023-01-01'
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # TODO: override useful?
         """string-representation allows print(model)"""
         return str(self.model_dump())
 
