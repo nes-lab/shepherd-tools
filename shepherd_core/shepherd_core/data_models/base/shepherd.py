@@ -91,6 +91,11 @@ class ShpModel(BaseModel):
         """Allows dict access -> model["key"], in addition to model.key"""
         return self.__getattribute__(key)
 
+    def __contains__(self, item: str) -> bool:
+        """Allows checks like 'x in YClass'"""
+        return item in self.model_dump().keys()  # noqa: SIM118
+        # more correct, but probably slower than hasattr
+
     def keys(self):  # noqa: ANN201
         """Fn of dict"""
         return self.model_dump().keys()
