@@ -5,6 +5,8 @@
 - fix exit-fn
 - allow checking presence of variables in model (if X in Y)
 - more efficient coding
+- cleanup try-import-code
+- cleanup singletons
 
 ## v2023.10.1
 

@@ -6,7 +6,7 @@ import errno
 import logging
 import math
 import os
-import pickle  # noqa: S403
+import pickle
 from pathlib import Path
 from types import TracebackType
 from typing import Optional

@@ -12,10 +12,8 @@ from .validation import is_elf
 
 try:
     from pwnlib.elf import ELF
-
-    elf_support = True
 except ImportError as e:
-    elf_support = False
+    ELF = None
     elf_error_text = (
         "Please install functionality with 'pip install shepherd_core[elf] -U' first, "
         f"underlying exception: {e.msg}"
@@ -26,7 +24,7 @@ except ImportError as e:
 def find_symbol(file_elf: Path, symbol: str) -> bool:
     if symbol is None or not is_elf(file_elf):
         return False
-    if not elf_support:
+    if ELF is None:
         raise RuntimeError(elf_error_text)
     elf = ELF(path=file_elf)
     try:
@@ -54,7 +52,7 @@ def read_symbol(
     """Interpreted as int"""
     if not find_symbol(file_elf, symbol):
         return None
-    if not elf_support:
+    if ELF is None:
         raise RuntimeError(elf_error_text)
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]
@@ -70,7 +68,7 @@ def read_uid(file_elf: Path) -> Optional[int]:
 def read_arch(file_elf: Path) -> Optional[str]:
     if not is_elf(file_elf):
         return None
-    if not elf_support:
+    if ELF is None:
         raise RuntimeError(elf_error_text)
     elf = ELF(path=file_elf)
     if "exec" in elf.elftype.lower():
@@ -94,7 +92,7 @@ def modify_symbol_value(
     """
     if not find_symbol(file_elf, symbol):
         return None
-    if not elf_support:
+    if ELF is None:
         raise RuntimeError(elf_error_text)
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]

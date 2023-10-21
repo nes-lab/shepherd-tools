@@ -69,6 +69,9 @@ extend-ignore = [
     "D102",
     "D103",
     "G200",
+    # handled by ruff
+    "S403",
+    "S404",
 ]
 
 per-file-ignores = """
@@ -129,7 +132,6 @@ ignore = [
     "N802", "N803", "N806", "N815", "N816", # naming (si-units should stay)
     "PLR2004", # magic values
     "TID252", # relative imports from parent
-    "RUF100", # noqa from other linters, TODO: replace flake8, when security is fully ported (S4**)
     "PLR0904", # complexity
     "PLR0911", "PLR0912", # complexity
     "PLR0913", "PLR0915", # complexity

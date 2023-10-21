@@ -16,9 +16,11 @@ from .user_model import User
 
 
 class TestbedClient:
-    _instance = None
+    _instance: Optional[Self] = None
 
-    def __init__(self, **kwargs: Unpack[TypedDict]) -> None:
+    def __init__(
+        self, server: Optional[str] = None, token: Union[str, Path, None] = None
+    ) -> None:
         if not hasattr(self, "_token"):
             self._token: str = "null"
             self._server: Optional[str] = testbed_server_default
@@ -27,12 +29,13 @@ class TestbedClient:
             self._fixtures: Optional[Fixtures] = Fixtures()
             self._connected: bool = False
             self._req = None
-        if "server" in kwargs or "token" in kwargs:
-            self.connect(**kwargs)
+        if server is not None:
+            self.connect(server=server, token=token)
 
-    def __new__(cls) -> Self:
+    @classmethod
+    def __new__(cls, *_args: tuple, **_kwargs: Unpack[TypedDict]) -> Self:
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
+            cls._instance = object.__new__(cls)
         return cls._instance
 
     def __del__(self) -> None:

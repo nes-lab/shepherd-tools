@@ -1,6 +1,6 @@
 import copy
 import os
-import pickle  # noqa: S403
+import pickle
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path

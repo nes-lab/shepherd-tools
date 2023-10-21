@@ -1,5 +1,5 @@
 import platform
-import subprocess  # noqa: S404
+import subprocess
 import time
 from contextlib import suppress
 from typing import Optional
@@ -10,10 +10,8 @@ from .. import logger
 
 try:
     import psutil
-
-    psutil_support = True
 except ImportError:
-    psutil_support = False
+    psutil = None
 
 from pydantic import ConfigDict
 from pydantic.types import PositiveInt
@@ -45,15 +43,7 @@ class SystemInventory(ShpModel):
 
     @classmethod
     def collect(cls) -> Self:
-        if psutil_support:
-            ifs1 = psutil.net_if_addrs().items()
-            ifs2 = {
-                name: (_if[1].address, _if[0].address)
-                for name, _if in ifs1
-                if len(_if) > 1
-            }
-            uptime = time.time() - psutil.boot_time()
-        else:
+        if psutil is None:
             ifs2 = {}
             uptime = 0
             logger.warning(
@@ -61,6 +51,14 @@ class SystemInventory(ShpModel):
                 "Please install functionality with "
                 "'pip install shepherd_core[inventory] -U' first"
             )
+        else:
+            ifs1 = psutil.net_if_addrs().items()
+            ifs2 = {
+                name: (_if[1].address, _if[0].address)
+                for name, _if in ifs1
+                if len(_if) > 1
+            }
+            uptime = time.time() - psutil.boot_time()
 
         model_dict = {
             "uptime": round(uptime),

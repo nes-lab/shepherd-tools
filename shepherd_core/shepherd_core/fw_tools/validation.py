@@ -15,10 +15,9 @@ from .converter_elf import elf_to_hex
 try:
     from elftools.common.exceptions import ELFError
     from pwnlib.elf import ELF
-
-    elf_support = True
 except ImportError as e:
-    elf_support = False
+    ELF = None
+    ELFError = None
     elf_error_text = (
         "Please install functionality with 'pip install shepherd_core[elf] -U' first, "
         f"underlying exception: {e.msg}"
@@ -81,7 +80,7 @@ def is_hex_nrf52(file: Path) -> bool:
 
 @validate_call
 def is_elf(file: Path) -> bool:
-    if not elf_support:
+    if ELF is None:
         raise RuntimeError(elf_error_text)
     if not file.is_file():
         return False
