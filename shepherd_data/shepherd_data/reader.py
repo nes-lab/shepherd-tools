@@ -50,7 +50,7 @@ class Reader(CoreReader):
             return 0
         csv_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.csv")
         if csv_path.exists():
-            self._logger.warning("%s already exists, will skip", csv_path)
+            self._logger.info("File already exists, will skip '%s'", csv_path.name)
             return 0
         datasets = [
             key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
@@ -93,7 +93,7 @@ class Reader(CoreReader):
             return 0
         log_path = self.file_path.with_suffix(f".{h5_group.name.strip('/')}.log")
         if log_path.exists():
-            self._logger.warning("%s already exists, will skip", log_path)
+            self._logger.info("File already exists, will skip '%s'", log_path.name)
             return 0
         datasets = [
             key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
@@ -116,6 +116,38 @@ class Reader(CoreReader):
                     log_file.write(f"\t{message}")
                 log_file.write("\n")
         return h5_group["time"].shape[0]
+
+    def warn_logs(self, h5_group: h5py, min_level: int = 30, limit: int = 10) -> bool:
+        if h5_group["time"].shape[0] < 1:
+            return False
+        if "level" not in h5_group:
+            return False
+        _items = [1 for _x in h5_group["level"][:] if _x >= min_level]
+        if len(_items) < 1:
+            return False
+        self._logger.warning(
+            "%s caught %d Warnings/Errors with level>=%d -> first %d are:",
+            self.get_hostname(),
+            len(_items),
+            min_level,
+            limit,
+        )
+        for idx, time_ns in enumerate(h5_group["time"][:]):
+            _level = h5_group["level"][idx]
+            if _level < min_level:
+                continue
+            _msg = h5_group["message"][idx]
+            _timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
+            if _level < 30:
+                self._logger.info("    %s: %s", _timestamp, _msg)
+            elif _level < 40:
+                self._logger.warning("    %s: %s", _timestamp, _msg)
+            else:
+                self._logger.error("    %s: %s", _timestamp, _msg)
+            limit -= 1
+            if limit < 1:
+                break
+        return True
 
     def downsample(
         self,
