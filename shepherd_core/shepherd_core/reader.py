@@ -103,11 +103,15 @@ class Reader:
                 self._logger.debug("File is available now")
             else:
                 self._logger.error(
-                    "File is faulty! Will try to open but there might be dragons",
+                    "[FileValidation] File is faulty! "
+                    "Will try to open but there might be dragons, for '%s'",
+                    self.file_path.name,
                 )
 
         if not isinstance(self.h5file, h5py.File):
-            raise TypeError("Type of opened file is not h5py.File")
+            raise TypeError(
+                "Type of opened file is not h5py.File, for %s", self.file_path.name
+            )
 
         self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
         self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]

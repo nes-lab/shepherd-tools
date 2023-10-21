@@ -117,14 +117,23 @@ class Reader(CoreReader):
                 log_file.write("\n")
         return h5_group["time"].shape[0]
 
-    def warn_logs(self, h5_group: h5py, min_level: int = 30, limit: int = 10) -> bool:
+    def warn_logs(
+        self,
+        h5_group: h5py,
+        min_level: int = 30,
+        limit: int = 10,
+        *,
+        show: bool = True,
+    ) -> int:
         if h5_group["time"].shape[0] < 1:
-            return False
+            return 0
         if "level" not in h5_group:
-            return False
+            return 0
         _items = [1 for _x in h5_group["level"][:] if _x >= min_level]
         if len(_items) < 1:
-            return False
+            return 0
+        if not show:
+            return len(_items)
         self._logger.warning(
             "%s caught %d Warnings/Errors with level>=%d -> first %d are:",
             self.get_hostname(),
@@ -147,7 +156,7 @@ class Reader(CoreReader):
             limit -= 1
             if limit < 1:
                 break
-        return True
+        return len(_items)
 
     def downsample(
         self,
