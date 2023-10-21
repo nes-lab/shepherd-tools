@@ -175,15 +175,16 @@ def extract_meta(in_data: Path, separator: str) -> None:
         # TODO remove deprecated: timesync; "shepherd-log", "dmesg", "exceptions"
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                elements = shpr.save_metadata()
+                shpr.save_metadata()
                 for element in ["ptp", "sysutil", "timesync"]:
-                    if element in elements:
+                    if element in shpr.h5file:
                         shpr.save_csv(shpr[element], separator)
                 logs_depr = ["shepherd-log", "dmesg", "exceptions"]
                 logs = ["sheep", "kernel", "phc2sys", "uart"]
                 for element in logs + logs_depr:
-                    if element in elements:
+                    if element in shpr.h5file:
                         shpr.save_log(shpr[element])
+                        shpr.warn_logs(shpr[element])
         except TypeError as _xpc:
             logger.error("ERROR: will skip file, caught exception: %s", _xpc)
 
@@ -205,7 +206,7 @@ def extract_uart(in_data: Path) -> None:
                 # TODO: could also add parameter to get symbols instead of lines
                 log_path = Path(file).with_suffix(".uart_from_wf.log")
                 if log_path.exists():
-                    logger.warning("%s already exists, will skip", log_path)
+                    logger.info("File already exists, will skip '%s'", log_path.name)
                     continue
 
                 with log_path.open("w") as log_file:

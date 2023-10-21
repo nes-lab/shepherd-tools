@@ -19,9 +19,9 @@ if __name__ == "__main__":
             continue
 
         with shp.Reader(fpath, verbose=False) as fh:
-            elements = fh.save_metadata()
+            fh.save_metadata()
 
-            if "sysutil" in elements:
+            if "sysutil" in fh.h5file:
                 fh.save_csv(fh["sysutil"])
 
                 # also generate overall cpu-util
@@ -38,12 +38,12 @@ if __name__ == "__main__":
                     f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
                 )
 
-            if "timesync" in elements:
+            if "timesync" in fh.h5file:
                 fh.save_csv(fh["timesync"])
 
-            if "dmesg" in elements:
+            if "dmesg" in fh.h5file:
                 fh.save_log(fh["dmesg"])
-            if "exceptions" in elements:
+            if "exceptions" in fh.h5file:
                 fh.save_log(fh["exceptions"])
-            if "uart" in elements:
+            if "uart" in fh.h5file:
                 fh.save_log(fh["uart"])
