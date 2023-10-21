@@ -362,7 +362,8 @@ class Reader:
             opts = self.h5file["data"][dset].compression_opts
             if comp not in {None, "gzip", "lzf"}:
                 self._logger.warning(
-                    "[FileValidation] unsupported compression found (%s != None, lzf, gzip) in '%s'",
+                    "[FileValidation] unsupported compression found "
+                    "(%s != None, lzf, gzip) in '%s'",
                     comp,
                     self.file_path.name,
                 )
