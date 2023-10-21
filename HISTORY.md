@@ -1,5 +1,10 @@
 # History of Changes
 
+## v2023.10.3
+
+- add warning-system for errors in log
+- improve verbosity and messages
+
 ## v2023.10.2
 
 - fix exit-fn

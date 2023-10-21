@@ -69,12 +69,12 @@ class Reader:
         with self.file_path.open("rb") as ifr:
             self._df = pickle.load(ifr)  # noqa: S301
         self._refresh_file_stats()
-        self._logger.info(
+        self._logger.debug(
             "Reading data from '%s'\n"
             "\t- runtime = %d s\n"
             "\t- size = %.3f KiB\n"
             "\t- rate = %.3f KiB/s",
-            self.file_path,
+            self.file_path.name,
             self.runtime_s,
             self.file_size / 2**10,
             self.data_rate / 2**10,
@@ -123,7 +123,7 @@ class Reader:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self._logger.warning("%s already exists, will skip", shp_output.name)
+            self._logger.info("File already exists, will skip '%s'", shp_output.name)
             return
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
@@ -200,7 +200,7 @@ class Reader:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self._logger.warning("%s already exists, will skip", shp_output.name)
+            self._logger.info("File already exists, will skip '%s'", shp_output.name)
             return
 
         if tracker is None:
@@ -264,7 +264,7 @@ class Reader:
             df_elements_n = self._df.shape[0]
 
         if shp_output.exists():
-            self._logger.warning("%s already exists, will skip", shp_output.name)
+            self._logger.info("File already exists, will skip '%s'", shp_output.name)
             return
 
         with Writer(shp_output, datatype="isc_voc") as sfw:

@@ -100,7 +100,7 @@ class Reader:
                 ) from _xcp
 
             if self.is_valid():
-                self._logger.info("File is available now")
+                self._logger.debug("File is available now")
             else:
                 self._logger.error(
                     "File is faulty! Will try to open but there might be dragons",
@@ -126,14 +126,14 @@ class Reader:
 
         if file_path is not None:
             # file opened by this reader
-            self._logger.info(
+            self._logger.debug(
                 "Reading data from '%s'\n"
                 "\t- runtime %.1f s\n"
                 "\t- mode = %s\n"
                 "\t- window_size = %d\n"
                 "\t- size = %.3f MiB\n"
                 "\t- rate = %.0f KiB/s",
-                self.file_path,
+                self.file_path.name,
                 self.runtime_s,
                 self.get_mode(),
                 self.get_window_samples(),
@@ -267,55 +267,74 @@ class Reader:
         """
         # hard criteria
         if "data" not in self.h5file:
-            self._logger.error("root data-group not found (@Validator)")
+            self._logger.error(
+                "[FileValidation] root data-group not found in '%s'",
+                self.file_path.name,
+            )
             return False
         for attr in ["mode"]:
             if attr not in self.h5file.attrs:
                 self._logger.error(
-                    "attribute '%s' not found in file (@Validator)", attr
+                    "[FileValidation] attribute '%s' not found in '%s'",
+                    attr,
+                    self.file_path.name,
                 )
                 return False
             if self.h5file.attrs["mode"] not in self.mode_dtype_dict:
-                self._logger.error("unsupported mode '%s' (@Validator)", attr)
+                self._logger.error(
+                    "[FileValidation] unsupported mode '%s' in '%s'",
+                    attr,
+                    self.file_path.name,
+                )
                 return False
         for attr in ["window_samples", "datatype"]:
             if attr not in self.h5file["data"].attrs:
                 self._logger.error(
-                    "attribute '%s' not found in data-group (@Validator)", attr
+                    "[FileValidationError] attribute '%s' not found in data-group in '%s'",
+                    attr,
+                    self.file_path.name,
                 )
                 return False
         for dset in ["time", "current", "voltage"]:
             if dset not in self.h5file["data"]:
-                self._logger.error("dataset '%s' not found (@Validator)", dset)
+                self._logger.error(
+                    "[FileValidation] dataset '%s' not found in '%s'",
+                    dset,
+                    self.file_path.name,
+                )
                 return False
             for attr in ["gain", "offset"]:
                 if attr not in self.h5file["data"][dset].attrs:
                     self._logger.error(
-                        "attribute '%s' not found in dataset '%s' (@Validator)",
+                        "[FileValidation] attribute '%s' not found in dataset '%s' in '%s'",
                         attr,
                         dset,
+                        self.file_path.name,
                     )
                     return False
         if self.get_datatype() not in self.mode_dtype_dict[self.get_mode()]:
             self._logger.error(
-                "unsupported type '%s' for mode '%s' (@Validator)",
+                "[FileValidation] unsupported type '%s' for mode '%s'  in '%s'",
                 self.get_datatype(),
                 self.get_mode(),
+                self.file_path.name,
             )
             return False
 
         if self.get_datatype() == EnergyDType.ivcurve and self.get_window_samples() < 1:
             self._logger.error(
-                "window size / samples is < 1 "
-                "-> invalid for ivcurve-datatype (@Validator)"
+                "[FileValidation] window size / samples is < 1 "
+                "-> invalid for ivcurve-datatype, in '%s'",
+                self.file_path.name,
             )
             return False
 
         # soft-criteria:
         if self.get_datatype() != EnergyDType.ivcurve and self.get_window_samples() > 0:
             self._logger.warning(
-                "window size / samples is > 0 despite "
-                "not using the ivcurve-datatype (@Validator)"
+                "[FileValidation] window size / samples is > 0 despite "
+                "not using the ivcurve-datatype, in '%s'",
+                self.file_path.name,
             )
         # same length of datasets:
         ds_time_size = self.h5file["data"]["time"].shape[0]
@@ -323,17 +342,19 @@ class Reader:
             ds_size = self.h5file["data"][dset].shape[0]
             if ds_time_size != ds_size:
                 self._logger.warning(
-                    "dataset '%s' has different size (=%d), "
-                    "compared to time-ds (=%d) (@Validator)",
+                    "[FileValidation] dataset '%s' has different size (=%d), "
+                    "compared to time-ds (=%d), in '%s'",
                     dset,
                     ds_size,
                     ds_time_size,
+                    self.file_path.name,
                 )
         # dataset-length should be multiple of buffersize
         remaining_size = ds_time_size % self.samples_per_buffer
         if remaining_size != 0:
             self._logger.warning(
-                "datasets are not aligned with buffer-size (@Validator)"
+                "[FileValidation] datasets are not aligned with buffer-size in '%s'",
+                self.file_path.name,
             )
         # check compression
         for dset in ["time", "current", "voltage"]:
@@ -341,16 +362,21 @@ class Reader:
             opts = self.h5file["data"][dset].compression_opts
             if comp not in {None, "gzip", "lzf"}:
                 self._logger.warning(
-                    "unsupported compression found (%s != None, lzf, gzip) (@Validator)",
+                    "[FileValidation] unsupported compression found (%s != None, lzf, gzip) in '%s'",
                     comp,
+                    self.file_path.name,
                 )
             if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
                 self._logger.warning(
-                    "gzip compression is too high (%d > 1) for BBone (@Validator)", opts
+                    "[FileValidation] gzip compression is too high (%d > 1) for BBone in '%s'",
+                    opts,
+                    self.file_path.name,
                 )
         # host-name
         if self.get_hostname() == "unknown":
-            self._logger.warning("Hostname was not set (@Validator)")
+            self._logger.warning(
+                "[FileValidation] Hostname was not set in '%s'", self.file_path.name
+            )
         return True
 
     def __getitem__(self, key: str) -> Any:
@@ -547,7 +573,7 @@ class Reader:
         if isinstance(self.file_path, Path):
             yaml_path = Path(self.file_path).resolve().with_suffix(".yaml")
             if yaml_path.exists():
-                self._logger.info("%s already exists, will skip", yaml_path)
+                self._logger.info("File already exists, will skip '%s'", yaml_path.name)
                 return {}
             metadata = self.get_metadata(
                 node
@@ -610,7 +636,7 @@ class Reader:
     ) -> None:
         path_csv = self.file_path.with_suffix(f".waveform.{pin_name}.csv")
         if path_csv.exists():
-            self._logger.warning("%s already exists, will skip", path_csv)
+            self._logger.info("File already exists, will skip '%s'", path_csv.name)
             return
         with path_csv.open("w") as csv:
             csv.write(f"timestamp [s],{pin_name}\n")
