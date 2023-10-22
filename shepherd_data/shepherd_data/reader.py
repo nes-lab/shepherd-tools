@@ -119,33 +119,29 @@ class Reader(CoreReader):
 
     def warn_logs(
         self,
-        h5_group: h5py,
+        group_name: str = "sheep",
         min_level: int = 30,
         limit: int = 10,
         *,
         show: bool = True,
     ) -> int:
-        if h5_group["time"].shape[0] < 1:
-            return 0
-        if "level" not in h5_group:
-            return 0
-        _items = [1 for _x in h5_group["level"][:] if _x >= min_level]
-        if len(_items) < 1:
+        _count = self.count_errors_in_log(group_name, min_level)
+        if _count < 1:
             return 0
         if not show:
-            return len(_items)
+            return _count
         self._logger.warning(
-            "%s caught %d Warnings/Errors with level>=%d -> first %d are:",
+            "%s caught %d messages with level>=%d -> first %d are:",
             self.get_hostname(),
-            len(_items),
+            _count,
             min_level,
             limit,
         )
-        for idx, time_ns in enumerate(h5_group["time"][:]):
-            _level = h5_group["level"][idx]
+        for idx, time_ns in enumerate(self.h5file[group_name]["time"][:]):
+            _level = self.h5file[group_name]["level"][idx]
             if _level < min_level:
                 continue
-            _msg = h5_group["message"][idx]
+            _msg = self.h5file[group_name]["message"][idx]
             _timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
             if _level < 30:
                 self._logger.info("    %s: %s", _timestamp, _msg)
@@ -156,7 +152,7 @@ class Reader(CoreReader):
             limit -= 1
             if limit < 1:
                 break
-        return len(_items)
+        return _count
 
     def downsample(
         self,

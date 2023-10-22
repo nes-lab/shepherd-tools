@@ -382,6 +382,14 @@ class Reader:
             self._logger.warning(
                 "[FileValidation] Hostname was not set in '%s'", self.file_path.name
             )
+        # errors during execution
+        _err = self.count_errors_in_log()
+        if _err > 0:
+            self._logger.warning(
+                "[FileValidation] Sheep reported %d errors during execution -> check logs in '%s'",
+                _err,
+                self.file_path.name,
+            )
         return True
 
     def __getitem__(self, key: str) -> Any:
@@ -512,6 +520,19 @@ class Reader:
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
             )
         return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.samples_per_buffer, 6)
+
+    def count_errors_in_log(
+        self, group_name: str = "sheep", min_level: int = 40
+    ) -> int:
+        if group_name not in self.h5file:
+            return 0
+        if "level" not in self.h5file["sheep"]:
+            return 0
+        _lvl = self.h5file["sheep"]["level"]
+        if _lvl.shape[0] < 1:
+            return 0
+        _items = [1 for _x in _lvl[:] if _x >= min_level]
+        return len(_items)
 
     def get_metadata(
         self,

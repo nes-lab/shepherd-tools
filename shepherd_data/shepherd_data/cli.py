@@ -184,7 +184,7 @@ def extract_meta(in_data: Path, separator: str) -> None:
                 for element in logs + logs_depr:
                     if element in shpr.h5file:
                         shpr.save_log(shpr[element])
-                        shpr.warn_logs(shpr[element])
+                        shpr.warn_logs(element, show=True)
         except TypeError as _xpc:
             logger.error("ERROR: will skip file, caught exception: %s", _xpc)
 
