@@ -3,8 +3,8 @@
 # https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Target_pre-deployment-tests.xlsx
 - datatype: target
   parameters:
-    id: 6
-    name: nRF52_FRAM_001
+    id: 6  # Outer ID - selected by user - can be rearranged
+    name: nRF52_FRAM_001  # inner ID - used to link all parts together
     version: v1.0
     description: nRF52 as MCU + Radio, MSP430FR as SPI-FRAM or additional MCU
     comment: Test3 21nA sleep, msp-programming was flaky before -> monitor!
@@ -34,28 +34,28 @@
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
-    id: 1
+    id: 13
     name: nRF52_FRAM_005
-    comment: Test3 21nA sleep
+    comment: Test3 21nA sleep, changed Antenna to λ/4
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 14
+    name: nRF52_FRAM_006
+    comment: Test3 21nA sleep, changed Antenna to λ/4
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
     id: 7
-    name: nRF52_FRAM_006
-    comment: Test3 21nA sleep
-- datatype: target
-  parameters:
-    inherit_from: nRF52_FRAM_001
-    id: 1307
     name: nRF52_FRAM_007
-    comment: msp-programming is failing -> defective
+    comment: msp-programming is failing -> defective, msp removed & changed Antenna to λ/4
     active: false
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
-    id: 1308
+    id: 8
     name: nRF52_FRAM_008
-    comment: msp-programming is failing -> defective
+    comment: msp-programming is failing -> defective, msp removed & changed Antenna to λ/4
     active: false
 - datatype: target
   parameters:
@@ -72,15 +72,15 @@
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
-    id: 12
+    id: 1
     name: nRF52_FRAM_011
-    comment: Test3 21nA sleep
+    comment: Test3 21nA sleep, changed Antenna to λ/4
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
     id: 1312
     name: nRF52_FRAM_012
-    comment: msp-programming is failing -> defective
+    comment: msp-programming is failing -> defective, Antenna-Port destroyed
     active: false
 - datatype: target
   parameters:
@@ -111,7 +111,7 @@
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
-    id: 8
+    id: 12
     name: nRF52_FRAM_017
     comment: Test3 21nA sleep, nrf was miss-aligned -> hot air rework
 - datatype: target

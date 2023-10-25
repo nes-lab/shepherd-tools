@@ -84,7 +84,7 @@
     inherit_from: cape51
     id: 1270064
     name: cape64
-    comment: only 220u/440uF on 5V
+    comment: only 220u/440uF on 5V, had 6x74LVC2T45GT flippend (U11,12,23,24,27,28) - hot air repair
 - datatype: cape
   parameters:
     inherit_from: cape51
