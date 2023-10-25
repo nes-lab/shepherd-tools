@@ -212,7 +212,7 @@
     eth_port: L24
     description: test on microwave
     cape:
-      name: cape62
+      name: cape64
     target_a:
       name: nRF52_FRAM_006
     created: 2023-09-22 12:12:12
