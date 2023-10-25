@@ -194,9 +194,9 @@
     name: sheep13
     ip: 192.168.165.213
     mac: 18:62:E4:D0:D7:70
-    room: unresolved
-    eth_port: unresolved
-    description: unresolved
+    room: II62
+    eth_port: A18
+    description: south-east - middle of window
     cape:
       name: cape60
     target_a:
@@ -208,9 +208,9 @@
     name: sheep14
     ip: 192.168.165.214
     mac: 18:62:E4:E3:89:43
-    room: unresolved
-    eth_port: unresolved
-    description: unresolved
+    room: II64B
+    eth_port: L24
+    description: test on microwave
     cape:
       name: cape62
     target_a:
