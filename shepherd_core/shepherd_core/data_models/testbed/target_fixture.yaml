@@ -49,14 +49,14 @@
     id: 7
     name: nRF52_FRAM_007
     comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
-    active: false
+    active: true  # TODO: temporary
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
     id: 8
     name: nRF52_FRAM_008
     comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
-    active: false
+    active: true  # TODO: temporary
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
