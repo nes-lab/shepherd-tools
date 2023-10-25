@@ -36,26 +36,26 @@
     inherit_from: nRF52_FRAM_001
     id: 13
     name: nRF52_FRAM_005
-    comment: Test3 21nA sleep, changed Antenna to λ/4
+    comment: Test3 21nA sleep, changed Antenna to lambda/4
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
     id: 14
     name: nRF52_FRAM_006
-    comment: Test3 21nA sleep, changed Antenna to λ/4
+    comment: Test3 21nA sleep, changed Antenna to lambda/4
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
     id: 7
     name: nRF52_FRAM_007
-    comment: msp-programming is failing -> defective, msp removed & changed Antenna to λ/4
+    comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
     active: false
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
     id: 8
     name: nRF52_FRAM_008
-    comment: msp-programming is failing -> defective, msp removed & changed Antenna to λ/4
+    comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
     active: false
 - datatype: target
   parameters:
@@ -74,7 +74,7 @@
     inherit_from: nRF52_FRAM_001
     id: 1
     name: nRF52_FRAM_011
-    comment: Test3 21nA sleep, changed Antenna to λ/4
+    comment: Test3 21nA sleep, changed Antenna to lambda/4
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
