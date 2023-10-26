@@ -25,12 +25,13 @@ class PythonInventory(ShpModel):
     def collect(cls) -> Self:
         model_dict = {"python": platform.python_version()}
         module_names = [
-            "numpy",
             "h5py",
+            "numpy",
             "pydantic",
-            "yaml",
             "shepherd_core",
             "shepherd_sheep",
+            "yaml",
+            "zstandard",
         ]
 
         for module_name in module_names:
