@@ -1,5 +1,10 @@
 # History of Changes
 
+## v2023.11.1
+
+- warn about errors during test-run during validation (default when opening shepherd-files)
+- update testbed-structure (changed positions, composition and added two nodes)
+
 ## v2023.10.3
 
 - add warning-system for errors in log
