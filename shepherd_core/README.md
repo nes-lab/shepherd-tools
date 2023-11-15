@@ -32,6 +32,14 @@ For postprocessing shepherds .h5-files users want to use [shepherd_data](https:/
 
 See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a trafficbench-experiment that's used to derive the link-matrix.
 
+### Compatibility
+
+| OS      |   PyVersion  | Comment                                     |
+|---------|--------------|---------------------------------------------|
+| Ubuntu  | 3.8 - 3.12   |                                             |
+| MacOS   | 3.8 - 3.12   |                                             |
+| Windows | 3.8 - 3.12   | no support for elf and hex-conversions yet  |
+
 ### Data-Models in Detail
 
 - new orchestration ``/data-models`` with focus on remote shepherd-testbed
