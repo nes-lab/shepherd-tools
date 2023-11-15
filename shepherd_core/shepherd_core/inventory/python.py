@@ -11,13 +11,14 @@ from ..data_models import ShpModel
 
 class PythonInventory(ShpModel):
     # program versions
-    python: Optional[str] = None
-    numpy: Optional[str] = None
     h5py: Optional[str] = None
+    numpy: Optional[str] = None
     pydantic: Optional[str] = None
-    yaml: Optional[str] = None
+    python: Optional[str] = None
     shepherd_core: Optional[str] = None
     shepherd_sheep: Optional[str] = None
+    yaml: Optional[str] = None
+    zstandard: Optional[str] = None
 
     model_config = ConfigDict(str_min_length=0)
 
