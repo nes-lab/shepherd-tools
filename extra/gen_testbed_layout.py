@@ -11,6 +11,10 @@ if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     separator = "; "  # excel parses this as table, but not ","?!?
     path_csv = path_here / "content/testbed_layout.csv"
+
+    if not path_csv.parent.exists():
+        path_csv.parent.mkdir(parents=True)
+
     with path_csv.open("w") as csv:
         elements = [
             "tb_id",

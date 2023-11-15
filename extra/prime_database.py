@@ -40,6 +40,9 @@ if __name__ == "__main__":
     else:
         path_content = path_here / "content/"
 
+    if not path_content.exists():
+        path_content.mkdir(parents=True)
+
     files = get_files(path_content, ".yaml")
     fixtures = []
 
