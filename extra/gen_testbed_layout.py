@@ -12,6 +12,8 @@ if __name__ == "__main__":
     separator = "; "  # excel parses this as table, but not ","?!?
     path_csv = path_here / "content/testbed_layout.csv"
 
+    Fixtures(reset=True)  # force database refresh 
+
     if not path_csv.parent.exists():
         path_csv.parent.mkdir(parents=True)
 
