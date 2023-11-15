@@ -172,7 +172,7 @@ class Fixtures:
     suffix = ".yaml"
 
     @validate_call
-    def __init__(self, file_path: Optional[Path] = None) -> None:
+    def __init__(self, file_path: Optional[Path] = None, *, reset: bool = False) -> None:
         if file_path is None:
             self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
         else:
@@ -180,7 +180,7 @@ class Fixtures:
         self.components: Dict[str, Fixture] = {}
         save_path = self.file_path / "fixtures.pickle"
 
-        if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)):
+        if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)) and not reset:
             # speedup
             with save_path.open("rb", buffering=-1) as fd:
                 self.components = pickle.load(fd)  # noqa: S301
