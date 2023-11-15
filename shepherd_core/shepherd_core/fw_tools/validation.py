@@ -92,22 +92,22 @@ def is_elf(file: Path) -> bool:
     return True
 
 
-def is_elf_msp430(file: Path) -> bool:
+def is_elf_msp430(file: Path) -> bool:  # TODO: allow detection without conversion
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
             file_hex = Path(path) / "file.hex"
-            file_hex = elf_to_hex(file, file_hex)  # TODO: allow detection without conversion
+            file_hex = elf_to_hex(file, file_hex)
             if is_hex_msp430(file_hex):
                 return True
         return False
     return False
 
 
-def is_elf_nrf52(file: Path) -> bool:
+def is_elf_nrf52(file: Path) -> bool:  # TODO: allow detection without conversion
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
             file_hex = Path(path) / "file.hex"
-            file_hex = elf_to_hex(file, file_hex)  # TODO: allow detection without conversion
+            file_hex = elf_to_hex(file, file_hex)
             if is_hex_nrf52(file_hex):
                 return True
         return False

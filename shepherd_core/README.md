@@ -34,11 +34,17 @@ See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core
 
 ### Compatibility
 
-| OS      |   PyVersion  | Comment                                     |
-|---------|--------------|---------------------------------------------|
-| Ubuntu  | 3.8 - 3.12   |                                             |
-| MacOS   | 3.8 - 3.12   |                                             |
-| Windows | 3.8 - 3.12   | no support for elf and hex-conversions yet  |
+| OS      |   PyVersion  | Comment                                    |
+|---------|--------------|--------------------------------------------|
+| Ubuntu  | 3.8 - 3.12   |                                            |
+| Windows | 3.8 - 3.12   | no support for elf and hex-conversions yet |
+| MacOS   | 3.8 - 3.12   | hex-conversion missing                     |
+
+Notes:
+- hex-conversion needs a working and accessible objcopy
+- elf-supports needs
+  - ``shepherd-core[elf]`` installs ``pwntools-elf-only``
+  - most elf-features also still utilize hex-conversion
 
 ### Data-Models in Detail
 
