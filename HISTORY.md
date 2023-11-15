@@ -4,6 +4,8 @@
 
 - warn about errors during test-run during validation (default when opening shepherd-files)
 - update testbed-structure (changed positions, composition and added two nodes)
+- extend GH-Actions (with unittests) to windows & macOS
+- fix inventory
 
 ## v2023.10.3
 
