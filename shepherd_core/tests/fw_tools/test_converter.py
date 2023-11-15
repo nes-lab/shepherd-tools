@@ -30,6 +30,7 @@ def test_firmware_to_hex_w_elf(path_elf: Path) -> None:
     assert path_gen.exists
     assert path_gen.suffix.lower() == ".hex"
 
+
 @pytest.mark.converter
 def test_firmware_to_hex_w_hex(path_hex: Path) -> None:
     path_gen = fw_tools.firmware_to_hex(path_hex)

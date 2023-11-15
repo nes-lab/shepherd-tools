@@ -14,55 +14,11 @@ permissions:
   contents: read
 
 jobs:
-  build_and_test_ubuntu:
+  build_and_test:
 
     strategy:
       matrix:
-        python-version: [ "3.12", "3.10", "3.8" ] # 5 versions / years
-
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }} 🐍
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies 🔧
-        run: pip install build
-
-        #python -m pip install --upgrade pip
-        # sudo apt install build-essential
-
-      - name: Test-Build core-package 🧱
-        run: python -m build
-        working-directory: "./shepherd_core"
-      - name: Test-Build data-package 🧱
-        run: python -m build
-        working-directory: "./shepherd_data"
-
-      - name: Install core-package 🧱
-        run: pip install .[test,elf,inventory]
-        working-directory: "./shepherd_core"
-      - name: Install data-package 🧱
-        run: pip install .[test]
-        working-directory: "./shepherd_data"
-
-      - name: Test core-package with pytest 🧫
-        run: pytest
-        working-directory: "./shepherd_core"
-      - name: Test data-package with pytest 🧫
-        run: pytest
-        working-directory: "./shepherd_data"
-
-  build_and_test_WinMac:
-
-    strategy:
-      matrix:
-        os: ["windows-latest", "macos-latest"]
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: [ "3.12", "3.10", "3.8" ] # 5 versions / years
 
     runs-on: ${{ matrix.os }}
@@ -76,8 +32,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies 🔧
+      - name: Install pip-dependencies 🔧
         run: pip install build
+      - name: Install apt-dependencies 🔧
+        run: sudo apt install build-essential
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        #python -m pip install --upgrade pip
 
       - name: Test-Build core-package 🧱
         run: python -m build
@@ -87,8 +47,12 @@ jobs:
         working-directory: "./shepherd_data"
 
       - name: Install core-package 🧱
-        run: pip install .[test,inventory]  # TODO: include elf again
+        run: pip install .[test,inventory]
         working-directory: "./shepherd_core"
+      - name: Install ELF-support 🧱
+        run: pip install .[elf]
+        working-directory: "./shepherd_core"
+        if: ${{ matrix.os != 'windows-latest' }}
       - name: Install data-package 🧱
         run: pip install .[test]
         working-directory: "./shepherd_data"

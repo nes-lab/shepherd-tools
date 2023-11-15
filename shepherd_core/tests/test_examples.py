@@ -30,7 +30,7 @@ def test_example_scripts(example_path: Path, file: str) -> None:
 examples_fw = [
     "firmware_model.py",
     "firmware_modification.py",
-    ]
+]
 
 
 @pytest.mark.converter

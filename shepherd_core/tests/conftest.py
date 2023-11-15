@@ -44,12 +44,12 @@ def pytest_collection_modifyitems(
     except ImportError:
         ELF = None
     skip_elf = pytest.mark.skip(
-        reason="ELF-support not found -> 'shepherd_core[elf]' missing or OS=Windows"
+        reason="ELF-support not found -> shepherd_core[elf] missing or OS is Windows?"
     )
 
     # OBJCOPY
     try:
-        subprocess.run(["objcopy", "--version"], check=True)  # noqa: S603
+        subprocess.run(["objcopy", "--version"], check=True)
         OBJCOPY = True
     except FileNotFoundError:
         OBJCOPY = None
