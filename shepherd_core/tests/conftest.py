@@ -1,3 +1,5 @@
+import subprocess
+from collections.abc import Iterable
 from pathlib import Path
 
 import numpy as np
@@ -30,3 +32,33 @@ def generate_h5_file(file_path: Path, file_name: str = "harvest_example.h5") -> 
 @pytest.fixture
 def data_h5(tmp_path: Path) -> Path:
     return generate_h5_file(tmp_path)
+
+
+def pytest_collection_modifyitems(
+    config: pytest.Config,
+    items: Iterable[pytest.Item],
+) -> None:
+    # ELF
+    try:
+        from pwnlib.elf import ELF
+    except ImportError:
+        ELF = None
+    skip_elf = pytest.mark.skip(
+        reason="ELF-support not found -> 'shepherd_core[elf]' missing or OS=Windows"
+    )
+
+    # OBJCOPY
+    try:
+        subprocess.run(["objcopy", "--version"], check=True)  # noqa: S603
+        OBJCOPY = True
+    except FileNotFoundError:
+        OBJCOPY = None
+    skip_converter = pytest.mark.skip(
+        reason="Objcopy not found -> are binutils or build-essential installed?"
+    )
+
+    for item in items:
+        if "elf" in item.keywords and ELF is None:
+            item.add_marker(skip_elf)
+        if "converter" in item.keywords and OBJCOPY is None:
+            item.add_marker(skip_converter)
