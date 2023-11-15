@@ -5,5 +5,4 @@ NOTE2: only temporary, while testbed-client is a mockup
 """
 from shepherd_core.testbed_client.fixtures import Fixtures
 
-
 Fixtures(reset=True)

@@ -199,9 +199,7 @@ class Reader:
         """
         if end_n is None:
             end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)
-        self._logger.debug(
-            "Reading blocks %d to %d from source-file", start_n, end_n
-        )
+        self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
         _raw = is_raw
 
         for i in range(start_n, end_n):
