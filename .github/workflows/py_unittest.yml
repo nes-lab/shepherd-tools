@@ -32,27 +32,28 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies 🔧
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
-          sudo apt install build-essential
+        run: pip install build
+
+        #python -m pip install --upgrade pip
+        # sudo apt install build-essential
 
       - name: Test-Build core-package 🧱
         run: python -m build
         working-directory: "./shepherd_core"
-      - name: Install core-package 🧱
-        run: pip install .[test,elf,inventory]
-        working-directory: "./shepherd_core"
-      - name: Test core-package with pytest 🧫
-        run: pytest
-        working-directory: "./shepherd_core"
-
       - name: Test-Build data-package 🧱
         run: python -m build
         working-directory: "./shepherd_data"
+
+      - name: Install core-package 🧱
+        run: pip install .[test,elf,inventory]
+        working-directory: "./shepherd_core"
       - name: Install data-package 🧱
         run: pip install .[test]
         working-directory: "./shepherd_data"
+
+      - name: Test core-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_core"
       - name: Test data-package with pytest 🧫
         run: pytest
         working-directory: "./shepherd_data"
@@ -81,19 +82,20 @@ jobs:
       - name: Test-Build core-package 🧱
         run: python -m build
         working-directory: "./shepherd_core"
-      - name: Install core-package 🧱
-        run: pip install .[test,elf,inventory]
-        working-directory: "./shepherd_core"
-      - name: Test core-package with pytest 🧫
-        run: pytest
-        working-directory: "./shepherd_core"
-
       - name: Test-Build data-package 🧱
         run: python -m build
         working-directory: "./shepherd_data"
+
+      - name: Install core-package 🧱
+        run: pip install .[test,inventory]  # TODO: include elf again
+        working-directory: "./shepherd_core"
       - name: Install data-package 🧱
         run: pip install .[test]
         working-directory: "./shepherd_data"
+
+      - name: Test core-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_core"
       - name: Test data-package with pytest 🧫
         run: pytest
         working-directory: "./shepherd_data"
@@ -112,9 +114,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies 🔧
-        run: |
-          python -m pip install --upgrade pip
-          pip install pylint pylint-exit
+        run: pip install pylint pylint-exit
 
       - name: Run Pre-Commit Tests 🧪
         uses: pre-commit/action@v3.0.0
