@@ -96,7 +96,7 @@ def is_elf_msp430(file: Path) -> bool:
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
             file_hex = Path(path) / "file.hex"
-            file_hex = elf_to_hex(file, file_hex)
+            file_hex = elf_to_hex(file, file_hex)  # TODO: allow detection without conversion
             if is_hex_msp430(file_hex):
                 return True
         return False
@@ -107,7 +107,7 @@ def is_elf_nrf52(file: Path) -> bool:
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
             file_hex = Path(path) / "file.hex"
-            file_hex = elf_to_hex(file, file_hex)
+            file_hex = elf_to_hex(file, file_hex)  # TODO: allow detection without conversion
             if is_hex_nrf52(file_hex):
                 return True
         return False
