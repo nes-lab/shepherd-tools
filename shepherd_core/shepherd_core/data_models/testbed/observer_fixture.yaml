@@ -102,7 +102,7 @@
     cape:
       name: cape56
     target_a:
-      name: nRF52_FRAM_007  # TODO: not validated
+      name: nRF52_FRAM_017  # TODO: not validated
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -142,9 +142,9 @@
     eth_port: C4
     description: south-east-corner
     cape:
-      name: cape59
+      name: cape65
     target_a:
-      name: nRF52_FRAM_009
+      name: nRF52_FRAM_009  # TODO: not validated
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -156,7 +156,7 @@
     eth_port: C20
     description: mid on east-side
     cape:
-      name: cape65
+      name: cape59
     target_a:
       name: nRF52_FRAM_010
     created: 2023-09-22 12:12:12
@@ -166,13 +166,13 @@
     name: sheep11
     ip: 192.168.165.211
     mac: 18:62:E4:E4:0E:5D
-    room: II75
-    eth_port: D10
+    room: II70
+    eth_port: B22
     description: mid on west-side
     cape:
       name: cape61
     target_a:
-      name: nRF52_FRAM_017  # TODO: not validated
+      name: nRF52_FRAM_007
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -194,9 +194,10 @@
     name: sheep13
     ip: 192.168.165.213
     mac: 18:62:E4:D0:D7:70
-    room: II62
-    eth_port: A18
-    description: south-east - middle of window
+    room: II64C
+    eth_port: A4
+    description: north-east - in corner of room
+    comment: might temporary be in II70
     cape:
       name: cape60
     target_a:
@@ -210,7 +211,8 @@
     mac: 18:62:E4:E3:89:43
     room: II64B
     eth_port: L24
-    description: test on microwave
+    description: south - behind door
+    comment: might temporary be in II70
     cape:
       name: cape64
     target_a:

@@ -46,17 +46,19 @@
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
-    id: 7
+    id: 12
     name: nRF52_FRAM_007
     comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
-    active: true  # TODO: temporary
+    mcu2: null
+    active: true
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
     id: 8
     name: nRF52_FRAM_008
     comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
-    active: true  # TODO: temporary
+    mcu2: null
+    active: true
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
@@ -111,7 +113,7 @@
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_001
-    id: 12
+    id: 7
     name: nRF52_FRAM_017
     comment: Test3 21nA sleep, nrf was miss-aligned -> hot air rework
 - datatype: target
