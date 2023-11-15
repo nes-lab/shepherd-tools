@@ -23,6 +23,7 @@ def test_elf_to_hex(path_elf: Path, tmp_path: Path) -> None:
     assert path_hex.as_posix() == path_gen.as_posix()
 
 
+@pytest.mark.elf
 @pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_firmware_to_hex_w_elf(path_elf: Path) -> None:
@@ -31,6 +32,7 @@ def test_firmware_to_hex_w_elf(path_elf: Path) -> None:
     assert path_gen.suffix.lower() == ".hex"
 
 
+@pytest.mark.elf
 @pytest.mark.converter
 def test_firmware_to_hex_w_hex(path_hex: Path) -> None:
     path_gen = fw_tools.firmware_to_hex(path_hex)
@@ -39,6 +41,7 @@ def test_firmware_to_hex_w_hex(path_hex: Path) -> None:
     assert path_gen.as_posix() == path_hex.as_posix()
 
 
+@pytest.mark.elf
 @pytest.mark.converter
 def test_firmware_to_hex_w_fail() -> None:
     path_some = Path(__file__).parent / "conftest.py"
@@ -46,6 +49,7 @@ def test_firmware_to_hex_w_fail() -> None:
         _ = fw_tools.firmware_to_hex(path_some)
 
 
+@pytest.mark.elf
 @pytest.mark.converter
 def test_hash() -> None:
     hash_a = fw_tools.file_to_hash(files_elf[0])
@@ -55,6 +59,7 @@ def test_hash() -> None:
     assert hash_b == hash_c
 
 
+@pytest.mark.elf
 @pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_base64(path_elf: Path, tmp_path: Path) -> None:
