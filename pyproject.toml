@@ -135,6 +135,7 @@ ignore = [
     "ANN101", "ANN102", # self & cls not type-annotated
     "ANN401",  # Any as valid type
     "COM812", # trailing comma, same line
+    "PLC0415",  # import in FN
 ]
 target-version = "py38"
 preview = true
