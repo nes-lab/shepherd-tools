@@ -26,7 +26,7 @@
     mac: 18:62:E4:E4:41:8D
     room: II56
     eth_port: J24
-    description: mid on west-side
+    description: lower mid on west-side
     cape:
       name: cape51
     target_a:
@@ -112,7 +112,7 @@
     mac: 18:62:E4:E4:39:D7
     room: II66
     eth_port: A20
-    description: mid on west-side
+    description: north-west-corner
     cape:
       name: cape57
     target_a:
@@ -154,7 +154,7 @@
     mac: 18:62:E4:E4:24:C5
     room: II74
     eth_port: C20
-    description: mid on east-side
+    description: upper mid on east-side
     cape:
       name: cape59
     target_a:
@@ -166,9 +166,9 @@
     name: sheep11
     ip: 192.168.165.211
     mac: 18:62:E4:E4:0E:5D
-    room: II70
-    eth_port: B22
-    description: mid on west-side
+    room: II69
+    eth_port: B14
+    description: mid on east-side
     cape:
       name: cape61
     target_a:
@@ -196,7 +196,7 @@
     mac: 18:62:E4:D0:D7:70
     room: II64C
     eth_port: A4
-    description: north-east - in corner of room
+    description: north-west-corner
     comment: might temporary be in II70
     cape:
       name: cape60
@@ -211,7 +211,7 @@
     mac: 18:62:E4:E3:89:43
     room: II64B
     eth_port: L24
-    description: south - behind door
+    description: north-east-corner in cupboard
     comment: might temporary be in II70
     cape:
       name: cape64

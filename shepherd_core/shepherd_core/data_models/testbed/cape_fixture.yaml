@@ -50,6 +50,7 @@
     inherit_from: cape51
     id: 1270058
     name: cape58
+    comment: has shields on emu & hrv-circuits -> no effect on RF-Performance
 - datatype: cape
   parameters:
     inherit_from: cape51
