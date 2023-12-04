@@ -191,7 +191,6 @@ class Uart:
         """Look after longest pauses
         - accumulate steps until a state with uneven step-size is found
         """
-        pass
 
     def get_symbols(self, *, force_redo: bool = False) -> np.ndarray:
         """Ways to detect EOF:

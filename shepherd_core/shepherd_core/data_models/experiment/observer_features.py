@@ -138,6 +138,7 @@ class SystemLogging(ShpModel, title="Config for System-Logging"):
     ptp: bool = True
     shepherd: bool = True
     # TODO: rename to kernel, timesync, sheep
+    # TODO: add utilization as option
 
 
 # TODO: some more interaction would be good

@@ -69,6 +69,7 @@ class SystemInventory(ShpModel):
             "processor": platform.processor(),
             "hostname": platform.node(),
             "interfaces": ifs2,
+            # TODO: add free space on /
         }
 
         with suppress(FileNotFoundError):
