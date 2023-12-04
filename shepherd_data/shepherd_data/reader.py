@@ -331,7 +331,6 @@ class Reader(CoreReader):
                 slice_out_now = slice_out_nxt
             resampler.reset()
             """
-            pass
 
         if isinstance(data_dst, np.ndarray):
             data_dst.resize((slice_out_now,), refcheck=False)

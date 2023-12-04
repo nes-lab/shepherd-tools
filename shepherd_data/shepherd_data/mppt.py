@@ -57,7 +57,6 @@ class MPPTracker:
         :param coeffs: ivonne coefficients
         :return:
         """
-        pass
 
 
 class OpenCircuitTracker(MPPTracker):

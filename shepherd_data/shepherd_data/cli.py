@@ -184,6 +184,7 @@ def extract_meta(in_data: Path, separator: str) -> None:
                 for element in logs + logs_depr:
                     if element in shpr.h5file:
                         shpr.save_log(shpr[element])
+                        # TODO: allow omitting timestamp, also test if segmented uart is correctly written
                         shpr.warn_logs(element, show=True)
         except TypeError as _xpc:
             logger.error("ERROR: will skip file, caught exception: %s", _xpc)
@@ -218,6 +219,7 @@ def extract_uart(in_data: Path) -> None:
                             log_file.write(
                                 timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":"
                             )
+                            # TODO: allow to skip Timestamp and export raw text
                             log_file.write(f"\t{str.encode(line[1])}")
                             log_file.write("\n")
         except TypeError as _xpc:
