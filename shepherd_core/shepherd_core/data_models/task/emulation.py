@@ -29,8 +29,9 @@ class Compression(str, Enum):
     lzf = "lzf"  # not native hdf5
     gzip1 = 1  # higher compr & load
     gzip = 1
-    default = 1
+    default = "lzf"
     null = None
+    # NOTE: changed to lzf as BBB needs every straw it can get
 
 
 compressions_allowed: list = [None, "lzf", 1]
@@ -52,8 +53,7 @@ class EmulationTask(ShpModel):
     force_overwrite: bool = False
     # ⤷ Overwrite existing file
     output_compression: Optional[Compression] = Compression.default
-    # ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)
-
+    # ⤷ should be lzf, 1 (gzip level 1) or None (order of recommendation)
     time_start: Optional[datetime] = None
     # timestamp or unix epoch time, None = ASAP
     duration: Optional[timedelta] = None
