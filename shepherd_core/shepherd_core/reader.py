@@ -185,6 +185,7 @@ class Reader:
         end_n: Optional[int] = None,
         *,
         is_raw: bool = False,
+        omit_ts: bool = False,
     ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
@@ -201,19 +202,20 @@ class Reader:
             end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
         _raw = is_raw
+        _wts = not omit_ts
 
         for i in range(start_n, end_n):
             idx_start = i * self.samples_per_buffer
             idx_end = idx_start + self.samples_per_buffer
             if _raw:
                 yield (
-                    self.ds_time[idx_start:idx_end],
+                    self.ds_time[idx_start:idx_end] if _wts else 0,
                     self.ds_voltage[idx_start:idx_end],
                     self.ds_current[idx_start:idx_end],
                 )
             else:
                 yield (
-                    self._cal.time.raw_to_si(self.ds_time[idx_start:idx_end]),
+                    self._cal.time.raw_to_si(self.ds_time[idx_start:idx_end]) if _wts else 0,
                     self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_end]),
                     self._cal.current.raw_to_si(self.ds_current[idx_start:idx_end]),
                 )
