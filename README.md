@@ -76,30 +76,31 @@ coverage report
 
 ## Release-Procedure
 
-- increase version number in ``__init__.py`` of both packages
+- increase version number by executing ``bump2version``
 - install and run ``pre-commit`` for QA-Checks, see steps below
 - run unittests from both packages locally
   - additionally every commit gets automatically tested by GitHub workflows
-- update changelog in ``HISTORY.md``
+- update changelog in ``CHANGELOG.md``
 - move code from dev-branch to main by PR
-- add tag to commit - reflecting current version number - i.e. ``v23.9.0``
-- GitHub automatically creates a release & pushes the release to pypi
+- add tag to commit - reflecting current version number - i.e. ``v2023.9.0``
+  - GitHub automatically creates a release & pushes the release to pypi
 - update release-text with latest Changelog
 - rebase dev-branch
 
 ```shell
-pip3 install pre-commit
-# or better
 pipenv shell
+
+bump2version patch --allow-dirty
 
 pre-commit run --all-files
 
 # additional QA-Tests (currently with open issues)
 pyright
-ruff check .
 
 # inside sub-modules unittests
 cd shepherd_core
+pytest --stepwise
+cd ../shepherd_data
 pytest --stepwise
 # when developers add code they should make sure its covered by the testsuite
 coverage run -m pytest
