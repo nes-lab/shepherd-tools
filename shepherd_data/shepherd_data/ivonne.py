@@ -63,9 +63,7 @@ class Reader:
 
     def __enter__(self) -> Self:
         if not self.file_path.exists():
-            raise FileNotFoundError(
-                errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name
-            )
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name)
         with self.file_path.open("rb") as ifr:
             self._df = pickle.load(ifr)  # noqa: S301
         self._refresh_file_stats()
@@ -116,9 +114,7 @@ class Reader:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %f s", duration_s)
-            df_elements_n = min(
-                self._df.shape[0], int(duration_s * self.samplerate_sps)
-            )
+            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
         else:
             df_elements_n = self._df.shape[0]
 
@@ -128,9 +124,7 @@ class Reader:
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
 
-        with Writer(
-            shp_output, datatype="ivcurve", window_samples=pts_per_curve
-        ) as sfw:
+        with Writer(shp_output, datatype="ivcurve", window_samples=pts_per_curve) as sfw:
             sfw.store_hostname("IVonne")
             curve_interval_us = round(sfw.sample_interval_ns * pts_per_curve / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
@@ -140,9 +134,7 @@ class Reader:
             for idx in job_iter:
                 idx_top = min(idx + max_elements, df_elements_n)
                 df_slice = self._df.iloc[idx : idx_top + 1].copy()
-                df_slice["timestamp"] = pd.TimedeltaIndex(
-                    data=df_slice["time"], unit="s"
-                )
+                df_slice["timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
                 df_slice = df_slice.set_index("timestamp")
                 # warning: .interpolate does crash in debug-mode with typeError
                 df_slice = (
@@ -193,9 +185,7 @@ class Reader:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %f s", duration_s)
-            df_elements_n = min(
-                self._df.shape[0], int(duration_s * self.samplerate_sps)
-            )
+            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
         else:
             df_elements_n = self._df.shape[0]
 
@@ -223,17 +213,11 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice = tracker.process(df_slice)
-                df_slice["timestamp"] = pd.TimedeltaIndex(
-                    data=df_slice["time"], unit="s"
-                )
-                df_slice = df_slice[["time", "v", "i", "timestamp"]].set_index(
-                    "timestamp"
-                )
+                df_slice["timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
+                df_slice = df_slice[["time", "v", "i", "timestamp"]].set_index("timestamp")
                 # warning: .interpolate does crash in debug-mode with typeError
                 df_slice = (
-                    df_slice.resample(f"{interval_us}us")
-                    .interpolate(method="cubic")
-                    .iloc[:-1]
+                    df_slice.resample(f"{interval_us}us").interpolate(method="cubic").iloc[:-1]
                 )
                 sfw.append_iv_data_si(
                     df_slice["time"].to_numpy(),
@@ -257,9 +241,7 @@ class Reader:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %f s", duration_s)
-            df_elements_n = min(
-                self._df.shape[0], int(duration_s * self.samplerate_sps)
-            )
+            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
         else:
             df_elements_n = self._df.shape[0]
 
@@ -282,17 +264,11 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice.loc[:, "isc"] = get_isc(df_slice)
-                df_slice["timestamp"] = pd.TimedeltaIndex(
-                    data=df_slice["time"], unit="s"
-                )
-                df_slice = df_slice[["time", "voc", "isc", "timestamp"]].set_index(
-                    "timestamp"
-                )
+                df_slice["timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
+                df_slice = df_slice[["time", "voc", "isc", "timestamp"]].set_index("timestamp")
                 # warning: .interpolate does crash in debug-mode with typeError
                 df_slice = (
-                    df_slice.resample(f"{interval_us}us")
-                    .interpolate(method="cubic")
-                    .iloc[:-1]
+                    df_slice.resample(f"{interval_us}us").interpolate(method="cubic").iloc[:-1]
                 )
                 sfw.append_iv_data_si(
                     df_slice["time"].to_numpy(),

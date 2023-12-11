@@ -27,9 +27,7 @@ def path2str(
 
 
 def time2int(dumper: Dumper, data: timedelta) -> ScalarNode:
-    return dumper.represent_scalar(
-        "tag:yaml.org,2002:int", str(int(data.total_seconds()))
-    )
+    return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
 
 
 def generic2str(dumper: Dumper, data: Any) -> ScalarNode:
@@ -109,9 +107,7 @@ class ShpModel(BaseModel):
     def schema_to_file(cls, path: Union[str, Path]) -> None:
         """Store schema to yaml (for frontend-generators)"""
         model_dict = cls.model_json_schema()
-        model_yaml = yaml.safe_dump(
-            model_dict, default_flow_style=False, sort_keys=False
-        )
+        model_yaml = yaml.safe_dump(model_dict, default_flow_style=False, sort_keys=False)
         with Path(path).resolve().with_suffix(".yaml").open("w") as f:
             f.write(model_yaml)
 

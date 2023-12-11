@@ -98,9 +98,7 @@ class EmulationTask(ShpModel):
         # convert & add local timezone-data
         has_time = values.get("time_start") is not None
         if has_time and isinstance(values["time_start"], (int, float)):
-            values["time_start"] = datetime.fromtimestamp(
-                values["time_start"], tz=local_tz()
-            )
+            values["time_start"] = datetime.fromtimestamp(values["time_start"], tz=local_tz())
         if has_time and isinstance(values["time_start"], str):
             values["time_start"] = datetime.fromisoformat(values["time_start"])
         if has_time and values["time_start"].tzinfo is None:
@@ -123,18 +121,14 @@ class EmulationTask(ShpModel):
             "main",
             "buffer",
         }:
-            raise ValueError(
-                "Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'."
-            )
+            raise ValueError("Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'.")
         if self.gpio_actuation is not None:
             raise ValueError("GPIO Actuation not yet implemented!")
         return self
 
     @classmethod
     @validate_call
-    def from_xp(
-        cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path
-    ) -> Self:
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 
@@ -144,8 +138,7 @@ class EmulationTask(ShpModel):
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
             abort_on_error=xp.abort_on_error,
-            enable_io=(tgt_cfg.gpio_tracing is not None)
-            or (tgt_cfg.gpio_actuation is not None),
+            enable_io=(tgt_cfg.gpio_tracing is not None) or (tgt_cfg.gpio_actuation is not None),
             io_port=obs.get_target_port(tgt_id),
             pwr_port=obs.get_target_port(tgt_id),
             virtual_source=tgt_cfg.virtual_source,

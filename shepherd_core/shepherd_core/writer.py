@@ -39,9 +39,7 @@ def path2str(
 
 
 def time2int(dumper: Dumper, data: timedelta) -> ScalarNode:
-    return dumper.represent_scalar(
-        "tag:yaml.org,2002:int", str(int(data.total_seconds()))
-    )
+    return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
 
 
 yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
@@ -130,14 +128,14 @@ class Writer(Reader):
             base_dir = file_path.resolve().parents[0]
             self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
             self._logger.warning(
-                "File '%s' already exists -> " "storing under '%s' instead",
+                "File '%s' already exists -> storing under '%s' instead",
                 file_path,
                 self.file_path.name,
             )
 
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
             raise ValueError(
-                f"Can't handle mode '{mode}' " f"(choose one of {self.mode_dtype_dict})"
+                f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})"
             )
 
         _dtypes = self.mode_dtype_dict[mode if mode else self.mode_default]
@@ -145,8 +143,7 @@ class Writer(Reader):
             datatype = EnergyDType[datatype]
         if isinstance(datatype, EnergyDType) and datatype not in _dtypes:
             raise ValueError(
-                f"Can't handle value '{datatype}' of datatype "
-                f"(choose one of {_dtypes})"
+                f"Can't handle value '{datatype}' of datatype (choose one of {_dtypes})"
             )
 
         if self._modify:
@@ -158,9 +155,7 @@ class Writer(Reader):
             self._datatype = (
                 datatype if isinstance(datatype, EnergyDType) else self.datatype_default
             )
-            self._window_samples = (
-                window_samples if isinstance(window_samples, int) else 0
-            )
+            self._window_samples = window_samples if isinstance(window_samples, int) else 0
 
         if isinstance(cal_data, (CalEmu, CalHrv)):
             self._cal = CalSeries.from_cal(cal_data)
@@ -181,9 +176,7 @@ class Writer(Reader):
 
         # show key parameters for h5-performance
         settings = list(self.h5file.id.get_access_plist().get_cache())
-        self._logger.debug(
-            "H5Py Cache_setting=%s (_mdc, _nslots, _nbytes, _w0)", settings
-        )
+        self._logger.debug("H5Py Cache_setting=%s (_mdc, _nslots, _nbytes, _w0)", settings)
 
         # Store the mode in order to allow user to differentiate harvesting vs emulation data
         if isinstance(self._mode, str) and self._mode in self.mode_dtype_dict:
@@ -257,9 +250,7 @@ class Writer(Reader):
             compression=self._compression,
         )
         grp_data["time"].attrs["unit"] = "s"
-        grp_data["time"].attrs[
-            "description"
-        ] = "system time [s] = value * gain + (offset)"
+        grp_data["time"].attrs["description"] = "system time [s] = value * gain + (offset)"
 
         grp_data.create_dataset(
             "current",

@@ -34,8 +34,7 @@ if __name__ == "__main__":
                 )
             else:
                 print(
-                    f"{file} \t-> {fh['mode']}, "
-                    f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
+                    f"{file} \t-> {fh['mode']}, data-rate = {round(fh.data_rate / 2**10)} KiB/s"
                 )
 
             if "timesync" in fh.h5file:

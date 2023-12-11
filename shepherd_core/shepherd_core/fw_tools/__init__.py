@@ -25,9 +25,7 @@ except ImportError:
         "cffi",
     ]
     # only update when module is not avail
-    MOCK_MODULES = [
-        mod_name for mod_name in MOCK_MODULES if find_spec(mod_name) is None
-    ]
+    MOCK_MODULES = [mod_name for mod_name in MOCK_MODULES if find_spec(mod_name) is None]
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 from .converter import base64_to_file

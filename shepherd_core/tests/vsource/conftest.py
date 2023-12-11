@@ -9,9 +9,7 @@ from shepherd_data import mppt
 
 @pytest.fixture
 def file_ivonne() -> Path:
-    path = (
-        Path(__file__).resolve().parent.parent.parent.parent / "shepherd_data/examples"
-    )
+    path = Path(__file__).resolve().parent.parent.parent.parent / "shepherd_data/examples"
     os.chdir(path)
     return path / "./jogging_10m.iv"
 

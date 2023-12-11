@@ -52,21 +52,14 @@ class Reader(CoreReader):
         if csv_path.exists():
             self._logger.info("File already exists, will skip '%s'", csv_path.name)
             return 0
-        datasets = [
-            key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
-        ]
+        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group]
         datasets.remove("time")
         datasets = ["time", *datasets]
         separator = separator.strip().ljust(2)
-        header = [
-            h5_group[key].attrs["description"].replace(", ", separator)
-            for key in datasets
-        ]
+        header = [h5_group[key].attrs["description"].replace(", ", separator) for key in datasets]
         header = separator.join(header)
         with csv_path.open("w", encoding="utf-8-sig") as csv_file:
-            self._logger.info(
-                "CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name
-            )
+            self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
             csv_file.write(header + "\n")
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 timestamp = datetime.fromtimestamp(time_ns / 1e9, tz=local_tz())
@@ -95,14 +88,10 @@ class Reader(CoreReader):
         if log_path.exists():
             self._logger.info("File already exists, will skip '%s'", log_path.name)
             return 0
-        datasets = [
-            key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group
-        ]
+        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group]
         datasets.remove("time")
         with log_path.open("w", encoding="utf-8-sig") as log_file:
-            self._logger.info(
-                "Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name
-            )
+            self._logger.info("Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name)
             for idx, time_ns in enumerate(h5_group["time"][:]):
                 if add_timestamp:
                     timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
@@ -219,20 +208,14 @@ class Reader(CoreReader):
             leave=False,
             disable=iterations < 8,
         ):
-            slice_ds = data_src[
-                start_n + _iter * iblock_len : start_n + (_iter + 1) * iblock_len
-            ]
+            slice_ds = data_src[start_n + _iter * iblock_len : start_n + (_iter + 1) * iblock_len]
             if not is_time and ds_factor > 1:
                 slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
             slice_ds = slice_ds[::ds_factor]
             slice_len = min(dest_len - _iter * oblock_len, oblock_len)
-            data_dst[_iter * oblock_len : (_iter + 1) * oblock_len] = slice_ds[
-                :slice_len
-            ]
+            data_dst[_iter * oblock_len : (_iter + 1) * oblock_len] = slice_ds[:slice_len]
         if isinstance(data_dst, np.ndarray):
-            data_dst.resize(
-                (oblock_len * (iterations - 1) + slice_len,), refcheck=False
-            )
+            data_dst.resize((oblock_len * (iterations - 1) + slice_len,), refcheck=False)
         else:
             data_dst.resize((oblock_len * (iterations - 1) + slice_len,))
         return data_dst
@@ -255,9 +238,7 @@ class Reader(CoreReader):
         :param is_time:
         :return:
         """
-        self._logger.error(
-            "Resampling is still under construction - do not use for now!"
-        )
+        self._logger.error("Resampling is still under construction - do not use for now!")
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Resampling-Function was not written for IVCurves")
 
@@ -376,14 +357,10 @@ class Reader(CoreReader):
                 )
             ).astype(float),
             "voltage": self._cal.voltage.raw_to_si(
-                self.downsample(
-                    self.ds_voltage, None, start_sample, end_sample, ds_factor
-                )
+                self.downsample(self.ds_voltage, None, start_sample, end_sample, ds_factor)
             ),
             "current": self._cal.current.raw_to_si(
-                self.downsample(
-                    self.ds_current, None, start_sample, end_sample, ds_factor
-                )
+                self.downsample(self.ds_current, None, start_sample, end_sample, ds_factor)
             ),
             "start_s": start_s,
             "end_s": end_s,
@@ -393,9 +370,7 @@ class Reader(CoreReader):
         return data
 
     @staticmethod
-    def assemble_plot(
-        data: Union[dict, list], width: int = 20, height: int = 10
-    ) -> plt.Figure:
+    def assemble_plot(data: Union[dict, list], width: int = 20, height: int = 10) -> plt.Figure:
         """TODO: add power (if wanted)
 
         :param data: plottable / down-sampled iv-data with some meta-data
@@ -443,9 +418,7 @@ class Reader(CoreReader):
 
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
-        plot_path = self.file_path.resolve().with_suffix(
-            f".plot_{start_str}_to_{end_str}.png"
-        )
+        plot_path = self.file_path.resolve().with_suffix(f".plot_{start_str}_to_{end_str}.png")
         if plot_path.exists():
             self._logger.warning("Plot exists, will skip & not overwrite!")
             return
@@ -470,9 +443,7 @@ class Reader(CoreReader):
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
         plot_path = (
-            Path(plot_path)
-            .resolve()
-            .with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
+            Path(plot_path).resolve().with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
         )
         if plot_path.exists():
             logger.warning("Plot exists, will skip & not overwrite!")

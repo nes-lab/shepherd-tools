@@ -6,9 +6,7 @@ from shepherd_data.cli import cli
 
 
 def test_cli_downsample_file_full(data_h5: Path) -> None:
-    res = CliRunner().invoke(
-        cli, ["--verbose", "downsample", "--ds-factor", "10", str(data_h5)]
-    )
+    res = CliRunner().invoke(cli, ["--verbose", "downsample", "--ds-factor", "10", str(data_h5)])
     assert res.exit_code == 0
     assert data_h5.with_suffix(".downsampled_x10.h5").exists()
 
@@ -38,9 +36,7 @@ def test_cli_downsample_dir_full(data_h5: Path) -> None:
 
 
 def test_cli_downsample_rate_file_full(data_h5: Path) -> None:
-    res = CliRunner().invoke(
-        cli, ["--verbose", "downsample", "--sample-rate", "100", str(data_h5)]
-    )
+    res = CliRunner().invoke(cli, ["--verbose", "downsample", "--sample-rate", "100", str(data_h5)])
     assert res.exit_code == 0
     assert data_h5.with_suffix(".downsampled_x1000.h5").exists()
 

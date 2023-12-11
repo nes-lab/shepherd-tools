@@ -60,9 +60,7 @@ class HarvestTask(ShpModel):
         # convert & add local timezone-data, TODO: used twice, refactor
         has_time = values.get("time_start") is not None
         if has_time and isinstance(values["time_start"], (int, float)):
-            values["time_start"] = datetime.fromtimestamp(
-                values["time_start"], tz=local_tz()
-            )
+            values["time_start"] = datetime.fromtimestamp(values["time_start"], tz=local_tz())
         if has_time and isinstance(values["time_start"], str):
             values["time_start"] = datetime.fromisoformat(values["time_start"])
         if has_time and values["time_start"].tzinfo is None:

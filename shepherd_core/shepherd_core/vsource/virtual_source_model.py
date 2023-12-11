@@ -37,9 +37,7 @@ class VirtualSourceModel:
         cnv_config = ConverterPRUConfig.from_vsrc(
             self.cfg_src, log_intermediate_node=log_intermediate
         )
-        self.cnv: VirtualConverterModel = VirtualConverterModel(
-            cnv_config, self._cal_pru
-        )
+        self.cnv: VirtualConverterModel = VirtualConverterModel(cnv_config, self._cal_pru)
 
         hrv_config = HarvesterPRUConfig.from_vhrv(
             self.cfg_src.harvester,
@@ -53,9 +51,7 @@ class VirtualSourceModel:
         self.W_inp_fWs: float = 0.0
         self.W_out_fWs: float = 0.0
 
-    def iterate_sampling(
-        self, V_inp_uV: int = 0, I_inp_nA: int = 0, I_out_nA: int = 0
-    ) -> int:
+    def iterate_sampling(self, V_inp_uV: int = 0, I_inp_nA: int = 0, I_out_nA: int = 0) -> int:
         """TEST-SIMPLIFICATION - code below is not part of pru-code,
         but in part sample_emulator() in sampling.c
 

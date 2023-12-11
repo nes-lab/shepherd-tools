@@ -53,11 +53,7 @@ class SystemInventory(ShpModel):
             )
         else:
             ifs1 = psutil.net_if_addrs().items()
-            ifs2 = {
-                name: (_if[1].address, _if[0].address)
-                for name, _if in ifs1
-                if len(_if) > 1
-            }
+            ifs2 = {name: (_if[1].address, _if[0].address) for name, _if in ifs1 if len(_if) > 1}
             uptime = time.time() - psutil.boot_time()
 
         model_dict = {

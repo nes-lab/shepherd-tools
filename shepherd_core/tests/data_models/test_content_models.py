@@ -144,9 +144,7 @@ def test_content_model_fw_extract_hex_to_dir(path_elf: Path, tmp_path: Path) -> 
 
 
 @pytest.mark.parametrize("path_elf", files_elf)
-def test_content_model_fw_extract_path_elf_to_dir(
-    path_elf: Path, tmp_path: Path
-) -> None:
+def test_content_model_fw_extract_path_elf_to_dir(path_elf: Path, tmp_path: Path) -> None:
     assert path_elf.exists()
     fw = Firmware(
         data=path_elf,
@@ -164,9 +162,7 @@ def test_content_model_fw_extract_path_elf_to_dir(
 @pytest.mark.elf
 @pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
-def test_content_model_fw_extract_path_hex_to_dir(
-    path_elf: Path, tmp_path: Path
-) -> None:
+def test_content_model_fw_extract_path_hex_to_dir(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
     path_hex = fw_tools.elf_to_hex(path_elf, path_hex)
     assert path_hex.exists()
@@ -225,9 +221,7 @@ def test_content_model_hrv_faulty_voltage0() -> None:
 
 def test_content_model_hrv_faulty_voltage1() -> None:
     with pytest.raises(ValueError):
-        _ = VirtualHarvesterConfig(
-            name="iv110", voltage_min_mV=4001, voltage_max_mV=4000
-        )
+        _ = VirtualHarvesterConfig(name="iv110", voltage_min_mV=4001, voltage_max_mV=4000)
 
 
 def test_content_model_hrv_faulty_voltage2() -> None:

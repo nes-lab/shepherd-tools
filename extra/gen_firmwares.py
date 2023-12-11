@@ -46,9 +46,7 @@ if __name__ == "__main__":
             files_elf = [each for each in os.listdir(path_sub) if each.endswith(".elf")]
 
             if len(files_elf) > 1:
-                logger.warning(
-                    "More than one .ELF in directory -> will use first of %s", files_elf
-                )
+                logger.warning("More than one .ELF in directory -> will use first of %s", files_elf)
             path_elf = path_sub / files_elf[0]
 
             if path_elf.exists():

@@ -18,9 +18,7 @@ from .user_model import User
 class TestbedClient:
     _instance: Optional[Self] = None
 
-    def __init__(
-        self, server: Optional[str] = None, token: Union[str, Path, None] = None
-    ) -> None:
+    def __init__(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> None:
         if not hasattr(self, "_token"):
             self._token: str = "null"
             self._server: Optional[str] = testbed_server_default
@@ -42,9 +40,7 @@ class TestbedClient:
         TestbedClient._instance = None
 
     @validate_call
-    def connect(
-        self, server: Optional[str] = None, token: Union[str, Path, None] = None
-    ) -> bool:
+    def connect(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> bool:
         """
         server: either "local" to use demo-fixtures or something like "https://HOST:PORT"
         token: your account validation
@@ -74,9 +70,7 @@ class TestbedClient:
             parameters=data.model_dump(),
         )
         if self._connected:
-            r = self._req.post(
-                self._server + "/add", data=wrap.model_dump_json(), timeout=2
-            )
+            r = self._req.post(self._server + "/add", data=wrap.model_dump_json(), timeout=2)
             r.raise_for_status()
         else:
             self._fixtures.insert_model(wrap)
@@ -134,15 +128,12 @@ class TestbedClient:
                 and value.lower() in self._fixtures[model_type].elements_by_name
             ):
                 values = self.query_item(model_type, name=value)
-            elif (
-                isinstance(value, int)
-                and value in self._fixtures[model_type].elements_by_id
-            ):
+            elif isinstance(value, int) and value in self._fixtures[model_type].elements_by_id:
                 # TODO: still depending on _fixture
                 values = self.query_item(model_type, uid=value)
             else:
                 raise ValueError(
-                    f"Query {model_type} by name / ID failed - " f"{values} is unknown!"
+                    f"Query {model_type} by name / ID failed - {values} is unknown!"
                 )
         return self.try_inheritance(model_type, values)
 

@@ -42,15 +42,9 @@ if __name__ == "__main__":
             with ShpWriter(file_path) as file:
                 file.store_hostname("artificial")
                 # values in SI units
-                timestamp_vector = np.arange(
-                    0.0, duration_s, file.sample_interval_ns / 1e9
-                )
-                voltage_vector = np.linspace(
-                    _v, _v, int(file.samplerate_sps * duration_s)
-                )
-                current_vector = np.linspace(
-                    _c, _c, int(file.samplerate_sps * duration_s)
-                )
+                timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
+                voltage_vector = np.linspace(_v, _v, int(file.samplerate_sps * duration_s))
+                current_vector = np.linspace(_c, _c, int(file.samplerate_sps * duration_s))
 
                 for idx in trange(repetitions, desc="generate"):
                     timestamps = idx * duration_s + timestamp_vector

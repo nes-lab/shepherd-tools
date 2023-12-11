@@ -46,9 +46,7 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
 
 
 @validate_call
-def read_symbol(
-    file_elf: Path, symbol: str, length: int = uid_len_default
-) -> Optional[int]:
+def read_symbol(file_elf: Path, symbol: str, length: int = uid_len_default) -> Optional[int]:
     """Interpreted as int"""
     if not find_symbol(file_elf, symbol):
         return None
@@ -99,9 +97,7 @@ def modify_symbol_value(
     value_raw = elf.read(address=addr, count=uid_len_default)[-uid_len_default:]
     # ⤷ cutting needed -> msp produces 4b instead of 2
     value_old = int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
-    value_raw = value.to_bytes(
-        length=uid_len_default, byteorder=elf.endian, signed=False
-    )
+    value_raw = value.to_bytes(length=uid_len_default, byteorder=elf.endian, signed=False)
     try:
         elf.write(address=addr, data=value_raw)
     except AttributeError:
@@ -110,9 +106,7 @@ def modify_symbol_value(
     if overwrite:
         file_new = file_elf
     else:
-        file_new = file_elf.with_name(
-            file_elf.stem + "_" + str(value) + file_elf.suffix
-        )
+        file_new = file_elf.with_name(file_elf.stem + "_" + str(value) + file_elf.suffix)
         # could be simplified, but py3.8-- doesn't know .with_stem()
     elf.save(path=file_new)
     elf.close()
@@ -127,6 +121,4 @@ def modify_symbol_value(
 
 
 def modify_uid(file_elf: Path, value: int) -> Optional[Path]:
-    return modify_symbol_value(
-        file_elf, symbol=uid_str_default, value=value, overwrite=True
-    )
+    return modify_symbol_value(file_elf, symbol=uid_str_default, value=value, overwrite=True)

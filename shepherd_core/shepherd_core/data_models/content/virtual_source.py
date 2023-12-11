@@ -153,15 +153,9 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             dV_output_imed_low_mV = 0
 
         # protect from complex solutions (non valid input combinations)
-        if not (
-            isinstance(dV_output_en_thrs_mV, (int, float))
-            and (dV_output_en_thrs_mV >= 0)
-        ):
+        if not (isinstance(dV_output_en_thrs_mV, (int, float)) and (dV_output_en_thrs_mV >= 0)):
             dV_output_en_thrs_mV = 0
-        if not (
-            isinstance(dV_output_imed_low_mV, (int, float))
-            and (dV_output_imed_low_mV >= 0)
-        ):
+        if not (isinstance(dV_output_imed_low_mV, (int, float)) and (dV_output_imed_low_mV >= 0)):
             logger.warning("VSrc: C_output shouldn't be larger than C_intermediate")
             dV_output_imed_low_mV = 0
 
@@ -171,9 +165,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
             if self.V_intermediate_enable_threshold_mV > V_pre_output_mV:
                 values["dV_enable_output_mV"] = dV_output_en_thrs_mV
-                values[
-                    "V_enable_output_threshold_mV"
-                ] = self.V_intermediate_enable_threshold_mV
+                values["V_enable_output_threshold_mV"] = self.V_intermediate_enable_threshold_mV
 
             else:
                 values["dV_enable_output_mV"] = dV_output_imed_low_mV
@@ -182,20 +174,14 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
                 )
 
             if self.V_intermediate_disable_threshold_mV > V_pre_output_mV:
-                values[
-                    "V_disable_output_threshold_mV"
-                ] = self.V_intermediate_disable_threshold_mV
+                values["V_disable_output_threshold_mV"] = self.V_intermediate_disable_threshold_mV
             else:
                 values["V_disable_output_threshold_mV"] = V_pre_output_mV
 
         else:
             values["dV_enable_output_mV"] = dV_output_en_thrs_mV
-            values[
-                "V_enable_output_threshold_mV"
-            ] = self.V_intermediate_enable_threshold_mV
-            values[
-                "V_disable_output_threshold_mV"
-            ] = self.V_intermediate_disable_threshold_mV
+            values["V_enable_output_threshold_mV"] = self.V_intermediate_enable_threshold_mV
+            values["V_disable_output_threshold_mV"] = self.V_intermediate_disable_threshold_mV
         return values
 
     def calc_converter_mode(self, *, log_intermediate_node: bool) -> int:
@@ -286,9 +272,7 @@ class ConverterPRUConfig(ShpModel):
         states = data.calc_internal_states()
         return cls(
             # General
-            converter_mode=data.calc_converter_mode(
-                log_intermediate_node=log_intermediate_node
-            ),
+            converter_mode=data.calc_converter_mode(log_intermediate_node=log_intermediate_node),
             interval_startup_delay_drain_n=round(
                 data.interval_startup_delay_drain_ms * samplerate_sps_default * 1e-3
             ),
@@ -299,26 +283,16 @@ class ConverterPRUConfig(ShpModel):
             Constant_us_per_nF_n28=data.calc_cap_constant_us_per_nF_n28(),
             V_intermediate_init_uV=round(data.V_intermediate_init_mV * 1e3),
             I_intermediate_leak_nA=round(data.I_intermediate_leak_nA),
-            V_enable_output_threshold_uV=round(
-                states["V_enable_output_threshold_mV"] * 1e3
-            ),
-            V_disable_output_threshold_uV=round(
-                states["V_disable_output_threshold_mV"] * 1e3
-            ),
+            V_enable_output_threshold_uV=round(states["V_enable_output_threshold_mV"] * 1e3),
+            V_disable_output_threshold_uV=round(states["V_disable_output_threshold_mV"] * 1e3),
             dV_enable_output_uV=round(states["dV_enable_output_mV"] * 1e3),
             interval_check_thresholds_n=round(
                 data.interval_check_thresholds_ms * samplerate_sps_default * 1e-3
             ),
-            V_pwr_good_enable_threshold_uV=round(
-                data.V_pwr_good_enable_threshold_mV * 1e3
-            ),
-            V_pwr_good_disable_threshold_uV=round(
-                data.V_pwr_good_disable_threshold_mV * 1e3
-            ),
+            V_pwr_good_enable_threshold_uV=round(data.V_pwr_good_enable_threshold_mV * 1e3),
+            V_pwr_good_disable_threshold_uV=round(data.V_pwr_good_disable_threshold_mV * 1e3),
             immediate_pwr_good_signal=data.immediate_pwr_good_signal,
-            V_output_log_gpio_threshold_uV=round(
-                data.V_output_log_gpio_threshold_mV * 1e3
-            ),
+            V_output_log_gpio_threshold_uV=round(data.V_output_log_gpio_threshold_mV * 1e3),
             # Boost-Converter
             V_input_boost_threshold_uV=round(data.V_input_boost_threshold_mV * 1e3),
             V_intermediate_max_uV=round(data.V_intermediate_max_mV * 1e3),
@@ -330,8 +304,7 @@ class ConverterPRUConfig(ShpModel):
             LUT_input_I_min_log2_nA=data.LUT_input_I_min_log2_nA,
             LUT_output_I_min_log2_nA=data.LUT_output_I_min_log2_nA,
             LUT_inp_efficiency_n8=[
-                [min(255, round(256 * ival)) for ival in il]
-                for il in data.LUT_input_efficiency
+                [min(255, round(256 * ival)) for ival in il] for il in data.LUT_input_efficiency
             ],
             LUT_out_inv_efficiency_n4=[
                 min((2**14), round((2**4) / value)) if (value > 0) else int(2**14)
