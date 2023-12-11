@@ -46,7 +46,7 @@ def test_experiment_model_exp_yaml_comparison() -> None:
 
     target_cfgs = TargetConfig(
         target_IDs=list(range(1, 5)),
-        custom_IDs=list(range(0, 4)),
+        custom_IDs=list(range(4)),
         energy_env={"name": "SolarSunny"},
         virtual_source={"name": "diode+capacitor"},
         firmware1={"name": "nrf52_demo_rf"},
@@ -148,9 +148,7 @@ def test_experiment_model_exp_missing_target() -> None:
                 target_IDs=[1234567],  # <- not existent
                 custom_IDs=list(range(7, 18)),
                 energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-                virtual_source=VirtualSourceConfig(
-                    name="BQ25570-Schmitt", harvester=hrv
-                ),
+                virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
                 firmware1=Firmware(name="nrf52_demo_rf"),
                 firmware2=Firmware(name="msp430_deep_sleep"),
             ),

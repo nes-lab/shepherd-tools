@@ -32,9 +32,7 @@ __all__ = [
 ]
 
 
-def prepare_task(
-    config: Union[ShpModel, Path, str], observer: Optional[str] = None
-) -> Wrapper:
+def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = None) -> Wrapper:
     """- Opens file (from Path or str of Path)
     - wraps task-model
     - and if it's an TestbedTasks it will extract the correct ObserverTask
@@ -88,9 +86,7 @@ def extract_tasks(shp_wrap: Wrapper, *, no_task_sets: bool = True) -> List[ShpMo
         content = [ProgrammingTask(**shp_wrap.parameters)]
     elif shp_wrap.datatype == TestbedTasks.__name__:
         if no_task_sets:
-            raise ValueError(
-                "Model in Wrapper was TestbedTasks -> Task-Sets not allowed!"
-            )
+            raise ValueError("Model in Wrapper was TestbedTasks -> Task-Sets not allowed!")
         content = [TestbedTasks(**shp_wrap.parameters)]
     else:
         raise ValueError("Extractor had unknown task: %s", shp_wrap.datatype)

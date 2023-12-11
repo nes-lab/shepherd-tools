@@ -1,5 +1,12 @@
 # History of Changes
 
+## v2023.12.1
+
+- optimize reader.read_buffers() to allow omitting timestamp (less overhead)
+- change default compression to lzf
+- weaken errors / warnings for missing timestamps
+- toolchain: replace isort, black, flake8, pylint by ruff
+
 ## v2023.11.1
 
 - warn about errors during test-run during validation (default when opening shepherd-files)

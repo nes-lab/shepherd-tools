@@ -57,7 +57,6 @@ class MPPTracker:
         :param coeffs: ivonne coefficients
         :return:
         """
-        pass
 
 
 class OpenCircuitTracker(MPPTracker):
@@ -68,18 +67,14 @@ class OpenCircuitTracker(MPPTracker):
     :param ratio:  (float) Ratio of open-circuit voltage to track
     """
 
-    def __init__(
-        self, v_max: float = 5.0, pts_per_curve: int = 1000, ratio: float = 0.8
-    ) -> None:
+    def __init__(self, v_max: float = 5.0, pts_per_curve: int = 1000, ratio: float = 0.8) -> None:
         super().__init__(v_max, pts_per_curve)
         self.ratio = ratio
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         if "voc" not in coeffs.columns:
-            coeffs["voc"] = coeffs.apply(
-                lambda x: find_oc(self.v_proto, x["ivcurve"]), axis=1
-            )
+            coeffs["voc"] = coeffs.apply(lambda x: find_oc(self.v_proto, x["ivcurve"]), axis=1)
         coeffs["rvoc_pos"] = coeffs.apply(
             lambda x: np.argmax(self.v_proto[self.v_proto < self.ratio * x["voc"]]),
             axis=1,

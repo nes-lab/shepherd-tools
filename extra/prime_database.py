@@ -77,9 +77,7 @@ if __name__ == "__main__":
                 created=local_now(),
                 parameters=model_dict,
             )
-            fixtures.append(
-                model_wrap.model_dump(exclude_unset=True, exclude_defaults=True)
-            )
+            fixtures.append(model_wrap.model_dump(exclude_unset=True, exclude_defaults=True))
 
     model_yaml = yaml.safe_dump(fixtures, default_flow_style=False, sort_keys=False)
     with (path_db / "_external_fixtures.yaml").open("w") as f:

@@ -87,10 +87,7 @@ for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_li
     # visualize results
     pwr_good_ratio = round(100 * N_good / samples, 3)
     t_s = samples // 100
-    print(
-        f"Power-Good-Ratio = {pwr_good_ratio} % "
-        f"(for {vs_name}, {v_hrv_mV} mV, {t_s} ms)"
-    )
+    print(f"Power-Good-Ratio = {pwr_good_ratio} % (for {vs_name}, {v_hrv_mV} mV, {t_s} ms)")
 
     fig = plt.figure(figsize=(20, 8))
     plt.plot(ts, vcaps)

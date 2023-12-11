@@ -80,9 +80,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         if len(target_ids) > len(set(target_ids)):
             raise ValueError("Target-ID used more than once in Experiment!")
         if len(target_ids) > len(set(custom_ids)):
-            raise ValueError(
-                "Custom Target-ID are faulty (some form of id-collisions)!"
-            )
+            raise ValueError("Custom Target-ID are faulty (some form of id-collisions)!")
 
     @staticmethod
     def validate_observers(configs: List[TargetConfig]) -> None:
@@ -92,8 +90,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
         if len(target_ids) > len(set(obs_ids)):
             raise ValueError(
-                "Observer used more than once in Experiment "
-                "-> only 1 target per observer!"
+                "Observer used more than once in Experiment -> only 1 target per observer!"
             )
 
     def get_target_ids(self) -> list:
@@ -104,6 +101,4 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             if target_id in _config.target_IDs:
                 return _config
         # gets already caught in target_config - but keep:
-        raise ValueError(
-            f"Target-ID {target_id} was not found in Experiment '{self.name}'"
-        )
+        raise ValueError(f"Target-ID {target_id} was not found in Experiment '{self.name}'")

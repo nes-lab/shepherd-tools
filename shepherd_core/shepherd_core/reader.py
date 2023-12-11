@@ -95,9 +95,7 @@ class Reader:
                 self.h5file = h5py.File(self.file_path, "r")  # = readonly
                 self._reader_opened = True
             except OSError as _xcp:
-                raise TypeError(
-                    f"Unable to open HDF5-File '{self.file_path.name}'"
-                ) from _xcp
+                raise TypeError(f"Unable to open HDF5-File '{self.file_path.name}'") from _xcp
 
             if self.is_valid():
                 self._logger.debug("File is available now")
@@ -109,9 +107,7 @@ class Reader:
                 )
 
         if not isinstance(self.h5file, h5py.File):
-            raise TypeError(
-                "Type of opened file is not h5py.File, for %s", self.file_path.name
-            )
+            raise TypeError("Type of opened file is not h5py.File, for %s", self.file_path.name)
 
         self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
         self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]
@@ -120,9 +116,7 @@ class Reader:
         # retrieve cal-data
         if not hasattr(self, "_cal"):
             cal_dict = CalibrationSeries().model_dump()
-            for ds, param in product(
-                ["current", "voltage", "time"], ["gain", "offset"]
-            ):
+            for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
                 cal_dict[ds][param] = self.h5file["data"][ds].attrs[param]
             self._cal = CalibrationSeries(**cal_dict)
 
@@ -167,12 +161,11 @@ class Reader:
         """update internal states, helpful after resampling or other changes in data-group"""
         self.h5file.flush()
         if (self.ds_time.shape[0] > 1) and (self.ds_time[1] != self.ds_time[0]):
-            self.sample_interval_s = self._cal.time.raw_to_si(
-                self.ds_time[1] - self.ds_time[0]
-            )
+            # this assumes isochronal sampling
+            self.sample_interval_s = self._cal.time.raw_to_si(self.ds_time[1] - self.ds_time[0])
             self.sample_interval_ns = int(10**9 * self.sample_interval_s)
             self.samplerate_sps = max(int(10**9 // self.sample_interval_ns), 1)
-        self.runtime_s = round(self.ds_time.shape[0] / self.samplerate_sps, 1)
+        self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:
@@ -185,6 +178,7 @@ class Reader:
         end_n: Optional[int] = None,
         *,
         is_raw: bool = False,
+        omit_ts: bool = False,
     ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
@@ -195,25 +189,27 @@ class Reader:
             :param start_n: (int) Index of first buffer to be read
             :param end_n: (int) Index of last buffer to be read
             :param is_raw: (bool) output original data, not transformed to SI-Units
+            :param omit_ts: (bool) optimize reading if timestamp is never used
         Yields: Buffers between start and end (tuple with time, voltage, current)
         """
         if end_n is None:
-            end_n = int(self.ds_time.shape[0] // self.samples_per_buffer)
+            end_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
         _raw = is_raw
+        _wts = not omit_ts
 
         for i in range(start_n, end_n):
             idx_start = i * self.samples_per_buffer
             idx_end = idx_start + self.samples_per_buffer
             if _raw:
                 yield (
-                    self.ds_time[idx_start:idx_end],
+                    self.ds_time[idx_start:idx_end] if _wts else None,
                     self.ds_voltage[idx_start:idx_end],
                     self.ds_current[idx_start:idx_end],
                 )
             else:
                 yield (
-                    self._cal.time.raw_to_si(self.ds_time[idx_start:idx_end]),
+                    self._cal.time.raw_to_si(self.ds_time[idx_start:idx_end]) if _wts else None,
                     self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_end]),
                     self._cal.current.raw_to_si(self.ds_current[idx_start:idx_end]),
                 )
@@ -339,20 +335,20 @@ class Reader:
                 self.file_path.name,
             )
         # same length of datasets:
-        ds_time_size = self.h5file["data"]["time"].shape[0]
-        for dset in ["current", "voltage"]:
+        ds_volt_size = self.h5file["data"]["voltage"].shape[0]
+        for dset in ["current", "time"]:
             ds_size = self.h5file["data"][dset].shape[0]
-            if ds_time_size != ds_size:
+            if ds_volt_size != ds_size:
                 self._logger.warning(
                     "[FileValidation] dataset '%s' has different size (=%d), "
                     "compared to time-ds (=%d), in '%s'",
                     dset,
                     ds_size,
-                    ds_time_size,
+                    ds_volt_size,
                     self.file_path.name,
                 )
         # dataset-length should be multiple of buffersize
-        remaining_size = ds_time_size % self.samples_per_buffer
+        remaining_size = ds_volt_size % self.samples_per_buffer
         if remaining_size != 0:
             self._logger.warning(
                 "[FileValidation] datasets are not aligned with buffer-size in '%s'",
@@ -409,10 +405,10 @@ class Reader:
 
         :return: sampled energy in Ws (watt-seconds)
         """
-        iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
+        iterations = math.ceil(self.ds_voltage.shape[0] / self.max_elements)
         job_iter = trange(
             0,
-            self.ds_time.shape[0],
+            self.ds_voltage.shape[0],
             self.max_elements,
             desc="energy",
             leave=False,
@@ -420,7 +416,7 @@ class Reader:
         )
 
         def _calc_energy(idx_start: int) -> float:
-            idx_stop = min(idx_start + self.max_elements, self.ds_time.shape[0])
+            idx_stop = min(idx_start + self.max_elements, self.ds_voltage.shape[0])
             vol_v = self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_stop])
             cur_a = self._cal.current.raw_to_si(self.ds_current[idx_start:idx_stop])
             return (vol_v[:] * cur_a[:]).sum() * self.sample_interval_s
@@ -439,9 +435,7 @@ class Reader:
         si_converted = True
         if not isinstance(cal, CalibrationPair):
             if "gain" in dset.attrs and "offset" in dset.attrs:
-                cal = CalibrationPair(
-                    gain=dset.attrs["gain"], offset=dset.attrs["offset"]
-                )
+                cal = CalibrationPair(gain=dset.attrs["gain"], offset=dset.attrs["offset"])
             else:
                 cal = CalibrationPair(gain=1)
                 si_converted = False
@@ -459,8 +453,7 @@ class Reader:
             return [np.mean(data), np.min(data), np.max(data), np.std(data)]
 
         stats_list = [
-            _calc_statistics(cal.raw_to_si(dset[i : i + self.max_elements]))
-            for i in job_iter
+            _calc_statistics(cal.raw_to_si(dset[i : i + self.max_elements])) for i in job_iter
         ]
         if len(stats_list) < 1:
             return {}
@@ -519,9 +512,7 @@ class Reader:
             )
         return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.samples_per_buffer, 6)
 
-    def count_errors_in_log(
-        self, group_name: str = "sheep", min_level: int = 40
-    ) -> int:
+    def count_errors_in_log(self, group_name: str = "sheep", min_level: int = 40) -> int:
         if group_name not in self.h5file:
             return 0
         if "level" not in self.h5file["sheep"]:
@@ -599,9 +590,7 @@ class Reader:
             if yaml_path.exists():
                 self._logger.info("File already exists, will skip '%s'", yaml_path.name)
                 return {}
-            metadata = self.get_metadata(
-                node
-            )  # {"h5root": self.get_metadata(self.h5file)}
+            metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
             with yaml_path.open("w", encoding="utf-8-sig") as yfd:
                 yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
         else:
@@ -637,9 +626,7 @@ class Reader:
         gpio_vs = self.h5file["gpio"]["value"]
 
         if name is None:
-            descriptions = yaml.safe_load(
-                self.h5file["gpio"]["value"].attrs["description"]
-            )
+            descriptions = yaml.safe_load(self.h5file["gpio"]["value"].attrs["description"])
             pin_dict = {value["name"]: key for key, value in descriptions.items()}
         else:
             pin_dict = {name: self.get_gpio_pin_num(name)}
@@ -655,9 +642,7 @@ class Reader:
             )
         return waveforms
 
-    def waveform_to_csv(
-        self, pin_name: str, pin_wf: np.ndarray, separator: str = ","
-    ) -> None:
+    def waveform_to_csv(self, pin_name: str, pin_wf: np.ndarray, separator: str = ",") -> None:
         path_csv = self.file_path.with_suffix(f".waveform.{pin_name}.csv")
         if path_csv.exists():
             self._logger.info("File already exists, will skip '%s'", path_csv.name)

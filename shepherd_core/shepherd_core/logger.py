@@ -15,9 +15,7 @@ def get_verbose_level() -> int:
     return verbose_level
 
 
-def set_log_verbose_level(
-    log_: Union[logging.Logger, logging.Handler], verbose: int
-) -> None:
+def set_log_verbose_level(log_: Union[logging.Logger, logging.Handler], verbose: int) -> None:
     if verbose == 0:
         log_.setLevel(logging.ERROR)
         logging.basicConfig(level=logging.ERROR)

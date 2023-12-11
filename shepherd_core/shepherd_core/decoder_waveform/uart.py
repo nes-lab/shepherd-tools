@@ -56,9 +56,7 @@ class Uart:
           (some detectors still missing)
         """
         if isinstance(content, Path):
-            self.events_sig: np.ndarray = np.loadtxt(
-                content.as_posix(), delimiter=",", skiprows=1
-            )
+            self.events_sig: np.ndarray = np.loadtxt(content.as_posix(), delimiter=",", skiprows=1)
             # TODO: if float fails load as str -
             #  cast first col as np.datetime64 with ns-resolution, convert to delta
         else:
@@ -66,9 +64,7 @@ class Uart:
 
         # verify table
         if self.events_sig.shape[1] != 2:
-            raise TypeError(
-                "Input file should have 2 rows -> (comma-separated) timestamp & value"
-            )
+            raise TypeError("Input file should have 2 rows -> (comma-separated) timestamp & value")
         if self.events_sig.shape[0] < 8:
             raise TypeError("Input file is too short (< state-changes)")
         # verify timestamps
@@ -80,23 +76,17 @@ class Uart:
         self._convert_analog2digital()
         self._filter_redundant_states()
 
-        self.baud_rate: int = (
-            baud_rate if baud_rate is not None else self.detect_baud_rate()
-        )
+        self.baud_rate: int = baud_rate if baud_rate is not None else self.detect_baud_rate()
         self.dur_tick: float = 1.0 / self.baud_rate
 
         self._add_duration()
 
-        self.inversion: bool = (
-            inversion if inversion is not None else self.detect_inversion()
-        )
+        self.inversion: bool = inversion if inversion is not None else self.detect_inversion()
         self.half_stop: bool = self.detect_half_stop()  # not needed ATM
 
         # TODO: add detectors
         self.parity: Parity = parity if parity is not None else Parity.no
-        self.bit_order: BitOrder = (
-            bit_order if bit_order is not None else BitOrder.lsb_first
-        )
+        self.bit_order: BitOrder = bit_order if bit_order is not None else BitOrder.lsb_first
         self.frame_length: int = frame_length if frame_length is not None else 8
 
         if not (0 < self.frame_length <= 64):
@@ -146,14 +136,10 @@ class Uart:
             logger.warning("Tried to add state-duration, but it seems already present")
             return
         if not hasattr(self, "dur_tick"):
-            raise ValueError(
-                "Make sure that baud-rate was calculated before running add_dur()"
-            )
+            raise ValueError("Make sure that baud-rate was calculated before running add_dur()")
         dur_steps = self.events_sig[1:, 0] - self.events_sig[:-1, 0]
         dur_steps = np.reshape(dur_steps, (dur_steps.size, 1))
-        self.events_sig = np.append(
-            self.events_sig[:-1, :], dur_steps / self.dur_tick, axis=1
-        )
+        self.events_sig = np.append(self.events_sig[:-1, :], dur_steps / self.dur_tick, axis=1)
 
     def detect_inversion(self) -> bool:
         """Analyze bit-state during long pauses (unchanged states)
@@ -182,16 +168,12 @@ class Uart:
     def detect_half_stop(self) -> bool:
         """Looks into the spacing between time-steps"""
         events = self.events_sig[:1000, :]  # speedup for large datasets
-        return (
-            np.sum((events > 1.333 * self.dur_tick) & (events < 1.667 * self.dur_tick))
-            > 0
-        )
+        return np.sum((events > 1.333 * self.dur_tick) & (events < 1.667 * self.dur_tick)) > 0
 
     def detect_dataframe_length(self) -> int:
         """Look after longest pauses
         - accumulate steps until a state with uneven step-size is found
         """
-        pass
 
     def get_symbols(self, *, force_redo: bool = False) -> np.ndarray:
         """Ways to detect EOF:

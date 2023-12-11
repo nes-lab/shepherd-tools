@@ -14,9 +14,7 @@ from .timezone import local_now
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
 IdInt = Annotated[int, Field(ge=0, lt=2**128)]
-NameStr = Annotated[
-    str, StringConstraints(max_length=32, pattern=r'^[^<>:;,?"*|\/\\]+$')
-]
+NameStr = Annotated[str, StringConstraints(max_length=32, pattern=r'^[^<>:;,?"*|\/\\]+$')]
 # ⤷ Regex = FileSystem-Compatible ASCII
 SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ Regex = All Printable ASCII-Characters with Space
@@ -35,9 +33,7 @@ class ContentModel(ShpModel):
         default_factory=id_default,
     )
     name: NameStr
-    description: Annotated[
-        Optional[SafeStr], Field(description="Required when public")
-    ] = None
+    description: Annotated[Optional[SafeStr], Field(description="Required when public")] = None
     comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
 
@@ -57,7 +53,6 @@ class ContentModel(ShpModel):
         is_visible = self.visible2group or self.visible2all
         if is_visible and self.description is None:
             raise ValueError(
-                "Public instances require a description "
-                "(check visible2*- and description-field)"
+                "Public instances require a description (check visible2*- and description-field)"
             )
         return self

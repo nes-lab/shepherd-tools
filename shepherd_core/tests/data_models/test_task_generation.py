@@ -25,7 +25,7 @@ def test_task_generation_script(tmp_path: Path) -> None:
         # first init similar to yaml
         TargetConfig(
             target_IDs=list(range(1, 4)),
-            custom_IDs=list(range(0, 3)),
+            custom_IDs=list(range(3)),
             energy_env={"name": "SolarSunny"},
             virtual_source={"name": "diode+capacitor"},
             firmware1={"name": "nrf52_demo_rf"},

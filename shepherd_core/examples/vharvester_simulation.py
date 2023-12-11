@@ -16,9 +16,7 @@ from shepherd_data import ivonne
 
 # config simulation
 sim_duration = 32
-file_ivonne = (
-    Path(__file__).parent.parent.parent / "shepherd_data/examples/jogging_10m.iv"
-)
+file_ivonne = Path(__file__).parent.parent.parent / "shepherd_data/examples/jogging_10m.iv"
 file_ivcurve = Path(__file__).parent / "jogging_ivcurve.h5"
 
 hrv_list = [

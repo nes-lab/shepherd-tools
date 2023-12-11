@@ -39,9 +39,7 @@ def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
     # the first algos are not usable for ivcurve
     with pytest.raises(ValueError):
         hrv_config = VirtualHarvesterConfig(name=hrv_name)
-        _ = HarvesterPRUConfig.from_vhrv(
-            hrv_config, for_emu=True, dtype_in=EnergyDType.ivcurve
-        )
+        _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in=EnergyDType.ivcurve)
 
 
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
@@ -58,9 +56,7 @@ def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
         for _t, _v, _i in file.read_buffers():
             length = max(_v.size, _i.size)
             for _n in range(length):
-                hrv.ivcurve_sample(
-                    _voltage_uV=_v[_n] * 10**6, _current_nA=_i[_n] * 10**9
-                )
+                hrv.ivcurve_sample(_voltage_uV=_v[_n] * 10**6, _current_nA=_i[_n] * 10**9)
 
 
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
@@ -68,9 +64,7 @@ def test_vsource_hrv_fail_isc_voc(hrv_name: str) -> None:
     # not implemented ATM
     with pytest.raises(ValueError):
         hrv_config = VirtualHarvesterConfig(name=hrv_name)
-        _ = HarvesterPRUConfig.from_vhrv(
-            hrv_config, for_emu=True, dtype_in=EnergyDType.isc_voc
-        )
+        _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in=EnergyDType.isc_voc)
 
 
 def test_vsource_hrv_fail_unknown_type() -> None:

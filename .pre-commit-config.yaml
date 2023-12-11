@@ -20,16 +20,6 @@ repos:
       - id: check-toml
       - id: fix-byte-order-marker
 
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-
-  - repo: https://github.com/psf/black
-    rev: 23.11.0
-    hooks:
-      - id: black
-
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
@@ -41,45 +31,6 @@ repos:
       - id: rst-inline-touching-normal
       - id: text-unicode-replacement-char
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
-    hooks:
-      - id: pyupgrade
-        args: ["--py38-plus"]
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
-    hooks:
-      - id: flake8
-        additional_dependencies:
-          # NOTE: entries are copy of .flake8-config-file -> for auto-install
-          ### Bugs
-          - flake8-bugbear
-          - flake8-secure-coding-standard
-          - flake8-bandit
-          - flake8-builtins
-
-          ### Clean Code
-          - flake8-comprehensions
-          - flake8-simplify
-          - flake8-eradicate
-
-          ### Limitations
-          - flake8-blind-except
-          - flake8-logging-format
-          - flake8-print
-
-          ### Documentation
-          - flake8-comments
-          # - flake8-docstrings
-          # - flake8-rst-docstrings
-
-          ### Test-Improvements
-          - flake8-assertive
-
-          ### Load Config from ...
-          - flake8-pyproject
-
 #  - repo: https://github.com/RobertCraigie/pyright-python
 #    rev: v1.1.331
 #    hooks:
@@ -89,8 +40,9 @@ repos:
 #      - shepherd-data[dev,test]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.1.5'
+    rev: 'v0.1.6'
     hooks:
+      - id: ruff-format
       - id: ruff
         args: ["--fix", "--exit-non-zero-on-fix"]
         # manual run: ruff check . --preview
@@ -121,7 +73,6 @@ repos:
       - id: validate-pyproject
 
 # TODO: github.com/PyCQA/pydocstyle
-# TODO: github.com/PyCQA/pylint
 
 # default_language_version:
 #    python: python3.8

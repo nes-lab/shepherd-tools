@@ -93,9 +93,7 @@ class VirtualHarvesterModel:
             if distance_now < distance_last and distance_now < self.voltage_step_x4_uV:
                 self.voltage_hold = _voltage_uV
                 self.current_hold = _current_nA
-            elif (
-                distance_last < distance_now and distance_last < self.voltage_step_x4_uV
-            ):
+            elif distance_last < distance_now and distance_last < self.voltage_step_x4_uV:
                 self.voltage_hold = self.voltage_last
                 self.current_hold = self.current_last
 

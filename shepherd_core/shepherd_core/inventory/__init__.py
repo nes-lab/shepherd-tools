@@ -30,15 +30,9 @@ class Inventory(PythonInventory, SystemInventory, TargetInventory):
     @classmethod
     def collect(cls) -> Self:
         # one by one for more precise error messages
-        pid = PythonInventory.collect().model_dump(
-            exclude_unset=True, exclude_defaults=True
-        )
-        sid = SystemInventory.collect().model_dump(
-            exclude_unset=True, exclude_defaults=True
-        )
-        tid = TargetInventory.collect().model_dump(
-            exclude_unset=True, exclude_defaults=True
-        )
+        pid = PythonInventory.collect().model_dump(exclude_unset=True, exclude_defaults=True)
+        sid = SystemInventory.collect().model_dump(exclude_unset=True, exclude_defaults=True)
+        tid = TargetInventory.collect().model_dump(exclude_unset=True, exclude_defaults=True)
         model = {**pid, **sid, **tid}
         return cls(**model)
 

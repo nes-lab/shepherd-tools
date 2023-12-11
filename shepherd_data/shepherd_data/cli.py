@@ -120,9 +120,7 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                 # will create a downsampled h5-file (if not existing) and then saving to csv
                 ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
                 if not ds_file.exists():
-                    logger.info(
-                        "Downsampling '%s' by factor x%f ...", file.name, ds_factor
-                    )
+                    logger.info("Downsampling '%s' by factor x%f ...", file.name, ds_factor)
                     with Writer(
                         ds_file,
                         mode=shpr.get_mode(),
@@ -140,12 +138,8 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                             ds_factor=ds_factor,
                             is_time=True,
                         )
-                        shpr.downsample(
-                            shpr.ds_voltage, shpw.ds_voltage, ds_factor=ds_factor
-                        )
-                        shpr.downsample(
-                            shpr.ds_current, shpw.ds_current, ds_factor=ds_factor
-                        )
+                        shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=ds_factor)
+                        shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=ds_factor)
 
                 with Reader(ds_file, verbose=verbose_level > 2) as shpd:
                     shpd.save_csv(shpd["data"], separator)
@@ -184,6 +178,8 @@ def extract_meta(in_data: Path, separator: str) -> None:
                 for element in logs + logs_depr:
                     if element in shpr.h5file:
                         shpr.save_log(shpr[element])
+                        # TODO: allow omitting timestamp,
+                        #       also test if segmented uart is correctly written
                         shpr.warn_logs(element, show=True)
         except TypeError as _xpc:
             logger.error("ERROR: will skip file, caught exception: %s", _xpc)
@@ -212,21 +208,16 @@ def extract_uart(in_data: Path) -> None:
                 with log_path.open("w") as log_file:
                     for line in lines:
                         with suppress(TypeError):
-                            timestamp = datetime.fromtimestamp(
-                                float(line[0]), tz=local_tz()
-                            )
-                            log_file.write(
-                                timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":"
-                            )
+                            timestamp = datetime.fromtimestamp(float(line[0]), tz=local_tz())
+                            log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
+                            # TODO: allow to skip Timestamp and export raw text
                             log_file.write(f"\t{str.encode(line[1])}")
                             log_file.write("\n")
         except TypeError as _xpc:
             logger.error("ERROR: will skip file, caught exception: %s", _xpc)
 
 
-@cli.command(
-    short_help="Extracts gpio-trace from file or directory containing shepherd-recordings"
-)
+@cli.command(short_help="Extracts gpio-trace from file or directory containing shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--separator",
@@ -269,9 +260,7 @@ def extract_gpio(in_data: Path, separator: str) -> None:
     type=click.INT,
     help="Alternative Input to determine a downsample-factor (Choose One)",
 )
-def downsample(
-    in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]
-) -> None:
+def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]) -> None:
     """Creates an array of downsampling-files from file
     or directory containing shepherd-recordings
     """
@@ -289,7 +278,7 @@ def downsample(
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 for _factor in ds_list:
-                    if shpr.ds_time.shape[0] / _factor < 1000:
+                    if shpr.ds_voltage.shape[0] / _factor < 1000:
                         logger.warning(
                             "will skip downsampling for %s because "
                             "resulting sample-size is too small",
@@ -299,9 +288,7 @@ def downsample(
                     ds_file = file.with_suffix(f".downsampled_x{round(_factor)}.h5")
                     if ds_file.exists():
                         continue
-                    logger.info(
-                        "Downsampling '%s' by factor x%f ...", file.name, _factor
-                    )
+                    logger.info("Downsampling '%s' by factor x%f ...", file.name, _factor)
                     with Writer(
                         ds_file,
                         mode=shpr.get_mode(),
@@ -313,22 +300,14 @@ def downsample(
                         shpw["ds_factor"] = _factor
                         shpw.store_hostname(shpr.get_hostname())
                         shpw.store_config(shpr.get_config())
-                        shpr.downsample(
-                            shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True
-                        )
-                        shpr.downsample(
-                            shpr.ds_voltage, shpw.ds_voltage, ds_factor=_factor
-                        )
-                        shpr.downsample(
-                            shpr.ds_current, shpw.ds_current, ds_factor=_factor
-                        )
+                        shpr.downsample(shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True)
+                        shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=_factor)
+                        shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=_factor)
         except TypeError as _xpc:
             logger.error("ERROR: will skip file, caught exception: %s", _xpc)
 
 
-@cli.command(
-    short_help="Plots IV-trace from file or directory containing shepherd-recordings"
-)
+@cli.command(short_help="Plots IV-trace from file or directory containing shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--start",
@@ -382,9 +361,7 @@ def plot(
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 if multiplot:
-                    data.append(
-                        shpr.generate_plot_data(start, end, relative_timestamp=True)
-                    )
+                    data.append(shpr.generate_plot_data(start, end, relative_timestamp=True))
                 else:
                     shpr.plot_to_file(start, end, width, height)
         except TypeError as _xpc:

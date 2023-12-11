@@ -52,9 +52,7 @@ class VirtualConverterModel:
         self.V_input_uV: float = 0.0
         self.P_inp_fW: float = 0.0
         self.P_out_fW: float = 0.0
-        self.interval_startup_disabled_drain_n: int = (
-            self._cfg.interval_startup_delay_drain_n
-        )
+        self.interval_startup_disabled_drain_n: int = self._cfg.interval_startup_delay_drain_n
 
         # container for the stored energy
         self.V_mid_uV: float = self._cfg.V_intermediate_init_uV
@@ -71,12 +69,8 @@ class VirtualConverterModel:
 
         # prepare hysteresis-thresholds
         self.dV_enable_output_uV: float = self._cfg.dV_enable_output_uV
-        self.V_enable_output_threshold_uV: float = (
-            self._cfg.V_enable_output_threshold_uV
-        )
-        self.V_disable_output_threshold_uV: float = (
-            self._cfg.V_disable_output_threshold_uV
-        )
+        self.V_enable_output_threshold_uV: float = self._cfg.V_enable_output_threshold_uV
+        self.V_disable_output_threshold_uV: float = self._cfg.V_disable_output_threshold_uV
 
         if self.dV_enable_output_uV > self.V_enable_output_threshold_uV:
             self.V_enable_output_threshold_uV = self.dV_enable_output_uV
@@ -163,11 +157,7 @@ class VirtualConverterModel:
 
         if self.V_mid_uV > self._cfg.V_intermediate_max_uV:
             self.V_mid_uV = self._cfg.V_intermediate_max_uV
-        if (
-            (not self.enable_boost)
-            and (self.P_inp_fW > 0.0)
-            and (self.V_mid_uV > self.V_input_uV)
-        ):
+        if (not self.enable_boost) and (self.P_inp_fW > 0.0) and (self.V_mid_uV > self.V_input_uV):
             # TODO: obfuscated - no "direct connection"?
             self.V_mid_uV = self.V_input_uV
         elif self.V_mid_uV < 1:

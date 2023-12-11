@@ -24,9 +24,7 @@ with shpd.Reader(file) as shpr:
         window_samples=shpr.get_window_samples(),
         cal_data=shpr.get_calibration_data(),
     ) as shpw:
-        shpr.resample(
-            shpr.ds_time, shpw.ds_time, samplerate_dst=samplerate_sps, is_time=True
-        )
+        shpr.resample(shpr.ds_time, shpw.ds_time, samplerate_dst=samplerate_sps, is_time=True)
         shpr.resample(shpr.ds_voltage, shpw.ds_voltage, samplerate_dst=samplerate_sps)
         shpr.resample(shpr.ds_current, shpw.ds_current, samplerate_dst=samplerate_sps)
         shpw.save_metadata()

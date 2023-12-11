@@ -148,16 +148,12 @@ class Fixture:
     def query_id(self, _id: int) -> dict:
         if isinstance(_id, int) and _id in self.elements_by_id:
             return self.elements_by_id[_id]
-        raise ValueError(
-            f"Initialization of {self.model_type} by ID failed - {_id} is unknown!"
-        )
+        raise ValueError(f"Initialization of {self.model_type} by ID failed - {_id} is unknown!")
 
     def query_name(self, name: str) -> dict:
         if isinstance(name, str) and name.lower() in self.elements_by_name:
             return self.elements_by_name[name.lower()]
-        raise ValueError(
-            f"Initialization of {self.model_type} by name failed - {name} is unknown!"
-        )
+        raise ValueError(f"Initialization of {self.model_type} by name failed - {name} is unknown!")
 
 
 def file_older_than(file: Path, delta: timedelta) -> bool:
@@ -172,9 +168,7 @@ class Fixtures:
     suffix = ".yaml"
 
     @validate_call
-    def __init__(
-        self, file_path: Optional[Path] = None, *, reset: bool = False
-    ) -> None:
+    def __init__(self, file_path: Optional[Path] = None, *, reset: bool = False) -> None:
         if file_path is None:
             self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
         else:
@@ -182,11 +176,7 @@ class Fixtures:
         self.components: Dict[str, Fixture] = {}
         save_path = self.file_path / "fixtures.pickle"
 
-        if (
-            save_path.exists()
-            and not file_older_than(save_path, timedelta(hours=24))
-            and not reset
-        ):
+        if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)) and not reset:
             # speedup
             with save_path.open("rb", buffering=-1) as fd:
                 self.components = pickle.load(fd)  # noqa: S301

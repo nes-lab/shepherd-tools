@@ -19,9 +19,7 @@ from .target import Target
 
 MACStr = Annotated[
     str,
-    StringConstraints(
-        max_length=17, pattern=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
-    ),
+    StringConstraints(max_length=17, pattern=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"),
 ]
 
 
@@ -65,23 +63,13 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
         has_cape = self.cape is not None
         has_target = (self.target_a is not None) or (self.target_b is not None)
         if not has_cape and has_target:
-            raise ValueError(
-                f"Observer '{self.name}' is faulty " f"-> has targets but no cape"
-            )
+            raise ValueError(f"Observer '{self.name}' is faulty -> has targets but no cape")
         return self
 
     def has_target(self, target_id: int) -> bool:
-        if (
-            self.target_a is not None
-            and target_id == self.target_a.id
-            and self.target_a.active
-        ):
+        if self.target_a is not None and target_id == self.target_a.id and self.target_a.active:
             return True
-        if (
-            self.target_b is not None
-            and target_id == self.target_b.id
-            and self.target_b.active
-        ):
+        if self.target_b is not None and target_id == self.target_b.id and self.target_b.active:
             return True
         return False
 
@@ -91,9 +79,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 return TargetPort.A
             if self.target_b is not None and target_id == self.target_b.id:
                 return TargetPort.B
-        raise ValueError(
-            f"Target-ID {target_id} was not found in Observer '{self.name}'"
-        )
+        raise ValueError(f"Target-ID {target_id} was not found in Observer '{self.name}'")
 
     def get_target(self, target_id: int) -> Target:
         if self.has_target(target_id):
@@ -101,6 +87,4 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 return self.target_a
             if self.target_b is not None and target_id == self.target_b.id:
                 return self.target_b
-        raise ValueError(
-            f"Target-ID {target_id} was not found in Observer '{self.name}'"
-        )
+        raise ValueError(f"Target-ID {target_id} was not found in Observer '{self.name}'")

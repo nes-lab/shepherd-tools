@@ -22,18 +22,14 @@ class TargetConfig(ShpModel, title="Target Config"):
     """Configuration for Target Nodes (DuT)"""
 
     target_IDs: Annotated[List[IdInt], Field(min_length=1, max_length=128)]
-    custom_IDs: Optional[
-        Annotated[List[IdInt16], Field(min_length=1, max_length=128)]
-    ] = None
+    custom_IDs: Optional[Annotated[List[IdInt16], Field(min_length=1, max_length=128)]] = None
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
     #   if no custom ID is provided, the original ID of target is used
 
     energy_env: EnergyEnvironment  # alias: input
     virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
     target_delays: Optional[
-        Annotated[
-            List[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)
-        ]
+        Annotated[List[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)]
     ] = None
     # ⤷ individual starting times -> allows to use the same environment
     # TODO: delays not used ATM
@@ -48,9 +44,7 @@ class TargetConfig(ShpModel, title="Target Config"):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         if not self.energy_env.valid:
-            raise ValueError(
-                f"EnergyEnv '{self.energy_env.name}' for target must be valid"
-            )
+            raise ValueError(f"EnergyEnv '{self.energy_env.name}' for target must be valid")
         for _id in self.target_IDs:
             target = Target(id=_id)
             for mcu_num in [1, 2]:
@@ -78,8 +72,7 @@ class TargetConfig(ShpModel, title="Target Config"):
         t_ids = self.target_IDs
         if c_ids is not None and (len(set(c_ids)) < len(set(t_ids))):
             raise ValueError(
-                f"Provided custom IDs {c_ids} not enough "
-                f"to cover target range {t_ids}"
+                f"Provided custom IDs {c_ids} not enough to cover target range {t_ids}"
             )
         # TODO: if custom ids present, firmware must be ELF
         return self

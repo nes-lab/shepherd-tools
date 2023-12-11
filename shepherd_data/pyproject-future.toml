@@ -45,9 +45,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "black",
-    "pylint",
-    "flake8",
     "twine",
     "pre-commit",
     "pyright",

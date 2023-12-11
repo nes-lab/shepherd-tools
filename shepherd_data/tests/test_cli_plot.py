@@ -52,9 +52,7 @@ def test_cli_plot_file_short(data_h5: Path) -> None:
 def test_cli_plot_file_min(data_h5: Path) -> None:
     res = CliRunner().invoke(cli, ["-v", "plot", str(data_h5)])
     assert res.exit_code == 0
-    assert data_h5.with_suffix(
-        ".plot_0s000_to_10s000.png"
-    ).exists()  # full duration of file
+    assert data_h5.with_suffix(".plot_0s000_to_10s000.png").exists()  # full duration of file
 
 
 def test_cli_plot_dir_min(tmp_path: Path) -> None:
@@ -62,12 +60,8 @@ def test_cli_plot_dir_min(tmp_path: Path) -> None:
     file2_path = generate_h5_file(tmp_path, "hrv_file2.h5")
     res = CliRunner().invoke(cli, ["-v", "plot", str(tmp_path.resolve())])
     assert res.exit_code == 0
-    assert file1_path.with_suffix(
-        ".plot_0s000_to_10s000.png"
-    ).exists()  # full duration of file
-    assert file2_path.with_suffix(
-        ".plot_0s000_to_10s000.png"
-    ).exists()  # full duration of file
+    assert file1_path.with_suffix(".plot_0s000_to_10s000.png").exists()  # full duration of file
+    assert file2_path.with_suffix(".plot_0s000_to_10s000.png").exists()  # full duration of file
 
 
 def test_cli_multiplot_dir_full(tmp_path: Path) -> None:
@@ -123,6 +117,4 @@ def test_cli_multiplot_dir_min(tmp_path: Path) -> None:
     generate_h5_file(tmp_path, "hrv_file2.h5")
     res = CliRunner().invoke(cli, ["-v", "plot", "-m", str(tmp_path)])
     assert res.exit_code == 0
-    assert tmp_path.with_suffix(
-        ".multiplot_0s000_to_10s000.png"
-    ).exists()  # full duration of file
+    assert tmp_path.with_suffix(".multiplot_0s000_to_10s000.png").exists()  # full duration of file

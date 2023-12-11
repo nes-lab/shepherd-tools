@@ -9,9 +9,7 @@ from shepherd_core.inventory import SystemInventory
 from shepherd_core.inventory import TargetInventory
 
 
-@pytest.mark.parametrize(
-    "inv", [PythonInventory, SystemInventory, TargetInventory, Inventory]
-)
+@pytest.mark.parametrize("inv", [PythonInventory, SystemInventory, TargetInventory, Inventory])
 def test_collect_data(inv: Inventory) -> None:
     inv.collect()
 

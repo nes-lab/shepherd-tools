@@ -32,19 +32,19 @@ if __name__ == "__main__":
             # TODO: add missing calibration or retrieve older version
 
             # datasets with unequal size
-            ds_time_size = fh.h5file["data"]["time"].shape[0]
-            for dset in ["current", "voltage"]:
+            ds_volt_size = fh.h5file["data"]["voltage"].shape[0]
+            for dset in ["current", "time"]:
                 ds_size = fh.h5file["data"][dset].shape[0]
-                if ds_time_size != ds_size:
+                if ds_volt_size != ds_size:
                     print(" -> will bring datasets to equal size")
                     fh.__exit__()
                     with shp.Writer(fpath, modify_existing=True) as fw:
-                        fw.h5file["data"]["time"].resize(min(ds_time_size, ds_size))
-                        fw.h5file["data"][dset].resize(min(ds_time_size, ds_size))
+                        fw.h5file["data"]["voltage"].resize(min(ds_volt_size, ds_size))
+                        fw.h5file["data"][dset].resize(min(ds_volt_size, ds_size))
                     fh.__enter__()
 
             # unaligned datasets
-            remaining_size = fh.h5file["data"]["time"].shape[0] % fh.samples_per_buffer
+            remaining_size = fh.h5file["data"]["voltage"].shape[0] % fh.samples_per_buffer
             if remaining_size != 0:
                 print(" -> will align datasets")
                 fh.__exit__()

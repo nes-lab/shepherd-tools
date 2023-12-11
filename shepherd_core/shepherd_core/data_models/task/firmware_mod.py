@@ -40,9 +40,7 @@ class FirmwareModTask(ShpModel):
             FirmwareDType.base64_hex,
             FirmwareDType.path_hex,
         }:
-            logger.warning(
-                "Firmware is scheduled to get custom-ID but is not in elf-format"
-            )
+            logger.warning("Firmware is scheduled to get custom-ID but is not in elf-format")
         return self
 
     @classmethod

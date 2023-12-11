@@ -19,9 +19,7 @@ from ..data_models.base.shepherd import ShpModel
 
 
 @validate_call
-def hash_password(
-    pw: Annotated[str, StringConstraints(min_length=20, max_length=100)]
-) -> bytes:
+def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length=100)]) -> bytes:
     # TODO: add salt of testbed -> this fn should be part of Testbed-Object
     # NOTE: 1M Iterations need 25s on beaglebone
     return pbkdf2_hmac(

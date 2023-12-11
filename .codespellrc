@@ -1,0 +1,10 @@
+[codespell]
+
+builtin = clear,rare,informal,usage,code,en-GB_to_en-US
+
+# skip =
+ignore-words-list = astroid,ws,arange,fram
+
+# options without argument
+check-filenames =
+# check-hidden =

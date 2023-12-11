@@ -22,9 +22,7 @@ def firmware_to_hex(file_path: Path) -> Path:
         return elf_to_hex(file_path)
     if is_hex(file_path):
         return file_path
-    raise ValueError(
-        "FW2Hex: unknown file '%s', it should be ELF or HEX", file_path.name
-    )
+    raise ValueError("FW2Hex: unknown file '%s', it should be ELF or HEX", file_path.name)
 
 
 @validate_call
@@ -72,9 +70,7 @@ def base64_to_hash(content: str) -> str:
 
 
 @validate_call
-def extract_firmware(
-    data: Union[str, Path], data_type: FirmwareDType, file_path: Path
-) -> Path:
+def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path: Path) -> Path:
     """- base64-string will be transformed into file
     - if data is a path the file will be copied to the destination
     """
@@ -90,14 +86,10 @@ def extract_firmware(
         elif data_type == FirmwareDType.path_hex:
             file = file_path.with_suffix(".hex")
         else:
-            raise ValueError(
-                "FW-Extraction failed due to unknown datatype '%s'", data_type
-            )
+            raise ValueError("FW-Extraction failed due to unknown datatype '%s'", data_type)
         if not file.parent.exists():
             file.parent.mkdir(parents=True)
         shutil.copy(data, file)
     else:
-        raise ValueError(
-            "FW-Extraction failed due to unknown data-type '%s'", type(data)
-        )
+        raise ValueError("FW-Extraction failed due to unknown data-type '%s'", type(data))
     return file
