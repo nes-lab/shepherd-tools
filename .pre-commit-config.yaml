@@ -73,7 +73,6 @@ repos:
       - id: validate-pyproject
 
 # TODO: github.com/PyCQA/pydocstyle
-# TODO: github.com/PyCQA/pylint
 
 # default_language_version:
 #    python: python3.8

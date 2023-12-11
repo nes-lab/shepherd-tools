@@ -9,7 +9,7 @@
   - this can reconstruct timestamp-stream after the measurement
   - weaken errors / warnings for missing timestamps
 - toolchain
-  - replace isort, black, flake8 by ruff
+  - replace isort, black, flake8, pylint by ruff
 
 ## v2023.11.1
 

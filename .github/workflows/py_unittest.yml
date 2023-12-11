@@ -77,11 +77,5 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies 🔧
-        run: pip install pylint pylint-exit
-
       - name: Run Pre-Commit Tests 🧪
         uses: pre-commit/action@v3.0.0
-
-      - name: Analyze the code with pylint 🧐
-        run: pylint $(git ls-files '*.py') || pylint-exit $?
