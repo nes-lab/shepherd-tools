@@ -8,6 +8,8 @@
   - meta: buffer-timestamp, sample-count, pru-util mean & max
   - this can reconstruct timestamp-stream after the measurement
   - weaken errors / warnings for missing timestamps
+- toolchain
+  - replace isort, black, flake8 by ruff
 
 ## v2023.11.1
 
