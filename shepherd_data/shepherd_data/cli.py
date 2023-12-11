@@ -278,7 +278,7 @@ def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 for _factor in ds_list:
-                    if shpr.ds_time.shape[0] / _factor < 1000:
+                    if shpr.ds_voltage.shape[0] / _factor < 1000:
                         logger.warning(
                             "will skip downsampling for %s because "
                             "resulting sample-size is too small",

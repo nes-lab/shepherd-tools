@@ -298,7 +298,7 @@ class Writer(Reader):
         else:
             raise ValueError("timestamp-data was not usable")
 
-        len_old = self.ds_time.shape[0]
+        len_old = self.ds_voltage.shape[0]
 
         # resize dataset
         self.ds_time.resize((len_old + len_new,))
@@ -335,15 +335,15 @@ class Writer(Reader):
     def _align(self) -> None:
         """Align datasets with buffer-size of shepherd"""
         self._refresh_file_stats()
-        n_buff = self.ds_time.size / self.samples_per_buffer
+        n_buff = self.ds_voltage.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
-        if size_new < self.ds_time.size:
+        if size_new < self.ds_voltage.size:
             if self.samplerate_sps != samplerate_sps_default:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(
                 "aligning with buffer-size, discarding last %d entries",
-                self.ds_time.size - size_new,
+                self.ds_voltage.size - size_new,
             )
             self.ds_time.resize((size_new,))
             self.ds_voltage.resize((size_new,))

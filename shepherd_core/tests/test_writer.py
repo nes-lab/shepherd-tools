@@ -140,7 +140,7 @@ def test_writer_align(h5_path: Path) -> None:
         data_nd = np.zeros((int(length),))
         sfw.append_iv_data_raw(time_nd, data_nd, data_nd)
     with Reader(h5_path) as sfr:
-        assert sfr.ds_time.size < length
+        assert sfr.ds_voltage.size < length
 
 
 def test_writer_not_align(h5_path: Path) -> None:
@@ -151,7 +151,7 @@ def test_writer_not_align(h5_path: Path) -> None:
         data_nd = np.zeros((int(length),))
         sfw.append_iv_data_raw(time_nd, data_nd, data_nd)
     with Reader(h5_path) as sfr:
-        assert sfr.ds_time.size == length
+        assert sfr.ds_voltage.size == length
 
 
 def test_writer_setter(h5_path: Path) -> None:
