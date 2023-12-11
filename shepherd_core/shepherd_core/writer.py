@@ -134,9 +134,7 @@ class Writer(Reader):
             )
 
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
-            raise ValueError(
-                f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})"
-            )
+            raise ValueError(f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})")
 
         _dtypes = self.mode_dtype_dict[mode if mode else self.mode_default]
         if isinstance(datatype, str):
