@@ -14,6 +14,7 @@ import yaml
 from pydantic import validate_call
 from typing_extensions import Self
 
+from .cache_path import cache_user_path
 from ..data_models.base.timezone import local_now
 from ..data_models.base.timezone import local_tz
 from ..data_models.base.wrapper import Wrapper
@@ -170,7 +171,7 @@ class Fixtures:
     @validate_call
     def __init__(self, file_path: Optional[Path] = None, *, reset: bool = False) -> None:
         if file_path is None:
-            self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
+            self.file_path = cache_user_path
         else:
             self.file_path = file_path
         self.components: Dict[str, Fixture] = {}
@@ -192,6 +193,7 @@ class Fixtures:
             for file in files:
                 self.insert_file(file)
 
+            cache_user_path.parent.mkdir(parents=True, exist_ok=True)
             with save_path.open("wb", buffering=-1) as fd:
                 pickle.dump(self.components, fd)
 
