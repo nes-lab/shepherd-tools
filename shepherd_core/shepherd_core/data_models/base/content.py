@@ -28,7 +28,7 @@ def id_default() -> int:
 
 class ContentModel(ShpModel):
     # General Properties
-    id: IdInt = Field(  # noqa: A003
+    id: IdInt = Field(
         description="Unique ID",
         default_factory=id_default,
     )

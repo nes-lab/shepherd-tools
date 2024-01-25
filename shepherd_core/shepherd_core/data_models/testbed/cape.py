@@ -24,7 +24,7 @@ class TargetPort(str, Enum):
 class Cape(ShpModel, title="Shepherd-Cape"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: IdInt  # noqa: A003
+    id: IdInt
     name: NameStr
     version: NameStr
     description: SafeStr

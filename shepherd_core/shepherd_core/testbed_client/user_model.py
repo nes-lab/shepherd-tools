@@ -34,7 +34,7 @@ def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length
 class User(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: IdInt = Field(  # noqa: A003
+    id: IdInt = Field(
         description="Unique ID",
         default_factory=id_default,
     )

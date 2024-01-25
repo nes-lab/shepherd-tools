@@ -26,7 +26,7 @@ class Direction(str, Enum):
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component"""
 
-    id: IdInt  # noqa: A003
+    id: IdInt
     name: NameStr
     description: Optional[SafeStr] = None
     comment: Optional[SafeStr] = None

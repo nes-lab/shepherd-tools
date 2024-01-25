@@ -26,7 +26,7 @@ MACStr = Annotated[
 class Observer(ShpModel, title="Shepherd-Sheep"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: IdInt  # noqa: A003
+    id: IdInt
     name: NameStr
     description: SafeStr
     comment: Optional[SafeStr] = None
