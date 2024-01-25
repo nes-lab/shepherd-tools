@@ -1,8 +1,110 @@
+[project]
+name = "shepherd_core"
+description = "Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed"
+keywords = ["testbed", "beaglebone", "pru", "batteryless", "energyharvesting", "solar"]
+
+authors = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
+maintainers = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
+
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE"}
+dynamic = ["version"]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+]
+
+requires-python = ">=3.8"
+dependencies = [
+    "h5py",
+    "numpy",
+    "pyYAML",
+    "chromalog",
+    "pydantic[email]>2.0.0",
+    "scipy",
+    "tqdm",
+    "intelhex",
+    "requests",
+    "pyelftools",
+    "zstandard",
+]
+
+[project.optional-dependencies]
+elf = [
+    "pwntools-elf-only",
+    # TODO: still separate because of missing windows-compat
+    # modified package for reading ELF-files with fw_tools
+    # original can be problematic to install on windows & beaglebone
+    # probably also needed: https://docs.pwntools.com/en/stable/install.html  + binutils-$ARCH
+]
+
+inventory = [
+    "psutil",
+]
+
+
+dev = [
+    "twine",
+    "pre-commit",
+    "pyright",
+    "ruff",
+    "mypy",
+    "types-PyYAML",
+]
+
+test = [
+    "pytest",
+    "coverage",
+]
+
+[project.urls]
+Documentation = "https://github.com/orgua/shepherd-datalib/blob/main/README.md"
+Issues = "https://github.com/orgua/shepherd-datalib/issues"
+Source = "https://pypi.org/project/shepherd-core/"
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+platforms = ["unix", "linux", "osx", "cygwin", "win32", "win64"]
+zip-safe = true
+include-package-data = true
+
+[tool.setuptools.package-dir]
+shepherd_core = "shepherd_core"
+
+[tool.setuptools.package-data]
+shepherd_core = [
+    "README.md",
+    "*.yaml",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "shepherd_core.__version__"}
+
+[tool.pytest.ini_options]
+markers = [
+    "converter: automatically added when no objcopy is found (on ubuntu install build-essential)",
+    "elf: automatically added when no elf-support is found (on windows or missing shepherd-core[elf])"
+]
+
+addopts = "-vvv --stepwise" # opts: verbose result for each tests
+# TODO: add something like "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+
 [tool.coverage.run]
+source = ["shepherd_core"]
 omit = ["*/shepherd_data/*"]
 
 [tool.mypy]

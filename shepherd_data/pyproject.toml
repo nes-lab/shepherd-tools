@@ -1,6 +1,100 @@
+[project]
+name = "shepherd_data"
+description = "Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed"
+keywords = ["testbed", "beaglebone", "pru", "batteryless", "energyharvesting", "solar"]
+
+authors = [
+    {name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},
+]
+maintainers = [
+    {name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},
+]
+
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE"}
+dynamic = ["version"]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+]
+
+requires-python = ">=3.8"
+dependencies = [
+    "click",
+    "h5py",
+    "matplotlib",  # full-version
+    "numpy",
+    "pandas",  # full-version, v2 is OK
+    "pyYAML",
+    "scipy",   # full-version
+    "shepherd-core[inventory]>=2023.12.1",
+    "tqdm",    # full-version
+]
+
+[project.optional-dependencies]
+elf = [
+    "shepherd-core[elf]"
+]
+
+dev = [
+    "shepherd-core[dev]",
+    "pandas-stubs",  # for pyright with pandas
+]
+
+test = [
+    "shepherd-core[test]",
+    "pytest",
+    "pytest-click",
+    "coverage",
+]
+
+[project.urls]
+Documentation = "https://github.com/orgua/shepherd-datalib/blob/main/README.md"
+Issues = "https://pypi.org/project/shepherd-data/issues"
+Source = "https://pypi.org/project/shepherd-data/"
+
+[project.scripts]
+shepherd-data = "shepherd_data.cli:cli"
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+platforms = ["unix", "linux", "osx", "cygwin", "win32", "win64"]
+zip-safe = true
+#include-package-data = true
+
+[tool.setuptools.package-dir]
+shepherd_data = "shepherd_data"
+
+[tool.setuptools.package-data]
+shepherd_data = [
+    "README.md",
+    "src/examples/*.py",
+    "src/examples/*.iv",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "shepherd_data.__version__"}
+
+[tool.pytest.ini_options]
+addopts = "-vvv --stepwise" # opts: verbose result for each tests
+# TODO: add something like "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+
+[tool.coverage.run]
+source = ["shepherd_data"]
 
 [tool.mypy]
 python_version = 3.8
