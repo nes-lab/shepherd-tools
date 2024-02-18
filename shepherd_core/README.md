@@ -13,7 +13,7 @@
 
 ---
 
-This Python Module is designed as a library and bundles data-models and file-access-routines for the shepherd-testbed, that are used by several codebases.
+The Python Module is designed as a library and bundles data-models and file-access-routines for the shepherd-testbed, that are used by several codebases.
 
 For postprocessing shepherds .h5-files users want to use [shepherd_data](https://pypi.org/project/shepherd_data).
 

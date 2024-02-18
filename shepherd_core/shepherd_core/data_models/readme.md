@@ -41,7 +41,7 @@
     - trace-default: NOT POSSIBLE, right?
     - disable: init with "null" OR just mention parameter but keep it empty
 
-### add documentation after creation -> avoid Field()
+### add documentation after creation ⇾ avoid Field()
 
 - these do not work
 
@@ -50,7 +50,7 @@ from pydantic import Field
 from shepherd_core.data_models import ShpModel
 
 class Experiment(ShpModel, title="Config of an Experiment"):
-    def __init__(self):  # test to add doc after creation -> to avoid Field()
+    def __init__(self):  # test to add doc after creation ⇾ to avoid Field()
         super().__init__()
         self.Config.fields["output_path"].description = "test description"
     class Config:

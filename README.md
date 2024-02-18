@@ -5,6 +5,10 @@
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml)
 [![CodeStyle](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
+**Data-Package**: <https://pypi.org/project/shepherd_data>
+
+**Core-library**: <https://pypi.org/project/shepherd_core>
+
 **Main Project**: [https://github.com/orgua/shepherd](https://github.com/orgua/shepherd)
 
 **Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
@@ -13,12 +17,16 @@
 
 The Repository contains python packages for the [shepherd](https://github.com/orgua/shepherd)-testbed
 
-- `/shepherd_core` bundles functionality that is used by multiple tools
+- `/shepherd_core` bundles functionality that is used by multiple tools and the community
 - `/shepherd_data` holds the data-module that is designed for users of the testbed
+
+Navigate there to get an in depth view for the tools.
 
 ## Development
 
 ### PipEnv
+
+The environment brings everything needed for dev-work, steps for installing are described below also as shell-commands (OS-independent).
 
 - clone repository
 - navigate shell into directory
@@ -41,7 +49,7 @@ pipenv install --dev pytest
 
 ### Update dynamic Fixtures
 
-When external dependencies ([Target-Lib](https://github.com/orgua/shepherd-targets/)) change, the fixtures should be updated.
+When external dependencies ([Target-Lib](https://github.com/orgua/shepherd-targets/)) change, the fixtures should be also updated for the testbed.
 
 ```shell
 python3 extra/gen_firmwares.py
@@ -54,14 +62,14 @@ python3 extra/prime_database.py
 ### Running Testbench
 
 - run pytest in ``_core``- or ``_data``-subdirectory
-- alternative (below) is running from failed test to next fail
+- alternative (bottom-cmd) is running from failed test to next fail (if any)
 
 ```shell
 pytest
 pytest --stepwise
 ```
 
-### code coverage (with pytest)
+### Code Coverage (with pytest)
 
 - run coverage in ``_core``- or ``_data``-subdirectory
 - check results (in browser `./htmlcov/index.html`)
@@ -109,11 +117,11 @@ coverage html
 
 ## Open Tasks
 
-- [click progressbar](https://click.palletsprojects.com/en/8.1.x/api/#click.progressbar) -> could replace tqdm
+- [click progressbar](https://click.palletsprojects.com/en/8.1.x/api/#click.progressbar) ⇾ could replace tqdm
 - implementations for this lib
   - generalize up- and down-sampling, use out_sample_rate instead of ds-factor
-    - lib samplerate (tested) -> promising, but designed for float32 and range of +-1.0
-    - lib resampy (tested) -> could be problematic with slice-iterator
+    - lib samplerate (tested) ⇾ promising, but designed for float32 and range of +-1.0
+    - lib resampy (tested) ⇾ could be problematic with slice-iterator
     - https://stackoverflow.com/questions/29085268/resample-a-numpy-array
     - scipy.signal.resample, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample.html
     - scipy.signal.decimate, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.decimate.html
@@ -121,11 +129,11 @@ coverage html
     - timestamps could be regenerated with np.arange( tmin, tmax, 1e9/samplerate)
   - generalize converters (currently in IVonne)
     - isc&voc <-> ivcurve
-    - ivcurve -> ivsample
+    - ivcurve ⇾ ivsample
   - plotting and downsampling for IVCurves ()
   - plotting more generalized (power, cpu-util, ..., if IV then offer power as well)
   - some metadata is calculated wrong (non-scalar datasets)
-  - unittests & codecoverage -> 79% with v22.5.4, https://pytest-cov.readthedocs.io/en/latest/config.html
+  - unittests & codecoverage ⇾ 79% with v22.5.4, https://pytest-cov.readthedocs.io/en/latest/config.html
     - test example: https://github.com/kvas-it/pytest-console-scripts
     - use coverage to test some edge-cases
   - sub-divide valid() into healthy()
@@ -140,4 +148,4 @@ coverage html
   - full and minimal config into h5
   - use the datalib as a base
   - isc-voc-harvesting
-  - directly process isc-voc -> resample to ivcurve?
+  - directly process isc-voc ⇾ resample to ivcurve?
