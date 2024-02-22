@@ -9,9 +9,11 @@
 
 **Core-library**: <https://pypi.org/project/shepherd_core>
 
-**Main Project**: [https://github.com/orgua/shepherd](https://github.com/orgua/shepherd)
+**Main Documentation**: <https://orgua.github.io/shepherd>
 
-**Source Code**: [https://github.com/orgua/shepherd-datalib](https://github.com/orgua/shepherd-datalib)
+**Main Project**: <https://github.com/orgua/shepherd>
+
+**Source Code**: <https://github.com/orgua/shepherd-datalib>
 
 ---
 

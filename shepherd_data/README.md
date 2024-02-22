@@ -5,7 +5,7 @@
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml)
 [![CodeStyle](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-**Documentation**: <https://orgua.github.io/shepherd/external/shepherd_data.html>
+**Main Documentation**: <https://orgua.github.io/shepherd>
 
 **Source Code**: <https://github.com/orgua/shepherd-datalib>
 
