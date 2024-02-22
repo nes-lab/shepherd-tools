@@ -182,8 +182,8 @@ class Reader:
     ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
         can be configured on first call
-        TODO: reconstruct - start/end mark samples and
-            each call can request a certain number of samples
+        TODO: reconstruct - start/end mark samples &
+         each call can request a certain number of samples
 
         Args:
             :param start_n: (int) Index of first buffer to be read

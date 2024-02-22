@@ -21,7 +21,7 @@ MCUPort = Annotated[int, Field(ge=1, le=2)]
 class Target(ShpModel, title="Target Node (DuT)"):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: IdInt  # noqa: A003
+    id: IdInt
     name: NameStr
     version: NameStr
     description: SafeStr

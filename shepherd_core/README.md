@@ -5,7 +5,7 @@
 [![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml)
 [![CodeStyle](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-**Documentation**: <https://orgua.github.io/shepherd/external/shepherd_core.html>
+**Main Documentation**: <https://orgua.github.io/shepherd>
 
 **Source Code**: <https://github.com/orgua/shepherd-datalib>
 
@@ -13,7 +13,7 @@
 
 ---
 
-This Python Module is designed as a library and bundles data-models and file-access-routines for the shepherd-testbed, that are used by several codebases.
+The Python Module is designed as a library and bundles data-models and file-access-routines for the shepherd-testbed, that are used by several codebases.
 
 For postprocessing shepherds .h5-files users want to use [shepherd_data](https://pypi.org/project/shepherd_data).
 
@@ -30,7 +30,9 @@ For postprocessing shepherds .h5-files users want to use [shepherd_data](https:/
 - decode waveforms (gpio-state & timestamp) to UART
 - create an inventory (used versions of software, hardware)
 
-See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a trafficbench-experiment that's used to derive the link-matrix.
+See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a [trafficbench](https://github.com/orgua/TrafficBench)-experiment that's used to derive the link-matrix of the testbed-nodes.
+
+For learning more about the file-structure you can consult the [official documentation](https://orgua.github.io/shepherd/user/data_format)
 
 ### Compatibility
 

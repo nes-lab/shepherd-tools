@@ -2,10 +2,12 @@ import platform
 import subprocess
 import time
 from contextlib import suppress
+from datetime import datetime
 from typing import Optional
 
 from typing_extensions import Self
 
+from .. import local_now
 from .. import logger
 
 try:
@@ -22,6 +24,9 @@ from ..data_models import ShpModel
 class SystemInventory(ShpModel):
     uptime: PositiveInt
     # ⤷ seconds
+    timestamp: datetime
+    # time_delta: timedelta = timedelta(0)  # noqa: ERA001
+    # ⤷ lag behind earliest observer, TODO: wrong place
 
     system: str
     release: str
@@ -43,6 +48,8 @@ class SystemInventory(ShpModel):
 
     @classmethod
     def collect(cls) -> Self:
+        ts = local_now()
+
         if psutil is None:
             ifs2 = {}
             uptime = 0
@@ -58,6 +65,7 @@ class SystemInventory(ShpModel):
 
         model_dict = {
             "uptime": round(uptime),
+            "timestamp": ts,
             "system": platform.system(),
             "release": platform.release(),
             "version": platform.version(),

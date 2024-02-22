@@ -20,7 +20,7 @@ from .observer import Observer
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: IdInt  # noqa: A003
+    id: IdInt
     name: NameStr
     description: SafeStr
     comment: Optional[SafeStr] = None

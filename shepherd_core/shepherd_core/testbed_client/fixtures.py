@@ -18,6 +18,7 @@ from ..data_models.base.timezone import local_now
 from ..data_models.base.timezone import local_tz
 from ..data_models.base.wrapper import Wrapper
 from ..logger import logger
+from .cache_path import cache_user_path
 
 # Proposed field-name:
 # - inheritance
@@ -174,7 +175,7 @@ class Fixtures:
         else:
             self.file_path = file_path
         self.components: Dict[str, Fixture] = {}
-        save_path = self.file_path / "fixtures.pickle"
+        save_path = cache_user_path / "fixtures.pickle"
 
         if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)) and not reset:
             # speedup
@@ -192,6 +193,7 @@ class Fixtures:
             for file in files:
                 self.insert_file(file)
 
+            save_path.parent.mkdir(parents=True, exist_ok=True)
             with save_path.open("wb", buffering=-1) as fd:
                 pickle.dump(self.components, fd)
 

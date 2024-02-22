@@ -120,7 +120,7 @@
 sudo python3 -X importtime -c 'from shepherd_core.data_models.task import EmulationTask' 2> importtime.log
 #  8.4 s on v2023.8.6, pydantic 1.10
 # 13.9 s on v2023.8.7, pydantic 2.2.1, core 2.6.1
-# 13.7 s with defer_build=True -> triggers bug?
+# 13.7 s with defer_build=True ⇾ triggers bug?
 ```
 
 ## v2023.08.6
