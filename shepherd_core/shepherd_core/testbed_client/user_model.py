@@ -1,6 +1,7 @@
 import secrets
 from hashlib import pbkdf2_hmac
 from typing import Optional
+from typing import Union
 from uuid import uuid4
 
 from pydantic import UUID4
@@ -34,7 +35,8 @@ def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length
 class User(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: UUID4 = Field(
+    # id: UUID4 = Field(  # TODO db-migration - temp fix for documentation
+    id: Union[UUID4, int] = Field(
         description="Unique ID",
         default_factory=uuid4,
     )

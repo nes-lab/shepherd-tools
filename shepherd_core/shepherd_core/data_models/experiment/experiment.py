@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import timedelta
 from typing import List
 from typing import Optional
+from typing import Union
 from uuid import uuid4
 
 from pydantic import UUID4
@@ -26,7 +27,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     """
 
     # General Properties
-    id: UUID4 = Field(default_factory=uuid4)
+    # id: UUID4 = Field(default_factory=uuid4) # TODO db-migration - temp fix for documentation
+    id: Union[UUID4, int] = Field(default_factory=uuid4)
     # ⤷ TODO: automatic ID is problematic for identification by hash
 
     name: NameStr

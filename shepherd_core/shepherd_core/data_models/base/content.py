@@ -1,6 +1,7 @@
 import hashlib
 from datetime import datetime
 from typing import Optional
+from typing import Union
 from uuid import uuid4
 
 from pydantic import UUID4
@@ -31,7 +32,8 @@ def id_default() -> int:
 
 class ContentModel(ShpModel):
     # General Properties
-    id: UUID4 = Field(
+    # id: UUID4 = Field(  # TODO: db-migration - temp fix for documentation
+    id: Union[UUID4, int] = Field(
         description="Unique ID",
         default_factory=uuid4,
     )
@@ -42,9 +44,9 @@ class ContentModel(ShpModel):
     updated_last: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access
-    # TODO: remove, only needed for DB
-    # owner_id: NameStr
-    # group_id: Annotated[NameStr, Field(description="University or Subgroup")]
+    # TODO: remove owner & group, only needed for DB
+    owner: NameStr
+    group: Annotated[NameStr, Field(description="University or Subgroup")]
     visible2group: bool = False
     visible2all: bool = False
 
