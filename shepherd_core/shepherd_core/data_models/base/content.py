@@ -1,7 +1,9 @@
 import hashlib
 from datetime import datetime
 from typing import Optional
+from uuid import uuid4
 
+from pydantic import UUID4
 from pydantic import Field
 from pydantic import StringConstraints
 from pydantic import model_validator
@@ -21,25 +23,28 @@ SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 
 
 def id_default() -> int:
+    # note: IdInt has space for 128 bit, so 128/4 = 32 hex-chars
     time_stamp = str(local_now()).encode("utf-8")
-    time_hash = hashlib.sha3_224(time_stamp).hexdigest()[-16:]
+    time_hash = hashlib.sha3_224(time_stamp).hexdigest()[-32:]
     return int(time_hash, 16)
 
 
 class ContentModel(ShpModel):
     # General Properties
-    id: IdInt = Field(
+    id: UUID4 = Field(
         description="Unique ID",
-        default_factory=id_default,
+        default_factory=uuid4,
     )
     name: NameStr
     description: Annotated[Optional[SafeStr], Field(description="Required when public")] = None
     comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
+    updated_last: datetime = Field(default_factory=datetime.now)
 
     # Ownership & Access
-    owner: NameStr
-    group: Annotated[NameStr, Field(description="University or Subgroup")]
+    # TODO: remove, only needed for DB
+    # owner_id: NameStr
+    # group_id: Annotated[NameStr, Field(description="University or Subgroup")]
     visible2group: bool = False
     visible2all: bool = False
 
