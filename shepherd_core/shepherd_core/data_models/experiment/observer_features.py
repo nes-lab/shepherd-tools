@@ -113,11 +113,11 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
 
 
 class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
-    """Configuration for a GPIO-Actuation-Sequence
-    TODO: not implemented ATM:
-        - decide if pru control sys-gpio or
-        - reverses pru-gpio (preferred if possible)
-    """
+    """Configuration for a GPIO-Actuation-Sequence"""
+
+    # TODO: not implemented ATM:
+    #   decide if pru control sys-gpio or
+    #   reverses pru-gpio (preferred if possible)
 
     events: Annotated[List[GpioEvent], Field(min_length=1, max_length=1024)]
 

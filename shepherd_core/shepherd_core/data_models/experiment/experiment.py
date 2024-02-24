@@ -2,8 +2,9 @@ from datetime import datetime
 from datetime import timedelta
 from typing import List
 from typing import Optional
+from uuid import uuid4
 
-from pydantic import EmailStr
+from pydantic import UUID4
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Annotated
@@ -12,7 +13,6 @@ from typing_extensions import Self
 from ..base.content import IdInt
 from ..base.content import NameStr
 from ..base.content import SafeStr
-from ..base.content import id_default
 from ..base.shepherd import ShpModel
 from ..testbed.target import Target
 from ..testbed.testbed import Testbed
@@ -26,11 +26,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     """
 
     # General Properties
-    id: IdInt = Field(
-        description="Unique ID",
-        default_factory=id_default,
-    )
+    id: UUID4 = Field(default_factory=uuid4)
     # ⤷ TODO: automatic ID is problematic for identification by hash
+
     name: NameStr
     description: Annotated[
         Optional[SafeStr], Field(description="Required for public instances")
@@ -38,12 +36,12 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     comment: Optional[SafeStr] = None
     created: datetime = Field(default_factory=datetime.now)
 
-    # Ownership & Access, TODO
-    owner_id: Optional[IdInt] = 5472  # UUID?
+    # Ownership & Access
+    owner_id: Optional[IdInt] = None
 
     # feedback
-    email_results: Optional[EmailStr] = None
-    # ⤷ TODO: can be bool, as its linked to account
+    email_results: bool = False
+
     sys_logging: SystemLogging = SystemLogging(dmesg=True, ptp=True, shepherd=True)
 
     # schedule
