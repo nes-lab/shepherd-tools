@@ -7,6 +7,7 @@ from typing import Any
 from typing import Generator
 from typing import Optional
 from typing import Union
+from uuid import UUID
 
 import yaml
 from pydantic import BaseModel
@@ -39,6 +40,7 @@ yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.Path, path2str, SafeDumper)
 yaml.add_representer(timedelta, time2int, SafeDumper)
 yaml.add_representer(IPv4Address, generic2str, SafeDumper)
+yaml.add_representer(UUID, generic2str, SafeDumper)
 
 
 class ShpModel(BaseModel):
