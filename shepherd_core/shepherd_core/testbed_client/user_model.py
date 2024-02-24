@@ -1,7 +1,9 @@
 import secrets
 from hashlib import pbkdf2_hmac
 from typing import Optional
+from uuid import uuid4
 
+from pydantic import UUID4
 from pydantic import EmailStr
 from pydantic import Field
 from pydantic import SecretBytes
@@ -11,10 +13,8 @@ from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Annotated
 
-from ..data_models.base.content import IdInt
 from ..data_models.base.content import NameStr
 from ..data_models.base.content import SafeStr
-from ..data_models.base.content import id_default
 from ..data_models.base.shepherd import ShpModel
 
 
@@ -34,9 +34,9 @@ def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length
 class User(ShpModel):
     """meta-data representation of a testbed-component (physical object)"""
 
-    id: IdInt = Field(
+    id: UUID4 = Field(
         description="Unique ID",
-        default_factory=id_default,
+        default_factory=uuid4,
     )
     name: NameStr
     description: Optional[SafeStr] = None

@@ -20,7 +20,7 @@ For postprocessing shepherds .h5-files users want to use [shepherd_data](https:/
 ## Features
 
 - read and write shepherds hdf5-files
-- create, read, write and convert experiments for the testbed (all data-models included)
+- create, read, write and convert experiments for the testbed (all required data-models included)
 - simulate the virtual source, including virtual harvesters (and virtual converter as a whole)
 - connect and query the testbed via a webclient (TestbedClient)
   - offline usage defaults to static demo-fixtures loaded from yaml-files in the model-directories
@@ -28,7 +28,7 @@ For postprocessing shepherds .h5-files users want to use [shepherd_data](https:/
   - embed, modify, verify, convert
   - **Note**: working with ELF-files requires external dependencies, see ``Installation``-Chapter
 - decode waveforms (gpio-state & timestamp) to UART
-- create an inventory (used versions of software, hardware)
+- create an inventory (for deployed versions of software, hardware)
 
 See [examples](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased there. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a [trafficbench](https://github.com/orgua/TrafficBench)-experiment that's used to derive the link-matrix of the testbed-nodes.
 

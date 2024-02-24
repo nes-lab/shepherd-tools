@@ -25,11 +25,12 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     for supplying the Target Node during the experiment.
     If not already done, the energy will be harvested and then converted.
     The converter-stage is software defined and offers:
-      buck-boost-combinations,
-      a simple diode + resistor and
-      an intermediate buffer capacitor.
-      TODO: I,V,R should be in regular unit (V, A, Ohm)
+    - buck-boost-combinations,
+    - a simple diode + resistor and
+    - an intermediate buffer capacitor.
     """
+
+    # TODO: I,V,R should be in regular unit (V, A, Ohm)
 
     # General Metadata & Ownership -> ContentModel
 
@@ -126,7 +127,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         Energy-Change Storage Cap   ->  E_new = E_old - E_output
         with Energy of a Cap 	    -> 	E_x = C_x * V_x^2 / 2
         combine formulas 		    ->
-                    C_store * V_store_new^2 / 2 = C_store * V_store_old^2 / 2 - C_out * V_out^2 / 2
+            C_store * V_store_new^2 / 2 = C_store * V_store_old^2 / 2 - C_out * V_out^2 / 2
         convert formula to V_new 	->	V_store_new^2 = V_store_old^2 - (C_out / C_store) * V_out^2
         convert into dV	 	        ->	dV = V_store_new - V_store_old
         in case of V_cap = V_out 	-> 	dV = V_store_old * (sqrt(1 - C_out / C_store) - 1)
@@ -187,7 +188,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     def calc_converter_mode(self, *, log_intermediate_node: bool) -> int:
         """Assembles bitmask from discrete values
         log_intermediate_node: record / log virtual intermediate (cap-)voltage and
-                            -current (out) instead of output-voltage and -current
+            -current (out) instead of output-voltage and -current
         """
         enable_storage = self.C_intermediate_uF > 0
         enable_boost = self.enable_boost and enable_storage
