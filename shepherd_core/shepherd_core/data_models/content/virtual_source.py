@@ -124,14 +124,17 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         only has simpler formula, second enabling when V_Cap >= V_out
 
         Math behind this calculation:
-        Energy-Change Storage Cap   ->  E_new = E_old - E_output
-        with Energy of a Cap 	    -> 	E_x = C_x * V_x^2 / 2
-        combine formulas 		    ->
-            C_store * V_store_new^2 / 2 = C_store * V_store_old^2 / 2 - C_out * V_out^2 / 2
-        convert formula to V_new 	->	V_store_new^2 = V_store_old^2 - (C_out / C_store) * V_out^2
-        convert into dV	 	        ->	dV = V_store_new - V_store_old
-        in case of V_cap = V_out 	-> 	dV = V_store_old * (sqrt(1 - C_out / C_store) - 1)
-        -> dV values will be reversed (negated), because dV is always negative (Voltage drop)
+
+        - Energy-Change Storage Cap ->  E_new = E_old - E_output
+        - with Energy of a Cap 	    -> 	E_x = C_x * V_x^2 / 2
+        - combine formulas 		    ->  C_store * V_store_new^2 / 2 =
+          C_store * V_store_old^2 / 2 - C_out * V_out^2 / 2
+        - convert formula to V_new 	->	V_store_new^2 =
+          V_store_old^2 - (C_out / C_store) * V_out^2
+        - convert into dV	 	        ->	dV = V_store_new - V_store_old
+        - in case of V_cap = V_out 	-> 	dV = V_store_old * (sqrt(1 - C_out / C_store) - 1)
+
+        Note: dV values will be reversed (negated), because dV is always negative (Voltage drop)
         """
         values = {}
         if self.C_intermediate_uF > 0 and self.C_output_uF > 0:
@@ -187,8 +190,9 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     def calc_converter_mode(self, *, log_intermediate_node: bool) -> int:
         """Assembles bitmask from discrete values
+
         log_intermediate_node: record / log virtual intermediate (cap-)voltage and
-            -current (out) instead of output-voltage and -current
+        -current (out) instead of output-voltage and -current
         """
         enable_storage = self.C_intermediate_uF > 0
         enable_boost = self.enable_boost and enable_storage

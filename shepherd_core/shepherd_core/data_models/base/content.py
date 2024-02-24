@@ -16,7 +16,7 @@ from .timezone import local_now
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
 IdInt = Annotated[int, Field(ge=0, lt=2**128)]
-NameStr = Annotated[str, StringConstraints(max_length=32, pattern=r'^[^<>:;,?"*|\/\\]+$')]
+NameStr = Annotated[str, StringConstraints(max_length=32, pattern=r'^[^<>:;,?\"\*|\/\\]+$')]
 # ⤷ Regex = FileSystem-Compatible ASCII
 SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ Regex = All Printable ASCII-Characters with Space
