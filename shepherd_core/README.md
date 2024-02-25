@@ -33,21 +33,7 @@ For postprocessing shepherds .h5-files usage of [shepherd_data](https://pypi.org
 
 See [official documentation](https://orgua.github.io/shepherd) or [example scripts](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased in both. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a [trafficbench](https://github.com/orgua/TrafficBench)-experiment that's used to derive the link-matrix of the testbed-nodes.
 
-### Compatibility
-
-| OS      |   PyVersion  | Comment                                    |
-|---------|--------------|--------------------------------------------|
-| Ubuntu  | 3.8 - 3.12   |                                            |
-| Windows | 3.8 - 3.12   | no support for elf and hex-conversions yet |
-| MacOS   | 3.8 - 3.12   | hex-conversion missing                     |
-
-Notes:
-- hex-conversion needs a working and accessible objcopy
-- elf-supports needs
-  - ``shepherd-core[elf]`` installs ``pwntools-elf-only``
-  - most elf-features also still utilize hex-conversion
-
-### Config-Models in Detail
+## Config-Models in Detail
 
 These pydantic data-models are used throughout all shepherd interfaces. Users can create an experiment, include their own content and feed it to the testbed.
 
@@ -74,6 +60,20 @@ These pydantic data-models are used throughout all shepherd interfaces. Users ca
   - types are limited in size (str)
   - exposes no internal paths
 - experiments can be transformed to task-sets (``TestbedTasks.from_xp()``)
+
+## Compatibility
+
+| OS      |   PyVersion  | Comment                                    |
+|---------|--------------|--------------------------------------------|
+| Ubuntu  | 3.8 - 3.12   |                                            |
+| Windows | 3.8 - 3.12   | no support for elf and hex-conversions yet |
+| MacOS   | 3.8 - 3.12   | hex-conversion missing                     |
+
+Notes:
+- hex-conversion needs a working and accessible objcopy
+- elf-supports needs
+  - ``shepherd-core[elf]`` installs ``pwntools-elf-only``
+  - most elf-features also still utilize hex-conversion
 
 ## Installation
 
