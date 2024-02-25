@@ -1,5 +1,14 @@
 # History of Changes
 
+## v2024.03.1
+
+## v2024.02.1
+
+- add UUID to models
+- improve docstrings to be used by shepherd-doc
+- improved docs
+- switch fully to pyproject.toml
+
 ## v2023.12.1
 
 - optimize reader.read_buffers() to allow omitting timestamp (less overhead)

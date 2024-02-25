@@ -9,6 +9,7 @@ shepherd-data = {editable = true, extras = ["dev","test"], path = "shepherd_data
 samplerate = "*"
 
 [dev-packages]
+bump2version = "*"
 
 [pipenv]
 allow_prereleases = false
