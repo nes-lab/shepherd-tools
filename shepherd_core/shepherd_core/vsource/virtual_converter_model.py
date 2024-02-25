@@ -6,7 +6,7 @@
 NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 
 Compromises:
-- bitshifted values (ie. _n28) are converted to float without shift
+- bitshifted values (i.e. _n28) are converted to float without shift
 
 """
 

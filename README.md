@@ -51,7 +51,7 @@ pipenv install --dev pytest
 
 ### Update dynamic Fixtures
 
-When external dependencies ([Target-Lib](https://github.com/orgua/shepherd-targets/)) change, the fixtures should be also updated for the testbed.
+When external dependencies ([Target-Lib](https://github.com/orgua/shepherd-targets/)) or core-models change, the fixtures should be also updated for the testbed.
 
 ```shell
 python3 extra/gen_firmwares.py
