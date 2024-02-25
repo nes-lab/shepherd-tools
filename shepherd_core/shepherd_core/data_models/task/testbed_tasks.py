@@ -1,12 +1,12 @@
 from typing import List
 from typing import Optional
 
-from pydantic import EmailStr
 from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Annotated
 from typing_extensions import Self
 
+from ..base.content import IdInt
 from ..base.content import NameStr
 from ..base.shepherd import ShpModel
 from ..experiment.experiment import Experiment
@@ -21,7 +21,10 @@ class TestbedTasks(ShpModel):
     observer_tasks: Annotated[List[ObserverTasks], Field(min_length=1, max_length=128)]
 
     # POST PROCESS
-    email: Optional[EmailStr] = None
+    email_results: bool = False
+    owner_id: Optional[IdInt]
+    # TODO: had real email previously, does it really need these at all?
+    #  DB stores experiment and knows when to email
 
     @classmethod
     @validate_call
@@ -34,7 +37,8 @@ class TestbedTasks(ShpModel):
         return cls(
             name=xp.name,
             observer_tasks=obs_tasks,
-            email=xp.email_results,
+            email_results=xp.email_results,
+            owner_id=xp.owner_id,
         )
 
     def get_observer_tasks(self, observer: str) -> Optional[ObserverTasks]:

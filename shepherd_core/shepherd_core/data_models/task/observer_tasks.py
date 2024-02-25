@@ -21,7 +21,7 @@ class ObserverTasks(ShpModel):
     """Collection of tasks for selected observer included in experiment"""
 
     observer: NameStr
-    owner_id: IdInt
+    owner_id: Optional[IdInt]  # TODO: set to optional for now, shouldn't be
 
     # PRE PROCESS
     time_prep: datetime  # TODO: should be optional

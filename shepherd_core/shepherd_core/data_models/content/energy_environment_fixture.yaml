@@ -14,6 +14,7 @@
     visible2group: true
     visible2all: true
     created: 2022-12-12 12:12:12
+    updated_last: 2022-12-12 12:12:12
 
 - datatype: EnergyEnvironment
   parameters:
@@ -31,6 +32,7 @@
     visible2group: true
     visible2all: true
     created: 2022-12-12 12:12:12
+    updated_last: 2022-12-12 12:12:12
 
 - datatype: EnergyEnvironment
   parameters:
@@ -48,3 +50,4 @@
     visible2group: true
     visible2all: true
     created: 2022-12-12 12:12:12
+    updated_last: 2022-12-12 12:12:12

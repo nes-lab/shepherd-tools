@@ -1,11 +1,12 @@
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.779899
+  created: 2024-02-25 12:45:58.488609+02:00
   parameters:
     id: 2639560972524229652
     name: eenv_static_2000mV_10mA_3600s
     description: Artificial static Energy Environment, 2000mV, 10mA, 3600s
     comment: null
     created: 2023-09-27 19:27:02.177941
+    updated_last: 2024-02-25 11:32:34.140144
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -21,13 +22,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.783398
+  created: 2024-02-25 12:45:58.497654+02:00
   parameters:
     id: 9823394105967169626
     name: eenv_static_2000mV_1mA_3600s
     description: Artificial static Energy Environment, 2000mV, 1mA, 3600s
     comment: null
     created: 2023-09-27 19:28:37.291941
+    updated_last: 2024-02-25 11:33:54.292910
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -43,13 +45,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.786899
+  created: 2024-02-25 12:45:58.506739+02:00
   parameters:
     id: 3900615675169501222
     name: eenv_static_2000mV_50mA_3600s
     description: Artificial static Energy Environment, 2000mV, 50mA, 3600s
     comment: null
     created: 2023-09-27 19:26:18.621440
+    updated_last: 2024-02-25 11:31:53.183281
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -65,13 +68,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.790399
+  created: 2024-02-25 12:45:58.515790+02:00
   parameters:
     id: 14796673729431137386
     name: eenv_static_2000mV_5mA_3600s
     description: Artificial static Energy Environment, 2000mV, 5mA, 3600s
     comment: null
     created: 2023-09-27 19:27:48.976440
+    updated_last: 2024-02-25 11:33:15.250555
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -87,13 +91,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.793899
+  created: 2024-02-25 12:45:58.524761+02:00
   parameters:
     id: 6648482606607441403
     name: eenv_static_3000mV_10mA_3600s
     description: Artificial static Energy Environment, 3000mV, 10mA, 3600s
     comment: null
     created: 2023-09-27 19:24:02.885439
+    updated_last: 2024-02-25 11:29:52.671833
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -109,13 +114,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.796898
+  created: 2024-02-25 12:45:58.533513+02:00
   parameters:
     id: 13566000951043177991
     name: eenv_static_3000mV_1mA_3600s
     description: Artificial static Energy Environment, 3000mV, 1mA, 3600s
     comment: null
     created: 2023-09-27 19:25:32.729442
+    updated_last: 2024-02-25 11:31:12.003732
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -131,13 +137,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.800400
+  created: 2024-02-25 12:45:58.542278+02:00
   parameters:
     id: 7977778327156610158
     name: eenv_static_3000mV_50mA_3600s
     description: Artificial static Energy Environment, 3000mV, 50mA, 3600s
     comment: null
     created: 2023-09-27 19:23:18.980940
+    updated_last: 2024-02-25 11:29:12.185905
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -153,13 +160,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2023-09-27 19:51:44.803899
+  created: 2024-02-25 12:45:58.550974+02:00
   parameters:
     id: 4900162978999238419
     name: eenv_static_3000mV_5mA_3600s
     description: Artificial static Energy Environment, 3000mV, 5mA, 3600s
     comment: null
     created: 2023-09-27 19:24:47.092941
+    updated_last: 2024-02-25 11:30:33.170119
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -175,13 +183,14 @@
     indoor: true
     location: Lab-VSrc
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.816899
+  created: 2024-02-25 12:45:58.568363+02:00
   parameters:
     id: 3000
     name: msp430_deep_sleep
     description: practically turned off MCU with the lowest possible consumption
     comment: null
     created: 2022-12-12 12:12:12
+    updated_last: 2024-02-25 11:45:58.563335
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -202,13 +211,14 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.820399
+  created: 2024-02-25 12:45:58.578594+02:00
   parameters:
     id: 3001
     name: msp430_spi_fram
     description: riotee implementation to use MSP as a flash storage
     comment: null
     created: 2022-12-12 12:12:12
+    updated_last: 2024-02-25 11:45:58.573327
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -229,13 +239,14 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.823899
+  created: 2024-02-25 12:45:58.589223+02:00
   parameters:
     id: 3002
     name: msp430_testable
     description: switches on all shared gpio one by one (verification after assembly)
     comment: null
     created: 2022-12-12 12:12:12
+    updated_last: 2024-02-25 11:45:58.583701
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -256,13 +267,14 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.827399
+  created: 2024-02-25 12:45:58.599274+02:00
   parameters:
     id: 7163917825449888392
     name: nrf52_deep_sleep
     description: practically turned off MCU with the lowest possible consumption
     comment: null
     created: 2023-09-13 21:01:52.815691
+    updated_last: 2024-02-25 11:45:58.594236
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -283,13 +295,14 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.831400
+  created: 2024-02-25 12:45:58.609313+02:00
   parameters:
     id: 2000
     name: nrf52_demo_rf
     description: A simple demo that sends BLE packets when energy budget allows it
     comment: null
     created: 2022-12-12 12:12:12
+    updated_last: 2024-02-25 11:45:58.604324
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -310,7 +323,7 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.834899
+  created: 2024-02-25 12:45:58.619155+02:00
   parameters:
     id: 3174430733058172825
     name: nrf52_rf_survey
@@ -318,6 +331,7 @@
       P_TX, loops until stopped
     comment: null
     created: 2023-09-13 21:01:53.308666
+    updated_last: 2024-02-25 11:45:58.614199
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -338,13 +352,14 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.838398
+  created: 2024-02-25 12:45:58.628815+02:00
   parameters:
     id: 16381936580724580968
     name: nrf52_rf_test
     description: sends out 1 BLE-Packet per second (verify with an app like 'RaMBLE')
     comment: null
     created: 2023-09-13 21:01:53.575861
+    updated_last: 2024-02-25 11:45:58.623974
     owner: Ingmar
     group: NES_Lab
     visible2group: true
@@ -365,7 +380,7 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2023-09-27 19:51:44.841899
+  created: 2024-02-25 12:45:58.638812+02:00
   parameters:
     id: 2002
     name: nrf52_testable
@@ -373,6 +388,7 @@
       assembly)
     comment: null
     created: 2022-12-12 12:12:12
+    updated_last: 2024-02-25 11:45:58.633957
     owner: Ingmar
     group: NES_Lab
     visible2group: true

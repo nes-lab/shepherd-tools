@@ -179,6 +179,7 @@ class Fixtures:
 
         if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)) and not reset:
             # speedup
+            # TODO: also add version as criterion
             with save_path.open("rb", buffering=-1) as fd:
                 self.components = pickle.load(fd)  # noqa: S301
             logger.debug(" -> found & used pickled fixtures")

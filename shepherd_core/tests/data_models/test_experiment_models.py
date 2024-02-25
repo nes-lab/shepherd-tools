@@ -58,6 +58,7 @@ def test_experiment_model_exp_yaml_comparison() -> None:
         time_start="2033-12-12 12:12:12",
         target_configs=[target_cfgs],
     )
+    assert exp1.model_dump() == exp2.model_dump()
     assert exp1.get_hash() == exp2.get_hash()
 
 

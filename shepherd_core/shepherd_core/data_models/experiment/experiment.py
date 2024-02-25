@@ -27,7 +27,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     """
 
     # General Properties
-    # id: UUID4 = Field(default_factory=uuid4) # TODO db-migration - temp fix for documentation
+    # id: UUID4 ... # TODO db-migration - temp fix for documentation
     id: Union[UUID4, int] = Field(default_factory=uuid4)
     # ⤷ TODO: automatic ID is problematic for identification by hash
 
