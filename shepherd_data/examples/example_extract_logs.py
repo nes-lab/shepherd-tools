@@ -6,6 +6,7 @@
 CLI-Version of this is:
 shepherd-data extract-meta file_or_dir
 """
+
 import os
 from pathlib import Path
 

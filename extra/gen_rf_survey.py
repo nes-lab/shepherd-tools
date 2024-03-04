@@ -1,7 +1,5 @@
-"""
+""" """
 
-
-"""
 from pathlib import Path
 
 from shepherd_core import TestbedClient

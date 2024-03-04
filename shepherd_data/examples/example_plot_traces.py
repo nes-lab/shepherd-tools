@@ -7,6 +7,7 @@ shepherd-data plot file_or_dir [-s start_time] [-e end_time]
                                [-w plot_width] [-h plot_height]
                                [--multiplot]
 """
+
 from pathlib import Path
 
 import shepherd_data as shp

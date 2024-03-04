@@ -76,7 +76,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         logger.debug("VHrv-Inheritances: %s", chain)
 
         # post corrections -> should be in separate validator
-        cal = CalibrationHarvester()  # todo: as argument?
+        cal = CalibrationHarvester()  # TODO: as argument?
         c_limit = values.get("current_limit_uA", 50_000)  # cls.current_limit_uA)
         values["current_limit_uA"] = max(10**6 * cal.adc_C_Hrv.raw_to_si(4), c_limit)
 

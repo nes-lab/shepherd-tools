@@ -6,6 +6,7 @@
 NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 
 """
+
 from typing import Optional
 
 from ..data_models import CalibrationEmulator

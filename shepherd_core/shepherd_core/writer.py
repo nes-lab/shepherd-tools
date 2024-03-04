@@ -1,5 +1,5 @@
-"""Writer that inherits from Reader-Baseclass
-"""
+"""Writer that inherits from Reader-Baseclass"""
+
 import logging
 import math
 import pathlib
@@ -87,6 +87,7 @@ class Writer(Reader):
             otherwise a unique name will be found
         compression: (str) use either None, lzf or "1" (gzips compression level)
         verbose: (bool) provides more debug-info
+
     """
 
     comp_default: int = 1
@@ -285,6 +286,7 @@ class Writer(Reader):
             timestamp: just start of buffer or whole ndarray
             voltage: ndarray as raw unsigned integers
             current: ndarray as raw unsigned integers
+
         """
         len_new = min(voltage.size, current.size)
 
@@ -326,6 +328,7 @@ class Writer(Reader):
                        -> provide start of buffer or whole ndarray
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
+
         """
         timestamp = self._cal.time.si_to_raw(timestamp)
         voltage = self._cal.voltage.si_to_raw(voltage)

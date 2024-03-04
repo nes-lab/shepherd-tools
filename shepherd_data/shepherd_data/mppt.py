@@ -1,6 +1,7 @@
 """Harvesters, simple and fast approach.
 Might be exchanged by shepherds py-model of pru-harvesters
 """
+
 import numpy as np
 import pandas as pd
 
@@ -18,6 +19,7 @@ def iv_model(voltages: Calc_t, coeffs: pd.Series) -> Calc_t:
     Returns:
     -------
         Solar current at given load voltage
+
     """
     currents = float(coeffs["a"]) - float(coeffs["b"]) * (
         np.exp(float(coeffs["c"]) * voltages) - 1.0

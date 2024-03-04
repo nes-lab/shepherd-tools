@@ -2,6 +2,7 @@
 to generate valid shepherd-data for emulation
 
 """
+
 import errno
 import logging
 import math
@@ -180,6 +181,7 @@ class Reader:
         :param v_max: Maximum voltage supported by shepherd
         :param duration_s: time to stop in seconds, counted from beginning
         :param tracker: VOC or OPT
+
         """
         if self._df is None:
             raise RuntimeError("IVonne Context was not entered - file not open!")

@@ -1,5 +1,5 @@
-"""Reader-Baseclass
-"""
+"""Reader-Baseclass"""
+
 import math
 from datetime import datetime
 from pathlib import Path
@@ -26,6 +26,7 @@ class Reader(CoreReader):
     ----
         file_path: Path of hdf5 file containing shepherd data with iv-samples, iv-curves or isc&voc
         verbose: more info during usage, 'None' skips the setter
+
     """
 
     def __init__(

@@ -165,7 +165,7 @@ class CapeData(ShpModel):
     `See<https://github.com/beagleboard/beaglebone-black/wiki/System-Reference-Manual#824_EEPROM_Data_Format>`_
     """
 
-    header: conbytes(max_length=4) = b"\xAA\x55\x33\xEE"
+    header: conbytes(max_length=4) = b"\xaa\x55\x33\xee"
     eeprom_revision: constr(max_length=2) = "A2"
     board_name: constr(max_length=32) = "BeagleBone SHEPHERD2 Cape"
     version: constr(max_length=4) = "24B0"
@@ -207,6 +207,7 @@ class CalibrationCape(ShpModel):
             cape: data can be supplied
         Returns:
             CalibrationCape object with extracted calibration data.
+
         """
         dv = cls().model_dump(include={"harvester", "emulator"})
         lw = list(dict_generator(dv))
@@ -225,6 +226,7 @@ class CalibrationCape(ShpModel):
         Returns
         -------
             Byte string representation of calibration values.
+
         """
         lw = list(dict_generator(self.model_dump(include={"harvester", "emulator"})))
         values = [walk[-1] for walk in lw]

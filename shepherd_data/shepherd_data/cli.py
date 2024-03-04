@@ -1,5 +1,5 @@
-"""Command definitions for CLI
-"""
+"""Command definitions for CLI"""
+
 import logging
 import os
 import sys
@@ -365,7 +365,7 @@ def plot(
                 else:
                     shpr.plot_to_file(start, end, width, height)
         except TypeError as _xpc:
-            logger.error("ERROR: will skip file, caught exception: %s", _xpc)
+            logger.exception("ERROR: will skip file, caught exception: %s", _xpc)
     if multiplot:
         logger.info("Got %d datasets to plot", len(data))
         mpl_path = Reader.multiplot_to_file(data, in_data, width, height)

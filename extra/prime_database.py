@@ -2,6 +2,7 @@
 - clean Models from temporary data (if wanted)
 - copy models to content-dir of core-lib
 """
+
 import sys
 from pathlib import Path
 from typing import Optional
