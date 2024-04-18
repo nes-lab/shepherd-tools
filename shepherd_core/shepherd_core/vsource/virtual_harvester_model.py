@@ -11,6 +11,7 @@ Compromises:
 - Python has no static vars -> FName_reset is handling the class-vars
 
 """
+
 from typing import Tuple
 
 from ..data_models.content.virtual_harvester import HarvesterPRUConfig

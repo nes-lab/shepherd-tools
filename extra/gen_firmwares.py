@@ -3,6 +3,7 @@
 - generate embedded firmware-models
 - it assumes sub-dirs in the same dir with ./build.elf in it
 """
+
 import os
 import shutil
 from io import BytesIO

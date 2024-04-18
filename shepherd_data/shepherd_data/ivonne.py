@@ -2,6 +2,7 @@
 to generate valid shepherd-data for emulation
 
 """
+
 import errno
 import logging
 import math
@@ -34,7 +35,7 @@ def get_isc(coeffs: pd.DataFrame):  # noqa: ANN201
 
 
 class Reader:
-    """container for converters to shepherd-data"""
+    """Container for converters that bridge the gap to shepherds data-files."""
 
     _logger: logging.Logger = logging.getLogger("SHPData.IVonne.Reader")
 
@@ -102,8 +103,9 @@ class Reader:
         pts_per_curve: int = 1000,
         duration_s: Optional[float] = None,
     ) -> None:
-        """Transforms previously recorded parameters to shepherd hdf database with IV curves.
-        Shepherd should work with IV 'surfaces', where we have a stream of IV curves
+        """Transform recorded parameters to shepherd hdf database with IV curves.
+
+        Shepherd works with IV 'surfaces', which is a stream of IV curves.
 
         :param shp_output: Path where the resulting hdf file shall be stored
         :param v_max: Maximum voltage supported by shepherd
@@ -134,7 +136,7 @@ class Reader:
             for idx in job_iter:
                 idx_top = min(idx + max_elements, df_elements_n)
                 df_slice = self._df.iloc[idx : idx_top + 1].copy()
-                df_slice["timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
+                df_slice["timestamp"] = pd.to_timedelta(df_slice["time"], unit="s")
                 df_slice = df_slice.set_index("timestamp")
                 # warning: .interpolate does crash in debug-mode with typeError
                 df_slice = (
@@ -163,7 +165,7 @@ class Reader:
         duration_s: Optional[float] = None,
         tracker: Optional[MPPTracker] = None,
     ) -> None:
-        """Transforms shepherd IV curves to shepherd IV traces.
+        """Transform shepherd IV curves to shepherd IV samples / traces.
 
         For the 'buck' and 'buck-boost' modes, shepherd takes voltage and current traces.
         These can be recorded with shepherd or generated from existing IV curves by, for
@@ -180,6 +182,7 @@ class Reader:
         :param v_max: Maximum voltage supported by shepherd
         :param duration_s: time to stop in seconds, counted from beginning
         :param tracker: VOC or OPT
+
         """
         if self._df is None:
             raise RuntimeError("IVonne Context was not entered - file not open!")
@@ -213,7 +216,7 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice = tracker.process(df_slice)
-                df_slice["timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
+                df_slice["timestamp"] = pd.to_timedelta(df_slice["time"], unit="s")
                 df_slice = df_slice[["time", "v", "i", "timestamp"]].set_index("timestamp")
                 # warning: .interpolate does crash in debug-mode with typeError
                 df_slice = (
@@ -231,7 +234,7 @@ class Reader:
         v_max: float = 5.0,
         duration_s: Optional[float] = None,
     ) -> None:
-        """Transforms ivonne-parameters to upsampled version for shepherd
+        """Transform ivonne-parameters to up-sampled versions for shepherd.
 
         :param shp_output: Path where the resulting hdf file shall be stored
         :param v_max: Maximum voltage supported by shepherd
@@ -264,7 +267,7 @@ class Reader:
                 df_slice.loc[:, "voc"] = get_voc(df_slice)
                 df_slice.loc[df_slice["voc"] >= v_max, "voc"] = v_max
                 df_slice.loc[:, "isc"] = get_isc(df_slice)
-                df_slice["timestamp"] = pd.TimedeltaIndex(data=df_slice["time"], unit="s")
+                df_slice["timestamp"] = pd.to_timedelta(df_slice["time"], unit="s")
                 df_slice = df_slice[["time", "voc", "isc", "timestamp"]].set_index("timestamp")
                 # warning: .interpolate does crash in debug-mode with typeError
                 df_slice = (

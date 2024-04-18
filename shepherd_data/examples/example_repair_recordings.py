@@ -6,6 +6,7 @@
 -> the usage of __enter__() and __exit__() is not encouraged,
    but makes the codes simpler for this edge-case (reading- and writing-handler for same file)
 """
+
 import os
 from pathlib import Path
 

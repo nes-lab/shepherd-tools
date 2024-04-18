@@ -5,6 +5,7 @@
 - results are printed on console (harvested energy)
 
 """
+
 from pathlib import Path
 
 from shepherd_core import Reader

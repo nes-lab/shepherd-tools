@@ -9,6 +9,7 @@
 - results are plotted
 
 """
+
 from itertools import product
 
 import matplotlib.pyplot as plt

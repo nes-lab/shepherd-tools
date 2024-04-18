@@ -44,12 +44,12 @@ def generate_shp_file(
     return store_path
 
 
-@pytest.fixture
+@pytest.fixture()
 def h5_path(tmp_path: Path) -> Path:
     return tmp_path / "hrv_test.h5"
 
 
-@pytest.fixture
+@pytest.fixture()
 def h5_file(h5_path: Path) -> Path:
     generate_shp_file(h5_path)
     return h5_path

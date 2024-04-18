@@ -41,8 +41,7 @@ class TestbedClient:
 
     @validate_call
     def connect(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> bool:
-        """
-        server: either "local" to use demo-fixtures or something like "https://HOST:PORT"
+        """server: either "local" to use demo-fixtures or something like "https://HOST:PORT"
         token: your account validation
         """
         if isinstance(token, Path):
@@ -120,7 +119,7 @@ class TestbedClient:
         return self._fixtures[model_type].inheritance(values)
 
     def try_completing_model(self, model_type: str, values: dict) -> (dict, list):
-        """init by name/id, for none existing instances raise Exception"""
+        """Init by name/id, for none existing instances raise Exception"""
         if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             value = next(iter(values.values()))
             if (

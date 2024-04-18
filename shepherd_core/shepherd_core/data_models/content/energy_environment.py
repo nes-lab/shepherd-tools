@@ -13,7 +13,7 @@ class EnergyDType(str, Enum):
     ivsample = "ivsample"
     ivsamples = "ivsample"
     ivcurve = "ivcurve"
-    ivcurves = "ivcurve"
+    ivcurves = "ivcurve"  # a stream could also be called iv-surface
     isc_voc = "isc_voc"
 
 

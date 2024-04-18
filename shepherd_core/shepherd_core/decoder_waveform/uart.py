@@ -17,6 +17,7 @@ https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter
 https://sigrok.org/wiki/Protocol_decoder:Uart
 
 """
+
 from enum import Enum
 from pathlib import Path
 from typing import Optional

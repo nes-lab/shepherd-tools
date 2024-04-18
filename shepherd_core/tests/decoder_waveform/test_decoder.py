@@ -5,7 +5,7 @@ import pytest
 from shepherd_core.decoder_waveform import Uart
 
 
-@pytest.fixture
+@pytest.fixture()
 def example_path() -> Path:
     return Path(__file__).resolve().parent.parent.parent / "examples"
 

@@ -2,6 +2,7 @@
 - generate static environments
 - saves energy-env to yaml
 """
+
 from itertools import product
 from pathlib import Path
 
