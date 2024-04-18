@@ -28,6 +28,8 @@ if __name__ == "__main__":
             "observer_id",
             "observer_name",
             "room",
+            "observer_description",
+            "eth_port",
             "lat",
             "long",
         ]
@@ -57,6 +59,8 @@ if __name__ == "__main__":
                     str(observer.id),
                     observer.name,
                     observer.room,
+                    str(observer.description),
+                    str(observer.eth_port),
                     str(observer.latitude),
                     str(observer.longitude),
                 ]
