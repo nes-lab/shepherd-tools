@@ -38,7 +38,7 @@ dependencies = [
     "pandas>=2.0.0",  # full-version, v2 is OK
     "pyYAML",
     "scipy",   # full-version
-    "shepherd-core[inventory]>=2024.02.0",
+    "shepherd-core[inventory]>=2024.04.1",
     "tqdm",    # full-version
 ]
 
