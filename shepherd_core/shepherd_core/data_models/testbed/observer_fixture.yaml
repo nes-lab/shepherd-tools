@@ -24,9 +24,9 @@
     name: sheep01
     ip: 192.168.165.201
     mac: 18:62:E4:E4:41:8D
-    room: II56
-    eth_port: J24
-    description: lower mid on west-side
+    room: II70
+    eth_port: B22
+    description: mid-mid in room
     cape:
       name: cape51
     target_a:
@@ -38,9 +38,9 @@
     name: sheep02
     ip: 192.168.165.202
     mac: 18:62:E4:D0:DE:3F
-    room: II57
-    eth_port: J6
-    description: mid on east-side
+    room: II66
+    eth_port: A18
+    description: south-west corner
     cape:
       name: cape52
     target_a:
@@ -52,9 +52,9 @@
     name: sheep03
     ip: 192.168.165.203
     mac: 18:62:E4:D0:9E:6A
-    room: II59
-    eth_port: I14
-    description: north-west-corner
+    room: II69
+    eth_port: B10
+    description: north-east-corner
     cape:
       name: cape63
     target_a:
@@ -66,8 +66,8 @@
     name: sheep04
     ip: 192.168.165.204
     mac: 18:62:E4:D0:61:4D
-    room: II61
-    eth_port: H18
+    room: II72
+    eth_port: C6
     description: mid on east-side
     cape:
       name: cape54
@@ -80,9 +80,9 @@
     name: sheep05
     ip: 192.168.165.205
     mac: 18:62:E4:E3:6E:13
-    room: II62
-    eth_port: H14
-    description: mid on south-side
+    room: II75
+    eth_port: D10
+    description: south-west corner
     cape:
       name: cape55
     target_a:
@@ -125,13 +125,14 @@
     ip: 192.168.165.208
     mac: 18:62:E4:D0:E5:FB
     room: II69
-    eth_port: B10
+    eth_port: TBD
     description: north-east-corner
     cape:
       name: cape58
     target_a:
       name: nRF52_FRAM_016
     created: 2023-09-22 12:12:12
+    active: false  # TODO: cape is broken for now
 - datatype: observer
   parameters:
     id: 9
@@ -168,7 +169,7 @@
     mac: 18:62:E4:E4:0E:5D
     room: II69
     eth_port: B14
-    description: mid on east-side
+    description: lower mid on east-side
     cape:
       name: cape61
     target_a:
@@ -180,9 +181,9 @@
     name: sheep12
     ip: 192.168.165.212
     mac: 18:62:E4:D0:AA:F7
-    room: II59
-    eth_port: I10
-    description: south-west-corner
+    room: II71
+    eth_port: B24
+    description: north-east-corner
     cape:
       name: cape62
     target_a:
@@ -197,7 +198,7 @@
     room: II64C
     eth_port: A4
     description: north-west-corner
-    comment: might temporary be in II70
+    comment:
     cape:
       name: cape60
     target_a:
@@ -211,8 +212,8 @@
     mac: 18:62:E4:E3:89:43
     room: II64B
     eth_port: L24
-    description: north-east-corner in cupboard
-    comment: might temporary be in II70
+    description: north-east-corner in cupboard, elevated
+    comment:
     cape:
       name: cape64
     target_a:
