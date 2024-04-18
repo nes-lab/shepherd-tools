@@ -1,13 +1,22 @@
 # History of Changes
 
-## v2024.03.1
+## TODO
 
-## v2024.02.1
+- remove db-specific fields
+- add map-generator
+- add tests for broken h5-files
+- divide h5-tests in valid and healthy
+- add multi-processing
+
+## v2024.04.1
 
 - add UUID to models
 - improve docstrings to be used by shepherd-doc
 - improved docs
 - switch fully to pyproject.toml
+- update deps
+- (extra) testbed-layout-table: add fields
+- represent current testbed-structure
 
 ## v2023.12.1
 
