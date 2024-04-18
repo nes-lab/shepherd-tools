@@ -35,7 +35,7 @@ dependencies = [
     "h5py",
     "matplotlib",  # full-version
     "numpy",
-    "pandas",  # full-version, v2 is OK
+    "pandas>=2.0.0",  # full-version, v2 is OK
     "pyYAML",
     "scipy",   # full-version
     "shepherd-core[inventory]>=2024.02.0",
