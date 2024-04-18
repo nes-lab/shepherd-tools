@@ -13,7 +13,7 @@ from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.base.timezone import local_now
 from .data_models.base.timezone import local_tz
-from .data_models.task import Compression
+from .data_models.task.emulation import Compression
 from .inventory import Inventory
 from .logger import get_verbose_level
 from .logger import increase_verbose_level

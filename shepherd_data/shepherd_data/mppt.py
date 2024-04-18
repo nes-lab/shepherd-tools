@@ -1,5 +1,6 @@
 """Harvesters, simple and fast approach.
-Might be exchanged by shepherds py-model of pru-harvesters
+
+Might be exchanged by shepherds py-model of pru-harvesters.
 """
 
 import numpy as np
@@ -9,17 +10,11 @@ from shepherd_core import Calc_t
 
 
 def iv_model(voltages: Calc_t, coeffs: pd.Series) -> Calc_t:
-    """Simple diode based model of a solar panel IV curve.
+    """Calculate simple diode based model (equivalent circuit diagram) of a solar panel IV curve.
 
-    Args:
-    ----
-        :param voltages: Load voltage of the solar panel
-        :param coeffs: three generic coefficients
-
-    Returns:
-    -------
-        Solar current at given load voltage
-
+    :param voltages: Load voltage of the solar panel
+    :param coeffs: three generic coefficients
+    :return: Solar current at given load voltage
     """
     currents = float(coeffs["a"]) - float(coeffs["b"]) * (
         np.exp(float(coeffs["c"]) * voltages) - 1.0
@@ -42,7 +37,7 @@ def find_oc(v_arr: np.ndarray, i_arr: np.ndarray, ratio: float = 0.05) -> np.nda
 
 
 class MPPTracker:
-    """Prototype
+    """Prototype for a MPPT-class.
 
     :param v_max: Maximum voltage supported by shepherd
     :param pts_per_curve: resolution of internal ivcurve
@@ -54,15 +49,15 @@ class MPPTracker:
         self.v_proto: np.ndarray = np.linspace(0, v_max, pts_per_curve)
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
-        """Apply harvesting model to input data
+        """Apply harvesting model to input data.
 
         :param coeffs: ivonne coefficients
-        :return:
+        :return: ivsample-data
         """
 
 
 class OpenCircuitTracker(MPPTracker):
-    """Open-circuit based MPPT
+    """Open-circuit (-voltage) based MPPT.
 
     :param v_max: Maximum voltage supported by shepherd
     :param pts_per_curve: resolution of internal ivcurve
@@ -74,6 +69,11 @@ class OpenCircuitTracker(MPPTracker):
         self.ratio = ratio
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
+        """Apply harvesting model to input data.
+
+        :param coeffs: ivonne coefficients
+        :return: ivsample-data
+        """
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         if "voc" not in coeffs.columns:
             coeffs["voc"] = coeffs.apply(lambda x: find_oc(self.v_proto, x["ivcurve"]), axis=1)
@@ -87,7 +87,7 @@ class OpenCircuitTracker(MPPTracker):
 
 
 class OptimalTracker(MPPTracker):
-    """Optimal MPPT
+    """Optimal MPPT by looking at the whole curve.
 
     Calculates optimal harvesting voltage for every time and corresponding IV curve.
 
@@ -99,6 +99,11 @@ class OptimalTracker(MPPTracker):
         super().__init__(v_max, pts_per_curve)
 
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
+        """Apply harvesting model to input data.
+
+        :param coeffs: ivonne coefficients
+        :return: ivsample-data
+        """
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         coeffs["pcurve"] = coeffs.apply(lambda x: self.v_proto * x["icurve"], axis=1)
         coeffs["max_pos"] = coeffs.apply(lambda x: np.argmax(x["pcurve"]), axis=1)

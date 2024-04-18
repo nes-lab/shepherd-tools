@@ -1,4 +1,4 @@
-"""Reader-Baseclass"""
+"""Reader-Baseclass for opening shepherds hdf5-files."""
 
 import math
 from datetime import datetime
@@ -38,7 +38,7 @@ class Reader(CoreReader):
         super().__init__(file_path, verbose=verbose)
 
     def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
-        """Extract numerical data via csv
+        """Extract numerical data from group and store it into csv.
 
         :param h5_group: can be external and should probably be downsampled
         :param separator: used between columns
@@ -74,7 +74,7 @@ class Reader(CoreReader):
         return h5_group["time"][:].shape[0]
 
     def save_log(self, h5_group: h5py.Group, *, add_timestamp: bool = True) -> int:
-        """Save dataset in group as log, optimal for logged dmesg and exceptions
+        """Save dataset from group as log, optimal for logged 'dmesg' and console-output.
 
         :param h5_group: can be external
         :param add_timestamp: can be external
@@ -115,6 +115,7 @@ class Reader(CoreReader):
         *,
         show: bool = True,
     ) -> int:
+        """Print warning messages from log in data-group."""
         _count = self.count_errors_in_log(group_name, min_level)
         if _count < 1:
             return 0
@@ -146,7 +147,7 @@ class Reader(CoreReader):
 
     def downsample(
         self,
-        data_src: h5py.Dataset,
+        data_src: Union[h5py.Dataset, np.ndarray],
         data_dst: Union[None, h5py.Dataset, np.ndarray],
         start_n: int = 0,
         end_n: Optional[int] = None,
@@ -154,15 +155,17 @@ class Reader(CoreReader):
         *,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
-        """Warning: only valid for IV-Stream, not IV-Curves
+        """Sample down iv-data.
+
+        Warning: only valid for IV-Stream, not IV-Curves
 
         :param data_src: a h5-dataset to digest, can be external
         :param data_dst: can be a dataset, numpy-array or None (will be created internally then)
         :param start_n: start-sample
         :param end_n: ending-sample (not included)
-        :param ds_factor: downsampling-factor
-        :param is_time: time is not really downsamples, but just decimated
-        :return: downsampled h5-dataset or numpy-array
+        :param ds_factor: sampling-factor
+        :param is_time: time is not really down-sampled, but decimated
+        :return: resampled h5-dataset or numpy-array
         """
         from scipy import signal  # here due to massive delay
 
@@ -223,7 +226,7 @@ class Reader(CoreReader):
 
     def resample(
         self,
-        data_src: h5py.Dataset,
+        data_src: Union[h5py.Dataset, np.ndarray],
         data_dst: Union[None, h5py.Dataset, np.ndarray],
         start_n: int = 0,
         end_n: Optional[int] = None,
@@ -231,13 +234,15 @@ class Reader(CoreReader):
         *,
         is_time: bool = False,
     ) -> Union[h5py.Dataset, np.ndarray]:
-        """:param data_src:
-        :param data_dst:
-        :param start_n:
-        :param end_n:
-        :param samplerate_dst:
-        :param is_time:
-        :return:
+        """Up- or down-sample the original trace-data.
+
+        :param data_src: original iv-data
+        :param data_dst: resampled iv-traces
+        :param start_n: start index of the source
+        :param end_n: end index of the source
+        :param samplerate_dst: desired sampling rate
+        :param is_time: time-array is handled differently than IV-Samples
+        :return: resampled iv-data
         """
         self._logger.error("Resampling is still under construction - do not use for now!")
         if self.get_datatype() == "ivcurve":
@@ -328,7 +333,7 @@ class Reader(CoreReader):
         *,
         relative_timestamp: bool = True,
     ) -> Dict:
-        """Provides down-sampled iv-data that can be feed into plot_to_file()
+        """Provide down-sampled iv-data that can be fed into plot_to_file().
 
         :param start_s: time in seconds, relative to start of recording
         :param end_s: time in seconds, relative to start of recording
@@ -372,14 +377,15 @@ class Reader(CoreReader):
 
     @staticmethod
     def assemble_plot(data: Union[dict, list], width: int = 20, height: int = 10) -> plt.Figure:
-        """TODO: add power (if wanted)
+        """Create the actual figure.
 
         :param data: plottable / down-sampled iv-data with some meta-data
                 -> created with generate_plot_data()
         :param width: plot-width
         :param height: plot-height
-        :return:
+        :return: figure
         """
+        # TODO: add power (if wanted)
         if isinstance(data, dict):
             data = [data]
         fig, axes = plt.subplots(2, 1, sharex="all")
@@ -404,8 +410,9 @@ class Reader(CoreReader):
         width: int = 20,
         height: int = 10,
     ) -> None:
-        """Creates (down-sampled) IV-Plot
-            -> omitting start- and end-time will use the whole duration
+        """Create (down-sampled) IV-Plots.
+
+        Omitting start- and end-time will use the whole trace (full duration).
 
         :param start_s: time in seconds, relative to start of recording, optional
         :param end_s: time in seconds, relative to start of recording, optional
@@ -433,7 +440,7 @@ class Reader(CoreReader):
     def multiplot_to_file(
         data: list, plot_path: Path, width: int = 20, height: int = 10
     ) -> Optional[Path]:
-        """Creates (down-sampled) IV-Multi-Plot
+        """Create (down-sampled) IV-Multi-Plots (of more than one trace).
 
         :param data: plottable / down-sampled iv-data with some meta-data
             -> created with generate_plot_data()
