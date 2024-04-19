@@ -191,14 +191,11 @@ class Fixtures:
             else:
                 raise ValueError("Path must either be file or directory (or empty)")
 
-            if len(files) < 1:
-                logger.error(f"No fixtures found at {self.file_path.as_posix()}")
-
             for file in files:
                 self.insert_file(file)
 
             if len(self.components) < 1:
-                logger.error(f"No fixture-components present at {self.file_path.as_posix()}")
+                logger.error(f"No fixture-components found at {self.file_path.as_posix()}")
             else:
                 save_path.parent.mkdir(parents=True, exist_ok=True)
                 with save_path.open("wb", buffering=-1) as fd:

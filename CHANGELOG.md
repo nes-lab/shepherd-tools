@@ -10,7 +10,7 @@
 
 ## v2024.4.2
 
-- fix 
+- fix import-bug regarding fixtures
 
 ## v2024.4.1
 
