@@ -8,7 +8,11 @@
 - divide h5-tests in valid and healthy
 - add multi-processing
 
-## v2024.04.1
+## v2024.4.2
+
+- fix 
+
+## v2024.4.1
 
 - add UUID to models
 - improve docstrings to be used by shepherd-doc
