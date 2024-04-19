@@ -194,9 +194,10 @@ class Fixtures:
             for file in files:
                 self.insert_file(file)
 
-            save_path.parent.mkdir(parents=True, exist_ok=True)
-            with save_path.open("wb", buffering=-1) as fd:
-                pickle.dump(self.components, fd)
+            if False:
+                save_path.parent.mkdir(parents=True, exist_ok=True)
+                with save_path.open("wb", buffering=-1) as fd:
+                    pickle.dump(self.components, fd)
 
     @validate_call
     def insert_file(self, file: Path) -> None:
