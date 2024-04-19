@@ -170,7 +170,7 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 
 ## v2023.08.3
 
-- improve handling of uninstalled sub-modules (elf, inventory)
+- improve handling of uninstalled submodules (elf, inventory)
 - add helper FNs for fw_tools, including utests
 - fix missing imports
 - add hash to fw-model

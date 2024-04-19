@@ -69,6 +69,7 @@ class ShpModel(BaseModel):
         str_strip_whitespace=True,  # strip leading & trailing whitespaces
         use_enum_values=True,  # cleaner export of enum-parameters
         allow_inf_nan=False,  # float without +-inf or NaN
+        defer_build=True,
         # defer_build, possible speedup -> but it triggers a bug
     )
 
