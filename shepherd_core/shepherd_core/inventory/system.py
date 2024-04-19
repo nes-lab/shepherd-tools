@@ -7,8 +7,8 @@ from typing import Optional
 
 from typing_extensions import Self
 
-from .. import local_now
-from .. import logger
+from ..data_models.base.timezone import local_now
+from ..logger import logger
 
 try:
     import psutil

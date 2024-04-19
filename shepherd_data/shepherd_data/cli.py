@@ -16,7 +16,7 @@ from shepherd_core import increase_verbose_level
 from shepherd_core import local_tz
 from shepherd_core.commons import samplerate_sps_default
 
-from . import Reader
+from .reader import Reader
 from . import Writer
 from . import __version__
 
