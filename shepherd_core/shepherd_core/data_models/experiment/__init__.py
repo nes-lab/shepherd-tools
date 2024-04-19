@@ -1,4 +1,3 @@
-from ..testbed.cape import TargetPort
 from .experiment import Experiment
 from .observer_features import GpioActuation
 from .observer_features import GpioEvent
@@ -21,5 +20,4 @@ __all__ = [
     "SystemLogging",
     # Enums
     "GpioLevel",
-    "TargetPort",
 ]

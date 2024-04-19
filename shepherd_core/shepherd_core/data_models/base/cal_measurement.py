@@ -7,10 +7,10 @@ from pydantic import PositiveFloat
 from pydantic import validate_call
 from typing_extensions import Annotated
 
-from .. import CalibrationCape
-from .. import CalibrationEmulator
-from .. import CalibrationHarvester
-from .. import CalibrationPair
+from .calibration import CalibrationCape
+from .calibration import CalibrationEmulator
+from .calibration import CalibrationHarvester
+from .calibration import CalibrationPair
 from .calibration import CapeData
 from .shepherd import ShpModel
 
@@ -27,7 +27,7 @@ CalMeasPairs = Annotated[List[CalMeasurementPair], Field(min_length=2)]
 
 @validate_call
 def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
-    from scipy import stats  # here due to massive delay
+    from scipy import stats  # placed here due to massive delay
 
     x = np.empty(len(data))
     y = np.empty(len(data))
