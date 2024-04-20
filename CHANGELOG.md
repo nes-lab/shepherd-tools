@@ -7,10 +7,18 @@
 - add tests for broken h5-files
 - divide h5-tests in valid and healthy
 - add multi-processing
+- divide core into sub-libs:
+  - shepherd_models: data_models + vsource
+  - shepherd_fw_tools
+  - shepherd_decoders
+  - shepherd_core:
 
 ## v2024.4.2
 
 - fix import-bug regarding fixtures
+- warn when fixtures are empty
+- fix relative imports (be as specific as possible)
+- fix lots of lint warnings
 
 ## v2024.4.1
 
