@@ -43,7 +43,7 @@ def test_content_model_ee_min2() -> None:
 
 
 def test_content_model_fw_faulty() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         Firmware(
             id=9999,
             name="dome",
@@ -102,7 +102,7 @@ def test_content_model_fw_from_hex_failing(tmp_path: Path) -> None:
     path_hex = tmp_path / "some.hex"
     with path_hex.open("w") as fd:
         fd.write("something")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         Firmware.from_firmware(
             file=path_hex,
             name="dome",
@@ -191,7 +191,7 @@ def test_content_model_hrv_min() -> None:
 
 
 def test_content_model_hrv_neutral() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = VirtualHarvesterConfig(name="neutral")
 
 
@@ -220,24 +220,24 @@ def test_content_model_hrv_faulty_voltage0() -> None:
 
 
 def test_content_model_hrv_faulty_voltage1() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = VirtualHarvesterConfig(name="iv110", voltage_min_mV=4001, voltage_max_mV=4000)
 
 
 def test_content_model_hrv_faulty_voltage2() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = VirtualHarvesterConfig(name="iv110", voltage_mV=4001, voltage_max_mV=4000)
 
 
 def test_content_model_hrv_faulty_voltage3() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = VirtualHarvesterConfig(name="iv110", voltage_mV=4000, voltage_min_mV=4001)
 
 
 @pytest.mark.parametrize("name", ["ivcurves", "iv1000", "isc_voc"])
 def test_content_model_hrv_faulty_emu(name: str) -> None:
     hrv = VirtualHarvesterConfig(name=name)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = VirtualSourceConfig(name="dio_cap", harvester=hrv)
 
 

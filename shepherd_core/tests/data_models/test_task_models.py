@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Union
 
 import pytest
+from pydantic import ValidationError
 
 from shepherd_core.data_models import Experiment
 from shepherd_core.data_models import FirmwareDType
@@ -24,7 +25,7 @@ def test_task_model_emu_min() -> None:
 
 
 def test_task_model_emu_fault_in_past() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         EmulationTask(
             input_path="./here",
             time_start="1984-01-01 11:12:13",
@@ -41,7 +42,7 @@ def test_task_model_emu_custom_aux(value: Union[float, str]) -> None:
 
 @pytest.mark.parametrize("value", [-1.0, 5, "max", "something"])
 def test_task_model_emu_fault_aux(value: Union[float, str]) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         EmulationTask(
             input_path="./here",
             voltage_aux=value,
@@ -49,7 +50,7 @@ def test_task_model_emu_fault_aux(value: Union[float, str]) -> None:
 
 
 def test_task_model_emu_fault_gpio_actuation() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         EmulationTask(
             input_path="./here",
             gpio_actuation=GpioActuation(
@@ -92,7 +93,7 @@ def test_task_model_hrv_duration() -> None:
 
 
 def test_task_model_hrv_too_late() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         HarvestTask(
             output_path="./here",
             time_start="1984-01-01 11:12:13",

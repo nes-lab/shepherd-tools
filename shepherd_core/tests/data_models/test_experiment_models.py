@@ -81,7 +81,7 @@ def test_experiment_model_exp_collision_target_id() -> None:
             firmware2=Firmware(name="msp430_deep_sleep"),
         ),
     ]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
@@ -109,7 +109,7 @@ def test_experiment_model_exp_collision_custom_id() -> None:
             firmware2=Firmware(name="msp430_deep_sleep"),
         ),
     ]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
@@ -130,7 +130,7 @@ def test_experiment_model_exp_collision_observer() -> None:
             firmware2=Firmware(name="msp430_deep_sleep"),
         ),
     ]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = Experiment(
             id="4567",
             name="meaningful Test-Name",
@@ -162,12 +162,12 @@ def test_experiment_model_pwrtracing_min() -> None:
 
 
 def test_experiment_model_pwrtracing_fault_post() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(NotImplementedError):
         PowerTracing(calculate_power=True)
 
 
 def test_experiment_model_pwrtracing_fault_discard_all() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         PowerTracing(calculate_power=False, discard_current=True, discard_voltage=True)
 
 
@@ -176,7 +176,7 @@ def test_experiment_model_gpiotracing_min() -> None:
 
 
 def test_experiment_model_gpiotracing_fault_mask() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         GpioTracing(mask=0)
 
 
@@ -190,7 +190,7 @@ def test_experiment_model_gpioevent_min() -> None:
 
 
 def test_experiment_model_gpioevent_fault_readonly() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         GpioEvent(
             delay=300,
             gpio=GPIO(name="BAT_OK"),
@@ -241,7 +241,7 @@ def test_experiment_model_tgt_cfg_min2() -> None:
 
 
 def test_experiment_model_tgt_cfg_fault_valid_ee() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = TargetConfig(
             target_IDs=[1],
             energy_env=EnergyEnvironment(name="nuclear"),
@@ -250,7 +250,7 @@ def test_experiment_model_tgt_cfg_fault_valid_ee() -> None:
 
 
 def test_experiment_model_tgt_cfg_fault_firmware1() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = TargetConfig(
             target_IDs=[1],  # is nRF
             energy_env=EnergyEnvironment(name="SolarSunny"),
@@ -259,7 +259,7 @@ def test_experiment_model_tgt_cfg_fault_firmware1() -> None:
 
 
 def test_experiment_model_tgt_cfg_fault_firmware2() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = TargetConfig(
             target_IDs=[1],  # is nRF
             energy_env=EnergyEnvironment(name="SolarSunny"),
@@ -269,7 +269,7 @@ def test_experiment_model_tgt_cfg_fault_firmware2() -> None:
 
 
 def test_experiment_model_tgt_cfg_fault_custom_ids() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = TargetConfig(
             target_IDs=[1, 2, 3],
             custom_IDs=[0, 1],  # not enough

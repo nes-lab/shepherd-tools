@@ -155,7 +155,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
             if dtype_in == EnergyDType.ivsample:
                 return 0
             # isc_voc: 2 * (1 + wait_cycles), noqa
-            raise ValueError("Not Implemented")
+            raise NotImplementedError
 
         # only used by ivcurve algo (in ADC-Mode)
         return self.samples_n
@@ -228,7 +228,7 @@ class HarvesterPRUConfig(ShpModel):
         if isinstance(dtype_in, str):
             dtype_in = EnergyDType[dtype_in]
         if for_emu and dtype_in not in {EnergyDType.ivsample, EnergyDType.ivcurve}:
-            raise ValueError("Not Implemented")
+            raise NotImplementedError
         # TODO: use dtype properly in shepherd
         interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)
         return cls(

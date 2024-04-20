@@ -45,7 +45,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         if not self.calculate_power and discard_all:
             raise ValueError("Error in config -> tracing enabled, but output gets discarded")
         if self.calculate_power:
-            raise ValueError("postprocessing not implemented ATM")
+            raise NotImplementedError("postprocessing not implemented ATM")
         return self
 
 

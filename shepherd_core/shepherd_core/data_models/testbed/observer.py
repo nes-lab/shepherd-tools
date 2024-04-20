@@ -79,7 +79,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 return TargetPort.A
             if self.target_b is not None and target_id == self.target_b.id:
                 return TargetPort.B
-        raise ValueError(f"Target-ID {target_id} was not found in Observer '{self.name}'")
+        raise KeyError(f"Target-ID {target_id} was not found in Observer '{self.name}'")
 
     def get_target(self, target_id: int) -> Target:
         if self.has_target(target_id):
@@ -87,4 +87,4 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 return self.target_a
             if self.target_b is not None and target_id == self.target_b.id:
                 return self.target_b
-        raise ValueError(f"Target-ID {target_id} was not found in Observer '{self.name}'")
+        raise KeyError(f"Target-ID {target_id} was not found in Observer '{self.name}'")

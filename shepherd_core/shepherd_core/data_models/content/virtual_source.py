@@ -8,8 +8,8 @@ from typing_extensions import Self
 from ...commons import samplerate_sps_default
 from ...logger import logger
 from ...testbed_client import tb_client
-from ..base.shepherd import ShpModel
 from ..base.content import ContentModel
+from ..base.shepherd import ShpModel
 from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvesterConfig
 

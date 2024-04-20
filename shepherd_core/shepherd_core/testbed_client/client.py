@@ -77,19 +77,19 @@ class TestbedClient:
 
     def query_ids(self, model_type: str) -> list:
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         return list(self._fixtures[model_type].elements_by_id.keys())
 
     def query_names(self, model_type: str) -> list:
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         return list(self._fixtures[model_type].elements_by_name.keys())
 
     def query_item(
         self, model_type: str, uid: Optional[int] = None, name: Optional[str] = None
     ) -> dict:
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         if uid is not None:
             return self._fixtures[model_type].query_id(uid)
         if name is not None:
@@ -115,7 +115,7 @@ class TestbedClient:
 
     def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         return self._fixtures[model_type].inheritance(values)
 
     def try_completing_model(self, model_type: str, values: dict) -> (dict, list):

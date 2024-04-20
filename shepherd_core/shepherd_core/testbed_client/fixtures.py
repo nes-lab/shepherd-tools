@@ -228,7 +228,7 @@ class Fixtures:
 
     @staticmethod
     def to_file(file: Path) -> None:
-        raise RuntimeError(f"Not Implemented, TODO (val={file})")
+        raise NotImplementedError(f"TODO (val={file})")
 
 
 def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> List[Path]:

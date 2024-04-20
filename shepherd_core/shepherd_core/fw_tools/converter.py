@@ -17,12 +17,12 @@ from .validation import is_hex
 def firmware_to_hex(file_path: Path) -> Path:
     """Generic converter that handles ELF & HEX"""
     if not file_path.is_file():
-        raise ValueError("Fn needs an existing file as input")
+        raise FileNotFoundError("Fn needs an existing file as input")
     if is_elf(file_path):
         return elf_to_hex(file_path)
     if is_hex(file_path):
         return file_path
-    raise ValueError("FW2Hex: unknown file '%s', it should be ELF or HEX", file_path.name)
+    raise FileNotFoundError("FW2Hex: unknown file '%s', it should be ELF or HEX", file_path.name)
 
 
 @validate_call

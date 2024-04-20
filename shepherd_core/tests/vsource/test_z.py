@@ -1,5 +1,2 @@
-from pathlib import Path
-
-
-def test_vsource_cleanup(file_cleanup: Path) -> None:
+def test_vsource_cleanup(_file_cleanup: None) -> None:
     pass

@@ -113,7 +113,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             elif fw_tools.is_hex_nrf52(file):
                 arch = "nrf52"
             else:
-                raise ValueError("File is not a HEX for the Testbed")
+                raise ValueError("File is not a suitable HEX for the Testbed")
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
 
