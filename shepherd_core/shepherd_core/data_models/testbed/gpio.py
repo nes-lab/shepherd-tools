@@ -15,12 +15,9 @@ from ..base.shepherd import ShpModel
 
 
 class Direction(str, Enum):
-    Input = "IN"
-    IN = "IN"
-    Output = "OUT"
-    OUT = "OUT"
-    Bidirectional = "IO"
-    IO = "IO"
+    Input = IN = "IN"
+    Output = OUT = "OUT"
+    Bidirectional = IO = "IO"
 
 
 class GPIO(ShpModel, title="GPIO of Observer Node"):

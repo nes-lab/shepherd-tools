@@ -25,7 +25,7 @@ logger = logging.getLogger("SHPData.cli")
 
 def path_to_flist(data_path: Path) -> List[Path]:
     """Every path gets transformed to a list of paths.
-    
+
     Transformations:
     - if directory: list of files inside
     - if existing file: list with 1 element

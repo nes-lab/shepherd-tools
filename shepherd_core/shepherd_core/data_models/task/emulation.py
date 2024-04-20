@@ -26,10 +26,8 @@ from ..testbed.cape import TargetPort
 
 
 class Compression(str, Enum):
-    lzf = "lzf"  # not native hdf5
-    gzip1 = 1  # higher compr & load
-    gzip = 1
-    default = "lzf"
+    lzf = default = "lzf"  # not native hdf5
+    gzip1 = gzip = 1  # higher compr & load
     null = None
     # NOTE: changed to lzf as BBB needs every straw it can get
 

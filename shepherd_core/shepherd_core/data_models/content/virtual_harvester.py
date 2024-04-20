@@ -18,16 +18,12 @@ from .energy_environment import EnergyDType
 
 class AlgorithmDType(str, Enum):
     isc_voc = "isc_voc"
-    ivcurve = ("ivcurve",)
-    ivcurves = ("ivcurve",)
-    cv = "cv"
-    constant = "cv"
+    ivcurve = ivcurves = ("ivcurve",)
+    constant = cv = "cv"
     # ci .. constant current -> is this desired?
     mppt_voc = "mppt_voc"
-    mppt_po = "mppt_po"
-    perturb_observe = "mppt_po"
-    mppt_opt = "mppt_opt"
-    optimal = "mppt_opt"
+    mppt_po = perturb_observe = "mppt_po"
+    mppt_opt = optimal = "mppt_opt"
 
 
 class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):

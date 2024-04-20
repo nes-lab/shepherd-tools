@@ -15,10 +15,8 @@ from ..base.shepherd import ShpModel
 
 
 class TargetPort(str, Enum):
-    A = "A"
-    B = "B"
-    a = "A"
-    b = "B"
+    A = a = "A"
+    B = b = "B"
 
 
 class Cape(ShpModel, title="Shepherd-Cape"):

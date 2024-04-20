@@ -13,14 +13,10 @@ from ..base.shepherd import ShpModel
 
 
 class ProgrammerProtocol(str, Enum):
-    SWD = "SWD"
-    swd = "SWD"
-    SBW = "SBW"
-    sbw = "SBW"
-    JTAG = "JTAG"
-    jtag = "JTAG"
-    UART = "UART"
-    uart = "UART"
+    SWD = swd = "SWD"
+    SBW = sbw = "SBW"
+    JTAG = jtag = "JTAG"
+    UART = uart = "UART"
 
 
 class MCU(ShpModel, title="Microcontroller of the Target Node"):

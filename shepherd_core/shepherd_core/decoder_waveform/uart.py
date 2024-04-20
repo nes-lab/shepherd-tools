@@ -38,10 +38,8 @@ class Parity(str, Enum):
 
 
 class BitOrder(str, Enum):
-    msb = "msb"
-    msb_first = "msb"
-    lsb = "lsb"
-    lsb_first = "lsb"
+    msb = msb_first = "msb"
+    lsb = lsb_first = "lsb"
 
 
 class Uart:
