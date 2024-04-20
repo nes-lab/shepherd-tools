@@ -40,10 +40,11 @@ def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
     rval = result.rvalue  # test quality of regression
 
     if rval < 0.999:
-        raise ValueError(
+        msg = (
             "Calibration faulty -> Correlation coefficient "
             f"(rvalue) = {rval}:.6f is too low for '{component}'"
         )
+        raise ValueError(msg)
     return CalibrationPair(offset=offset, gain=gain)
 
 

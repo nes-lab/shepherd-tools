@@ -24,7 +24,7 @@ from ..testbed.target import MCUPort
 
 
 class FirmwareModTask(ShpModel):
-    """Config for Task that adds the custom ID to the firmware & stores it into a file"""
+    """Config for Task that adds the custom ID to the firmware & stores it into a file."""
 
     data: Union[FirmwareStr, Path]
     data_type: FirmwareDType

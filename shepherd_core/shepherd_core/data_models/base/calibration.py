@@ -41,13 +41,13 @@ def dict_generator(
 
 
 class CalibrationPair(ShpModel):
-    """SI-value [SI-Unit] = raw-value * gain + offset"""
+    """SI-value [SI-Unit] = raw-value * gain + offset."""
 
     gain: PositiveFloat
     offset: float = 0
 
     def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
-        """Convert between physical units and raw unsigned integers"""
+        """Convert between physical units and raw unsigned integers."""
         values_si = values_raw * self.gain + self.offset
         if not allow_negative:
             if isinstance(values_si, np.ndarray):
@@ -60,7 +60,7 @@ class CalibrationPair(ShpModel):
         return values_si
 
     def si_to_raw(self, values_si: Calc_t) -> Calc_t:
-        """Convert between physical units and raw unsigned integers"""
+        """Convert between physical units and raw unsigned integers."""
         values_raw = (values_si - self.offset) / self.gain
         if isinstance(values_raw, np.ndarray):
             values_raw[values_raw < 0.0] = 0.0
@@ -94,7 +94,9 @@ class CalibrationHarvester(ShpModel):
     adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
 
     def export_for_sysfs(self) -> dict:
-        """[scaling according to commons.h]
+        """Convert and write the essential data.
+
+        [scaling according to commons.h]
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
         # ADC-V is handled in uV (micro-volt), gain is shifted by 8 bit
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
@@ -111,7 +113,8 @@ class CalibrationHarvester(ShpModel):
             if (("gain" in key) and not (0 <= value < 2**32)) or (
                 ("offset" in key) and not (-(2**31) <= value < 2**31)
             ):
-                raise ValueError(f"Value ({key}={value}) exceeds uint32-container")
+                msg = f"Value ({key}={value}) exceeds uint32-container"
+                raise ValueError(msg)
         return cal_set
 
 
@@ -124,7 +127,7 @@ cal_emu_legacy = {  # legacy translator
 
 
 class CalibrationEmulator(ShpModel):
-    """Cal-Data for both Target-Ports A/B"""
+    """Cal-Data for both Target-Ports A/B."""
 
     dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
@@ -132,7 +135,9 @@ class CalibrationEmulator(ShpModel):
     adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
 
     def export_for_sysfs(self) -> dict:
-        """[scaling according to commons.h]
+        """Convert and write the essential data.
+
+        [scaling according to commons.h]
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
         # ADC-V -> unused by vsrc / emu
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
@@ -150,13 +155,14 @@ class CalibrationEmulator(ShpModel):
             if (("gain" in key) and not (0 <= value < 2**32)) or (
                 ("offset" in key) and not (-(2**31) <= value < 2**31)
             ):
-                raise ValueError(f"Value ({key}={value}) exceeds uint32-container")
+                msg = f"Value ({key}={value}) exceeds uint32-container"
+                raise ValueError(msg)
         return cal_set
 
 
 class CapeData(ShpModel):
     """Representation of Beaglebone Cape information
-        -> just provide serial-number on creation
+        -> just provide serial-number on creation.
 
     According to BeagleBone specifications, each cape should host an EEPROM
     that contains some standardized information about the type of cape,
@@ -178,7 +184,7 @@ class CapeData(ShpModel):
     # ⤷ produces something like '2023-01-01'
 
     def __repr__(self) -> str:  # TODO: override useful?
-        """string-representation allows print(model)"""
+        """string-representation allows print(model)."""
         return str(self.model_dump())
 
 
@@ -223,8 +229,7 @@ class CalibrationCape(ShpModel):
         """Serializes calibration data to byte string.
         Used to prepare data for writing it to EEPROM.
 
-        Returns
-        -------
+        Returns:
             Byte string representation of calibration values.
 
         """

@@ -39,7 +39,7 @@ c_translate = {"lzf": "lzf", "1": 1, "None": None, None: None}
 
 
 class EmulationTask(ShpModel):
-    """Configuration for the Observer in Emulation-Mode"""
+    """Configuration for the Observer in Emulation-Mode."""
 
     # General config
     input_path: Path
@@ -111,10 +111,11 @@ class EmulationTask(ShpModel):
         has_time = self.time_start is not None
         time_now = datetime.now().astimezone()
         if has_time and self.time_start < time_now:
-            raise ValueError(
+            msg = (
                 "Start-Time for Emulation can't be in the past "
                 f"('{self.time_start}' vs '{time_now}'."
             )
+            raise ValueError(msg)
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
         if isinstance(self.voltage_aux, str) and self.voltage_aux not in {

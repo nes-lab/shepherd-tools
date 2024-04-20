@@ -15,7 +15,7 @@ from .validation import is_hex
 
 @validate_call
 def firmware_to_hex(file_path: Path) -> Path:
-    """Generic converter that handles ELF & HEX"""
+    """Generic converter that handles ELF & HEX."""
     if not file_path.is_file():
         raise FileNotFoundError("Fn needs an existing file as input")
     if is_elf(file_path):
@@ -27,9 +27,10 @@ def firmware_to_hex(file_path: Path) -> Path:
 
 @validate_call
 def file_to_base64(file_path: Path) -> str:
-    """Compress and encode content of file
+    """Compress and encode content of file.
+
     - base64 adds ~33 % overhead
-    - zstd compression ~ 1:3
+    - zstd compression reduces to ~ 1:3
     """
     if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
@@ -41,9 +42,10 @@ def file_to_base64(file_path: Path) -> str:
 
 @validate_call
 def base64_to_file(content: str, file_path: Path) -> None:
-    """DeCompress and decode Content of file
+    """DeCompress and decode Content of file.
+
     - base64 adds ~33 % overhead
-    - zstd compression ~ 1:3
+    - zstd compression reduces to ~ 1:3
     """
     file_cmpress = base64.b64decode(content)
     file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
@@ -71,8 +73,10 @@ def base64_to_hash(content: str) -> str:
 
 @validate_call
 def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path: Path) -> Path:
-    """- base64-string will be transformed into file
-    - if data is a path the file will be copied to the destination
+    """Make included firmware-data usable in filesystem.
+
+    - base64-string will be transformed to file
+    - if data is a path the file will be copied to the destination.
     """
     if data_type == FirmwareDType.base64_elf:
         file = file_path.with_suffix(".elf")

@@ -1,4 +1,6 @@
-"""Reader-Baseclass"""
+"""Reader-Baseclass."""
+
+from __future__ import annotations
 
 import contextlib
 import errno
@@ -7,7 +9,7 @@ import math
 import os
 from itertools import product
 from pathlib import Path
-from types import TracebackType
+from typing import TYPE_CHECKING
 from typing import Any
 from typing import ClassVar
 from typing import Dict
@@ -29,6 +31,9 @@ from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.content.energy_environment import EnergyDType
 from .decoder_waveform import Uart
+
+if TYPE_CHECKING:
+    from types import TracebackType
 
 
 class Reader:
@@ -96,7 +101,8 @@ class Reader:
                 self.h5file = h5py.File(self.file_path, "r")  # = readonly
                 self._reader_opened = True
             except OSError as _xcp:
-                raise TypeError(f"Unable to open HDF5-File '{self.file_path.name}'") from _xcp
+                msg = f"Unable to open HDF5-File '{self.file_path.name}'"
+                raise TypeError(msg) from _xcp
 
             if self.is_valid():
                 self._logger.debug("File is available now")
@@ -159,7 +165,7 @@ class Reader:
         )
 
     def _refresh_file_stats(self) -> None:
-        """Update internal states, helpful after resampling or other changes in data-group"""
+        """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
         if (self.ds_time.shape[0] > 1) and (self.ds_time[1] != self.ds_time[0]):
             # this assumes isochronal sampling
@@ -182,9 +188,10 @@ class Reader:
         omit_ts: bool = False,
     ) -> Generator[tuple, None, None]:
         """Generator that reads the specified range of buffers from the hdf5 file.
+
         can be configured on first call
         TODO: reconstruct - start/end mark samples &
-         each call can request a certain number of samples
+         each call can request a certain number of samples.
 
         Args:
         ----
@@ -253,7 +260,8 @@ class Reader:
             return None
 
     def get_hrv_config(self) -> dict:
-        """Essential info for harvester
+        """Essential info for harvester.
+
         :return: config-dict directly for vHarvester to be used during emulation
         """
         return {
@@ -262,7 +270,7 @@ class Reader:
         }
 
     def is_valid(self) -> bool:
-        """Checks file for plausibility
+        """Checks file for plausibility.
 
         :return: state of validity
         """
@@ -390,7 +398,7 @@ class Reader:
         return True
 
     def __getitem__(self, key: str) -> Any:
-        """Returns attribute or (if none found) a handle for a group or dataset (if found)
+        """Returns attribute or (if none found) a handle for a group or dataset (if found).
 
         :param key: attribute, group, dataset
         :return: value of that key, or handle of object
@@ -402,9 +410,10 @@ class Reader:
         raise KeyError
 
     def energy(self) -> float:
-        """Determine the recorded energy of the trace
+        """Determine the recorded energy of the trace.
+
         # multiprocessing: https://stackoverflow.com/a/71898911
-        # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool
+        # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool.
 
         :return: sampled energy in Ws (watt-seconds)
         """
@@ -431,6 +440,7 @@ class Reader:
         self, dset: h5py.Dataset, cal: Optional[CalibrationPair] = None
     ) -> Dict[str, float]:
         """Some basic stats for a provided dataset
+
         :param dset: dataset to evaluate
         :param cal: calibration (if wanted)
         :return: dict with entries for mean, min, max, std
@@ -473,7 +483,8 @@ class Reader:
 
     def _data_timediffs(self) -> List[float]:
         """Calculate list of (unique) time-deltas between buffers [s]
-            -> optimized version that only looks at the start of each buffer
+
+        Optimized version that only looks at the start of each buffer.
 
         :return: list of (unique) time-deltas between buffers [s]
         """
@@ -503,8 +514,9 @@ class Reader:
         return list(diffs)
 
     def check_timediffs(self) -> bool:
-        """Validate equal time-deltas
-        -> unexpected time-jumps hint at a corrupted file or faulty measurement
+        """Validate equal time-deltas.
+
+        Unexpected time-jumps hint at a corrupted file or faulty measurement.
 
         :return: True if OK
         """
@@ -532,7 +544,8 @@ class Reader:
         *,
         minimal: bool = False,
     ) -> Dict[str, dict]:
-        """Recursive FN to capture the structure of the file
+        """Recursive FN to capture the structure of the file.
+
         :param node: starting node, leave free to go through whole file
         :param minimal: just provide a bare tree (much faster)
         :return: structure of that node with everything inside it
@@ -583,7 +596,7 @@ class Reader:
         return metadata
 
     def save_metadata(self, node: Union[h5py.Dataset, h5py.Group, None] = None) -> dict:
-        """Get structure of file and dump content to yaml-file with same name as original
+        """Get structure of file and dump content to yaml-file with same name as original.
 
         :param node: starting node, leave free to go through whole file
         :return: structure of that node with everything inside it
@@ -612,8 +625,9 @@ class Reader:
 
     @staticmethod
     def get_filter_for_redundant_states(data: np.ndarray) -> np.ndarray:
-        """Input is 1D state-vector, kep only first from identical & sequential states
-        algo: create an offset-by-one vector and compare against original
+        """Input is 1D state-vector, kep only first from identical & sequential states.
+
+        Algo: create an offset-by-one vector and compare against original.
         """
         if len(data.shape) > 1:
             ValueError("Array must be 1D")

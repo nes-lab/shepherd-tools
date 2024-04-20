@@ -1,5 +1,5 @@
-"""shepherd.core
-~~~~~
+"""Bundled core features used by several systems.
+
 Provides classes for storing and retrieving sampled IV data to/from
 HDF5 files.
 

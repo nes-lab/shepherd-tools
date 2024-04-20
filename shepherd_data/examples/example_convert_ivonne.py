@@ -1,7 +1,7 @@
 """this repo contains a recording from ivonne
--> consists of voc & isc with 50 Hz sampling rate
+-> consists of voc & isc with 50 Hz sampling rate.
 
-this script converts a IVonne-Recording to shepherd dataformat:
+This script converts a IVonne-Recording to shepherd dataformat:
 - ivcurves that can be harvested during emulation
 - ivsamples that can be directly used for emulation
   (already harvested with to different algorithms)

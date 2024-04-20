@@ -29,7 +29,7 @@ from .cache_path import cache_user_path
 
 
 class Fixture:
-    """Current implementation of a file-based database"""
+    """Current implementation of a file-based database."""
 
     def __init__(self, model_type: str) -> None:
         self.model_type: str = model_type.lower()
@@ -63,7 +63,8 @@ class Fixture:
             key = int(key) if key.isdigit() else None
         if key in self.elements_by_id:
             return self.elements_by_id[int(key)]
-        raise ValueError(f"{self.model_type} '{key}' not found!")
+        msg = f"{self.model_type} '{key}' not found!"
+        raise ValueError(msg)
 
     def __iter__(self) -> Self:
         self._iter_index = 0
@@ -95,12 +96,14 @@ class Fixture:
             if "name" in values and len(chain) < 1:
                 base_name = values.get("name")
                 if base_name in chain:
+                    msg = f"Inheritance-Circle detected ({base_name} already in {chain})"
                     raise ValueError(
-                        f"Inheritance-Circle detected ({base_name} already in {chain})",
+                        msg,
                     )
                 if base_name == fixture_name:
+                    msg = f"Inheritance-Circle detected ({base_name} == {fixture_name})"
                     raise ValueError(
-                        f"Inheritance-Circle detected ({base_name} == {fixture_name})",
+                        msg,
                     )
                 chain.append(base_name)
             fixture_base = copy.copy(self[fixture_name])
@@ -149,12 +152,14 @@ class Fixture:
     def query_id(self, _id: int) -> dict:
         if isinstance(_id, int) and _id in self.elements_by_id:
             return self.elements_by_id[_id]
-        raise ValueError(f"Initialization of {self.model_type} by ID failed - {_id} is unknown!")
+        msg = f"Initialization of {self.model_type} by ID failed - {_id} is unknown!"
+        raise ValueError(msg)
 
     def query_name(self, name: str) -> dict:
         if isinstance(name, str) and name.lower() in self.elements_by_name:
             return self.elements_by_name[name.lower()]
-        raise ValueError(f"Initialization of {self.model_type} by name failed - {name} is unknown!")
+        msg = f"Initialization of {self.model_type} by name failed - {name} is unknown!"
+        raise ValueError(msg)
 
 
 def file_older_than(file: Path, delta: timedelta) -> bool:
@@ -221,14 +226,16 @@ class Fixtures:
         key = key.lower()
         if key in self.components:
             return self.components[key]
-        raise ValueError(f"Component '{key}' not found!")
+        msg = f"Component '{key}' not found!"
+        raise ValueError(msg)
 
     def keys(self):  # noqa: ANN201
         return self.components.keys()
 
     @staticmethod
     def to_file(file: Path) -> None:
-        raise NotImplementedError(f"TODO (val={file})")
+        msg = f"TODO (val={file})"
+        raise NotImplementedError(msg)
 
 
 def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> List[Path]:

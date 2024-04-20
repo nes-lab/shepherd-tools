@@ -44,7 +44,7 @@ yaml.add_representer(UUID, generic2str, SafeDumper)
 
 
 class ShpModel(BaseModel):
-    """Pre-configured Pydantic Base-Model (specifically for shepherd)
+    """Pre-configured Pydantic Base-Model (specifically for shepherd).
 
     Inheritable Features:
     - constant / frozen, hashable .get_hash()
@@ -73,13 +73,13 @@ class ShpModel(BaseModel):
     )
 
     def __repr__(self) -> str:
-        """string-representation allows print(model)"""
+        """string-representation allows print(model)."""
         name = type(self).__name__
         content = self.model_dump(exclude_unset=True, exclude_defaults=True)
         return f"{name}({content})"
 
     def __str__(self) -> str:
-        """string-representation allows str(model)"""
+        """string-representation allows str(model)."""
         content = yaml.safe_dump(
             self.model_dump(exclude_unset=True, exclude_defaults=True),
             default_flow_style=False,
@@ -88,26 +88,26 @@ class ShpModel(BaseModel):
         return str(content)
 
     def __getitem__(self, key: str) -> Any:
-        """Allows dict access -> model["key"], in addition to model.key"""
+        """Allows dict access -> model["key"], in addition to model.key."""
         return self.__getattribute__(key)
 
     def __contains__(self, item: str) -> bool:
-        """Allows checks like 'x in YClass'"""
+        """Allows checks like 'x in YClass'."""
         return item in self.model_dump().keys()  # noqa: SIM118
         # more correct, but probably slower than hasattr
 
     def keys(self):  # noqa: ANN201
-        """Fn of dict"""
+        """Fn of dict."""
         return self.model_dump().keys()
 
     def items(self) -> Generator[tuple, None, None]:
-        """Fn of dict"""
+        """Fn of dict."""
         for key in self.keys():
             yield key, self[key]
 
     @classmethod
     def schema_to_file(cls, path: Union[str, Path]) -> None:
-        """Store schema to yaml (for frontend-generators)"""
+        """Store schema to yaml (for frontend-generators)."""
         model_dict = cls.model_json_schema()
         model_yaml = yaml.safe_dump(model_dict, default_flow_style=False, sort_keys=False)
         with Path(path).resolve().with_suffix(".yaml").open("w") as f:
@@ -121,8 +121,9 @@ class ShpModel(BaseModel):
         minimal: bool = True,
     ) -> Path:
         """Store data to yaml in a wrapper
+
         minimal: stores minimal set (filters out unset & default parameters)
-        comment: documentation
+        comment: documentation.
         """
         model_dict = self.model_dump(exclude_unset=minimal)
         model_wrap = Wrapper(
@@ -146,7 +147,7 @@ class ShpModel(BaseModel):
 
     @classmethod
     def from_file(cls, path: Union[str, Path]) -> Self:
-        """Load from yaml"""
+        """Load from yaml."""
         with Path(path).open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)

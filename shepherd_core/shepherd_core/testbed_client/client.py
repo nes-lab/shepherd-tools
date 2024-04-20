@@ -41,8 +41,10 @@ class TestbedClient:
 
     @validate_call
     def connect(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> bool:
-        """server: either "local" to use demo-fixtures or something like "https://HOST:PORT"
-        token: your account validation
+        """Establish connection to testbed-server.
+
+        server: either "local" to use demo-fixtures or something like "https://HOST:PORT"
+        token: your account validation.
         """
         if isinstance(token, Path):
             with token.resolve().open() as file:
@@ -119,7 +121,7 @@ class TestbedClient:
         return self._fixtures[model_type].inheritance(values)
 
     def try_completing_model(self, model_type: str, values: dict) -> (dict, list):
-        """Init by name/id, for none existing instances raise Exception"""
+        """Init by name/id, for none existing instances raise Exception."""
         if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             value = next(iter(values.values()))
             if (
@@ -131,7 +133,8 @@ class TestbedClient:
                 # TODO: still depending on _fixture
                 values = self.query_item(model_type, uid=value)
             else:
-                raise ValueError(f"Query {model_type} by name / ID failed - {values} is unknown!")
+                msg = f"Query {model_type} by name / ID failed - {values} is unknown!"
+                raise ValueError(msg)
         return self.try_inheritance(model_type, values)
 
     def fill_in_user_data(self, values: dict) -> dict:

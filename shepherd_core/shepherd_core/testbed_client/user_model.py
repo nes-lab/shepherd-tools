@@ -33,7 +33,7 @@ def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length
 
 
 class User(ShpModel):
-    """meta-data representation of a testbed-component (physical object)"""
+    """meta-data representation of a testbed-component (physical object)."""
 
     # id: UUID4 = Field(  # TODO db-migration - temp fix for documentation
     id: Union[UUID4, int] = Field(

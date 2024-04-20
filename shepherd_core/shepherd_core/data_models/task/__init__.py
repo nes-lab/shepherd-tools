@@ -33,7 +33,9 @@ __all__ = [
 
 
 def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = None) -> Wrapper:
-    """- Opens file (from Path or str of Path)
+    """Opens file and extracts tasks.
+
+    - Open file (from Path or str of Path)
     - wraps task-model
     - and if it's an TestbedTasks it will extract the correct ObserverTask
     """

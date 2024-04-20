@@ -32,7 +32,7 @@ class AlgorithmDType(str, Enum):
 
 class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     """A Harvester is needed when the file-based energy environment
-    of the virtual source is not already supplied as ivsample
+    of the virtual source is not already supplied as ivsample.
     """
 
     # General Metadata & Ownership -> ContentModel
@@ -110,19 +110,21 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num = algo_to_num.get(self.algorithm)
         if for_emu and self.get_datatype() != EnergyDType.ivsample:
-            raise ValueError(
+            msg = (
                 f"[{self.name}] Select valid harvest-algorithm for emulator, "
-                f"current usage = {self.algorithm}",
+                f"current usage = {self.algorithm}"
             )
+            raise ValueError(msg)
         if num < algo_to_num["isc_voc"]:
-            raise ValueError(
+            msg = (
                 f"[{self.name}] Select valid harvest-algorithm for harvester, "
-                f"current usage = {self.algorithm}",
+                f"current usage = {self.algorithm}"
             )
+            raise ValueError(msg)
         return num
 
     def calc_timings_ms(self, *, for_emu: bool) -> Tuple[float, float]:
-        """factor-in model-internal timing-constraints"""
+        """factor-in model-internal timing-constraints."""
         window_length = self.samples_n * (1 + self.wait_cycles)
         time_min_ms = (1 + self.wait_cycles) * 1_000 / samplerate_sps_default
         if for_emu:
@@ -195,7 +197,7 @@ class HarvesterPRUConfig(ShpModel):
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw
-      - ordering is intentional and in sync with shepherd/commons.h
+      - ordering is intentional and in sync with shepherd/commons.h.
     """
 
     algorithm: u32

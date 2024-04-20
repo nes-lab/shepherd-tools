@@ -24,7 +24,7 @@ class Direction(str, Enum):
 
 
 class GPIO(ShpModel, title="GPIO of Observer Node"):
-    """meta-data representation of a testbed-component"""
+    """meta-data representation of a testbed-component."""
 
     id: IdInt
     name: NameStr
@@ -54,10 +54,11 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
         no_pru = (self.reg_pru is None) or (self.pin_pru is None)
         no_sys = (self.reg_sys is None) or (self.pin_sys is None)
         if no_pru and no_sys:
-            raise ValueError(
+            msg = (
                 "GPIO-Instance is faulty -> "
                 f"it needs to use pru or sys, content: {self.model_dump()}"
             )
+            raise ValueError(msg)
         return self
 
     def user_controllable(self) -> bool:

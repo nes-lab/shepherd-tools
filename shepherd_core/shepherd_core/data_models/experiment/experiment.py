@@ -23,7 +23,7 @@ from .target_config import TargetConfig
 
 class Experiment(ShpModel, title="Config of an Experiment"):
     """Configuration for Experiments on the Shepherd-Testbed
-    emulating Energy Environments for Target Nodes
+    emulating Energy Environments for Target Nodes.
     """
 
     # General Properties
@@ -101,4 +101,5 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             if target_id in _config.target_IDs:
                 return _config
         # gets already caught in target_config - but keep:
-        raise ValueError(f"Target-ID {target_id} was not found in Experiment '{self.name}'")
+        msg = f"Target-ID {target_id} was not found in Experiment '{self.name}'"
+        raise ValueError(msg)

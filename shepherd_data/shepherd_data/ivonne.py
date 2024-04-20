@@ -1,5 +1,5 @@
 """prototype of a file-reader with various converters
-to generate valid shepherd-data for emulation
+to generate valid shepherd-data for emulation.
 
 """
 

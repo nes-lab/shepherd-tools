@@ -18,7 +18,7 @@ from .emulation import Compression
 
 class HarvestTask(ShpModel):
     """Configuration for the Observer in Harvest-Mode
-    Record IV data from a harvest-source
+    Record IV data from a harvest-source.
     """
 
     # General config
@@ -73,10 +73,11 @@ class HarvestTask(ShpModel):
         has_time = self.time_start is not None
         time_now = datetime.now().astimezone()
         if has_time and self.time_start < time_now:
-            raise ValueError(
+            msg = (
                 "Start-Time for Emulation can't be in the past "
                 f"('{self.time_start}' vs '{time_now}'."
             )
+            raise ValueError(msg)
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
         return self

@@ -1,4 +1,4 @@
-"""TODO: Work in Progress"""
+"""TODO: Work in Progress."""
 
 import tempfile
 from pathlib import Path
@@ -35,7 +35,9 @@ def is_hex(file: Path) -> bool:
 
 
 def is_hex_msp430(file: Path) -> bool:
-    """Observations:
+    """Try to detect specifics for that MCU.
+
+    Observations:
     - addresses begin at 0x4000
     - value @0xFFFE (IVT) is start_address (of pgm-code)
     """
@@ -56,7 +58,9 @@ def is_hex_msp430(file: Path) -> bool:
 
 
 def is_hex_nrf52(file: Path) -> bool:
-    """Observations:
+    """Try to detect specifics for that MCU.
+
+    Observations:
     - addresses begin at 0x0
     - only one segment (.get_segments), todo
     """

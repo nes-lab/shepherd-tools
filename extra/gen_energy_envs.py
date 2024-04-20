@@ -1,6 +1,6 @@
-"""script will:
-- generate static environments
-- saves energy-env to yaml
+"""This Script will
+generate static environments &
+save energy-env to yaml.
 """
 
 from itertools import product

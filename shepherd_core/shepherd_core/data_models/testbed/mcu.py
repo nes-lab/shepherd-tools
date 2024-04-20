@@ -24,7 +24,7 @@ class ProgrammerProtocol(str, Enum):
 
 
 class MCU(ShpModel, title="Microcontroller of the Target Node"):
-    """meta-data representation of a testbed-component (physical object)"""
+    """meta-data representation of a testbed-component (physical object)."""
 
     id: IdInt
     name: NameStr

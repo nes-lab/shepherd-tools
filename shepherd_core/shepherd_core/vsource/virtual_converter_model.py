@@ -1,4 +1,7 @@
-"""this is ported py-version of the pru-code, goals:
+"""This is ported py-version of the pru-code.
+
+Goals:
+
 - stay close to original code-base
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
@@ -6,6 +9,7 @@
 NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 
 Compromises:
+
 - bitshifted values (i.e. _n28) are converted to float without shift
 
 """
@@ -19,7 +23,7 @@ from ..data_models.content.virtual_source import ConverterPRUConfig
 
 
 class PruCalibration:
-    """part of calibration.h"""
+    """part of calibration.h."""
 
     def __init__(self, cal_emu: Optional[CalibrationEmulator] = None) -> None:
         self.cal = cal_emu if cal_emu else CalibrationEmulator()
@@ -30,7 +34,8 @@ class PruCalibration:
 
     @staticmethod
     def conv_adc_raw_to_uV(voltage_raw: int) -> float:
-        raise RuntimeError(f"This Fn should not been used (val={voltage_raw})")
+        msg = f"This Fn should not been used (val={voltage_raw})"
+        raise RuntimeError(msg)
 
     def conv_uV_to_dac_raw(self, voltage_uV: float) -> int:
         dac_raw = self.cal.dac_V_A.si_to_raw(float(voltage_uV) / (10**6))

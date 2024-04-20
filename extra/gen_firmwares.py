@@ -1,4 +1,5 @@
-"""script will:
+"""This script will download & prepare target-firmwares.
+
 - download and extract firmwares from https://github.com/orgua/shepherd-targets/releases
 - generate embedded firmware-models
 - it assumes sub-dirs in the same dir with ./build.elf in it

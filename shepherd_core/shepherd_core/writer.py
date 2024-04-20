@@ -1,4 +1,4 @@
-"""Writer that inherits from Reader-Baseclass"""
+"""Writer that inherits from Reader-Baseclass."""
 
 import logging
 import math
@@ -49,7 +49,7 @@ yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
-    """Finds an unused filename in case it already exists
+    """Finds an unused filename in case it already exists.
 
     :param base_path: file-path to test
     :param suffix: file-suffix
@@ -64,7 +64,7 @@ def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
 
 
 class Writer(Reader):
-    """Stores data for Shepherd in HDF5 format
+    """Stores data for Shepherd in HDF5 format.
 
     Choose lossless compression filter
      - lzf:  low to moderate compression, VERY fast, no options
@@ -124,7 +124,8 @@ class Writer(Reader):
             self.file_path: Path = file_path.resolve()
             self._logger.info("Storing data to   '%s'", self.file_path)
         elif file_path.exists() and not file_path.is_file():
-            raise TypeError(f"Path is not a file ({file_path})")
+            msg = f"Path is not a file ({file_path})"
+            raise TypeError(msg)
         else:
             base_dir = file_path.resolve().parents[0]
             self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
@@ -135,15 +136,15 @@ class Writer(Reader):
             )
 
         if isinstance(mode, str) and mode not in self.mode_dtype_dict:
-            raise ValueError(f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})")
+            msg = f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})"
+            raise ValueError(msg)
 
         _dtypes = self.mode_dtype_dict[mode or self.mode_default]
         if isinstance(datatype, str):
             datatype = EnergyDType[datatype]
         if isinstance(datatype, EnergyDType) and datatype not in _dtypes:
-            raise ValueError(
-                f"Can't handle value '{datatype}' of datatype (choose one of {_dtypes})"
-            )
+            msg = f"Can't handle value '{datatype}' of datatype (choose one of {_dtypes})"
+            raise ValueError(msg)
 
         if self._modify:
             self._mode = mode
@@ -223,7 +224,7 @@ class Writer(Reader):
         self.h5file.close()
 
     def _create_skeleton(self) -> None:
-        """Initializes the structure of the HDF5 file
+        """Initializes the structure of the HDF5 file.
 
         HDF5 is hierarchically structured and before writing data, we have to
         setup this structure, i.e. creating the right groups with corresponding
@@ -279,7 +280,7 @@ class Writer(Reader):
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:
-        """Writes raw data to database
+        """Writes raw data to database.
 
         Args:
         ----
@@ -318,7 +319,7 @@ class Writer(Reader):
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:
-        """Writes data (in SI / physical unit) to file, but converts it to raw-data first
+        """Writes data (in SI / physical unit) to file, but converts it to raw-data first.
 
            SI-value [SI-Unit] = raw-value * gain + offset,
 
@@ -336,7 +337,7 @@ class Writer(Reader):
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def _align(self) -> None:
-        """Align datasets with buffer-size of shepherd"""
+        """Align datasets with buffer-size of shepherd."""
         self._refresh_file_stats()
         n_buff = self.ds_voltage.size / self.samples_per_buffer
         size_new = int(math.floor(n_buff) * self.samples_per_buffer)
@@ -353,13 +354,14 @@ class Writer(Reader):
             self.ds_current.resize((size_new,))
 
     def __setitem__(self, key: str, item: Any) -> None:
-        """A convenient interface to store relevant key-value data (attribute) if H5-structure"""
+        """A convenient interface to store relevant key-value data (attribute) if H5-structure."""
         self.h5file.attrs.__setitem__(key, item)
 
     def store_config(self, data: dict) -> None:
-        """Important Step to get a self-describing Output-File
+        """Important Step to get a self-describing Output-File.
+
         TODO: use data-model?
-        :param data: from virtual harvester or converter / source
+        :param data: from virtual harvester or converter / source.
         """
         self.h5file["data"].attrs["config"] = yaml.safe_dump(
             data, default_flow_style=False, sort_keys=False
@@ -367,7 +369,7 @@ class Writer(Reader):
 
     def store_hostname(self, name: str) -> None:
         """Option to distinguish the host, target or data-source in the testbed
-            -> perfect for plotting later
+            -> perfect for plotting later.
 
         :param name: something unique, or "artificial" in case of generated content
         """

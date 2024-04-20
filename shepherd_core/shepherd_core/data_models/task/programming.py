@@ -21,7 +21,7 @@ from ..testbed.testbed import Testbed
 
 
 class ProgrammingTask(ShpModel):
-    """Config for Task programming the target selected"""
+    """Config for Task programming the target selected."""
 
     firmware_file: Path
     target_port: TargetPort = TargetPort.A

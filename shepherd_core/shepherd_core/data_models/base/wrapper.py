@@ -11,7 +11,7 @@ SafeStrClone = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 
 class Wrapper(BaseModel):
     """Prototype for enabling one web- & file-interface for
-    all models with dynamic typecasting
+    all models with dynamic typecasting.
     """
 
     datatype: str

@@ -1,6 +1,6 @@
-"""script will:
-- generate plots with various zoom-levels for h5-files
-- NOTE: let the generator- and converter-example run before
+"""This script will generate plots with various zoom-levels for h5-files.
+
+NOTE: let the generator- and converter-example run before.
 
 CLI-Version of this is:
 shepherd-data plot file_or_dir [-s start_time] [-e end_time]

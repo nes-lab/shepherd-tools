@@ -18,7 +18,7 @@ class EnergyDType(str, Enum):
 
 
 class EnergyEnvironment(ContentModel):
-    """Recording of meta-data representation of a testbed-component"""
+    """Recording of meta-data representation of a testbed-component."""
 
     # General Metadata & Ownership -> ContentModel
 

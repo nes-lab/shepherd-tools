@@ -18,7 +18,7 @@ from .observer import Observer
 
 
 class Testbed(ShpModel):
-    """meta-data representation of a testbed-component (physical object)"""
+    """meta-data representation of a testbed-component (physical object)."""
 
     id: IdInt
     name: NameStr
@@ -87,4 +87,5 @@ class Testbed(ShpModel):
                 continue
             if _observer.has_target(target_id):
                 return _observer
-        raise ValueError(f"Target-ID {target_id} was not found in Testbed '{self.name}'")
+        msg = f"Target-ID {target_id} was not found in Testbed '{self.name}'"
+        raise ValueError(msg)

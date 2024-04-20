@@ -1,7 +1,7 @@
 """Creates an overview for shepherd-host-machines with:
 - relevant software-versions
 - system-parameters
-- hardware-config
+- hardware-config.
 """
 
 from datetime import datetime
@@ -50,9 +50,11 @@ class InventoryList(ShpModel):
     elements: Annotated[List[Inventory], Field(min_length=1)]
 
     def to_csv(self, path: Path) -> None:
-        """TODO: pretty messed up (raw lists and dicts for sub-elements)
+        """Generate a CSV.
+
+        TODO: pretty messed up (raw lists and dicts for sub-elements)
         numpy.savetxt -> too basic
-        np.concatenate(content).reshape((len(content), len(content[0])))
+        np.concatenate(content).reshape((len(content), len(content[0]))).
         """
         if path.is_dir():
             path = path / "inventory.yaml"
