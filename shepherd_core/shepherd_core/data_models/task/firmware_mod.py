@@ -1,3 +1,5 @@
+"""Config for Task that adds the custom ID to the firmware & stores it into a file."""
+
 import copy
 from pathlib import Path
 from typing import Optional

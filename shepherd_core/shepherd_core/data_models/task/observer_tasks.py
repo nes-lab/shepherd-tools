@@ -1,3 +1,5 @@
+"""Collection of tasks for selected observer included in experiment."""
+
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path

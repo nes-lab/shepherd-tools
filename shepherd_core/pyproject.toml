@@ -38,6 +38,7 @@ dependencies = [
     "requests",
     "pyelftools",
     "zstandard",
+    "typing-extensions",
 ]
 
 [project.optional-dependencies]

@@ -1,3 +1,5 @@
+"""Generalized virtual source data models."""
+
 from typing import List
 
 from pydantic import Field

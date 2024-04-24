@@ -1,3 +1,5 @@
+"""Configs for observer features like gpio- & power-tracing."""
+
 from datetime import timedelta
 from enum import Enum
 from typing import List
@@ -86,6 +88,8 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
 
 class GpioLevel(str, Enum):
+    """Options for setting the gpio-level or state."""
+
     low = "L"
     high = "H"
     toggle = "X"  # TODO: not the smartest decision for writing a converter

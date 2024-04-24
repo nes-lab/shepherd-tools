@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from datetime import timedelta
 from pathlib import Path
 from typing import List

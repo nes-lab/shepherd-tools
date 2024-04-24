@@ -1,3 +1,5 @@
+"""Simulation model of the virtual source."""
+
 from .virtual_converter_model import PruCalibration
 from .virtual_converter_model import VirtualConverterModel
 from .virtual_harvester_model import VirtualHarvesterModel

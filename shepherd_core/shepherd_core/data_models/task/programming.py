@@ -1,3 +1,5 @@
+"""Config for a Task programming the selected target."""
+
 import copy
 from pathlib import Path
 from typing import Optional
@@ -21,7 +23,7 @@ from ..testbed.testbed import Testbed
 
 
 class ProgrammingTask(ShpModel):
-    """Config for Task programming the target selected."""
+    """Config for a Task programming the selected target."""
 
     firmware_file: Path
     target_port: TargetPort = TargetPort.A

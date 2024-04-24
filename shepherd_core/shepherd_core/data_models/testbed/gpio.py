@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from enum import Enum
 from typing import Optional
 
@@ -15,6 +17,8 @@ from ..base.shepherd import ShpModel
 
 
 class Direction(str, Enum):
+    """Options for pin-direction."""
+
     Input = IN = "IN"
     Output = OUT = "OUT"
     Bidirectional = IO = "IO"

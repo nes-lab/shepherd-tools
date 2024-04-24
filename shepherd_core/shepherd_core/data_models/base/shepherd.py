@@ -1,3 +1,5 @@
+"""Shepherds base-model that brings a lot of default functionality."""
+
 import hashlib
 import pathlib
 from datetime import timedelta
@@ -24,14 +26,17 @@ from .wrapper import Wrapper
 def path2str(
     dumper: Dumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
 ) -> ScalarNode:
+    """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
 def time2int(dumper: Dumper, data: timedelta) -> ScalarNode:
+    """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
 
 
 def generic2str(dumper: Dumper, data: Any) -> ScalarNode:
+    """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
 
 

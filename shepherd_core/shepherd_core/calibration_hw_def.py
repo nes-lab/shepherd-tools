@@ -33,6 +33,7 @@ RAW_MAX_DAC = 2**M_DAC - 1
 
 
 def adc_current_to_raw(current: float) -> int:
+    """Convert back a current [A] to raw ADC value."""
     # voltage on input of adc
     val_adc = G_INST_AMP * R_SHT * current
     # digital value according to ADC gain
@@ -41,6 +42,7 @@ def adc_current_to_raw(current: float) -> int:
 
 
 def adc_raw_to_current(value: int) -> float:
+    """Convert a raw ADC value to a current [A]."""
     value = min(max(value, 0), 2**M_ADC - 1)
     # voltage on input of adc
     val_adc = float(value) * (G_ADC_I * V_REF_ADC) / (2**M_ADC)
@@ -49,22 +51,26 @@ def adc_raw_to_current(value: int) -> float:
 
 
 def adc_voltage_to_raw(voltage: float) -> int:
+    """Convert back a voltage [V] to raw ADC value."""
     # digital value according to ADC gain
     val_raw = int(voltage * (2**M_ADC) / (G_ADC_V * V_REF_ADC))
     return min(max(val_raw, 0), 2**M_ADC - 1)
 
 
 def adc_raw_to_voltage(value: int) -> float:
+    """Convert a raw ADC value to a voltage [V]."""
     value = min(max(value, 0), 2**M_ADC - 1)
     # voltage according to ADC value
     return float(value) * (G_ADC_V * V_REF_ADC) / (2**M_ADC)
 
 
 def dac_raw_to_voltage(value: int) -> float:
+    """Convert back a raw DAC value to a voltage [V]."""
     value = min(max(value, 0), 2**M_DAC - 1)
     return float(value) * (V_REF_DAC * G_DAC) / (2**M_DAC)
 
 
 def dac_voltage_to_raw(voltage: float) -> int:
+    """Convert a voltage [V] to raw DAC value."""
     val_raw = int(voltage * (2**M_DAC) / (V_REF_DAC * G_DAC))
     return min(max(val_raw, 0), 2**M_DAC - 1)

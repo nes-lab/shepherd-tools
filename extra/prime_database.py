@@ -17,6 +17,7 @@ from shepherd_core.testbed_client.fixtures import get_files
 
 
 def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
+    """Open and unwrap a shepherd data-model."""
     try:
         return _model.from_file(path)
     except ValueError:

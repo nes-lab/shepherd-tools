@@ -1,4 +1,9 @@
-"""TODO: Work in Progress."""
+"""Helper-functions for firmware-validation.
+
+TODO: Work in Progress.
+    - Each arch should have its own file and
+    - detection-functions that register in main validator.
+"""
 
 import tempfile
 from pathlib import Path
@@ -25,6 +30,7 @@ except ImportError as e:
 
 @validate_call
 def is_hex(file: Path) -> bool:
+    """Check if file is containing intel-hex data."""
     try:
         _ = IntelHex(file.as_posix())
     except ValueError:  # parsing
@@ -83,6 +89,7 @@ def is_hex_nrf52(file: Path) -> bool:
 
 @validate_call
 def is_elf(file: Path) -> bool:
+    """Check if file is an ELF file."""
     if ELF is None:
         raise RuntimeError(elf_error_text)
     if not file.is_file():
@@ -95,7 +102,11 @@ def is_elf(file: Path) -> bool:
     return True
 
 
-def is_elf_msp430(file: Path) -> bool:  # TODO: allow detection without conversion
+def is_elf_msp430(file: Path) -> bool:
+    """Check if file is an ELF for that MCU.
+
+    TODO: allow detection without conversion
+    """
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
             file_hex = Path(path) / "file.hex"
@@ -106,7 +117,11 @@ def is_elf_msp430(file: Path) -> bool:  # TODO: allow detection without conversi
     return False
 
 
-def is_elf_nrf52(file: Path) -> bool:  # TODO: allow detection without conversion
+def is_elf_nrf52(file: Path) -> bool:
+    """Check if file is an ELF for that MCU.
+
+    TODO: allow detection without conversion
+    """
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
             file_hex = Path(path) / "file.hex"
@@ -118,6 +133,7 @@ def is_elf_nrf52(file: Path) -> bool:  # TODO: allow detection without conversio
 
 
 def determine_type(file: Path) -> FirmwareDType:
+    """Figure out file-type (hex or elf)."""
     if not file.is_file():
         raise ValueError("Fn needs an existing file as input")
     if is_hex(file):
@@ -128,6 +144,7 @@ def determine_type(file: Path) -> FirmwareDType:
 
 
 def determine_arch(file: Path) -> str:
+    """Figure out arch (msp430 or nrf52)."""
     file_t = determine_type(file)
     if file_t == FirmwareDType.path_elf:
         if is_elf_nrf52(file):

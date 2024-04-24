@@ -1,3 +1,8 @@
+"""Handling firmware for targets.
+
+TODO: should be more generalized - currently only supports msp & nRF
+"""
+
 from pathlib import Path
 from typing import Optional
 from typing import TypedDict

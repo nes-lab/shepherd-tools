@@ -119,7 +119,18 @@ coverage run -m pytest
 coverage html
 ```
 
-## Open Tasks
+## Open Tasks / TODO
+
+- remove db-specific fields
+- add map-generator
+- add tests for broken h5-files
+- divide h5-tests in valid and healthy
+- add multi-processing
+- divide core into sub-libs:
+  - shepherd_models: data_models + vsource
+  - shepherd_fw_tools
+  - shepherd_decoders
+  - shepherd_core:
 
 - [click progressbar](https://click.palletsprojects.com/en/8.1.x/api/#click.progressbar) ⇾ could replace tqdm
 - implementations for this lib

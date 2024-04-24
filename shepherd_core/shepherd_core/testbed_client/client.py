@@ -1,3 +1,5 @@
+"""Client-Class to access a testbed instance."""
+
 from importlib import import_module
 from pathlib import Path
 from typing import Optional
@@ -16,6 +18,8 @@ from .user_model import User
 
 
 class TestbedClient:
+    """Client-Class to access a testbed instance."""
+
     _instance: Optional[Self] = None
 
     def __init__(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> None:

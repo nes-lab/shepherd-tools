@@ -1,3 +1,5 @@
+"""Models for the calibration-data to convert between raw & SI-Values."""
+
 import struct
 from typing import Callable
 from typing import Generator
@@ -26,6 +28,10 @@ Calc_t = TypeVar("Calc_t", NDArray[np.float64], float)
 def dict_generator(
     in_dict: Union[dict, list], pre: Optional[list] = None
 ) -> Generator[list, None, None]:
+    """Recursive helper-function to generate a 1D-List(or not?).
+
+    TODO: isn't that a 1D-List generator?
+    """
     pre = pre[:] if pre else []
     if isinstance(in_dict, dict):
         for key, value in in_dict.items():
@@ -71,6 +77,7 @@ class CalibrationPair(ShpModel):
 
     @classmethod
     def from_fn(cls, fn: Callable) -> Self:
+        """Probe linear function to determine scaling values."""
         offset = fn(0)
         gain_inv = fn(1.0) - offset
         return cls(
@@ -88,6 +95,8 @@ cal_hrv_legacy = {  # legacy translator
 
 
 class CalibrationHarvester(ShpModel):
+    """Container for all calibration-pairs for that device."""
+
     dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     adc_V_Sense: CalibrationPair = CalibrationPair.from_fn(adc_voltage_to_raw)
@@ -127,7 +136,10 @@ cal_emu_legacy = {  # legacy translator
 
 
 class CalibrationEmulator(ShpModel):
-    """Cal-Data for both Target-Ports A/B."""
+    """Container for all calibration-pairs for that device.
+
+    Differentiates between both target-ports A/B.
+    """
 
     dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
@@ -243,6 +255,8 @@ class CalibrationCape(ShpModel):
 
 
 class CalibrationSeries(ShpModel):
+    """Cal-Data for a typical recording of a testbed experiment."""
+
     voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9)
     # ⤷ default allows 0 - 12 V in 3 nV-Steps
     current: CalibrationPair = CalibrationPair(gain=250 * 1e-12)

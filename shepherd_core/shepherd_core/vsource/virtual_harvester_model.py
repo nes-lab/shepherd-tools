@@ -22,6 +22,8 @@ from ..data_models.content.virtual_harvester import HarvesterPRUConfig
 
 
 class VirtualHarvesterModel:
+    """Ported python version of the pru vHrv."""
+
     HRV_IVCURVE: int = 2**4
     HRV_CV: int = 2**8
     HRV_MPPT_VOC: int = 2**12

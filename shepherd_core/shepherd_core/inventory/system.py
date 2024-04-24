@@ -1,3 +1,5 @@
+"""System / OS related inventory model."""
+
 import platform
 import subprocess
 import time
@@ -22,6 +24,8 @@ from ..data_models import ShpModel
 
 
 class SystemInventory(ShpModel):
+    """System / OS related inventory model."""
+
     uptime: PositiveInt
     # ⤷ seconds
     timestamp: datetime

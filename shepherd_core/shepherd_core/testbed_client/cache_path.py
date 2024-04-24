@@ -1,3 +1,5 @@
+"""Generalized path for the file-cache."""
+
 import os
 from pathlib import Path
 

@@ -1,3 +1,5 @@
+"""Demonstrates decoding of a sampled waveform to UART-symbols."""
+
 from pathlib import Path
 from timeit import timeit
 

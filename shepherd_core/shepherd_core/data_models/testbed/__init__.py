@@ -1,3 +1,8 @@
+"""Module for testbed-related data-models.
+
+These models import externally from: /base
+"""
+
 from .cape import Cape
 from .cape import TargetPort
 from .gpio import GPIO
@@ -9,8 +14,6 @@ from .observer import Observer
 from .target import IdInt16
 from .target import Target
 from .testbed import Testbed
-
-# these models import externally from: /base
 
 __all__ = [
     "Testbed",

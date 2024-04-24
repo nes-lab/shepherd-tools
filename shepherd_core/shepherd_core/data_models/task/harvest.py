@@ -1,3 +1,5 @@
+"""Config for the Observer in Harvest-Mode to record IV data from a harvesting-source."""
+
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path

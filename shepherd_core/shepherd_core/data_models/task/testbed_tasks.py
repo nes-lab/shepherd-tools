@@ -1,3 +1,5 @@
+"""Collection of tasks for all observers included in experiment."""
+
 from typing import List
 from typing import Optional
 

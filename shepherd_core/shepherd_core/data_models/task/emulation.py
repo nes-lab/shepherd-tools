@@ -1,3 +1,5 @@
+"""Configuration for the Observer in Emulation-Mode."""
+
 import copy
 from datetime import datetime
 from datetime import timedelta
@@ -26,6 +28,8 @@ from ..testbed.cape import TargetPort
 
 
 class Compression(str, Enum):
+    """Options for choosing a dataset-compression."""
+
     lzf = default = "lzf"  # not native hdf5
     gzip1 = gzip = 1  # higher compr & load
     null = None

@@ -30,7 +30,11 @@ __all__ = [
 
 
 class Inventory(PythonInventory, SystemInventory, TargetInventory):
-    # has all child-parameters
+    """Complete inventory for one device.
+
+    Has all child-parameters.
+    """
+
     hostname: str
     created: datetime
 
@@ -49,6 +53,8 @@ class Inventory(PythonInventory, SystemInventory, TargetInventory):
 
 
 class InventoryList(ShpModel):
+    """Collection of inventories for several devices."""
+
     elements: Annotated[List[Inventory], Field(min_length=1)]
 
     def to_csv(self, path: Path) -> None:

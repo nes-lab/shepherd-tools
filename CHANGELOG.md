@@ -1,18 +1,5 @@
 # History of Changes
 
-## TODO
-
-- remove db-specific fields
-- add map-generator
-- add tests for broken h5-files
-- divide h5-tests in valid and healthy
-- add multi-processing
-- divide core into sub-libs:
-  - shepherd_models: data_models + vsource
-  - shepherd_fw_tools
-  - shepherd_decoders
-  - shepherd_core:
-
 ## v2024.4.2
 
 - fix import-bug regarding fixtures

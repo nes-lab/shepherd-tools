@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from datetime import date
 from datetime import datetime
 from enum import Enum
@@ -15,6 +17,8 @@ from ..base.shepherd import ShpModel
 
 
 class TargetPort(str, Enum):
+    """Options for choosing a target-port."""
+
     A = a = "A"
     B = b = "B"
 

@@ -1,3 +1,5 @@
+"""Python related inventory model."""
+
 import platform
 from contextlib import suppress
 from importlib import import_module
@@ -10,6 +12,8 @@ from ..data_models import ShpModel
 
 
 class PythonInventory(ShpModel):
+    """Python related inventory model."""
+
     # program versions
     h5py: Optional[str] = None
     numpy: Optional[str] = None

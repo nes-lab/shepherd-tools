@@ -1,3 +1,5 @@
+"""Generalized energy harvester data models."""
+
 from enum import Enum
 from typing import Optional
 from typing import Tuple
@@ -17,6 +19,8 @@ from .energy_environment import EnergyDType
 
 
 class AlgorithmDType(str, Enum):
+    """Options for choosing a harvesting algorithm."""
+
     isc_voc = "isc_voc"
     ivcurve = ivcurves = ("ivcurve",)
     constant = cv = "cv"

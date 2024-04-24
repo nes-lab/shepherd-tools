@@ -1,3 +1,5 @@
+"""Configuration related to Target Nodes (DuT)."""
+
 from typing import List
 from typing import Optional
 
@@ -19,7 +21,7 @@ from .observer_features import PowerTracing
 
 
 class TargetConfig(ShpModel, title="Target Config"):
-    """Configuration for Target Nodes (DuT)."""
+    """Configuration related to Target Nodes (DuT)."""
 
     target_IDs: Annotated[List[IdInt], Field(min_length=1, max_length=128)]
     custom_IDs: Optional[Annotated[List[IdInt16], Field(min_length=1, max_length=128)]] = None

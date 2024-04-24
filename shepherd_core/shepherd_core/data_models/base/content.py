@@ -1,3 +1,5 @@
+"""Base-Model for all content."""
+
 import hashlib
 from datetime import datetime
 from typing import Optional
@@ -10,6 +12,7 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Annotated
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from .shepherd import ShpModel
 from .timezone import local_now
@@ -23,15 +26,20 @@ SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ Regex = All Printable ASCII-Characters with Space
 
 
+@deprecated("use UUID4 instead")
 def id_default() -> int:
-    # note: IdInt has space for 128 bit, so 128/4 = 32 hex-chars
+    """Generate a unique ID - usable as default value.
+
+    Note: IdInt has space for 128 bit, so 128/4 = 32 hex-chars
+    """
     time_stamp = str(local_now()).encode("utf-8")
     time_hash = hashlib.sha3_224(time_stamp).hexdigest()[-32:]
     return int(time_hash, 16)
 
 
 class ContentModel(ShpModel):
-    # General Properties
+    """Base-Model for content with generalized properties."""
+
     # id: UUID4 = Field(  # TODO: db-migration - temp fix for documentation
     id: Union[UUID4, int] = Field(
         description="Unique ID",

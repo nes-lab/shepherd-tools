@@ -1,3 +1,5 @@
+"""Content-Converters for firmwares."""
+
 import base64
 import hashlib
 import shutil
@@ -60,6 +62,7 @@ def base64_to_file(content: str, file_path: Path) -> None:
 
 @validate_call
 def file_to_hash(file_path: Path) -> str:
+    """Convert file-content to hash-value."""
     if not file_path.is_file():
         raise ValueError("Fn needs an existing file as input")
     with file_path.resolve().open("rb") as file:
@@ -69,6 +72,7 @@ def file_to_hash(file_path: Path) -> str:
 
 @validate_call
 def base64_to_hash(content: str) -> str:
+    """Convert base64-content to hash-value."""
     file_cmpress = base64.b64decode(content)
     file_content = zstd.ZstdDecompressor().decompress(file_cmpress)
     return hashlib.sha3_224(file_content).hexdigest()
@@ -76,7 +80,7 @@ def base64_to_hash(content: str) -> str:
 
 @validate_call
 def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path: Path) -> Path:
-    """Make included firmware-data usable in filesystem.
+    """Make embedded firmware-data usable in filesystem.
 
     - base64-string will be transformed to file
     - if data is a path the file will be copied to the destination.

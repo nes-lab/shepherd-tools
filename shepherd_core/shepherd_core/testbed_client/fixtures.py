@@ -1,3 +1,5 @@
+"""Current implementation of a file-based database."""
+
 import copy
 import os
 import pickle
@@ -163,6 +165,7 @@ class Fixture:
 
 
 def file_older_than(file: Path, delta: timedelta) -> bool:
+    """Decide if file is older than a specific duration of time."""
     cutoff = local_now() - delta
     mtime = datetime.fromtimestamp(file.stat().st_mtime, tz=local_tz())
     if mtime < cutoff:
@@ -171,6 +174,8 @@ def file_older_than(file: Path, delta: timedelta) -> bool:
 
 
 class Fixtures:
+    """A collection of individual fixture-elements."""
+
     suffix = ".yaml"
 
     @validate_call
@@ -239,6 +244,7 @@ class Fixtures:
 
 
 def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> List[Path]:
+    """Generate a recursive list of all files in a directory."""
     if recursion_depth == 0:
         suffix = suffix.lower().split(".")[-1]
     dir_items = os.scandir(start_path)

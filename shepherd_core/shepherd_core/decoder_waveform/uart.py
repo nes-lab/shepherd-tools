@@ -32,17 +32,23 @@ from ..logger import logger
 
 
 class Parity(str, Enum):
+    """Options for parity-property of UART data-frame."""
+
     no = "no"
     even = "odd"
     odd = "even"
 
 
 class BitOrder(str, Enum):
+    """Options for bit-order-property of UART data-frame."""
+
     msb = msb_first = "msb"
     lsb = lsb_first = "lsb"
 
 
 class Uart:
+    """Specialized UART decoder."""
+
     def __init__(
         self,
         content: Union[Path, np.ndarray],

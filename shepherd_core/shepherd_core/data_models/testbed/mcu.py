@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from enum import Enum
 from typing import Optional
 
@@ -13,6 +15,8 @@ from ..base.shepherd import ShpModel
 
 
 class ProgrammerProtocol(str, Enum):
+    """Options regarding the programming-protocol."""
+
     SWD = swd = "SWD"
     SBW = sbw = "SBW"
     JTAG = jtag = "JTAG"

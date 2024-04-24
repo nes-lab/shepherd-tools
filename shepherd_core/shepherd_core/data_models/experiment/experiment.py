@@ -1,3 +1,5 @@
+"""Config for testbed experiments."""
+
 from datetime import datetime
 from datetime import timedelta
 from typing import List
@@ -88,7 +90,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
         if len(target_ids) > len(set(obs_ids)):
             raise ValueError(
-                "Observer used more than once in Experiment -> only 1 target per observer!"
+                "Observer is used more than once in Experiment -> only 1 target per observer!"
             )
 
     def get_target_ids(self) -> list:

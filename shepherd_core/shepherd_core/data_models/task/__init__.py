@@ -1,3 +1,8 @@
+"""Module for task-related data-modules.
+
+These models import externally from all other model-modules!
+"""
+
 from pathlib import Path
 from typing import List
 from typing import Optional

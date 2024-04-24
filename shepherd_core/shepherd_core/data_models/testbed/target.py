@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from datetime import datetime
 from typing import Optional
 from typing import Union

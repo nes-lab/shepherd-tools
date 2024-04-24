@@ -45,6 +45,8 @@ class PruCalibration:
 
 
 class VirtualConverterModel:
+    """Ported python version of the pru vCnv."""
+
     def __init__(self, cfg: ConverterPRUConfig, cal: PruCalibration) -> None:
         self._cal: PruCalibration = cal
         self._cfg: ConverterPRUConfig = cfg
