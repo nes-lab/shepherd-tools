@@ -33,7 +33,7 @@ __all__ = [
 
 
 def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = None) -> Wrapper:
-    """Opens file and extracts tasks.
+    """Open file and extract tasks.
 
     - Open file (from Path or str of Path)
     - wraps task-model
@@ -52,7 +52,7 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
             parameters=config.model_dump(),
         )
     else:
-        raise ValueError("had unknown input: %s", type(config))
+        raise TypeError("had unknown input: %s", type(config))
 
     if shp_wrap.datatype == TestbedTasks.__name__:
         if observer is None:
@@ -74,7 +74,7 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
 
 
 def extract_tasks(shp_wrap: Wrapper, *, no_task_sets: bool = True) -> List[ShpModel]:
-    """ """
+    """Make the individual task-sets usable for each observer."""
     if shp_wrap.datatype == ObserverTasks.__name__:
         obt = ObserverTasks(**shp_wrap.parameters)
         content = obt.get_tasks()

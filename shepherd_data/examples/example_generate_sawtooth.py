@@ -1,7 +1,6 @@
-"""This script will
-generate a repetitive ramp / sawtooth,
-save file-metadata to yaml &
-read file and query some data.
+"""This script will generate a repetitive ramp / sawtooth.
+
+It will also save file-metadata to yaml & read file and query some data.
 """
 
 from pathlib import Path

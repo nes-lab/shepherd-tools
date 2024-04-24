@@ -83,8 +83,10 @@ def modify_symbol_value(
     *,
     overwrite: bool = False,
 ) -> Optional[Path]:
-    """Replaces value of symbol in ELF-File, hardcoded for uint16_t (2 byte)
-    testbed uses FN to patch firmware with custom target-ID.
+    """Replace value of uint16-symbol in ELF-File.
+
+    Hardcoded for uint16_t (2 byte).
+    The testbed uses this to patch firmware with custom target-ID.
 
     NOTE: can overwrite provided file.
 

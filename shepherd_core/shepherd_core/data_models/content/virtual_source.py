@@ -21,10 +21,10 @@ LUT2D = Annotated[List[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
-    """The virtual Source uses the energy environment (file)
-    for supplying the Target Node during the experiment.
+    """The vSrc uses the energy environment (file) for supplying the Target Node.
 
-    If not already done, the energy will be harvested and then converted.
+    If not already done, the energy will be harvested and
+    then converted during the experiment.
 
     The converter-stage is software defined and offers:
     - buck-boost-combinations,
@@ -119,9 +119,14 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         return self
 
     def calc_internal_states(self) -> dict:
-        """Compensate for (hard to detect) current-surge of real capacitors
-        when converter gets turned on -> this can be const value, because
-        the converter always turns on with "V_storage_enable_threshold_uV".
+        """Update the model-states for the capacitor and other elements.
+
+        This also compensates for current-surge of real capacitors
+        when the converter gets turned on:
+
+        - surges are hard to detect & record
+        - this can be const value, because
+        - the converter always turns on with "V_storage_enable_threshold_uV".
 
         TODO: currently neglecting delay after disabling converter, boost
         only has simpler formula, second enabling when V_Cap >= V_out

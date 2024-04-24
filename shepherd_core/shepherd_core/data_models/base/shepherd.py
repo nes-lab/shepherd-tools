@@ -88,11 +88,14 @@ class ShpModel(BaseModel):
         return str(content)
 
     def __getitem__(self, key: str) -> Any:
-        """Allows dict access -> model["key"], in addition to model.key."""
+        """Allow dict access like model["key"].
+
+        in addition to model.key.
+        """
         return self.__getattribute__(key)
 
     def __contains__(self, item: str) -> bool:
-        """Allows checks like 'x in YClass'."""
+        """Allow checks like 'x in YClass'."""
         return item in self.model_dump().keys()  # noqa: SIM118
         # more correct, but probably slower than hasattr
 
@@ -120,7 +123,7 @@ class ShpModel(BaseModel):
         *,
         minimal: bool = True,
     ) -> Path:
-        """Store data to yaml in a wrapper
+        """Store data to yaml in a wrapper.
 
         minimal: stores minimal set (filters out unset & default parameters)
         comment: documentation.

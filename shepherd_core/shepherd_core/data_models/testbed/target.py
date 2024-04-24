@@ -36,7 +36,7 @@ class Target(ShpModel, title="Target Node (DuT)"):
     mcu1: Union[MCU, NameStr]
     mcu2: Union[MCU, NameStr, None] = None
 
-    # TODO programming pins per mcu should be here (or better in Cape)
+    # TODO: programming pins per mcu should be here (or better in Cape)
 
     def __str__(self) -> str:
         return self.name

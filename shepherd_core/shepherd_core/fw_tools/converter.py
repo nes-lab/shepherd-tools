@@ -15,7 +15,10 @@ from .validation import is_hex
 
 @validate_call
 def firmware_to_hex(file_path: Path) -> Path:
-    """Generic converter that handles ELF & HEX."""
+    """Convert ELF-Files to HEX.
+
+    Generic converter that handles ELF & HEX.
+    """
     if not file_path.is_file():
         raise FileNotFoundError("Fn needs an existing file as input")
     if is_elf(file_path):

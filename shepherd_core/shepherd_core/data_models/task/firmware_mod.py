@@ -79,7 +79,7 @@ class FirmwareModTask(ShpModel):
         **kwargs: Unpack[TypedDict],
     ) -> Self:
         if not isinstance(fw, Firmware):
-            raise ValueError("fw-argument must be of type Firmware")
+            raise TypeError("fw-argument must be of type Firmware")
         kwargs["data"] = fw.data
         kwargs["data_type"] = fw.data_type
         fw.compare_hash()

@@ -22,12 +22,10 @@ from .target_config import TargetConfig
 
 
 class Experiment(ShpModel, title="Config of an Experiment"):
-    """Configuration for Experiments on the Shepherd-Testbed
-    emulating Energy Environments for Target Nodes.
-    """
+    """Config for experiments on the testbed emulating energy environments for target nodes."""
 
     # General Properties
-    # id: UUID4 ... # TODO db-migration - temp fix for documentation
+    # id: UUID4 ... # TODO: db-migration - temp fix for documentation
     id: Union[UUID4, int] = Field(default_factory=uuid4)
     # ⤷ TODO: automatic ID is problematic for identification by hash
 

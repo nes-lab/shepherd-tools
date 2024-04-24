@@ -187,9 +187,9 @@ class Reader:
         is_raw: bool = False,
         omit_ts: bool = False,
     ) -> Generator[tuple, None, None]:
-        """Generator that reads the specified range of buffers from the hdf5 file.
+        """Read the specified range of buffers from the hdf5 file.
 
-        can be configured on first call
+        Generator - can be configured on first call
         TODO: reconstruct - start/end mark samples &
          each call can request a certain number of samples.
 
@@ -225,7 +225,7 @@ class Reader:
                 )
 
     def get_calibration_data(self) -> CalibrationSeries:
-        """Reads calibration-data from hdf5 file.
+        """Read calibration-data from hdf5 file.
 
         :return: Calibration data as CalibrationSeries object
         """
@@ -255,8 +255,9 @@ class Reader:
         try:
             if "datatype" in self.h5file["data"].attrs:
                 return EnergyDType[self.h5file["data"].attrs["datatype"]]
-            return None
         except KeyError:
+            return None
+        else:
             return None
 
     def get_hrv_config(self) -> dict:
@@ -270,7 +271,7 @@ class Reader:
         }
 
     def is_valid(self) -> bool:
-        """Checks file for plausibility.
+        """Check file for plausibility, validity / correctness.
 
         :return: state of validity
         """
@@ -398,7 +399,7 @@ class Reader:
         return True
 
     def __getitem__(self, key: str) -> Any:
-        """Returns attribute or (if none found) a handle for a group or dataset (if found).
+        """Query attribute or (if none found) a handle for a group or dataset (if found).
 
         :param key: attribute, group, dataset
         :return: value of that key, or handle of object
@@ -439,7 +440,7 @@ class Reader:
     def _dset_statistics(
         self, dset: h5py.Dataset, cal: Optional[CalibrationPair] = None
     ) -> Dict[str, float]:
-        """Some basic stats for a provided dataset
+        """Create basic stats for a provided dataset.
 
         :param dset: dataset to evaluate
         :param cal: calibration (if wanted)
@@ -482,7 +483,7 @@ class Reader:
         return stats
 
     def _data_timediffs(self) -> List[float]:
-        """Calculate list of (unique) time-deltas between buffers [s]
+        """Calculate list of unique time-deltas [s] between buffers.
 
         Optimized version that only looks at the start of each buffer.
 

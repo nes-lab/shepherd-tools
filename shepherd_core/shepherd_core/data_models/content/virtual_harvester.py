@@ -27,8 +27,10 @@ class AlgorithmDType(str, Enum):
 
 
 class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
-    """A Harvester is needed when the file-based energy environment
-    of the virtual source is not already supplied as ivsample.
+    """A vHrv makes a source-characterization (i.e. ivcurve) usable for the vSrc.
+
+    Mostly used when the file-based energy environment of the virtual source
+    is not already supplied as pre-harvested ivsample-stream.
     """
 
     # General Metadata & Ownership -> ContentModel
@@ -189,7 +191,8 @@ algo_to_dtype = {
 
 
 class HarvesterPRUConfig(ShpModel):
-    """Map settings-list to internal state-vars struct HarvesterConfig
+    """Map settings-list to internal state-vars struct HarvesterConfig for PRU.
+
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw

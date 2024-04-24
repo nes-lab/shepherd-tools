@@ -151,7 +151,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @validate_call
     def extract_firmware(self, file: Path) -> Path:
-        """Stores embedded data in file.
+        """Store embedded fw-data in file.
 
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used

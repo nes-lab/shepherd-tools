@@ -56,8 +56,9 @@ class VirtualSourceModel:
         self.W_out_fWs: float = 0.0
 
     def iterate_sampling(self, V_inp_uV: int = 0, I_inp_nA: int = 0, I_out_nA: int = 0) -> int:
-        """TEST-SIMPLIFICATION - code below is not part of pru-code,
-        but in part sample_emulator() in sampling.c.
+        """TEST-SIMPLIFICATION - code below is not part of pru-code.
+
+        It originates from sample_emulator() in sampling.c.
 
         :param V_inp_uV:
         :param I_inp_nA:

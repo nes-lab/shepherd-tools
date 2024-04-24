@@ -1,4 +1,6 @@
-"""How to define an experiment:
+"""Shows different ways to define an experiment.
+
+How to define an experiment:
 
 - within python (shown in this example)
     - object-oriented data-models of

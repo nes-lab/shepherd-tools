@@ -129,7 +129,7 @@ def test_writer_append_raw(h5_path: Path) -> None:
         sfw.append_iv_data_raw(time_float, data_nd, data_nd)
         sfw.append_iv_data_raw(time_int, data_nd, data_nd)
         sfw.append_iv_data_raw(time_nd, data_nd, data_nd)
-        with pytest.raises(ValueError):  # noqa: PT011
+        with pytest.raises(TypeError):
             sfw.append_iv_data_raw(None, data_nd, data_nd)
 
 

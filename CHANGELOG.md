@@ -19,6 +19,8 @@
 - warn when fixtures are empty
 - fix relative imports (be as specific as possible)
 - fix lots of lint warnings
+- improve documentation
+- improve error-handling
 
 ## v2024.4.1
 

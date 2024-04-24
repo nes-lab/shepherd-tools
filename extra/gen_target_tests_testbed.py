@@ -1,4 +1,4 @@
-""" """
+"""Create experiments for running target self-checks on testbed."""
 
 from pathlib import Path
 

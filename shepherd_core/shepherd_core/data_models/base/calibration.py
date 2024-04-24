@@ -161,8 +161,9 @@ class CalibrationEmulator(ShpModel):
 
 
 class CapeData(ShpModel):
-    """Representation of Beaglebone Cape information
-        -> just provide serial-number on creation.
+    """Representation of Beaglebone Cape information.
+
+    User must at least provide serial-number on creation.
 
     According to BeagleBone specifications, each cape should host an EEPROM
     that contains some standardized information about the type of cape,
@@ -190,6 +191,7 @@ class CapeData(ShpModel):
 
 class CalibrationCape(ShpModel):
     """Represents calibration data of shepherd cape.
+
     Defines the format of calibration data and provides convenient functions
     to read and write calibration data.
 
@@ -204,7 +206,8 @@ class CalibrationCape(ShpModel):
 
     @classmethod
     def from_bytestr(cls, data: bytes, cape: Optional[CapeData] = None) -> Self:
-        """Instantiates calibration data based on byte string.
+        """Instantiate calibration data based on byte string.
+
         This is mainly used to deserialize data read from an EEPROM memory.
 
         Args:
@@ -226,7 +229,8 @@ class CalibrationCape(ShpModel):
         return cls(**dv)
 
     def to_bytestr(self) -> bytes:
-        """Serializes calibration data to byte string.
+        """Serialize calibration data to byte string.
+
         Used to prepare data for writing it to EEPROM.
 
         Returns:

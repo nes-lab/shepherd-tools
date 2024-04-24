@@ -1,4 +1,4 @@
-"""UART - Decoder
+"""UART - Decoder.
 
 Features:
 
@@ -52,8 +52,11 @@ class Uart:
         parity: Optional[Parity] = Parity.no,
         bit_order: Optional[BitOrder] = BitOrder.lsb_first,
     ) -> None:
-        """Provide a file with two columns:
-        timestamp (seconds with fraction) and signal (can be analog).
+        """Provide a file with two columns: TS & Signal.
+
+        Constraints:
+        - timestamp -> seconds with fraction
+        - signal -> can be analog or digital
 
         Note: class-parameters that are None (above) get auto-detected
           (some detectors still missing).
@@ -170,14 +173,17 @@ class Uart:
         return round(1 / mean_tick)
 
     def detect_half_stop(self) -> bool:
-        """Looks into the spacing between time-steps."""
+        """Look into the spacing between time-steps to determine use of half stop."""
         events = self.events_sig[:1000, :]  # speedup for large datasets
         return np.sum((events > 1.333 * self.dur_tick) & (events < 1.667 * self.dur_tick)) > 0
 
     def detect_dataframe_length(self) -> int:
-        """Look for longest pauses & accumulate steps until
+        """Try to determine length of dataframe.
+
+        Algo will look for longest pauses & accumulate steps until
         a state with uneven step-size is found.
         """
+        raise NotImplementedError
 
     def get_symbols(self, *, force_redo: bool = False) -> np.ndarray:
         """Extract symbols from events.

@@ -1,7 +1,4 @@
-"""This script will
-clean Models from temporary data (if wanted) &
-copy models to content-dir of core-lib.
-"""
+"""Clean models from temporary data (if wanted) & copy to content-dir of core-lib."""
 
 import sys
 from pathlib import Path

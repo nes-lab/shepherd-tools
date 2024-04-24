@@ -1,4 +1,6 @@
-"""Creates an overview for shepherd-host-machines with:
+"""Creates an overview for shepherd-host-machines.
+
+This will collect:
 - relevant software-versions
 - system-parameters
 - hardware-config.

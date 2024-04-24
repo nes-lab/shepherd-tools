@@ -49,7 +49,7 @@ yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
-    """Finds an unused filename in case it already exists.
+    """Find an unused filename in case it already exists.
 
     :param base_path: file-path to test
     :param suffix: file-suffix
@@ -224,7 +224,7 @@ class Writer(Reader):
         self.h5file.close()
 
     def _create_skeleton(self) -> None:
-        """Initializes the structure of the HDF5 file.
+        """Initialize the structure of the HDF5 file.
 
         HDF5 is hierarchically structured and before writing data, we have to
         setup this structure, i.e. creating the right groups with corresponding
@@ -280,7 +280,7 @@ class Writer(Reader):
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:
-        """Writes raw data to database.
+        """Write raw data to database.
 
         Args:
         ----
@@ -299,7 +299,7 @@ class Writer(Reader):
         if isinstance(timestamp, np.ndarray):
             len_new = min(len_new, timestamp.size)
         else:
-            raise ValueError("timestamp-data was not usable")
+            raise TypeError("timestamp-data was not usable")
 
         len_old = self.ds_voltage.shape[0]
 
@@ -319,7 +319,9 @@ class Writer(Reader):
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:
-        """Writes data (in SI / physical unit) to file, but converts it to raw-data first.
+        """Write data (provided in SI / physical unit) to file.
+
+        This will convert it to raw-data first.
 
            SI-value [SI-Unit] = raw-value * gain + offset,
 
@@ -354,11 +356,11 @@ class Writer(Reader):
             self.ds_current.resize((size_new,))
 
     def __setitem__(self, key: str, item: Any) -> None:
-        """A convenient interface to store relevant key-value data (attribute) if H5-structure."""
+        """Conveniently store relevant key-value data (attribute) in H5-structure."""
         self.h5file.attrs.__setitem__(key, item)
 
     def store_config(self, data: dict) -> None:
-        """Important Step to get a self-describing Output-File.
+        """Get a better self-describing Output-File.
 
         TODO: use data-model?
         :param data: from virtual harvester or converter / source.
@@ -368,8 +370,7 @@ class Writer(Reader):
         )
 
     def store_hostname(self, name: str) -> None:
-        """Option to distinguish the host, target or data-source in the testbed
-            -> perfect for plotting later.
+        """Option to distinguish the host, target or data-source -> perfect for plotting later.
 
         :param name: something unique, or "artificial" in case of generated content
         """

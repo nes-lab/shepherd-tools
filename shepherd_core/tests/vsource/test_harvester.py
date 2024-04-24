@@ -37,8 +37,8 @@ def test_vsource_hrv_create_files(
 @pytest.mark.parametrize("hrv_name", hrv_list[:3])
 def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
     # the first algos are not usable for ivcurve
+    hrv_config = VirtualHarvesterConfig(name=hrv_name)
     with pytest.raises(ValueError):  # noqa: PT011
-        hrv_config = VirtualHarvesterConfig(name=hrv_name)
         _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in=EnergyDType.ivcurve)
 
 
@@ -62,12 +62,12 @@ def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
 def test_vsource_hrv_fail_isc_voc(hrv_name: str) -> None:
     # not implemented ATM
+    hrv_config = VirtualHarvesterConfig(name=hrv_name)
     with pytest.raises(NotImplementedError):
-        hrv_config = VirtualHarvesterConfig(name=hrv_name)
         _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in=EnergyDType.isc_voc)
 
 
 def test_vsource_hrv_fail_unknown_type() -> None:
+    hrv_config = VirtualHarvesterConfig(name="mppt_voc")
     with pytest.raises(KeyError):
-        hrv_config = VirtualHarvesterConfig(name="mppt_voc")
         _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in="xyz")

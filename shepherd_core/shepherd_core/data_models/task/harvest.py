@@ -17,9 +17,7 @@ from .emulation import Compression
 
 
 class HarvestTask(ShpModel):
-    """Configuration for the Observer in Harvest-Mode
-    Record IV data from a harvest-source.
-    """
+    """Config for the Observer in Harvest-Mode to record IV data from a harvesting-source."""
 
     # General config
     output_path: Path
