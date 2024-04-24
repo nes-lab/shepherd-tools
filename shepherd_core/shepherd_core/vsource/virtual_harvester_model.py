@@ -1,4 +1,7 @@
-"""this is ported py-version of the pru-code, goals:
+"""this is ported py-version of the pru-code.
+
+Goals:
+
 - stay close to original code-base
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
@@ -7,6 +10,7 @@ NOTE1: DO NOT OPTIMIZE -> stay close to original c-code-base
 NOTE2: adc-harvest-routines are not part of this model (virtual_harvester lines 66:289)
 
 Compromises:
+
 - Py has to map the settings-list to internal vars -> is kernel-task
 - Python has no static vars -> FName_reset is handling the class-vars
 
@@ -18,6 +22,8 @@ from ..data_models.content.virtual_harvester import HarvesterPRUConfig
 
 
 class VirtualHarvesterModel:
+    """Ported python version of the pru vHrv."""
+
     HRV_IVCURVE: int = 2**4
     HRV_CV: int = 2**8
     HRV_MPPT_VOC: int = 2**12

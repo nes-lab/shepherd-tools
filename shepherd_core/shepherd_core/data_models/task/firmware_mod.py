@@ -1,3 +1,5 @@
+"""Config for Task that adds the custom ID to the firmware & stores it into a file."""
+
 import copy
 from pathlib import Path
 from typing import Optional
@@ -24,7 +26,7 @@ from ..testbed.target import MCUPort
 
 
 class FirmwareModTask(ShpModel):
-    """Config for Task that adds the custom ID to the firmware & stores it into a file"""
+    """Config for Task that adds the custom ID to the firmware & stores it into a file."""
 
     data: Union[FirmwareStr, Path]
     data_type: FirmwareDType
@@ -79,7 +81,7 @@ class FirmwareModTask(ShpModel):
         **kwargs: Unpack[TypedDict],
     ) -> Self:
         if not isinstance(fw, Firmware):
-            raise ValueError("fw-argument must be of type Firmware")
+            raise TypeError("fw-argument must be of type Firmware")
         kwargs["data"] = fw.data
         kwargs["data_type"] = fw.data_type
         fw.compare_hash()

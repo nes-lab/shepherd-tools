@@ -1,3 +1,5 @@
+"""Generalized virtual source data models."""
+
 from typing import List
 
 from pydantic import Field
@@ -8,8 +10,8 @@ from typing_extensions import Self
 from ...commons import samplerate_sps_default
 from ...logger import logger
 from ...testbed_client import tb_client
-from .. import ShpModel
 from ..base.content import ContentModel
+from ..base.shepherd import ShpModel
 from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvesterConfig
 
@@ -21,9 +23,11 @@ LUT2D = Annotated[List[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
-    """The virtual Source uses the energy environment (file)
-    for supplying the Target Node during the experiment.
-    If not already done, the energy will be harvested and then converted.
+    """The vSrc uses the energy environment (file) for supplying the Target Node.
+
+    If not already done, the energy will be harvested and
+    then converted during the experiment.
+
     The converter-stage is software defined and offers:
     - buck-boost-combinations,
     - a simple diode + resistor and
@@ -117,9 +121,15 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         return self
 
     def calc_internal_states(self) -> dict:
-        """Compensate for (hard to detect) current-surge of real capacitors
-        when converter gets turned on -> this can be const value, because
-        the converter always turns on with "V_storage_enable_threshold_uV"
+        """Update the model-states for the capacitor and other elements.
+
+        This also compensates for current-surge of real capacitors
+        when the converter gets turned on:
+
+        - surges are hard to detect & record
+        - this can be const value, because
+        - the converter always turns on with "V_storage_enable_threshold_uV".
+
         TODO: currently neglecting delay after disabling converter, boost
         only has simpler formula, second enabling when V_Cap >= V_out
 
@@ -189,7 +199,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         return values
 
     def calc_converter_mode(self, *, log_intermediate_node: bool) -> int:
-        """Assembles bitmask from discrete values
+        """Assembles bitmask from discrete values.
 
         log_intermediate_node: record / log virtual intermediate (cap-)voltage and
         -current (out) instead of output-voltage and -current
@@ -204,7 +214,8 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         )
 
     def calc_cap_constant_us_per_nF_n28(self) -> int:
-        """Calc constant to convert capacitor-current to Voltage-delta
+        """Calc constant to convert capacitor-current to Voltage-delta.
+
         dV[uV] = constant[us/nF] * current[nA] = constant[us*V/nAs] * current[nA]
         """
         C_cap_uF = max(self.C_intermediate_uF, 0.001)
@@ -224,7 +235,8 @@ lut_o = Annotated[List[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
 class ConverterPRUConfig(ShpModel):
-    """Map settings-list to internal state-vars struct ConverterConfig
+    """Map settings-list to internal state-vars struct ConverterConfig.
+
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw

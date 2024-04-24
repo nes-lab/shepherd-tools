@@ -1,3 +1,5 @@
+"""Data-model for recorded eEnvs."""
+
 from enum import Enum
 from pathlib import Path
 from typing import Optional
@@ -10,15 +12,15 @@ from ..base.content import ContentModel
 
 
 class EnergyDType(str, Enum):
-    ivsample = "ivsample"
-    ivsamples = "ivsample"
-    ivcurve = "ivcurve"
-    ivcurves = "ivcurve"  # a stream could also be called iv-surface
+    """Data-Type-Options for energy environments."""
+
+    ivsample = ivsamples = "ivsample"
+    ivcurve = ivcurves = ivsurface = "ivcurve"
     isc_voc = "isc_voc"
 
 
 class EnergyEnvironment(ContentModel):
-    """Recording of meta-data representation of a testbed-component"""
+    """Recording of meta-data representation of a testbed-component."""
 
     # General Metadata & Ownership -> ContentModel
 

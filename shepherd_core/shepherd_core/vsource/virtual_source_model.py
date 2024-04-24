@@ -1,7 +1,10 @@
-"""this is ported py-version of the pru-code, goals:
+"""This is ported py-version of the pru-code.
+
+Goals:
+
 - stay close to original code-base
 - offer a comparison for the tests
-- step 1 to a virtualization of emulation
+- step 1 to a virtualization of emulation.
 
 NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 
@@ -20,7 +23,7 @@ from .virtual_harvester_model import VirtualHarvesterModel
 
 
 class VirtualSourceModel:
-    """part of sampling.c"""
+    """part of sampling.c."""
 
     def __init__(
         self,
@@ -53,8 +56,9 @@ class VirtualSourceModel:
         self.W_out_fWs: float = 0.0
 
     def iterate_sampling(self, V_inp_uV: int = 0, I_inp_nA: int = 0, I_out_nA: int = 0) -> int:
-        """TEST-SIMPLIFICATION - code below is not part of pru-code,
-        but in part sample_emulator() in sampling.c
+        """TEST-SIMPLIFICATION - code below is not part of pru-code.
+
+        It originates from sample_emulator() in sampling.c.
 
         :param V_inp_uV:
         :param I_inp_nA:

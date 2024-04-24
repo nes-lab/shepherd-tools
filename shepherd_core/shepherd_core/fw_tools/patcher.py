@@ -1,3 +1,5 @@
+"""Read and modify symbols in ELF-files."""
+
 from pathlib import Path
 from typing import Optional
 
@@ -22,6 +24,7 @@ except ImportError as e:
 
 @validate_call
 def find_symbol(file_elf: Path, symbol: str) -> bool:
+    """Find a symbol in the ELF file."""
     if symbol is None or not is_elf(file_elf):
         return False
     if ELF is None:
@@ -47,7 +50,10 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
 
 @validate_call
 def read_symbol(file_elf: Path, symbol: str, length: int = uid_len_default) -> Optional[int]:
-    """Interpreted as int"""
+    """Read value of symbol in ELF-File.
+
+    Will be interpreted as int.
+    """
     if not find_symbol(file_elf, symbol):
         return None
     if ELF is None:
@@ -60,10 +66,12 @@ def read_symbol(file_elf: Path, symbol: str, length: int = uid_len_default) -> O
 
 
 def read_uid(file_elf: Path) -> Optional[int]:
+    """Read value of UID-symbol for shepherd testbed."""
     return read_symbol(file_elf, symbol=uid_str_default, length=uid_len_default)
 
 
 def read_arch(file_elf: Path) -> Optional[str]:
+    """Determine chip-architecture from elf-metadata."""
     if not is_elf(file_elf):
         return None
     if ELF is None:
@@ -83,9 +91,12 @@ def modify_symbol_value(
     *,
     overwrite: bool = False,
 ) -> Optional[Path]:
-    """Replaces value of symbol in ELF-File, hardcoded for uint16_t (2 byte)
-    testbed uses FN to patch firmware with custom target-ID
-    NOTE: can overwrite provided file
+    """Replace value of uint16-symbol in ELF-File.
+
+    Hardcoded for uint16_t (2 byte).
+    The testbed uses this to patch firmware with custom target-ID.
+
+    NOTE: can overwrite provided file.
 
     """
     if not find_symbol(file_elf, symbol):
@@ -121,4 +132,5 @@ def modify_symbol_value(
 
 
 def modify_uid(file_elf: Path, value: int) -> Optional[Path]:
+    """Replace value of UID-symbol for shepherd testbed."""
     return modify_symbol_value(file_elf, symbol=uid_str_default, value=value, overwrite=True)

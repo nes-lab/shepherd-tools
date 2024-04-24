@@ -1,3 +1,5 @@
+"""Hardware related inventory model."""
+
 from typing import List
 from typing import Optional
 
@@ -8,6 +10,8 @@ from ..data_models import ShpModel
 
 
 class TargetInventory(ShpModel):
+    """Hardware related inventory model."""
+
     cape: Optional[str] = None
     targets: List[str] = []  # noqa: RUF012
 

@@ -45,7 +45,7 @@ def test_firmware_to_hex_w_hex(path_hex: Path) -> None:
 @pytest.mark.converter()
 def test_firmware_to_hex_w_fail() -> None:
     path_some = Path(__file__).parent / "conftest.py"
-    with pytest.raises(ValueError):
+    with pytest.raises(FileNotFoundError):
         _ = fw_tools.firmware_to_hex(path_some)
 
 

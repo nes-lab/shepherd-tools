@@ -1,3 +1,5 @@
+"""Collection of tasks for selected observer included in experiment."""
+
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
@@ -18,7 +20,7 @@ from .programming import ProgrammingTask
 
 
 class ObserverTasks(ShpModel):
-    """Collection of tasks for selected observer included in experiment"""
+    """Collection of tasks for selected observer included in experiment."""
 
     observer: NameStr
     owner_id: Optional[IdInt]  # TODO: set to optional for now, shouldn't be

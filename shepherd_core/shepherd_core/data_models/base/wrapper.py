@@ -1,3 +1,5 @@
+"""Wrapper-related ecosystem for transferring models."""
+
 from datetime import datetime
 from typing import Optional
 
@@ -10,9 +12,7 @@ SafeStrClone = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 
 
 class Wrapper(BaseModel):
-    """Prototype for enabling one web- & file-interface for
-    all models with dynamic typecasting
-    """
+    """Generalized web- & file-interface for all models with dynamic typecasting."""
 
     datatype: str
     # ⤷ model-name

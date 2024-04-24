@@ -1,3 +1,5 @@
+"""Shows how to use inventory functionality."""
+
 from pathlib import Path
 
 from shepherd_core.inventory import Inventory

@@ -1,3 +1,5 @@
+"""Collection of tasks for all observers included in experiment."""
+
 from typing import List
 from typing import Optional
 
@@ -15,7 +17,7 @@ from .observer_tasks import ObserverTasks
 
 
 class TestbedTasks(ShpModel):
-    """Collection of tasks for all observers included in experiment"""
+    """Collection of tasks for all observers included in experiment."""
 
     name: NameStr
     observer_tasks: Annotated[List[ObserverTasks], Field(min_length=1, max_length=128)]

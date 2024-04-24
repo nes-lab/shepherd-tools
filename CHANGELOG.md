@@ -1,14 +1,15 @@
 # History of Changes
 
-## TODO
+## v2024.4.2
 
-- remove db-specific fields
-- add map-generator
-- add tests for broken h5-files
-- divide h5-tests in valid and healthy
-- add multi-processing
+- fix import-bug regarding fixtures
+- warn when fixtures are empty
+- fix relative imports (be as specific as possible)
+- fix lots of lint warnings
+- improve documentation
+- improve error-handling
 
-## v2024.04.1
+## v2024.4.1
 
 - add UUID to models
 - improve docstrings to be used by shepherd-doc
@@ -139,6 +140,7 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 #  8.4 s on v2023.8.6, pydantic 1.10
 # 13.9 s on v2023.8.7, pydantic 2.2.1, core 2.6.1
 # 13.7 s with defer_build=True ⇾ triggers bug?
+# 12.8 s on v2024.4.1, pydantic 2.7.0, core 2.18.1
 ```
 
 ## v2023.08.6
@@ -165,7 +167,7 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 
 ## v2023.08.3
 
-- improve handling of uninstalled sub-modules (elf, inventory)
+- improve handling of uninstalled submodules (elf, inventory)
 - add helper FNs for fw_tools, including utests
 - fix missing imports
 - add hash to fw-model

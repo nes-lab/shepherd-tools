@@ -1,3 +1,5 @@
+"""Models for the process of calibration a device by measurements."""
+
 from typing import List
 from typing import Optional
 
@@ -7,10 +9,10 @@ from pydantic import PositiveFloat
 from pydantic import validate_call
 from typing_extensions import Annotated
 
-from .. import CalibrationCape
-from .. import CalibrationEmulator
-from .. import CalibrationHarvester
-from .. import CalibrationPair
+from .calibration import CalibrationCape
+from .calibration import CalibrationEmulator
+from .calibration import CalibrationHarvester
+from .calibration import CalibrationPair
 from .calibration import CapeData
 from .shepherd import ShpModel
 
@@ -18,6 +20,8 @@ from .shepherd import ShpModel
 
 
 class CalMeasurementPair(ShpModel):
+    """Value-container for a calibration-measurement."""
+
     shepherd_raw: PositiveFloat
     reference_si: float = 0
 
@@ -27,7 +31,8 @@ CalMeasPairs = Annotated[List[CalMeasurementPair], Field(min_length=2)]
 
 @validate_call
 def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
-    from scipy import stats  # here due to massive delay
+    """Convert values from calibration-measurement to the calibration itself."""
+    from scipy import stats  # placed here due to massive delay
 
     x = np.empty(len(data))
     y = np.empty(len(data))
@@ -40,14 +45,17 @@ def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
     rval = result.rvalue  # test quality of regression
 
     if rval < 0.999:
-        raise ValueError(
+        msg = (
             "Calibration faulty -> Correlation coefficient "
             f"(rvalue) = {rval}:.6f is too low for '{component}'"
         )
+        raise ValueError(msg)
     return CalibrationPair(offset=offset, gain=gain)
 
 
 class CalMeasurementHarvester(ShpModel):
+    """Container for the values of the calibration-measurement."""
+
     dac_V_Hrv: CalMeasPairs
     dac_V_Sim: CalMeasPairs
     adc_V_Sense: CalMeasPairs
@@ -62,6 +70,8 @@ class CalMeasurementHarvester(ShpModel):
 
 
 class CalMeasurementEmulator(ShpModel):
+    """Container for the values of the calibration-measurement."""
+
     dac_V_A: CalMeasPairs  # TODO: why not V_dac_A or V_dac_a
     dac_V_B: CalMeasPairs
     adc_C_A: CalMeasPairs
@@ -76,6 +86,8 @@ class CalMeasurementEmulator(ShpModel):
 
 
 class CalMeasurementCape(ShpModel):
+    """Container for the values of the calibration-measurement."""
+
     cape: Optional[CapeData] = None
     host: Optional[str] = None
 

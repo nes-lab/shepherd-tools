@@ -1,3 +1,5 @@
+"""Model for user-management."""
+
 import secrets
 from hashlib import pbkdf2_hmac
 from typing import Optional
@@ -21,8 +23,11 @@ from ..data_models.base.shepherd import ShpModel
 
 @validate_call
 def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length=100)]) -> bytes:
-    # TODO: add salt of testbed -> this fn should be part of Testbed-Object
+    """Generate a hash of a string.
+
     # NOTE: 1M Iterations need 25s on beaglebone
+    # TODO: add salt of testbed -> this fn should be part of Testbed-Object
+    """
     return pbkdf2_hmac(
         "sha512",
         password=pw.encode("utf-8"),
@@ -33,9 +38,9 @@ def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length
 
 
 class User(ShpModel):
-    """meta-data representation of a testbed-component (physical object)"""
+    """meta-data representation of a testbed-component (physical object)."""
 
-    # id: UUID4 = Field(  # TODO db-migration - temp fix for documentation
+    # id: UUID4 = Field(  # TODO: db-migration - temp fix for documentation
     id: Union[UUID4, int] = Field(
         description="Unique ID",
         default_factory=uuid4,

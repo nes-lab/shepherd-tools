@@ -1,7 +1,9 @@
-"""Creates an overview for shepherd-host-machines with:
+"""Creates an overview for shepherd-host-machines.
+
+This will collect:
 - relevant software-versions
 - system-parameters
-- hardware-config
+- hardware-config.
 """
 
 from datetime import datetime
@@ -28,7 +30,11 @@ __all__ = [
 
 
 class Inventory(PythonInventory, SystemInventory, TargetInventory):
-    # has all child-parameters
+    """Complete inventory for one device.
+
+    Has all child-parameters.
+    """
+
     hostname: str
     created: datetime
 
@@ -47,12 +53,16 @@ class Inventory(PythonInventory, SystemInventory, TargetInventory):
 
 
 class InventoryList(ShpModel):
+    """Collection of inventories for several devices."""
+
     elements: Annotated[List[Inventory], Field(min_length=1)]
 
     def to_csv(self, path: Path) -> None:
-        """TODO: pretty messed up (raw lists and dicts for sub-elements)
+        """Generate a CSV.
+
+        TODO: pretty messed up (raw lists and dicts for sub-elements)
         numpy.savetxt -> too basic
-        np.concatenate(content).reshape((len(content), len(content[0])))
+        np.concatenate(content).reshape((len(content), len(content[0]))).
         """
         if path.is_dir():
             path = path / "inventory.yaml"

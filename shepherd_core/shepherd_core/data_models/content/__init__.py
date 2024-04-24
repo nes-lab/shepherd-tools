@@ -1,11 +1,14 @@
+"""Module for content-type data-models.
+
+These models import externally from: /base, /testbed.
+"""
+
 from .energy_environment import EnergyDType
 from .energy_environment import EnergyEnvironment
 from .firmware import Firmware
 from .firmware_datatype import FirmwareDType
 from .virtual_harvester import VirtualHarvesterConfig
 from .virtual_source import VirtualSourceConfig
-
-# these models import externally from: /base, /testbed
 
 __all__ = [
     "EnergyEnvironment",
@@ -16,5 +19,3 @@ __all__ = [
     "EnergyDType",
     "FirmwareDType",
 ]
-
-# TODO: include models for end-users on root-level

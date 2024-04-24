@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from shepherd_core.data_models.testbed import GPIO
 from shepherd_core.data_models.testbed import MCU
@@ -33,7 +34,7 @@ def test_testbed_model_gpio_min() -> None:
 
 
 def test_testbed_model_gpio_fault() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         GPIO(
             id=9999,
             name="gippi",
@@ -78,7 +79,7 @@ def test_testbed_model_observer_min() -> None:
 
 
 def test_testbed_model_observer_fault_cape_a() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         Observer(
             id=9933,
             name="sheep120",
@@ -92,7 +93,7 @@ def test_testbed_model_observer_fault_cape_a() -> None:
 
 
 def test_testbed_model_observer_fault_cape_b() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         Observer(
             id=9933,
             name="sheep120",
@@ -122,9 +123,9 @@ def test_testbed_model_observer_fault_target() -> None:
     obs.get_target(3)
     obs.get_target_port(2)
     obs.get_target_port(3)
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         obs.get_target_port(123456)
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         obs.get_target(123456)
 
 
@@ -163,7 +164,7 @@ def test_testbed_model_tb_min() -> None:
 
 
 def test_testbed_model_tb_fault_observer() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         TasteBad(
             name="shepherd",
             id="9955",
@@ -175,7 +176,7 @@ def test_testbed_model_tb_fault_observer() -> None:
 
 
 def test_testbed_model_tb_fault_shared() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         TasteBad(
             name="shepherd",
             id="9955",

@@ -1,3 +1,8 @@
+"""Handling firmware for targets.
+
+TODO: should be more generalized - currently only supports msp & nRF
+"""
+
 from pathlib import Path
 from typing import Optional
 from typing import TypedDict
@@ -45,7 +50,7 @@ FirmwareStr = Annotated[str, StringConstraints(min_length=3, max_length=8_000_00
 
 
 class Firmware(ContentModel, title="Firmware of Target"):
-    """meta-data representation of a data-component"""
+    """meta-data representation of a data-component."""
 
     # General Metadata & Ownership -> ContentModel
 
@@ -91,9 +96,10 @@ class Firmware(ContentModel, title="Firmware of Target"):
         embed: bool = True,
         **kwargs: Unpack[TypedDict],
     ) -> Self:
-        """Embeds firmware and tries to fill parameters
+        """Embeds firmware and tries to fill parameters.
+
         ELF -> mcu und data_type are deducted
-        HEX -> must supply mcu manually
+        HEX -> must supply mcu manually.
         """
         # TODO: use new determine_type() & determine_arch() and also allow to not embed
         kwargs["data_hash"] = fw_tools.file_to_hash(file)
@@ -113,7 +119,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             elif fw_tools.is_hex_nrf52(file):
                 arch = "nrf52"
             else:
-                raise ValueError("File is not a HEX for the Testbed")
+                raise ValueError("File is not a suitable HEX for the Testbed")
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
 
@@ -150,7 +156,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @validate_call
     def extract_firmware(self, file: Path) -> Path:
-        """Stores embedded data in file
+        """Store embedded fw-data in file.
+
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """

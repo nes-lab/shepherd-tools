@@ -1,3 +1,5 @@
+"""Client-Class to access a testbed instance."""
+
 from importlib import import_module
 from pathlib import Path
 from typing import Optional
@@ -16,6 +18,8 @@ from .user_model import User
 
 
 class TestbedClient:
+    """Client-Class to access a testbed instance."""
+
     _instance: Optional[Self] = None
 
     def __init__(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> None:
@@ -41,8 +45,10 @@ class TestbedClient:
 
     @validate_call
     def connect(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> bool:
-        """server: either "local" to use demo-fixtures or something like "https://HOST:PORT"
-        token: your account validation
+        """Establish connection to testbed-server.
+
+        server: either "local" to use demo-fixtures or something like "https://HOST:PORT"
+        token: your account validation.
         """
         if isinstance(token, Path):
             with token.resolve().open() as file:
@@ -77,19 +83,19 @@ class TestbedClient:
 
     def query_ids(self, model_type: str) -> list:
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         return list(self._fixtures[model_type].elements_by_id.keys())
 
     def query_names(self, model_type: str) -> list:
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         return list(self._fixtures[model_type].elements_by_name.keys())
 
     def query_item(
         self, model_type: str, uid: Optional[int] = None, name: Optional[str] = None
     ) -> dict:
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         if uid is not None:
             return self._fixtures[model_type].query_id(uid)
         if name is not None:
@@ -115,11 +121,11 @@ class TestbedClient:
 
     def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
         if self._connected:
-            raise RuntimeError("Not Implemented, TODO")
+            raise NotImplementedError("TODO")
         return self._fixtures[model_type].inheritance(values)
 
     def try_completing_model(self, model_type: str, values: dict) -> (dict, list):
-        """Init by name/id, for none existing instances raise Exception"""
+        """Init by name/id, for none existing instances raise Exception."""
         if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             value = next(iter(values.values()))
             if (
@@ -131,7 +137,8 @@ class TestbedClient:
                 # TODO: still depending on _fixture
                 values = self.query_item(model_type, uid=value)
             else:
-                raise ValueError(f"Query {model_type} by name / ID failed - {values} is unknown!")
+                msg = f"Query {model_type} by name / ID failed - {values} is unknown!"
+                raise ValueError(msg)
         return self.try_inheritance(model_type, values)
 
     def fill_in_user_data(self, values: dict) -> dict:

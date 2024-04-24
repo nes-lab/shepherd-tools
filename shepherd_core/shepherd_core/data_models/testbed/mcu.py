@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from enum import Enum
 from typing import Optional
 
@@ -13,18 +15,16 @@ from ..base.shepherd import ShpModel
 
 
 class ProgrammerProtocol(str, Enum):
-    SWD = "SWD"
-    swd = "SWD"
-    SBW = "SBW"
-    sbw = "SBW"
-    JTAG = "JTAG"
-    jtag = "JTAG"
-    UART = "UART"
-    uart = "UART"
+    """Options regarding the programming-protocol."""
+
+    SWD = swd = "SWD"
+    SBW = sbw = "SBW"
+    JTAG = jtag = "JTAG"
+    UART = uart = "UART"
 
 
 class MCU(ShpModel, title="Microcontroller of the Target Node"):
-    """meta-data representation of a testbed-component (physical object)"""
+    """meta-data representation of a testbed-component (physical object)."""
 
     id: IdInt
     name: NameStr

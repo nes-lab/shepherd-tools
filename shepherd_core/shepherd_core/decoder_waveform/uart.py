@@ -1,4 +1,7 @@
-"""UART - Decoder - Features:
+"""UART - Decoder.
+
+Features:
+
 - 1 bit Start (LOW)
 - 1 .. **8** .. 64 bit data-frame
 - **1**, 1.5, 2 bit stop (HIGH) - don't care?
@@ -7,12 +10,12 @@
 - **no** inversion
 
 Todo:
-----
-  - detect bitOrder
-  - detect dataframe length
-  - detect parity
+- detect bitOrder
+- detect dataframe length
+- detect parity
 
 More Info:
+
 https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter
 https://sigrok.org/wiki/Protocol_decoder:Uart
 
@@ -29,19 +32,23 @@ from ..logger import logger
 
 
 class Parity(str, Enum):
+    """Options for parity-property of UART data-frame."""
+
     no = "no"
     even = "odd"
     odd = "even"
 
 
 class BitOrder(str, Enum):
-    msb = "msb"
-    msb_first = "msb"
-    lsb = "lsb"
-    lsb_first = "lsb"
+    """Options for bit-order-property of UART data-frame."""
+
+    msb = msb_first = "msb"
+    lsb = lsb_first = "lsb"
 
 
 class Uart:
+    """Specialized UART decoder."""
+
     def __init__(
         self,
         content: Union[Path, np.ndarray],
@@ -51,10 +58,14 @@ class Uart:
         parity: Optional[Parity] = Parity.no,
         bit_order: Optional[BitOrder] = BitOrder.lsb_first,
     ) -> None:
-        """Provide a file with two columns:
-        - timestamp (seconds with fraction) and signal (can be analog).
-        - class-parameters that are None (above) get auto-detected
-          (some detectors still missing)
+        """Provide a file with two columns: TS & Signal.
+
+        Constraints:
+        - timestamp -> seconds with fraction
+        - signal -> can be analog or digital
+
+        Note: class-parameters that are None (above) get auto-detected
+          (some detectors still missing).
         """
         if isinstance(content, Path):
             self.events_sig: np.ndarray = np.loadtxt(content.as_posix(), delimiter=",", skiprows=1)
@@ -109,7 +120,7 @@ class Uart:
         self.text: Optional[str] = None
 
     def _convert_analog2digital(self, *, invert: bool = False) -> None:
-        """Divide dimension in two, divided by mean-value"""
+        """Divide dimension in two, divided by mean-value."""
         data = self.events_sig[:, 1]
         mean = np.mean(data)
         if invert:
@@ -118,7 +129,7 @@ class Uart:
             self.events_sig[:, 1] = data >= mean
 
     def _filter_redundant_states(self) -> None:
-        """Sum of two sequential states is always 1 (True + False) if alternating"""
+        """Sum of two sequential states is always 1 (True + False) if alternating."""
         data_0 = self.events_sig[:, 1]
         data_1 = np.concatenate([[not data_0[0]], data_0[:-1]])
         data_f = data_0 + data_1
@@ -132,7 +143,7 @@ class Uart:
             )
 
     def _add_duration(self) -> None:
-        """Calculate third column -> duration of state in [baud-ticks]"""
+        """Calculate third column -> duration of state in [baud-ticks]."""
         if self.events_sig.shape[1] > 2:
             logger.warning("Tried to add state-duration, but it seems already present")
             return
@@ -143,7 +154,8 @@ class Uart:
         self.events_sig = np.append(self.events_sig[:-1, :], dur_steps / self.dur_tick, axis=1)
 
     def detect_inversion(self) -> bool:
-        """Analyze bit-state during long pauses (unchanged states)
+        """Analyze bit-state during long pauses (unchanged states).
+
         - pause should be HIGH for non-inverted mode (default)
         - assumes max frame size of 64 bit + x for safety
         """
@@ -157,7 +169,7 @@ class Uart:
         return mean_state < 0.5
 
     def detect_baud_rate(self) -> int:
-        """Analyze the smallest step"""
+        """Analyze the smallest step."""
         events = self.events_sig[:1000, :]  # speedup for large datasets
         dur_steps = events[1:, 0] - events[:-1, 0]
         def_step = np.percentile(dur_steps[dur_steps > 0], 10)
@@ -167,23 +179,29 @@ class Uart:
         return round(1 / mean_tick)
 
     def detect_half_stop(self) -> bool:
-        """Looks into the spacing between time-steps"""
+        """Look into the spacing between time-steps to determine use of half stop."""
         events = self.events_sig[:1000, :]  # speedup for large datasets
         return np.sum((events > 1.333 * self.dur_tick) & (events < 1.667 * self.dur_tick)) > 0
 
     def detect_dataframe_length(self) -> int:
-        """Look after longest pauses
-        - accumulate steps until a state with uneven step-size is found
+        """Try to determine length of dataframe.
+
+        Algo will look for longest pauses & accumulate steps until
+        a state with uneven step-size is found.
         """
+        raise NotImplementedError
 
     def get_symbols(self, *, force_redo: bool = False) -> np.ndarray:
-        """Ways to detect EOF:
+        """Extract symbols from events.
+
+        Ways to detect EOF:
         - long pause on HIGH
         - off_tick pause on high
         - bit_pos > max
+
         # TODO:
             - slowest FN -> speedup with numba or parallelization?
-            - dset could be divided (long pauses) and threaded for speedup
+            - dset could be divided (long pauses) and threaded for speedup.
         """
         if force_redo:
             self.events_symbols = None
@@ -235,7 +253,7 @@ class Uart:
         return self.events_symbols
 
     def get_lines(self, *, force_redo: bool = False) -> np.ndarray:
-        """Timestamped symbols to line, cut at \r, \r\n or \n"""
+        r"""Timestamped symbols to line, cut at \r, \r\n or \n."""
         if force_redo:
             self.events_lines = None
         if self.events_lines is not None:
@@ -267,7 +285,7 @@ class Uart:
         return self.events_lines
 
     def get_text(self, *, force_redo: bool = False) -> str:
-        """Remove timestamps and just return the whole string"""
+        """Remove timestamps and just return the whole string."""
         if force_redo:
             self.text = None
         if self.text is not None:

@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Optional
 
 import pytest
-from pytest import approx
 
 from shepherd_core import CalibrationEmulator
 from shepherd_core import Reader
@@ -55,7 +54,7 @@ def test_vsource_vsrc_static1() -> None:
     for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=3_000_000, I_inp_nA=0)
     assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs == approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
+    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
 
 
 def test_vsource_vsrc_static2() -> None:
@@ -64,7 +63,7 @@ def test_vsource_vsrc_static2() -> None:
     for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=0, I_inp_nA=3_000_000)
     assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs == approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
+    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
 
 
 @pytest.mark.parametrize("src_name", src_list[2:])
@@ -75,7 +74,7 @@ def test_vsource_charge(src_name: str) -> None:
         src.iterate_sampling(V_inp_uV=v_mV * 1000, I_inp_nA=1_000_000)
     v_out = src.iterate_sampling(V_inp_uV=1_000_000, I_inp_nA=1_000_000)
     assert src.W_inp_fWs > 0.0
-    assert src.W_out_fWs == approx(c_leak_fWs(src, iterations), rel=0.12, abs=1e-3)
+    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=0.12, abs=1e-3)
     assert v_out > 0.0
 
 

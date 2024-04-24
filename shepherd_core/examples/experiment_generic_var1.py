@@ -1,4 +1,6 @@
-"""How-to for defining an experiment:
+"""How-to for defining an experiment - variant 1.
+
+What the code does:
 - recommended approach for missing testbed-client
 - variants
 - var1 - references a server-path for the firmware

@@ -1,3 +1,5 @@
+"""Models for the calibration-data to convert between raw & SI-Values."""
+
 import struct
 from typing import Callable
 from typing import Generator
@@ -26,6 +28,10 @@ Calc_t = TypeVar("Calc_t", NDArray[np.float64], float)
 def dict_generator(
     in_dict: Union[dict, list], pre: Optional[list] = None
 ) -> Generator[list, None, None]:
+    """Recursive helper-function to generate a 1D-List(or not?).
+
+    TODO: isn't that a 1D-List generator?
+    """
     pre = pre[:] if pre else []
     if isinstance(in_dict, dict):
         for key, value in in_dict.items():
@@ -41,13 +47,13 @@ def dict_generator(
 
 
 class CalibrationPair(ShpModel):
-    """SI-value [SI-Unit] = raw-value * gain + offset"""
+    """SI-value [SI-Unit] = raw-value * gain + offset."""
 
     gain: PositiveFloat
     offset: float = 0
 
     def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
-        """Convert between physical units and raw unsigned integers"""
+        """Convert between physical units and raw unsigned integers."""
         values_si = values_raw * self.gain + self.offset
         if not allow_negative:
             if isinstance(values_si, np.ndarray):
@@ -60,7 +66,7 @@ class CalibrationPair(ShpModel):
         return values_si
 
     def si_to_raw(self, values_si: Calc_t) -> Calc_t:
-        """Convert between physical units and raw unsigned integers"""
+        """Convert between physical units and raw unsigned integers."""
         values_raw = (values_si - self.offset) / self.gain
         if isinstance(values_raw, np.ndarray):
             values_raw[values_raw < 0.0] = 0.0
@@ -71,6 +77,7 @@ class CalibrationPair(ShpModel):
 
     @classmethod
     def from_fn(cls, fn: Callable) -> Self:
+        """Probe linear function to determine scaling values."""
         offset = fn(0)
         gain_inv = fn(1.0) - offset
         return cls(
@@ -88,13 +95,17 @@ cal_hrv_legacy = {  # legacy translator
 
 
 class CalibrationHarvester(ShpModel):
+    """Container for all calibration-pairs for that device."""
+
     dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     adc_V_Sense: CalibrationPair = CalibrationPair.from_fn(adc_voltage_to_raw)
     adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
 
     def export_for_sysfs(self) -> dict:
-        """[scaling according to commons.h]
+        """Convert and write the essential data.
+
+        [scaling according to commons.h]
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
         # ADC-V is handled in uV (micro-volt), gain is shifted by 8 bit
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
@@ -111,7 +122,8 @@ class CalibrationHarvester(ShpModel):
             if (("gain" in key) and not (0 <= value < 2**32)) or (
                 ("offset" in key) and not (-(2**31) <= value < 2**31)
             ):
-                raise ValueError(f"Value ({key}={value}) exceeds uint32-container")
+                msg = f"Value ({key}={value}) exceeds uint32-container"
+                raise ValueError(msg)
         return cal_set
 
 
@@ -124,7 +136,10 @@ cal_emu_legacy = {  # legacy translator
 
 
 class CalibrationEmulator(ShpModel):
-    """Cal-Data for both Target-Ports A/B"""
+    """Container for all calibration-pairs for that device.
+
+    Differentiates between both target-ports A/B.
+    """
 
     dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
     dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
@@ -132,7 +147,9 @@ class CalibrationEmulator(ShpModel):
     adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
 
     def export_for_sysfs(self) -> dict:
-        """[scaling according to commons.h]
+        """Convert and write the essential data.
+
+        [scaling according to commons.h]
         # ADC-C is handled in nA (nano-ampere), gain is shifted by 8 bit
         # ADC-V -> unused by vsrc / emu
         # DAC-V is handled in uV (micro-volt), gain is shifted by 20 bit
@@ -150,13 +167,15 @@ class CalibrationEmulator(ShpModel):
             if (("gain" in key) and not (0 <= value < 2**32)) or (
                 ("offset" in key) and not (-(2**31) <= value < 2**31)
             ):
-                raise ValueError(f"Value ({key}={value}) exceeds uint32-container")
+                msg = f"Value ({key}={value}) exceeds uint32-container"
+                raise ValueError(msg)
         return cal_set
 
 
 class CapeData(ShpModel):
-    """Representation of Beaglebone Cape information
-        -> just provide serial-number on creation
+    """Representation of Beaglebone Cape information.
+
+    User must at least provide serial-number on creation.
 
     According to BeagleBone specifications, each cape should host an EEPROM
     that contains some standardized information about the type of cape,
@@ -178,12 +197,13 @@ class CapeData(ShpModel):
     # ⤷ produces something like '2023-01-01'
 
     def __repr__(self) -> str:  # TODO: override useful?
-        """string-representation allows print(model)"""
+        """string-representation allows print(model)."""
         return str(self.model_dump())
 
 
 class CalibrationCape(ShpModel):
     """Represents calibration data of shepherd cape.
+
     Defines the format of calibration data and provides convenient functions
     to read and write calibration data.
 
@@ -198,7 +218,8 @@ class CalibrationCape(ShpModel):
 
     @classmethod
     def from_bytestr(cls, data: bytes, cape: Optional[CapeData] = None) -> Self:
-        """Instantiates calibration data based on byte string.
+        """Instantiate calibration data based on byte string.
+
         This is mainly used to deserialize data read from an EEPROM memory.
 
         Args:
@@ -220,11 +241,11 @@ class CalibrationCape(ShpModel):
         return cls(**dv)
 
     def to_bytestr(self) -> bytes:
-        """Serializes calibration data to byte string.
+        """Serialize calibration data to byte string.
+
         Used to prepare data for writing it to EEPROM.
 
-        Returns
-        -------
+        Returns:
             Byte string representation of calibration values.
 
         """
@@ -234,6 +255,8 @@ class CalibrationCape(ShpModel):
 
 
 class CalibrationSeries(ShpModel):
+    """Cal-Data for a typical recording of a testbed experiment."""
+
     voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9)
     # ⤷ default allows 0 - 12 V in 3 nV-Steps
     current: CalibrationPair = CalibrationPair(gain=250 * 1e-12)

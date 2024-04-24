@@ -1,3 +1,5 @@
+"""Converter for ELF-files."""
+
 import subprocess
 from pathlib import Path
 from typing import Optional
@@ -9,6 +11,7 @@ from pydantic import validate_call
 
 @validate_call
 def elf_to_hex(file_elf: Path, file_hex: Optional[Path] = None) -> Path:
+    """Convert ELF to hex file using objcopy."""
     if not file_elf.is_file():
         raise ValueError("Fn needs an existing file as input")
     if not file_hex:

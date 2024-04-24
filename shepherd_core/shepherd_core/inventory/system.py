@@ -1,3 +1,5 @@
+"""System / OS related inventory model."""
+
 import platform
 import subprocess
 import time
@@ -7,8 +9,8 @@ from typing import Optional
 
 from typing_extensions import Self
 
-from .. import local_now
-from .. import logger
+from ..data_models.base.timezone import local_now
+from ..logger import logger
 
 try:
     import psutil
@@ -22,6 +24,8 @@ from ..data_models import ShpModel
 
 
 class SystemInventory(ShpModel):
+    """System / OS related inventory model."""
+
     uptime: PositiveInt
     # ⤷ seconds
     timestamp: datetime

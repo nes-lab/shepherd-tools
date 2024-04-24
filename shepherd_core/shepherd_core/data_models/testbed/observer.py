@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from datetime import datetime
 from typing import Optional
 
@@ -24,7 +26,7 @@ MACStr = Annotated[
 
 
 class Observer(ShpModel, title="Shepherd-Sheep"):
-    """meta-data representation of a testbed-component (physical object)"""
+    """meta-data representation of a testbed-component (physical object)."""
 
     id: IdInt
     name: NameStr
@@ -63,7 +65,8 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
         has_cape = self.cape is not None
         has_target = (self.target_a is not None) or (self.target_b is not None)
         if not has_cape and has_target:
-            raise ValueError(f"Observer '{self.name}' is faulty -> has targets but no cape")
+            msg = f"Observer '{self.name}' is faulty -> has targets but no cape"
+            raise ValueError(msg)
         return self
 
     def has_target(self, target_id: int) -> bool:
@@ -79,7 +82,8 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 return TargetPort.A
             if self.target_b is not None and target_id == self.target_b.id:
                 return TargetPort.B
-        raise ValueError(f"Target-ID {target_id} was not found in Observer '{self.name}'")
+        msg = f"Target-ID {target_id} was not found in Observer '{self.name}'"
+        raise KeyError(msg)
 
     def get_target(self, target_id: int) -> Target:
         if self.has_target(target_id):
@@ -87,4 +91,5 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 return self.target_a
             if self.target_b is not None and target_id == self.target_b.id:
                 return self.target_b
-        raise ValueError(f"Target-ID {target_id} was not found in Observer '{self.name}'")
+        msg = f"Target-ID {target_id} was not found in Observer '{self.name}'"
+        raise KeyError(msg)

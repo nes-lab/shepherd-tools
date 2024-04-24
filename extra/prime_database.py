@@ -1,7 +1,4 @@
-"""script will:
-- clean Models from temporary data (if wanted)
-- copy models to content-dir of core-lib
-"""
+"""Clean models from temporary data (if wanted) & copy to content-dir of core-lib."""
 
 import sys
 from pathlib import Path
@@ -20,6 +17,7 @@ from shepherd_core.testbed_client.fixtures import get_files
 
 
 def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
+    """Open and unwrap a shepherd data-model."""
     try:
         return _model.from_file(path)
     except ValueError:

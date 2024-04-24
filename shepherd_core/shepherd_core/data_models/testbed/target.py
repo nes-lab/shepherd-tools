@@ -1,3 +1,5 @@
+"""meta-data representation of a testbed-component (physical object)."""
+
 from datetime import datetime
 from typing import Optional
 from typing import Union
@@ -19,7 +21,7 @@ MCUPort = Annotated[int, Field(ge=1, le=2)]
 
 
 class Target(ShpModel, title="Target Node (DuT)"):
-    """meta-data representation of a testbed-component (physical object)"""
+    """meta-data representation of a testbed-component (physical object)."""
 
     id: IdInt
     name: NameStr
@@ -36,7 +38,7 @@ class Target(ShpModel, title="Target Node (DuT)"):
     mcu1: Union[MCU, NameStr]
     mcu2: Union[MCU, NameStr, None] = None
 
-    # TODO programming pins per mcu should be here (or better in Cape)
+    # TODO: programming pins per mcu should be here (or better in Cape)
 
     def __str__(self) -> str:
         return self.name

@@ -1,3 +1,5 @@
+"""Config for testbed experiments."""
+
 from datetime import datetime
 from datetime import timedelta
 from typing import List
@@ -22,12 +24,10 @@ from .target_config import TargetConfig
 
 
 class Experiment(ShpModel, title="Config of an Experiment"):
-    """Configuration for Experiments on the Shepherd-Testbed
-    emulating Energy Environments for Target Nodes
-    """
+    """Config for experiments on the testbed emulating energy environments for target nodes."""
 
     # General Properties
-    # id: UUID4 ... # TODO db-migration - temp fix for documentation
+    # id: UUID4 ... # TODO: db-migration - temp fix for documentation
     id: Union[UUID4, int] = Field(default_factory=uuid4)
     # ⤷ TODO: automatic ID is problematic for identification by hash
 
@@ -90,7 +90,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
         if len(target_ids) > len(set(obs_ids)):
             raise ValueError(
-                "Observer used more than once in Experiment -> only 1 target per observer!"
+                "Observer is used more than once in Experiment -> only 1 target per observer!"
             )
 
     def get_target_ids(self) -> list:
@@ -101,4 +101,5 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             if target_id in _config.target_IDs:
                 return _config
         # gets already caught in target_config - but keep:
-        raise ValueError(f"Target-ID {target_id} was not found in Experiment '{self.name}'")
+        msg = f"Target-ID {target_id} was not found in Experiment '{self.name}'"
+        raise ValueError(msg)

@@ -1,3 +1,14 @@
+"""Container for shepherds data-models.
+
+Public models are directly referenced here and are usable like:
+
+'''python
+from shepherd-core import data_models
+
+cdata = data_models.CapeData(serial_number="A123")
+'''
+"""
+
 from .base.calibration import CalibrationCape
 from .base.calibration import CalibrationEmulator
 from .base.calibration import CalibrationHarvester

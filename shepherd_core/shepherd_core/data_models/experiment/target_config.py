@@ -1,3 +1,5 @@
+"""Configuration related to Target Nodes (DuT)."""
+
 from typing import List
 from typing import Optional
 
@@ -19,7 +21,7 @@ from .observer_features import PowerTracing
 
 
 class TargetConfig(ShpModel, title="Target Config"):
-    """Configuration for Target Nodes (DuT)"""
+    """Configuration related to Target Nodes (DuT)."""
 
     target_IDs: Annotated[List[IdInt], Field(min_length=1, max_length=128)]
     custom_IDs: Optional[Annotated[List[IdInt16], Field(min_length=1, max_length=128)]] = None
@@ -44,7 +46,8 @@ class TargetConfig(ShpModel, title="Target Config"):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         if not self.energy_env.valid:
-            raise ValueError(f"EnergyEnv '{self.energy_env.name}' for target must be valid")
+            msg = f"EnergyEnv '{self.energy_env.name}' for target must be valid"
+            raise ValueError(msg)
         for _id in self.target_IDs:
             target = Target(id=_id)
             for mcu_num in [1, 2]:
@@ -56,24 +59,25 @@ class TargetConfig(ShpModel, title="Target Config"):
                     fw_def = Firmware(name=tgt_mcu.fw_name_default)
                     # ⤷ this will raise if default is faulty
                     if tgt_mcu.id != fw_def.mcu.id:
-                        raise ValueError(
+                        msg = (
                             f"Default-Firmware for MCU{mcu_num} of Target-ID '{target.id}' "
                             f"(={fw_def.mcu.name}) "
                             f"is incompatible (={tgt_mcu.name})"
                         )
+                        raise ValueError(msg)
                 if has_fw and has_mcu and val_fw.mcu.id != tgt_mcu.id:
-                    raise ValueError(
+                    msg = (
                         f"Firmware{mcu_num} for MCU of Target-ID '{target.id}' "
                         f"(={val_fw.mcu.name}) "
                         f"is incompatible (={tgt_mcu.name})"
                     )
+                    raise ValueError(msg)
 
         c_ids = self.custom_IDs
         t_ids = self.target_IDs
         if c_ids is not None and (len(set(c_ids)) < len(set(t_ids))):
-            raise ValueError(
-                f"Provided custom IDs {c_ids} not enough to cover target range {t_ids}"
-            )
+            msg = f"Provided custom IDs {c_ids} not enough to cover target range {t_ids}"
+            raise ValueError(msg)
         # TODO: if custom ids present, firmware must be ELF
         return self
 

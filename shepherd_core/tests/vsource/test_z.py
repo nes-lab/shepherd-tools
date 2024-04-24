@@ -1,5 +1,6 @@
-from pathlib import Path
+import pytest
 
 
-def test_vsource_cleanup(file_cleanup: Path) -> None:
+@pytest.mark.usefixtures("_file_cleanup")
+def test_vsource_cleanup() -> None:
     pass

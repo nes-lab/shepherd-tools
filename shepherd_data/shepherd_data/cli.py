@@ -1,4 +1,4 @@
-"""Command definitions for CLI"""
+"""Command definitions for CLI."""
 
 import logging
 import os
@@ -16,15 +16,17 @@ from shepherd_core import increase_verbose_level
 from shepherd_core import local_tz
 from shepherd_core.commons import samplerate_sps_default
 
-from . import Reader
 from . import Writer
 from . import __version__
+from .reader import Reader
 
 logger = logging.getLogger("SHPData.cli")
 
 
 def path_to_flist(data_path: Path) -> List[Path]:
-    """Every path gets transformed to a list of paths
+    """Every path gets transformed to a list of paths.
+
+    Transformations:
     - if directory: list of files inside
     - if existing file: list with 1 element
     - or else: empty list
@@ -57,7 +59,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
 )
 @click.pass_context  # TODO: is the ctx-type correct?
 def cli(ctx: click.Context, verbose: bool, version: bool) -> None:  # noqa: FBT001
-    """Shepherd: Synchronized Energy Harvesting Emulator and Recorder"""
+    """Shepherd: Synchronized Energy Harvesting Emulator and Recorder."""
     if verbose:
         increase_verbose_level(3)
     if version:
@@ -71,7 +73,7 @@ def cli(ctx: click.Context, verbose: bool, version: bool) -> None:  # noqa: FBT0
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 def validate(in_data: Path) -> None:
-    """Validates a file or directory containing shepherd-recordings"""
+    """Validate a file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()  # TODO: should be stored and passed in ctx
     valid_dir = True
@@ -85,8 +87,8 @@ def validate(in_data: Path) -> None:
                 valid_dir &= valid_file
                 if not valid_file:
                     logger.error(" -> File '%s' was NOT valid", file.name)
-        except TypeError as _xpc:
-            logger.error("ERROR: will skip file, caught exception: %s", _xpc)
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
     sys.exit(int(not valid_dir))
 
 
@@ -107,7 +109,7 @@ def validate(in_data: Path) -> None:
     help="Set an individual csv-separator",
 )
 def extract(in_data: Path, ds_factor: float, separator: str) -> None:
-    """Extracts recorded IVSamples and stores it to csv"""
+    """Extract recorded IVSamples and store them to csv."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:
@@ -143,8 +145,8 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
 
                 with Reader(ds_file, verbose=verbose_level > 2) as shpd:
                     shpd.save_csv(shpd["data"], separator)
-        except TypeError as _xpc:
-            logger.error("ERROR: will skip file, caught exception: %s", _xpc)
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
 @cli.command(
@@ -159,14 +161,14 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
     help="Set an individual csv-separator",
 )
 def extract_meta(in_data: Path, separator: str) -> None:
-    """Extracts metadata and logs from file or directory containing shepherd-recordings"""
+    """Extract metadata and logs from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     for file in files:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
         # TODO: add default exports (user-centric) and allow specifying --all or specific ones
         # TODO: could also be combined with other extractors (just have one)
-        # TODO remove deprecated: timesync; "shepherd-log", "dmesg", "exceptions"
+        # TODO: remove deprecated timesync; "shepherd-log", "dmesg", "exceptions"
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 shpr.save_metadata()
@@ -181,8 +183,8 @@ def extract_meta(in_data: Path, separator: str) -> None:
                         # TODO: allow omitting timestamp,
                         #       also test if segmented uart is correctly written
                         shpr.warn_logs(element, show=True)
-        except TypeError as _xpc:
-            logger.error("ERROR: will skip file, caught exception: %s", _xpc)
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
 @cli.command(
@@ -190,7 +192,7 @@ def extract_meta(in_data: Path, separator: str) -> None:
 )
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 def extract_uart(in_data: Path) -> None:
-    """Extracts uart from gpio-trace in file or directory containing shepherd-recordings"""
+    """Extract UART from GPIO-trace in file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     for file in files:
@@ -213,8 +215,8 @@ def extract_uart(in_data: Path) -> None:
                             # TODO: allow to skip Timestamp and export raw text
                             log_file.write(f"\t{str.encode(line[1])}")
                             log_file.write("\n")
-        except TypeError as _xpc:
-            logger.error("ERROR: will skip file, caught exception: %s", _xpc)
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
 @cli.command(short_help="Extracts gpio-trace from file or directory containing shepherd-recordings")
@@ -227,7 +229,7 @@ def extract_uart(in_data: Path) -> None:
     help="Set an individual csv-separator",
 )
 def extract_gpio(in_data: Path, separator: str) -> None:
-    """Extracts uart from gpio-trace in file or directory containing shepherd-recordings"""
+    """Extract UART from gpio-trace in file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     for file in files:
@@ -237,8 +239,8 @@ def extract_gpio(in_data: Path, separator: str) -> None:
                 wfs = shpr.gpio_to_waveforms()
                 for name, wf in wfs.items():
                     shpr.waveform_to_csv(name, wf, separator)
-        except TypeError as _xpc:
-            logger.error("ERROR: will skip file, caught exception: %s", _xpc)
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
 @cli.command(
@@ -261,9 +263,7 @@ def extract_gpio(in_data: Path, separator: str) -> None:
     help="Alternative Input to determine a downsample-factor (Choose One)",
 )
 def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]) -> None:
-    """Creates an array of downsampling-files from file
-    or directory containing shepherd-recordings
-    """
+    """Create an array of down-sampled files from file or dir containing shepherd-recordings."""
     if ds_factor is None and sample_rate is not None and sample_rate >= 1:
         ds_factor = int(samplerate_sps_default / sample_rate)
         # TODO: shouldn't current sps be based on file rather than default?
@@ -303,8 +303,8 @@ def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[
                         shpr.downsample(shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True)
                         shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=_factor)
                         shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=_factor)
-        except TypeError as _xpc:
-            logger.error("ERROR: will skip file, caught exception: %s", _xpc)
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
 @cli.command(short_help="Plots IV-trace from file or directory containing shepherd-recordings")
@@ -351,7 +351,7 @@ def plot(
     height: int,
     multiplot: bool,  # noqa: FBT001
 ) -> None:
-    """Plots IV-trace from file or directory containing shepherd-recordings"""
+    """Plot IV-trace from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     multiplot = multiplot and len(files) > 1
@@ -364,8 +364,8 @@ def plot(
                     data.append(shpr.generate_plot_data(start, end, relative_timestamp=True))
                 else:
                     shpr.plot_to_file(start, end, width, height)
-        except TypeError as _xpc:
-            logger.exception("ERROR: will skip file, caught exception: %s", _xpc)
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
     if multiplot:
         logger.info("Got %d datasets to plot", len(data))
         mpl_path = Reader.multiplot_to_file(data, in_data, width, height)

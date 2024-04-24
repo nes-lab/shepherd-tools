@@ -20,7 +20,7 @@ def test_base_model_cape_data() -> None:
 
 
 def test_base_model_cape_data_fail() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         CapeData()
 
 
@@ -93,14 +93,14 @@ def test_base_model_cal_cape_example(tmp_path: Path) -> None:
 def test_base_model_cal_hrv_fault() -> None:
     path = Path(__file__).resolve().with_name("example_cal_data_faulty.yaml")
     cal = CalibrationCape.from_file(path)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         _ = cal.harvester.export_for_sysfs()
 
 
 def test_base_model_cal_emu_fault() -> None:
     path = Path(__file__).resolve().with_name("example_cal_data_faulty.yaml")
     cal = CalibrationCape.from_file(path)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         _ = cal.emulator.export_for_sysfs()
 
 
@@ -121,7 +121,7 @@ def test_base_model_cal_meas_example() -> None:
 
 def test_base_model_cal_meas_fault_correlation() -> None:
     path = Path(__file__).resolve().with_name("example_cal_meas_faulty1.yaml")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = CalMeasurementCape.from_file(path)
 
 
@@ -145,7 +145,7 @@ def test_base_model_content_public_group() -> None:
         group="work",
         visible2group=True,
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = ContentModel(name="tricky", owner="peter", group="work", visible2group=True)
 
 
@@ -153,7 +153,7 @@ def test_base_model_content_public_all() -> None:
     _ = ContentModel(
         name="tricky", description="fake", owner="peter", group="work", visible2all=True
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         _ = ContentModel(name="tricky", owner="peter", group="work", visible2all=True)
 
 
@@ -176,7 +176,7 @@ def test_base_model_shepherd_fault_load_other(tmp_path: Path) -> None:
     path = tmp_path / "content.yaml"
     content = ContentModel(name="tricky", owner="peter", group="work")
     content.to_file(path)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         CalibrationCape.from_file(path)
 
 

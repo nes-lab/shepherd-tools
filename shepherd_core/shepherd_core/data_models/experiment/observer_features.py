@@ -1,3 +1,5 @@
+"""Configs for observer features like gpio- & power-tracing."""
+
 from datetime import timedelta
 from enum import Enum
 from typing import List
@@ -15,7 +17,8 @@ from ..testbed.gpio import GPIO
 
 
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):
-    """Configuration for recording the Power-Consumption of the Target Nodes
+    """Configuration for recording the Power-Consumption of the Target Nodes.
+
     TODO: postprocessing not implemented ATM
     """
 
@@ -45,12 +48,13 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         if not self.calculate_power and discard_all:
             raise ValueError("Error in config -> tracing enabled, but output gets discarded")
         if self.calculate_power:
-            raise ValueError("postprocessing not implemented ATM")
+            raise NotImplementedError("postprocessing not implemented ATM")
         return self
 
 
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
-    """Configuration for recording the GPIO-Output of the Target Nodes
+    """Configuration for recording the GPIO-Output of the Target Nodes.
+
     TODO: postprocessing not implemented ATM
     """
 
@@ -84,13 +88,15 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
 
 class GpioLevel(str, Enum):
+    """Options for setting the gpio-level or state."""
+
     low = "L"
     high = "H"
     toggle = "X"  # TODO: not the smartest decision for writing a converter
 
 
 class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
-    """Configuration for a single GPIO-Event (Actuation)"""
+    """Configuration for a single GPIO-Event (Actuation)."""
 
     delay: PositiveFloat
     # ⤷ from start_time
@@ -104,7 +110,8 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         if not self.gpio.user_controllable():
-            raise ValueError(f"GPIO '{self.gpio.name}' in actuation-event not controllable by user")
+            msg = f"GPIO '{self.gpio.name}' in actuation-event not controllable by user"
+            raise ValueError(msg)
         return self
 
     def get_events(self) -> np.ndarray:
@@ -113,7 +120,7 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
 
 
 class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
-    """Configuration for a GPIO-Actuation-Sequence"""
+    """Configuration for a GPIO-Actuation-Sequence."""
 
     # TODO: not implemented ATM - decide if pru control sys-gpio or
     # TODO: not implemented ATM - reverses pru-gpio (preferred if possible)
@@ -125,7 +132,7 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
 
 class SystemLogging(ShpModel, title="Config for System-Logging"):
-    """Configuration for recording Debug-Output of the Observers System-Services"""
+    """Configuration for recording Debug-Output of the Observers System-Services."""
 
     dmesg: bool = True
     ptp: bool = True

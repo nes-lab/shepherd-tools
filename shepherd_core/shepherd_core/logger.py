@@ -1,3 +1,5 @@
+"""Log handler of shepherd."""
+
 import logging
 import logging.handlers
 from typing import Union
@@ -12,10 +14,12 @@ verbose_level: int = 2
 
 
 def get_verbose_level() -> int:
+    """Get log level of shepherd."""
     return verbose_level
 
 
 def set_log_verbose_level(log_: Union[logging.Logger, logging.Handler], verbose: int) -> None:
+    """Set log level of shepherd."""
     if verbose == 0:
         log_.setLevel(logging.ERROR)
         logging.basicConfig(level=logging.ERROR)
@@ -39,6 +43,7 @@ def set_log_verbose_level(log_: Union[logging.Logger, logging.Handler], verbose:
 
 
 def increase_verbose_level(verbose: int) -> None:
+    """Increase log level of shepherd."""
     global verbose_level  # noqa: PLW0603
     if verbose >= verbose_level:
         verbose_level = min(max(verbose, 0), 3)

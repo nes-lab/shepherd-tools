@@ -1,3 +1,5 @@
+"""Helper-functions for handling firmware around the testbed."""
+
 from typing import Any
 
 try:

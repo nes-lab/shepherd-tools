@@ -1,4 +1,4 @@
-"""Demonstrate behavior of Virtual Source Algorithms
+"""Demonstrate behavior of Virtual Source Algorithms.
 
 - simulation combines a range of
     - virtual sources

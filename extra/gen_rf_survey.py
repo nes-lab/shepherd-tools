@@ -1,4 +1,4 @@
-""" """
+"""Prepare TrafficBench to run as experiment on testbed."""
 
 from pathlib import Path
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
                 power_tracing=None,
                 gpio_tracing=GpioTracing(
                     duration=0,  # this affects only the gpio-tracing itself
-                    uart_decode=True,  # hackjob: enables logging uart from userspace
+                    uart_decode=True,  # TODO: enables logging uart from userspace, temp solution
                     uart_baudrate=115_200,
                 ),
             )

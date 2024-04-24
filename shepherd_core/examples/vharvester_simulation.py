@@ -1,4 +1,4 @@
-"""Demonstrate behavior of Virtual Harvester Algorithms
+"""Demonstrate behavior of Virtual Harvester Algorithms.
 
 - simulation is based on ivsamples derived from a solar-isc-voc-recording during a jogging-trip
 - harvesting is done by various algorithms and preconfigured virtual harvesters

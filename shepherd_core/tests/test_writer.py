@@ -76,12 +76,12 @@ def test_writer_unique_path(h5_file: Path) -> None:
 
 
 def test_writer_faulty_mode(h5_path: Path) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         generate_shp_file(h5_path, mode="excavator", datatype="ivcurve")
 
 
 def test_writer_faulty_datatype(h5_path: Path) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         generate_shp_file(h5_path, mode="emulator", datatype="ivcurve")
 
 
@@ -109,9 +109,9 @@ def test_writer_init_cal_series(h5_path: Path) -> None:
 
 
 def test_writer_faulty_window(h5_path: Path) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         generate_shp_file(h5_path, mode="harvester", datatype="ivcurve")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         generate_shp_file(
             h5_path,
             mode="harvester",
@@ -129,7 +129,7 @@ def test_writer_append_raw(h5_path: Path) -> None:
         sfw.append_iv_data_raw(time_float, data_nd, data_nd)
         sfw.append_iv_data_raw(time_int, data_nd, data_nd)
         sfw.append_iv_data_raw(time_nd, data_nd, data_nd)
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             sfw.append_iv_data_raw(None, data_nd, data_nd)
 
 

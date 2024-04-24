@@ -1,3 +1,5 @@
+"""Generalized energy harvester data models."""
+
 from enum import Enum
 from typing import Optional
 from typing import Tuple
@@ -17,22 +19,22 @@ from .energy_environment import EnergyDType
 
 
 class AlgorithmDType(str, Enum):
+    """Options for choosing a harvesting algorithm."""
+
     isc_voc = "isc_voc"
-    ivcurve = ("ivcurve",)
-    ivcurves = ("ivcurve",)
-    cv = "cv"
-    constant = "cv"
+    ivcurve = ivcurves = ("ivcurve",)
+    constant = cv = "cv"
     # ci .. constant current -> is this desired?
     mppt_voc = "mppt_voc"
-    mppt_po = "mppt_po"
-    perturb_observe = "mppt_po"
-    mppt_opt = "mppt_opt"
-    optimal = "mppt_opt"
+    mppt_po = perturb_observe = "mppt_po"
+    mppt_opt = optimal = "mppt_opt"
 
 
 class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
-    """A Harvester is needed when the file-based energy environment
-    of the virtual source is not already supplied as ivsample
+    """A vHrv makes a source-characterization (i.e. ivcurve) usable for the vSrc.
+
+    Mostly used when the file-based energy environment of the virtual source
+    is not already supplied as pre-harvested ivsample-stream.
     """
 
     # General Metadata & Ownership -> ContentModel
@@ -110,19 +112,21 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num = algo_to_num.get(self.algorithm)
         if for_emu and self.get_datatype() != EnergyDType.ivsample:
-            raise ValueError(
+            msg = (
                 f"[{self.name}] Select valid harvest-algorithm for emulator, "
-                f"current usage = {self.algorithm}",
+                f"current usage = {self.algorithm}"
             )
+            raise ValueError(msg)
         if num < algo_to_num["isc_voc"]:
-            raise ValueError(
+            msg = (
                 f"[{self.name}] Select valid harvest-algorithm for harvester, "
-                f"current usage = {self.algorithm}",
+                f"current usage = {self.algorithm}"
             )
+            raise ValueError(msg)
         return num
 
     def calc_timings_ms(self, *, for_emu: bool) -> Tuple[float, float]:
-        """factor-in model-internal timing-constraints"""
+        """factor-in model-internal timing-constraints."""
         window_length = self.samples_n * (1 + self.wait_cycles)
         time_min_ms = (1 + self.wait_cycles) * 1_000 / samplerate_sps_default
         if for_emu:
@@ -155,7 +159,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
             if dtype_in == EnergyDType.ivsample:
                 return 0
             # isc_voc: 2 * (1 + wait_cycles), noqa
-            raise ValueError("Not Implemented")
+            raise NotImplementedError
 
         # only used by ivcurve algo (in ADC-Mode)
         return self.samples_n
@@ -191,11 +195,12 @@ algo_to_dtype = {
 
 
 class HarvesterPRUConfig(ShpModel):
-    """Map settings-list to internal state-vars struct HarvesterConfig
+    """Map settings-list to internal state-vars struct HarvesterConfig for PRU.
+
     NOTE:
       - yaml is based on si-units like nA, mV, ms, uF
       - c-code and py-copy is using nA, uV, ns, nF, fW, raw
-      - ordering is intentional and in sync with shepherd/commons.h
+      - ordering is intentional and in sync with shepherd/commons.h.
     """
 
     algorithm: u32
@@ -228,7 +233,7 @@ class HarvesterPRUConfig(ShpModel):
         if isinstance(dtype_in, str):
             dtype_in = EnergyDType[dtype_in]
         if for_emu and dtype_in not in {EnergyDType.ivsample, EnergyDType.ivcurve}:
-            raise ValueError("Not Implemented")
+            raise NotImplementedError
         # TODO: use dtype properly in shepherd
         interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)
         return cls(

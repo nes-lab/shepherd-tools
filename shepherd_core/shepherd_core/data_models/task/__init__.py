@@ -1,3 +1,8 @@
+"""Module for task-related data-modules.
+
+These models import externally from all other model-modules!
+"""
+
 from pathlib import Path
 from typing import List
 from typing import Optional
@@ -33,7 +38,9 @@ __all__ = [
 
 
 def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = None) -> Wrapper:
-    """- Opens file (from Path or str of Path)
+    """Open file and extract tasks.
+
+    - Open file (from Path or str of Path)
     - wraps task-model
     - and if it's an TestbedTasks it will extract the correct ObserverTask
     """
@@ -50,7 +57,7 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
             parameters=config.model_dump(),
         )
     else:
-        raise ValueError("had unknown input: %s", type(config))
+        raise TypeError("had unknown input: %s", type(config))
 
     if shp_wrap.datatype == TestbedTasks.__name__:
         if observer is None:
@@ -72,7 +79,7 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
 
 
 def extract_tasks(shp_wrap: Wrapper, *, no_task_sets: bool = True) -> List[ShpModel]:
-    """ """
+    """Make the individual task-sets usable for each observer."""
     if shp_wrap.datatype == ObserverTasks.__name__:
         obt = ObserverTasks(**shp_wrap.parameters)
         content = obt.get_tasks()
