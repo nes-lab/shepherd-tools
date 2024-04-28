@@ -71,6 +71,7 @@ class CalibrationPair(ShpModel):
         if isinstance(values_raw, np.ndarray):
             values_raw[values_raw < 0.0] = 0.0
             values_raw = np.around(values_raw)
+            # TODO: overflow should also be prevented (add bit-width) -> fail or warn at both?
         else:
             values_raw = round(max(values_raw, 0.0))
         return values_raw

@@ -168,11 +168,12 @@ def extract_meta(in_data: Path, separator: str) -> None:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
         # TODO: add default exports (user-centric) and allow specifying --all or specific ones
         # TODO: could also be combined with other extractors (just have one)
-        # TODO: remove deprecated timesync; "shepherd-log", "dmesg", "exceptions"
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 shpr.save_metadata()
-                for element in ["ptp", "sysutil", "timesync"]:
+                csvs_depr = ["sysutil", "timesync"]
+                csvs = ["ptp", "sys_util", "pru_util"]
+                for element in csvs + csvs_depr:
                     if element in shpr.h5file:
                         shpr.save_csv(shpr[element], separator)
                 logs_depr = ["shepherd-log", "dmesg", "exceptions"]

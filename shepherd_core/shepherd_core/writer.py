@@ -229,7 +229,7 @@ class Writer(Reader):
         """Initialize the structure of the HDF5 file.
 
         HDF5 is hierarchically structured and before writing data, we have to
-        setup this structure, i.e. creating the right groups with corresponding
+        set up this structure, i.e. creating the right groups with corresponding
         data types. We will store 3 types of data in a database: The
         actual IV samples recorded either from the harvester (during recording)
         or the target (during emulation). Any log messages, that can be used to
