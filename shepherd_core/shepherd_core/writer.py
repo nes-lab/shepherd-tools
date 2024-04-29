@@ -367,7 +367,7 @@ class Writer(Reader):
         TODO: use data-model?
         :param data: from virtual harvester or converter / source.
         """
-        self.h5file["data"].attrs["config"] = yaml.safe_dump(
+        self.h5file.attrs["config"] = yaml.safe_dump(
             data, default_flow_style=False, sort_keys=False
         )
 
