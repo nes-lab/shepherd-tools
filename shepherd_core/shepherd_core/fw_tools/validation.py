@@ -23,7 +23,7 @@ except ImportError as e:
     ELF = None
     ELFError = None
     elf_error_text = (
-        "Please install functionality with 'pip install shepherd_core[elf] -U' first, "
+        "Please install functionality with 'pip install shepherd-core[elf] -U' first, "
         f"underlying exception: {e.msg}"
     )
 
