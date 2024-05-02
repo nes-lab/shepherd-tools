@@ -60,7 +60,7 @@ class EmulationTask(ShpModel):
     # timestamp or unix epoch time, None = ASAP
     duration: Optional[timedelta] = None
     # ⤷ Duration of recording in seconds, None = till EOF
-    abort_on_error: bool = False
+    abort_on_error: bool = False  # TODO: remove, should not exist
 
     # emulation-specific
     use_cal_default: bool = False

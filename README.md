@@ -101,7 +101,7 @@ coverage report
 ```shell
 pipenv shell
 
-bump2version --allow-dirty --new-version 2024.4.2
+bump2version --allow-dirty --new-version 2024.5.1
 # ⤷ format: year.month.patch_release
 
 pre-commit run --all-files
@@ -131,6 +131,20 @@ coverage html
   - shepherd_fw_tools
   - shepherd_decoders
   - shepherd_core:
+- allow combining measurements (data_0...data_#)
+  - either hostname, date or seq. number after data_
+  - shepherd-dataset must be explained more clearly
+  - common time-vector for all? or can hdf5 compress 5 copies of the same vector? TEST
+- clearer rules on how delta-time can be generated
+  - generally: t[1:] - t[:-1], but last sample is missing (fill with min or mean dt)
+  - more advanced integration methods (trapezoidal, polynomial, ..)
+  - resulting energy-vectors can be base for more precise upsampling-routines
+- more generalized hdf5-structure-explorer (yaml-export) to allow opening all variants
+  - currently it faults when expecting shepherd-conform structure
+  - additional features: show 1..10 of front and tail from dataset
+- monitors & recorder should move here
+  - add fn for validation, export, visualization
+  - also add basic IV-group as recorder
 
 - [click progressbar](https://click.palletsprojects.com/en/8.1.x/api/#click.progressbar) ⇾ could replace tqdm
 - implementations for this lib
