@@ -1,5 +1,12 @@
 # History of Changes
 
+## v2024.5.1
+
+- move config to root-level
+- add newest log-names to meta-extractor
+- fix advice in error-text
+- update deps
+
 ## v2024.4.2
 
 - fix import-bug regarding fixtures
