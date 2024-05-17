@@ -160,6 +160,7 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
     type=click.STRING,
     help="Set an individual csv-separator",
 )
+# TODO: a recursive option would help!
 def extract_meta(in_data: Path, separator: str) -> None:
     """Extract metadata and logs from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data)
