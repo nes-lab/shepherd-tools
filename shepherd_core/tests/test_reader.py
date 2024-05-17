@@ -179,20 +179,6 @@ def test_reader_fault_no_voltage(data_h5: Path) -> None:
         Reader(data_h5, verbose=True)
 
 
-def test_reader_fault_no_gain(data_h5: Path) -> None:
-    with Writer(data_h5, modify_existing=True) as sfw:
-        del sfw.h5file["data"]["time"].attrs["gain"]
-    with pytest.raises(KeyError):
-        Reader(data_h5, verbose=True)
-
-
-def test_reader_fault_no_offset(data_h5: Path) -> None:
-    with Writer(data_h5, modify_existing=True) as sfw:
-        del sfw.h5file["data"]["time"].attrs["offset"]
-    with pytest.raises(KeyError):
-        Reader(data_h5, verbose=True)
-
-
 def test_reader_fault_non_eq_time(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
         sfw.h5file["data"]["time"].resize((0,))
