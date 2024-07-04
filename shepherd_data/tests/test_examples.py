@@ -14,11 +14,11 @@ def example_path() -> Path:
 
 
 examples = [
-    "example_convert_ivonne.py",
-    "example_extract_logs.py",
-    "example_generate_sawtooth.py",
-    "example_plot_traces.py",
-    "example_repair_recordings.py",
+    "convert_ivonne.py",
+    "extract_logs.py",
+    "generate_sawtooth.py",
+    "plot_traces.py",
+    "repair_recordings.py",
 ]
 
 

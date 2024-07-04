@@ -6,7 +6,6 @@ keywords = ["testbed", "beaglebone", "pru", "batteryless", "energyharvesting", "
 authors = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
 maintainers = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
 
-readme = {file = "README.md", content-type = "text/markdown"}
 license = {file = "LICENSE"}
 dynamic = ["version"]
 
@@ -32,7 +31,6 @@ dependencies = [
     "pyYAML",
     "chromalog",
     "pydantic[email]>2.0.0",
-    "scipy",
     "tqdm",
     "intelhex",
     "requests",
@@ -54,7 +52,6 @@ inventory = [
     "psutil",
 ]
 
-
 dev = [
     "twine",
     "pre-commit",
@@ -69,13 +66,17 @@ test = [
     "coverage",
 ]
 
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
 [project.urls]
 Documentation = "https://github.com/orgua/shepherd-datalib/blob/main/README.md"
 Issues = "https://github.com/orgua/shepherd-datalib/issues"
 Source = "https://pypi.org/project/shepherd-core/"
 
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools>=61.2", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -98,7 +99,7 @@ version = {attr = "shepherd_core.__version__"}
 [tool.pytest.ini_options]
 markers = [
     "converter: automatically added when no objcopy is found (on ubuntu install build-essential)",
-    "elf: automatically added when no elf-support is found (on windows or missing shepherd-core[elf])"
+    "elf: automatically added when no elf-support is found (on windows or missing shepherd-core[elf])",
 ]
 
 addopts = "-vvv --stepwise" # opts: verbose result for each tests

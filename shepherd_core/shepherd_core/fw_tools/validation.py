@@ -56,10 +56,9 @@ def is_hex_msp430(file: Path) -> bool:
         value = int.from_bytes(ih.gets(0xFFFE, 2), byteorder="little", signed=False)
         if 0x4000 > value >= 0xFF80:
             return False
-        if ih.get_memory_size() >= 270_000:
-            # conservative test for now - should be well below 128 kB + 8kB for msp430fr5962
-            return False
-        return True
+
+        # conservative test for now - should be well below 128 kB + 8kB for msp430fr5962
+        return ih.get_memory_size() <= 270_000
     return False
 
 
@@ -74,10 +73,9 @@ def is_hex_nrf52(file: Path) -> bool:
         ih = IntelHex(file.as_posix())
         if ih.minaddr() != 0x0000:
             return False
-        if ih.get_memory_size() >= 1310720:
-            # conservative test for now - should be well below 1 MB + 256 kB
-            return False
-        return True
+
+        # conservative test for now - should be well below 1 MB + 256 kB
+        return ih.get_memory_size() < 1310720
     return False
 
 

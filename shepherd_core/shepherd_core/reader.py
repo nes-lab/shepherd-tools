@@ -124,7 +124,10 @@ class Reader:
         if not hasattr(self, "_cal"):
             cal_dict = CalibrationSeries().model_dump()
             for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
-                cal_dict[ds][param] = self.h5file["data"][ds].attrs[param]
+                try:
+                    cal_dict[ds][param] = self.h5file["data"][ds].attrs[param]
+                except KeyError:  # noqa: PERF203
+                    self._logger.debug("Cal-Param '%s' for dataset '%s' not found!", param, ds)
             self._cal = CalibrationSeries(**cal_dict)
 
         self._refresh_file_stats()
@@ -256,6 +259,8 @@ class Reader:
             if "datatype" in self.h5file["data"].attrs:
                 return EnergyDType[self.h5file["data"].attrs["datatype"]]
         except KeyError:
+            return None
+        except ValueError:
             return None
         else:
             return None
@@ -631,7 +636,7 @@ class Reader:
         Algo: create an offset-by-one vector and compare against original.
         """
         if len(data.shape) > 1:
-            ValueError("Array must be 1D")
+            raise ValueError("Array must be 1D")
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 

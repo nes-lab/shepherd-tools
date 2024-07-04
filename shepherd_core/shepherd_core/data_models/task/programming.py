@@ -43,7 +43,7 @@ class ProgrammingTask(ShpModel):
     def post_validation(self) -> Self:
         d_type = suffix_to_DType.get(self.firmware_file.suffix.lower())
         if d_type != FirmwareDType.base64_hex:
-            ValueError(f"Firmware is not intel-.hex ('{self.firmware_file}')")
+            raise ValueError("Firmware is not intel-.hex ('%s')", self.firmware_file.as_posix())
         return self
 
     @classmethod
