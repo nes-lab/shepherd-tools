@@ -168,9 +168,7 @@ def file_older_than(file: Path, delta: timedelta) -> bool:
     """Decide if file is older than a specific duration of time."""
     cutoff = local_now() - delta
     mtime = datetime.fromtimestamp(file.stat().st_mtime, tz=local_tz())
-    if mtime < cutoff:
-        return True
-    return False
+    return mtime < cutoff
 
 
 class Fixtures:

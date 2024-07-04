@@ -70,11 +70,13 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
         return self
 
     def has_target(self, target_id: int) -> bool:
-        if self.target_a is not None and target_id == self.target_a.id and self.target_a.active:
-            return True
-        if self.target_b is not None and target_id == self.target_b.id and self.target_b.active:
-            return True
-        return False
+        case_a = (
+            self.target_a is not None and target_id == self.target_a.id and self.target_a.active
+        )
+        case_b = (
+            self.target_b is not None and target_id == self.target_b.id and self.target_b.active
+        )
+        return case_a or case_b
 
     def get_target_port(self, target_id: int) -> TargetPort:
         if self.has_target(target_id):

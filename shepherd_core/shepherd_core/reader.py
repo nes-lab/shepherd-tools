@@ -636,7 +636,7 @@ class Reader:
         Algo: create an offset-by-one vector and compare against original.
         """
         if len(data.shape) > 1:
-            ValueError("Array must be 1D")
+            raise ValueError("Array must be 1D")
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 
