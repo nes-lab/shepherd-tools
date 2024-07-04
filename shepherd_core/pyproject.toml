@@ -6,7 +6,6 @@ keywords = ["testbed", "beaglebone", "pru", "batteryless", "energyharvesting", "
 authors = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
 maintainers = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
 
-readme = {file = "README.md", content-type = "text/markdown"}
 license = {file = "LICENSE"}
 dynamic = ["version"]
 
@@ -54,7 +53,6 @@ inventory = [
     "psutil",
 ]
 
-
 dev = [
     "twine",
     "pre-commit",
@@ -69,13 +67,17 @@ test = [
     "coverage",
 ]
 
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
 [project.urls]
 Documentation = "https://github.com/orgua/shepherd-datalib/blob/main/README.md"
 Issues = "https://github.com/orgua/shepherd-datalib/issues"
 Source = "https://pypi.org/project/shepherd-core/"
 
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools>=61.2", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]

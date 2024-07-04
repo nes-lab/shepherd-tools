@@ -10,7 +10,6 @@ maintainers = [
     {name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},
 ]
 
-readme = {file = "README.md", content-type = "text/markdown"}
 license = {file = "LICENSE"}
 dynamic = ["version"]
 
@@ -64,11 +63,15 @@ Documentation = "https://github.com/orgua/shepherd-datalib/blob/main/README.md"
 Issues = "https://pypi.org/project/shepherd-data/issues"
 Source = "https://pypi.org/project/shepherd-data/"
 
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
 [project.scripts]
 shepherd-data = "shepherd_data.cli:cli"
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
