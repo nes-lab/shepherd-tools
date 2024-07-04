@@ -31,7 +31,6 @@ dependencies = [
     "pyYAML",
     "chromalog",
     "pydantic[email]>2.0.0",
-    "scipy",
     "tqdm",
     "intelhex",
     "requests",

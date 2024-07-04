@@ -16,8 +16,6 @@ from .calibration import CalibrationPair
 from .calibration import CapeData
 from .shepherd import ShpModel
 
-# TODO: move to shepherd_data to remove scipy-dependency from _core
-
 
 class CalMeasurementPair(ShpModel):
     """Value-container for a calibration-measurement."""
@@ -32,17 +30,23 @@ CalMeasPairs = Annotated[List[CalMeasurementPair], Field(min_length=2)]
 @validate_call
 def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
     """Convert values from calibration-measurement to the calibration itself."""
-    from scipy import stats  # placed here due to massive delay
-
     x = np.empty(len(data))
     y = np.empty(len(data))
     for i, pair in enumerate(data):
         x[i] = pair.shepherd_raw
         y[i] = pair.reference_si
-    result = stats.linregress(x, y)
-    offset = float(result.intercept)
-    gain = float(result.slope)
-    rval = result.rvalue  # test quality of regression
+
+    model = np.polyfit(x, y, 1)
+    offset = model[1]
+    gain = model[0]
+
+    # r-squared, Pearson correlation coefficient
+    p = np.poly1d(model)
+    yhat = p(x)
+    ybar = np.sum(y) / len(y)
+    ssreg = np.sum((yhat - ybar) ** 2)
+    sstot = np.sum((y - ybar) ** 2)
+    rval = ssreg / sstot
 
     if rval < 0.999:
         msg = (
