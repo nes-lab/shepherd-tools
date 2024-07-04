@@ -1,4 +1,13 @@
-"""file-reader with various converters to generate valid shepherd-data for emulation."""
+"""file-reader with various converters to generate valid shepherd-data for emulation.
+
+IVonne uses the Shockley Diode Equation to estimate a model
+I_D = I_S * ( e ^ ( U_D / n*U_T ) - 1 )
+coeff_a = I_D = I_SC
+coeff_b = I_S
+coeff_c = 1 / n*U_T = q / n*k*T (constant)
+
+literature: https://en.wikipedia.org/wiki/Shockley_diode_equation
+"""
 
 import errno
 import logging
