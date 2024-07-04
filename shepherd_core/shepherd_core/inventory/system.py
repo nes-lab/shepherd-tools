@@ -3,7 +3,6 @@
 import platform
 import subprocess
 import time
-from contextlib import suppress
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -49,7 +48,7 @@ class SystemInventory(ShpModel):
     #   ip IPvAnyAddress
     #   mac MACStr
 
-    fs_root: str
+    fs_root: Optional[str] = None
     beagle: Optional[str] = None
 
     model_config = ConfigDict(str_min_length=0)
@@ -71,16 +70,30 @@ class SystemInventory(ShpModel):
             ifs2 = {name: (_if[1].address, _if[0].address) for name, _if in ifs1 if len(_if) > 1}
             uptime = time.time() - psutil.boot_time()
 
-        stat_fs = subprocess.run(  # noqa: S603
-            ["/usr/bin/df", "-h", "/"], timeout=30, capture_output=True, check=False
-        )
+        fs_cmd = ["/usr/bin/df", "-h", "/"]
+        fs_out = None
+        if Path(fs_cmd[0]).is_file():
+            reply = subprocess.run(  # noqa: S603
+                fs_cmd, timeout=30, capture_output=True, check=False
+            )
+            fs_out = str(reply.stdout)
 
-        beagle_cmd = "/usr/bin/beagle-version"
+        beagle_cmd = ["/usr/bin/beagle-version"]
         beagle_out = None
-        if Path(beagle_cmd).is_file():
-            beagle_out = subprocess.run(  # noqa: S603
-                [beagle_cmd], timeout=30, capture_output=True, check=False
-            ).stdout
+        if Path(beagle_cmd[0]).is_file():
+            reply = subprocess.run(  # noqa: S603
+                beagle_cmd, timeout=30, capture_output=True, check=False
+            )
+            beagle_out = str(reply.stdout)
+
+        ptp_cmd = ["/usr/sbin/ptp4l", "-v"]
+        ptp_out = None
+        if Path(ptp_cmd[0]).is_file():
+            reply = subprocess.run(  # noqa: S603
+                ptp_cmd, timeout=30, capture_output=True, check=False
+            )
+            ptp_out = f"{ reply.stdout }, { reply.stderr }"
+            # alternative: check_output - seems to be lighter
 
         model_dict = {
             "uptime": round(uptime),
@@ -92,15 +105,9 @@ class SystemInventory(ShpModel):
             "processor": platform.processor(),
             "hostname": platform.node(),
             "interfaces": ifs2,
-            "fs_root": str(stat_fs.stdout),
+            "fs_root": fs_out,
             "beagle": beagle_out,
+            "ptp": ptp_out,
         }
-
-        with suppress(FileNotFoundError):
-            ret = subprocess.run(  # noqa: S603
-                ["/usr/sbin/ptp4l", "-v"], timeout=30, capture_output=True, check=False
-            )
-            model_dict["ptp"] = f"{ ret.stdout }, { ret.stderr }"
-            # alternative: check_output - seems to be lighter
 
         return cls(**model_dict)
