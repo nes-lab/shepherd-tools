@@ -99,7 +99,7 @@ version = {attr = "shepherd_core.__version__"}
 [tool.pytest.ini_options]
 markers = [
     "converter: automatically added when no objcopy is found (on ubuntu install build-essential)",
-    "elf: automatically added when no elf-support is found (on windows or missing shepherd-core[elf])"
+    "elf: automatically added when no elf-support is found (on windows or missing shepherd-core[elf])",
 ]
 
 addopts = "-vvv --stepwise" # opts: verbose result for each tests

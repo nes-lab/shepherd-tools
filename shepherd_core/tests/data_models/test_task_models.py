@@ -125,8 +125,9 @@ def test_task_model_prog_min() -> None:
 
 
 def test_task_model_prog_fault_elf() -> None:
-    ProgrammingTask(
-        firmware_file=Path("fw_to_load.elf"),
-        protocol=ProgrammerProtocol.SWD,
-        mcu_type="nrf52",
-    )
+    with pytest.raises(ValidationError):
+        ProgrammingTask(
+            firmware_file=Path("fw_to_load.elf"),
+            protocol=ProgrammerProtocol.SWD,
+            mcu_type="nrf52",
+        )

@@ -50,7 +50,7 @@ class SystemInventory(ShpModel):
     #   mac MACStr
 
     fs_root: str
-    beagle: str = None
+    beagle: Optional[str] = None
 
     model_config = ConfigDict(str_min_length=0)
 
@@ -92,7 +92,7 @@ class SystemInventory(ShpModel):
             "processor": platform.processor(),
             "hostname": platform.node(),
             "interfaces": ifs2,
-            "fs_root": str(stat_fs.stdout).split("\n"),
+            "fs_root": str(stat_fs.stdout),
             "beagle": beagle_out,
         }
 
