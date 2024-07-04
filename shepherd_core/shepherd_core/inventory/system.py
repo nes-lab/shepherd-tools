@@ -67,6 +67,15 @@ class SystemInventory(ShpModel):
             ifs2 = {name: (_if[1].address, _if[0].address) for name, _if in ifs1 if len(_if) > 1}
             uptime = time.time() - psutil.boot_time()
 
+        stat_fs = subprocess.run(
+            ["/usr/bin/df", "-h", "/"], timeout=30, capture_output=True, check=False
+        )
+
+        beagle_cmd = [""]
+        # TODO: /usr/bin/beagle-version | grep boot
+        # check if file is present
+        # replies = self.run_cmd(sudo=False, cmd=f"test -f {src_path}")
+
         model_dict = {
             "uptime": round(uptime),
             "timestamp": ts,
@@ -77,12 +86,14 @@ class SystemInventory(ShpModel):
             "processor": platform.processor(),
             "hostname": platform.node(),
             "interfaces": ifs2,
-            # TODO: add free space on /
+            "fs_root": str(stat_fs.stdout).split("\n"),
         }
 
         with suppress(FileNotFoundError):
-            ret = subprocess.run(["/usr/sbin/ptp4l", "-v"], check=False)  # noqa: S603
-            model_dict["ptp"] = ret.stdout
+            ret = subprocess.run(
+                ["/usr/sbin/ptp4l", "-v"], timeout=30, capture_output=True, check=False
+            )
+            model_dict["ptp"] = f"{ ret.stdout }, { ret.stderr }"
             # alternative: check_output - seems to be lighter
 
         return cls(**model_dict)
