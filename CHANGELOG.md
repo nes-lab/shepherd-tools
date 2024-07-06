@@ -1,5 +1,9 @@
 # History of Changes
 
+## v2024.7.2
+
+- inventory - bugfix for getting beagle-info
+
 ## v2024.7.1
 
 - core - replace scipy-code with numpy to remove dependency

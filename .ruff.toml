@@ -13,7 +13,6 @@ ignore = [
     "ANN101", "ANN102", # self & cls not type-annotated
     "ANN401",  # Any as valid type
     "COM812", # trailing comma, same line
-    "PLC0415",  # import in FN
     "TD002", "TD003", "TD005", "FIX002",  # TODOs
     "D105", "D107", # docstring in magic methods & init
     "COM812", "ISC001", # conflicts with formatter
