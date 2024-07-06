@@ -690,9 +690,9 @@ class Reader:
 
         try:
             return Uart(gpio_wf).get_lines()
-        except TypeError as e:
-            self._logger.exception("TypeError: Extracting UART from GPIO failed - will skip file.", exc_info=False)
+        except TypeError:
+            self._logger.error("TypeError: Extracting UART from GPIO failed - will skip file.")
             return None
         except ValueError:
-            self._logger.exception("ValueError: Extracting UART from GPIO failed - will skip file.", exc_info=False)
+            self._logger.error("ValueError: Extracting UART from GPIO failed - will skip file.")
             return None
