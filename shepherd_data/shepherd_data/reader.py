@@ -44,7 +44,7 @@ class Reader(CoreReader):
         :param separator: used between columns
         :return: number of processed entries
         """
-        if h5_group["time"].shape[0] < 1:
+        if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
             self._logger.warning("%s is empty, no csv generated", h5_group.name)
             return 0
         if not isinstance(self.file_path, Path):
@@ -80,7 +80,7 @@ class Reader(CoreReader):
         :param add_timestamp: can be external
         :return: number of processed entries
         """
-        if h5_group["time"].shape[0] < 1:
+        if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
             self._logger.warning("%s is empty, no log generated", h5_group.name)
             return 0
         if not isinstance(self.file_path, Path):
