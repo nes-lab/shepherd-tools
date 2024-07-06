@@ -688,4 +688,11 @@ class Reader:
         gpio_wf = pin_wf.astype(float)
         gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
 
-        return Uart(gpio_wf).get_lines()
+        try:
+            return Uart(gpio_wf).get_lines()
+        except TypeError as e:
+            self._logger.exception("TypeError: Extracting UART from GPIO failed - will skip file.", exc_info=False)
+            return None
+        except ValueError:
+            self._logger.exception("ValueError: Extracting UART from GPIO failed - will skip file.", exc_info=False)
+            return None
