@@ -335,7 +335,7 @@ class Reader(CoreReader):
         end_s: Optional[float] = None,
         *,
         relative_timestamp: bool = True,
-    ) -> Dict:
+    ) -> Optional[Dict]:
         """Provide down-sampled iv-data that can be fed into plot_to_file().
 
         :param start_s: time in seconds, relative to start of recording
@@ -344,14 +344,17 @@ class Reader(CoreReader):
         :return: down-sampled size of ~ self.max_elements
         """
         if self.get_datatype() == "ivcurve":
-            self._logger.warning("Plot-Function was not written for IVCurves")
-            # TODO: allow returning None
+            self._logger.warning("Plot-Function was not written for IVCurves.")
+            return None
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
             end_s = self.runtime_s
         start_sample = round(start_s * self.samplerate_sps)
         end_sample = round(end_s * self.samplerate_sps)
+        if end_sample - start_sample < 5:
+            self._logger.warning("Skip plot, because of small sample-size.")
+            return None
         samplerate_dst = max(round(self.max_elements / (end_s - start_s), 3), 0.001)
         ds_factor = float(self.samplerate_sps / samplerate_dst)
         data = {
@@ -426,10 +429,12 @@ class Reader(CoreReader):
         if not isinstance(self.file_path, Path):
             return
 
-        data = [self.generate_plot_data(start_s, end_s)]
+        data = self.generate_plot_data(start_s, end_s)
+        if data is None:
+            return
 
-        start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
-        end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
+        start_str = f"{data['start_s']:.3f}".replace(".", "s")
+        end_str = f"{data['end_s']:.3f}".replace(".", "s")
         plot_path = self.file_path.resolve().with_suffix(f".plot_{start_str}_to_{end_str}.png")
         if plot_path.exists():
             self._logger.warning("Plot exists, will skip & not overwrite!")

@@ -37,6 +37,8 @@ if __name__ == "__main__":
     for file in files:
         with shp.Reader(file, verbose=False) as db:
             date = db.generate_plot_data(0, 1)
+            if date is None:
+                continue
             date["name"] = file.stem[12:]  # cut away "jogging_10m_"
             data.append(date)
             print(db.energy())

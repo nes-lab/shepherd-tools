@@ -119,6 +119,14 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
         logger.info("Extracting IV-Samples from '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
+                # TODO: this code is very similar to data.reader.downsample()
+                if (shpr.ds_voltage.shape[0] / ds_factor) < 10:
+                    logger.warning(
+                        "will skip downsampling for %s because "
+                        "resulting sample-size is too small",
+                        file.name,
+                    )
+                    continue
                 # will create a downsampled h5-file (if not existing) and then saving to csv
                 ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
                 if not ds_file.exists():
@@ -203,6 +211,8 @@ def extract_uart(in_data: Path) -> None:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 # TODO: move into separate fn OR add to h5-file and use .save_log(), ALSO TEST
                 lines = shpr.gpio_to_uart()
+                if lines is None:
+                    continue
                 # TODO: could also add parameter to get symbols instead of lines
                 log_path = Path(file).with_suffix(".uart_from_wf.log")
                 if log_path.exists():
@@ -363,7 +373,10 @@ def plot(
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 if multiplot:
-                    data.append(shpr.generate_plot_data(start, end, relative_timestamp=True))
+                    date = shpr.generate_plot_data(start, end, relative_timestamp=True)
+                    if date is None:
+                        continue
+                    data.append(date)
                 else:
                     shpr.plot_to_file(start, end, width, height)
         except TypeError:
