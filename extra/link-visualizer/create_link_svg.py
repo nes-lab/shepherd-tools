@@ -2,16 +2,18 @@ import argparse
 import logging
 import os
 import re
+from pathlib import Path
+from typing import Optional, Tuple, Dict
 
 logging.basicConfig(level=logging.INFO)
 
-INFILE = "nodes.svg"
-OUTDIR = "."
+INFILE: str = "nodes.svg"
+OUTDIR: str = "."
 
 # -------------------------------------------------------
 
 # node locations in pixel
-NODES = {
+NODES: Dict[int, Tuple[int, int]] = {
     1: (104, 110),
     2: (207, 70),
     3: (326, 31),
@@ -31,7 +33,7 @@ NODES = {
 # -------------------------------------------------------
 
 
-def indent(s, pre="\t", *, empty=False):
+def indent(s, pre="\t", *, empty: bool = False):
     if empty:
         indent1 = lambda l: pre + l
     else:
@@ -57,7 +59,8 @@ class SVGNodes:
 
     def get_svg_group(self):
         frame = (
-            '<g style="fill:#000000;stroke:#000000;stroke-width:1;font:bold 17px sans-serif;text-anchor:middle">\n',
+            '<g style="fill:#000000;stroke:#000000;stroke-width:1;'
+            'font:bold 17px sans-serif;text-anchor:middle">\n',
             "\n</g>\n",
         )
         data = "\n".join(self._nodes)
@@ -71,7 +74,7 @@ class SVGLines:
         self._lines = []
 
     @staticmethod
-    def _gen_line(node1, node2, width):
+    def _gen_line(node1: int, node2: int, width):
         x1, y1 = NODES[node1]
         x2, y2 = NODES[node2]
         width = str(int(width))
@@ -86,102 +89,101 @@ class SVGLines:
         return indent(data).join(frame)
 
 
-def update_svg(group, infile, outfile):
-    with open(infile) as f:
-        lines = f.readlines()
-    k = 0
-    i = 0
-    for t in ("<svg", "<image"):
+def update_svg(group, file_inp: str, file_out: str) -> None:
+    with Path(file_inp).open() as file:
+        lines = file.readlines()
+    k: int = 0
+    i: int = 0
+    for type_val in ("<svg", "<image"):
         while i < len(lines):
-            if lines[i].strip().startswith(t):
+            if lines[i].strip().startswith(type_val):
                 k = i + 1
                 break
             i += 1
     lines.insert(k, group)
-    logging.info("update file %s and save it to %s", infile, outfile)
-    with open(outfile, "w") as f:
-        f.writelines(lines)
+    logging.info("update file %s and save it to %s", file_inp, file_out)
+    with Path(file_out).open("w") as file:
+        file.writelines(lines)
 
 
 # -------------------------------------------------------
 
 
-def line_width(x):
-    y = (100 + x + 4) // 5
-    if x and not y:
-        logging.warning("rssi of %s converted to line_width 1", x)
+def line_width(x_val: float) -> int:
+    y_val = (100 + x_val + 4) // 5
+    if x_val and not y_val:
+        logging.warning("rssi of %s converted to line_width 1", x_val)
         return 1
-    elif y > 10:
-        logging.warning("rssi of %s converted to line_width 10", x)
-        y = 10
-    return y
+    if y_val > 10:
+        logging.warning("rssi of %s converted to line_width 10", x_val)
+        y_val = 10
+    return round(y_val)
 
 
-def tpl_line_width(tpl):
+def tpl_line_width(tpl) -> int:
     if abs(tpl[0] - tpl[1]) > 6:
         logging.warning("received and sent signal strength differ a lot: %s", tpl)
-    return line_width(sum(tpl) / 2)
+    return line_width(sum(tpl) // 2)
 
 
-def add_nodes(infile, outfile):
+def add_nodes(file_inp: str, file_out: str) -> None:
     svgn = SVGNodes(color="#FFFF00")
     for n in NODES:
         svgn.add_node(n)
-    update_svg("\n" + svgn.get_svg_group(), infile, outfile)
+    update_svg("\n" + svgn.get_svg_group(), file_inp, file_out)
 
 
-def add_links(infile, outfile, rssi_dic):
+def add_links(file_inp: str, file_out: str, rssi: dict) -> None:
     svgl = SVGLines(color="#0000FF")
     rssi_tpls = {}
-    for (n1, n2), v in rssi_dic.items():
+    for (n1, n2), v in rssi.items():
         tpl = rssi_tpls.setdefault((min(n1, n2), max(n1, n2)), [v - 10, v - 10])
         tpl[n2 > n1] = v
     for (n1, n2), tpl in rssi_tpls.items():
         svgl.add_line(n1, n2, tpl_line_width(tpl))
-    update_svg("\n" + svgl.get_svg_group(), infile, outfile)
+    update_svg("\n" + svgl.get_svg_group(), file_inp, file_out)
 
 
 # -------------------------------------------------------
 
 
-def extract_rssi_data(filename):
-    data = []
-    reading = False
-    with open(filename) as f:
-        for l in f.readlines():
+def extract_rssi_data(file_name: str) -> dict:
+    data: list = []
+    reading: bool = False
+    with Path(file_name).open() as file:
+        for line in file.readlines():
             if reading:
-                if l.isspace():
+                if line.isspace():
                     break
-                data.append(l)
-            elif "link matrix:" in l.lower():
+                data.append(line)
+            elif "link matrix:" in line.lower():
                 reading = True
     logging.info("link matrix:\n%s", "".join(data))
     # extract numbers
     head = [(int(m[1]), m.span()) for m in re.finditer(r"\s+(\d+)", data[0])]
     assert len(head) == len(data) - 2
-    rssi_dic = {}
-    for l in data[2:]:
-        m = re.match(r"^\s*(\d+)\s*\|", l)
+    rssi: dict = {}
+    for line in data[2:]:
+        m = re.match(r"^\s*(\d+)\s*\|", line)
         n1 = int(m[1])
         offset = m.span()[1]
         for n2, (a, b) in head:
-            v = l[max(a, offset) : b].strip()
+            v = line[max(a, offset) : b].strip()
             if v:
-                rssi_dic[(n1, n2)] = float(v)
-    return rssi_dic
+                rssi[(n1, n2)] = float(v)
+    return rssi
 
 
-def check_outfile(infile, outfile):
-    if outfile is None:
-        outfile, ext = os.path.splitext(infile)
-        return outfile + "_" + os.urandom(2).hex() + ext
-    elif outfile == "":
-        return infile
-    else:
-        return outfile
+def check_outfile(file_inp: str, file_out: Optional[str] = None) -> str:
+    if file_out is None:
+        file = Path(file_inp).resolve()
+        file_root = file.parent / file.stem
+        file_ext = file.suffix
+        return str(file_root) + "_" + os.urandom(2).hex() + file_ext
+    if file_out == "":
+        return file_inp
+    return file_out
 
-
-# -------------------------------------------------------
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="visualize rssi links in an svg file")
@@ -211,4 +213,4 @@ if __name__ == "__main__":
     else:
         logging.warning("no TrafficBench data defined")
 
-    print(f"svg file {args.outfile} created")
+    logging.info(f"svg file {args.outfile} created")
