@@ -536,9 +536,9 @@ class Reader:
     def count_errors_in_log(self, group_name: str = "sheep", min_level: int = 40) -> int:
         if group_name not in self.h5file:
             return 0
-        if "level" not in self.h5file["sheep"]:
+        if "level" not in self.h5file[group_name]:
             return 0
-        _lvl = self.h5file["sheep"]["level"]
+        _lvl = self.h5file[group_name]["level"]
         if _lvl.shape[0] < 1:
             return 0
         _items = [1 for _x in _lvl[:] if _x >= min_level]
