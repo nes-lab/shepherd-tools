@@ -1,5 +1,13 @@
 # History of Changes
 
+## v2024.7.2
+
+- inventory - bugfix for beagle-info
+- extract - more robust file-handling
+- extract-uart - more robust waveform decoding
+- extract-meta - more robust operation
+- add script to generate plot of link-matrix
+
 ## v2024.7.1
 
 - core - replace scipy-code with numpy to remove dependency

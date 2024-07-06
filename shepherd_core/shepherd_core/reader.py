@@ -536,9 +536,9 @@ class Reader:
     def count_errors_in_log(self, group_name: str = "sheep", min_level: int = 40) -> int:
         if group_name not in self.h5file:
             return 0
-        if "level" not in self.h5file["sheep"]:
+        if "level" not in self.h5file[group_name]:
             return 0
-        _lvl = self.h5file["sheep"]["level"]
+        _lvl = self.h5file[group_name]["level"]
         if _lvl.shape[0] < 1:
             return 0
         _items = [1 for _x in _lvl[:] if _x >= min_level]
@@ -688,4 +688,11 @@ class Reader:
         gpio_wf = pin_wf.astype(float)
         gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
 
-        return Uart(gpio_wf).get_lines()
+        try:
+            return Uart(gpio_wf).get_lines()
+        except TypeError:
+            self._logger.error("TypeError: Extracting UART from GPIO failed - will skip file.")
+            return None
+        except ValueError:
+            self._logger.error("ValueError: Extracting UART from GPIO failed - will skip file.")
+            return None

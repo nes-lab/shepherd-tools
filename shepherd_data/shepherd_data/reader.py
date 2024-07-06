@@ -44,7 +44,7 @@ class Reader(CoreReader):
         :param separator: used between columns
         :return: number of processed entries
         """
-        if h5_group["time"].shape[0] < 1:
+        if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
             self._logger.warning("%s is empty, no csv generated", h5_group.name)
             return 0
         if not isinstance(self.file_path, Path):
@@ -80,7 +80,7 @@ class Reader(CoreReader):
         :param add_timestamp: can be external
         :return: number of processed entries
         """
-        if h5_group["time"].shape[0] < 1:
+        if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
             self._logger.warning("%s is empty, no log generated", h5_group.name)
             return 0
         if not isinstance(self.file_path, Path):
@@ -117,7 +117,7 @@ class Reader(CoreReader):
     ) -> int:
         """Print warning messages from log in data-group."""
         _count = self.count_errors_in_log(group_name, min_level)
-        if _count < 1:
+        if (_count < 1) or ("level" not in self.h5file[group_name]):
             return 0
         if not show:
             return _count
@@ -154,7 +154,7 @@ class Reader(CoreReader):
         ds_factor: float = 5,
         *,
         is_time: bool = False,
-    ) -> Union[h5py.Dataset, np.ndarray]:
+    ) -> Union[None, h5py.Dataset, np.ndarray]:
         """Sample down iv-data.
 
         Warning: only valid for IV-Stream, not IV-Curves
@@ -171,6 +171,7 @@ class Reader(CoreReader):
 
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Downsampling-Function was not written for IVCurves")
+            return data_dst
         ds_factor = max(1, math.floor(ds_factor))
 
         if isinstance(end_n, (int, float)):
@@ -182,6 +183,7 @@ class Reader(CoreReader):
         data_len = _end_n - start_n  # TODO: one-off to calculation below ?
         if data_len == 0:
             self._logger.warning("downsampling failed because of data_len = 0")
+            return data_dst
         iblock_len = min(self.max_elements, data_len)
         oblock_len = round(iblock_len / ds_factor)
         iterations = math.ceil(data_len / iblock_len)
@@ -233,7 +235,7 @@ class Reader(CoreReader):
         samplerate_dst: float = 1000,
         *,
         is_time: bool = False,
-    ) -> Union[h5py.Dataset, np.ndarray]:
+    ) -> Union[None, h5py.Dataset, np.ndarray]:
         """Up- or down-sample the original trace-data.
 
         :param data_src: original iv-data
@@ -247,7 +249,7 @@ class Reader(CoreReader):
         self._logger.error("Resampling is still under construction - do not use for now!")
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Resampling-Function was not written for IVCurves")
-
+            return data_dst
         if isinstance(end_n, (int, float)):
             _end_n = min(data_src.shape[0], round(end_n))
         else:
@@ -257,11 +259,12 @@ class Reader(CoreReader):
         data_len = _end_n - start_n
         if data_len == 0:
             self._logger.warning("resampling failed because of data_len = 0")
+            return data_dst
         fs_ratio = samplerate_dst / self.samplerate_sps
         dest_len = math.floor(data_len * fs_ratio) + 1
         if fs_ratio <= 1.0:  # down-sampling
             slice_inp_len = min(self.max_elements, data_len)
-            slice_out_len = round(slice_inp_len * fs_ratio)
+            slice_out_len = round(slice_inp_len * fs_ratio)  # TODO: is that correct?
         else:  # up-sampling
             slice_out_len = min(self.max_elements, data_len * fs_ratio)
             slice_inp_len = round(slice_out_len / fs_ratio)
@@ -332,7 +335,7 @@ class Reader(CoreReader):
         end_s: Optional[float] = None,
         *,
         relative_timestamp: bool = True,
-    ) -> Dict:
+    ) -> Optional[Dict]:
         """Provide down-sampled iv-data that can be fed into plot_to_file().
 
         :param start_s: time in seconds, relative to start of recording
@@ -341,13 +344,17 @@ class Reader(CoreReader):
         :return: down-sampled size of ~ self.max_elements
         """
         if self.get_datatype() == "ivcurve":
-            self._logger.warning("Plot-Function was not written for IVCurves")
+            self._logger.warning("Plot-Function was not written for IVCurves.")
+            return None
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
             end_s = self.runtime_s
         start_sample = round(start_s * self.samplerate_sps)
         end_sample = round(end_s * self.samplerate_sps)
+        if end_sample - start_sample < 5:
+            self._logger.warning("Skip plot, because of small sample-size.")
+            return None
         samplerate_dst = max(round(self.max_elements / (end_s - start_s), 3), 0.001)
         ds_factor = float(self.samplerate_sps / samplerate_dst)
         data = {
@@ -422,10 +429,12 @@ class Reader(CoreReader):
         if not isinstance(self.file_path, Path):
             return
 
-        data = [self.generate_plot_data(start_s, end_s)]
+        data = self.generate_plot_data(start_s, end_s)
+        if data is None:
+            return
 
-        start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
-        end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
+        start_str = f"{data['start_s']:.3f}".replace(".", "s")
+        end_str = f"{data['end_s']:.3f}".replace(".", "s")
         plot_path = self.file_path.resolve().with_suffix(f".plot_{start_str}_to_{end_str}.png")
         if plot_path.exists():
             self._logger.warning("Plot exists, will skip & not overwrite!")

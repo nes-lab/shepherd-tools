@@ -5,6 +5,7 @@ import subprocess
 import time
 from datetime import datetime
 from pathlib import Path
+from typing import List
 from typing import Optional
 
 from typing_extensions import Self
@@ -48,8 +49,8 @@ class SystemInventory(ShpModel):
     #   ip IPvAnyAddress
     #   mac MACStr
 
-    fs_root: Optional[str] = None
-    beagle: Optional[str] = None
+    fs_root: List[str] = None
+    beagle: List[str] = None
 
     model_config = ConfigDict(str_min_length=0)
 
@@ -71,20 +72,20 @@ class SystemInventory(ShpModel):
             uptime = time.time() - psutil.boot_time()
 
         fs_cmd = ["/usr/bin/df", "-h", "/"]
-        fs_out = None
+        fs_out = []
         if Path(fs_cmd[0]).is_file():
             reply = subprocess.run(  # noqa: S603
                 fs_cmd, timeout=30, capture_output=True, check=False
             )
-            fs_out = str(reply.stdout)
+            fs_out = str(reply.stdout).split(r"\n")
 
         beagle_cmd = ["/usr/bin/beagle-version"]
-        beagle_out = None
+        beagle_out = []
         if Path(beagle_cmd[0]).is_file():
             reply = subprocess.run(  # noqa: S603
                 beagle_cmd, timeout=30, capture_output=True, check=False
             )
-            beagle_out = str(reply.stdout)
+            beagle_out = str(reply.stdout).split(r"\n")
 
         ptp_cmd = ["/usr/sbin/ptp4l", "-v"]
         ptp_out = None
