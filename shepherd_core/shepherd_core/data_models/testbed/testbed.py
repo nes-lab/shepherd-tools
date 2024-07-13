@@ -11,6 +11,7 @@ from pydantic import model_validator
 from typing_extensions import Annotated
 from typing_extensions import Self
 
+from ... import logger
 from ...testbed_client import tb_client
 from ..base.content import IdInt
 from ..base.content import NameStr
@@ -42,6 +43,14 @@ class Testbed(ShpModel):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict) -> dict:
+        # allow instantiating an empty Testbed
+        #   -> query the first (and only) entry of client
+        if len(values) == 0:
+            ids = tb_client.query_ids(cls.__name__)
+            if len(ids) > 1:
+                logger.warning("More than one testbed defined?!?")
+            values = {"id": ids[0]}
+
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values
 

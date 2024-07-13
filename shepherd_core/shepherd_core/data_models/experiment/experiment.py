@@ -13,7 +13,7 @@ from pydantic import model_validator
 from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ... import __version__
+from ...version import version
 from ..base.content import IdInt
 from ..base.content import NameStr
 from ..base.content import SafeStr
@@ -55,19 +55,20 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # targets
     target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=128)]
 
-    # remember for debug-purposes (and later comp-checks)
-    lib_ver: str = __version__
+    # for debug-purposes and later comp-checks
+    lib_ver: Optional[str] = version
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        self.validate_targets(self.target_configs)
-        self.validate_observers(self.target_configs)
+        testbed = Testbed()  # this will query the first (and only) entry of client
+        self._validate_targets(self.target_configs)
+        self._validate_observers(self.target_configs, testbed)
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration of experiment can't be negative.")
         return self
 
     @staticmethod
-    def validate_targets(configs: List[TargetConfig]) -> None:
+    def _validate_targets(configs: List[TargetConfig]) -> None:
         target_ids = []
         custom_ids = []
         for _config in configs:
@@ -85,10 +86,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             raise ValueError("Custom Target-ID are faulty (some form of id-collisions)!")
 
     @staticmethod
-    def validate_observers(configs: List[TargetConfig]) -> None:
+    def _validate_observers(configs: List[TargetConfig], testbed: Testbed) -> None:
         target_ids = [_id for _config in configs for _id in _config.target_IDs]
-
-        testbed = Testbed(name="shepherd_tud_nes")
         obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
         if len(target_ids) > len(set(obs_ids)):
             raise ValueError(
