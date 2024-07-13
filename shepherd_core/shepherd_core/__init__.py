@@ -21,9 +21,10 @@ from .logger import logger
 from .reader import Reader
 from .testbed_client.client import TestbedClient
 from .testbed_client.client import tb_client
+from .version import version
 from .writer import Writer
 
-__version__ = "2024.7.2"
+__version__ = version
 
 __all__ = [
     "Reader",
