@@ -13,6 +13,7 @@ from pydantic import model_validator
 from typing_extensions import Annotated
 from typing_extensions import Self
 
+from ... import __version__
 from ..base.content import IdInt
 from ..base.content import NameStr
 from ..base.content import SafeStr
@@ -54,7 +55,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # targets
     target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=128)]
 
-    # TODO: we probably need to remember the lib-version for content &| experiment
+    # remember for debug-purposes (and later comp-checks)
+    lib_ver: str = __version__
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
