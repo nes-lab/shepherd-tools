@@ -9,6 +9,7 @@ import os
 import shutil
 from io import BytesIO
 from pathlib import Path
+from typing import Dict
 from urllib.request import urlopen
 from zipfile import ZipFile
 
@@ -65,3 +66,18 @@ if __name__ == "__main__":
                 logger.info("saved FW %s", path_elf)
             else:
                 logger.error("FW not found, will skip: %s", path_elf.as_posix())
+
+            # debug-part below
+            sizeof: Dict[str, int] = {}
+            sizeof["elf"] = path_elf.stat().st_size
+            files_hex = [each for each in os.listdir(path_sub) if each.endswith(".hex")]
+            if len(files_hex):
+                sizeof["hex"] = (path_sub / files_hex[0]).stat().st_size
+            file_temp = path_here / "temp" / "demo_fw.yaml"
+            fw = Firmware.from_firmware(path_elf)
+            fw.to_file(file_temp, minimal=True)
+            sizeof["yaml"] = file_temp.stat().st_size
+            with file_temp.open("w") as fh:
+                fh.write(fw.model_dump_json(exclude_unset=True, exclude_defaults=True))
+            sizeof["json"] = file_temp.stat().st_size
+            logger.info(" -> size-stat: %s", sizeof)
