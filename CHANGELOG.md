@@ -14,7 +14,7 @@ saved FW ./content/fw/nes_lab/nrf52_rf_test/build.elf
 saved FW ./content/fw/nes_lab/nrf52_deep_sleep/build.elf
  -> size-stat: {'elf': 619088, 'hex': 799, 'yaml': 170395, 'json': 170320}
 saved FW ./content/fw/nes_lab/nrf52_rf_survey/build.elf
- -> size-stat: {'elf': 799636, 'hex': 123517, 'yaml': 287927, 'json': 287852} 
+ -> size-stat: {'elf': 799636, 'hex': 123517, 'yaml': 287927, 'json': 287852}
  ```
 
 ## v2024.7.2
