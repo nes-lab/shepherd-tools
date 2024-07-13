@@ -36,6 +36,7 @@ class TestbedClient:
 
     @classmethod
     def __new__(cls, *_args: tuple, **_kwargs: Unpack[TypedDict]) -> Self:
+        # Singleton
         if cls._instance is None:
             cls._instance = object.__new__(cls)
         return cls._instance
