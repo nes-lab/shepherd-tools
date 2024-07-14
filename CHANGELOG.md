@@ -5,6 +5,7 @@
 - fixture-cache -> limit usage to sheep / bbone
 - include lib-version in experiment- and wrapper-data
 - tb-client - improve query of data
+- create AbstractBaseClass for tb-client to allow dedicated Clients like `FixturesClient`, `WebClient`, `DbClient`
 - `extra/gen_firmwares.py` shows size of different firmwares (elf, hex, embedded-yaml, embedded-json)
   - yaml / json does embed elf with zstd-compression level20 and base64-encoding
 

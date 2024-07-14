@@ -152,6 +152,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
         if not match:
             logger.warning("FW-Hash does not match with stored value!")
+            # TODO: it might be more appropriate to raise here
         return match
 
     @validate_call
