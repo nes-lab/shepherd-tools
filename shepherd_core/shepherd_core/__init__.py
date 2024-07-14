@@ -19,7 +19,6 @@ from .logger import get_verbose_level
 from .logger import increase_verbose_level
 from .logger import logger
 from .reader import Reader
-from .testbed_client import tb_client
 from .testbed_client.client_web import WebClient
 from .version import version
 from .writer import Writer
@@ -42,6 +41,5 @@ __all__ = [
     "Calc_t",
     "Compression",
     "WebClient",
-    "tb_client",  # using this (instead of the Class) is the cleaner, but less pythonic way
     "Inventory",
 ]

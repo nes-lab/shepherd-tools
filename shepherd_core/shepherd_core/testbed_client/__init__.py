@@ -1,11 +1,11 @@
 """Client to access a testbed-instance for controlling experiments."""
 
-from .client_fixtures import FixturesClient
+from .client_abc_fix import tb_client
+from .client_web import WebClient
 from .user_model import User
-
-tb_client = FixturesClient()
 
 __all__ = [
     "tb_client",
+    "WebClient",
     "User",
 ]
