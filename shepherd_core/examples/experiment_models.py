@@ -18,7 +18,7 @@ How to define an experiment:
 
 """
 
-from shepherd_core import TestbedClient
+from shepherd_core import WebClient
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import VirtualHarvesterConfig
@@ -30,16 +30,14 @@ from shepherd_core.data_models.task import TestbedTasks
 # generate description for all parameters -> base for web-forms
 Experiment.schema_to_file("experiment_schema.yaml")
 
-# for online-queries the lib can be connected to the testbed-server
+# For online-queries the lib can be connected to the testbed-server.
 # NOTE: there are 3 states:
-#    - unconnected -> demo-fixture is queried (locally)
-#    - connected -> publicly available data is queried online
-#    - logged in with token -> also private data is queried online
-tb_client = TestbedClient()
+# - unconnected -> demo-fixtures are queried (locally)
+# - connected -> publicly available data is queried online
+# - logged in with valid token -> also private data is queried online
 do_connect = False
-
 if do_connect:
-    tb_client.connect()
+    WebClient()
 
 # Defining an Experiment in Python
 hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")

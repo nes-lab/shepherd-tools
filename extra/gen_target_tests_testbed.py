@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from shepherd_core import TestbedClient
+from shepherd_core import WebClient
 from shepherd_core.data_models import EnergyEnvironment
 from shepherd_core.data_models import Experiment
 from shepherd_core.data_models import Firmware
@@ -19,10 +19,10 @@ if __name__ == "__main__":
     else:
         path_task = path_here / "content/"
 
-    tb_client = TestbedClient()
     do_connect = False
     if do_connect:
-        tb_client.connect()
+        # connected -> publicly available data is queried online
+        WebClient()
 
     if not path_task.exists():
         path_task.mkdir(parents=True)
