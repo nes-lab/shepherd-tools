@@ -5,32 +5,19 @@
 - that can happen just with an instantiation`WebClient`
 
 """
-from abc import ABC, abstractmethod
-from typing import Optional, Self, Unpack, TypedDict
+
+from abc import ABC
+from abc import abstractmethod
+from typing import Optional
 
 
 class AbcClient(ABC):
     """AbstractBase-Class to access a testbed instance."""
 
-    _instance: Optional[Self] = None
-
     def __init__(self) -> None:
         print("ABC init")
         global tb_client
         tb_client = self
-
-    @classmethod
-    def __new__(cls, *_args: tuple, **_kwargs: Unpack[TypedDict]) -> Self:
-        # Singleton, TODO: overwrite / exchange
-        if cls._instance is None:
-            cls._instance = object.__new__(cls)
-            print("ABC-Singleton created")
-        else:
-            print("ABC-Singleton reused")
-        return cls._instance
-
-    def __del__(self) -> None:
-        AbcClient._instance = None
 
     @abstractmethod
     def do_something(self) -> None:
@@ -49,7 +36,7 @@ class FixClient(AbcClient):
 
 
 class WebClient(AbcClient):
-    """Client-Class to access the file based fixtures."""
+    """Client-Class to access the Web-Server."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -58,6 +45,8 @@ class WebClient(AbcClient):
     def do_something(self) -> None:
         print("Web do")
 
+
+tb_client: Optional[AbcClient] = None
 
 print("####### TB - default to fix ##########")
 tb_client = FixClient()
