@@ -121,7 +121,7 @@ class WebClient(AbcClient):
             return True
         return False
 
-    def submit_experiment(self, xp: "Experiment") -> str:
+    def submit_experiment(self, xp: ShpModel) -> str:
         """Transmit XP to server to validate its feasibility.
 
         - Experiment will be added to DB (if not present)
@@ -132,6 +132,7 @@ class WebClient(AbcClient):
         Will return an ID if valid, otherwise an empty string.
         TODO: maybe its better to throw specific errors if validation fails
         TODO: is it better to include these experiment-related FNs in Xp-Class?
+        TODO: Experiment-typehint for argument triggers circular import
         """
         raise NotImplementedError("TODO")
 
