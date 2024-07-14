@@ -9,7 +9,6 @@
 from pathlib import Path
 
 from shepherd_core import Reader
-from shepherd_core import TestbedClient
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
 from shepherd_core.vsource import VirtualHarvesterModel
@@ -32,17 +31,6 @@ hrv_list = [
     "mppt_po",
     "mppt_opt",
 ]
-
-# for online-queries the lib can be connected to the testbed-server
-# NOTE: there are 3 states:
-#    - unconnected -> demo-fixture is queried (locally)
-#    - connected -> publicly available data is queried online
-#    - logged in with token -> also private data is queried online
-tb_client = TestbedClient()
-do_connect = False
-
-if do_connect:
-    tb_client.connect()
 
 # convert IVonne to IVCurve
 if not file_ivcurve.exists():

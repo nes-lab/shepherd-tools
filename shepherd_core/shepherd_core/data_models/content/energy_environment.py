@@ -35,7 +35,7 @@ class EnergyEnvironment(ContentModel):
 
     # TODO: scale up/down voltage/current
 
-    # additional descriptive metadata
+    # additional descriptive metadata, TODO: these are very solar-centered -> generalize
     light_source: Optional[str] = None
     weather_conditions: Optional[str] = None
     indoor: Optional[bool] = None

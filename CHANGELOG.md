@@ -1,5 +1,23 @@
 # History of Changes
 
+## v2024.7.3
+
+- fixture-cache -> limit usage to sheep / bbone
+- include lib-version in experiment- and wrapper-data
+- tb-client - improve query of data
+- create AbstractBaseClass for tb-client to allow dedicated Clients like `FixturesClient`, `WebClient`, `DbClient`
+- `extra/gen_firmwares.py` shows size of different firmwares (elf, hex, embedded-yaml, embedded-json)
+  - yaml / json does embed elf with zstd-compression level20 and base64-encoding
+
+```
+saved FW ./content/fw/nes_lab/nrf52_rf_test/build.elf
+ -> size-stat: {'elf': 860904, 'hex': 4340, 'yaml': 232007, 'json': 231932}
+saved FW ./content/fw/nes_lab/nrf52_deep_sleep/build.elf
+ -> size-stat: {'elf': 619088, 'hex': 799, 'yaml': 170395, 'json': 170320}
+saved FW ./content/fw/nes_lab/nrf52_rf_survey/build.elf
+ -> size-stat: {'elf': 799636, 'hex': 123517, 'yaml': 287927, 'json': 287852}
+ ```
+
 ## v2024.7.2
 
 - inventory - bugfix for beagle-info

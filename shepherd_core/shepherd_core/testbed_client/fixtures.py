@@ -183,12 +183,18 @@ class Fixtures:
         else:
             self.file_path = file_path
         self.components: Dict[str, Fixture] = {}
-        save_path = cache_user_path / "fixtures.pickle"
+        cache_file = cache_user_path / "fixtures.pickle"
+        sheep_detect = Path("/lib/firmware/am335x-pru0-fw").exists()
 
-        if save_path.exists() and not file_older_than(save_path, timedelta(hours=24)) and not reset:
-            # speedup
+        if (
+            not sheep_detect
+            and cache_file.exists()
+            and not file_older_than(cache_file, timedelta(hours=24))
+            and not reset
+        ):
+            # speedup by loading from cache
             # TODO: also add version as criterion
-            with save_path.open("rb", buffering=-1) as fd:
+            with cache_file.open("rb", buffering=-1) as fd:
                 self.components = pickle.load(fd)  # noqa: S301
             logger.debug(" -> found & used pickled fixtures")
         else:
@@ -204,9 +210,9 @@ class Fixtures:
 
             if len(self.components) < 1:
                 logger.error(f"No fixture-components found at {self.file_path.as_posix()}")
-            else:
-                save_path.parent.mkdir(parents=True, exist_ok=True)
-                with save_path.open("wb", buffering=-1) as fd:
+            elif sheep_detect:
+                cache_file.parent.mkdir(parents=True, exist_ok=True)
+                with cache_file.open("wb", buffering=-1) as fd:
                     pickle.dump(self.components, fd)
 
     @validate_call

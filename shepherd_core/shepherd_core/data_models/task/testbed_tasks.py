@@ -32,8 +32,9 @@ class TestbedTasks(ShpModel):
     @validate_call
     def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None) -> Self:
         if tb is None:
-            # TODO: just for testing OK
-            tb = Testbed(name="shepherd_tud_nes")
+            # TODO: is tb-argument really needed? prob. not
+            tb = Testbed()  # this will query the first (and only) entry of client
+
         tgt_ids = xp.get_target_ids()
         obs_tasks = [ObserverTasks.from_xp(xp, tb, _id) for _id in tgt_ids]
         return cls(

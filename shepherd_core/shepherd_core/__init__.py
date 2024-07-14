@@ -19,11 +19,11 @@ from .logger import get_verbose_level
 from .logger import increase_verbose_level
 from .logger import logger
 from .reader import Reader
-from .testbed_client.client import TestbedClient
-from .testbed_client.client import tb_client
+from .testbed_client.client_web import WebClient
+from .version import version
 from .writer import Writer
 
-__version__ = "2024.7.2"
+__version__ = version
 
 __all__ = [
     "Reader",
@@ -40,7 +40,6 @@ __all__ = [
     "local_now",
     "Calc_t",
     "Compression",
-    "TestbedClient",
-    "tb_client",  # using this (instead of the Class) is the cleaner, but less pythonic way
+    "WebClient",
     "Inventory",
 ]

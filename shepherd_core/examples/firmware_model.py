@@ -6,7 +6,7 @@ or shepherd-core[elf].
 
 from pathlib import Path
 
-from shepherd_core import TestbedClient
+from shepherd_core import WebClient
 from shepherd_core import fw_tools
 from shepherd_core.data_models import Firmware
 from shepherd_core.data_models import FirmwareDType
@@ -41,9 +41,7 @@ print(f"stored firmware to '{path_elf2.name}'")
 
 # Option 3 - fully automatic (with login) -> owner and group get prefilled
 
-tb_client = TestbedClient()
 do_connect = False
-
 if do_connect:
-    tb_client.connect(token="your_personal_login_token")  # noqa: S106
+    WebClient(token="your_personal_login_token")  # noqa: S106
     fw3 = Firmware.from_firmware(file=path_elf, name="msp_deep_sleep3")

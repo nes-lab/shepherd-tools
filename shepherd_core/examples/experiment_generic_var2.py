@@ -14,7 +14,7 @@
 
 from pathlib import Path
 
-from shepherd_core import TestbedClient
+from shepherd_core import WebClient
 from shepherd_core.data_models import GpioTracing
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
@@ -22,16 +22,14 @@ from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 
-# for online-queries the lib can be connected to the testbed-server
+# For online-queries the lib can be connected to the testbed-server.
 # NOTE: there are 3 states:
-#    - unconnected -> demo-fixture is queried (locally)
-#    - connected -> publicly available data is queried online
-#    - logged in with token -> also private data is queried online
-tb_client = TestbedClient()
+# - unconnected -> demo-fixtures are queried (locally)
+# - connected -> publicly available data is queried online
+# - logged in with valid token -> also private data is queried online
 do_connect = False
-
 if do_connect:
-    tb_client.connect()
+    WebClient()
 
 xp = Experiment(
     id="4567",

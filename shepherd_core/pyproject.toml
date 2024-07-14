@@ -94,7 +94,7 @@ shepherd_core = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "shepherd_core.__version__"}
+version = {attr = "shepherd_core.version.version"}
 
 [tool.pytest.ini_options]
 markers = [

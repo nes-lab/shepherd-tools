@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from pydantic import StringConstraints
 from typing_extensions import Annotated
 
+from ...version import version
+
 SafeStrClone = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ copy avoids circular import
 
@@ -19,5 +21,7 @@ class Wrapper(BaseModel):
     comment: Optional[SafeStrClone] = None
     created: Optional[datetime] = None
     # ⤷ Optional metadata
+    lib_ver: Optional[str] = version
+    # ⤷ for debug-purposes and later comp-checks
     parameters: dict
     # ⤷ ShpModel
