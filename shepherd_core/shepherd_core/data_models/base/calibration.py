@@ -274,7 +274,7 @@ class CalibrationSeries(ShpModel):
         emu_port_a: bool = True,
     ) -> Self:
         if isinstance(cal, CalibrationHarvester):
-            return cls(voltage=cal.adc_V_Sense, current=cal.dac_V_Hrv)
+            return cls(voltage=cal.adc_V_Sense, current=cal.adc_C_Hrv)
         if emu_port_a:
             return cls(voltage=cal.dac_V_A, current=cal.adc_C_A)
         return cls(voltage=cal.dac_V_B, current=cal.adc_C_B)
