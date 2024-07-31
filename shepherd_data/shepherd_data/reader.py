@@ -402,10 +402,10 @@ class Reader(CoreReader):
             fig = plt.figure(figsize=(width, height))
             fig.suptitle("Power-Trace")
             plt.xlabel("time [s]")
-            plt.ylabel(r"power [$\mu$W]")
+            plt.ylabel("power [mW]")
             for date in data:
                 plt.plot(
-                    date["time"], date["voltage"] * date["current"] * 10**6, label=date["name"]
+                    date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
                 )
             if len(data) > 1:
                 plt.legend(loc="lower center", ncol=len(data))
