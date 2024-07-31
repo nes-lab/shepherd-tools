@@ -171,7 +171,6 @@ class Reader(CoreReader):
 
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Downsampling-Function was not written for IVCurves")
-            return data_dst
         ds_factor = max(1, math.floor(ds_factor))
 
         if isinstance(end_n, (int, float)):
@@ -345,7 +344,6 @@ class Reader(CoreReader):
         """
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Plot-Function was not written for IVCurves.")
-            return None
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
