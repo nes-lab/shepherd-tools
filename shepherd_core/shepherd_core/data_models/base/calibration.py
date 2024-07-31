@@ -51,6 +51,7 @@ class CalibrationPair(ShpModel):
 
     gain: PositiveFloat
     offset: float = 0
+    # TODO: add unit
 
     def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
         """Convert between physical units and raw unsigned integers."""
