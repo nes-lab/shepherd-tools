@@ -79,8 +79,8 @@ class CalibrationPair(ShpModel):
     @classmethod
     def from_fn(cls, fn: Callable) -> Self:
         """Probe linear function to determine scaling values."""
-        offset = fn(0)
-        gain_inv = fn(1.0) - offset
+        offset = fn(0, limited=False)
+        gain_inv = fn(1.0, limited=False) - offset
         return cls(
             gain=1.0 / float(gain_inv),
             offset=-float(offset) / gain_inv,
