@@ -355,7 +355,7 @@ class Reader(CoreReader):
             return None
         samplerate_dst = max(round(self.max_elements / (end_s - start_s), 3), 0.001)
         ds_factor = float(self.samplerate_sps / samplerate_dst)
-        data = {
+        data: dict = {
             "name": self.get_hostname(),
             "time": self._cal.time.raw_to_si(
                 self.downsample(
@@ -381,28 +381,49 @@ class Reader(CoreReader):
         return data
 
     @staticmethod
-    def assemble_plot(data: Union[dict, list], width: int = 20, height: int = 10) -> plt.Figure:
+    def assemble_plot(
+        data: Union[dict, list], width: int = 20, height: int = 10, *, only_pwr: bool = False
+    ) -> plt.Figure:
         """Create the actual figure.
+
+        Due to the 50 mA limits of the cape the default units for current & power are mA & mW.
 
         :param data: plottable / down-sampled iv-data with some meta-data
                 -> created with generate_plot_data()
         :param width: plot-width
         :param height: plot-height
+        :param only_pwr: plot power-trace instead of Voltage & Current
         :return: figure
         """
-        # TODO: add power (if wanted)
+        # TODO: allow choosing freely from I, V, P, GPIO
         if isinstance(data, dict):
             data = [data]
-        fig, axes = plt.subplots(2, 1, sharex="all")
-        fig.suptitle("Voltage and current")
-        for date in data:
-            axes[0].plot(date["time"], date["voltage"], label=date["name"])
-            axes[1].plot(date["time"], date["current"] * 10**6, label=date["name"])
-        axes[0].set_ylabel("voltage [V]")
-        axes[1].set_ylabel(r"current [$\mu$A]")
-        if len(data) > 1:
-            axes[0].legend(loc="lower center", ncol=len(data))
-        axes[1].set_xlabel("time [s]")
+        if only_pwr:
+            fig = plt.figure(figsize=(width, height))
+            fig.suptitle("Power-Trace")
+            plt.xlabel("time [s]")
+            plt.ylabel(r"power [$\mu$W]")
+            for date in data:
+                plt.plot(
+                    date["time"], date["voltage"] * date["current"] * 10**6, label=date["name"]
+                )
+            if len(data) > 1:
+                plt.legend(loc="lower center", ncol=len(data))
+        else:
+            fig, axes = plt.subplots(3, 1, sharex="all")
+            fig.suptitle("Voltage, current & power")
+            for date in data:
+                axes[0].plot(date["time"], date["voltage"], label=date["name"])
+                axes[1].plot(date["time"], date["current"] * 10**3, label=date["name"])
+                axes[2].plot(
+                    date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
+                )
+            axes[0].set_ylabel("voltage [V]")
+            axes[1].set_ylabel("current [mA]")
+            axes[2].set_ylabel("power [mW]")
+            if len(data) > 1:
+                axes[0].legend(loc="lower center", ncol=len(data))
+            axes[2].set_xlabel("time [s]")
         fig.set_figwidth(width)
         fig.set_figheight(height)
         fig.tight_layout()
