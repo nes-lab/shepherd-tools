@@ -392,7 +392,7 @@ class Reader(CoreReader):
                 -> created with generate_plot_data()
         :param width: plot-width
         :param height: plot-height
-        :param only_pwr: plot power-trace instead of Voltage & Current
+        :param only_pwr: plot power-trace instead of voltage, current & power
         :return: figure
         """
         # TODO: allow choosing freely from I, V, P, GPIO
@@ -435,6 +435,8 @@ class Reader(CoreReader):
         end_s: Optional[float] = None,
         width: int = 20,
         height: int = 10,
+        *,
+        only_pwr: bool = False,
     ) -> None:
         """Create (down-sampled) IV-Plots.
 
@@ -444,6 +446,7 @@ class Reader(CoreReader):
         :param end_s: time in seconds, relative to start of recording, optional
         :param width: plot-width
         :param height: plot-height
+        :param only_pwr: plot power-trace instead of voltage, current & power
         """
         if not isinstance(self.file_path, Path):
             return
@@ -459,14 +462,19 @@ class Reader(CoreReader):
             self._logger.warning("Plot exists, will skip & not overwrite!")
             return
         self._logger.info("Plot generated, will be saved to '%s'", plot_path.name)
-        fig = self.assemble_plot(data, width, height)
+        fig = self.assemble_plot(data, width, height, only_pwr=only_pwr)
         plt.savefig(plot_path)
         plt.close(fig)
         plt.clf()
 
     @staticmethod
     def multiplot_to_file(
-        data: list, plot_path: Path, width: int = 20, height: int = 10
+        data: list,
+        plot_path: Path,
+        width: int = 20,
+        height: int = 10,
+        *,
+        only_pwr: bool = False,
     ) -> Optional[Path]:
         """Create (down-sampled) IV-Multi-Plots (of more than one trace).
 
@@ -475,6 +483,7 @@ class Reader(CoreReader):
         :param plot_path: optional
         :param width: plot-width
         :param height: plot-height
+        :param only_pwr: plot power-trace instead of voltage, current & power
         """
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
@@ -484,7 +493,7 @@ class Reader(CoreReader):
         if plot_path.exists():
             logger.warning("Plot exists, will skip & not overwrite!")
             return None
-        fig = Reader.assemble_plot(data, width, height)
+        fig = Reader.assemble_plot(data, width, height, only_pwr=only_pwr)
         plt.savefig(plot_path)
         plt.close(fig)
         plt.clf()
