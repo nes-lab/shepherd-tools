@@ -1,5 +1,14 @@
 # History of Changes
 
+## v2024.7.4
+
+- fix two bugs in calibration
+- plotting
+  - re-enable plotting of ivcurves (but still warn about it)
+  - add plot for power (IV combined)
+  - add option to only plot power
+  - switch from uA & uW to mA & mW for plots
+
 ## v2024.7.3
 
 - fixture-cache -> limit usage to sheep / bbone

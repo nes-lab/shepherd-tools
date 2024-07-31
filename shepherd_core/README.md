@@ -80,28 +80,30 @@ Notes:
 The Library is available via PyPI and can be installed with
 
 ```shell
-  pip install shepherd-core -U
+pip install shepherd-core -U
 
-  # or for the full experience (includes core)
-  pip install shepherd-data -U
+# or for the full experience (includes core)
+pip install shepherd-data -U
 ```
 
 For bleeding-edge-features or dev-work it is possible to install directly from GitHub-Sources (here `dev`-branch):
 
 ```Shell
 pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U
+# and on sheep with newer debian
+pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U --break-system-packages
 ```
 
 If you are working with ``.elf``-files (embedding into experiments) you make "objcopy" accessible to python. In Ubuntu, you can either install ``build-essential`` or ``binutils-$ARCH`` with arch being ``msp430`` or ``arm-none-eabi`` for the nRF52.
 
 ```shell
-  sudo apt install build-essential
+sudo apt install build-essential
 ```
 
 For more advanced work with ``.elf``-files (modify value of symbols / target-ID) you should install
 
 ```shell
-  pip install shepherd-core[elf]
+pip install shepherd-core[elf]
 ```
 
 and also make sure the prereqs for the [pwntools](https://docs.pwntools.com/en/stable/install.html) are met.
@@ -109,7 +111,7 @@ and also make sure the prereqs for the [pwntools](https://docs.pwntools.com/en/s
 For creating an inventory of the host-system you should install
 
 ```shell
-  pip install shepherd-core[inventory]
+pip install shepherd-core[inventory]
 ```
 
 ## Unittests

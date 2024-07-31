@@ -101,7 +101,7 @@ coverage report
 ```shell
 pipenv shell
 
-bump2version --allow-dirty --new-version 2024.7.3 patch
+bump2version --allow-dirty --new-version 2024.7.4 patch
 # ⤷ format: year.month.patch_release
 
 pre-commit run --all-files

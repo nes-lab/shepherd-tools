@@ -171,7 +171,6 @@ class Reader(CoreReader):
 
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Downsampling-Function was not written for IVCurves")
-            return data_dst
         ds_factor = max(1, math.floor(ds_factor))
 
         if isinstance(end_n, (int, float)):
@@ -345,7 +344,6 @@ class Reader(CoreReader):
         """
         if self.get_datatype() == "ivcurve":
             self._logger.warning("Plot-Function was not written for IVCurves.")
-            return None
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
@@ -357,7 +355,7 @@ class Reader(CoreReader):
             return None
         samplerate_dst = max(round(self.max_elements / (end_s - start_s), 3), 0.001)
         ds_factor = float(self.samplerate_sps / samplerate_dst)
-        data = {
+        data: dict = {
             "name": self.get_hostname(),
             "time": self._cal.time.raw_to_si(
                 self.downsample(
@@ -383,28 +381,49 @@ class Reader(CoreReader):
         return data
 
     @staticmethod
-    def assemble_plot(data: Union[dict, list], width: int = 20, height: int = 10) -> plt.Figure:
+    def assemble_plot(
+        data: Union[dict, list], width: int = 20, height: int = 10, *, only_pwr: bool = False
+    ) -> plt.Figure:
         """Create the actual figure.
+
+        Due to the 50 mA limits of the cape the default units for current & power are mA & mW.
 
         :param data: plottable / down-sampled iv-data with some meta-data
                 -> created with generate_plot_data()
         :param width: plot-width
         :param height: plot-height
+        :param only_pwr: plot power-trace instead of voltage, current & power
         :return: figure
         """
-        # TODO: add power (if wanted)
+        # TODO: allow choosing freely from I, V, P, GPIO
         if isinstance(data, dict):
             data = [data]
-        fig, axes = plt.subplots(2, 1, sharex="all")
-        fig.suptitle("Voltage and current")
-        for date in data:
-            axes[0].plot(date["time"], date["voltage"], label=date["name"])
-            axes[1].plot(date["time"], date["current"] * 10**6, label=date["name"])
-        axes[0].set_ylabel("voltage [V]")
-        axes[1].set_ylabel(r"current [$\mu$A]")
-        if len(data) > 1:
-            axes[0].legend(loc="lower center", ncol=len(data))
-        axes[1].set_xlabel("time [s]")
+        if only_pwr:
+            fig = plt.figure(figsize=(width, height))
+            fig.suptitle("Power-Trace")
+            plt.xlabel("time [s]")
+            plt.ylabel("power [mW]")
+            for date in data:
+                plt.plot(
+                    date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
+                )
+            if len(data) > 1:
+                plt.legend(loc="lower center", ncol=len(data))
+        else:
+            fig, axes = plt.subplots(3, 1, sharex="all")
+            fig.suptitle("Voltage, current & power")
+            for date in data:
+                axes[0].plot(date["time"], date["voltage"], label=date["name"])
+                axes[1].plot(date["time"], date["current"] * 10**3, label=date["name"])
+                axes[2].plot(
+                    date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
+                )
+            axes[0].set_ylabel("voltage [V]")
+            axes[1].set_ylabel("current [mA]")
+            axes[2].set_ylabel("power [mW]")
+            if len(data) > 1:
+                axes[0].legend(loc="lower center", ncol=len(data))
+            axes[2].set_xlabel("time [s]")
         fig.set_figwidth(width)
         fig.set_figheight(height)
         fig.tight_layout()
@@ -416,6 +435,8 @@ class Reader(CoreReader):
         end_s: Optional[float] = None,
         width: int = 20,
         height: int = 10,
+        *,
+        only_pwr: bool = False,
     ) -> None:
         """Create (down-sampled) IV-Plots.
 
@@ -425,6 +446,7 @@ class Reader(CoreReader):
         :param end_s: time in seconds, relative to start of recording, optional
         :param width: plot-width
         :param height: plot-height
+        :param only_pwr: plot power-trace instead of voltage, current & power
         """
         if not isinstance(self.file_path, Path):
             return
@@ -440,14 +462,19 @@ class Reader(CoreReader):
             self._logger.warning("Plot exists, will skip & not overwrite!")
             return
         self._logger.info("Plot generated, will be saved to '%s'", plot_path.name)
-        fig = self.assemble_plot(data, width, height)
+        fig = self.assemble_plot(data, width, height, only_pwr=only_pwr)
         plt.savefig(plot_path)
         plt.close(fig)
         plt.clf()
 
     @staticmethod
     def multiplot_to_file(
-        data: list, plot_path: Path, width: int = 20, height: int = 10
+        data: list,
+        plot_path: Path,
+        width: int = 20,
+        height: int = 10,
+        *,
+        only_pwr: bool = False,
     ) -> Optional[Path]:
         """Create (down-sampled) IV-Multi-Plots (of more than one trace).
 
@@ -456,6 +483,7 @@ class Reader(CoreReader):
         :param plot_path: optional
         :param width: plot-width
         :param height: plot-height
+        :param only_pwr: plot power-trace instead of voltage, current & power
         """
         start_str = f"{data[0]['start_s']:.3f}".replace(".", "s")
         end_str = f"{data[0]['end_s']:.3f}".replace(".", "s")
@@ -465,7 +493,7 @@ class Reader(CoreReader):
         if plot_path.exists():
             logger.warning("Plot exists, will skip & not overwrite!")
             return None
-        fig = Reader.assemble_plot(data, width, height)
+        fig = Reader.assemble_plot(data, width, height, only_pwr=only_pwr)
         plt.savefig(plot_path)
         plt.close(fig)
         plt.clf()

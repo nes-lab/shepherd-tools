@@ -58,7 +58,7 @@ def path_to_flist(data_path: Path) -> List[Path]:
     help="Prints version-info at start (combinable with -v)",
 )
 @click.pass_context  # TODO: is the ctx-type correct?
-def cli(ctx: click.Context, verbose: bool, version: bool) -> None:  # noqa: FBT001
+def cli(ctx: click.Context, *, verbose: bool, version: bool) -> None:
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder."""
     if verbose:
         increase_verbose_level(3)
@@ -355,13 +355,21 @@ def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[
     is_flag=True,
     help="Plot all files (in directory) into one Multiplot",
 )
+@click.option(
+    "--only-power",
+    "-p",
+    is_flag=True,
+    help="Plot only power instead of voltage, current & power",
+)
 def plot(
     in_data: Path,
     start: Optional[float],
     end: Optional[float],
     width: int,
     height: int,
-    multiplot: bool,  # noqa: FBT001
+    *,
+    multiplot: bool,
+    only_power: bool,
 ) -> None:
     """Plot IV-trace from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data)
@@ -378,12 +386,12 @@ def plot(
                         continue
                     data.append(date)
                 else:
-                    shpr.plot_to_file(start, end, width, height)
+                    shpr.plot_to_file(start, end, width, height, only_pwr=only_power)
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
     if multiplot:
         logger.info("Got %d datasets to plot", len(data))
-        mpl_path = Reader.multiplot_to_file(data, in_data, width, height)
+        mpl_path = Reader.multiplot_to_file(data, in_data, width, height, only_pwr=only_power)
         if mpl_path:
             logger.info("Plot generated and saved to '%s'", mpl_path.name)
         else:
