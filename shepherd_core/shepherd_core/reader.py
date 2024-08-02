@@ -84,6 +84,7 @@ class Reader:
 
         # init stats
         self.runtime_s: float = 0
+        self.buffers_n: int = 0
         self.file_size: int = 0
         self.data_rate: float = 0
 
@@ -176,6 +177,7 @@ class Reader:
             self.sample_interval_ns = int(10**9 * self.sample_interval_s)
             self.samplerate_sps = max(int(10**9 // self.sample_interval_ns), 1)
         self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
+        self.buffers_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:
