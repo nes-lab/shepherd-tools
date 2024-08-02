@@ -230,10 +230,11 @@ class CalibrationCape(ShpModel):
 
         """
         dv = cls().model_dump(include={"harvester", "emulator"})
-        lw = list(dict_generator(dv))
-        values = struct.unpack(">" + len(lw) * "d", data)
+        lw1 = list(dict_generator(dv))
+        lw2 = [elem for elem in lw1 if isinstance(elem[-1], float)]
+        values = struct.unpack(">" + len(lw2) * "d", data)
         # ⤷ X => double float, big endian
-        for _i, walk in enumerate(lw):
+        for _i, walk in enumerate(lw2):
             # hardcoded fixed depth ... bad but easy
             dv[walk[0]][walk[1]][walk[2]] = float(values[_i])
         dv["cape"] = cape
@@ -249,8 +250,8 @@ class CalibrationCape(ShpModel):
 
         """
         lw = list(dict_generator(self.model_dump(include={"harvester", "emulator"})))
-        values = [walk[-1] for walk in lw]
-        return struct.pack(">" + len(lw) * "d", *values)
+        values = [walk[-1] for walk in lw if isinstance(walk[-1], float)]
+        return struct.pack(">" + len(values) * "d", *values)
 
 
 class CalibrationSeries(ShpModel):
