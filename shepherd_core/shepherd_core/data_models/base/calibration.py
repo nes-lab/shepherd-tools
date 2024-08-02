@@ -51,7 +51,7 @@ class CalibrationPair(ShpModel):
 
     gain: PositiveFloat
     offset: float = 0
-    unit: Optional[str]  # TODO: add units when used
+    unit: Optional[str] = None  # TODO: add units when used
 
     def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
         """Convert between physical units and raw unsigned integers."""
@@ -78,7 +78,7 @@ class CalibrationPair(ShpModel):
         return values_raw
 
     @classmethod
-    def from_fn(cls, fn: Callable, unit: Optional[str]) -> Self:
+    def from_fn(cls, fn: Callable, unit: Optional[str] = None) -> Self:
         """Probe linear function to determine scaling values."""
         offset = fn(0, limited=False)
         gain_inv = fn(1.0, limited=False) - offset
