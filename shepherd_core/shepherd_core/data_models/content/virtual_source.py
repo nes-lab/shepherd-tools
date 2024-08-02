@@ -76,6 +76,8 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # final (always last) stage to compensate undetectable current spikes
     # when enabling power for target
     C_output_uF: Annotated[float, Field(ge=0, le=4.29e6)] = 1.0
+    # TODO: C_output is handled internally as delta-V, but should be a I_transient
+    #       that makes it visible in simulation as additional i_out_drain
 
     # Extra
     V_output_log_gpio_threshold_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 1_400
