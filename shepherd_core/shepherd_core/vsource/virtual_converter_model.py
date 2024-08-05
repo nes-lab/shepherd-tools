@@ -25,8 +25,8 @@ from ..data_models.content.virtual_source import ConverterPRUConfig
 class PruCalibration:
     """part of calibration.h."""
 
-    # negative residue compensation:
-    # compensate for noise around 0 - current uint-design cuts away negative part and leads to biased mean()
+    # negative residue compensation - compensate for noise around 0
+    # -> current uint-design cuts away negative part and leads to biased mean()
     NOISE_ESTIMATE_nA: int = 2000
     RESIDUE_SIZE_FACTOR: int = 30
     RESIDUE_MAX_nA: int = NOISE_ESTIMATE_nA * RESIDUE_SIZE_FACTOR
@@ -36,7 +36,7 @@ class PruCalibration:
         self.cal = cal_emu if cal_emu else CalibrationEmulator()
 
     def conv_adc_raw_to_nA(self, current_raw: int) -> float:
-        I_nA = self.cal.adc_C_A.raw_to_si(current_raw) * (10 ** 9)
+        I_nA = self.cal.adc_C_A.raw_to_si(current_raw) * (10**9)
         if self.cal.adc_C_A.offset < 0:
             if I_nA > self.negative_residue_nA:
                 I_nA -= self.negative_residue_nA
@@ -104,7 +104,7 @@ class VirtualConverterModel:
         self.vsource_skip_gpio_logging: bool = False
 
     def calc_inp_power(self, input_voltage_uV: float, input_current_nA: float) -> int:
-        # Next 2 lines are Python-specific (model uint)
+        # Next 2 lines are Python-specific (model unsigned int)
         input_voltage_uV = max(0.0, input_voltage_uV)
         input_current_nA = max(0.0, input_current_nA)
 
@@ -149,7 +149,7 @@ class VirtualConverterModel:
         return round(self.P_inp_fW)  # Python-specific, added for easier testing
 
     def calc_out_power(self, current_adc_raw: int) -> int:
-        # Next 2 lines are Python-specific (model uint / int)
+        # Next 2 lines are Python-specific (model unsigned int)
         current_adc_raw = max(0, current_adc_raw)
         current_adc_raw = min((2**18) - 1, current_adc_raw)
 

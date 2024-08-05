@@ -320,8 +320,8 @@ class ConverterPRUConfig(ShpModel):
             V_buck_drop_uV=round(data.V_buck_drop_mV * 1e3),
             # LUTs
             LUT_input_V_min_log2_uV=data.LUT_input_V_min_log2_uV,
-            LUT_input_I_min_log2_nA=data.LUT_input_I_min_log2_nA - 1,  # sub-1 due to later log2() operation
-            LUT_output_I_min_log2_nA=data.LUT_output_I_min_log2_nA - 1,  # sub-1 due to later log2() operation
+            LUT_input_I_min_log2_nA=data.LUT_input_I_min_log2_nA - 1,  # sub-1 due to later log2-op
+            LUT_output_I_min_log2_nA=data.LUT_output_I_min_log2_nA - 1,  # sub-1 due to later log2
             LUT_inp_efficiency_n8=[
                 [min(255, round(256 * ival)) for ival in il] for il in data.LUT_input_efficiency
             ],
