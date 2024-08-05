@@ -58,14 +58,14 @@
       [ 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 ],
     ] # input-array[12][12] depending on array[inp_voltage][log(inp_current)], influence of cap-voltage is not implemented
     LUT_input_V_min_log2_uV: 0 # 2^7 = 128 uV -> array[0] is for inputs < 128 uV
-    LUT_input_I_min_log2_nA: 0 # 2^8 = 256 nA -> array[0] is for inputs < 256 nA
+    LUT_input_I_min_log2_nA: 1 # 2^8 = 256 nA -> array[0] is for inputs < 256 nA
 
     # Buck-converter
     V_output_mV: 2400
     V_buck_drop_mV: 0.0  # simulate LDO min voltage differential or output-diode
 
     LUT_output_efficiency: [ 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 ] # array[12] depending on output_current
-    LUT_output_I_min_log2_nA: 0  # 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
+    LUT_output_I_min_log2_nA: 1  # 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
     owner: Ingmar
     group: NES Lab
