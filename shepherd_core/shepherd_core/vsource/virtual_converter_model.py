@@ -108,8 +108,6 @@ class VirtualConverterModel:
         if self.enable_boost:
             if input_voltage_uV < self._cfg.V_input_boost_threshold_uV:
                 input_voltage_uV = 0.0
-            if input_voltage_uV > self.V_mid_uV:
-                input_voltage_uV = self.V_mid_uV
         elif not self.enable_storage:
             # direct connection
             self.V_mid_uV = input_voltage_uV
