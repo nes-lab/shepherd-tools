@@ -23,10 +23,10 @@ from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.vsource import VirtualSourceModel
 
 # config simulation
-file_input = Path(__file__).parent.parent.parent / "hrv_ivcurve.h5"
-file_output = Path(__file__).parent / "emu_ivcurve.h5"
+file_input = Path(__file__).parent.parent.parent / "hrv_opt.h5"
+file_output = Path(__file__).parent / "emu_opt04.h5"
 
-src_list = ["BQ25570"]  # "BQ25504"
+src_list = ["BQ25504"]  # "BQ25504"
 
 I_mcu_sleep_A = 3e-3
 I_mcu_active_A = 3e-3
@@ -37,10 +37,12 @@ for vs_name in src_list:
     src_config = VirtualSourceConfig(
         inherit_from=vs_name,
         C_output_uF=0,
-        V_output_mV=3000,
+        #V_output_mV=3000,
         V_intermediate_init_mV=3600,
         harvester=VirtualHarvesterConfig(name="mppt_bq_solar"),
         V_buck_drop_mV=0,
+        #C_intermediate_uF=100,
+        V_intermediate_disable_threshold_mV=0,
     )
 
     with Reader(file_input, verbose=False) as f_inp, Writer(
