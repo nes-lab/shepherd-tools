@@ -95,7 +95,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # influence of cap-voltage is not implemented
     LUT_input_V_min_log2_uV: Annotated[int, Field(ge=0, le=20)] = 0
     # ⤷ 2^7 = 128 uV -> LUT[0][:] is for inputs < 128 uV
-    LUT_input_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 0
+    LUT_input_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 1
     # ⤷ 2^8 = 256 nA -> LUT[:][0] is for inputs < 256 nA
 
     # Buck Converter
@@ -105,7 +105,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     LUT_output_efficiency: LUT1D = 12 * [1.00]
     # ⤷ array[12] depending on output_current
-    LUT_output_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 0
+    LUT_output_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 1
     # ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
     @model_validator(mode="before")
