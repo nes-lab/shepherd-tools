@@ -149,9 +149,12 @@ class Writer(Reader):
             raise ValueError(msg)
 
         if self._modify:
-            self._mode = mode
-            self._datatype = datatype
-            self._window_samples = window_samples
+            if mode:
+                self._mode = mode
+            if datatype:
+                self._datatype = datatype
+            if window_samples:
+                self._window_samples = window_samples
         else:
             self._mode = mode if isinstance(mode, str) else self.mode_default
             self._datatype = (
