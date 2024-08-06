@@ -116,7 +116,7 @@
   parameters:
     id: 1020
     name: BQ25504
-    description: TI BQ25504 with integrated boost-converter
+    description: TI BQ25504 with integrated boost-converter. Values are taken from the DK-Board.
     inherit_from: neutral # to complete undefined vars
     enable_boost: true # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
 
@@ -126,16 +126,16 @@
     V_input_max_mV: 3000
     I_input_max_mA: 100
 
-    C_intermediate_uF: 22.0  # primary storage-Cap
+    C_intermediate_uF: 100.0  # primary storage-Cap
     V_intermediate_init_mV: 3000 # allow a proper / fast startup
     I_intermediate_leak_nA: 330
 
-    V_intermediate_enable_threshold_mV: 2600 # -> target gets connected (hysteresis-combo with next value)
+    V_intermediate_enable_threshold_mV: 1000 # -> target gets connected (hysteresis-combo with next value)
     V_intermediate_disable_threshold_mV: 0 # -> target gets disconnected
     interval_check_thresholds_ms: 64.0  # some BQs check every 64 ms if output should be disconnected
 
     V_pwr_good_enable_threshold_mV: 2800 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
-    V_pwr_good_disable_threshold_mV: 2400
+    V_pwr_good_disable_threshold_mV: 2340
     immediate_pwr_good_signal: false  # 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 
     # Boost Converter

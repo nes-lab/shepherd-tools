@@ -10,7 +10,7 @@
   - fix off-by-1 error in rows of efficiency-LUTs
   - remove limiting-behavior of boost-regulator
   - add residue-feature to calibration-converters
-  - bq25504 - to not cut-off output
+  - bq25504 - to not cut-off output, increase capacity to 100 uF and adapt pwr-good-voltages (close to DK)
 - ivcurve-recording: switch to rising ramp due to problems with the step in the falling configuration (high voltage & current)
 - hdf5-writer: only modify non-None elements
 - hdf5-reader: improve samplerate calculation
