@@ -26,7 +26,7 @@
     voltage_min_mV: 0
     voltage_max_mV: 5000
     wait_cycles: 1  # results in 200 Hz (= 100kHz /(2*250))
-    rising: false # downward sawtooth seems to have advantages for solar cells
+    rising: true # NOTE: falling ramp shows errors during step (high voltage and still higher current)
     # todo: also add switch for sawtooth- vs triangle-wave?
     # todo: could also include a version with dynamic upper-boundary, varied if voc is reached very early
 
