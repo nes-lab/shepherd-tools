@@ -149,20 +149,25 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
     def calc_window_size(
         self,
-        dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
+        dtype_in: Optional[EnergyDType] = None,
         *,
         for_emu: bool,
     ) -> int:
-        if for_emu:
-            if dtype_in == EnergyDType.ivcurve:
-                return self.samples_n * (1 + self.wait_cycles)
-            if dtype_in == EnergyDType.ivsample:
-                return 0
-            # isc_voc: 2 * (1 + wait_cycles), noqa
-            raise NotImplementedError
+        if not for_emu:
+            # TODO: should be named 'for_ivcurve_recording'
+            # only used by ivcurve algo (in ADC-Mode)
+           return self.samples_n
 
-        # only used by ivcurve algo (in ADC-Mode)
-        return self.samples_n
+        if dtype_in is None:
+            dtype_in = self.get_datatype()
+
+        if dtype_in == EnergyDType.ivcurve:
+            return self.samples_n * (1 + self.wait_cycles)
+        if dtype_in == EnergyDType.ivsample:
+            return 0
+        if dtype_in == EnergyDType.isc_voc:
+            return 2 * (1 + self.wait_cycles)
+        raise NotImplementedError
 
 
 u32 = Annotated[int, Field(ge=0, lt=2**32)]
@@ -234,7 +239,7 @@ class HarvesterPRUConfig(ShpModel):
             dtype_in = EnergyDType[dtype_in]
         if for_emu and dtype_in not in {EnergyDType.ivsample, EnergyDType.ivcurve}:
             raise NotImplementedError
-        # TODO: use dtype properly in shepherd
+
         interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)
         return cls(
             algorithm=data.calc_algorithm_num(for_emu=for_emu),
