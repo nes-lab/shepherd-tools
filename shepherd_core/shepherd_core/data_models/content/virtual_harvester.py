@@ -155,8 +155,10 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     ) -> int:
         if not for_emu:
             # TODO: should be named 'for_ivcurve_recording'
+            # TODO: add extra variable to distinguish step_count
+            #       and window_size (currently mixed together)
             # only used by ivcurve algo (in ADC-Mode)
-           return self.samples_n
+            return self.samples_n
 
         if dtype_in is None:
             dtype_in = self.get_datatype()

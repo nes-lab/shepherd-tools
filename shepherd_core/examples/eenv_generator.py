@@ -1,6 +1,5 @@
-"""Create a set of static artificial energy environments.
+"""Create a set of static artificial energy environments."""
 
-"""
 from itertools import product
 from pathlib import Path
 
@@ -8,8 +7,8 @@ import numpy as np
 from tqdm import trange
 
 from shepherd_core import Reader as ShpReader
-from shepherd_core import logger
 from shepherd_core import Writer as ShpWriter
+from shepherd_core import logger
 
 # Config
 voltages_V = [4.0, 2.0]

@@ -2,14 +2,18 @@
 
 ## v2024.8.1
 
-- plotting: disable creation of tick-offset 
+- plotting: disable creation of tick-offset
 - cal: add si-unit
-- add `core/example/vsource_emulation.py` that processes hdf5-recordings and also generates them 
+- add `shepherd_core/example/vsource_emulation.py` that processes hdf5-recordings and also generates them
+- add `shepherd_core/examples/eenv_generator.py` to create static energy environments
 - virtual source model
   - fix off-by-1 error in rows of efficiency-LUTs
   - remove limiting-behavior of boost-regulator
   - add residue-feature to calibration-converters
   - bq25504 - to not cut-off output
+- ivcurve-recording: switch to rising ramp due to problems with the step in the falling configuration (high voltage & current)
+- hdf5-writer: only modify non-None elements
+- hdf5-reader: improve samplerate calculation
 
 ## v2024.7.4
 

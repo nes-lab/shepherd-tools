@@ -172,13 +172,13 @@ class Reader:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
         sample_count = self.ds_time.shape[0]
-        duration_raw = self.ds_time[sample_count - 1] - self.ds_time[0]
+        duration_raw = self.ds_time[sample_count - 1] - self.ds_time[0] if sample_count > 0 else 0
         if (sample_count > 0) and (duration_raw > 0):
             # this assumes iso-chronous sampling
             duration_s = self._cal.time.raw_to_si(duration_raw)
             self.sample_interval_s = duration_s / sample_count
             self.sample_interval_ns = int(10**9 * self.sample_interval_s)
-            self.samplerate_sps = max(int(sample_count / duration_s), 1)
+            self.samplerate_sps = max(int((sample_count - 1) / duration_s), 1)
         self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
         self.buffers_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
         if isinstance(self.file_path, Path):
