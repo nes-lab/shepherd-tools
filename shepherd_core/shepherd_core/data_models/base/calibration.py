@@ -96,10 +96,10 @@ cal_hrv_legacy = {  # legacy translator
 class CalibrationHarvester(ShpModel):
     """Container for all calibration-pairs for that device."""
 
-    dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    adc_V_Sense: CalibrationPair = CalibrationPair.from_fn(adc_voltage_to_raw)
-    adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
+    dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    adc_V_Sense: CalibrationPair = CalibrationPair.from_fn(adc_voltage_to_raw, unit="V")
+    adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
 
     def export_for_sysfs(self) -> dict:
         """Convert and write the essential data.
@@ -140,10 +140,10 @@ class CalibrationEmulator(ShpModel):
     Differentiates between both target-ports A/B.
     """
 
-    dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    adc_C_A: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
-    adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
+    dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    adc_C_A: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
+    adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
 
     def export_for_sysfs(self) -> dict:
         """Convert and write the essential data.
@@ -257,11 +257,11 @@ class CalibrationCape(ShpModel):
 class CalibrationSeries(ShpModel):
     """Cal-Data for a typical recording of a testbed experiment."""
 
-    voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9)
+    voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9, unit="V")
     # ⤷ default allows 0 - 12 V in 3 nV-Steps
-    current: CalibrationPair = CalibrationPair(gain=250 * 1e-12)
+    current: CalibrationPair = CalibrationPair(gain=250 * 1e-12, unit="A")
     # ⤷ default allows 0 - 1 A in 250 pA - Steps
-    time: CalibrationPair = CalibrationPair(gain=1e-9)
+    time: CalibrationPair = CalibrationPair(gain=1e-9, unit="s")
     # ⤷ default = nanoseconds
 
     @classmethod
