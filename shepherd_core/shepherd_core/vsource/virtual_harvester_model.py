@@ -59,9 +59,10 @@ class VirtualHarvesterModel:
 
         # INIT static vars: VOC
         self.age_now: int = 0
-        self.voc_now: int = 0
+        self.voc_now: int = self._cfg.voltage_max_uV
         self.age_nxt: int = 0
-        self.voc_nxt: int = 0
+        self.voc_nxt: int = self._cfg.voltage_max_uV
+        self.voc_min: int = max(1000, self._cfg.voltage_min_uV)
 
         # INIT static vars: PO
         # already done: interval step
@@ -117,7 +118,7 @@ class VirtualHarvesterModel:
         if (
             (_current_nA < self._cfg.current_limit_nA)
             and (_voltage_uV < self.voc_nxt)
-            and (_voltage_uV >= self._cfg.voltage_min_uV)
+            and (_voltage_uV >= self.voc_min)
             and (_voltage_uV <= self._cfg.voltage_max_uV)
         ):
             self.voc_nxt = _voltage_uV
