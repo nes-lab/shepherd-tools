@@ -11,6 +11,11 @@
   - remove limiting-behavior of boost-regulator
   - add residue-feature to calibration-converters
   - bq25504 - to not cut-off output, increase capacity to 100 uF and adapt pwr-good-voltages (close to DK)
+- harvester model
+  - fix voc-harvesting
+  - improve windowing setting for ingested ivcurve
+  - port behavior from PRU
+  - port behavior from PRU
 - ivcurve-harvesting-fixture: make 110 Hz version the new default
 - isc-voc-harvesting-fixture: give 4x more time to settle
 - hdf5-writer: only modify non-None elements
