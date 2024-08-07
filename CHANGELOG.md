@@ -1,5 +1,26 @@
 # History of Changes
 
+## v2024.8.1
+
+- plotting: disable creation of tick-offset
+- cal: add si-unit
+- add `shepherd_core/example/vsource_emulation.py` that processes hdf5-recordings and also generates them
+- add `shepherd_core/examples/eenv_generator.py` to create static energy environments
+- virtual source model
+  - fix off-by-1 error in rows of efficiency-LUTs
+  - remove limiting-behavior of boost-regulator
+  - add residue-feature to calibration-converters
+  - bq25504 - to not cut-off output, increase capacity to 100 uF and adapt pwr-good-voltages (close to DK)
+- harvester model
+  - fix voc-harvesting
+  - improve windowing setting for ingested ivcurve
+  - port behavior from PRU
+  - port behavior from PRU
+- ivcurve-harvesting-fixture: make 110 Hz version the new default
+- isc-voc-harvesting-fixture: give 4x more time to settle
+- hdf5-writer: only modify non-None elements
+- hdf5-reader: improve samplerate calculation
+
 ## v2024.7.4
 
 - fix two bugs in calibration

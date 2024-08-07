@@ -51,7 +51,7 @@ class CalibrationPair(ShpModel):
 
     gain: PositiveFloat
     offset: float = 0
-    # TODO: add unit
+    unit: Optional[str] = None  # TODO: add units when used
 
     def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
         """Convert between physical units and raw unsigned integers."""
@@ -78,14 +78,11 @@ class CalibrationPair(ShpModel):
         return values_raw
 
     @classmethod
-    def from_fn(cls, fn: Callable) -> Self:
+    def from_fn(cls, fn: Callable, unit: Optional[str] = None) -> Self:
         """Probe linear function to determine scaling values."""
         offset = fn(0, limited=False)
         gain_inv = fn(1.0, limited=False) - offset
-        return cls(
-            gain=1.0 / float(gain_inv),
-            offset=-float(offset) / gain_inv,
-        )
+        return cls(gain=1.0 / float(gain_inv), offset=-float(offset) / gain_inv, unit=unit)
 
 
 cal_hrv_legacy = {  # legacy translator
@@ -99,10 +96,10 @@ cal_hrv_legacy = {  # legacy translator
 class CalibrationHarvester(ShpModel):
     """Container for all calibration-pairs for that device."""
 
-    dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    adc_V_Sense: CalibrationPair = CalibrationPair.from_fn(adc_voltage_to_raw)
-    adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
+    dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    adc_V_Sense: CalibrationPair = CalibrationPair.from_fn(adc_voltage_to_raw, unit="V")
+    adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
 
     def export_for_sysfs(self) -> dict:
         """Convert and write the essential data.
@@ -143,10 +140,10 @@ class CalibrationEmulator(ShpModel):
     Differentiates between both target-ports A/B.
     """
 
-    dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw)
-    adc_C_A: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
-    adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw)
+    dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+    adc_C_A: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
+    adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
 
     def export_for_sysfs(self) -> dict:
         """Convert and write the essential data.
@@ -233,10 +230,11 @@ class CalibrationCape(ShpModel):
 
         """
         dv = cls().model_dump(include={"harvester", "emulator"})
-        lw = list(dict_generator(dv))
-        values = struct.unpack(">" + len(lw) * "d", data)
+        lw1 = list(dict_generator(dv))
+        lw2 = [elem for elem in lw1 if isinstance(elem[-1], float)]
+        values = struct.unpack(">" + len(lw2) * "d", data)
         # ⤷ X => double float, big endian
-        for _i, walk in enumerate(lw):
+        for _i, walk in enumerate(lw2):
             # hardcoded fixed depth ... bad but easy
             dv[walk[0]][walk[1]][walk[2]] = float(values[_i])
         dv["cape"] = cape
@@ -252,18 +250,18 @@ class CalibrationCape(ShpModel):
 
         """
         lw = list(dict_generator(self.model_dump(include={"harvester", "emulator"})))
-        values = [walk[-1] for walk in lw]
-        return struct.pack(">" + len(lw) * "d", *values)
+        values = [walk[-1] for walk in lw if isinstance(walk[-1], float)]
+        return struct.pack(">" + len(values) * "d", *values)
 
 
 class CalibrationSeries(ShpModel):
     """Cal-Data for a typical recording of a testbed experiment."""
 
-    voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9)
+    voltage: CalibrationPair = CalibrationPair(gain=3 * 1e-9, unit="V")
     # ⤷ default allows 0 - 12 V in 3 nV-Steps
-    current: CalibrationPair = CalibrationPair(gain=250 * 1e-12)
+    current: CalibrationPair = CalibrationPair(gain=250 * 1e-12, unit="A")
     # ⤷ default allows 0 - 1 A in 250 pA - Steps
-    time: CalibrationPair = CalibrationPair(gain=1e-9)
+    time: CalibrationPair = CalibrationPair(gain=1e-9, unit="s")
     # ⤷ default = nanoseconds
 
     @classmethod

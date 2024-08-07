@@ -399,34 +399,32 @@ class Reader(CoreReader):
         if isinstance(data, dict):
             data = [data]
         if only_pwr:
-            fig = plt.figure(figsize=(width, height))
+            fig, ax = plt.subplots(1, 1, figsize=(width, height), layout="tight")
+            axs = [ax]
             fig.suptitle("Power-Trace")
-            plt.xlabel("time [s]")
-            plt.ylabel("power [mW]")
-            for date in data:
-                plt.plot(
-                    date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
-                )
-            if len(data) > 1:
-                plt.legend(loc="lower center", ncol=len(data))
         else:
-            fig, axes = plt.subplots(3, 1, sharex="all")
+            fig, axs = plt.subplots(3, 1, sharex="all", figsize=(width, height), layout="tight")
             fig.suptitle("Voltage, current & power")
-            for date in data:
-                axes[0].plot(date["time"], date["voltage"], label=date["name"])
-                axes[1].plot(date["time"], date["current"] * 10**3, label=date["name"])
-                axes[2].plot(
-                    date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
-                )
-            axes[0].set_ylabel("voltage [V]")
-            axes[1].set_ylabel("current [mA]")
-            axes[2].set_ylabel("power [mW]")
-            if len(data) > 1:
-                axes[0].legend(loc="lower center", ncol=len(data))
-            axes[2].set_xlabel("time [s]")
-        fig.set_figwidth(width)
-        fig.set_figheight(height)
-        fig.tight_layout()
+            axs[0].set_ylabel("voltage [V]")
+            axs[1].set_ylabel("current [mA]")
+            # last axis is set below
+
+        for date in data:
+            if not only_pwr:
+                axs[0].plot(date["time"], date["voltage"], label=date["name"])
+                axs[1].plot(date["time"], date["current"] * 10**3, label=date["name"])
+            axs[-1].plot(
+                date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
+            )
+
+        if len(data) > 1:
+            axs[0].legend(loc="lower center", ncol=len(data))
+        axs[-1].set_xlabel("time [s]")
+        axs[-1].set_ylabel("power [mW]")
+        for ax in axs:
+            # deactivates offset-creation for ax-ticks
+            ax.get_yaxis().get_major_formatter().set_useOffset(False)
+            ax.get_xaxis().get_major_formatter().set_useOffset(False)
         return fig
 
     def plot_to_file(

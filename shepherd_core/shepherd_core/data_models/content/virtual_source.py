@@ -76,6 +76,8 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # final (always last) stage to compensate undetectable current spikes
     # when enabling power for target
     C_output_uF: Annotated[float, Field(ge=0, le=4.29e6)] = 1.0
+    # TODO: C_output is handled internally as delta-V, but should be a I_transient
+    #       that makes it visible in simulation as additional i_out_drain
 
     # Extra
     V_output_log_gpio_threshold_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 1_400
@@ -93,7 +95,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # influence of cap-voltage is not implemented
     LUT_input_V_min_log2_uV: Annotated[int, Field(ge=0, le=20)] = 0
     # ⤷ 2^7 = 128 uV -> LUT[0][:] is for inputs < 128 uV
-    LUT_input_I_min_log2_nA: Annotated[int, Field(ge=0, le=20)] = 0
+    LUT_input_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 1
     # ⤷ 2^8 = 256 nA -> LUT[:][0] is for inputs < 256 nA
 
     # Buck Converter
@@ -103,7 +105,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     LUT_output_efficiency: LUT1D = 12 * [1.00]
     # ⤷ array[12] depending on output_current
-    LUT_output_I_min_log2_nA: Annotated[int, Field(ge=0, le=20)] = 0
+    LUT_output_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 1
     # ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation
 
     @model_validator(mode="before")
@@ -318,8 +320,8 @@ class ConverterPRUConfig(ShpModel):
             V_buck_drop_uV=round(data.V_buck_drop_mV * 1e3),
             # LUTs
             LUT_input_V_min_log2_uV=data.LUT_input_V_min_log2_uV,
-            LUT_input_I_min_log2_nA=data.LUT_input_I_min_log2_nA,
-            LUT_output_I_min_log2_nA=data.LUT_output_I_min_log2_nA,
+            LUT_input_I_min_log2_nA=data.LUT_input_I_min_log2_nA - 1,  # sub-1 due to later log2-op
+            LUT_output_I_min_log2_nA=data.LUT_output_I_min_log2_nA - 1,  # sub-1 due to later log2
             LUT_inp_efficiency_n8=[
                 [min(255, round(256 * ival)) for ival in il] for il in data.LUT_input_efficiency
             ],

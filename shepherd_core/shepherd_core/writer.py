@@ -149,9 +149,18 @@ class Writer(Reader):
             raise ValueError(msg)
 
         if self._modify:
-            self._mode = mode
-            self._datatype = datatype
-            self._window_samples = window_samples
+            if mode:
+                self._mode = mode
+            if not hasattr(self, "_mode"):
+                self._mode = self.mode_default
+            if datatype:
+                self._datatype = datatype
+            if not hasattr(self, "_datatype"):
+                self._datatype = self.datatype_default
+            if window_samples:
+                self._window_samples = window_samples
+            if not hasattr(self, "_window_samples"):
+                self._window_samples = 0
         else:
             self._mode = mode if isinstance(mode, str) else self.mode_default
             self._datatype = (
@@ -335,6 +344,7 @@ class Writer(Reader):
             current: ndarray in physical-unit A
 
         """
+        # TODO: make timestamp optional to add it raw, OR unify append with granular raw-switch
         timestamp = self._cal.time.si_to_raw(timestamp)
         voltage = self._cal.voltage.si_to_raw(voltage)
         current = self._cal.current.si_to_raw(current)
