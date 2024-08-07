@@ -35,7 +35,8 @@ class VirtualHarvesterModel:
 
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1
-        self.interval_step: int = 2**30
+        self.interval_step: int = max(0, self._cfg.interval_n - (2 * self._cfg.window_size))
+        # ⤷ intake two ivcurves before overflow / reset
         self.is_rising: bool = (self._cfg.hrv_mode & (2**1)) != 0
 
         # PO-Relevant, iv & adc
@@ -51,6 +52,7 @@ class VirtualHarvesterModel:
         self.voltage_hold: int = 0
         self.current_hold: int = 0
         self.voltage_step_x4_uV: int = self._cfg.voltage_step_uV * 4
+        self.age_max: int = 2 * self._cfg.window_size
 
         # INIT static vars: CV
         self.voltage_last: int = 0
@@ -124,7 +126,7 @@ class VirtualHarvesterModel:
             self.voc_nxt = _voltage_uV
             self.age_nxt = 0
 
-        if (self.age_now > self._cfg.window_size) or (self.voc_nxt <= self.voc_now):
+        if (self.age_now > self.age_max) or (self.voc_nxt <= self.voc_now):
             self.age_now = self.age_nxt
             self.voc_now = self.voc_nxt
             self.age_nxt = 0
@@ -194,7 +196,7 @@ class VirtualHarvesterModel:
             self.voltage_nxt = _voltage_uV
             self.current_nxt = _current_nA
 
-        if (self.age_now > self._cfg.window_size) or (self.power_nxt >= self.power_now):
+        if (self.age_now > self.age_max) or (self.power_nxt >= self.power_now):
             self.age_now = self.age_nxt
             self.power_now = self.power_nxt
             self.voltage_now = self.voltage_nxt
