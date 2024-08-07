@@ -61,7 +61,9 @@ for hrv_name in hrv_list:
     _cal = CalibrationHarvester()
     if save_files:
         stack = ExitStack()
-        file_output = file_ivcurve.with_stem(file_ivcurve.stem + "_" + hrv_name)
+        file_output = file_ivcurve.with_name(
+            file_ivcurve.stem + "_" + hrv_name + file_ivcurve.suffix
+        )
         fh_output = Writer(
             file_output, cal_data=_cal, mode="harvester", verbose=False, force_overwrite=True
         )
