@@ -23,50 +23,30 @@ from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.vsource import VirtualSourceModel
 
 # config simulation
-file_input = Path(__file__).parent.parent.parent / "hrv_opt.h5"
-file_output = Path(__file__).parent / "emu_opt04.h5"
+file_input = Path(__file__).parent / "jogging_ivcurve.h5"
 
-src_list = ["BQ25504"]  # "BQ25504"
+src_list = ["BQ25504"]
 
 I_mcu_sleep_A = 3e-3
 I_mcu_active_A = 3e-3
 R_Ohm = 1000
 
 for vs_name in src_list:
+    file_output = file_input.with_stem(file_input.stem + "_emu_" + vs_name)
+
     cal_emu = CalibrationEmulator()
     src_config = VirtualSourceConfig(
         inherit_from=vs_name,
-        C_output_uF=0,
-        # V_output_mV=3000,
-        V_intermediate_init_mV=1000,
+        V_intermediate_init_mV=3000,
         harvester=VirtualHarvesterConfig(name="mppt_bq_solar"),
-        V_buck_drop_mV=0,
-        # C_intermediate_uF=100,
-        V_intermediate_disable_threshold_mV=0,
-        LUT_input_efficiency=[
-          # <8uA  8uA   16uA  32uA  64uA  128uA 256uA 512uA 1mA   2mA   4mA   >8mA
-          [0.01, 0.01, 0.02, 0.05, 0.10, 0.15, 0.15, 0.20, 0.25, 0.30, 0.30, 0.35],  # < 128 mV
-          [0.10, 0.20, 0.30, 0.40, 0.50, 0.55, 0.56, 0.57, 0.58, 0.59, 0.60, 0.61],  # > 128 mV, ~200
-          [0.20, 0.40, 0.50, 0.60, 0.65, 0.66, 0.67, 0.68, 0.69, 0.70, 0.71, 0.72],  # > 256 mV, ~320
-          [0.35, 0.55, 0.65, 0.71, 0.73, 0.74, 0.75, 0.75, 0.76, 0.77, 0.77, 0.78],  # > 384 mV, ~450
-          [0.45, 0.65, 0.70, 0.73, 0.75, 0.77, 0.78, 0.79, 0.80, 0.81, 0.81, 0.82],  # > 512 mV, ~570
-          [0.50, 0.70, 0.74, 0.76, 0.78, 0.79, 0.80, 0.81, 0.82, 0.83, 0.83, 0.84],  # > 640 mV
-          [0.52, 0.73, 0.76, 0.78, 0.80, 0.81, 0.82, 0.83, 0.84, 0.85, 0.85, 0.86],  # > 768 mV
-          [0.53, 0.75, 0.77, 0.79, 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.86, 0.87],  # > 896 mV
-          [0.55, 0.77, 0.78, 0.80, 0.82, 0.83, 0.85, 0.86, 0.87, 0.87, 0.87, 0.88],  # > 1024 mV
-          [0.56, 0.78, 0.79, 0.81, 0.83, 0.85, 0.87, 0.88, 0.88, 0.88, 0.88, 0.89],  # > 1152 mV
-          [0.58, 0.79, 0.80, 0.82, 0.84, 0.86, 0.88, 0.89, 0.89, 0.89, 0.89, 0.90],  # > 1280 mV
-          [0.60, 0.80, 0.81, 0.83, 0.85, 0.87, 0.89, 0.90, 0.90, 0.90, 0.90, 0.90],  # > 1408 mV
-        ]
-        # input-array[12][12] depending on array[inp_voltage][log(inp_current)],
-        # influence of cap-voltage is not implemented
+        C_intermediate_uF=50,
     )
 
     with Reader(file_input, verbose=False) as f_inp, Writer(
         file_output, cal_data=cal_emu, mode="emulator", verbose=False
     ) as f_out:
         window_size = f_inp.get_window_samples()
-        f_out.store_hostname("simulation")
+        f_out.store_hostname("emu_sim_" + vs_name)
         f_out.store_config(src_config.model_dump())
         src = VirtualSourceModel(
             src_config, cal_emu, log_intermediate=False, window_size=window_size
@@ -101,3 +81,6 @@ for vs_name in src_list:
             else:
                 I_out_nA = int(I_mcu_sleep_A * 10 ** 9)
             """
+
+    with Reader(file_output, verbose=False) as f_out:
+        f_out.save_metadata()
