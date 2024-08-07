@@ -32,7 +32,7 @@ I_mcu_active_A = 3e-3
 R_Ohm = 1000
 
 for vs_name in src_list:
-    file_output = file_input.with_stem(file_input.stem + "_emu_" + vs_name)
+    file_output = file_input.with_name(file_input.stem + "_emu_" + vs_name + file_input.suffix)
 
     cal_emu = CalibrationEmulator()
     src_config = VirtualSourceConfig(
