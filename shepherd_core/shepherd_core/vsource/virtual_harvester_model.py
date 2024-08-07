@@ -35,7 +35,10 @@ class VirtualHarvesterModel:
 
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1
-        self.interval_step: int = max(0, self._cfg.interval_n - (2 * self._cfg.window_size))
+        if self._cfg.interval_n > 2 * self._cfg.window_size:
+            self.interval_step = self._cfg.interval_n - (2 * self._cfg.window_size)
+        else:
+            self.interval_step = 2**30
         # ⤷ intake two ivcurves before overflow / reset
         self.is_rising: bool = (self._cfg.hrv_mode & (2**1)) != 0
 
@@ -113,7 +116,9 @@ class VirtualHarvesterModel:
         return self.voltage_hold, self.current_hold
 
     def ivcurve_2_mppt_voc(self, _voltage_uV: int, _current_nA: int) -> Tuple[int, int]:
-        self.interval_step = (self.interval_step + 1) % self._cfg.interval_n
+        self.interval_step = self.interval_step + 1
+        if self.interval_step >= self._cfg.interval_n:
+            self.interval_step = 0
         self.age_nxt += 1
         self.age_now += 1
 
@@ -140,7 +145,9 @@ class VirtualHarvesterModel:
         return _voltage_uV, _current_nA
 
     def ivcurve_2_mppt_po(self, _voltage_uV: int, _current_nA: int) -> Tuple[int, int]:
-        self.interval_step = (self.interval_step + 1) % self._cfg.interval_n
+        self.interval_step = self.interval_step + 1
+        if self.interval_step >= self._cfg.interval_n:
+            self.interval_step = 0
 
         _voltage_uV, _current_nA = self.ivcurve_2_cv(_voltage_uV, _current_nA)
 
