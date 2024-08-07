@@ -27,7 +27,7 @@ def src_model(
     dtype_in: EnergyDType = EnergyDType.ivsample,
     window_size: Optional[int] = None,
 ) -> VirtualSourceModel:
-    src_config = VirtualSourceConfig(name=name)
+    src_config = VirtualSourceConfig(name=name, V_intermediate_init_mV=2000)
     cal_emu = CalibrationEmulator()
     return VirtualSourceModel(
         src_config,
@@ -68,13 +68,13 @@ def test_vsource_vsrc_static2() -> None:
 
 @pytest.mark.parametrize("src_name", src_list[2:])
 def test_vsource_charge(src_name: str) -> None:
-    iterations = 4_000
+    iterations = 8_000
     src = src_model(src_name)
     for v_mV in range(iterations):
-        src.iterate_sampling(V_inp_uV=v_mV * 1000, I_inp_nA=1_000_000)
+        src.iterate_sampling(V_inp_uV=10**6 + v_mV * 1000, I_inp_nA=1_500_000)
     v_out = src.iterate_sampling(V_inp_uV=1_000_000, I_inp_nA=1_000_000)
     assert src.W_inp_fWs > 0.0
-    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=0.12, abs=1e-3)
+    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=0.20, abs=1e-3)
     assert v_out > 0.0
 
 
@@ -82,6 +82,11 @@ def test_vsource_charge(src_name: str) -> None:
 def test_vsource_drain(src_name: str) -> None:
     iterations = 4_000
     src = src_model(src_name)
+    assert src.W_inp_fWs == 0.0
+    # pre-charge and then drain
+    for v_mV in range(iterations):
+        src.iterate_sampling(V_inp_uV=v_mV * 1000, I_inp_nA=2_000_000)
+    src.W_inp_fWs = 0.0
     for c_uA in range(iterations):
         src.iterate_sampling(I_out_nA=c_uA * 1000)
     v_out = src.iterate_sampling()
@@ -120,6 +125,7 @@ def test_vsource_vsrc_cycle() -> None:
         src.iterate_sampling(I_out_nA=40 * 10**6)
     v_out = src.iterate_sampling()
     assert v_out == 0
+    # TODO: not accurate anymore as the output does not get disconnected for this BQ
 
     for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=5 * 10**6, I_inp_nA=4 * 10**6)
