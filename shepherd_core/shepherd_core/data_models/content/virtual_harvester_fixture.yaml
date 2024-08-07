@@ -19,14 +19,14 @@
     id: 1010
     name: ivcurve
     description: Postpone harvesting by sampling ivcurves (voltage stepped as sawtooth-wave)
-    comment: ~200 Hz
+    comment: ~110 Hz, Between 50 & 60 Hz line-frequency to avoid standing waves
     inherit_from: neutral
     algorithm: ivcurve
-    samples_n: 250
+    samples_n: 909
     voltage_min_mV: 0
     voltage_max_mV: 5000
-    wait_cycles: 1  # results in 200 Hz (= 100kHz /(2*250))
-    rising: true # NOTE: falling ramp shows errors during step (high voltage and still higher current)
+    wait_cycles: 0
+    rising: false # downward sawtooth seems to have advantages for solar cells
     # todo: also add switch for sawtooth- vs triangle-wave?
     # todo: could also include a version with dynamic upper-boundary, varied if voc is reached very early
 
@@ -34,6 +34,12 @@
   parameters:
     id: 1011
     name: ivcurves  # synonym
+    inherit_from: ivcurve
+
+- datatype: VirtualHarvesterConfig
+  parameters:
+    id: 1013
+    name: iv110 # synonym
     inherit_from: ivcurve
 
 - datatype: VirtualHarvesterConfig
@@ -47,21 +53,12 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1013
-    name: iv110
-    comment: Between 50 & 60 Hz line-frequency to avoid standing waves
-    inherit_from: ivcurve
-    samples_n: 909
-    wait_cycles: 0
-
-- datatype: VirtualHarvesterConfig
-  parameters:
     id: 1020
     name: isc_voc
     description: Postpone harvesting by sampling short circuit current & open circuit voltage
     inherit_from: neutral
     algorithm: isc_voc
-    wait_cycles: 1  # results in 25 kHz (isc, wait, voc, wait)
+    wait_cycles: 4  # results in 10 kHz (isc, wait, voc, wait)
 
 - datatype: VirtualHarvesterConfig
   parameters:
