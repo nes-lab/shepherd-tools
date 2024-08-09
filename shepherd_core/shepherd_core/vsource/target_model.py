@@ -27,13 +27,12 @@ class ResistiveTarget(TargetABC):
     def __init__(self, resistance_Ohm: float, *, controlled: bool = False) -> None:
         if resistance_Ohm < 1e-3:
             raise ValueError("Resistance must be greater than 1e-3 Ohm.")
-        self.r_Ohm = resistance_Ohm
+        self.r_kOhm = 1e-3 * resistance_Ohm
         self.ctrl = controlled
 
     def step(self, voltage_uV: int, *, pwr_good: bool) -> float:
         if pwr_good or not self.ctrl:
-            return 1e3 * voltage_uV / self.r_Ohm
-
+            return voltage_uV / self.r_kOhm  # = nA
         return 0
 
 
@@ -60,4 +59,4 @@ class ConstantPowerTarget(TargetABC):
         self.p_sleep_fW = 1e15 * p_sleep_W
 
     def step(self, voltage_uV: int, *, pwr_good: bool) -> float:
-        return (self.p_active_fW if pwr_good else self.p_sleep_fW) / voltage_uV
+        return (self.p_active_fW if pwr_good else self.p_sleep_fW) / voltage_uV  # = nA

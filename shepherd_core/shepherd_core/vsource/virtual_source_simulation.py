@@ -53,22 +53,21 @@ def simulate_source(
     e_out_Ws = 0.0
 
     for _t, v_inp, i_inp in tqdm(
-        file_inp.read_buffers(is_raw=True), total=file_inp.buffers_n, desc="Buffers"
+        file_inp.read_buffers(is_raw=True), total=file_inp.buffers_n, desc="Buffers", leave=False
     ):
         v_uV = cal_inp.voltage.raw_to_si(v_inp) * 1e6
         i_nA = cal_inp.current.raw_to_si(i_inp) * 1e9
 
         for _n in range(len(_t)):
-            v_out_uV = src.iterate_sampling(
+            v_uV[_n] = src.iterate_sampling(
                 V_inp_uV=int(v_uV[_n]),
                 I_inp_nA=int(i_nA[_n]),
                 I_out_nA=i_out_nA,
             )
-            i_out_nA = target.step(v_out_uV, pwr_good=src.cnv.get_power_good())
-
-            v_uV[_n] = v_out_uV / 1e6
-            i_nA[_n] = i_out_nA / 1e9
+            i_out_nA = target.step(int(v_uV[_n]), pwr_good=src.cnv.get_power_good())
+            i_nA[_n] = i_out_nA
             # TODO: src.cnv.get_I_mod_out_nA() has more internal drains
+
         e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
         if path_output:
             v_out = cal_out.voltage.si_to_raw(v_uV / 1e6)
