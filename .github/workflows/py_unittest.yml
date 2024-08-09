@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [ "3.13", "3.12", "3.10", "3.8" ] # 5 versions / years
+        python-version: [ "3.13.0-rc.1", "3.12", "3.10", "3.8" ] # 5 versions / years
 
     runs-on: ${{ matrix.os }}
 
