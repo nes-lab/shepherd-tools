@@ -35,7 +35,7 @@ for _v, _c in product(voltages_V, currents_A):
             voltage_vector = np.linspace(_v, _v, int(file.samplerate_sps * duration_s))
             current_vector = np.linspace(_c, _c, int(file.samplerate_sps * duration_s))
 
-            for idx in trange(repetitions, desc="generate"):
+            for idx in trange(repetitions, desc="generate", leave=False):
                 timestamps = idx * duration_s + timestamp_vector
                 file.append_iv_data_si(timestamps, voltage_vector, current_vector)
 

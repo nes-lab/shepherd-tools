@@ -137,7 +137,7 @@ class Reader:
             curve_interval_us = round(sfw.sample_interval_ns * pts_per_curve / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
             max_elements = math.ceil(sfw.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivcurves")
+            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivcurves", leave=False)
 
             for idx in job_iter:
                 idx_top = min(idx + max_elements, df_elements_n)
@@ -212,7 +212,7 @@ class Reader:
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
             max_elements = math.ceil(sfw.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivsamples")
+            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivsamples", leave=False)
 
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps
@@ -263,7 +263,7 @@ class Reader:
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
             max_elements = math.ceil(sfw.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc="generate upsample")
+            job_iter = trange(0, df_elements_n, max_elements, desc="generate upsample", leave=False)
 
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps
