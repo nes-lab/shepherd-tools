@@ -18,8 +18,9 @@ examples = [
     "experiment_models.py",
     "inventory.py",
     "uart_decode_waveform.py",
-    "vharvester_simulation.py",
-    "vsource_simulation.py",
+    "simulate_vharvester.py",
+    "simulate_vsource.py",
+    "vsource_debug_sim.py",
 ]
 
 

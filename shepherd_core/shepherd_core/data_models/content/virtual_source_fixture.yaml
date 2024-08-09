@@ -15,7 +15,7 @@
     interval_startup_delay_drain_ms: 0
 
     harvester:
-      name: mppt_opt # harvester only active if input is "ivcurves"
+      name: mppt_opt # harvester only active if input is "ivcurve"
 
     V_input_max_mV: 10000
     I_input_max_mA: 4200

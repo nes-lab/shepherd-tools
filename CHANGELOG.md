@@ -1,5 +1,14 @@
 # History of Changes
 
+## v2024.8.2
+
+- add hdf5-file based simulations
+  - targets: resistive, constant-current and constant-power; each controllable by pwr_good
+  - source / emulation
+  - harvest
+  - update examples accordingly `shepherd_core/example/simulation_xyz.py`
+- remove progress-bar when task is finished
+
 ## v2024.8.1
 
 - plotting: disable creation of tick-offset
