@@ -1,3 +1,11 @@
+"""Simulate behavior of virtual harvester algorithms.
+
+The simulation recreates an observer-cape and the virtual harvester
+- input = hdf5-file with an ivcurve
+- output = optional as hdf5-file
+
+The output file can be analyzed and plotted with shepherds tool suite.
+"""
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Optional
@@ -15,6 +23,10 @@ from .virtual_harvester_model import VirtualHarvesterModel
 def simulate_harvester(
     cfg: VirtualHarvesterConfig, path_input: Path, path_output: Optional[Path] = None
 ) -> float:
+    """Simulate behavior of virtual harvester algorithms.
+
+    Fn return the harvested energy.
+    """
     stack = ExitStack()
     file_inp = Reader(path_input, verbose=False)
     stack.enter_context(file_inp)

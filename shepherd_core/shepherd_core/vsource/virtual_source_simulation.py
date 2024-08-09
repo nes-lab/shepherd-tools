@@ -1,3 +1,11 @@
+"""Simulate behavior of virtual source algorithms.
+
+The simulation recreates an observer-cape, the virtual Source and a virtual target
+- input = hdf5-file with a harvest-recording
+- output = optional as hdf5-file
+
+The output file can be analyzed and plotted with shepherds tool suite.
+"""
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Optional
@@ -15,6 +23,10 @@ from .target_model import TargetABC
 def simulate_source(
     cfg: VirtualSourceConfig, tgt: TargetABC, path_input: Path, path_output: Optional[Path] = None
 ) -> float:
+    """Simulate behavior of virtual source algorithms.
+
+    FN returns the consumed energy of the target.
+    """
     stack = ExitStack()
     file_inp = Reader(path_input, verbose=False)
     stack.enter_context(file_inp)
