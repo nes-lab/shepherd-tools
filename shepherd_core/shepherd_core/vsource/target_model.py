@@ -25,8 +25,8 @@ class ResistiveTarget(TargetABC):
     """Predictable target for matching the real world."""
 
     def __init__(self, resistance_Ohm: float, *, controlled: bool = False) -> None:
-        if resistance_Ohm < 1e-3:
-            raise ValueError("Resistance must be greater than 1e-3 Ohm.")
+        if resistance_Ohm <= 1e-3:
+            raise ValueError("Resistance must be greater than 1 mOhm.")
         self.r_kOhm = 1e-3 * resistance_Ohm
         self.ctrl = controlled
 

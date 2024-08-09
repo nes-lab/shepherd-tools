@@ -55,8 +55,8 @@ def simulate_source(
     for _t, v_inp, i_inp in tqdm(
         file_inp.read_buffers(is_raw=True), total=file_inp.buffers_n, desc="Buffers", leave=False
     ):
-        v_uV = cal_inp.voltage.raw_to_si(v_inp) * 1e6
-        i_nA = cal_inp.current.raw_to_si(i_inp) * 1e9
+        v_uV = 1e6 * cal_inp.voltage.raw_to_si(v_inp)
+        i_nA = 1e9 * cal_inp.current.raw_to_si(i_inp)
 
         for _n in range(len(_t)):
             v_uV[_n] = src.iterate_sampling(
@@ -70,9 +70,9 @@ def simulate_source(
 
         e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
         if path_output:
-            v_out = cal_out.voltage.si_to_raw(v_uV / 1e6)
-            i_out = cal_out.current.si_to_raw(i_nA / 1e9)
-            file_out.append_iv_data_si(_t, v_out, i_out)
+            v_out = cal_out.voltage.si_to_raw(1e-6 * v_uV)
+            i_out = cal_out.current.si_to_raw(1e-9 * i_nA)
+            file_out.append_iv_data_raw(_t, v_out, i_out)
 
     stack.close()
     return e_out_Ws
