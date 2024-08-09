@@ -6,6 +6,7 @@ The simulation recreates an observer-cape, the virtual Source and a virtual targ
 
 The output file can be analyzed and plotted with shepherds tool suite.
 """
+
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Optional
@@ -21,7 +22,10 @@ from .target_model import TargetABC
 
 
 def simulate_source(
-    cfg: VirtualSourceConfig, tgt: TargetABC, path_input: Path, path_output: Optional[Path] = None
+    config: VirtualSourceConfig,
+    target: TargetABC,
+    path_input: Path,
+    path_output: Optional[Path] = None,
 ) -> float:
     """Simulate behavior of virtual source algorithms.
 
@@ -38,12 +42,12 @@ def simulate_source(
             path_output, cal_data=cal_emu, mode="emulator", verbose=False, force_overwrite=True
         )
         stack.enter_context(file_out)
-        file_out.store_hostname("emu_sim_" + cfg.name)
-        file_out.store_config(cfg.model_dump())
+        file_out.store_hostname("emu_sim_" + config.name)
+        file_out.store_config(config.model_dump())
         cal_out = file_out.get_calibration_data()
 
     src = VirtualSourceModel(
-        cfg, cal_emu, log_intermediate=False, window_size=file_inp.get_window_samples()
+        config, cal_emu, log_intermediate=False, window_size=file_inp.get_window_samples()
     )
     i_out_nA = 0
     e_out_Ws = 0.0
@@ -60,7 +64,7 @@ def simulate_source(
                 I_inp_nA=int(i_nA[_n]),
                 I_out_nA=i_out_nA,
             )
-            i_out_nA = tgt.step(v_out_uV, src)
+            i_out_nA = target.step(v_out_uV, src)
 
             v_uV[_n] = v_out_uV / 1e6
             i_nA[_n] = i_out_nA / 1e9

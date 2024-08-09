@@ -6,6 +6,7 @@ The simulation recreates an observer-cape and the virtual harvester
 
 The output file can be analyzed and plotted with shepherds tool suite.
 """
+
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Optional
@@ -21,7 +22,7 @@ from .virtual_harvester_model import VirtualHarvesterModel
 
 
 def simulate_harvester(
-    cfg: VirtualHarvesterConfig, path_input: Path, path_output: Optional[Path] = None
+    config: VirtualHarvesterConfig, path_input: Path, path_output: Optional[Path] = None
 ) -> float:
     """Simulate behavior of virtual harvester algorithms.
 
@@ -39,10 +40,10 @@ def simulate_harvester(
         )
         stack.enter_context(file_out)
         cal_out = file_out.get_calibration_data()
-        file_out.store_hostname("hrv_sim_" + cfg.name)
+        file_out.store_hostname("hrv_sim_" + config.name)
 
     hrv_pru = HarvesterPRUConfig.from_vhrv(
-        cfg,
+        config,
         for_emu=True,
         dtype_in=file_inp.get_datatype(),
         window_size=file_inp.get_window_samples(),

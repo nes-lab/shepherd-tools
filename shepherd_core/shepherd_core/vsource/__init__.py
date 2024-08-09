@@ -1,5 +1,7 @@
 """Simulation model of the virtual source."""
 
+from .target_model import ConstantCurrentTarget
+from .target_model import ConstantPowerTarget
 from .target_model import ResistiveTarget
 from .virtual_converter_model import PruCalibration
 from .virtual_converter_model import VirtualConverterModel
@@ -16,4 +18,6 @@ __all__ = [
     "simulate_harvester",
     "simulate_source",
     "ResistiveTarget",
+    "ConstantCurrentTarget",
+    "ConstantPowerTarget",
 ]
