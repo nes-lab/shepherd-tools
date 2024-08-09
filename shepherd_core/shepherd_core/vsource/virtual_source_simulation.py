@@ -64,7 +64,7 @@ def simulate_source(
                 I_inp_nA=int(i_nA[_n]),
                 I_out_nA=i_out_nA,
             )
-            i_out_nA = target.step(v_out_uV, src)
+            i_out_nA = target.step(v_out_uV, pwr_good=src.cnv.get_power_good())
 
             v_uV[_n] = v_out_uV / 1e6
             i_nA[_n] = i_out_nA / 1e9
