@@ -4,17 +4,21 @@
 - harvesting is done by various algorithms and preconfigured virtual harvesters
 - results are printed on console (harvested energy)
 
+Output:
+E_out = 0.000 mWs -> cv20
+E_out = 17.165 mWs -> cv10
+E_out = 17.427 mWs -> mppt_voc
+E_out = 17.242 mWs -> mppt_bq_solar
+E_out = 13.998 mWs -> mppt_bq_thermoelectric
+E_out = 15.202 mWs -> mppt_po
+E_out = 17.811 mWs -> mppt_opt
 """
 
-from contextlib import ExitStack
 from pathlib import Path
 
-from shepherd_core import CalibrationHarvester
 from shepherd_core import Reader
-from shepherd_core import Writer
 from shepherd_core.data_models import VirtualHarvesterConfig
-from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
-from shepherd_core.vsource import VirtualHarvesterModel
+from shepherd_core.vsource import simulate_harvester
 from shepherd_data import ivonne
 
 # config simulation
@@ -35,7 +39,7 @@ hrv_list = [
     "mppt_opt",
 ]
 
-save_files: bool = True
+save_files: bool = False
 
 # convert IVonne to IVCurve
 if not file_ivcurve.exists():
@@ -57,40 +61,14 @@ with Reader(file_ivcurve, verbose=False) as file:
 
 # Simulation
 for hrv_name in hrv_list:
-    E_out_Ws = 0.0
-    _cal = CalibrationHarvester()
-    if save_files:
-        stack = ExitStack()
-        file_output = file_ivcurve.with_name(
-            file_ivcurve.stem + "_" + hrv_name + file_ivcurve.suffix
-        )
-        fh_output = Writer(
-            file_output, cal_data=_cal, mode="harvester", verbose=False, force_overwrite=True
-        )
-        stack.enter_context(fh_output)
-        fh_output.store_hostname("hrv_sim_" + hrv_name)
-
-    with Reader(file_ivcurve, verbose=False) as file:
-        hrv_config = VirtualHarvesterConfig(name=hrv_name)
-        hrv_pru = HarvesterPRUConfig.from_vhrv(
-            hrv_config,
-            for_emu=True,
-            dtype_in=file.get_datatype(),
-            window_size=4 * file.get_window_samples(),
-        )
-        hrv = VirtualHarvesterModel(hrv_pru)
-        for _t, _v, _i in file.read_buffers():
-            # TODO: _t should be handed to new file without conversions
-            length = max(_v.size, _i.size)
-            for _n in range(length):
-                _v[_n], _i[_n] = hrv.ivcurve_sample(
-                    _voltage_uV=_v[_n] * 10**6, _current_nA=_i[_n] * 10**9
-                )
-            E_out_Ws += (_v * _i).sum() * 1e-15 * file.sample_interval_s
-            if save_files:
-                fh_output.append_iv_data_si(_t, _v / 1e6, _i / 1e9)
-        if save_files:
-            stack.close()
-            with Reader(file_output) as fh_output:
-                fh_output.save_metadata()
-        print(f"E_out = {E_out_Ws * 1e3:.3f} mWs -> {hrv_name}")
+    file_output = (
+        file_ivcurve.with_name(file_ivcurve.stem + "_" + hrv_name + file_ivcurve.suffix)
+        if save_files
+        else None
+    )
+    E_out_Ws = simulate_harvester(
+        config=VirtualHarvesterConfig(name=hrv_name),
+        path_input=file_ivcurve,
+        path_output=file_output,
+    )
+    print(f"E_out = {E_out_Ws * 1e3:.3f} mWs -> {hrv_name}")

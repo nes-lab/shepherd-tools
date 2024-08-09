@@ -7,80 +7,49 @@ The emulation recreates an observer-cape, the virtual Source and a virtual targe
 - target is currently a simple resistor
 
 The output file can be analyzed and plotted with shepherds tool suite.
+
+Output:
+E_out = 0.007 mWs -> direct
+E_out = 0.033 mWs -> diode+capacitor
+E_out = 0.033 mWs -> diode+resistor+capacitor
+E_out = 14.964 mWs -> BQ25504
+E_out = 15.042 mWs -> BQ25504s
+E_out = 13.909 mWs -> BQ25570
+E_out = 14.073 mWs -> BQ25570s
 """
-# TODO: `shepherd-data emulate config.yaml`
 
 from pathlib import Path
 
-import numpy as np
-from tqdm import tqdm
-
-from shepherd_core import CalibrationEmulator
-from shepherd_core import Reader
-from shepherd_core import Writer
-from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models import VirtualSourceConfig
-from shepherd_core.vsource import VirtualSourceModel
+from shepherd_core.vsource import ConstantCurrentTarget
+from shepherd_core.vsource import simulate_source
 
 # config simulation
 file_input = Path(__file__).parent / "jogging_ivcurve.h5"
 
-src_list = ["BQ25504"]
+src_list = [
+    "direct",
+    "diode+capacitor",
+    "diode+resistor+capacitor",
+    "BQ25504",
+    "BQ25504s",
+    "BQ25570",
+    "BQ25570s",
+]
+tgt = ConstantCurrentTarget(i_active_A=1e-3, i_sleep_A=200e-9)
+save_files = False
 
-I_mcu_sleep_A = 3e-3
-I_mcu_active_A = 3e-3
-R_Ohm = 1000
-
-for vs_name in src_list:
-    file_output = file_input.with_name(file_input.stem + "_emu_" + vs_name + file_input.suffix)
-
-    cal_emu = CalibrationEmulator()
-    src_config = VirtualSourceConfig(
-        inherit_from=vs_name,
-        V_intermediate_init_mV=3000,
-        harvester=VirtualHarvesterConfig(name="mppt_bq_solar"),
-        C_intermediate_uF=50,
+for src_name in src_list:
+    file_output = (
+        file_input.with_name(file_input.stem + "_emu_" + src_name + file_input.suffix)
+        if save_files
+        else None
     )
 
-    with Reader(file_input, verbose=False) as f_inp, Writer(
-        file_output, cal_data=cal_emu, mode="emulator", verbose=False
-    ) as f_out:
-        window_size = f_inp.get_window_samples()
-        f_out.store_hostname("emu_sim_" + vs_name)
-        f_out.store_config(src_config.model_dump())
-        src = VirtualSourceModel(
-            src_config, cal_emu, log_intermediate=False, window_size=window_size
-        )
-
-        I_out_nA = 0
-
-        for _t, _V_inp, _I_inp in tqdm(f_inp.read_buffers(), total=f_inp.buffers_n):
-            V_out = np.empty(_V_inp.shape)
-            I_out = np.empty(_I_inp.shape)
-
-            for _iter in range(len(_t)):
-                V_out_uV = src.iterate_sampling(
-                    V_inp_uV=_V_inp[_iter] * 10**6,
-                    I_inp_nA=_I_inp[_iter] * 10**9,
-                    I_out_nA=I_out_nA,
-                )
-                I_out_nA = 1e3 * V_out_uV / R_Ohm
-
-                V_out[_iter] = V_out_uV / 1e6
-                I_out[_iter] = I_out_nA / 1e9
-
-                # TODO: src.cnv.get_I_mod_out_nA() has more internal drains
-
-            f_out.append_iv_data_si(_t, V_out, I_out)
-
-            # listen to power-good signal
-            """
-            if src.cnv.get_power_good():
-                I_out_nA = int(I_mcu_active_A * 10 ** 9)
-                N_good += 1
-            else:
-                I_out_nA = int(I_mcu_sleep_A * 10 ** 9)
-            """
-
-    with Reader(file_output, verbose=False) as f_out:
-        f_out.save_metadata()
+    e_out_Ws = simulate_source(
+        config=VirtualSourceConfig(name=src_name),
+        target=tgt,
+        path_input=file_input,
+        path_output=file_output,
+    )
+    print(f"E_out = {e_out_Ws * 1e3:.3f} mWs -> {src_name}")
