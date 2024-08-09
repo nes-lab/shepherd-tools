@@ -212,7 +212,9 @@ class Reader:
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
             max_elements = math.ceil(sfw.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivsamples", leave=False)
+            job_iter = trange(
+                0, df_elements_n, max_elements, desc="generate ivsamples", leave=False
+            )
 
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps
