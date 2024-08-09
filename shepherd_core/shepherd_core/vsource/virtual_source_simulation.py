@@ -1,0 +1,63 @@
+from contextlib import ExitStack
+from pathlib import Path
+from typing import Optional
+
+from tqdm import tqdm
+
+from .. import CalibrationEmulator
+from .. import Reader
+from .. import Writer
+from ..data_models import VirtualSourceConfig
+from . import VirtualSourceModel
+from .target_model import TargetABC
+
+
+def simulate_source(
+    cfg: VirtualSourceConfig, tgt: TargetABC, path_input: Path, path_output: Optional[Path] = None
+) -> float:
+    stack = ExitStack()
+    file_inp = Reader(path_input, verbose=False)
+    stack.enter_context(file_inp)
+    cal_emu = CalibrationEmulator()
+    cal_inp = file_inp.get_calibration_data()
+
+    if path_output:
+        file_out = Writer(
+            path_output, cal_data=cal_emu, mode="emulator", verbose=False, force_overwrite=True
+        )
+        stack.enter_context(file_out)
+        file_out.store_hostname("emu_sim_" + cfg.name)
+        file_out.store_config(cfg.model_dump())
+        cal_out = file_out.get_calibration_data()
+
+    src = VirtualSourceModel(
+        cfg, cal_emu, log_intermediate=False, window_size=file_inp.get_window_samples()
+    )
+    i_out_nA = 0
+    e_out_Ws = 0.0
+
+    for _t, v_inp, i_inp in tqdm(
+        file_inp.read_buffers(is_raw=True), total=file_inp.buffers_n, desc="Buffers"
+    ):
+        v_uV = cal_inp.voltage.raw_to_si(v_inp) * 1e6
+        i_nA = cal_inp.current.raw_to_si(i_inp) * 1e9
+
+        for _n in range(len(_t)):
+            v_out_uV = src.iterate_sampling(
+                V_inp_uV=int(v_uV[_n]),
+                I_inp_nA=int(i_nA[_n]),
+                I_out_nA=i_out_nA,
+            )
+            i_out_nA = tgt.step(v_out_uV, src)
+
+            v_uV[_n] = v_out_uV / 1e6
+            i_nA[_n] = i_out_nA / 1e9
+            # TODO: src.cnv.get_I_mod_out_nA() has more internal drains
+        e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
+        if path_output:
+            v_out = cal_out.voltage.si_to_raw(v_uV / 1e6)
+            i_out = cal_out.current.si_to_raw(i_nA / 1e9)
+            file_out.append_iv_data_si(_t, v_out, i_out)
+
+    stack.close()
+    return e_out_Ws
