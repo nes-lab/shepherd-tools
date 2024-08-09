@@ -63,11 +63,11 @@ These pydantic data-models are used throughout all shepherd interfaces. Users ca
 
 ## Compatibility
 
-| OS      |   PyVersion  | Comment                                    |
-|---------|--------------|--------------------------------------------|
-| Ubuntu  | 3.8 - 3.12   |                                            |
-| Windows | 3.8 - 3.12   | no support for elf and hex-conversions yet |
-| MacOS   | 3.8 - 3.12   | hex-conversion missing                     |
+| OS      | PyVersion  | Comment                                    |
+|---------|------------|--------------------------------------------|
+| Ubuntu  | 3.8 - 3.13 |                                            |
+| Windows | 3.8 - 3.13 | no support for elf and hex-conversions yet |
+| MacOS   | 3.8 - 3.13 | hex-conversion missing                     |
 
 Notes:
 - hex-conversion needs a working and accessible objcopy
