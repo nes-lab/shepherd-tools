@@ -35,12 +35,18 @@ class VirtualHarvesterModel:
 
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1
+
+        self.is_emu: bool = bool(self._cfg.hrv_mode & (2 ** 0))
+        if not self.is_emu:
+            raise RuntimeError("Config is not for emulation-mode!")
+
         if self._cfg.interval_n > 2 * self._cfg.window_size:
             self.interval_step = self._cfg.interval_n - (2 * self._cfg.window_size)
         else:
             self.interval_step = 2**30
         # ⤷ intake two ivcurves before overflow / reset
-        self.is_rising: bool = (self._cfg.hrv_mode & (2**1)) != 0
+
+        self.is_rising: bool = bool(self._cfg.hrv_mode & (2**1))
 
         # PO-Relevant, iv & adc
         self.volt_step_uV: int = self._cfg.voltage_step_uV
@@ -54,7 +60,7 @@ class VirtualHarvesterModel:
         # globals for iv_cv
         self.voltage_hold: int = 0
         self.current_hold: int = 0
-        self.voltage_step_x4_uV: int = self._cfg.voltage_step_uV * 4
+        self.voltage_step_x4_uV: int = 4 * self._cfg.voltage_step_uV
         self.age_max: int = 2 * self._cfg.window_size
 
         # INIT static vars: CV
@@ -194,7 +200,7 @@ class VirtualHarvesterModel:
 
         power_fW = _voltage_uV * _current_nA
         if (
-            (power_fW > self.power_nxt)
+            (power_fW >= self.power_nxt)
             and (_voltage_uV >= self._cfg.voltage_min_uV)
             and (_voltage_uV <= self._cfg.voltage_max_uV)
         ):
