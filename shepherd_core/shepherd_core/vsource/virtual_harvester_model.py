@@ -36,7 +36,7 @@ class VirtualHarvesterModel:
         # INIT global vars: shared states
         self.voltage_set_uV: int = self._cfg.voltage_uV + 1
 
-        self.is_emu: bool = bool(self._cfg.hrv_mode & (2 ** 0))
+        self.is_emu: bool = bool(self._cfg.hrv_mode & (2**0))
         if not self.is_emu:
             raise RuntimeError("Config is not for emulation-mode!")
 
