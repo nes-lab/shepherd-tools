@@ -21,7 +21,7 @@ E_out = 14.073 mWs -> BQ25570s
 from pathlib import Path
 
 from shepherd_core.data_models import VirtualSourceConfig
-from shepherd_core.vsource import ConstantCurrentTarget
+from shepherd_core.vsource import ResistiveTarget
 from shepherd_core.vsource import simulate_source
 
 # config simulation
@@ -36,8 +36,8 @@ src_list = [
     "BQ25570",
     "BQ25570s",
 ]
-tgt = ConstantCurrentTarget(i_active_A=1e-3, i_sleep_A=200e-9)
-save_files = False
+tgt = ResistiveTarget(resistance_Ohm=1000)
+save_files = True
 
 for src_name in src_list:
     file_output = (
@@ -47,7 +47,7 @@ for src_name in src_list:
     )
 
     e_out_Ws = simulate_source(
-        config=VirtualSourceConfig(name=src_name),
+        config=VirtualSourceConfig(name=src_name, C_output_uF=0),
         target=tgt,
         path_input=file_input,
         path_output=file_output,
