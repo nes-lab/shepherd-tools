@@ -270,7 +270,7 @@ class VirtualConverterModel:
     def get_power_good(self) -> bool:
         return self.power_good
 
-    def get_I_mod_out_nA(self) -> float:
+    def get_I_mid_out_nA(self) -> float:
         return self.P_out_fW / self.V_mid_uV
 
     def get_state_log_intermediate(self) -> bool:

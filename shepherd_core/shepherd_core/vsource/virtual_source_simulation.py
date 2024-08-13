@@ -66,7 +66,7 @@ def simulate_source(
             )
             i_out_nA = target.step(int(v_uV[_n]), pwr_good=src.cnv.get_power_good())
             i_nA[_n] = i_out_nA
-            # TODO: src.cnv.get_I_mod_out_nA() has more internal drains
+            # TODO: src.cnv.get_I_mid_out_nA() has more internal drains
 
         e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
         if path_output:
