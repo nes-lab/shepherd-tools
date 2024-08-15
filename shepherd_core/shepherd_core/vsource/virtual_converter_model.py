@@ -43,8 +43,7 @@ class PruCalibration:
                 self.negative_residue_nA = 0
             else:
                 self.negative_residue_nA = self.negative_residue_nA - I_nA
-                if self.negative_residue_nA > self.RESIDUE_MAX_nA:
-                    self.negative_residue_nA = self.RESIDUE_MAX_nA
+                self.negative_residue_nA = min(self.negative_residue_nA, self.RESIDUE_MAX_nA)
                 I_nA = 0
         return I_nA
 
@@ -55,9 +54,7 @@ class PruCalibration:
 
     def conv_uV_to_dac_raw(self, voltage_uV: float) -> int:
         dac_raw = self.cal.dac_V_A.si_to_raw(float(voltage_uV) / (10**6))
-        if dac_raw > (2**16) - 1:
-            dac_raw = (2**16) - 1
-        return dac_raw
+        return min(dac_raw, (2**16) - 1)
 
 
 class VirtualConverterModel:
@@ -95,8 +92,9 @@ class VirtualConverterModel:
         self.V_enable_output_threshold_uV: float = self._cfg.V_enable_output_threshold_uV
         self.V_disable_output_threshold_uV: float = self._cfg.V_disable_output_threshold_uV
 
-        if self.dV_enable_output_uV > self.V_enable_output_threshold_uV:
-            self.V_enable_output_threshold_uV = self.dV_enable_output_uV
+        self.V_enable_output_threshold_uV = max(
+            self.dV_enable_output_uV, self.V_enable_output_threshold_uV
+        )
 
         # pulled from update_states_and_output() due to easier static init
         self.sample_count: int = 0xFFFFFFF0
@@ -114,11 +112,9 @@ class VirtualConverterModel:
         else:
             input_voltage_uV = 0.0
 
-        if input_voltage_uV > self._cfg.V_input_max_uV:
-            input_voltage_uV = self._cfg.V_input_max_uV
+        input_voltage_uV = min(input_voltage_uV, self._cfg.V_input_max_uV)
 
-        if input_current_nA > self._cfg.I_input_max_nA:
-            input_current_nA = self._cfg.I_input_max_nA
+        input_current_nA = min(input_current_nA, self._cfg.I_input_max_nA)
 
         self.V_input_uV = input_voltage_uV
 
@@ -177,8 +173,7 @@ class VirtualConverterModel:
             dV_mid_uV = I_mid_nA * self.Constant_us_per_nF
             self.V_mid_uV += dV_mid_uV
 
-        if self.V_mid_uV > self._cfg.V_intermediate_max_uV:
-            self.V_mid_uV = self._cfg.V_intermediate_max_uV
+        self.V_mid_uV = min(self.V_mid_uV, self._cfg.V_intermediate_max_uV)
         if (not self.enable_boost) and (self.P_inp_fW > 0.0) and (self.V_mid_uV > self.V_input_uV):
             # TODO: obfuscated - no "direct connection"?
             self.V_mid_uV = self.V_input_uV
