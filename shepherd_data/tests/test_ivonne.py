@@ -7,7 +7,7 @@ from shepherd_data import ivonne
 from shepherd_data import mppt
 
 
-@pytest.fixture()
+@pytest.fixture
 def example_path() -> Path:
     here = Path(__file__).resolve().parent
     return here.parent / "examples"

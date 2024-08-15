@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture
 def example_path() -> Path:
     path = Path(__file__).resolve().parent.parent / "examples"
     os.chdir(path)
@@ -35,8 +35,8 @@ examples_fw = [
 ]
 
 
-@pytest.mark.converter()
-@pytest.mark.elf()
+@pytest.mark.converter
+@pytest.mark.elf
 @pytest.mark.parametrize("file", examples_fw)
 def test_example_scripts_fw(example_path: Path, file: str) -> None:
     subprocess.run([sys.executable, (example_path / file).as_posix()], shell=True, check=True)
