@@ -76,7 +76,7 @@ class Reader:
 
         if not hasattr(self, "samplerate_sps"):
             self.samplerate_sps: int = samplerate_sps_default
-        self.sample_interval_ns: int = int(10**9 // self.samplerate_sps)
+        self.sample_interval_ns: int = round(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
         self.max_elements: int = 40 * self.samplerate_sps
@@ -177,8 +177,8 @@ class Reader:
             # this assumes iso-chronous sampling
             duration_s = self._cal.time.raw_to_si(duration_raw)
             self.sample_interval_s = duration_s / sample_count
-            self.sample_interval_ns = int(10**9 * self.sample_interval_s)
-            self.samplerate_sps = max(int((sample_count - 1) / duration_s), 1)
+            self.sample_interval_ns = round(10**9 * self.sample_interval_s)
+            self.samplerate_sps = max(round((sample_count - 1) / duration_s), 1)
         self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
         self.buffers_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
         if isinstance(self.file_path, Path):
