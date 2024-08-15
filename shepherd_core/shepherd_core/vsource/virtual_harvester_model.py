@@ -19,6 +19,7 @@ Compromises:
 from typing import Tuple
 
 from ..data_models.content.virtual_harvester import HarvesterPRUConfig
+from ..logger import logger
 
 
 class VirtualHarvesterModel:
@@ -38,7 +39,9 @@ class VirtualHarvesterModel:
 
         self.is_emu: bool = bool(self._cfg.hrv_mode & (2**0))
         if not self.is_emu:
-            raise RuntimeError("Config is not for emulation-mode!")
+            logger.warning(
+                "This VSrc-config is not meant for emulation-mode -> activate 'is_emu' flag."
+            )
 
         if self._cfg.interval_n > 2 * self._cfg.window_size:
             self.interval_step = self._cfg.interval_n - (2 * self._cfg.window_size)
