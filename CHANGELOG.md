@@ -222,6 +222,8 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 # 12.8 s on v2024.4.1, pydantic 2.7.0, core 2.18.1
 # 10.3 s on v2024.5.1, pydantic 2.7.4, core 2.18.4 - debian 12.5
 # 10.4 s on v2024.5.1, pydantic 2.8.0, core 2.20.0
+# 12.3 s on v2024.8.2, pydantic 2.8.2, core 2.20.1
+# 11.7 s on v2024.8.2, pydantic 2.9.0, core 2.23.2
 ```
 
 ## v2023.08.6
