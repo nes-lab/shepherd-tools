@@ -39,7 +39,9 @@ class VirtualSourceModel:
 
         self.cfg_src = VirtualSourceConfig() if vsrc is None else vsrc
         cnv_config = ConverterPRUConfig.from_vsrc(
-            self.cfg_src, log_intermediate_node=log_intermediate
+            self.cfg_src,
+            dtype_in=dtype_in,
+            log_intermediate_node=log_intermediate,
         )
         self.cnv: VirtualConverterModel = VirtualConverterModel(cnv_config, self._cal_pru)
 
@@ -79,5 +81,9 @@ class VirtualSourceModel:
 
         self.W_inp_fWs += P_inp_fW
         self.W_out_fWs += P_out_fW
+
+        # feedback path - important for boost-less circuits
+        if self.cnv.feedback_to_hrv:
+            self.hrv.voltage_set_uV = self.cnv.V_input_request_uV
 
         return V_mid_uV if self.cnv.get_state_log_intermediate() else V_out_uV

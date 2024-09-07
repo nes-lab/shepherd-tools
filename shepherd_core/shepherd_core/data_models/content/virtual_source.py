@@ -12,6 +12,7 @@ from ...logger import logger
 from ...testbed_client import tb_client
 from ..base.content import ContentModel
 from ..base.shepherd import ShpModel
+from .energy_environment import EnergyDType
 from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvesterConfig
 
@@ -42,6 +43,8 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # ⤷ if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     enable_buck: bool = False
     # ⤷ if false -> v_output = v_intermediate
+    enable_feedback_to_hrv: bool = False
+    # src can control a cv-harvester for ivcurve
 
     interval_startup_delay_drain_ms: Annotated[float, Field(ge=0, le=10_000)] = 0
 
@@ -200,7 +203,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             values["V_disable_output_threshold_mV"] = self.V_intermediate_disable_threshold_mV
         return values
 
-    def calc_converter_mode(self, *, log_intermediate_node: bool) -> int:
+    def calc_converter_mode(self, dtype_in: EnergyDType, *, log_intermediate_node: bool) -> int:
         """Assembles bitmask from discrete values.
 
         log_intermediate_node: record / log virtual intermediate (cap-)voltage and
@@ -208,11 +211,25 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         """
         enable_storage = self.C_intermediate_uF > 0
         enable_boost = self.enable_boost and enable_storage
+        if enable_boost != self.enable_boost:
+            logger.warning("VSrc - boost was disabled due to missing storage capacitor!")
+        enable_feedback = (
+            self.enable_feedback_to_hrv
+            and enable_storage
+            and not enable_boost
+            and dtype_in == EnergyDType.ivcurve
+        )
+        if enable_feedback != self.enable_feedback_to_hrv:
+            logger.warning(
+                "VSRC - feedback to harvester was disabled!"
+                "Possible reasons are: enabled boost, input not ivcurve or no storage capacitor"
+            )
         return (
             1 * int(enable_storage)
             + 2 * int(enable_boost)
             + 4 * int(self.enable_buck)
             + 8 * int(log_intermediate_node)
+            + 16 * int(enable_feedback)
         )
 
     def calc_cap_constant_us_per_nF_n28(self) -> int:
@@ -285,13 +302,16 @@ class ConverterPRUConfig(ShpModel):
     def from_vsrc(
         cls,
         data: VirtualSourceConfig,
+        dtype_in: EnergyDType = EnergyDType.ivsample,
         *,
         log_intermediate_node: bool = False,
     ) -> Self:
         states = data.calc_internal_states()
         return cls(
             # General
-            converter_mode=data.calc_converter_mode(log_intermediate_node=log_intermediate_node),
+            converter_mode=data.calc_converter_mode(
+                dtype_in, log_intermediate_node=log_intermediate_node
+            ),
             interval_startup_delay_drain_n=round(
                 data.interval_startup_delay_drain_ms * samplerate_sps_default * 1e-3
             ),

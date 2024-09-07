@@ -256,7 +256,7 @@ def test_content_model_src_force_warning() -> None:
         C_output_uF=200,
         C_intermediate_uF=100,
     )
-    ConverterPRUConfig.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)
     # -> triggers warning currently
 
 
@@ -268,7 +268,7 @@ def test_content_model_src_force_other_hysteresis1() -> None:
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )
-    ConverterPRUConfig.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)
 
 
 def test_content_model_src_force_other_hysteresis2() -> None:
@@ -279,4 +279,4 @@ def test_content_model_src_force_other_hysteresis2() -> None:
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )
-    ConverterPRUConfig.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)

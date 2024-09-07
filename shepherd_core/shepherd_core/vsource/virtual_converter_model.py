@@ -82,6 +82,9 @@ class VirtualConverterModel:
         self.enable_boost: bool = (int(self._cfg.converter_mode) & 0b0010) > 0
         self.enable_buck: bool = (int(self._cfg.converter_mode) & 0b0100) > 0
         self.enable_log_mid: bool = (int(self._cfg.converter_mode) & 0b1000) > 0
+        # back-channel to hrv
+        self.feedback_to_hrv: bool = (int(self._cfg.converter_mode) & 0b1_0000) > 0
+        self.V_input_request_uV: int = self._cfg.V_intermediate_init_uV
 
         self.V_out_dac_uV: float = self._cfg.V_output_uV
         self.V_out_dac_raw: int = self._cal.conv_uV_to_dac_raw(self._cfg.V_output_uV)
@@ -126,15 +129,23 @@ class VirtualConverterModel:
             self.V_mid_uV = input_voltage_uV
             input_voltage_uV = 0.0
             # ⤷ input current (& power) is not evaluated
-        elif input_voltage_uV > self.V_mid_uV:
-            V_diff_uV = input_voltage_uV - self.V_mid_uV
-            V_drop_uV = input_current_nA * self.R_input_kOhm
-            if V_drop_uV > V_diff_uV:
+        else:
+            # no boost, but cap, for ie. diode+cap (+resistor)
+            V_diff_uV = (
+                (input_voltage_uV - self.V_mid_uV) if (input_voltage_uV >= self.V_mid_uV) else 0
+            )
+            V_res_drop_uV = input_current_nA * self.R_input_kOhm
+            if V_res_drop_uV > V_diff_uV:
                 input_voltage_uV = self.V_mid_uV
             else:
-                input_voltage_uV -= V_drop_uV
-        else:
-            input_voltage_uV = 0.0
+                input_voltage_uV -= V_res_drop_uV
+
+            # IF input==ivcurve request new CV
+            if self.feedback_to_hrv:
+                self.V_input_request_uV = self.V_mid_uV + V_res_drop_uV + self._cfg.V_input_drop_uV
+            elif input_voltage_uV < self.V_mid_uV:
+                # without feedback there is no usable energy here
+                input_voltage_uV = 0
 
         if self.enable_boost:
             eta_inp = self.get_input_efficiency(input_voltage_uV, input_current_nA)
@@ -176,7 +187,9 @@ class VirtualConverterModel:
         self.V_mid_uV = min(self.V_mid_uV, self._cfg.V_intermediate_max_uV)
         if (not self.enable_boost) and (self.P_inp_fW > 0.0) and (self.V_mid_uV > self.V_input_uV):
             # TODO: obfuscated - no "direct connection"?
-            self.V_mid_uV = self.V_input_uV
+            # TODO: not totally correct: not enabled_boost and not enabled_storage
+            # self.V_mid_uV = self.V_input_uV
+            pass
         elif self.V_mid_uV < 1:
             self.V_mid_uV = 1
         return round(self.V_mid_uV)  # Python-specific, added for easier testing
