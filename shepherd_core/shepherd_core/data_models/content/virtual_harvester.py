@@ -62,6 +62,9 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     # ⤷ of (open voltage) measurement
     rising: bool = True
     # ⤷ direction of sawtooth
+    enable_linear_extrapolation: bool = True
+    # ⤷ improves slow cv-algo that is base of most ivcurve-harvesters
+    #   (update-freq dependent on window-size)
 
     # Underlying recorder
     wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
@@ -107,7 +110,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return self
 
     def calc_hrv_mode(self, *, for_emu: bool) -> int:
-        return 1 * int(for_emu) + 2 * self.rising
+        return 1 * int(for_emu) + 2 * self.rising + 4 * self.enable_linear_extrapolation
 
     def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num = algo_to_num.get(self.algorithm)

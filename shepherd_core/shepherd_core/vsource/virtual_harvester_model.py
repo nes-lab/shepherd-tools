@@ -70,6 +70,9 @@ class VirtualHarvesterModel:
         self.voltage_last: int = 0
         self.current_last: int = 0
         self.compare_last: int = 0
+        self.lin_extrapolation: bool = bool(self._cfg.hrv_mode & (2**2))
+        self.current_delta: int = 0
+        self.voltage_delta: int = 0
 
         # INIT static vars: VOC
         self.age_now: int = 0
@@ -115,9 +118,28 @@ class VirtualHarvesterModel:
             if distance_now < distance_last and distance_now < self.voltage_step_x4_uV:
                 self.voltage_hold = _voltage_uV
                 self.current_hold = _current_nA
+                self.current_delta = _current_nA - self.current_last
+                self.voltage_delta = _voltage_uV - self.voltage_last
+                # TODO: voltage_delta is static
             elif distance_last < distance_now and distance_last < self.voltage_step_x4_uV:
                 self.voltage_hold = self.voltage_last
                 self.current_hold = self.current_last
+                self.current_delta = _current_nA - self.current_last
+                self.voltage_delta = _voltage_uV - self.voltage_last
+        elif self.lin_extrapolation:
+            # apply the proper delta if needed
+            if (self.voltage_hold < self.voltage_set_uV) == (self.voltage_delta > 0):
+                self.voltage_hold += self.voltage_delta
+                self.current_hold += self.current_delta
+            else:
+                if self.voltage_hold > self.voltage_delta:
+                    self.voltage_hold -= self.voltage_delta
+                else:
+                    self.voltage_hold = 0
+                if self.current_hold > self.current_delta:
+                    self.current_hold -= self.current_delta
+                else:
+                    self.current_hold = 0
 
         self.voltage_last = _voltage_uV
         self.current_last = _current_nA
