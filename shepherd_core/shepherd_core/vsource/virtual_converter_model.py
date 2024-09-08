@@ -48,7 +48,7 @@ class PruCalibration:
         return I_nA
 
     @staticmethod
-    def conv_adc_raw_to_uV(voltage_raw: int) -> float:
+    def conv_adc_raw_to_uV(voltage_raw: int) -> None:
         msg = f"This Fn should not been used (val={voltage_raw})"
         raise RuntimeError(msg)
 
@@ -124,12 +124,7 @@ class VirtualConverterModel:
         if self.enable_boost:
             if input_voltage_uV < self._cfg.V_input_boost_threshold_uV:
                 input_voltage_uV = 0.0
-        elif not self.enable_storage:
-            # direct connection
-            self.V_mid_uV = input_voltage_uV
-            input_voltage_uV = 0.0
-            # ⤷ input current (& power) is not evaluated
-        else:
+        elif self.enable_storage:
             # no boost, but cap, for ie. diode+cap (+resistor)
             V_diff_uV = (
                 (input_voltage_uV - self.V_mid_uV) if (input_voltage_uV >= self.V_mid_uV) else 0
@@ -146,6 +141,14 @@ class VirtualConverterModel:
             elif input_voltage_uV < self.V_mid_uV:
                 # without feedback there is no usable energy here
                 input_voltage_uV = 0
+        else:
+            # direct connection
+            # modifying V_mid here is not clean, but simpler
+            # -> V_mid is needed in calc_out, before cap is updated
+            self.V_mid_uV = input_voltage_uV
+            input_voltage_uV = 0.0
+            # ⤷ input current (& power) will not be evaluated
+
 
         if self.enable_boost:
             eta_inp = self.get_input_efficiency(input_voltage_uV, input_current_nA)
@@ -185,12 +188,7 @@ class VirtualConverterModel:
             self.V_mid_uV += dV_mid_uV
 
         self.V_mid_uV = min(self.V_mid_uV, self._cfg.V_intermediate_max_uV)
-        if (not self.enable_boost) and (self.P_inp_fW > 0.0) and (self.V_mid_uV > self.V_input_uV):
-            # TODO: obfuscated - no "direct connection"?
-            # TODO: not totally correct: not enabled_boost and not enabled_storage
-            # self.V_mid_uV = self.V_input_uV
-            pass
-        elif self.V_mid_uV < 1:
+        if self.V_mid_uV < 1:
             self.V_mid_uV = 1
         return round(self.V_mid_uV)  # Python-specific, added for easier testing
 
