@@ -51,7 +51,11 @@ def simulate_source(
         cal_out = file_out.get_calibration_data()
 
     src = VirtualSourceModel(
-        config, cal_emu, dtype_in=file_inp.get_datatype(), log_intermediate=False, window_size=file_inp.get_window_samples()
+        config,
+        cal_emu,
+        dtype_in=file_inp.get_datatype(),
+        log_intermediate=False,
+        window_size=file_inp.get_window_samples(),
     )
     i_out_nA = 0
     e_out_Ws = 0.0
@@ -83,14 +87,14 @@ def simulate_source(
                     src.cnv.V_input_request_uV * 1e-6,  # V
                     src.hrv.voltage_set_uV * 1e-6,
                     src.cnv.V_mid_uV * 1e-6,
-                    src.hrv.current_hold * 1e-6, # mA
+                    src.hrv.current_hold * 1e-6,  # mA
                     src.hrv.current_delta * 1e-6,
                     i_out_nA * 1e-6,
                     src.cnv.P_inp_fW * 1e-12,  # mW
                     src.cnv.P_out_fW * 1e-12,
                     src.cnv.get_power_good(),
                 ]
-                stats_sample +=1
+                stats_sample += 1
 
         e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
         if path_output:
@@ -110,7 +114,7 @@ def simulate_source(
 
         axs[1].set_ylabel("Current [mA]")
         axs[1].plot(stats_internal[:, 0], stats_internal[:, 5:8])
-        axs[1].legend(["C_cv_hold", "C_cv_delta", "C_out", ], loc="upper right")
+        axs[1].legend(["C_cv_hold", "C_cv_delta", "C_out"], loc="upper right")
 
         axs[2].set_ylabel("Power [mW]")
         axs[2].plot(stats_internal[:, 0:1], stats_internal[:, 8:10])
@@ -118,7 +122,7 @@ def simulate_source(
 
         axs[3].set_ylabel("PwrGood [n]")
         axs[3].plot(stats_internal[:, 0], stats_internal[:, 10])
-        axs[3].legend(["PwrGood", ], loc="upper right")
+        axs[3].legend(["PwrGood"], loc="upper right")
 
         axs[3].set_xlabel("Runtime [s]")
 

@@ -149,7 +149,6 @@ class VirtualConverterModel:
             input_voltage_uV = 0.0
             # ⤷ input current (& power) will not be evaluated
 
-
         if self.enable_boost:
             eta_inp = self.get_input_efficiency(input_voltage_uV, input_current_nA)
         else:
@@ -188,8 +187,7 @@ class VirtualConverterModel:
             self.V_mid_uV += dV_mid_uV
 
         self.V_mid_uV = min(self.V_mid_uV, self._cfg.V_intermediate_max_uV)
-        if self.V_mid_uV < 1:
-            self.V_mid_uV = 1
+        self.V_mid_uV = max(self.V_mid_uV, 1)
         return round(self.V_mid_uV)  # Python-specific, added for easier testing
 
     def update_states_and_output(self) -> int:

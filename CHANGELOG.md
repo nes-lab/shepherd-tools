@@ -1,5 +1,21 @@
 # History of Changes
 
+## v2024.9.1
+
+- virtual harvester
+  - allow direct pass-through
+  - cv-harvester can now extrapolate (linear around current set-point) which makes it more responsive and reduces error
+- virtual source
+  - add feedback-path to harvester (to control cv-harvester) when no boost-converter is used
+  - bring changes from pru-code to py
+  - simulation can now plot several internal states
+  - simulation example now runs several models through the jogging-dataset and creates plots and data
+- virtual targets
+  - improve current targets
+  - add diode+resistor target (to emulate a diode for burning energy)
+  - add exemplary instantiations of some targets
+- shp-reader - improve calculation of file-stats
+
 ## v2024.8.2
 
 - add hdf5-file based simulations

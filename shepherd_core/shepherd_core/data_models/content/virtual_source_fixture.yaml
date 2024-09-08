@@ -241,3 +241,5 @@
     id: 1033
     name: default
     inherit_from: BQ25570s
+
+# TODO: add some generic boost-converters with mppt_po, _voc and more
