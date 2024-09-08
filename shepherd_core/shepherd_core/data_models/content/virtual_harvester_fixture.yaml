@@ -7,6 +7,7 @@
   parameters:
     id: 1000
     name: neutral
+    enable_linear_extrapolation: true
     owner: Ingmar
     group: NES Lab
     visible2group: true
@@ -155,3 +156,11 @@
     algorithm: mppt_opt
     voltage_step_mV: 1
     interval_ms: 0.01
+
+- datatype: VirtualHarvesterConfig
+  parameters:
+    id: 1050
+    name: direct
+    description: Disables harvesting, even for ivcurve-input
+    inherit_from: neutral
+    algorithm: neutral

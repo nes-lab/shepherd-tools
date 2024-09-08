@@ -21,6 +21,7 @@ from .energy_environment import EnergyDType
 class AlgorithmDType(str, Enum):
     """Options for choosing a harvesting algorithm."""
 
+    direct = disable = neutral = "neutral"
     isc_voc = "isc_voc"
     ivcurve = ivcurves = ("ivcurve",)
     constant = cv = "cv"
@@ -120,7 +121,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
                 f"current usage = {self.algorithm}"
             )
             raise ValueError(msg)
-        if num < algo_to_num["isc_voc"]:
+        if not for_emu and num < algo_to_num["isc_voc"]:
             msg = (
                 f"[{self.name}] Select valid harvest-algorithm for harvester, "
                 f"current usage = {self.algorithm}"
@@ -180,7 +181,7 @@ u32 = Annotated[int, Field(ge=0, lt=2**32)]
 
 # Currently implemented harvesters
 # NOTE: numbers have meaning and will be tested ->
-# - harvesting on "neutral" is not possible
+# - harvesting on "neutral" is not possible - direct pass-through
 # - emulation with "ivcurve" or lower is also resulting in Error
 # - "_opt" has its own algo for emulation, but is only a fast mppt_po for harvesting
 algo_to_num = {
@@ -195,6 +196,7 @@ algo_to_num = {
 }
 
 algo_to_dtype = {
+    "neutral": EnergyDType.ivsample,
     "isc_voc": EnergyDType.isc_voc,
     "ivcurve": EnergyDType.ivcurve,
     "cv": EnergyDType.ivsample,

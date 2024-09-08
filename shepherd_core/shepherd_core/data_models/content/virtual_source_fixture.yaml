@@ -85,6 +85,8 @@
     id: 1010
     name: direct
     inherit_from: neutral
+    harvester:
+      name: direct  # even disables harvesting of ivcurve
     # Note: current input has no influence
 
 - datatype: VirtualSourceConfig
