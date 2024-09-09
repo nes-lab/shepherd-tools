@@ -124,6 +124,7 @@ class VirtualConverterModel:
         if self.enable_boost:
             if input_voltage_uV < self._cfg.V_input_boost_threshold_uV:
                 input_voltage_uV = 0.0
+            # TODO: vdrop in case of v_input > v_storage (non-boost)
         elif self.enable_storage:
             # no boost, but cap, for ie. diode+cap (+resistor)
             V_diff_uV = (
@@ -147,7 +148,7 @@ class VirtualConverterModel:
             # -> V_mid is needed in calc_out, before cap is updated
             self.V_mid_uV = input_voltage_uV
             input_voltage_uV = 0.0
-            # ⤷ input current (& power) will not be evaluated
+            # ⤷ input will not be evaluated
 
         if self.enable_boost:
             eta_inp = self.get_input_efficiency(input_voltage_uV, input_current_nA)
