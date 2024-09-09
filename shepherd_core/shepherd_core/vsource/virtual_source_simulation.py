@@ -12,13 +12,13 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
-from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from .. import CalibrationEmulator
 from .. import Reader
 from .. import Writer
 from ..data_models import VirtualSourceConfig
+from ..logger import logger
 from . import VirtualSourceModel
 from .target_model import TargetABC
 
@@ -62,6 +62,12 @@ def simulate_source(
     if monitor_internals and path_output:
         stats_sample = 0
         stats_internal = np.empty((round(file_inp.runtime_s * file_inp.samplerate_sps), 11))
+        try:
+            # keep dependencies low
+            from matplotlib import pyplot as plt
+        except ImportError:
+            logger.warning("Matplotlib not installed, plotting of internals disabled")
+            stats_internal = None
     else:
         stats_internal = None
 
