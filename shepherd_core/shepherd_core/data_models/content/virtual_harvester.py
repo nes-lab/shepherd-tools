@@ -21,6 +21,7 @@ from .energy_environment import EnergyDType
 class AlgorithmDType(str, Enum):
     """Options for choosing a harvesting algorithm."""
 
+    direct = disable = neutral = "neutral"
     isc_voc = "isc_voc"
     ivcurve = ivcurves = ("ivcurve",)
     constant = cv = "cv"
@@ -62,6 +63,9 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     # ⤷ of (open voltage) measurement
     rising: bool = True
     # ⤷ direction of sawtooth
+    enable_linear_extrapolation: bool = True
+    # ⤷ improves slow cv-algo that is base of most ivcurve-harvesters
+    #   (update-freq dependent on window-size)
 
     # Underlying recorder
     wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
@@ -107,7 +111,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return self
 
     def calc_hrv_mode(self, *, for_emu: bool) -> int:
-        return 1 * int(for_emu) + 2 * self.rising
+        return 1 * int(for_emu) + 2 * self.rising + 4 * self.enable_linear_extrapolation
 
     def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num = algo_to_num.get(self.algorithm)
@@ -117,7 +121,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
                 f"current usage = {self.algorithm}"
             )
             raise ValueError(msg)
-        if num < algo_to_num["isc_voc"]:
+        if not for_emu and num < algo_to_num["isc_voc"]:
             msg = (
                 f"[{self.name}] Select valid harvest-algorithm for harvester, "
                 f"current usage = {self.algorithm}"
@@ -177,7 +181,7 @@ u32 = Annotated[int, Field(ge=0, lt=2**32)]
 
 # Currently implemented harvesters
 # NOTE: numbers have meaning and will be tested ->
-# - harvesting on "neutral" is not possible
+# - harvesting on "neutral" is not possible - direct pass-through
 # - emulation with "ivcurve" or lower is also resulting in Error
 # - "_opt" has its own algo for emulation, but is only a fast mppt_po for harvesting
 algo_to_num = {
@@ -192,6 +196,7 @@ algo_to_num = {
 }
 
 algo_to_dtype = {
+    "neutral": EnergyDType.ivsample,
     "isc_voc": EnergyDType.isc_voc,
     "ivcurve": EnergyDType.ivcurve,
     "cv": EnergyDType.ivsample,

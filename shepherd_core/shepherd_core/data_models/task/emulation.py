@@ -33,7 +33,8 @@ class Compression(str, Enum):
     lzf = default = "lzf"  # not native hdf5
     gzip1 = gzip = 1  # higher compr & load
     null = None
-    # NOTE: changed to lzf as BBB needs every straw it can get
+    # NOTE: lzf & external file-compression (xz or zstd) work better than gzip
+    #       -> even with additional compression
 
 
 compressions_allowed: list = [None, "lzf", 1]

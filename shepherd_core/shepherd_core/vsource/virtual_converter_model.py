@@ -43,21 +43,18 @@ class PruCalibration:
                 self.negative_residue_nA = 0
             else:
                 self.negative_residue_nA = self.negative_residue_nA - I_nA
-                if self.negative_residue_nA > self.RESIDUE_MAX_nA:
-                    self.negative_residue_nA = self.RESIDUE_MAX_nA
+                self.negative_residue_nA = min(self.negative_residue_nA, self.RESIDUE_MAX_nA)
                 I_nA = 0
         return I_nA
 
     @staticmethod
-    def conv_adc_raw_to_uV(voltage_raw: int) -> float:
+    def conv_adc_raw_to_uV(voltage_raw: int) -> None:
         msg = f"This Fn should not been used (val={voltage_raw})"
         raise RuntimeError(msg)
 
     def conv_uV_to_dac_raw(self, voltage_uV: float) -> int:
         dac_raw = self.cal.dac_V_A.si_to_raw(float(voltage_uV) / (10**6))
-        if dac_raw > (2**16) - 1:
-            dac_raw = (2**16) - 1
-        return dac_raw
+        return min(dac_raw, (2**16) - 1)
 
 
 class VirtualConverterModel:
@@ -85,6 +82,9 @@ class VirtualConverterModel:
         self.enable_boost: bool = (int(self._cfg.converter_mode) & 0b0010) > 0
         self.enable_buck: bool = (int(self._cfg.converter_mode) & 0b0100) > 0
         self.enable_log_mid: bool = (int(self._cfg.converter_mode) & 0b1000) > 0
+        # back-channel to hrv
+        self.feedback_to_hrv: bool = (int(self._cfg.converter_mode) & 0b1_0000) > 0
+        self.V_input_request_uV: int = self._cfg.V_intermediate_init_uV
 
         self.V_out_dac_uV: float = self._cfg.V_output_uV
         self.V_out_dac_raw: int = self._cal.conv_uV_to_dac_raw(self._cfg.V_output_uV)
@@ -95,8 +95,9 @@ class VirtualConverterModel:
         self.V_enable_output_threshold_uV: float = self._cfg.V_enable_output_threshold_uV
         self.V_disable_output_threshold_uV: float = self._cfg.V_disable_output_threshold_uV
 
-        if self.dV_enable_output_uV > self.V_enable_output_threshold_uV:
-            self.V_enable_output_threshold_uV = self.dV_enable_output_uV
+        self.V_enable_output_threshold_uV = max(
+            self.dV_enable_output_uV, self.V_enable_output_threshold_uV
+        )
 
         # pulled from update_states_and_output() due to easier static init
         self.sample_count: int = 0xFFFFFFF0
@@ -114,31 +115,40 @@ class VirtualConverterModel:
         else:
             input_voltage_uV = 0.0
 
-        if input_voltage_uV > self._cfg.V_input_max_uV:
-            input_voltage_uV = self._cfg.V_input_max_uV
+        input_voltage_uV = min(input_voltage_uV, self._cfg.V_input_max_uV)
 
-        if input_current_nA > self._cfg.I_input_max_nA:
-            input_current_nA = self._cfg.I_input_max_nA
+        input_current_nA = min(input_current_nA, self._cfg.I_input_max_nA)
 
         self.V_input_uV = input_voltage_uV
 
         if self.enable_boost:
             if input_voltage_uV < self._cfg.V_input_boost_threshold_uV:
                 input_voltage_uV = 0.0
-        elif not self.enable_storage:
-            # direct connection
-            self.V_mid_uV = input_voltage_uV
-            input_voltage_uV = 0.0
-            # ⤷ input current (& power) is not evaluated
-        elif input_voltage_uV > self.V_mid_uV:
-            V_diff_uV = input_voltage_uV - self.V_mid_uV
-            V_drop_uV = input_current_nA * self.R_input_kOhm
-            if V_drop_uV > V_diff_uV:
+            # TODO: vdrop in case of v_input > v_storage (non-boost)
+        elif self.enable_storage:
+            # no boost, but cap, for ie. diode+cap (+resistor)
+            V_diff_uV = (
+                (input_voltage_uV - self.V_mid_uV) if (input_voltage_uV >= self.V_mid_uV) else 0
+            )
+            V_res_drop_uV = input_current_nA * self.R_input_kOhm
+            if V_res_drop_uV > V_diff_uV:
                 input_voltage_uV = self.V_mid_uV
             else:
-                input_voltage_uV -= V_drop_uV
+                input_voltage_uV -= V_res_drop_uV
+
+            # IF input==ivcurve request new CV
+            if self.feedback_to_hrv:
+                self.V_input_request_uV = self.V_mid_uV + V_res_drop_uV + self._cfg.V_input_drop_uV
+            elif input_voltage_uV < self.V_mid_uV:
+                # without feedback there is no usable energy here
+                input_voltage_uV = 0
         else:
+            # direct connection
+            # modifying V_mid here is not clean, but simpler
+            # -> V_mid is needed in calc_out, before cap is updated
+            self.V_mid_uV = input_voltage_uV
             input_voltage_uV = 0.0
+            # ⤷ input will not be evaluated
 
         if self.enable_boost:
             eta_inp = self.get_input_efficiency(input_voltage_uV, input_current_nA)
@@ -177,13 +187,8 @@ class VirtualConverterModel:
             dV_mid_uV = I_mid_nA * self.Constant_us_per_nF
             self.V_mid_uV += dV_mid_uV
 
-        if self.V_mid_uV > self._cfg.V_intermediate_max_uV:
-            self.V_mid_uV = self._cfg.V_intermediate_max_uV
-        if (not self.enable_boost) and (self.P_inp_fW > 0.0) and (self.V_mid_uV > self.V_input_uV):
-            # TODO: obfuscated - no "direct connection"?
-            self.V_mid_uV = self.V_input_uV
-        elif self.V_mid_uV < 1:
-            self.V_mid_uV = 1
+        self.V_mid_uV = min(self.V_mid_uV, self._cfg.V_intermediate_max_uV)
+        self.V_mid_uV = max(self.V_mid_uV, 1)
         return round(self.V_mid_uV)  # Python-specific, added for easier testing
 
     def update_states_and_output(self) -> int:
@@ -270,7 +275,7 @@ class VirtualConverterModel:
     def get_power_good(self) -> bool:
         return self.power_good
 
-    def get_I_mod_out_nA(self) -> float:
+    def get_I_mid_out_nA(self) -> float:
         return self.P_out_fW / self.V_mid_uV
 
     def get_state_log_intermediate(self) -> bool:

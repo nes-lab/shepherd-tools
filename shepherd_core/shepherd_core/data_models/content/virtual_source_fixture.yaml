@@ -11,6 +11,7 @@
     # General Config
     enable_boost: false # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
     enable_buck: false # if false -> v_output = v_intermediate
+    enable_feedback_to_hrv: false  # src can control a cv-harvester for ivcurve
 
     interval_startup_delay_drain_ms: 0
 
@@ -26,18 +27,21 @@
     V_intermediate_init_mV: 3000 # allow a proper / fast startup
     I_intermediate_leak_nA: 0.0
 
+    # Output-Switch with comparator and hysteresis
     V_intermediate_enable_threshold_mV: 1 # -> target gets connected (hysteresis-combo with next value)
     V_intermediate_disable_threshold_mV: 0 # -> target gets disconnected
     interval_check_thresholds_ms: 0.0  # some BQs check every 64 ms if output should be disconnected
 
+    # Power-Good signal from comparator and hysteresis
     V_pwr_good_enable_threshold_mV: 2800 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
     V_pwr_good_disable_threshold_mV: 2200
     immediate_pwr_good_signal: true  # 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 
-    C_output_uF: 1.0   # final (always last) stage to compensate undetectable current spikes when enabling power for target
+    C_output_uF: 1.0   # final (always last) stage to compensate transient current spikes when enabling power for target
 
     # Extra
     V_output_log_gpio_threshold_mV: 1400  # min voltage needed to enable recording changes in gpio-bank
+    # TODO: actually disable gpio below that
 
     # Boost Converter
     V_input_boost_threshold_mV: 0.0 # min input-voltage for the boost converter to work
@@ -81,6 +85,8 @@
     id: 1010
     name: direct
     inherit_from: neutral
+    harvester:
+      name: direct  # even disables harvesting of ivcurve
     # Note: current input has no influence
 
 - datatype: VirtualSourceConfig
@@ -90,7 +96,12 @@
     description: Simple Converter based on diode and buffer capacitor
     inherit_from: neutral
     V_input_drop_mV: 300  # simulate input-diode
-    C_intermediate_uF: 10  # primary storage-Cap
+    C_intermediate_uF: 47  # primary storage-Cap
+    harvester:
+      name: cv20
+    enable_feedback_to_hrv: true  # src can control a cv-harvester for ivcurve
+    V_intermediate_enable_threshold_mV: 2000
+    V_intermediate_disable_threshold_mV: 1800  # nRF draw ~0.5 mA below that point
 
 - datatype: VirtualSourceConfig
   parameters:
@@ -230,3 +241,5 @@
     id: 1033
     name: default
     inherit_from: BQ25570s
+
+# TODO: add some generic boost-converters with mppt_po, _voc and more

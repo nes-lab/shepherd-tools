@@ -34,6 +34,9 @@ class EnergyEnvironment(ContentModel):
     valid: bool = False
 
     # TODO: scale up/down voltage/current
+    # TODO: multiple files for one env
+    # TODO: mean power as energy/duration
+    # TODO: harvester, transducer
 
     # additional descriptive metadata, TODO: these are very solar-centered -> generalize
     light_source: Optional[str] = None

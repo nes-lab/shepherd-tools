@@ -55,8 +55,8 @@ def test_content_model_fw_faulty() -> None:
         )
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_content_model_fw_min(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
@@ -72,8 +72,8 @@ def test_content_model_fw_min(path_elf: Path, tmp_path: Path) -> None:
     )
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_content_model_fw_from_elf(path_elf: Path) -> None:
     Firmware.from_firmware(
@@ -84,8 +84,8 @@ def test_content_model_fw_from_elf(path_elf: Path) -> None:
     )
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_content_model_fw_from_hex(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
@@ -111,8 +111,8 @@ def test_content_model_fw_from_hex_failing(tmp_path: Path) -> None:
         )
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_content_model_fw_extract_elf_to_dir(path_elf: Path, tmp_path: Path) -> None:
     fw = Firmware.from_firmware(
@@ -126,8 +126,8 @@ def test_content_model_fw_extract_elf_to_dir(path_elf: Path, tmp_path: Path) -> 
     assert file.is_file()
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_content_model_fw_extract_hex_to_dir(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
@@ -159,8 +159,8 @@ def test_content_model_fw_extract_path_elf_to_dir(path_elf: Path, tmp_path: Path
     assert file.is_file()
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_content_model_fw_extract_path_hex_to_dir(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
@@ -200,7 +200,7 @@ def test_content_model_hrv_by_name(name: str) -> None:
     _ = VirtualHarvesterConfig(name=name)
 
 
-@pytest.mark.parametrize("uid", [1013, 1020, 1032, 1044, 1045, 1046])
+@pytest.mark.parametrize("uid", [1103, 1200, 2102, 2204, 2205, 2206])
 def test_content_model_hrv_by_id(uid: int) -> None:
     _ = VirtualHarvesterConfig(id=uid)
 
@@ -256,7 +256,7 @@ def test_content_model_src_force_warning() -> None:
         C_output_uF=200,
         C_intermediate_uF=100,
     )
-    ConverterPRUConfig.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)
     # -> triggers warning currently
 
 
@@ -268,7 +268,7 @@ def test_content_model_src_force_other_hysteresis1() -> None:
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )
-    ConverterPRUConfig.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)
 
 
 def test_content_model_src_force_other_hysteresis2() -> None:
@@ -279,4 +279,4 @@ def test_content_model_src_force_other_hysteresis2() -> None:
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )
-    ConverterPRUConfig.from_vsrc(src)
+    ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)

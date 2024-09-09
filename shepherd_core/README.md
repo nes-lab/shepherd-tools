@@ -63,11 +63,11 @@ These pydantic data-models are used throughout all shepherd interfaces. Users ca
 
 ## Compatibility
 
-| OS      |   PyVersion  | Comment                                    |
-|---------|--------------|--------------------------------------------|
-| Ubuntu  | 3.8 - 3.12   |                                            |
-| Windows | 3.8 - 3.12   | no support for elf and hex-conversions yet |
-| MacOS   | 3.8 - 3.12   | hex-conversion missing                     |
+| OS      | PyVersion  | Comment                                    |
+|---------|------------|--------------------------------------------|
+| Ubuntu  | 3.8 - 3.13 |                                            |
+| Windows | 3.8 - 3.13 | no support for elf and hex-conversions yet |
+| MacOS   | 3.8 - 3.13 | hex-conversion missing                     |
 
 Notes:
 - hex-conversion needs a working and accessible objcopy
@@ -91,7 +91,7 @@ For bleeding-edge-features or dev-work it is possible to install directly from G
 ```Shell
 pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U
 # and on sheep with newer debian
-pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U --break-system-packages
+sudo pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U --break-system-packages
 ```
 
 If you are working with ``.elf``-files (embedding into experiments) you make "objcopy" accessible to python. In Ubuntu, you can either install ``build-essential`` or ``binutils-$ARCH`` with arch being ``msp430`` or ``arm-none-eabi`` for the nRF52.

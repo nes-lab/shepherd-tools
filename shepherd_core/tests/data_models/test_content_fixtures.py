@@ -1,3 +1,4 @@
+from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
@@ -26,8 +27,15 @@ def test_experiment_fixture_vsrc() -> None:
     for fix in Fixtures()["VirtualSourceConfig"]:
         vsrc = VirtualSourceConfig(name=fix["name"])
         VirtualSourceConfig(id=fix["id"])
-        ConverterPRUConfig.from_vsrc(vsrc, log_intermediate_node=False)
-        ConverterPRUConfig.from_vsrc(vsrc, log_intermediate_node=True)
+        ConverterPRUConfig.from_vsrc(
+            vsrc, dtype_in=EnergyDType.ivcurve, log_intermediate_node=False
+        )
+        ConverterPRUConfig.from_vsrc(
+            vsrc, dtype_in=EnergyDType.ivsample, log_intermediate_node=False
+        )
+        ConverterPRUConfig.from_vsrc(
+            vsrc, dtype_in=EnergyDType.ivsample, log_intermediate_node=True
+        )
 
 
 def test_experiment_fixture_vhrv() -> None:
@@ -36,6 +44,7 @@ def test_experiment_fixture_vhrv() -> None:
             continue
         vhrv = VirtualHarvesterConfig(name=fix["name"])
         VirtualHarvesterConfig(id=fix["id"])
-        HarvesterPRUConfig.from_vhrv(vhrv, for_emu=False)
-        if int(fix["id"]) >= 1030:
+        if int(fix["id"]) < 3000:
+            HarvesterPRUConfig.from_vhrv(vhrv, for_emu=False)
+        if int(fix["id"]) >= 2000:
             HarvesterPRUConfig.from_vhrv(vhrv, for_emu=True)

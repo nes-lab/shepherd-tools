@@ -8,8 +8,8 @@ from shepherd_core.data_models import FirmwareDType
 from .conftest import files_elf
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_elf_detection(path_elf: Path) -> None:
     assert fw_tools.is_elf(path_elf)
@@ -19,8 +19,8 @@ def test_elf_detection(path_elf: Path) -> None:
         assert fw_tools.is_elf_msp430(path_elf)
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_elf_determination(path_elf: Path) -> None:
     assert fw_tools.determine_type(path_elf) == FirmwareDType.path_elf
@@ -30,8 +30,8 @@ def test_elf_determination(path_elf: Path) -> None:
         assert fw_tools.determine_arch(path_elf) == "msp430"
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_hex_detection(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
@@ -43,8 +43,8 @@ def test_hex_detection(path_elf: Path, tmp_path: Path) -> None:
         assert fw_tools.is_hex_msp430(path_hex)
 
 
-@pytest.mark.elf()
-@pytest.mark.converter()
+@pytest.mark.elf
+@pytest.mark.converter
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_hex_determination(path_elf: Path, tmp_path: Path) -> None:
     path_hex = (tmp_path / (path_elf.stem + ".hex")).resolve()
