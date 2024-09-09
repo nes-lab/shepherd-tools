@@ -44,6 +44,7 @@ def test_experiment_fixture_vhrv() -> None:
             continue
         vhrv = VirtualHarvesterConfig(name=fix["name"])
         VirtualHarvesterConfig(id=fix["id"])
-        HarvesterPRUConfig.from_vhrv(vhrv, for_emu=False)
-        if int(fix["id"]) >= 1030:
+        if int(fix["id"]) < 3000:
+            HarvesterPRUConfig.from_vhrv(vhrv, for_emu=False)
+        if int(fix["id"]) >= 2000:
             HarvesterPRUConfig.from_vhrv(vhrv, for_emu=True)

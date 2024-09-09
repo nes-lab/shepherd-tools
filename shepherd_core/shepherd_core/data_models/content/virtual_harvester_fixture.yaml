@@ -3,6 +3,8 @@
 # - look into the implementation to see which parameters are used
 # - base for neutral fallback values if provided yml is sparse
 # - -> it is encouraged to omit redundant parameters in your own implementation
+# - general rule: 0<id<2000 harvest from transducers, 2000<=id harvest from ivcurve
+
 - datatype: VirtualHarvesterConfig
   parameters:
     id: 1000
@@ -17,7 +19,7 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1010
+    id: 1100
     name: ivcurve
     description: Postpone harvesting by sampling ivcurves (voltage stepped as sawtooth-wave)
     comment: ~110 Hz, Between 50 & 60 Hz line-frequency to avoid standing waves
@@ -33,19 +35,19 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1011
+    id: 1101
     name: ivcurves  # synonym
     inherit_from: ivcurve
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1013
+    id: 1103
     name: iv110 # synonym
     inherit_from: ivcurve
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1012
+    id: 1102
     name: iv1000
     comment: Name relates to curves per second
     inherit_from: ivcurve
@@ -54,7 +56,7 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1020
+    id: 1200
     name: isc_voc
     description: Postpone harvesting by sampling short circuit current & open circuit voltage
     inherit_from: neutral
@@ -63,7 +65,7 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1030
+    id: 2100
     name: cv20
     description: Harvesting with constant Voltage
     inherit_from: neutral
@@ -72,28 +74,28 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1031
+    id: 2101
     name: cv24
     inherit_from: cv20
     voltage_mV: 2400
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1032
+    id: 2102
     name: cv33
     inherit_from: cv20
     voltage_mV: 3300
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1032
+    id: 2102
     name: cv10
     inherit_from: cv20
     voltage_mV: 1000
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1040
+    id: 2200
     name: mppt_voc
     description: MPPT based on open circuit voltage for solar
     inherit_from: neutral
@@ -105,7 +107,7 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1041
+    id: 2201
     name: mppt_bq
     description: MPPT of TI BQ-Converters for solar
     inherit_from: mppt_voc
@@ -115,7 +117,7 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1042
+    id: 2202
     name: mppt_bqt
     description: MPPT of TI BQ-Converters for thermoelectric
     inherit_from: mppt_voc
@@ -125,19 +127,19 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1043
+    id: 2203
     name: mppt_bq_solar # explicit naming
     inherit_from: mppt_bq
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1044
+    id: 2204
     name: mppt_bq_thermoelectric # explicit naming
     inherit_from: mppt_bqt
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1045
+    id: 2205
     name: mppt_po
     description: MPPT based on perturb & observe algorithm
     inherit_from: neutral
@@ -149,7 +151,7 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1046
+    id: 2206
     name: mppt_opt
     description: Power-Optimum with very fast PO-Variant (harvesting) or special max-pwr-picker (emulator / ivcurve)
     inherit_from: mppt_po
@@ -159,7 +161,7 @@
 
 - datatype: VirtualHarvesterConfig
   parameters:
-    id: 1050
+    id: 3000
     name: direct
     description: Disables harvesting, even for ivcurve-input
     inherit_from: neutral
