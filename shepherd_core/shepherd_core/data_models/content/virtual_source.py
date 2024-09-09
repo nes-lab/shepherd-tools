@@ -223,10 +223,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             reason = "enabled boost, " if enable_boost else ""
             reason += "" if dtype_in == EnergyDType.ivcurve else "input not ivcurve, "
             reason += "" if enable_storage else "no storage capacitor"
-            logger.warning(
-                "VSRC - feedback to harvester was disabled! "
-                "Reasons is: %s", reason
-            )
+            logger.warning("VSRC - feedback to harvester was disabled! Reasons: %s", reason)
         return (
             1 * int(enable_storage)
             + 2 * int(enable_boost)
