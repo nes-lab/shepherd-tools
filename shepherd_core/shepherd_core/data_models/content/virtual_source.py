@@ -220,9 +220,12 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             and dtype_in == EnergyDType.ivcurve
         )
         if enable_feedback != self.enable_feedback_to_hrv:
+            reason = "enabled boost, " if enable_boost else ""
+            reason += "" if dtype_in == EnergyDType.ivcurve else "input not ivcurve, "
+            reason += "" if enable_storage else "no storage capacitor"
             logger.warning(
-                "VSRC - feedback to harvester was disabled!"
-                "Possible reasons are: enabled boost, input not ivcurve or no storage capacitor"
+                "VSRC - feedback to harvester was disabled! "
+                "Reasons is: %s", reason
             )
         return (
             1 * int(enable_storage)
