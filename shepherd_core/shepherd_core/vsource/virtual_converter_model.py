@@ -180,6 +180,7 @@ class VirtualConverterModel:
 
     # TODO: add range-checks for add, sub Ops
     def update_cap_storage(self) -> int:
+        # TODO: this calculation is wrong for everything beside boost-cnv
         if self.enable_storage:
             V_mid_prot_uV = max(1.0, self.V_mid_uV)
             P_sum_fW = self.P_inp_fW - self.P_out_fW
