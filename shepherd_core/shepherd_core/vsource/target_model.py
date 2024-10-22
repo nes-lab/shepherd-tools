@@ -79,10 +79,10 @@ class DiodeTarget(TargetABC):
 
     def step(self, voltage_uV: int, *, pwr_good: bool) -> float:
         if pwr_good or not self.ctrl:
-            V_CC = voltage_uV * 1e-3
+            V_CC = voltage_uV * 1e-6
             V_D = V_CC / 2
             I_R = I_D = 0
-            # there is no direct formular, but this recursion converges fast
+            # there is no direct formular, but this iteration converges fast
             for _ in range(10):
                 # low voltages tend to produce log(x<0)=err
                 with suppress(ValueError):
@@ -90,8 +90,9 @@ class DiodeTarget(TargetABC):
                 # both currents are positive and should be identical
                 I_R = max(0.0, (V_CC - V_D) / self.R_Ohm)
                 I_D = max(0.0, self.I_S * math.expm1(V_D / self.c1))
-                if abs(I_R / I_D - 1) < 1e-6:
-                    break
+                with suppress(ZeroDivisionError):
+                    if abs(I_R / I_D - 1) < 1e-6:
+                        break
                 # take mean of both currents and determine a new V_D
                 V_D = V_CC - self.R_Ohm * (I_R + I_D) / 2
             return 1e9 * (I_R + I_D) / 2  # = nA
