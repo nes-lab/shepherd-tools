@@ -95,6 +95,20 @@ def validate(in_data: Path) -> None:
 @cli.command(short_help="Extracts recorded IVSamples and stores it to csv")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
+    "--start",
+    "-s",
+    default=None,
+    type=click.FLOAT,
+    help="Start of plot in seconds, will be 0 if omitted",
+)
+@click.option(
+    "--end",
+    "-e",
+    default=None,
+    type=click.FLOAT,
+    help="End of plot in seconds, will be max if omitted",
+)
+@click.option(
     "--ds-factor",
     "-f",
     default=1000,
@@ -103,12 +117,25 @@ def validate(in_data: Path) -> None:
 )
 @click.option(
     "--separator",
-    "-s",
     default=";",
     type=click.STRING,
     help="Set an individual csv-separator",
 )
-def extract(in_data: Path, ds_factor: float, separator: str) -> None:
+@click.option(
+    "--raw",
+    "-r",
+    is_flag=True,
+    help="Plot only power instead of voltage, current & power",
+)
+def extract(
+    in_data: Path,
+    start: Optional[float],
+    end: Optional[float],
+    ds_factor: float,
+    separator: str,
+    *,
+    raw: bool = False,
+) -> None:
     """Extract recorded IVSamples and store them to csv."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
@@ -120,7 +147,26 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 # TODO: this code is very similar to data.reader.downsample()
-                if (shpr.ds_voltage.shape[0] / ds_factor) < 10:
+
+                start_s = start
+                end_s = end
+                if not isinstance(start_s, (float, int)):
+                    start_s = 0
+                if not isinstance(end_s, (float, int)):
+                    end_s = shpr.runtime_s
+                start_s = max(0, start_s)
+                end_s = min(shpr.runtime_s, end_s)
+
+                cut_str = ""
+                if start_s != 0 or end_s != shpr.runtime_s:
+                    start_str = f"{start_s:.3f}".replace(".", "s")
+                    end_str = f"{end_s:.3f}".replace(".", "s")
+                    cut_str = f".cut_{start_str}_to_{end_str}"
+
+                start_sample = round(start_s * shpr.samplerate_sps)
+                end_sample = round(end_s * shpr.samplerate_sps)
+
+                if ((end_sample - start_sample) / ds_factor) < 10:
                     logger.warning(
                         "will skip downsampling for %s because "
                         "resulting sample-size is too small",
@@ -128,11 +174,13 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                     )
                     continue
                 # will create a downsampled h5-file (if not existing) and then saving to csv
-                ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
-                if not ds_file.exists():
+                ds_str = f".downsampled_x{round(ds_factor)}" if ds_factor != 1.0 else ""
+
+                out_file = file.with_suffix(cut_str + ds_str + file.suffix)
+                if not out_file.exists():
                     logger.info("Downsampling '%s' by factor x%f ...", file.name, ds_factor)
                     with Writer(
-                        ds_file,
+                        out_file,
                         mode=shpr.get_mode(),
                         datatype=shpr.get_datatype(),
                         window_samples=shpr.get_window_samples(),
@@ -143,16 +191,24 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
                         shpw.store_hostname(shpr.get_hostname())
                         shpw.store_config(shpr.get_config())
                         shpr.downsample(
-                            shpr.ds_time,
+                            shpr.ds_time[start_sample:end_sample],
                             shpw.ds_time,
                             ds_factor=ds_factor,
                             is_time=True,
                         )
-                        shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=ds_factor)
-                        shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=ds_factor)
+                        shpr.downsample(
+                            shpr.ds_voltage[start_sample:end_sample],
+                            shpw.ds_voltage,
+                            ds_factor=ds_factor,
+                        )
+                        shpr.downsample(
+                            shpr.ds_current[start_sample:end_sample],
+                            shpw.ds_current,
+                            ds_factor=ds_factor,
+                        )
 
-                with Reader(ds_file, verbose=verbose_level > 2) as shpd:
-                    shpd.save_csv(shpd["data"], separator)
+                with Reader(out_file, verbose=verbose_level > 2) as shpd:
+                    shpd.save_csv(shpd["data"], separator, raw=raw)
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
 

@@ -37,11 +37,12 @@ class Reader(CoreReader):
     ) -> None:
         super().__init__(file_path, verbose=verbose)
 
-    def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
+    def save_csv(self, h5_group: h5py.Group, separator: str = ";", *, raw: bool = False) -> int:
         """Extract numerical data from group and store it into csv.
 
         :param h5_group: can be external and should probably be downsampled
         :param separator: used between columns
+        :param raw: don't convert to si-units
         :return: number of processed entries
         """
         if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
@@ -62,11 +63,21 @@ class Reader(CoreReader):
         with csv_path.open("w", encoding="utf-8-sig") as csv_file:
             self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
             csv_file.write(header + "\n")
+            ts_gain = h5_group["time"].attrs.get("gain", 1e-9)
+            # for converting data to si - if raw=false
+            gains: dict[str, float] = {
+                key: h5_group[key].attrs.get("gain", 1.0) for key in datasets[1:]
+            }
+            offsets: dict[str, float] = {
+                key: h5_group[key].attrs.get("offset", 1.0) for key in datasets[1:]
+            }
             for idx, time_ns in enumerate(h5_group["time"][:]):
-                timestamp = datetime.fromtimestamp(time_ns / 1e9, tz=local_tz())
+                timestamp = datetime.fromtimestamp(time_ns * ts_gain, tz=local_tz())
                 csv_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"))
                 for key in datasets[1:]:
                     values = h5_group[key][idx]
+                    if not raw:
+                        values = values * gains[key] + offsets[key]
                     if isinstance(values, np.ndarray):
                         values = separator.join([str(value) for value in values])
                     csv_file.write(f"{separator}{values}")
