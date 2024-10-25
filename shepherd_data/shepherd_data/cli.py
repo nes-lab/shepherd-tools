@@ -319,12 +319,8 @@ def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
-@cli.command(
-    short_help="Creates an array of downsampling-files from "
-    "file or directory containing shepherd-recordings"
-)
+@cli.command(short_help="Creates a subset of the recording.")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
-# @click.option("--out_data", "-o", type=click.Path(resolve_path=True))
 @click.option(
     "--start",
     "-s",
@@ -339,14 +335,12 @@ def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[
     type=click.FLOAT,
     help="End of plot in seconds, will be max if omitted",
 )
-
 def cut(
-        in_data: Path,
-        start: Optional[float],
-        end: Optional[float],
+    in_data: Path,
+    start: Optional[float],
+    end: Optional[float],
 ) -> None:
     """Create a subset of the recording."""
-
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     for file in files:
@@ -384,8 +378,8 @@ def cut(
                 ) as shpw:
                     shpw.store_hostname(shpr.get_hostname())
                     shpw.store_config(shpr.get_config())
-                    for idx in range(start_sample, end_sample, 10 ** 6):
-                        idx_end = min(idx + 10 ** 6, end_sample)
+                    for idx in range(start_sample, end_sample, 10**6):
+                        idx_end = min(idx + 10**6, end_sample)
                         shpw.append_iv_data_raw(
                             timestamp=shpr.ds_time[idx:idx_end],
                             voltage=shpr.ds_voltage[idx:idx_end],
@@ -393,7 +387,6 @@ def cut(
                         )
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
-
 
 
 @cli.command(short_help="Plots IV-trace from file or directory containing shepherd-recordings")
