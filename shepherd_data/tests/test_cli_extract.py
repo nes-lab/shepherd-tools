@@ -11,10 +11,13 @@ def test_cli_extract_file_full(data_h5: Path) -> None:
         [
             "--verbose",
             "extract",
+            # "--start", "1",
+            # "--end", "5",
             "--ds-factor",
             "100",
             "--separator",
             ",",
+            "--raw",
             str(data_h5),
         ],
     )
@@ -24,7 +27,7 @@ def test_cli_extract_file_full(data_h5: Path) -> None:
 
 
 def test_cli_extract_file_short(data_h5: Path) -> None:
-    res = CliRunner().invoke(cli, ["-v", "extract", "-f", "200", "-s", ";", str(data_h5)])
+    res = CliRunner().invoke(cli, ["-v", "extract", "-f", "200", "--separator", ";", str(data_h5)])
     assert res.exit_code == 0
     assert data_h5.with_suffix(".downsampled_x200.h5").exists()
     assert data_h5.with_suffix(".downsampled_x200.data.csv").exists()
@@ -64,12 +67,12 @@ def test_cli_extract_meta_file_full(data_h5: Path) -> None:
 
 
 def test_cli_extract_meta_file_short(data_h5: Path) -> None:
-    res = CliRunner().invoke(cli, ["-v", "extract-meta", "-s", "-", str(data_h5)])
+    res = CliRunner().invoke(cli, ["-v", "extract-meta", "--separator", "-", str(data_h5)])
     assert res.exit_code == 0
 
 
 def test_cli_extract_meta_file_min(data_h5: Path) -> None:
-    res = CliRunner().invoke(cli, ["-v", "extract-meta", "-s", "-", str(data_h5)])
+    res = CliRunner().invoke(cli, ["-v", "extract-meta", "--separator", "-", str(data_h5)])
     assert res.exit_code == 0
 
 

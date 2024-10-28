@@ -191,20 +191,26 @@ def extract(
                         shpw.store_hostname(shpr.get_hostname())
                         shpw.store_config(shpr.get_config())
                         shpr.downsample(
-                            shpr.ds_time[start_sample:end_sample],
+                            shpr.ds_time,
                             shpw.ds_time,
                             ds_factor=ds_factor,
                             is_time=True,
+                            start_n=start_sample,
+                            end_n=end_sample,
                         )
                         shpr.downsample(
-                            shpr.ds_voltage[start_sample:end_sample],
+                            shpr.ds_voltage,
                             shpw.ds_voltage,
                             ds_factor=ds_factor,
+                            start_n=start_sample,
+                            end_n=end_sample,
                         )
                         shpr.downsample(
-                            shpr.ds_current[start_sample:end_sample],
+                            shpr.ds_current,
                             shpw.ds_current,
                             ds_factor=ds_factor,
+                            start_n=start_sample,
+                            end_n=end_sample,
                         )
 
                 with Reader(out_file, verbose=verbose_level > 2) as shpd:
