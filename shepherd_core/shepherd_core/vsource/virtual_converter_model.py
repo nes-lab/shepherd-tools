@@ -195,30 +195,31 @@ class VirtualConverterModel:
     def update_states_and_output(self) -> int:
         self.sample_count += 1
         check_thresholds = self.sample_count >= self._cfg.interval_check_thresholds_n
+        V_mid_uV_now = self.V_mid_uV  # avoids not enabling pwr_good (due to large dV_enable_output_uV)
 
         if check_thresholds:
             self.sample_count = 0
             if self.is_outputting:
-                if self.V_mid_uV < self.V_disable_output_threshold_uV:
+                if V_mid_uV_now < self.V_disable_output_threshold_uV:
                     self.is_outputting = False
-            elif self.V_mid_uV >= self.V_enable_output_threshold_uV:
+            elif V_mid_uV_now >= self.V_enable_output_threshold_uV:
                 self.is_outputting = True
                 self.V_mid_uV -= self.dV_enable_output_uV
 
         if check_thresholds or self._cfg.immediate_pwr_good_signal:
             # generate power-good-signal
             if self.power_good:
-                if self.V_mid_uV <= self._cfg.V_pwr_good_disable_threshold_uV:
+                if V_mid_uV_now <= self._cfg.V_pwr_good_disable_threshold_uV:
                     self.power_good = False
-            elif self.V_mid_uV >= self._cfg.V_pwr_good_enable_threshold_uV:
+            elif V_mid_uV_now >= self._cfg.V_pwr_good_enable_threshold_uV:
                 self.power_good = self.is_outputting
             # set batok pin to state ... TODO?
 
         if self.is_outputting or self.interval_startup_disabled_drain_n > 0:
             if (not self.enable_buck) or (
-                self.V_mid_uV <= self._cfg.V_output_uV + self._cfg.V_buck_drop_uV
+                V_mid_uV_now <= self._cfg.V_output_uV + self._cfg.V_buck_drop_uV
             ):
-                if self.V_mid_uV > self._cfg.V_buck_drop_uV:
+                if V_mid_uV_now > self._cfg.V_buck_drop_uV:
                     self.V_out_dac_uV = self.V_mid_uV - self._cfg.V_buck_drop_uV
                 else:
                     self.V_out_dac_uV = 0.0
