@@ -195,7 +195,8 @@ class VirtualConverterModel:
     def update_states_and_output(self) -> int:
         self.sample_count += 1
         check_thresholds = self.sample_count >= self._cfg.interval_check_thresholds_n
-        V_mid_uV_now = self.V_mid_uV  # avoids not enabling pwr_good (due to large dV_enable_output_uV)
+        V_mid_uV_now = self.V_mid_uV
+        # copy avoids not enabling pwr_good (due to large dV_enable_output_uV)
 
         if check_thresholds:
             self.sample_count = 0
@@ -217,9 +218,9 @@ class VirtualConverterModel:
 
         if self.is_outputting or self.interval_startup_disabled_drain_n > 0:
             if (not self.enable_buck) or (
-                V_mid_uV_now <= self._cfg.V_output_uV + self._cfg.V_buck_drop_uV
+                self.V_mid_uV <= self._cfg.V_output_uV + self._cfg.V_buck_drop_uV
             ):
-                if V_mid_uV_now > self._cfg.V_buck_drop_uV:
+                if self.V_mid_uV > self._cfg.V_buck_drop_uV:
                     self.V_out_dac_uV = self.V_mid_uV - self._cfg.V_buck_drop_uV
                 else:
                     self.V_out_dac_uV = 0.0
