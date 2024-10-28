@@ -101,7 +101,7 @@ class VirtualConverterModel:
 
         # pulled from update_states_and_output() due to easier static init
         self.sample_count: int = 0xFFFFFFF0
-        self.is_outputting: bool = True
+        self.is_outputting: bool = False
         self.vsource_skip_gpio_logging: bool = False
 
     def calc_inp_power(self, input_voltage_uV: float, input_current_nA: float) -> int:
