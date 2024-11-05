@@ -1,5 +1,5 @@
 """
-Test how to effectively create a single file of a testbed-experiment
+Test how to effectively create a single file of a testbed-experiment.
 
 vary hdf5-files
 - content: constant set, rising, random
@@ -26,19 +26,22 @@ randm gzip  229     229
 randm lzf   229     229
 
 """
+
 from pathlib import Path
 
 import h5py
 import numpy as np
 
+from shepherd_core import logger
+
 duration_s = 60
 samplerate_sps = 100_000
 sample_interval_ns = round(10**9 // samplerate_sps)
 contents: dict = {
-        "rising": np.arange(0.0, duration_s * 1e6, sample_interval_ns / 1e3),  # usec
-        "constant": np.linspace(3 * 10**6, 3 * 10**6, int(samplerate_sps * duration_s)),
-        "random": np.random.default_rng().integers(0, 2**32 -1, int(samplerate_sps * duration_s)),
-    }
+    "rising": np.arange(0.0, duration_s * 1e6, sample_interval_ns / 1e3),  # usec
+    "constant": np.linspace(3 * 10**6, 3 * 10**6, int(samplerate_sps * duration_s)),
+    "random": np.random.default_rng().integers(0, 2**32 - 1, int(samplerate_sps * duration_s)),
+}
 compressions: dict = {
     "none": None,
     "gzip": "gzip",
@@ -49,15 +52,14 @@ path_here = Path(__file__).parent
 
 for content_name, content in contents.items():
     for compression_name, compression in compressions.items():
-
         # inner duplication
         file_path = path_here / f"{content_name}_{compression_name}_{duplication}in1.h5"
-        print(f"Generating {file_path}")
+        logger.info(f"Generating {file_path}")
         h5file = h5py.File(file_path, "w")
         grp_data = h5file.create_group("data")
 
-        for iter in range(duplication):
-            ds_name = f"current{iter}"
+        for _i in range(duplication):
+            ds_name = f"current{_i}"
             grp_data.create_dataset(
                 ds_name,
                 shape=(0,),
@@ -73,10 +75,10 @@ for content_name, content in contents.items():
         h5file.close()
 
         # outer duplication
-        ds_name = f"current"
-        for iter in range(duplication):
-            file_path = path_here / f"{content_name}_{compression_name}_entity{iter}.h5"
-            print(f"Generating {file_path}")
+        ds_name = "current"
+        for _i in range(duplication):
+            file_path = path_here / f"{content_name}_{compression_name}_entity{_i}.h5"
+            logger.info(f"Generating {file_path}")
             h5file = h5py.File(file_path, "w")
             grp_data = h5file.create_group("data")
             grp_data.create_dataset(
