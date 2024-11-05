@@ -10,11 +10,12 @@ from typing import List
 from typing import Optional
 
 import click
+import pydantic
 
 from shepherd_core import get_verbose_level
-from shepherd_core import increase_verbose_level
 from shepherd_core import local_tz
 from shepherd_core.commons import samplerate_sps_default
+from shepherd_core.logger import set_log_verbose_level
 
 from . import Writer
 from . import __version__
@@ -50,24 +51,23 @@ def path_to_flist(data_path: Path) -> List[Path]:
     "--verbose",
     "-v",
     is_flag=True,
-    help="4 Levels [0..3](Error, Warning, Info, Debug)",
-)
-@click.option(
-    "--version",
-    is_flag=True,
-    help="Prints version-info at start (combinable with -v)",
+    help="Switch from info- to debug-level",
 )
 @click.pass_context  # TODO: is the ctx-type correct?
-def cli(ctx: click.Context, *, verbose: bool, version: bool) -> None:
+def cli(ctx: click.Context, *, verbose: bool) -> None:
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder."""
-    if verbose:
-        increase_verbose_level(3)
-    if version:
-        logger.info("Shepherd-Data v%s", __version__)
-        logger.debug("Python v%s", sys.version)
-        logger.debug("Click v%s", click.__version__)
+    set_log_verbose_level(logger, 3 if verbose else 2)
     if not ctx.invoked_subcommand:
         click.echo("Please specify a valid command")
+
+
+@cli.command(short_help="Print version-info (combine with -v for more)")
+def version() -> None:
+    """Print version-info (combine with -v for more)."""
+    logger.info("Shepherd-Data v%s", __version__)
+    logger.debug("Python v%s", sys.version)
+    logger.debug("Click v%s", click.__version__)
+    logger.debug("Pydantic v%s", pydantic.__version__)
 
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
