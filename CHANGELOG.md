@@ -3,8 +3,15 @@
 ## v2024.11.1
 
 - CLI
-  - add cut.command for .h5 files
   - add cutting to extraction-command
+  - add cutting to downsampling-command
+  - add version-command
+  - fix console-output (not appearing)
+  - update unittests
+- Core.Writer
+  - fixed unwanted modification of params (cal, mode, dtype, windows_size)
+  - update unittests to prevent similar behavior
+- Data.Reader - add cut_and_downsample_to_file()
 - vTarget - fix diode model
 - vSrc
   - fix pwr_good not enabling when c_out is too large
