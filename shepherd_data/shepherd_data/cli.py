@@ -14,10 +14,8 @@ import pydantic
 
 from shepherd_core import get_verbose_level
 from shepherd_core import local_tz
-from shepherd_core.commons import samplerate_sps_default
 from shepherd_core.logger import set_log_verbose_level
 
-from . import Writer
 from . import __version__
 from .reader import Reader
 
@@ -99,14 +97,14 @@ def validate(in_data: Path) -> None:
     "-s",
     default=None,
     type=click.FLOAT,
-    help="Start of plot in seconds, will be 0 if omitted",
+    help="Start-point in seconds, will be 0 if omitted",
 )
 @click.option(
     "--end",
     "-e",
     default=None,
     type=click.FLOAT,
-    help="End of plot in seconds, will be max if omitted",
+    help="End-point in seconds, will be max if omitted",
 )
 @click.option(
     "--ds-factor",
@@ -146,76 +144,10 @@ def extract(
         logger.info("Extracting IV-Samples from '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                # TODO: this code is very similar to data.reader.downsample()
-
-                start_s = start
-                end_s = end
-                if not isinstance(start_s, (float, int)):
-                    start_s = 0
-                if not isinstance(end_s, (float, int)):
-                    end_s = shpr.runtime_s
-                start_s = max(0, start_s)
-                end_s = min(shpr.runtime_s, end_s)
-
-                cut_str = ""
-                if start_s != 0 or end_s != shpr.runtime_s:
-                    start_str = f"{start_s:.3f}".replace(".", "s")
-                    end_str = f"{end_s:.3f}".replace(".", "s")
-                    cut_str = f".cut_{start_str}_to_{end_str}"
-
-                start_sample = round(start_s * shpr.samplerate_sps)
-                end_sample = round(end_s * shpr.samplerate_sps)
-
-                if ((end_sample - start_sample) / ds_factor) < 10:
-                    logger.warning(
-                        "will skip downsampling for %s because "
-                        "resulting sample-size is too small",
-                        file.name,
-                    )
-                    continue
-                # will create a downsampled h5-file (if not existing) and then saving to csv
-                ds_str = f".downsampled_x{round(ds_factor)}" if ds_factor != 1.0 else ""
-
-                out_file = file.with_suffix(cut_str + ds_str + file.suffix)
-                if not out_file.exists():
-                    logger.info("Downsampling '%s' by factor x%f ...", file.name, ds_factor)
-                    with Writer(
-                        out_file,
-                        mode=shpr.get_mode(),
-                        datatype=shpr.get_datatype(),
-                        window_samples=shpr.get_window_samples(),
-                        cal_data=shpr.get_calibration_data(),
-                        verbose=verbose_level > 2,
-                    ) as shpw:
-                        shpw["ds_factor"] = ds_factor
-                        shpw.store_hostname(shpr.get_hostname())
-                        shpw.store_config(shpr.get_config())
-                        shpr.downsample(
-                            shpr.ds_time,
-                            shpw.ds_time,
-                            ds_factor=ds_factor,
-                            is_time=True,
-                            start_n=start_sample,
-                            end_n=end_sample,
-                        )
-                        shpr.downsample(
-                            shpr.ds_voltage,
-                            shpw.ds_voltage,
-                            ds_factor=ds_factor,
-                            start_n=start_sample,
-                            end_n=end_sample,
-                        )
-                        shpr.downsample(
-                            shpr.ds_current,
-                            shpw.ds_current,
-                            ds_factor=ds_factor,
-                            start_n=start_sample,
-                            end_n=end_sample,
-                        )
-
+                out_file = shpr.cut_and_downsample_to_file(start, end, ds_factor=ds_factor)
                 with Reader(out_file, verbose=verbose_level > 2) as shpd:
                     shpd.save_csv(shpd["data"], separator, raw=raw)
-        except TypeError:
+        except (TypeError, ValueError):
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
@@ -318,11 +250,10 @@ def extract_gpio(in_data: Path, separator: str) -> None:
 
 
 @cli.command(
-    short_help="Creates an array of downsampling-files from "
+    short_help="Creates an array of down-sampled files from "
     "file or directory containing shepherd-recordings"
 )
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
-# @click.option("--out_data", "-o", type=click.Path(resolve_path=True))
 @click.option(
     "--ds-factor",
     "-f",
@@ -336,118 +267,45 @@ def extract_gpio(in_data: Path, separator: str) -> None:
     type=click.INT,
     help="Alternative Input to determine a downsample-factor (Choose One)",
 )
-def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]) -> None:
-    """Create an array of down-sampled files from file or dir containing shepherd-recordings."""
-    if ds_factor is None and sample_rate is not None and sample_rate >= 1:
-        ds_factor = int(samplerate_sps_default / sample_rate)
-        # TODO: shouldn't current sps be based on file rather than default?
-    if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
-        ds_list = [ds_factor]
-    else:
-        ds_list = [5, 25, 100, 500, 2_500, 10_000, 50_000, 250_000, 1_000_000]
-
-    files = path_to_flist(in_data)
-    verbose_level = get_verbose_level()
-    for file in files:
-        try:
-            with Reader(file, verbose=verbose_level > 2) as shpr:
-                for _factor in ds_list:
-                    if (shpr.ds_voltage.shape[0] / _factor) < 1000:
-                        logger.warning(
-                            "will skip downsampling for %s because "
-                            "resulting sample-size is too small",
-                            file.name,
-                        )
-                        break
-                    ds_file = file.with_suffix(f".downsampled_x{round(_factor)}.h5")
-                    if ds_file.exists():
-                        continue
-                    logger.info("Downsampling '%s' by factor x%f ...", file.name, _factor)
-                    with Writer(
-                        ds_file,
-                        mode=shpr.get_mode(),
-                        datatype=shpr.get_datatype(),
-                        window_samples=shpr.get_window_samples(),
-                        cal_data=shpr.get_calibration_data(),
-                        verbose=verbose_level > 2,
-                    ) as shpw:
-                        shpw["ds_factor"] = _factor
-                        shpw.store_hostname(shpr.get_hostname())
-                        shpw.store_config(shpr.get_config())
-                        shpr.downsample(shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True)
-                        shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=_factor)
-                        shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=_factor)
-        except TypeError:
-            logger.exception("ERROR: Will skip file. It caused an exception.")
-
-
-@cli.command(short_help="Creates a subset of the recording.")
-@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--start",
     "-s",
     default=None,
     type=click.FLOAT,
-    help="Start of plot in seconds, will be 0 if omitted",
+    help="Start-point in seconds, will be 0 if omitted",
 )
 @click.option(
     "--end",
     "-e",
     default=None,
     type=click.FLOAT,
-    help="End of plot in seconds, will be max if omitted",
+    help="End-point in seconds, will be max if omitted",
 )
-def cut(
+def downsample(
     in_data: Path,
+    ds_factor: Optional[float],
+    sample_rate: Optional[int],
     start: Optional[float],
     end: Optional[float],
 ) -> None:
-    """Create a subset of the recording."""
+    """Create an array of down-sampled files from file or dir containing shepherd-recordings."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     for file in files:
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                start_s = start
-                end_s = end
-                if not isinstance(start_s, (float, int)):
-                    start_s = 0
-                if not isinstance(end_s, (float, int)):
-                    end_s = shpr.runtime_s
-                start_s = max(0, start_s)
-                end_s = min(shpr.runtime_s, end_s)
+                if ds_factor is None and sample_rate is not None and sample_rate >= 1:
+                    ds_factor = shpr.samplerate_sps / sample_rate
 
-                start_str = f"{start_s:.3f}".replace(".", "s")
-                end_str = f"{end_s:.3f}".replace(".", "s")
-                out_path = shpr.file_path.resolve().with_suffix(f".cut_{start_str}_to_{end_str}.h5")
-                if out_path.exists():
-                    continue
-                logger.info("Cutting '%s' from %.3f to %.3f ...", file.name, start_s, end_s)
+                if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
+                    ds_list = [ds_factor]
+                else:
+                    ds_list = [5, 25, 100, 500, 2_500, 10_000, 50_000, 250_000, 1_000_000]
 
-                start_sample = round(start_s * shpr.samplerate_sps)
-                end_sample = round(end_s * shpr.samplerate_sps)
-                if end_sample - start_sample < 5:
-                    logger.warning("Skip cut, because of small sample-size.")
-                    continue
-
-                with Writer(
-                    out_path,
-                    mode=shpr.get_mode(),
-                    datatype=shpr.get_datatype(),
-                    window_samples=shpr.get_window_samples(),
-                    cal_data=shpr.get_calibration_data(),
-                    verbose=verbose_level > 2,
-                ) as shpw:
-                    shpw.store_hostname(shpr.get_hostname())
-                    shpw.store_config(shpr.get_config())
-                    for idx in range(start_sample, end_sample, 10**6):
-                        idx_end = min(idx + 10**6, end_sample)
-                        shpw.append_iv_data_raw(
-                            timestamp=shpr.ds_time[idx:idx_end],
-                            voltage=shpr.ds_voltage[idx:idx_end],
-                            current=shpr.ds_current[idx:idx_end],
-                        )
-        except TypeError:
+                for _factor in ds_list:
+                    path_file = shpr.cut_and_downsample_to_file(start, end, _factor)
+                    logger.info("Created %s", path_file.name)
+        except (TypeError, ValueError):  # noqa: PERF203
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
@@ -458,14 +316,14 @@ def cut(
     "-s",
     default=None,
     type=click.FLOAT,
-    help="Start of plot in seconds, will be 0 if omitted",
+    help="Start-point in seconds, will be 0 if omitted",
 )
 @click.option(
     "--end",
     "-e",
     default=None,
     type=click.FLOAT,
-    help="End of plot in seconds, will be max if omitted",
+    help="End-point in seconds, will be max if omitted",
 )
 @click.option(
     "--width",
