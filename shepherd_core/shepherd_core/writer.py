@@ -94,7 +94,7 @@ class Writer(Reader):
 
     comp_default: int = 1
     mode_default: str = "harvester"
-    datatype_default: str = EnergyDType.ivsample
+    datatype_default: EnergyDType = EnergyDType.ivsample
 
     _chunk_shape: tuple = (Reader.samples_per_buffer,)
 
@@ -137,44 +137,6 @@ class Writer(Reader):
                 self.file_path.name,
             )
 
-        if isinstance(mode, str) and mode not in self.mode_dtype_dict:
-            msg = f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})"
-            raise ValueError(msg)
-
-        _dtypes = self.mode_dtype_dict[mode or self.mode_default]
-        if isinstance(datatype, str):
-            datatype = EnergyDType[datatype]
-        if isinstance(datatype, EnergyDType) and datatype not in _dtypes:
-            msg = f"Can't handle value '{datatype}' of datatype (choose one of {_dtypes})"
-            raise ValueError(msg)
-
-        if self._modify:
-            if mode:
-                self._mode = mode
-            if not hasattr(self, "_mode"):
-                self._mode = self.mode_default
-            if datatype:
-                self._datatype = datatype
-            if not hasattr(self, "_datatype"):
-                self._datatype = self.datatype_default
-            if window_samples:
-                self._window_samples = window_samples
-            if not hasattr(self, "_window_samples"):
-                self._window_samples = 0
-        else:
-            self._mode = mode if isinstance(mode, str) else self.mode_default
-            self._datatype = (
-                datatype if isinstance(datatype, EnergyDType) else self.datatype_default
-            )
-            self._window_samples = window_samples if isinstance(window_samples, int) else 0
-
-        if isinstance(cal_data, (CalEmu, CalHrv)):
-            self._cal = CalSeries.from_cal(cal_data)
-        elif isinstance(cal_data, CalSeries):
-            self._cal = cal_data
-        else:
-            self._cal = CalSeries()
-
         # open file
         if self._modify:
             self.h5file = h5py.File(self.file_path, "r+")  # = rw
@@ -185,30 +147,61 @@ class Writer(Reader):
             # ⤷ write, truncate if exist
             self._create_skeleton()
 
+        # Handle Mode
+        if isinstance(mode, str) and mode not in self.mode_dtype_dict:
+            msg = f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})"
+            raise ValueError(msg)
+
+        if mode is not None:
+            self.h5file.attrs["mode"] = mode
+        if "mode" not in self.h5file.attrs:
+            self.h5file.attrs["mode"] = self.mode_default
+
+        _dtypes = self.mode_dtype_dict[self.get_mode()]
+
+        # Handle Datatype
+        if isinstance(datatype, str):
+            datatype = EnergyDType[datatype]
+        if isinstance(datatype, EnergyDType) and datatype not in _dtypes:
+            msg = f"Can't handle value '{datatype}' of datatype (choose one of {_dtypes})"
+            raise ValueError(msg)
+
+        if isinstance(datatype, EnergyDType):
+            self.h5file["data"].attrs["datatype"] = datatype.name
+        if "datatype" not in self.h5file["data"].attrs:
+            self.h5file["data"].attrs["datatype"] = self.datatype_default.name
+        if self.get_datatype() not in _dtypes:
+            msg = (
+                f"Can't handle value '{self.get_datatype()}' of datatype (choose one of {_dtypes})"
+            )
+            raise ValueError(msg)
+
+        # Handle Window_samples
+        if window_samples is not None:
+            self.h5file["data"].attrs["window_samples"] = window_samples
+        if "window_samples" not in self.h5file["data"].attrs:
+            self.h5file["data"].attrs["window_samples"] = 0
+
+        if datatype == EnergyDType.ivcurve and self.get_window_samples() < 1:
+            raise ValueError("Window Size argument needed for ivcurve-Datatype")
+
+        # Handle Cal
+        if isinstance(cal_data, (CalEmu, CalHrv)):
+            cal_data = CalSeries.from_cal(cal_data)
+
+        if isinstance(cal_data, CalSeries):
+            for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
+                self.h5file["data"][ds].attrs[param] = cal_data[ds][param]
+        else:
+            # check if there are unset cal-values and set them to default
+            cal_data = CalSeries()
+            for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
+                if param not in self.h5file["data"][ds].attrs:
+                    self.h5file["data"][ds].attrs[param] = cal_data[ds][param]
+
         # show key parameters for h5-performance
         settings = list(self.h5file.id.get_access_plist().get_cache())
         self._logger.debug("H5Py Cache_setting=%s (_mdc, _nslots, _nbytes, _w0)", settings)
-
-        # Store the mode in order to allow user to differentiate harvesting vs emulation data
-        if isinstance(self._mode, str) and self._mode in self.mode_dtype_dict:
-            self.h5file.attrs["mode"] = self._mode
-
-        if (
-            isinstance(self._datatype, EnergyDType)
-            and self._datatype in self.mode_dtype_dict[self.get_mode()]
-        ):
-            self.h5file["data"].attrs["datatype"] = self._datatype.name
-        elif not self._modify:
-            self._logger.error("datatype invalid? '%s' not written", self._datatype)
-
-        if isinstance(self._window_samples, int):
-            self.h5file["data"].attrs["window_samples"] = self._window_samples
-        if datatype == EnergyDType.ivcurve and (self._window_samples in {None, 0}):
-            raise ValueError("Window Size argument needed for ivcurve-Datatype")
-
-        # include cal-data
-        for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
-            self.h5file["data"][ds].attrs[param] = self._cal[ds][param]
 
         super().__init__(file_path=None, verbose=verbose)
 

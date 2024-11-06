@@ -101,7 +101,7 @@ class VirtualConverterModel:
 
         # pulled from update_states_and_output() due to easier static init
         self.sample_count: int = 0xFFFFFFF0
-        self.is_outputting: bool = True
+        self.is_outputting: bool = False
         self.vsource_skip_gpio_logging: bool = False
 
     def calc_inp_power(self, input_voltage_uV: float, input_current_nA: float) -> int:
@@ -180,6 +180,7 @@ class VirtualConverterModel:
 
     # TODO: add range-checks for add, sub Ops
     def update_cap_storage(self) -> int:
+        # TODO: this calculation is wrong for everything beside boost-cnv
         if self.enable_storage:
             V_mid_prot_uV = max(1.0, self.V_mid_uV)
             P_sum_fW = self.P_inp_fW - self.P_out_fW
@@ -194,22 +195,24 @@ class VirtualConverterModel:
     def update_states_and_output(self) -> int:
         self.sample_count += 1
         check_thresholds = self.sample_count >= self._cfg.interval_check_thresholds_n
+        V_mid_uV_now = self.V_mid_uV
+        # copy avoids not enabling pwr_good (due to large dV_enable_output_uV)
 
         if check_thresholds:
             self.sample_count = 0
             if self.is_outputting:
-                if self.V_mid_uV < self.V_disable_output_threshold_uV:
+                if V_mid_uV_now < self.V_disable_output_threshold_uV:
                     self.is_outputting = False
-            elif self.V_mid_uV >= self.V_enable_output_threshold_uV:
+            elif V_mid_uV_now >= self.V_enable_output_threshold_uV:
                 self.is_outputting = True
                 self.V_mid_uV -= self.dV_enable_output_uV
 
         if check_thresholds or self._cfg.immediate_pwr_good_signal:
             # generate power-good-signal
             if self.power_good:
-                if self.V_mid_uV <= self._cfg.V_pwr_good_disable_threshold_uV:
+                if V_mid_uV_now <= self._cfg.V_pwr_good_disable_threshold_uV:
                     self.power_good = False
-            elif self.V_mid_uV >= self._cfg.V_pwr_good_enable_threshold_uV:
+            elif V_mid_uV_now >= self._cfg.V_pwr_good_enable_threshold_uV:
                 self.power_good = self.is_outputting
             # set batok pin to state ... TODO?
 

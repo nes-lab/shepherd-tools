@@ -1,5 +1,23 @@
 # History of Changes
 
+## v2024.11.1
+
+- CLI
+  - add cutting to extraction-command
+  - add cutting to downsampling-command
+  - add version-command
+  - fix console-output (not appearing)
+  - update unittests
+- Core.Writer
+  - fixed unwanted modification of params (cal, mode, dtype, windows_size)
+  - update unittests to prevent similar behavior
+- Data.Reader - add cut_and_downsample_to_file()
+- vTarget - fix diode model
+- vSrc
+  - fix pwr_good not enabling when c_out is too large
+  - converter is now disabled at startup
+- vHrv - emulate the VOC-search-window, include currents (before: output voltage stayed at MPP with current = 0)
+
 ## v2024.9.1
 
 - virtual harvester
@@ -240,6 +258,7 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 # 10.4 s on v2024.5.1, pydantic 2.8.0, core 2.20.0
 # 12.3 s on v2024.8.2, pydantic 2.8.2, core 2.20.1
 # 11.7 s on v2024.8.2, pydantic 2.9.0, core 2.23.2
+# 18.7 s on v2024.9.1, pydantic 2.9.2, core 2.23.4 - python 3.13 via uv
 ```
 
 ## v2023.08.6

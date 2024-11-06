@@ -13,7 +13,9 @@ from matplotlib import pyplot as plt
 from tqdm import trange
 
 from shepherd_core import Reader as CoreReader
+from shepherd_core import Writer as CoreWriter
 from shepherd_core import local_tz
+from shepherd_core.logger import get_verbose_level
 from shepherd_core.logger import logger
 
 # import samplerate  # noqa: ERA001, TODO: just a test-fn for now
@@ -37,11 +39,12 @@ class Reader(CoreReader):
     ) -> None:
         super().__init__(file_path, verbose=verbose)
 
-    def save_csv(self, h5_group: h5py.Group, separator: str = ";") -> int:
+    def save_csv(self, h5_group: h5py.Group, separator: str = ";", *, raw: bool = False) -> int:
         """Extract numerical data from group and store it into csv.
 
         :param h5_group: can be external and should probably be downsampled
         :param separator: used between columns
+        :param raw: don't convert to si-units
         :return: number of processed entries
         """
         if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
@@ -62,11 +65,21 @@ class Reader(CoreReader):
         with csv_path.open("w", encoding="utf-8-sig") as csv_file:
             self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
             csv_file.write(header + "\n")
+            ts_gain = h5_group["time"].attrs.get("gain", 1e-9)
+            # for converting data to si - if raw=false
+            gains: dict[str, float] = {
+                key: h5_group[key].attrs.get("gain", 1.0) for key in datasets[1:]
+            }
+            offsets: dict[str, float] = {
+                key: h5_group[key].attrs.get("offset", 1.0) for key in datasets[1:]
+            }
             for idx, time_ns in enumerate(h5_group["time"][:]):
-                timestamp = datetime.fromtimestamp(time_ns / 1e9, tz=local_tz())
+                timestamp = datetime.fromtimestamp(time_ns * ts_gain, tz=local_tz())
                 csv_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"))
                 for key in datasets[1:]:
                     values = h5_group[key][idx]
+                    if not raw:
+                        values = values * gains[key] + offsets[key]
                     if isinstance(values, np.ndarray):
                         values = separator.join([str(value) for value in values])
                     csv_file.write(f"{separator}{values}")
@@ -225,6 +238,115 @@ class Reader(CoreReader):
             data_dst.resize((oblock_len * (iterations - 1) + slice_len,))
         return data_dst
 
+    def cut_and_downsample_to_file(
+        self,
+        start_s: Optional[float],
+        end_s: Optional[float],
+        ds_factor: Optional[float],
+    ) -> Path:
+        """Cut source to given limits, downsample by factor and store result in separate file.
+
+        Resulting file-name is derived from input-name by adding
+        - ".cut_x_to_y" and
+        - ".downsample_x"
+        when applicable.
+        """
+        # prepare cut
+        if not isinstance(start_s, (float, int)):
+            start_s = 0
+        if not isinstance(end_s, (float, int)):
+            end_s = self.runtime_s
+        start_s = max(0, start_s)
+        end_s = min(self.runtime_s, end_s)
+
+        start_sample = round(start_s * self.samplerate_sps)
+        end_sample = round(end_s * self.samplerate_sps)
+
+        # test input-parameters
+        if end_sample < start_sample:
+            raise ValueError(
+                "Cut & downsample for %s failed because "
+                "end-mark (%.3f) is before start-mark (%.3f).",
+                self.file_path.name,
+                end_s,
+                start_s,
+            )
+        if ds_factor < 1:
+            raise ValueError(
+                "Cut & downsample for %s failed because factor < 1",
+                self.file_path.name,
+            )
+        if ((end_sample - start_sample) / ds_factor) < 1000:
+            raise ValueError(
+                "Cut & downsample for %s failed because " "resulting sample-size is too small",
+                self.file_path.name,
+            )
+
+        # assemble file-name of output
+        if start_s != 0.0 or end_s != self.runtime_s:
+            start_str = f"{start_s:.3f}".replace(".", "s")
+            end_str = f"{end_s:.3f}".replace(".", "s")
+            cut_str = f".cut_{start_str}_to_{end_str}"
+        else:
+            cut_str = ""
+
+        if ds_factor > 1:  # noqa: SIM108
+            ds_str = f".downsample_x{round(ds_factor)}"
+        else:
+            ds_str = ""
+
+        dst_file = self.file_path.resolve().with_suffix(cut_str + ds_str + ".h5")
+        if dst_file.exists():
+            logger.warning(
+                "Cut & Downsample skipped because output-file %s already exists.", dst_file.name
+            )
+            return dst_file
+
+        logger.debug(
+            "Cut & Downsample '%s' from %.3f s to %.3f s with factor = %.1f ...",
+            self.file_path.name,
+            start_s,
+            end_s,
+            ds_factor,
+        )
+
+        # convert data
+        with CoreWriter(
+            dst_file,
+            mode=self.get_mode(),
+            datatype=self.get_datatype(),
+            window_samples=self.get_window_samples(),
+            cal_data=self.get_calibration_data(),
+            verbose=get_verbose_level() > 2,
+        ) as shpw:
+            shpw["ds_factor"] = ds_factor
+            shpw.store_hostname(self.get_hostname())
+            shpw.store_config(self.get_config())
+            self.downsample(
+                self.ds_time,
+                shpw.ds_time,
+                start_n=start_sample,
+                end_n=end_sample,
+                ds_factor=ds_factor,
+                is_time=True,
+            )
+            self.downsample(
+                self.ds_voltage,
+                shpw.ds_voltage,
+                start_n=start_sample,
+                end_n=end_sample,
+                ds_factor=ds_factor,
+            )
+            self.downsample(
+                self.ds_current,
+                shpw.ds_current,
+                start_n=start_sample,
+                end_n=end_sample,
+                ds_factor=ds_factor,
+            )
+
+        return dst_file
+
     def resample(
         self,
         data_src: Union[h5py.Dataset, np.ndarray],
@@ -348,6 +470,8 @@ class Reader(CoreReader):
             start_s = 0
         if not isinstance(end_s, (float, int)):
             end_s = self.runtime_s
+        start_s = max(0, start_s)
+        end_s = min(self.runtime_s, end_s)
         start_sample = round(start_s * self.samplerate_sps)
         end_sample = round(end_s * self.samplerate_sps)
         if end_sample - start_sample < 5:

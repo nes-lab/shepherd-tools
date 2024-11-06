@@ -170,8 +170,9 @@ class VirtualHarvesterModel:
 
         _voltage_uV, _current_nA = self.ivcurve_2_cv(_voltage_uV, _current_nA)
         if self.interval_step < self._cfg.duration_n:
+            self.voltage_set_uV = self.voc_now
+        elif self.interval_step == self._cfg.duration_n:
             self.voltage_set_uV = int(self.voc_now * self._cfg.setpoint_n8 / 256)
-            _current_nA = 0
 
         return _voltage_uV, _current_nA
 

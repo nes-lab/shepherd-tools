@@ -102,6 +102,7 @@
     enable_feedback_to_hrv: true  # src can control a cv-harvester for ivcurve
     V_intermediate_enable_threshold_mV: 2000
     V_intermediate_disable_threshold_mV: 1800  # nRF draw ~0.5 mA below that point
+    # TODO: put switch-output into special nRF Version
 
 - datatype: VirtualSourceConfig
   parameters:

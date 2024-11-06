@@ -10,13 +10,12 @@ from typing import List
 from typing import Optional
 
 import click
+import pydantic
 
 from shepherd_core import get_verbose_level
-from shepherd_core import increase_verbose_level
 from shepherd_core import local_tz
-from shepherd_core.commons import samplerate_sps_default
+from shepherd_core.logger import set_log_verbose_level
 
-from . import Writer
 from . import __version__
 from .reader import Reader
 
@@ -50,24 +49,23 @@ def path_to_flist(data_path: Path) -> List[Path]:
     "--verbose",
     "-v",
     is_flag=True,
-    help="4 Levels [0..3](Error, Warning, Info, Debug)",
-)
-@click.option(
-    "--version",
-    is_flag=True,
-    help="Prints version-info at start (combinable with -v)",
+    help="Switch from info- to debug-level",
 )
 @click.pass_context  # TODO: is the ctx-type correct?
-def cli(ctx: click.Context, *, verbose: bool, version: bool) -> None:
+def cli(ctx: click.Context, *, verbose: bool) -> None:
     """Shepherd: Synchronized Energy Harvesting Emulator and Recorder."""
-    if verbose:
-        increase_verbose_level(3)
-    if version:
-        logger.info("Shepherd-Data v%s", __version__)
-        logger.debug("Python v%s", sys.version)
-        logger.debug("Click v%s", click.__version__)
+    set_log_verbose_level(logger, 3 if verbose else 2)
     if not ctx.invoked_subcommand:
         click.echo("Please specify a valid command")
+
+
+@cli.command(short_help="Print version-info (combine with -v for more)")
+def version() -> None:
+    """Print version-info (combine with -v for more)."""
+    logger.info("Shepherd-Data v%s", __version__)
+    logger.debug("Python v%s", sys.version)
+    logger.debug("Click v%s", click.__version__)
+    logger.debug("Pydantic v%s", pydantic.__version__)
 
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
@@ -95,6 +93,20 @@ def validate(in_data: Path) -> None:
 @cli.command(short_help="Extracts recorded IVSamples and stores it to csv")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
+    "--start",
+    "-s",
+    default=None,
+    type=click.FLOAT,
+    help="Start-point in seconds, will be 0 if omitted",
+)
+@click.option(
+    "--end",
+    "-e",
+    default=None,
+    type=click.FLOAT,
+    help="End-point in seconds, will be max if omitted",
+)
+@click.option(
     "--ds-factor",
     "-f",
     default=1000,
@@ -103,12 +115,25 @@ def validate(in_data: Path) -> None:
 )
 @click.option(
     "--separator",
-    "-s",
     default=";",
     type=click.STRING,
     help="Set an individual csv-separator",
 )
-def extract(in_data: Path, ds_factor: float, separator: str) -> None:
+@click.option(
+    "--raw",
+    "-r",
+    is_flag=True,
+    help="Plot only power instead of voltage, current & power",
+)
+def extract(
+    in_data: Path,
+    start: Optional[float],
+    end: Optional[float],
+    ds_factor: float,
+    separator: str,
+    *,
+    raw: bool = False,
+) -> None:
     """Extract recorded IVSamples and store them to csv."""
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
@@ -119,41 +144,10 @@ def extract(in_data: Path, ds_factor: float, separator: str) -> None:
         logger.info("Extracting IV-Samples from '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                # TODO: this code is very similar to data.reader.downsample()
-                if (shpr.ds_voltage.shape[0] / ds_factor) < 10:
-                    logger.warning(
-                        "will skip downsampling for %s because "
-                        "resulting sample-size is too small",
-                        file.name,
-                    )
-                    continue
-                # will create a downsampled h5-file (if not existing) and then saving to csv
-                ds_file = file.with_suffix(f".downsampled_x{round(ds_factor)}.h5")
-                if not ds_file.exists():
-                    logger.info("Downsampling '%s' by factor x%f ...", file.name, ds_factor)
-                    with Writer(
-                        ds_file,
-                        mode=shpr.get_mode(),
-                        datatype=shpr.get_datatype(),
-                        window_samples=shpr.get_window_samples(),
-                        cal_data=shpr.get_calibration_data(),
-                        verbose=verbose_level > 2,
-                    ) as shpw:
-                        shpw["ds_factor"] = ds_factor
-                        shpw.store_hostname(shpr.get_hostname())
-                        shpw.store_config(shpr.get_config())
-                        shpr.downsample(
-                            shpr.ds_time,
-                            shpw.ds_time,
-                            ds_factor=ds_factor,
-                            is_time=True,
-                        )
-                        shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=ds_factor)
-                        shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=ds_factor)
-
-                with Reader(ds_file, verbose=verbose_level > 2) as shpd:
-                    shpd.save_csv(shpd["data"], separator)
-        except TypeError:
+                out_file = shpr.cut_and_downsample_to_file(start, end, ds_factor=ds_factor)
+                with Reader(out_file, verbose=verbose_level > 2) as shpd:
+                    shpd.save_csv(shpd["data"], separator, raw=raw)
+        except (TypeError, ValueError):
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
@@ -256,11 +250,10 @@ def extract_gpio(in_data: Path, separator: str) -> None:
 
 
 @cli.command(
-    short_help="Creates an array of downsampling-files from "
+    short_help="Creates an array of down-sampled files from "
     "file or directory containing shepherd-recordings"
 )
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
-# @click.option("--out_data", "-o", type=click.Path(resolve_path=True))
 @click.option(
     "--ds-factor",
     "-f",
@@ -274,48 +267,45 @@ def extract_gpio(in_data: Path, separator: str) -> None:
     type=click.INT,
     help="Alternative Input to determine a downsample-factor (Choose One)",
 )
-def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[int]) -> None:
+@click.option(
+    "--start",
+    "-s",
+    default=None,
+    type=click.FLOAT,
+    help="Start-point in seconds, will be 0 if omitted",
+)
+@click.option(
+    "--end",
+    "-e",
+    default=None,
+    type=click.FLOAT,
+    help="End-point in seconds, will be max if omitted",
+)
+def downsample(
+    in_data: Path,
+    ds_factor: Optional[float],
+    sample_rate: Optional[int],
+    start: Optional[float],
+    end: Optional[float],
+) -> None:
     """Create an array of down-sampled files from file or dir containing shepherd-recordings."""
-    if ds_factor is None and sample_rate is not None and sample_rate >= 1:
-        ds_factor = int(samplerate_sps_default / sample_rate)
-        # TODO: shouldn't current sps be based on file rather than default?
-    if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
-        ds_list = [ds_factor]
-    else:
-        ds_list = [5, 25, 100, 500, 2_500, 10_000, 50_000, 250_000, 1_000_000]
-
     files = path_to_flist(in_data)
     verbose_level = get_verbose_level()
     for file in files:
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
+                if ds_factor is None and sample_rate is not None and sample_rate >= 1:
+                    ds_factor = shpr.samplerate_sps / sample_rate
+
+                if isinstance(ds_factor, (float, int)) and ds_factor >= 1:
+                    ds_list = [ds_factor]
+                else:
+                    ds_list = [5, 25, 100, 500, 2_500, 10_000, 50_000, 250_000, 1_000_000]
+
                 for _factor in ds_list:
-                    if (shpr.ds_voltage.shape[0] / _factor) < 1000:
-                        logger.warning(
-                            "will skip downsampling for %s because "
-                            "resulting sample-size is too small",
-                            file.name,
-                        )
-                        break
-                    ds_file = file.with_suffix(f".downsampled_x{round(_factor)}.h5")
-                    if ds_file.exists():
-                        continue
-                    logger.info("Downsampling '%s' by factor x%f ...", file.name, _factor)
-                    with Writer(
-                        ds_file,
-                        mode=shpr.get_mode(),
-                        datatype=shpr.get_datatype(),
-                        window_samples=shpr.get_window_samples(),
-                        cal_data=shpr.get_calibration_data(),
-                        verbose=verbose_level > 2,
-                    ) as shpw:
-                        shpw["ds_factor"] = _factor
-                        shpw.store_hostname(shpr.get_hostname())
-                        shpw.store_config(shpr.get_config())
-                        shpr.downsample(shpr.ds_time, shpw.ds_time, ds_factor=_factor, is_time=True)
-                        shpr.downsample(shpr.ds_voltage, shpw.ds_voltage, ds_factor=_factor)
-                        shpr.downsample(shpr.ds_current, shpw.ds_current, ds_factor=_factor)
-        except TypeError:
+                    path_file = shpr.cut_and_downsample_to_file(start, end, _factor)
+                    logger.info("Created %s", path_file.name)
+        except (TypeError, ValueError):  # noqa: PERF203
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
@@ -326,14 +316,14 @@ def downsample(in_data: Path, ds_factor: Optional[float], sample_rate: Optional[
     "-s",
     default=None,
     type=click.FLOAT,
-    help="Start of plot in seconds, will be 0 if omitted",
+    help="Start-point in seconds, will be 0 if omitted",
 )
 @click.option(
     "--end",
     "-e",
     default=None,
     type=click.FLOAT,
-    help="End of plot in seconds, will be max if omitted",
+    help="End-point in seconds, will be max if omitted",
 )
 @click.option(
     "--width",
