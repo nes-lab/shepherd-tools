@@ -5,7 +5,7 @@ from .client_web import WebClient
 from .user_model import User
 
 __all__ = [
-    "tb_client",
-    "WebClient",
     "User",
+    "WebClient",
+    "tb_client",
 ]

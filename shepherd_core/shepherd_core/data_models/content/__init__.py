@@ -11,11 +11,10 @@ from .virtual_harvester import VirtualHarvesterConfig
 from .virtual_source import VirtualSourceConfig
 
 __all__ = [
-    "EnergyEnvironment",
-    "VirtualSourceConfig",
-    "VirtualHarvesterConfig",
-    "Firmware",
-    # Enums
     "EnergyDType",
+    "EnergyEnvironment",
+    "Firmware",
     "FirmwareDType",
+    "VirtualHarvesterConfig",
+    "VirtualSourceConfig",
 ]

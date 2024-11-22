@@ -53,28 +53,25 @@ from .validation import is_hex_msp430
 from .validation import is_hex_nrf52
 
 __all__ = [
-    # patcher
-    "read_uid",
-    "modify_uid",
-    "modify_symbol_value",
-    "find_symbol",
-    "read_symbol",
-    "read_arch",
-    # converter
-    "elf_to_hex",
-    "file_to_base64",
     "base64_to_file",
-    "file_to_hash",
     "base64_to_hash",
+    "determine_arch",
+    "determine_type",
+    "elf_to_hex",
     "extract_firmware",
+    "file_to_base64",
+    "file_to_hash",
+    "find_symbol",
     "firmware_to_hex",
-    # validation
-    "is_hex",
-    "is_hex_msp430",
-    "is_hex_nrf52",
     "is_elf",
     "is_elf_msp430",
     "is_elf_nrf52",
-    "determine_type",
-    "determine_arch",
+    "is_hex",
+    "is_hex_msp430",
+    "is_hex_nrf52",
+    "modify_symbol_value",
+    "modify_uid",
+    "read_arch",
+    "read_symbol",
+    "read_uid",
 ]
