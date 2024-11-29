@@ -41,7 +41,7 @@ if __name__ == "__main__":
             duration=30,
             target_configs=[
                 TargetConfig(
-                    target_IDs=list(range(1, 13)),
+                    target_IDs=list(range(1, 12)),
                     energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
                     firmware1=Firmware(name=fw_nrf),
                     firmware2=Firmware(name=fw_msp),

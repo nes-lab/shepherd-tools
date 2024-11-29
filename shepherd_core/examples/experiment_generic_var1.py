@@ -41,7 +41,7 @@ xp = Experiment(
     duration=30,
     target_configs=[
         TargetConfig(
-            target_IDs=range(7, 13),
+            target_IDs=range(7, 12),
             custom_IDs=range(1, 100),  # note: longer list is OK
             energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
             firmware1=Firmware(
