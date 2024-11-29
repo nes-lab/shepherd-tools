@@ -11,13 +11,13 @@ from .virtual_source_model import VirtualSourceModel
 from .virtual_source_simulation import simulate_source
 
 __all__ = [
+    "ConstantCurrentTarget",
+    "ConstantPowerTarget",
     "PruCalibration",
+    "ResistiveTarget",
     "VirtualConverterModel",
     "VirtualHarvesterModel",
     "VirtualSourceModel",
     "simulate_harvester",
     "simulate_source",
-    "ResistiveTarget",
-    "ConstantCurrentTarget",
-    "ConstantPowerTarget",
 ]

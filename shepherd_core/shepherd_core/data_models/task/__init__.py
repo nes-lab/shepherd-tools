@@ -22,18 +22,15 @@ from .programming import ProgrammingTask
 from .testbed_tasks import TestbedTasks
 
 __all__ = [
-    # Hierarchical Order
-    "TestbedTasks",
-    "ObserverTasks",
-    "FirmwareModTask",
-    "ProgrammingTask",
-    "EmulationTask",
-    "HarvestTask",
-    # Enums
     "Compression",
-    # helper functions
-    "prepare_task",
+    "EmulationTask",
+    "FirmwareModTask",
+    "HarvestTask",
+    "ObserverTasks",
+    "ProgrammingTask",
+    "TestbedTasks",
     "extract_tasks",
+    "prepare_task",
 ]
 
 

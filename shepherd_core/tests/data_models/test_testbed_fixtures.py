@@ -31,6 +31,7 @@ def test_testbed_fixture_mcu() -> None:
 
 def test_testbed_fixture_observer() -> None:
     for fix in Fixtures()["Observer"]:
+        print(f"selecting {fix['name']} - {fix['id']}")
         Observer(name=fix["name"])
         Observer(id=fix["id"])
 

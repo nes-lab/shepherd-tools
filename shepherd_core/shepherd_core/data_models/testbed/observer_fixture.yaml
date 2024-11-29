@@ -14,8 +14,8 @@
     latitude: 0
     cape:
       name: cape53
-    target_a:
-      name: nRF52_FRAM_018
+#    target_a:
+#      name: nRF52_FRAM_018
     created: 2022-12-12 12:12:12
     active: false
 - datatype: observer
@@ -24,13 +24,13 @@
     name: sheep01
     ip: 192.168.165.201
     mac: 18:62:E4:E4:41:8D
-    room: II70
-    eth_port: B22
-    description: mid-mid in room
+    room: II69
+    eth_port: B14
+    description: lower mid on east-side
     cape:
       name: cape51
     target_a:
-      name: nRF52_FRAM_001
+      name: nRF52_FRAM_1392_386
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -44,7 +44,7 @@
     cape:
       name: cape52
     target_a:
-      name: nRF52_FRAM_002
+      name: nRF52_FRAM_1392_378
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -57,9 +57,10 @@
     description: north-east-corner
     cape:
       name: cape63
-    target_a:
-      name: nRF52_FRAM_003
+#    target_a:
+#      name:
     created: 2023-09-22 12:12:12
+    active: false
 - datatype: observer
   parameters:
     id: 4
@@ -72,7 +73,7 @@
     cape:
       name: cape54
     target_a:
-      name: nRF52_FRAM_004
+      name: nRF52_FRAM_1392_395
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -86,7 +87,7 @@
     cape:
       name: cape55
     target_a:
-      name: nRF52_FRAM_011
+      name: nRF52_FRAM_1392_393
     target_b:
       name: target_nRF52_01  # ONLY VIRTUAL - for unittests
     created: 2023-09-22 12:12:12
@@ -102,7 +103,7 @@
     cape:
       name: cape56
     target_a:
-      name: nRF52_FRAM_017  # TODO: not validated
+      name: nRF52_FRAM_1392_396
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -116,7 +117,7 @@
     cape:
       name: cape57
     target_a:
-      name: nRF52_FRAM_008
+      name: nRF52_FRAM_1392_387
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -129,8 +130,8 @@
     description: north-east-corner
     cape:
       name: cape58
-    target_a:
-      name: nRF52_FRAM_016
+#    target_a:
+#      name:
     created: 2023-09-22 12:12:12
     active: false  # TODO: cape is broken for now
 - datatype: observer
@@ -145,7 +146,7 @@
     cape:
       name: cape65
     target_a:
-      name: nRF52_FRAM_009  # TODO: not validated
+      name: nRF52_FRAM_1392_385
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -159,7 +160,7 @@
     cape:
       name: cape59
     target_a:
-      name: nRF52_FRAM_010
+      name: nRF52_FRAM_1392_377
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -167,14 +168,15 @@
     name: sheep11
     ip: 192.168.165.211
     mac: 18:62:E4:E4:0E:5D
-    room: II69
-    eth_port: B14
-    description: lower mid on east-side
+    room: tbd
+    eth_port: tbd
+    description: tbd
     cape:
       name: cape61
-    target_a:
-      name: nRF52_FRAM_007
+#    target_a:
+#      name:
     created: 2023-09-22 12:12:12
+    active: false
 - datatype: observer
   parameters:
     id: 12
@@ -187,7 +189,7 @@
     cape:
       name: cape62
     target_a:
-      name: nRF52_FRAM_014
+      name: nRF52_FRAM_1392_384
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -202,7 +204,7 @@
     cape:
       name: cape60
     target_a:
-      name: nRF52_FRAM_005
+      name: nRF52_FRAM_1392_379
     created: 2023-09-22 12:12:12
 - datatype: observer
   parameters:
@@ -217,5 +219,5 @@
     cape:
       name: cape64
     target_a:
-      name: nRF52_FRAM_006
+      name: nRF52_FRAM_1392_390
     created: 2023-09-22 12:12:12

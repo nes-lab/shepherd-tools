@@ -37,7 +37,7 @@ if __name__ == "__main__":
         duration=8 * 60,
         target_configs=[
             TargetConfig(
-                target_IDs=list(range(1, 14)),
+                target_IDs=list(range(1, 12)),
                 custom_IDs=list(range(1, 32)),
                 # ⤷ note: traffic bench expects node 1 as root-node
                 energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),

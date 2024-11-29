@@ -14,13 +14,11 @@ from .target_config import TargetConfig
 
 __all__ = [
     "Experiment",
-    "TargetConfig",
-    # Features
-    "PowerTracing",
-    "GpioTracing",
     "GpioActuation",
     "GpioEvent",
-    "SystemLogging",
-    # Enums
     "GpioLevel",
+    "GpioTracing",
+    "PowerTracing",
+    "SystemLogging",
+    "TargetConfig",
 ]

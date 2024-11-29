@@ -1,0 +1,137 @@
+---
+# more human-readable test-protocol @
+# https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Target_pre-deployment-tests.xlsx
+- datatype: target
+  parameters:
+    id: 6  # Outer ID - selected by user for XP - can be rearranged
+    name: nRF52_FRAM_001  # inner ID - used to link all parts together
+    version: v1.0
+    description: nRF52 as MCU + Radio, MSP430FR as SPI-FRAM or additional MCU
+    comment: Test3 21nA sleep, msp-programming was flaky before -> monitor!
+    created: 2023-04-12
+    mcu1:
+      name: nRF52
+    mcu2:
+      name: MSP430FR
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 10
+    name: nRF52_FRAM_002
+    comment: Test3 21nA sleep
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 7
+    name: nRF52_FRAM_003
+    comment: Test3 21nA sleep
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 3
+    name: nRF52_FRAM_004
+    comment: Test3 21nA sleep
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 11
+    name: nRF52_FRAM_005
+    comment: Test3 21nA sleep, changed Antenna to lambda/4
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 12
+    name: nRF52_FRAM_006
+    comment: Test3 21nA sleep, changed Antenna to lambda/4
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 8
+    name: nRF52_FRAM_007
+    comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
+    mcu2: null
+    active: true
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 9
+    name: nRF52_FRAM_008
+    comment: msp-programming is failing -> defective, msp removed & changed Antenna to lambda/4
+    mcu2: null
+    active: true
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 5
+    name: nRF52_FRAM_009
+    comment: Test3 21nA sleep
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 2
+    name: nRF52_FRAM_010
+    comment: Test3 21nA sleep
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 1
+    name: nRF52_FRAM_011
+    comment: Test3 21nA sleep, changed Antenna to lambda/4
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 1312
+    name: nRF52_FRAM_012
+    comment: msp-programming is failing -> defective, Antenna-Port destroyed
+    active: false
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 1313
+    name: nRF52_FRAM_013
+    comment: Test3 15nA sleep, Test1 fails - several cleanings -> defective
+    active: false
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 4
+    name: nRF52_FRAM_014
+    comment: Test3 21nA sleep
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 1315
+    name: nRF52_FRAM_015
+    comment: Test3 19nA sleep, Test1 fails - several cleanings - gpio error on nrf-side -> defective
+    active: false
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 666
+    name: nRF52_FRAM_016
+    comment: Test3 21nA sleep
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 13
+    name: nRF52_FRAM_017
+    comment: Test3 21nA sleep, nrf was miss-aligned -> hot air rework
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_001
+    id: 18
+    name: nRF52_FRAM_018
+    comment: Test3 21nA sleep, nrf was miss-aligned -> hot air rework
+    description: LabPrototype
+
+- datatype: target
+  parameters:
+    id: 1001
+    name: target_nRF52_01
+    version: v2.1r0
+    description: single target PCB, v2.1r0
+    comment: ONLY VIRTUAL - NOT REAL
+    mcu1:
+      name: nRF52
+    mcu2: null
+    created: 2022-12-12 12:12:12

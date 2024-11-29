@@ -16,17 +16,15 @@ from .target import Target
 from .testbed import Testbed
 
 __all__ = [
-    "Testbed",
-    "Observer",
-    "Cape",
-    "Target",
-    "MCU",
     "GPIO",
-    # enums
-    "ProgrammerProtocol",
+    "MCU",
+    "Cape",
     "Direction",
-    "TargetPort",
-    # custom types
     "IdInt16",
     "MACStr",
+    "Observer",
+    "ProgrammerProtocol",
+    "Target",
+    "TargetPort",
+    "Testbed",
 ]

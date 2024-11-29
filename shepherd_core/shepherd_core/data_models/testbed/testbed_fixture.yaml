@@ -11,15 +11,15 @@
     observers:
       - name: sheep01
       - name: sheep02
-      - name: sheep03
+#      - name: sheep03
       - name: sheep04
       - name: sheep05
       - name: sheep06
       - name: sheep07
-      - name: sheep08
+#      - name: sheep08
       - name: sheep09
       - name: sheep10
-      - name: sheep11
+#      - name: sheep11
       - name: sheep12
       - name: sheep13
       - name: sheep14
