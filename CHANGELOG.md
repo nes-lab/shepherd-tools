@@ -5,7 +5,7 @@
 - Core.Reader can now determine voltage_step from source-file
 - HarvesterPRUConfig.from_vhrv() needs voltage_step IF input is IVCurve for emulation
   - same for init() of VirtualSourceModel
-  - this fixes a bug that could ruin emulations with ivcurves (#73)
+  - this fixes a bug that could ruin emulations with ivcurves (#72)
 
 ## v2024.11.2
 
