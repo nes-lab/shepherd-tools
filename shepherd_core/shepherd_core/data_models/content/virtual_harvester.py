@@ -239,6 +239,7 @@ class HarvesterPRUConfig(ShpModel):
         data: VirtualHarvesterConfig,
         dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
         window_size: Optional[u32] = None,
+        voltage_step_V: Optional[float] = None,
         *,
         for_emu: bool = False,
     ) -> Self:
@@ -247,17 +248,36 @@ class HarvesterPRUConfig(ShpModel):
         if for_emu and dtype_in not in {EnergyDType.ivsample, EnergyDType.ivcurve}:
             raise NotImplementedError
 
+        if for_emu and dtype_in == EnergyDType.ivcurve and voltage_step_V is None:
+            raise ValueError(
+                "For correct emulation specify voltage_step used by harvester "
+                "e.g. via file_src.get_voltage_step()"
+            )
+
+        if for_emu and dtype_in == EnergyDType.ivcurve and window_size is None:
+            raise ValueError(
+                "For correct emulation specify window_size used by harvester "
+                "e.g. via file_src.get_window_size()"
+            )
+
         interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)
+        window_size = (
+            window_size
+            if window_size is not None
+            else data.calc_window_size(dtype_in, for_emu=for_emu)
+        )
+        voltage_step_mV = (
+            1e3 * voltage_step_V if voltage_step_V is not None else data.voltage_step_mV
+        )
+
         return cls(
             algorithm=data.calc_algorithm_num(for_emu=for_emu),
             hrv_mode=data.calc_hrv_mode(for_emu=for_emu),
-            window_size=window_size
-            if window_size is not None
-            else data.calc_window_size(dtype_in, for_emu=for_emu),
+            window_size=window_size,
             voltage_uV=round(data.voltage_mV * 10**3),
             voltage_min_uV=round(data.voltage_min_mV * 10**3),
             voltage_max_uV=round(data.voltage_max_mV * 10**3),
-            voltage_step_uV=round(data.voltage_step_mV * 10**3),
+            voltage_step_uV=round(voltage_step_mV * 10**3),
             current_limit_nA=round(data.current_limit_uA * 10**3),
             setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
             interval_n=round(interval_ms * samplerate_sps_default * 1e-3),
