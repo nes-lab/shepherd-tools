@@ -31,6 +31,7 @@ class VirtualSourceModel:
         cal_emu: CalibrationEmulator,
         dtype_in: EnergyDType = EnergyDType.ivsample,
         window_size: Optional[int] = None,
+        voltage_step_V: Optional[float] = None,
         *,
         log_intermediate: bool = False,
     ) -> None:
@@ -50,6 +51,7 @@ class VirtualSourceModel:
             for_emu=True,
             dtype_in=dtype_in,
             window_size=window_size,
+            voltage_step_V=voltage_step_V,
         )
 
         self.hrv: VirtualHarvesterModel = VirtualHarvesterModel(hrv_config)

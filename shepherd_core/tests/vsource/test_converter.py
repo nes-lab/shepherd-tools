@@ -26,6 +26,7 @@ def src_model(
     name: str,
     dtype_in: EnergyDType = EnergyDType.ivsample,
     window_size: Optional[int] = None,
+    voltage_step_V: Optional[float] = None,
 ) -> VirtualSourceModel:
     src_config = VirtualSourceConfig(name=name, V_intermediate_init_mV=2000)
     cal_emu = CalibrationEmulator()
@@ -35,6 +36,7 @@ def src_model(
         log_intermediate=False,
         dtype_in=dtype_in,
         window_size=window_size,
+        voltage_step_V=voltage_step_V,
     )
 
 
@@ -145,9 +147,12 @@ def test_vsource_vsrc_create_files(
 @pytest.mark.parametrize("src_name", src_list)
 def test_vsource_vsrc_sim_curve(src_name: str, file_ivcurve: Path) -> None:
     with Reader(file_ivcurve) as file:
-        window_size = file.get_window_samples()
-        dtype = file.get_datatype()
-        src = src_model("BQ25504s", dtype_in=dtype, window_size=window_size)
+        src = src_model(
+            "BQ25504s",
+            dtype_in=file.get_datatype(),
+            window_size=file.get_window_samples(),
+            voltage_step_V=file.get_voltage_step(),
+        )
         for _t, _v, _i in file.read_buffers():
             length = max(_v.size, _i.size)
             for _n in range(length):
@@ -157,9 +162,12 @@ def test_vsource_vsrc_sim_curve(src_name: str, file_ivcurve: Path) -> None:
 @pytest.mark.parametrize("src_name", src_list)
 def test_vsource_vsrc_sim_sample(src_name: str, file_ivsample: Path) -> None:
     with Reader(file_ivsample) as file:
-        window_size = file.get_window_samples()
-        dtype = file.get_datatype()
-        src = src_model("BQ25504s", dtype_in=dtype, window_size=window_size)
+        src = src_model(
+            "BQ25504s",
+            dtype_in=file.get_datatype(),
+            window_size=file.get_window_samples(),
+            voltage_step_V=file.get_voltage_step(),
+        )
         for _t, _v, _i in file.read_buffers():
             length = max(_v.size, _i.size)
             for _n in range(length):

@@ -39,7 +39,13 @@ def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
     # the first algos are not usable for ivcurve
     hrv_config = VirtualHarvesterConfig(name=hrv_name)
     with pytest.raises(ValueError):  # noqa: PT011
-        _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in=EnergyDType.ivcurve)
+        _ = HarvesterPRUConfig.from_vhrv(
+            hrv_config,
+            for_emu=True,
+            dtype_in=EnergyDType.ivcurve,
+            window_size=100,
+            voltage_step_V=0.1,
+        )
 
 
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])
@@ -51,6 +57,7 @@ def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
             for_emu=True,
             dtype_in=file.get_datatype(),
             window_size=file.get_window_samples(),
+            voltage_step_V=file.get_voltage_step(),
         )
         hrv = VirtualHarvesterModel(hrv_pru)
         for _t, _v, _i in file.read_buffers():
@@ -71,3 +78,26 @@ def test_vsource_hrv_fail_unknown_type() -> None:
     hrv_config = VirtualHarvesterConfig(name="mppt_voc")
     with pytest.raises(KeyError):
         _ = HarvesterPRUConfig.from_vhrv(hrv_config, for_emu=True, dtype_in="xyz")
+
+
+def test_vsource_hrv_adapt_voltage_step() -> None:
+    hrv_config = VirtualHarvesterConfig(name="mppt_bq")
+    # first case without setting step-size
+    pru_config1 = HarvesterPRUConfig.from_vhrv(
+        hrv_config,
+        for_emu=True,
+        dtype_in=EnergyDType.ivcurve,
+        window_size=1000,
+        voltage_step_V=1e-3 * hrv_config.voltage_step_mV,
+    )
+    step_expected_uV = (pru_config1.voltage_max_uV - pru_config1.voltage_min_uV) / (1000 - 1)
+    assert pru_config1.voltage_step_uV > 2 * step_expected_uV
+    # now it gets set
+    pru_config2 = HarvesterPRUConfig.from_vhrv(
+        hrv_config,
+        for_emu=True,
+        dtype_in=EnergyDType.ivcurve,
+        window_size=1000,
+        voltage_step_V=1e-6 * step_expected_uV,
+    )
+    assert pru_config2.voltage_step_uV < 2 * step_expected_uV

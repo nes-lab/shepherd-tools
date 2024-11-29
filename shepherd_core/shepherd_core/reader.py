@@ -270,6 +270,26 @@ class Reader:
         else:
             return None
 
+    def get_voltage_step(self) -> Optional[float]:
+        """Informs about the voltage step (in volts) used during harvesting the ivcurve.
+
+        Options for figuring out the real step:
+        - look into config (if available)
+        - analyze recorded data for most often used delta
+        - calculate with 'steps_n * (1 + wait_cycles)' (done for calculating window_size)
+        """
+        voltage_step: Optional[float] = (
+            self.get_config().get("virtual_harvester", {}).get("voltage_step_mV", None)
+        )
+        if voltage_step is None:
+            dsv = self.ds_voltage[0:2000]
+            diffs_np = np.unique(dsv[1:] - dsv[0:-1], return_counts=False)
+            diffs_ls = [_e for _e in list(np.array(diffs_np)) if _e > 0]
+            voltage_step = min(diffs_ls)
+        if voltage_step is not None:
+            voltage_step = 1e-3 * voltage_step
+        return voltage_step
+
     def get_hrv_config(self) -> dict:
         """Essential info for harvester.
 
@@ -278,6 +298,7 @@ class Reader:
         return {
             "datatype": self.get_datatype(),
             "window_samples": self.get_window_samples(),
+            "voltage_step_V": self.get_voltage_step(),
         }
 
     def is_valid(self) -> bool:
