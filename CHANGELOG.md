@@ -1,5 +1,10 @@
 # History of Changes
 
+## v2024.11.2
+
+- adapt fixtures to recent testbed-restructure
+- update tooling
+
 ## v2024.11.1
 
 - CLI
