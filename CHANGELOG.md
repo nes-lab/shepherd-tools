@@ -1,5 +1,10 @@
 # History of Changes
 
+## v2025.02.1
+
+- Core.Reader bugfix to properly detect `None` voltage steps in artificial static energy-environments (mainly relevant for emulation on sheep)
+- update deps
+
 ## v2024.11.3
 
 - Core.Reader can now determine voltage_step from source-file
@@ -271,6 +276,8 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 # 12.3 s on v2024.8.2, pydantic 2.8.2, core 2.20.1
 # 11.7 s on v2024.8.2, pydantic 2.9.0, core 2.23.2
 # 18.7 s on v2024.9.1, pydantic 2.9.2, core 2.23.4 - python 3.13 via uv
+# 12.2 s on v2024.11.3, pydantic 2.10.6, core 2.27.2
+#  8.9 s on v2024.11.3, pydantic 2.11.0a1, core 2.28.0
 ```
 
 ## v2023.08.6
