@@ -278,7 +278,7 @@ class Reader(CoreReader):
             )
         if ((end_sample - start_sample) / ds_factor) < 1000:
             raise ValueError(
-                "Cut & downsample for %s failed because " "resulting sample-size is too small",
+                "Cut & downsample for %s failed because resulting sample-size is too small",
                 self.file_path.name,
             )
 

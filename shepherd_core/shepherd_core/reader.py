@@ -172,7 +172,10 @@ class Reader:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
         sample_count = self.ds_time.shape[0]
-        duration_raw = self.ds_time[sample_count - 1] - self.ds_time[0] if sample_count > 0 else 0
+        duration_raw = (
+            (int(self.ds_time[sample_count - 1]) - int(self.ds_time[0])) if sample_count > 0 else 0
+        )
+        # above's typecasting prevents overflow in u64-format
         if (sample_count > 0) and (duration_raw > 0):
             # this assumes iso-chronous sampling
             duration_s = self._cal.time.raw_to_si(duration_raw)
@@ -285,6 +288,9 @@ class Reader:
             dsv = self.ds_voltage[0:2000]
             diffs_np = np.unique(dsv[1:] - dsv[0:-1], return_counts=False)
             diffs_ls = [_e for _e in list(np.array(diffs_np)) if _e > 0]
+            # static voltages have 0 steps, so
+            if len(diffs_ls) == 0:
+                return None  # or is 0 better? that may provoke div0
             voltage_step = min(diffs_ls)
         if voltage_step is not None:
             voltage_step = 1e-3 * voltage_step

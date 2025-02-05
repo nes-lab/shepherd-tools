@@ -93,7 +93,7 @@ class SystemInventory(ShpModel):
             reply = subprocess.run(  # noqa: S603
                 ptp_cmd, timeout=30, capture_output=True, check=False
             )
-            ptp_out = f"{ reply.stdout }, { reply.stderr }"
+            ptp_out = f"{reply.stdout}, {reply.stderr}"
             # alternative: check_output - seems to be lighter
 
         model_dict = {

@@ -36,7 +36,7 @@ class WebClient(AbcClient):
         super().__init__()
         if not hasattr(self, "_token"):
             # add default values
-            self._token: str = "basic_public_access"
+            self._token: str = "basic_public_access"  # noqa: S105
             self._server: str = testbed_server_default
             self._user: Optional[User] = None
             self._key: Optional[str] = None

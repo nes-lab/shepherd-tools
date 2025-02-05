@@ -59,8 +59,7 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
     if shp_wrap.datatype == TestbedTasks.__name__:
         if observer is None:
             logger.debug(
-                "Task-Set contained TestbedTasks & no observer was provided "
-                "-> will return TB-Tasks"
+                "Task-Set contained TestbedTasks & no observer was provided -> will return TB-Tasks"
             )
             return shp_wrap
         tbt = TestbedTasks(**shp_wrap.parameters)
