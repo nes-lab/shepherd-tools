@@ -87,7 +87,7 @@ coverage report
 ## Release-Procedure
 
 - if models were changed run all scripts in `/extra` to update pseudo-database
-- increase version number by executing ``bump2version``
+- increase version number by executing ``bump2version`` (see cmds below)
 - install and run ``pre-commit`` for QA-Checks, see steps below
 - run unittests from both packages locally
   - additionally every commit gets automatically tested by GitHub workflows
@@ -101,7 +101,7 @@ coverage report
 ```shell
 pipenv shell
 
-bump2version --allow-dirty --new-version 2024.11.3 patch
+bump2version --allow-dirty --new-version 2025.02.1 patch
 # ⤷ format: year.month.patch_release
 
 pre-commit run --all-files
