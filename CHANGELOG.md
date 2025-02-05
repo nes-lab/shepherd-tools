@@ -2,7 +2,9 @@
 
 ## v2025.02.1
 
-- Core.Reader bugfix to properly detect `None` voltage steps in artificial static energy-environments (mainly relevant for emulation on sheep)
+- Core.Reader
+  - bugfix to properly detect `None` voltage steps in artificial static energy-environments (mainly relevant for emulation on sheep)
+  - added typecasting to prevent overflow in u64-format while calculating file-duration in ._refresh_file_stats() (relevant for non-valid test-data)
 - update deps
 
 ## v2024.11.3

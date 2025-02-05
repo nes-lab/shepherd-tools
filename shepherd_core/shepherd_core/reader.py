@@ -172,7 +172,10 @@ class Reader:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
         sample_count = self.ds_time.shape[0]
-        duration_raw = self.ds_time[sample_count - 1] - self.ds_time[0] if sample_count > 0 else 0
+        duration_raw = (
+            (int(self.ds_time[sample_count - 1]) - int(self.ds_time[0])) if sample_count > 0 else 0
+        )
+        # above's typecasting prevents overflow in u64-format
         if (sample_count > 0) and (duration_raw > 0):
             # this assumes iso-chronous sampling
             duration_s = self._cal.time.raw_to_si(duration_raw)
