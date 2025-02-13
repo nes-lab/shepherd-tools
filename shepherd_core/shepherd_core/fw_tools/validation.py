@@ -66,16 +66,14 @@ def is_hex_nrf52(file: Path) -> bool:
     """Try to detect specifics for that MCU.
 
     Observations:
-    - addresses begin at 0x0
+    - addresses begin mostly at 0x0 (no must)
     - only one segment (.get_segments), todo
     """
     if is_hex(file):
         ih = IntelHex(file.as_posix())
-        if ih.minaddr() != 0x0000:
-            return False
-
-        # conservative test for now - should be well below 1 MB + 256 kB
-        return ih.get_memory_size() < 1310720
+        # conservative test for now - should be between 0 and 1 MB + 256 kB,
+        # but lately showed much higher values > 4 MB
+        return ih.get_memory_size() > 0
     return False
 
 
@@ -145,15 +143,15 @@ def determine_arch(file: Path) -> str:
     """Figure out arch (msp430 or nrf52)."""
     file_t = determine_type(file)
     if file_t == FirmwareDType.path_elf:
-        if is_elf_nrf52(file):
-            return "nrf52"
         if is_elf_msp430(file):
             return "msp430"
+        if is_elf_nrf52(file):
+            return "nrf52"
         raise ValueError("Arch of ELF '%s' could not be determined", file.name)
     if file_t == FirmwareDType.path_hex:
-        if is_hex_nrf52(file):
-            return "nrf52"
         if is_hex_msp430(file):
             return "msp430"
+        if is_hex_nrf52(file):
+            return "nrf52"
         raise ValueError("Arch of HEX '%s' could not be determined", file.name)
     raise ValueError("Arch of file '%s' could not be determined", file.name)
