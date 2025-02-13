@@ -143,15 +143,15 @@ def determine_arch(file: Path) -> str:
     """Figure out arch (msp430 or nrf52)."""
     file_t = determine_type(file)
     if file_t == FirmwareDType.path_elf:
-        if is_elf_nrf52(file):
-            return "nrf52"
         if is_elf_msp430(file):
             return "msp430"
+        if is_elf_nrf52(file):
+            return "nrf52"
         raise ValueError("Arch of ELF '%s' could not be determined", file.name)
     if file_t == FirmwareDType.path_hex:
-        if is_hex_nrf52(file):
-            return "nrf52"
         if is_hex_msp430(file):
             return "msp430"
+        if is_hex_nrf52(file):
+            return "nrf52"
         raise ValueError("Arch of HEX '%s' could not be determined", file.name)
     raise ValueError("Arch of file '%s' could not be determined", file.name)
