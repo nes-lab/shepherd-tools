@@ -127,8 +127,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
             arch = fw_tools.read_arch(file)
             if "msp430" in arch and not fw_tools.is_elf_msp430(file):
                 raise ValueError("File is not a ELF for msp430")
-            if "nrf52" in arch and not fw_tools.is_elf_nrf52(file):
+            elif ("nrf52" in arch or "arm" in arch) and not fw_tools.is_elf_nrf52(file):
                 raise ValueError("File is not a ELF for nRF52")
+            logger.debug("ELF-File '%s' has arch: %s", file.name, arch)
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
 
