@@ -31,7 +31,7 @@ class ProgrammingTask(ShpModel):
     mcu_type: SafeStr
     # ⤷ must be either "nrf52" or "msp430" ATM, TODO: clean xp to tasks
     voltage: Annotated[float, Field(ge=1, lt=5)] = 3
-    datarate: Annotated[int, Field(gt=0, le=1_000_000)] = 500_000
+    datarate: Annotated[int, Field(gt=0, le=1_000_000)] = 200_000
     protocol: ProgrammerProtocol
 
     simulate: bool = False
