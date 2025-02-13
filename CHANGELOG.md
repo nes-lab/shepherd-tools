@@ -4,7 +4,6 @@
 
 - task programmer - reduce data rate
 - firmware verification - properly detect ARM as nRF52 and reduce rejection-rate of hex-detector for nRF52
-- 
 
 ## v2025.02.1
 
