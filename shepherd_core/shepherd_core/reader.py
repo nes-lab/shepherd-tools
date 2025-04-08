@@ -194,6 +194,7 @@ class Reader:
         self,
         start_n: int = 0,
         end_n: Optional[int] = None,
+        n_samples_per_buffer: Optional[int] = None,
         *,
         is_raw: bool = False,
         omit_ts: bool = False,
@@ -213,15 +214,20 @@ class Reader:
         Yields: Buffers between start and end (tuple with time, voltage, current)
 
         """
+        if n_samples_per_buffer is None:
+            n_samples_per_buffer = self.samples_per_buffer
+        end_max = int(self.ds_voltage.shape[0] // n_samples_per_buffer)
         if end_n is None:
-            end_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
+            end_n = end_max
+        else:
+            end_n = min(end_n, end_max)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
         _raw = is_raw
         _wts = not omit_ts
 
         for i in range(start_n, end_n):
-            idx_start = i * self.samples_per_buffer
-            idx_end = idx_start + self.samples_per_buffer
+            idx_start = i * n_samples_per_buffer
+            idx_end = idx_start + n_samples_per_buffer
             if _raw:
                 yield (
                     self.ds_time[idx_start:idx_end] if _wts else None,
