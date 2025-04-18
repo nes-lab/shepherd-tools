@@ -216,10 +216,7 @@ class Reader:
         if n_samples_per_buffer is None:
             n_samples_per_buffer = self.samples_per_buffer
         end_max = int(self.ds_voltage.shape[0] // n_samples_per_buffer)
-        if end_n is None:
-            end_n = end_max
-        else:
-            end_n = min(end_n, end_max)
+        end_n = end_max if end_n is None else min(end_n, end_max)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
         _raw = is_raw
         _wts = not omit_ts

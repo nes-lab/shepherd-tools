@@ -5,7 +5,6 @@
 - it assumes sub-dirs in the same dir with ./build.elf in it
 """
 
-import os
 import shutil
 from io import BytesIO
 from pathlib import Path
@@ -46,7 +45,7 @@ if __name__ == "__main__":
 
         for _fw, _descr in metadata.items():
             path_sub = path_fw / _fw
-            files_elf = [each for each in os.listdir(path_sub) if each.endswith(".elf")]
+            files_elf = [each for each in path_sub.iterdir() if each.endswith(".elf")]
 
             if len(files_elf) > 1:
                 logger.warning("More than one .ELF in directory -> will use first of %s", files_elf)
@@ -70,7 +69,7 @@ if __name__ == "__main__":
             # debug-part below
             sizeof: Dict[str, int] = {}
             sizeof["elf"] = path_elf.stat().st_size
-            files_hex = [each for each in os.listdir(path_sub) if each.endswith(".hex")]
+            files_hex = [each for each in path_sub.iterdir() if each.endswith(".hex")]
             if files_hex:
                 sizeof["hex"] = (path_sub / files_hex[0]).stat().st_size
             file_temp = path_here / "temp" / "demo_fw.yaml"

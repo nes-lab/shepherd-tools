@@ -8,19 +8,17 @@ CLI-Version of this is:
 shepherd-data extract-meta file_or_dir
 """
 
-import os
 from pathlib import Path
 
 import shepherd_data as shp
 
 if __name__ == "__main__":
-    flist = os.listdir("./")
-    for file in flist:
-        fpath = Path(file)
-        if not fpath.is_file() or fpath.suffix != ".h5":
+    path_here = Path(__file__).parent
+    for file in path_here.glob("*.h5", case_sensitive=False):
+        if not file.is_file():
             continue
 
-        with shp.Reader(fpath, verbose=False) as fh:
+        with shp.Reader(file, verbose=False) as fh:
             fh.save_metadata()
 
             if "sysutil" in fh.h5file:
@@ -30,12 +28,15 @@ if __name__ == "__main__":
                 ds_cpu = fh["sysutil"]["cpu"]
 
                 print(
-                    f"{file} \t-> {fh['mode']}, "
+                    f"{file.name} \t-> {fh['mode']}, "
                     f"{ds_cpu.attrs['description']} = {round(ds_cpu[:].mean(), 2)}, "
                     f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
                 )
             else:
-                print(f"{file} \t-> {fh['mode']}, data-rate = {round(fh.data_rate / 2**10)} KiB/s")
+                print(
+                    f"{file.name} \t-> {fh['mode']}, "
+                    f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
+                )
 
             if "timesync" in fh.h5file:
                 fh.save_csv(fh["timesync"])
