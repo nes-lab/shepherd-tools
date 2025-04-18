@@ -2,11 +2,11 @@
 
 import hashlib
 import pathlib
+from collections.abc import Generator
 from datetime import timedelta
 from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Any
-from typing import Generator
 from typing import Optional
 from typing import Union
 from uuid import UUID

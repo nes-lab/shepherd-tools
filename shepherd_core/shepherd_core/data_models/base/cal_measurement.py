@@ -1,13 +1,12 @@
 """Models for the process of calibration a device by measurements."""
 
-from typing import List
+from typing import Annotated
 from typing import Optional
 
 import numpy as np
 from pydantic import Field
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from typing_extensions import Annotated
 
 from .calibration import CalibrationCape
 from .calibration import CalibrationEmulator
@@ -24,7 +23,7 @@ class CalMeasurementPair(ShpModel):
     reference_si: float = 0
 
 
-CalMeasPairs = Annotated[List[CalMeasurementPair], Field(min_length=2)]
+CalMeasPairs = Annotated[list[CalMeasurementPair], Field(min_length=2)]
 
 
 @validate_call

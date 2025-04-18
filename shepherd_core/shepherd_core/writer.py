@@ -3,14 +3,13 @@
 import logging
 import math
 import pathlib
+from collections.abc import Mapping
 from datetime import timedelta
 from itertools import product
 from pathlib import Path
 from types import TracebackType
 from typing import Any
-from typing import Mapping
 from typing import Optional
-from typing import Type
 from typing import Union
 
 import h5py
@@ -212,7 +211,7 @@ class Writer(Reader):
 
     def __exit__(
         self,
-        typ: Optional[Type[BaseException]] = None,
+        typ: Optional[type[BaseException]] = None,
         exc: Optional[BaseException] = None,
         tb: Optional[TracebackType] = None,
         extra_arg: int = 0,

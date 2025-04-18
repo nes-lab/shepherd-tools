@@ -2,7 +2,6 @@
 
 from importlib import import_module
 from pathlib import Path
-from typing import List
 from typing import Optional
 from typing import Union
 
@@ -57,10 +56,10 @@ class WebClient(AbcClient):
         r.raise_for_status()
         return True
 
-    def query_ids(self, model_type: str) -> List[int]:
+    def query_ids(self, model_type: str) -> list[int]:
         raise NotImplementedError("TODO")
 
-    def query_names(self, model_type: str) -> List[str]:
+    def query_names(self, model_type: str) -> list[str]:
         raise NotImplementedError("TODO")
 
     def query_item(

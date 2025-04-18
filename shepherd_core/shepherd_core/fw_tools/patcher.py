@@ -1,11 +1,11 @@
 """Read and modify symbols in ELF-files."""
 
 from pathlib import Path
+from typing import Annotated
 from typing import Optional
 
 from pydantic import Field
 from pydantic import validate_call
-from typing_extensions import Annotated
 
 from ..commons import uid_len_default
 from ..commons import uid_str_default
