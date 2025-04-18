@@ -241,6 +241,7 @@ def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
                             log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
                             # TODO: allow to skip Timestamp and export raw text
                             log_file.write(f"\t{str.encode(line[1])}")
+                            # TODO: does this produce "\tb'abc'"?
                             log_file.write("\n")
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")

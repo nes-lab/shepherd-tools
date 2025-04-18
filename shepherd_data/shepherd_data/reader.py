@@ -227,7 +227,7 @@ class Reader(CoreReader):
         for _iter in trange(
             0,
             iterations,
-            desc=f"downsampling {data_src.name}",
+            desc=f"downsampling {data_src.name if isinstance(data_src, h5py.Dataset) else ''}",
             leave=False,
             disable=iterations < 8,
         ):
@@ -247,7 +247,7 @@ class Reader(CoreReader):
         self,
         start_s: Optional[float],
         end_s: Optional[float],
-        ds_factor: Optional[float],
+        ds_factor: float,
     ) -> Path:
         """Cut source to given limits, downsample by factor and store result in separate file.
 
@@ -295,10 +295,7 @@ class Reader(CoreReader):
         else:
             cut_str = ""
 
-        if ds_factor > 1:  # noqa: SIM108
-            ds_str = f".downsample_x{round(ds_factor)}"
-        else:
-            ds_str = ""
+        ds_str = f".downsample_x{round(ds_factor)}" if ds_factor > 1 else ""
 
         dst_file = self.file_path.resolve().with_suffix(cut_str + ds_str + ".h5")
         if dst_file.exists():
@@ -408,7 +405,7 @@ class Reader(CoreReader):
             for _ in trange(
                 0,
                 iterations,
-                desc=f"resampling {data_src.name}",
+                desc=f"resampling {data_src.name if isinstance(data_src, h5py.Dataset) else ''}",
                 leave=False,
                 disable=iterations < 8,
             ):
