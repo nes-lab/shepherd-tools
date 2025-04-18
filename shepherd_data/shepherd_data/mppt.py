@@ -3,6 +3,9 @@
 Might be exchanged by shepherds py-model of pru-harvesters.
 """
 
+from abc import ABC
+from abc import abstractmethod
+
 import numpy as np
 import pandas as pd
 
@@ -36,7 +39,7 @@ def find_oc(v_arr: np.ndarray, i_arr: np.ndarray, ratio: float = 0.05) -> np.nda
     return v_arr[np.argmax(i_arr < i_arr[0] * ratio)]
 
 
-class MPPTracker:
+class MPPTracker(ABC):
     """Prototype for a MPPT-class.
 
     :param v_max: Maximum voltage supported by shepherd
@@ -48,6 +51,7 @@ class MPPTracker:
         self.v_max: float = v_max
         self.v_proto: np.ndarray = np.linspace(0, v_max, pts_per_curve)
 
+    @abstractmethod
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
         """Apply harvesting model to input data.
 
