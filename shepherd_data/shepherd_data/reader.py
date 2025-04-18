@@ -4,7 +4,10 @@ import math
 from datetime import datetime
 from pathlib import Path
 from typing import Dict
+from typing import List
+from typing import Mapping
 from typing import Optional
+from typing import Sequence
 from typing import Union
 
 import h5py
@@ -56,21 +59,25 @@ class Reader(CoreReader):
         if csv_path.exists():
             self._logger.info("File already exists, will skip '%s'", csv_path.name)
             return 0
-        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group]
+        datasets: List[str] = [
+            str(key) for key in h5_group if isinstance(h5_group[key], h5py.Dataset)
+        ]
         datasets.remove("time")
         datasets = ["time", *datasets]
         separator = separator.strip().ljust(2)
-        header = [h5_group[key].attrs["description"].replace(", ", separator) for key in datasets]
-        header = separator.join(header)
+        header_elements: List[str] = [
+            str(h5_group[key].attrs["description"]).replace(", ", separator) for key in datasets
+        ]
+        header: str = separator.join(header_elements)
         with csv_path.open("w", encoding="utf-8-sig") as csv_file:
             self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
             csv_file.write(header + "\n")
             ts_gain = h5_group["time"].attrs.get("gain", 1e-9)
             # for converting data to si - if raw=false
-            gains: dict[str, float] = {
+            gains: Dict[str, float] = {
                 key: h5_group[key].attrs.get("gain", 1.0) for key in datasets[1:]
             }
-            offsets: dict[str, float] = {
+            offsets: Dict[str, float] = {
                 key: h5_group[key].attrs.get("offset", 1.0) for key in datasets[1:]
             }
             for idx, time_ns in enumerate(h5_group["time"][:]):
@@ -222,7 +229,7 @@ class Reader(CoreReader):
         for _iter in trange(
             0,
             iterations,
-            desc=f"downsampling {data_src.name}",
+            desc=f"downsampling {data_src.name if isinstance(data_src, h5py.Dataset) else ''}",
             leave=False,
             disable=iterations < 8,
         ):
@@ -242,7 +249,7 @@ class Reader(CoreReader):
         self,
         start_s: Optional[float],
         end_s: Optional[float],
-        ds_factor: Optional[float],
+        ds_factor: float,
     ) -> Path:
         """Cut source to given limits, downsample by factor and store result in separate file.
 
@@ -290,10 +297,7 @@ class Reader(CoreReader):
         else:
             cut_str = ""
 
-        if ds_factor > 1:  # noqa: SIM108
-            ds_str = f".downsample_x{round(ds_factor)}"
-        else:
-            ds_str = ""
+        ds_str = f".downsample_x{round(ds_factor)}" if ds_factor > 1 else ""
 
         dst_file = self.file_path.resolve().with_suffix(cut_str + ds_str + ".h5")
         if dst_file.exists():
@@ -403,7 +407,7 @@ class Reader(CoreReader):
             for _ in trange(
                 0,
                 iterations,
-                desc=f"resampling {data_src.name}",
+                desc=f"resampling {data_src.name if isinstance(data_src, h5py.Dataset) else ''}",
                 leave=False,
                 disable=iterations < 8,
             ):
@@ -506,7 +510,7 @@ class Reader(CoreReader):
 
     @staticmethod
     def assemble_plot(
-        data: Union[dict, list], width: int = 20, height: int = 10, *, only_pwr: bool = False
+        data: Union[Mapping, Sequence], width: int = 20, height: int = 10, *, only_pwr: bool = False
     ) -> plt.Figure:
         """Create the actual figure.
 
@@ -520,7 +524,7 @@ class Reader(CoreReader):
         :return: figure
         """
         # TODO: allow choosing freely from I, V, P, GPIO
-        if isinstance(data, dict):
+        if isinstance(data, Mapping):
             data = [data]
         if only_pwr:
             fig, ax = plt.subplots(1, 1, figsize=(width, height), layout="tight")

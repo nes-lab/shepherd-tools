@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from datetime import timedelta
+from typing import Iterable
 from typing import List
 from typing import Optional
 from typing import Union
@@ -68,7 +69,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         return self
 
     @staticmethod
-    def _validate_targets(configs: List[TargetConfig]) -> None:
+    def _validate_targets(configs: Iterable[TargetConfig]) -> None:
         target_ids = []
         custom_ids = []
         for _config in configs:
@@ -86,7 +87,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             raise ValueError("Custom Target-ID are faulty (some form of id-collisions)!")
 
     @staticmethod
-    def _validate_observers(configs: List[TargetConfig], testbed: Testbed) -> None:
+    def _validate_observers(configs: Iterable[TargetConfig], testbed: Testbed) -> None:
         target_ids = [_id for _config in configs for _id in _config.target_IDs]
         obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
         if len(target_ids) > len(set(obs_ids)):

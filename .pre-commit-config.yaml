@@ -59,7 +59,7 @@ repos:
 #      - shepherd-data[dev,test]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.9.6'
+    rev: 'v0.11.6'
     hooks:
       - id: ruff-format
       - id: ruff
@@ -87,7 +87,7 @@ repos:
         args: ["--disable", "MD013"] # ignore line length
 
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.23
+    rev: v0.24.1
     hooks:
       - id: validate-pyproject
 

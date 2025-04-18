@@ -13,7 +13,6 @@ from shepherd_core.data_models import Wrapper
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.logger import logger
-from shepherd_core.testbed_client.fixtures import get_files
 
 
 def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
@@ -42,7 +41,8 @@ if __name__ == "__main__":
     if not path_content.exists():
         path_content.mkdir(parents=True)
 
-    files = get_files(path_content, ".yaml")
+    files = list(path_content.glob("**/*.yaml"))  # for py>=3.12: case_sensitive=False
+    logger.debug(" -> got %s YAML-files", len(files))
     fixtures = []
 
     for file in files:

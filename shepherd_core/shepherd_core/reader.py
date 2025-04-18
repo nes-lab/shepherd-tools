@@ -194,6 +194,7 @@ class Reader:
         self,
         start_n: int = 0,
         end_n: Optional[int] = None,
+        n_samples_per_buffer: Optional[int] = None,
         *,
         is_raw: bool = False,
         omit_ts: bool = False,
@@ -201,27 +202,28 @@ class Reader:
         """Read the specified range of buffers from the hdf5 file.
 
         Generator - can be configured on first call
-        TODO: reconstruct - start/end mark samples &
-         each call can request a certain number of samples.
 
         Args:
         ----
             :param start_n: (int) Index of first buffer to be read
             :param end_n: (int) Index of last buffer to be read
+            :param n_samples_per_buffer: (int) allows changing
             :param is_raw: (bool) output original data, not transformed to SI-Units
             :param omit_ts: (bool) optimize reading if timestamp is never used
         Yields: Buffers between start and end (tuple with time, voltage, current)
 
         """
-        if end_n is None:
-            end_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
+        if n_samples_per_buffer is None:
+            n_samples_per_buffer = self.samples_per_buffer
+        end_max = int(self.ds_voltage.shape[0] // n_samples_per_buffer)
+        end_n = end_max if end_n is None else min(end_n, end_max)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
         _raw = is_raw
         _wts = not omit_ts
 
         for i in range(start_n, end_n):
-            idx_start = i * self.samples_per_buffer
-            idx_end = idx_start + self.samples_per_buffer
+            idx_start = i * n_samples_per_buffer
+            idx_end = idx_start + n_samples_per_buffer
             if _raw:
                 yield (
                     self.ds_time[idx_start:idx_end] if _wts else None,
@@ -673,7 +675,7 @@ class Reader:
         return data != data_1
 
     def gpio_to_waveforms(self, name: Optional[str] = None) -> dict:
-        waveforms: dict[str, np.ndarray] = {}
+        waveforms: Dict[str, np.ndarray] = {}
         if "gpio" not in self.h5file:
             return waveforms
 

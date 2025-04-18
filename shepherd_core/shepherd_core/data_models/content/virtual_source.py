@@ -346,7 +346,7 @@ class ConverterPRUConfig(ShpModel):
                 [min(255, round(256 * ival)) for ival in il] for il in data.LUT_input_efficiency
             ],
             LUT_out_inv_efficiency_n4=[
-                min((2**14), round((2**4) / value)) if (value > 0) else int(2**14)
+                min((2**14), round((2**4) / value)) if (value > 0) else (2**14)
                 for value in data.LUT_output_efficiency
             ],
         )

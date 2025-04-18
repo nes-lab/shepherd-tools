@@ -3,7 +3,9 @@
 import struct
 from typing import Callable
 from typing import Generator
+from typing import Mapping
 from typing import Optional
+from typing import Sequence
 from typing import TypeVar
 from typing import Union
 
@@ -26,18 +28,18 @@ Calc_t = TypeVar("Calc_t", NDArray[np.float64], float)
 
 
 def dict_generator(
-    in_dict: Union[dict, list], pre: Optional[list] = None
+    in_dict: Union[Mapping, Sequence], pre: Optional[list] = None
 ) -> Generator[list, None, None]:
     """Recursive helper-function to generate a 1D-List(or not?).
 
     TODO: isn't that a 1D-List generator?
     """
     pre = pre[:] if pre else []
-    if isinstance(in_dict, dict):
+    if isinstance(in_dict, Mapping):
         for key, value in in_dict.items():
-            if isinstance(value, dict):
+            if isinstance(value, Mapping):
                 yield from dict_generator(value, [*pre, key])
-            elif isinstance(value, (list, tuple)):
+            elif isinstance(value, Sequence):
                 for v in value:
                     yield from dict_generator(v, [*pre, key])
             else:

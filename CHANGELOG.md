@@ -1,8 +1,21 @@
 # History of Changes
 
+## v2025.04.1
+
+- Core.Reader.read_buffers()
+  - safer access to data
+  - allow custom segmentation
+- avoid usage of os-package in favor of pathlib
+  - also transforms get_files() into one-liner
+- CLI commands that take h5-files can now search recursively if path is given
+- improve link visualizer script (draws nodes and links on map)
+- fix bugs discovered by mypy (and use clearer types)
+- generalize function-arguments if possible (dict -> Mapping, list -> Sequence or Iterable)
+- update deps
+
 ## v2025.02.2
 
-- task programmer - reduce data rate
+- task programmer - reduce default data rate
 - firmware verification - properly detect ARM as nRF52 and reduce rejection-rate of hex-detector for nRF52
 
 ## v2025.02.1
@@ -285,6 +298,7 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 # 18.7 s on v2024.9.1, pydantic 2.9.2, core 2.23.4 - python 3.13 via uv
 # 12.2 s on v2024.11.3, pydantic 2.10.6, core 2.27.2
 #  8.9 s on v2024.11.3, pydantic 2.11.0a1, core 2.28.0
+#  9.5 s on v2025.2.2, pydantic 2.11.1, core 2.33.0
 ```
 
 ## v2023.08.6

@@ -9,20 +9,18 @@ This script will:
    but makes the codes simpler for this edge-case (reading- and writing-handler for same file)
 """
 
-import os
 from pathlib import Path
 
 import shepherd_data as shp
 from shepherd_core.data_models import EnergyDType
 
 if __name__ == "__main__":
-    flist = os.listdir("./")
-    for file in flist:
-        fpath = Path(file)
-        if not fpath.is_file() or fpath.suffix.lower() != ".h5":
+    path_here = Path(__file__).parent
+    for file in path_here.glob("*.h5"):  # for py>=3.12: case_sensitive=False
+        if not file.is_file():
             continue
-        print(f"Analyzing '{fpath.name}' ...")
-        fh = shp.Reader(fpath, verbose=False)
+        print(f"Analyzing '{file.name}' ...")
+        fh = shp.Reader(file, verbose=False)
         elements = fh.get_metadata(minimal=True)
 
         # hard criteria to detect shepherd-recording (and sort out other hdf5-files)
@@ -42,19 +40,19 @@ if __name__ == "__main__":
                 size_new = (min(ds_volt_size, ds_size),)
                 print(" -> will bring datasets to equal size")
                 fh.__exit__()
-                with shp.Writer(fpath, modify_existing=True) as fw:
+                with shp.Writer(file, modify_existing=True) as fw:
                     fw.h5file["data"]["voltage"].resize(size_new)
                     fw.h5file["data"][dset].resize(size_new)
-                fh = shp.Reader(fpath, verbose=False)  # reopen file
+                fh = shp.Reader(file, verbose=False)  # reopen file
 
         # unaligned datasets
         remaining_size = fh.h5file["data"]["voltage"].shape[0] % shp.Reader.samples_per_buffer
         if remaining_size != 0:
             print(" -> will align datasets")
             fh.__exit__()
-            with shp.Writer(fpath, modify_existing=True) as fw:
+            with shp.Writer(file, modify_existing=True) as fw:
                 pass
-            fh = shp.Reader(fpath, verbose=False)
+            fh = shp.Reader(file, verbose=False)
 
         # invalid modes
         mode = fh.get_mode()
@@ -66,9 +64,9 @@ if __name__ == "__main__":
                 mode = "emulator"
             print(f" -> will set mode = {mode}")
             fh.__exit__()
-            with shp.Writer(fpath, mode=mode, modify_existing=True) as fw:
+            with shp.Writer(file, mode=mode, modify_existing=True) as fw:
                 pass
-            fh = shp.Reader(fpath, verbose=False)  # reopen file
+            fh = shp.Reader(file, verbose=False)  # reopen file
 
         # invalid datatype
         datatype = fh.get_datatype()
@@ -78,9 +76,9 @@ if __name__ == "__main__":
                 datatype = EnergyDType.ivcurve
             print(f" -> will set datatype = {datatype}")
             fh.__exit__()
-            with shp.Writer(fpath, datatype=datatype, modify_existing=True) as fw:
+            with shp.Writer(file, datatype=datatype, modify_existing=True) as fw:
                 pass
-            fh = shp.Reader(fpath, verbose=False)  # reopen file
+            fh = shp.Reader(file, verbose=False)  # reopen file
 
         # missing window_samples
         if "window_samples" not in fh.h5file["data"].attrs:
@@ -89,17 +87,17 @@ if __name__ == "__main__":
                 continue
             print(" -> will set window size = 0")
             fh.__exit__()
-            with shp.Writer(fpath, window_samples=0, modify_existing=True) as fw:
+            with shp.Writer(file, window_samples=0, modify_existing=True) as fw:
                 pass
-            fh = shp.Reader(fpath, verbose=False)  # reopen file
+            fh = shp.Reader(file, verbose=False)  # reopen file
 
         # missing hostname
         if "hostname" not in fh.h5file.attrs:
             print(" -> will set hostname = SheepX")
             fh.__exit__()
-            with shp.Writer(fpath, modify_existing=True) as fw:
+            with shp.Writer(file, modify_existing=True) as fw:
                 fw.store_hostname("SheepX")
-            fh = shp.Reader(fpath, verbose=False)  # reopen file
+            fh = shp.Reader(file, verbose=False)  # reopen file
 
         # close file for good
         fh.__exit__()

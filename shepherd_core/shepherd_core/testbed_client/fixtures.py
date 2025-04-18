@@ -1,14 +1,13 @@
 """Current implementation of a file-based database."""
 
 import copy
-import os
 import pickle
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
 from typing import Dict
-from typing import List
+from typing import Mapping
 from typing import Optional
 from typing import Union
 
@@ -144,7 +143,7 @@ class Fixture:
         return values, chain
 
     @staticmethod
-    def fill_model(model: dict, base: dict) -> dict:
+    def fill_model(model: Mapping, base: dict) -> dict:
         base = copy.copy(base)
         for key, value in model.items():
             # keep previous entries
@@ -201,7 +200,10 @@ class Fixtures:
             if self.file_path.is_file():
                 files = [self.file_path]
             elif self.file_path.is_dir():
-                files = get_files(self.file_path, self.suffix)
+                files = list(
+                    self.file_path.glob("**/*" + self.suffix)
+                )  # for py>=3.12: case_sensitive=False
+                logger.debug(" -> got %s %s-files", len(files), self.suffix)
             else:
                 raise ValueError("Path must either be file or directory (or empty)")
 
@@ -245,28 +247,3 @@ class Fixtures:
     def to_file(file: Path) -> None:
         msg = f"TODO (val={file})"
         raise NotImplementedError(msg)
-
-
-def get_files(start_path: Path, suffix: str, recursion_depth: int = 0) -> List[Path]:
-    """Generate a recursive list of all files in a directory."""
-    if recursion_depth == 0:
-        suffix = suffix.lower().split(".")[-1]
-    dir_items = os.scandir(start_path)
-    recursion_depth += 1
-    files = []
-
-    for item in dir_items:
-        if item.is_dir():
-            files += get_files(Path(item.path), suffix, recursion_depth)
-            continue
-
-        item_name = str(item.name).lower()
-        item_ext = item_name.split(".")[-1]
-        if item_ext == suffix and item_ext != item_name:
-            files.append(Path(item.path))
-        if not suffix and item_ext == item_name:
-            files.append(Path(item.path))
-
-    if recursion_depth == 1 and len(files) > 0:
-        logger.debug(" -> got %s files with the suffix '%s'", len(files), suffix)
-    return files
