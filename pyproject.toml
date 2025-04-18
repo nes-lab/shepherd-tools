@@ -4,6 +4,6 @@ include = [
     './shepherd_core/',
     './shepherd_data/',
 ]
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 pythonPlatform = "All"
 reportMissingParameterType = true
