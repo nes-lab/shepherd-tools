@@ -4,6 +4,8 @@
 
 - drop python 3.8 support
 - supported python is now 3.9 - 3.13
+- heavy changes in typesystem
+- pathlib now has .with_stem() to simplify code
 
 ## v2025.04.1
 
