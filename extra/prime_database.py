@@ -41,7 +41,7 @@ if __name__ == "__main__":
     if not path_content.exists():
         path_content.mkdir(parents=True)
 
-    files = list(path_content.glob("**/*.yaml", case_sensitive=False))
+    files = list(path_content.glob("**/*.yaml"))  # for py>=3.12: case_sensitive=False
     logger.debug(" -> got %s YAML-files", len(files))
     fixtures = []
 

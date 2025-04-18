@@ -34,7 +34,9 @@ def path_to_flist(data_path: Path, *, recurse: bool = False) -> List[Path]:
     if data_path.is_file() and data_path.suffix.lower() == ".h5":
         h5files.append(data_path)
     elif data_path.is_dir():
-        files = data_path.glob("**/*.h5" if recurse else "*.h5", case_sensitive=False)
+        files = data_path.glob(
+            "**/*.h5" if recurse else "*.h5"
+        )  # for py>=3.12: case_sensitive=False
         h5files = [file for file in files if file.is_file()]
     return h5files
 

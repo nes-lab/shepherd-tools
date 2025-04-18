@@ -14,7 +14,7 @@ import shepherd_data as shp
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent
-    for file in path_here.glob("*.h5", case_sensitive=False):
+    for file in path_here.glob("*.h5"):  # for py>=3.12: case_sensitive=False
         if not file.is_file():
             continue
 
