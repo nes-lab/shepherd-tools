@@ -4,6 +4,7 @@ import math
 from datetime import datetime
 from pathlib import Path
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Union
 
@@ -56,21 +57,25 @@ class Reader(CoreReader):
         if csv_path.exists():
             self._logger.info("File already exists, will skip '%s'", csv_path.name)
             return 0
-        datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group]
+        datasets: List[str] = [
+            str(key) for key in h5_group if isinstance(h5_group[key], h5py.Dataset)
+        ]
         datasets.remove("time")
         datasets = ["time", *datasets]
         separator = separator.strip().ljust(2)
-        header = [h5_group[key].attrs["description"].replace(", ", separator) for key in datasets]
-        header = separator.join(header)
+        header_elements: List[str] = [
+            str(h5_group[key].attrs["description"]).replace(", ", separator) for key in datasets
+        ]
+        header: str = separator.join(header_elements)
         with csv_path.open("w", encoding="utf-8-sig") as csv_file:
             self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
             csv_file.write(header + "\n")
             ts_gain = h5_group["time"].attrs.get("gain", 1e-9)
             # for converting data to si - if raw=false
-            gains: dict[str, float] = {
+            gains: Dict[str, float] = {
                 key: h5_group[key].attrs.get("gain", 1.0) for key in datasets[1:]
             }
-            offsets: dict[str, float] = {
+            offsets: Dict[str, float] = {
                 key: h5_group[key].attrs.get("offset", 1.0) for key in datasets[1:]
             }
             for idx, time_ns in enumerate(h5_group["time"][:]):
