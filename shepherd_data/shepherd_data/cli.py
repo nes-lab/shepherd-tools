@@ -1,7 +1,6 @@
 """Command definitions for CLI."""
 
 import logging
-import os
 import sys
 from contextlib import suppress
 from datetime import datetime
@@ -22,7 +21,7 @@ from .reader import Reader
 logger = logging.getLogger("SHPData.cli")
 
 
-def path_to_flist(data_path: Path) -> List[Path]:
+def path_to_flist(data_path: Path, *, recurse: bool = False) -> List[Path]:
     """Every path gets transformed to a list of paths.
 
     Transformations:
@@ -31,16 +30,12 @@ def path_to_flist(data_path: Path) -> List[Path]:
     - or else: empty list
     """
     data_path = Path(data_path).resolve()
-    h5files = []
+    h5files: list = []
     if data_path.is_file() and data_path.suffix.lower() == ".h5":
         h5files.append(data_path)
     elif data_path.is_dir():
-        flist = os.listdir(data_path)
-        for file in flist:
-            fpath = data_path / str(file)
-            if not fpath.is_file() or fpath.suffix.lower() != ".h5":
-                continue
-            h5files.append(fpath)
+        files = data_path.glob("**/*.h5" if recurse else "*.h5", case_sensitive=False)
+        h5files = [file for file in files if file.is_file()]
     return h5files
 
 
@@ -70,9 +65,15 @@ def version() -> None:
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
-def validate(in_data: Path) -> None:
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
+)
+def validate(in_data: Path, *, recurse: bool = False) -> None:
     """Validate a file or directory containing shepherd-recordings."""
-    files = path_to_flist(in_data)
+    files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()  # TODO: should be stored and passed in ctx
     valid_dir = True
     for file in files:
@@ -123,7 +124,13 @@ def validate(in_data: Path) -> None:
     "--raw",
     "-r",
     is_flag=True,
-    help="Plot only power instead of voltage, current & power",
+    help="Don't convert data to si-units",
+)
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
 )
 def extract(
     in_data: Path,
@@ -133,9 +140,10 @@ def extract(
     separator: str,
     *,
     raw: bool = False,
+    recurse: bool = False,
 ) -> None:
     """Extract recorded IVSamples and store them to csv."""
-    files = path_to_flist(in_data)
+    files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:
         ds_factor = 1000
@@ -162,10 +170,15 @@ def extract(
     type=click.STRING,
     help="Set an individual csv-separator",
 )
-# TODO: a recursive option would help!
-def extract_meta(in_data: Path, separator: str) -> None:
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
+)
+def extract_meta(in_data: Path, separator: str, *, recurse: bool = False) -> None:
     """Extract metadata and logs from file or directory containing shepherd-recordings."""
-    files = path_to_flist(in_data)
+    files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     for file in files:
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
@@ -195,9 +208,15 @@ def extract_meta(in_data: Path, separator: str) -> None:
     short_help="Extracts uart from gpio-trace in file or directory containing shepherd-recordings"
 )
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
-def extract_uart(in_data: Path) -> None:
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
+)
+def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
     """Extract UART from GPIO-trace in file or directory containing shepherd-recordings."""
-    files = path_to_flist(in_data)
+    files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     for file in files:
         logger.info("Extracting uart from gpio-trace from from '%s' ...", file.name)
@@ -233,10 +252,16 @@ def extract_uart(in_data: Path) -> None:
     default=";",
     type=click.STRING,
     help="Set an individual csv-separator",
+)  # TODO: also configure decimal point
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
 )
-def extract_gpio(in_data: Path, separator: str) -> None:
+def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> None:
     """Extract UART from gpio-trace in file or directory containing shepherd-recordings."""
-    files = path_to_flist(in_data)
+    files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     for file in files:
         logger.info("Extracting gpio-trace from from '%s' ...", file.name)
@@ -281,15 +306,23 @@ def extract_gpio(in_data: Path, separator: str) -> None:
     type=click.FLOAT,
     help="End-point in seconds, will be max if omitted",
 )
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
+)
 def downsample(
     in_data: Path,
     ds_factor: Optional[float],
     sample_rate: Optional[int],
     start: Optional[float],
     end: Optional[float],
+    *,
+    recurse: bool = False,
 ) -> None:
     """Create an array of down-sampled files from file or dir containing shepherd-recordings."""
-    files = path_to_flist(in_data)
+    files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     for file in files:
         try:
@@ -351,6 +384,12 @@ def downsample(
     is_flag=True,
     help="Plot only power instead of voltage, current & power",
 )
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
+)
 def plot(
     in_data: Path,
     start: Optional[float],
@@ -360,9 +399,10 @@ def plot(
     *,
     multiplot: bool,
     only_power: bool,
+    recurse: bool = False,
 ) -> None:
     """Plot IV-trace from file or directory containing shepherd-recordings."""
-    files = path_to_flist(in_data)
+    files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     multiplot = multiplot and len(files) > 1
     data = []
