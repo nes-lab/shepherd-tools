@@ -5,6 +5,10 @@
 - Core.Reader.read_buffers()
   - safer access to data
   - allow custom segmentation
+- avoid usage of os-package in favor of pathlib
+  - also transforms get_files() into one-liner
+- CLI commands that take h5-files can now search recursively if path is given
+- improve link visualizer script (draws nodes and links on map)
 - update deps
 
 ## v2025.02.2
