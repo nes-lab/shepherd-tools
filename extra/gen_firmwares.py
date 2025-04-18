@@ -71,7 +71,7 @@ if __name__ == "__main__":
             sizeof: Dict[str, int] = {}
             sizeof["elf"] = path_elf.stat().st_size
             files_hex = [each for each in os.listdir(path_sub) if each.endswith(".hex")]
-            if len(files_hex):
+            if files_hex:
                 sizeof["hex"] = (path_sub / files_hex[0]).stat().st_size
             file_temp = path_here / "temp" / "demo_fw.yaml"
             fw = Firmware.from_firmware(path_elf)

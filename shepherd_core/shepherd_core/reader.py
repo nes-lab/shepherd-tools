@@ -202,13 +202,12 @@ class Reader:
         """Read the specified range of buffers from the hdf5 file.
 
         Generator - can be configured on first call
-        TODO: reconstruct - start/end mark samples &
-         each call can request a certain number of samples.
 
         Args:
         ----
             :param start_n: (int) Index of first buffer to be read
             :param end_n: (int) Index of last buffer to be read
+            :param n_samples_per_buffer: (int) allows changing
             :param is_raw: (bool) output original data, not transformed to SI-Units
             :param omit_ts: (bool) optimize reading if timestamp is never used
         Yields: Buffers between start and end (tuple with time, voltage, current)
