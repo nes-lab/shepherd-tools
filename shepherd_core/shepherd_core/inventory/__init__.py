@@ -82,8 +82,8 @@ class InventoryList(ShpModel):
             if (_e.created.timestamp() - ts_earl) > 10:
                 warnings["time_delta"] = f"[{self.hostname}] time-sync has failed"
 
-        # turn  dict[hostname][type] = val
-        # to    dict[type][val] = list[hostnames]
+        # turn  Dict[hostname][type] = val
+        # to    Dict[type][val] = List[hostnames]
         _inp = {
             _e.hostname: _e.model_dump(exclude_unset=True, exclude_defaults=True)
             for _e in self.elements

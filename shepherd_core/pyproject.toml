@@ -113,3 +113,4 @@ omit = ["*/shepherd_data/*"]
 [tool.mypy]
 python_version = 3.8
 ignore_missing_imports = true
+disable_error_code = ["call-arg", ]

@@ -675,7 +675,7 @@ class Reader:
         return data != data_1
 
     def gpio_to_waveforms(self, name: Optional[str] = None) -> dict:
-        waveforms: dict[str, np.ndarray] = {}
+        waveforms: Dict[str, np.ndarray] = {}
         if "gpio" not in self.h5file:
             return waveforms
 
