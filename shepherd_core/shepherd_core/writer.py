@@ -8,6 +8,7 @@ from itertools import product
 from pathlib import Path
 from types import TracebackType
 from typing import Any
+from typing import Mapping
 from typing import Optional
 from typing import Type
 from typing import Union
@@ -364,7 +365,7 @@ class Writer(Reader):
         """Conveniently store relevant key-value data (attribute) in H5-structure."""
         self.h5file.attrs.__setitem__(key, item)
 
-    def store_config(self, data: dict) -> None:
+    def store_config(self, data: Mapping) -> None:
         """Get a better self-describing Output-File.
 
         TODO: use data-model?

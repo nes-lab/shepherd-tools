@@ -9,6 +9,8 @@
   - also transforms get_files() into one-liner
 - CLI commands that take h5-files can now search recursively if path is given
 - improve link visualizer script (draws nodes and links on map)
+- fix bugs discovered by mypy (and use clearer types)
+- generalize function-arguments if possible (dict -> Mapping, list -> Sequence or Iterable)
 - update deps
 
 ## v2025.02.2

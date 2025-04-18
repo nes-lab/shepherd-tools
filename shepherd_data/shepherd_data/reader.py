@@ -5,7 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict
 from typing import List
+from typing import Mapping
 from typing import Optional
+from typing import Sequence
 from typing import Union
 
 import h5py
@@ -508,7 +510,7 @@ class Reader(CoreReader):
 
     @staticmethod
     def assemble_plot(
-        data: Union[dict, list], width: int = 20, height: int = 10, *, only_pwr: bool = False
+        data: Union[Mapping, Sequence], width: int = 20, height: int = 10, *, only_pwr: bool = False
     ) -> plt.Figure:
         """Create the actual figure.
 
@@ -522,7 +524,7 @@ class Reader(CoreReader):
         :return: figure
         """
         # TODO: allow choosing freely from I, V, P, GPIO
-        if isinstance(data, dict):
+        if isinstance(data, Mapping):
             data = [data]
         if only_pwr:
             fig, ax = plt.subplots(1, 1, figsize=(width, height), layout="tight")

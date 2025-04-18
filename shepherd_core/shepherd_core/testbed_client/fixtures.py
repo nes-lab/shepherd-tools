@@ -7,6 +7,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Any
 from typing import Dict
+from typing import Mapping
 from typing import Optional
 from typing import Union
 
@@ -142,7 +143,7 @@ class Fixture:
         return values, chain
 
     @staticmethod
-    def fill_model(model: dict, base: dict) -> dict:
+    def fill_model(model: Mapping, base: dict) -> dict:
         base = copy.copy(base)
         for key, value in model.items():
             # keep previous entries
