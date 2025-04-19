@@ -9,9 +9,9 @@ import math
 import os
 from itertools import product
 from pathlib import Path
+from types import MappingProxyType
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import ClassVar
 from typing import Optional
 from typing import Union
 
@@ -22,7 +22,7 @@ from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
 
-from .commons import samplerate_sps_default
+from .commons import SAMPLERATE_SPS_DEFAULT
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.content.energy_environment import EnergyDType
@@ -30,6 +30,8 @@ from .decoder_waveform import Uart
 
 if TYPE_CHECKING:
     from collections.abc import Generator
+    from collections.abc import Mapping
+    from collections.abc import Sequence
     from types import TracebackType
 
 
@@ -43,16 +45,18 @@ class Reader:
 
     """
 
-    samples_per_buffer: int = 10_000
+    BUFFER_SAMPLES_N: int = 10_000
 
-    mode_dtype_dict: ClassVar[dict] = {
-        "harvester": [
-            EnergyDType.ivsample,
-            EnergyDType.ivcurve,
-            EnergyDType.isc_voc,
-        ],
-        "emulator": [EnergyDType.ivsample],
-    }
+    MODE_TO_DTYPE: Mapping[str, Sequence[EnergyDType]] = MappingProxyType(
+        {
+            "harvester": (
+                EnergyDType.ivsample,
+                EnergyDType.ivcurve,
+                EnergyDType.isc_voc,
+            ),
+            "emulator": (EnergyDType.ivsample,),
+        }
+    )
 
     @validate_call
     def __init__(
@@ -69,7 +73,7 @@ class Reader:
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
         if not hasattr(self, "samplerate_sps"):
-            self.samplerate_sps: int = samplerate_sps_default
+            self.samplerate_sps: int = SAMPLERATE_SPS_DEFAULT
         self.sample_interval_ns: int = round(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
@@ -177,7 +181,7 @@ class Reader:
             self.sample_interval_ns = round(10**9 * self.sample_interval_s)
             self.samplerate_sps = max(round((sample_count - 1) / duration_s), 1)
         self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
-        self.buffers_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
+        self.buffers_n = int(self.ds_voltage.shape[0] // self.BUFFER_SAMPLES_N)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:
@@ -208,7 +212,7 @@ class Reader:
 
         """
         if n_samples_per_buffer is None:
-            n_samples_per_buffer = self.samples_per_buffer
+            n_samples_per_buffer = self.BUFFER_SAMPLES_N
         end_max = int(self.ds_voltage.shape[0] // n_samples_per_buffer)
         end_n = end_max if end_n is None else min(end_n, end_max)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
@@ -323,7 +327,7 @@ class Reader:
                     self.file_path.name,
                 )
                 return False
-            if self.h5file.attrs["mode"] not in self.mode_dtype_dict:
+            if self.h5file.attrs["mode"] not in self.MODE_TO_DTYPE:
                 self._logger.error(
                     "[FileValidation] unsupported mode '%s' in '%s'",
                     attr,
@@ -355,7 +359,7 @@ class Reader:
                         self.file_path.name,
                     )
                     return False
-        if self.get_datatype() not in self.mode_dtype_dict[self.get_mode()]:
+        if self.get_datatype() not in self.MODE_TO_DTYPE[self.get_mode()]:
             self._logger.error(
                 "[FileValidation] unsupported type '%s' for mode '%s'  in '%s'",
                 self.get_datatype(),
@@ -393,7 +397,7 @@ class Reader:
                     self.file_path.name,
                 )
         # dataset-length should be multiple of buffersize
-        remaining_size = ds_volt_size % self.samples_per_buffer
+        remaining_size = ds_volt_size % self.BUFFER_SAMPLES_N
         if remaining_size != 0:
             self._logger.warning(
                 "[FileValidation] datasets are not aligned with buffer-size in '%s'",
@@ -534,14 +538,14 @@ class Reader:
 
         def calc_timediffs(idx_start: int) -> list:
             ds_time = self.ds_time[
-                idx_start : (idx_start + self.max_elements) : self.samples_per_buffer
+                idx_start : (idx_start + self.max_elements) : self.BUFFER_SAMPLES_N
             ]
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
             return list(np.array(diffs_np))
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
         diffs = {
-            round(self._cal.time.raw_to_si(j) / self.samples_per_buffer, 6)
+            round(self._cal.time.raw_to_si(j) / self.BUFFER_SAMPLES_N, 6)
             for i in diffs_ll
             for j in i
         }
@@ -559,7 +563,7 @@ class Reader:
             self._logger.warning(
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
             )
-        return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.samples_per_buffer, 6)
+        return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.BUFFER_SAMPLES_N, 6)
 
     def count_errors_in_log(self, group_name: str = "sheep", min_level: int = 40) -> int:
         if group_name not in self.h5file:

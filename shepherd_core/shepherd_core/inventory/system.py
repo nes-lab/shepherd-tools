@@ -3,8 +3,12 @@
 import platform
 import subprocess
 import time
+from collections.abc import Mapping
+from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
+from types import MappingProxyType
+from typing import Any
 from typing import Optional
 
 from typing_extensions import Self
@@ -43,13 +47,13 @@ class SystemInventory(ShpModel):
 
     hostname: str
 
-    interfaces: dict = {}  # noqa: RUF012
+    interfaces: Mapping[str, Any] = MappingProxyType({})
     # ⤷ tuple with
     #   ip IPvAnyAddress
     #   mac MACStr
 
-    fs_root: list[str] = None
-    beagle: list[str] = None
+    fs_root: Sequence[str] = ()
+    beagle: Sequence[str] = ()
 
     model_config = ConfigDict(str_min_length=0)
 

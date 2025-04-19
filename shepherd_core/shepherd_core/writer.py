@@ -20,7 +20,7 @@ from typing_extensions import Self
 from yaml import Node
 from yaml import SafeDumper
 
-from .commons import samplerate_sps_default
+from .commons import SAMPLERATE_SPS_DEFAULT
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
@@ -91,11 +91,10 @@ class Writer(Reader):
 
     """
 
-    comp_default: int = 1
-    mode_default: str = "harvester"
-    datatype_default: EnergyDType = EnergyDType.ivsample
+    MODE_DEFAULT: str = "harvester"
+    DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
 
-    _chunk_shape: tuple = (Reader.samples_per_buffer,)
+    _CHUNK_SHAPE: tuple = (Reader.BUFFER_SAMPLES_N,)
 
     @validate_call
     def __init__(
@@ -148,16 +147,16 @@ class Writer(Reader):
             self._create_skeleton()
 
         # Handle Mode
-        if isinstance(mode, str) and mode not in self.mode_dtype_dict:
-            msg = f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})"
+        if isinstance(mode, str) and mode not in self.MODE_TO_DTYPE:
+            msg = f"Can't handle mode '{mode}' (choose one of {self.MODE_TO_DTYPE})"
             raise ValueError(msg)
 
         if mode is not None:
             self.h5file.attrs["mode"] = mode
         if "mode" not in self.h5file.attrs:
-            self.h5file.attrs["mode"] = self.mode_default
+            self.h5file.attrs["mode"] = self.MODE_DEFAULT
 
-        _dtypes = self.mode_dtype_dict[self.get_mode()]
+        _dtypes = self.MODE_TO_DTYPE[self.get_mode()]
 
         # Handle Datatype
         if isinstance(datatype, str):
@@ -169,7 +168,7 @@ class Writer(Reader):
         if isinstance(datatype, EnergyDType):
             self.h5file["data"].attrs["datatype"] = datatype.name
         if "datatype" not in self.h5file["data"].attrs:
-            self.h5file["data"].attrs["datatype"] = self.datatype_default.name
+            self.h5file["data"].attrs["datatype"] = self.DATATYPE_DEFAULT.name
         if self.get_datatype() not in _dtypes:
             msg = (
                 f"Can't handle value '{self.get_datatype()}' of datatype (choose one of {_dtypes})"
@@ -250,7 +249,7 @@ class Writer(Reader):
             (0,),
             dtype="u8",
             maxshape=(None,),
-            chunks=self._chunk_shape,
+            chunks=self._CHUNK_SHAPE,
             compression=self._compression,
         )
         grp_data["time"].attrs["unit"] = "s"
@@ -261,7 +260,7 @@ class Writer(Reader):
             (0,),
             dtype="u4",
             maxshape=(None,),
-            chunks=self._chunk_shape,
+            chunks=self._CHUNK_SHAPE,
             compression=self._compression,
         )
         grp_data["current"].attrs["unit"] = "A"
@@ -272,7 +271,7 @@ class Writer(Reader):
             (0,),
             dtype="u4",
             maxshape=(None,),
-            chunks=self._chunk_shape,
+            chunks=self._CHUNK_SHAPE,
             compression=self._compression,
         )
         grp_data["voltage"].attrs["unit"] = "V"
@@ -346,10 +345,10 @@ class Writer(Reader):
     def _align(self) -> None:
         """Align datasets with buffer-size of shepherd."""
         self._refresh_file_stats()
-        n_buff = self.ds_voltage.size / self.samples_per_buffer
-        size_new = int(math.floor(n_buff) * self.samples_per_buffer)
+        n_buff = self.ds_voltage.size / self.BUFFER_SAMPLES_N
+        size_new = int(math.floor(n_buff) * self.BUFFER_SAMPLES_N)
         if size_new < self.ds_voltage.size:
-            if self.samplerate_sps != samplerate_sps_default:
+            if self.samplerate_sps != SAMPLERATE_SPS_DEFAULT:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(

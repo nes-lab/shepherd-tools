@@ -5,7 +5,14 @@
 - drop python 3.8 support
 - supported python is now 3.9 - 3.13
 - heavy changes in typesystem
+  - user facing interfaces should be safe to use
+  - mypy was used to find possible bugs
 - pathlib now has .with_stem() to simplify code
+- rename constants to upper-case
+  - 1-to-1: samplerate_sps_default,
+  - core.Reader().mode_dtype_dict -> .MODE_TO_DTYPE
+  - core.Reader().samples_per_buffer -> .BUFFER_SAMPLES_N
+- replace relative imports from parent with absolute ones
 
 ## v2025.04.1
 

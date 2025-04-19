@@ -1,5 +1,6 @@
 """Hardware related inventory model."""
 
+from collections.abc import Sequence
 from typing import Optional
 
 from pydantic import ConfigDict
@@ -12,7 +13,7 @@ class TargetInventory(ShpModel):
     """Hardware related inventory model."""
 
     cape: Optional[str] = None
-    targets: list[str] = []  # noqa: RUF012
+    targets: Sequence[str] = ()
 
     model_config = ConfigDict(str_min_length=0)
 
