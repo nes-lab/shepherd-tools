@@ -70,8 +70,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     @staticmethod
     def _validate_targets(configs: Iterable[TargetConfig]) -> None:
-        target_ids = []
-        custom_ids = []
+        target_ids: list[int] = []
+        custom_ids: list[int] = []
         for _config in configs:
             for _id in _config.target_IDs:
                 target_ids.append(_id)

@@ -10,26 +10,26 @@ currently configured for cape v2.4c
 """
 
 # both current channels have a 0.1 % shunt resistance of
-R_SHT = 2.0  # [ohm]
+R_SHT: float = 2.0  # [ohm]
 # the instrumentation amplifiers are configured for gain of
-G_INST_AMP = 48  # [n]
+G_INST_AMP: int = 48  # [n]
 # we use the ADC's internal reference with
-V_REF_ADC = 4.096  # [V]
+V_REF_ADC: float = 4.096  # [V]
 # range of current channels is
-G_ADC_I = 1.25  # [gain / V_REF]
+G_ADC_I: float = 1.25  # [gain / V_REF]
 # range of voltage channels is
-G_ADC_V = 1.25  # [gain / V_REF]
+G_ADC_V: float = 1.25  # [gain / V_REF]
 # bit resolution of ADC
-M_ADC = 18  # [bit]
+M_ADC: int = 18  # [bit]
 # DACs use internal reference with
-V_REF_DAC = 2.5  # [V]
+V_REF_DAC: float = 2.5  # [V]
 # gain of DAC is set to
-G_DAC = 2  # [n]
+G_DAC: int = 2  # [n]
 # bit resolution of DAC
-M_DAC = 16  # [bit]
+M_DAC: int = 16  # [bit]
 # DERIVED VARIABLES
-RAW_MAX_ADC = 2**M_ADC - 1
-RAW_MAX_DAC = 2**M_DAC - 1
+RAW_MAX_ADC: int = 2**M_ADC - 1
+RAW_MAX_DAC: int = 2**M_DAC - 1
 
 
 def adc_current_to_raw(current: float, *, limited: bool = True) -> int:

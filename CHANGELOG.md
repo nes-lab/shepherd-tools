@@ -4,9 +4,8 @@
 
 - drop python 3.8 support
 - supported python is now 3.9 - 3.13
-- heavy changes in typesystem
-  - user facing interfaces should be safe to use
-  - mypy was used to find possible bugs
+- heavy changes in typesystem - mypy was used to find possible bugs (NOTE: still work in progress)
+- user facing interfaces should be safer to use
 - pathlib now has .with_stem() to simplify code
 - rename constants to upper-case
   - 1-to-1: samplerate_sps_default,
