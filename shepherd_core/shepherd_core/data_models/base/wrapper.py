@@ -7,7 +7,7 @@ from typing import Optional
 from pydantic import BaseModel
 from pydantic import StringConstraints
 
-from ...version import version
+from shepherd_core.version import version
 
 SafeStrClone = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ copy avoids circular import

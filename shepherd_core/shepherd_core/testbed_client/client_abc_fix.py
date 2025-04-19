@@ -20,8 +20,9 @@ from abc import abstractmethod
 from typing import Any
 from typing import Optional
 
-from ..data_models.base.shepherd import ShpModel
-from ..data_models.base.wrapper import Wrapper
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.wrapper import Wrapper
+
 from .fixtures import Fixtures
 
 

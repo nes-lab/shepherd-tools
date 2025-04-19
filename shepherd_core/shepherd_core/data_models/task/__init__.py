@@ -9,9 +9,10 @@ from typing import Union
 
 import yaml
 
-from ...logger import logger
-from ..base.shepherd import ShpModel
-from ..base.wrapper import Wrapper
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.logger import logger
+
 from .emulation import Compression
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask

@@ -13,13 +13,14 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from ...version import version
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
-from ..testbed.target import Target
-from ..testbed.testbed import Testbed
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.testbed.target import Target
+from shepherd_core.data_models.testbed.testbed import Testbed
+from shepherd_core.version import version
+
 from .observer_features import SystemLogging
 from .target_config import TargetConfig
 

@@ -18,9 +18,10 @@ from pydantic import constr
 from pydantic import validate_call
 from typing_extensions import Self
 
-from ...calibration_hw_def import adc_current_to_raw
-from ...calibration_hw_def import adc_voltage_to_raw
-from ...calibration_hw_def import dac_voltage_to_raw
+from shepherd_core.calibration_hw_def import adc_current_to_raw
+from shepherd_core.calibration_hw_def import adc_voltage_to_raw
+from shepherd_core.calibration_hw_def import dac_voltage_to_raw
+
 from .shepherd import ShpModel
 from .timezone import local_iso_date
 

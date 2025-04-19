@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import ConfigDict
 from typing_extensions import Self
 
-from ..data_models import ShpModel
+from shepherd_core.data_models import ShpModel
 
 
 class TargetInventory(ShpModel):

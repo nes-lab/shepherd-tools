@@ -14,17 +14,17 @@ from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Self
 
-from ..base.content import IdInt
-from ..base.shepherd import ShpModel
-from ..base.timezone import local_tz
-from ..content.virtual_source import VirtualSourceConfig
-from ..experiment.experiment import Experiment
-from ..experiment.observer_features import GpioActuation
-from ..experiment.observer_features import GpioTracing
-from ..experiment.observer_features import PowerTracing
-from ..experiment.observer_features import SystemLogging
-from ..testbed import Testbed
-from ..testbed.cape import TargetPort
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.timezone import local_tz
+from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.experiment.experiment import Experiment
+from shepherd_core.data_models.experiment.observer_features import GpioActuation
+from shepherd_core.data_models.experiment.observer_features import GpioTracing
+from shepherd_core.data_models.experiment.observer_features import PowerTracing
+from shepherd_core.data_models.experiment.observer_features import SystemLogging
+from shepherd_core.data_models.testbed import Testbed
+from shepherd_core.data_models.testbed.cape import TargetPort
 
 
 class Compression(str, Enum):

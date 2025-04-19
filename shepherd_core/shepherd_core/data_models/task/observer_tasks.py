@@ -8,11 +8,12 @@ from typing import Optional
 from pydantic import validate_call
 from typing_extensions import Self
 
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.shepherd import ShpModel
-from ..experiment.experiment import Experiment
-from ..testbed.testbed import Testbed
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.experiment.experiment import Experiment
+from shepherd_core.data_models.testbed.testbed import Testbed
+
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask
 from .programming import ProgrammingTask

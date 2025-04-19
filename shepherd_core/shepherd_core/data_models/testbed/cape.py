@@ -10,11 +10,11 @@ from typing import Union
 from pydantic import Field
 from pydantic import model_validator
 
-from ...testbed_client import tb_client
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.testbed_client import tb_client
 
 
 class TargetPort(str, Enum):

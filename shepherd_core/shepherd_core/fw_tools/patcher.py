@@ -7,9 +7,10 @@ from typing import Optional
 from pydantic import Field
 from pydantic import validate_call
 
-from ..commons import uid_len_default
-from ..commons import uid_str_default
-from ..logger import logger
+from shepherd_core.commons import uid_len_default
+from shepherd_core.commons import uid_str_default
+from shepherd_core.logger import logger
+
 from .validation import is_elf
 
 try:

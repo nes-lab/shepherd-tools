@@ -14,7 +14,8 @@ from typing import Annotated
 from pydantic import Field
 from typing_extensions import Self
 
-from ..data_models import ShpModel
+from shepherd_core.data_models import ShpModel
+
 from .python import PythonInventory
 from .system import SystemInventory
 from .target import TargetInventory

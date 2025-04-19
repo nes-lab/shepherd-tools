@@ -8,9 +8,10 @@ from typing import Union
 
 from pydantic import validate_call
 
-from ..commons import testbed_server_default
-from ..data_models.base.shepherd import ShpModel
-from ..data_models.base.wrapper import Wrapper
+from shepherd_core.commons import testbed_server_default
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.wrapper import Wrapper
+
 from .client_abc_fix import AbcClient
 from .user_model import User
 

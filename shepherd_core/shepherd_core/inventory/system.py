@@ -9,8 +9,8 @@ from typing import Optional
 
 from typing_extensions import Self
 
-from ..data_models.base.timezone import local_now
-from ..logger import logger
+from shepherd_core.data_models.base.timezone import local_now
+from shepherd_core.logger import logger
 
 try:
     import psutil
@@ -20,7 +20,7 @@ except ImportError:
 from pydantic import ConfigDict
 from pydantic.types import PositiveInt
 
-from ..data_models import ShpModel
+from shepherd_core.data_models import ShpModel
 
 
 class SystemInventory(ShpModel):

@@ -8,8 +8,8 @@ from typing import Optional
 from pydantic import PositiveFloat
 from pydantic import model_validator
 
-from ...testbed_client import tb_client
-from ..base.content import ContentModel
+from shepherd_core.data_models.base.content import ContentModel
+from shepherd_core.testbed_client import tb_client
 
 
 class EnergyDType(str, Enum):

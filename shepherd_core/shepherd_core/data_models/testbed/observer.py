@@ -11,11 +11,12 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Self
 
-from ...testbed_client import tb_client
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.testbed_client import tb_client
+
 from .cape import Cape
 from .cape import TargetPort
 from .target import Target

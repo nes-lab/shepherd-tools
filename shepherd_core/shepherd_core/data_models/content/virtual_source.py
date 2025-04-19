@@ -7,11 +7,12 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from ...commons import samplerate_sps_default
-from ...logger import logger
-from ...testbed_client import tb_client
-from ..base.content import ContentModel
-from ..base.shepherd import ShpModel
+from shepherd_core.commons import samplerate_sps_default
+from shepherd_core.data_models.base.content import ContentModel
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.logger import logger
+from shepherd_core.testbed_client import tb_client
+
 from .energy_environment import EnergyDType
 from .virtual_harvester import HarvesterPRUConfig
 from .virtual_harvester import VirtualHarvesterConfig

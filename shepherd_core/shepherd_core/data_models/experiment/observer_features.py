@@ -11,8 +11,8 @@ from pydantic import PositiveFloat
 from pydantic import model_validator
 from typing_extensions import Self
 
-from ..base.shepherd import ShpModel
-from ..testbed.gpio import GPIO
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.testbed.gpio import GPIO
 
 
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):

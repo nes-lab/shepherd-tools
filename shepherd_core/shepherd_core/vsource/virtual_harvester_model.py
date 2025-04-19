@@ -16,8 +16,8 @@ Compromises:
 
 """
 
-from ..data_models.content.virtual_harvester import HarvesterPRUConfig
-from ..logger import logger
+from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
+from shepherd_core.logger import logger
 
 
 class VirtualHarvesterModel:

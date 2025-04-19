@@ -11,13 +11,13 @@ from pydantic import HttpUrl
 from pydantic import model_validator
 from typing_extensions import Self
 
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import logger
 from shepherd_core.testbed_client import tb_client
 
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
 from .observer import Observer
 
 

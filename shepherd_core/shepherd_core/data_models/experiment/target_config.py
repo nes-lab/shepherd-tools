@@ -7,13 +7,14 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from ..base.content import IdInt
-from ..base.shepherd import ShpModel
-from ..content.energy_environment import EnergyEnvironment
-from ..content.firmware import Firmware
-from ..content.virtual_source import VirtualSourceConfig
-from ..testbed.target import IdInt16
-from ..testbed.target import Target
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
+from shepherd_core.data_models.content.firmware import Firmware
+from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.testbed.target import IdInt16
+from shepherd_core.data_models.testbed.target import Target
+
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing

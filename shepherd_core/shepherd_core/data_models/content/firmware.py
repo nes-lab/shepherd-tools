@@ -16,11 +16,12 @@ from pydantic import validate_call
 from typing_extensions import Self
 from typing_extensions import Unpack
 
-from ... import fw_tools
-from ...logger import logger
-from ...testbed_client import tb_client
-from ..base.content import ContentModel
-from ..testbed.mcu import MCU
+from shepherd_core import fw_tools
+from shepherd_core.data_models.base.content import ContentModel
+from shepherd_core.data_models.testbed.mcu import MCU
+from shepherd_core.logger import logger
+from shepherd_core.testbed_client import tb_client
+
 from .firmware_datatype import FirmwareDType
 
 suffix_to_DType: dict = {

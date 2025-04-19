@@ -13,11 +13,12 @@ from typing import Optional
 
 from tqdm import tqdm
 
-from .. import CalibrationHarvester
-from .. import Reader
-from .. import Writer
-from ..data_models.content.virtual_harvester import HarvesterPRUConfig
-from ..data_models.content.virtual_harvester import VirtualHarvesterConfig
+from shepherd_core.data_models.base.calibration import CalibrationHarvester
+from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
+from shepherd_core.data_models.content.virtual_harvester import VirtualHarvesterConfig
+from shepherd_core.reader import Reader
+from shepherd_core.writer import Writer
+
 from .virtual_harvester_model import VirtualHarvesterModel
 
 

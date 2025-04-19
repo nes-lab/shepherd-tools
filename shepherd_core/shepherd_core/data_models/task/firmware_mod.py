@@ -13,16 +13,16 @@ from pydantic import validate_call
 from typing_extensions import Self
 from typing_extensions import Unpack
 
-from ...logger import logger
-from ..base.content import IdInt
-from ..base.shepherd import ShpModel
-from ..content.firmware import Firmware
-from ..content.firmware import FirmwareDType
-from ..content.firmware import FirmwareStr
-from ..experiment.experiment import Experiment
-from ..testbed import Testbed
-from ..testbed.target import IdInt16
-from ..testbed.target import MCUPort
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.content.firmware import Firmware
+from shepherd_core.data_models.content.firmware import FirmwareDType
+from shepherd_core.data_models.content.firmware import FirmwareStr
+from shepherd_core.data_models.experiment.experiment import Experiment
+from shepherd_core.data_models.testbed import Testbed
+from shepherd_core.data_models.testbed.target import IdInt16
+from shepherd_core.data_models.testbed.target import MCUPort
+from shepherd_core.logger import logger
 
 
 class FirmwareModTask(ShpModel):

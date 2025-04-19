@@ -14,10 +14,11 @@ import yaml
 from pydantic import validate_call
 from typing_extensions import Self
 
-from ..data_models.base.timezone import local_now
-from ..data_models.base.timezone import local_tz
-from ..data_models.base.wrapper import Wrapper
-from ..logger import logger
+from shepherd_core.data_models.base.timezone import local_now
+from shepherd_core.data_models.base.timezone import local_tz
+from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.logger import logger
+
 from .cache_path import cache_user_path
 
 # Proposed field-name:

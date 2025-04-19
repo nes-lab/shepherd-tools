@@ -28,7 +28,7 @@ from typing import Union
 
 import numpy as np
 
-from ..logger import logger
+from shepherd_core.logger import logger
 
 
 class Parity(str, Enum):

@@ -17,9 +17,9 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from pydantic import validate_call
 
-from ..data_models.base.content import NameStr
-from ..data_models.base.content import SafeStr
-from ..data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
 
 
 @validate_call
