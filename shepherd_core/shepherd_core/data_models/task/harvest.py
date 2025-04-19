@@ -3,18 +3,19 @@
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
+from typing import Annotated
 from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
-from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ..base.shepherd import ShpModel
-from ..base.timezone import local_tz
-from ..content.virtual_harvester import VirtualHarvesterConfig
-from ..experiment.observer_features import PowerTracing
-from ..experiment.observer_features import SystemLogging
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.timezone import local_tz
+from shepherd_core.data_models.content.virtual_harvester import VirtualHarvesterConfig
+from shepherd_core.data_models.experiment.observer_features import PowerTracing
+from shepherd_core.data_models.experiment.observer_features import SystemLogging
+
 from .emulation import Compression
 
 

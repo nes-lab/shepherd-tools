@@ -2,15 +2,16 @@
 
 from importlib import import_module
 from pathlib import Path
-from typing import List
+from typing import Any
 from typing import Optional
 from typing import Union
 
 from pydantic import validate_call
 
-from ..commons import testbed_server_default
-from ..data_models.base.shepherd import ShpModel
-from ..data_models.base.wrapper import Wrapper
+from shepherd_core.commons import TESTBED_SERVER_URI
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.wrapper import Wrapper
+
 from .client_abc_fix import AbcClient
 from .user_model import User
 
@@ -37,7 +38,7 @@ class WebClient(AbcClient):
         if not hasattr(self, "_token"):
             # add default values
             self._token: str = "basic_public_access"  # noqa: S105
-            self._server: str = testbed_server_default
+            self._server: str = TESTBED_SERVER_URI
             self._user: Optional[User] = None
             self._key: Optional[str] = None
             self._connected: bool = False
@@ -49,6 +50,8 @@ class WebClient(AbcClient):
     # ABC Functions below
 
     def insert(self, data: ShpModel) -> bool:
+        if self._req is None:
+            return False
         wrap = Wrapper(
             datatype=type(data).__name__,
             parameters=data.model_dump(),
@@ -57,10 +60,10 @@ class WebClient(AbcClient):
         r.raise_for_status()
         return True
 
-    def query_ids(self, model_type: str) -> List[int]:
+    def query_ids(self, model_type: str) -> list[int]:
         raise NotImplementedError("TODO")
 
-    def query_names(self, model_type: str) -> List[str]:
+    def query_names(self, model_type: str) -> list[str]:
         raise NotImplementedError("TODO")
 
     def query_item(
@@ -68,10 +71,14 @@ class WebClient(AbcClient):
     ) -> dict:
         raise NotImplementedError("TODO")
 
-    def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
+    def try_inheritance(
+        self, model_type: str, values: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[str]]:
         raise NotImplementedError("TODO")
 
-    def fill_in_user_data(self, values: dict) -> dict:
+    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
+        if self._user is None:
+            return values
         if values.get("owner") is None:
             values["owner"] = self._user.name
         if values.get("group") is None:
@@ -105,7 +112,7 @@ class WebClient(AbcClient):
         return self._query_user_data()
 
     def _query_session_key(self) -> bool:
-        if self._server:
+        if self._server and self._req is not None:
             r = self._req.get(self._server + "/session_key", timeout=2)
             r.raise_for_status()
             self._key = r.json()["value"]  # TODO: not finished
@@ -113,7 +120,7 @@ class WebClient(AbcClient):
         return False
 
     def _query_user_data(self) -> bool:
-        if self._server:
+        if self._server and self._req is not None:
             r = self._req.get(self._server + "/user?token=" + self._token, timeout=2)
             # TODO: possibly a security nightmare (send via json or encrypted via public key?)
             r.raise_for_status()

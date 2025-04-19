@@ -17,14 +17,14 @@ import pickle
 from pathlib import Path
 from types import TracebackType
 from typing import Optional
-from typing import Type
 
 import numpy as np
 import pandas as pd
 from tqdm import trange
 from typing_extensions import Self
 
-from . import Writer
+from shepherd_core.writer import Writer as CoreWriter
+
 from .mppt import MPPTracker
 from .mppt import OptimalTracker
 from .mppt import iv_model
@@ -88,7 +88,7 @@ class Reader:
 
     def __exit__(
         self,
-        typ: Optional[Type[BaseException]] = None,
+        typ: Optional[type[BaseException]] = None,
         exc: Optional[BaseException] = None,
         tb: Optional[TracebackType] = None,
         extra_arg: int = 0,
@@ -132,7 +132,7 @@ class Reader:
 
         v_proto = np.linspace(0, v_max, pts_per_curve)
 
-        with Writer(shp_output, datatype="ivcurve", window_samples=pts_per_curve) as sfw:
+        with CoreWriter(shp_output, datatype="ivcurve", window_samples=pts_per_curve) as sfw:
             sfw.store_hostname("IVonne")
             curve_interval_us = round(sfw.sample_interval_ns * pts_per_curve / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
@@ -207,7 +207,7 @@ class Reader:
                 v_max,
             )
 
-        with Writer(shp_output, datatype="ivsample") as sfw:
+        with CoreWriter(shp_output, datatype="ivsample") as sfw:
             sfw.store_hostname("IVonne")
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
@@ -260,7 +260,7 @@ class Reader:
             self._logger.info("File already exists, will skip '%s'", shp_output.name)
             return
 
-        with Writer(shp_output, datatype="isc_voc") as sfw:
+        with CoreWriter(shp_output, datatype="isc_voc") as sfw:
             sfw.store_hostname("IVonne")
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns

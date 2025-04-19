@@ -9,14 +9,10 @@ import math
 import os
 from itertools import product
 from pathlib import Path
+from types import MappingProxyType
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import ClassVar
-from typing import Dict
-from typing import Generator
-from typing import List
 from typing import Optional
-from typing import Type
 from typing import Union
 
 import h5py
@@ -26,13 +22,16 @@ from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
 
-from .commons import samplerate_sps_default
+from .commons import SAMPLERATE_SPS_DEFAULT
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.content.energy_environment import EnergyDType
 from .decoder_waveform import Uart
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+    from collections.abc import Mapping
+    from collections.abc import Sequence
     from types import TracebackType
 
 
@@ -46,28 +45,27 @@ class Reader:
 
     """
 
-    samples_per_buffer: int = 10_000
+    BUFFER_SAMPLES_N: int = 10_000
 
-    mode_dtype_dict: ClassVar[dict] = {
-        "harvester": [
-            EnergyDType.ivsample,
-            EnergyDType.ivcurve,
-            EnergyDType.isc_voc,
-        ],
-        "emulator": [EnergyDType.ivsample],
-    }
+    MODE_TO_DTYPE: Mapping[str, Sequence[EnergyDType]] = MappingProxyType(
+        {
+            "harvester": (
+                EnergyDType.ivsample,
+                EnergyDType.ivcurve,
+                EnergyDType.isc_voc,
+            ),
+            "emulator": (EnergyDType.ivsample,),
+        }
+    )
 
     @validate_call
     def __init__(
         self,
-        file_path: Optional[Path],
+        file_path: Path,
         *,
-        verbose: Optional[bool] = True,
+        verbose: bool = True,
     ) -> None:
-        if not hasattr(self, "file_path"):
-            self.file_path: Optional[Path] = None
-            if isinstance(file_path, (Path, str)):
-                self.file_path = Path(file_path).resolve()
+        self.file_path: Path = file_path.resolve()
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Reader")
@@ -75,7 +73,7 @@ class Reader:
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
         if not hasattr(self, "samplerate_sps"):
-            self.samplerate_sps: int = samplerate_sps_default
+            self.samplerate_sps: int = SAMPLERATE_SPS_DEFAULT
         self.sample_interval_ns: int = round(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
@@ -155,7 +153,7 @@ class Reader:
 
     def __exit__(
         self,
-        typ: Optional[Type[BaseException]] = None,
+        typ: Optional[type[BaseException]] = None,
         exc: Optional[BaseException] = None,
         tb: Optional[TracebackType] = None,
         extra_arg: int = 0,
@@ -183,7 +181,7 @@ class Reader:
             self.sample_interval_ns = round(10**9 * self.sample_interval_s)
             self.samplerate_sps = max(round((sample_count - 1) / duration_s), 1)
         self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
-        self.buffers_n = int(self.ds_voltage.shape[0] // self.samples_per_buffer)
+        self.buffers_n = int(self.ds_voltage.shape[0] // self.BUFFER_SAMPLES_N)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:
@@ -214,7 +212,7 @@ class Reader:
 
         """
         if n_samples_per_buffer is None:
-            n_samples_per_buffer = self.samples_per_buffer
+            n_samples_per_buffer = self.BUFFER_SAMPLES_N
         end_max = int(self.ds_voltage.shape[0] // n_samples_per_buffer)
         end_n = end_max if end_n is None else min(end_n, end_max)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
@@ -254,7 +252,7 @@ class Reader:
             return self.h5file.attrs["mode"]
         return ""
 
-    def get_config(self) -> Dict:
+    def get_config(self) -> dict:
         if "config" in self.h5file["data"].attrs:
             return yaml.safe_load(self.h5file["data"].attrs["config"])
         return {}
@@ -329,7 +327,7 @@ class Reader:
                     self.file_path.name,
                 )
                 return False
-            if self.h5file.attrs["mode"] not in self.mode_dtype_dict:
+            if self.h5file.attrs["mode"] not in self.MODE_TO_DTYPE:
                 self._logger.error(
                     "[FileValidation] unsupported mode '%s' in '%s'",
                     attr,
@@ -361,7 +359,7 @@ class Reader:
                         self.file_path.name,
                     )
                     return False
-        if self.get_datatype() not in self.mode_dtype_dict[self.get_mode()]:
+        if self.get_datatype() not in self.MODE_TO_DTYPE[self.get_mode()]:
             self._logger.error(
                 "[FileValidation] unsupported type '%s' for mode '%s'  in '%s'",
                 self.get_datatype(),
@@ -399,7 +397,7 @@ class Reader:
                     self.file_path.name,
                 )
         # dataset-length should be multiple of buffersize
-        remaining_size = ds_volt_size % self.samples_per_buffer
+        remaining_size = ds_volt_size % self.BUFFER_SAMPLES_N
         if remaining_size != 0:
             self._logger.warning(
                 "[FileValidation] datasets are not aligned with buffer-size in '%s'",
@@ -478,7 +476,7 @@ class Reader:
 
     def _dset_statistics(
         self, dset: h5py.Dataset, cal: Optional[CalibrationPair] = None
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Create basic stats for a provided dataset.
 
         :param dset: dataset to evaluate
@@ -511,7 +509,7 @@ class Reader:
         if len(stats_list) < 1:
             return {}
         stats_nd = np.stack(stats_list)
-        stats: Dict[str, float] = {
+        stats: dict[str, float] = {
             # TODO: wrong calculation for ndim-datasets with n>1
             "mean": float(stats_nd[:, 0].mean()),
             "min": float(stats_nd[:, 1].min()),
@@ -521,7 +519,7 @@ class Reader:
         }
         return stats
 
-    def _data_timediffs(self) -> List[float]:
+    def _data_timediffs(self) -> list[float]:
         """Calculate list of unique time-deltas [s] between buffers.
 
         Optimized version that only looks at the start of each buffer.
@@ -540,14 +538,14 @@ class Reader:
 
         def calc_timediffs(idx_start: int) -> list:
             ds_time = self.ds_time[
-                idx_start : (idx_start + self.max_elements) : self.samples_per_buffer
+                idx_start : (idx_start + self.max_elements) : self.BUFFER_SAMPLES_N
             ]
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
             return list(np.array(diffs_np))
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
         diffs = {
-            round(self._cal.time.raw_to_si(j) / self.samples_per_buffer, 6)
+            round(self._cal.time.raw_to_si(j) / self.BUFFER_SAMPLES_N, 6)
             for i in diffs_ll
             for j in i
         }
@@ -565,7 +563,7 @@ class Reader:
             self._logger.warning(
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
             )
-        return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.samples_per_buffer, 6)
+        return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.BUFFER_SAMPLES_N, 6)
 
     def count_errors_in_log(self, group_name: str = "sheep", min_level: int = 40) -> int:
         if group_name not in self.h5file:
@@ -583,7 +581,7 @@ class Reader:
         node: Union[h5py.Dataset, h5py.Group, None] = None,
         *,
         minimal: bool = False,
-    ) -> Dict[str, dict]:
+    ) -> dict[str, dict]:
         """Recursive FN to capture the structure of the file.
 
         :param node: starting node, leave free to go through whole file
@@ -594,7 +592,7 @@ class Reader:
             self._refresh_file_stats()
             return self.get_metadata(self.h5file, minimal=minimal)
 
-        metadata: Dict[str, dict] = {}
+        metadata: dict[str, dict] = {}
         if isinstance(node, h5py.Dataset) and not minimal:
             metadata["_dataset_info"] = {
                 "datatype": str(node.dtype),
@@ -616,7 +614,7 @@ class Reader:
                 with contextlib.suppress(yaml.YAMLError):
                     attr_value = yaml.safe_load(attr_value)
             elif "int" in str(type(attr_value)):
-                # TODO: why not isinstance? can it be List[int] other complex type?
+                # TODO: why not isinstance? can it be list[int] other complex type?
                 attr_value = int(attr_value)
             else:
                 attr_value = float(attr_value)
@@ -675,7 +673,7 @@ class Reader:
         return data != data_1
 
     def gpio_to_waveforms(self, name: Optional[str] = None) -> dict:
-        waveforms: Dict[str, np.ndarray] = {}
+        waveforms: dict[str, np.ndarray] = {}
         if "gpio" not in self.h5file:
             return waveforms
 

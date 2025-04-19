@@ -4,15 +4,15 @@ These models import externally from all other model-modules!
 """
 
 from pathlib import Path
-from typing import List
 from typing import Optional
 from typing import Union
 
 import yaml
 
-from ...logger import logger
-from ..base.shepherd import ShpModel
-from ..base.wrapper import Wrapper
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.logger import logger
+
 from .emulation import Compression
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask
@@ -74,7 +74,7 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
     return shp_wrap
 
 
-def extract_tasks(shp_wrap: Wrapper, *, no_task_sets: bool = True) -> List[ShpModel]:
+def extract_tasks(shp_wrap: Wrapper, *, no_task_sets: bool = True) -> list[ShpModel]:
     """Make the individual task-sets usable for each observer."""
     if shp_wrap.datatype == ObserverTasks.__name__:
         obt = ObserverTasks(**shp_wrap.parameters)

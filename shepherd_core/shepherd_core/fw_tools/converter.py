@@ -9,7 +9,8 @@ from typing import Union
 import zstandard as zstd
 from pydantic import validate_call
 
-from ..data_models.content.firmware_datatype import FirmwareDType
+from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
+
 from .converter_elf import elf_to_hex
 from .validation import is_elf
 from .validation import is_hex
@@ -85,10 +86,10 @@ def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path
     - base64-string will be transformed to file
     - if data is a path the file will be copied to the destination.
     """
-    if data_type == FirmwareDType.base64_elf:
+    if data_type == FirmwareDType.base64_elf and isinstance(data, str):
         file = file_path.with_suffix(".elf")
         base64_to_file(data, file)
-    elif data_type == FirmwareDType.base64_hex:
+    elif data_type == FirmwareDType.base64_hex and isinstance(data, str):
         file = file_path.with_suffix(".hex")
         base64_to_file(data, file)
     elif isinstance(data, (Path, str)):

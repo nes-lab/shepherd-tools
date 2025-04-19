@@ -12,8 +12,9 @@ from intelhex import IntelHex
 from intelhex import IntelHexError
 from pydantic import validate_call
 
-from ..data_models.content.firmware_datatype import FirmwareDType
-from ..logger import logger
+from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
+from shepherd_core.logger import logger
+
 from .converter_elf import elf_to_hex
 
 try:

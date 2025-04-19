@@ -1,9 +1,9 @@
 """Config for testbed experiments."""
 
+from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta
-from typing import Iterable
-from typing import List
+from typing import Annotated
 from typing import Optional
 from typing import Union
 from uuid import uuid4
@@ -11,16 +11,16 @@ from uuid import uuid4
 from pydantic import UUID4
 from pydantic import Field
 from pydantic import model_validator
-from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ...version import version
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
-from ..testbed.target import Target
-from ..testbed.testbed import Testbed
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.testbed.target import Target
+from shepherd_core.data_models.testbed.testbed import Testbed
+from shepherd_core.version import version
+
 from .observer_features import SystemLogging
 from .target_config import TargetConfig
 
@@ -54,7 +54,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     abort_on_error: bool = False
 
     # targets
-    target_configs: Annotated[List[TargetConfig], Field(min_length=1, max_length=128)]
+    target_configs: Annotated[list[TargetConfig], Field(min_length=1, max_length=128)]
 
     # for debug-purposes and later comp-checks
     lib_ver: Optional[str] = version
@@ -70,8 +70,8 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     @staticmethod
     def _validate_targets(configs: Iterable[TargetConfig]) -> None:
-        target_ids = []
-        custom_ids = []
+        target_ids: list[int] = []
+        custom_ids: list[int] = []
         for _config in configs:
             for _id in _config.target_IDs:
                 target_ids.append(_id)

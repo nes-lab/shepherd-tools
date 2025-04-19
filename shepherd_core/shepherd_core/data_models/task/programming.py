@@ -2,24 +2,24 @@
 
 import copy
 from pathlib import Path
+from typing import Annotated
 from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
-from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ..base.content import IdInt
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
-from ..content.firmware import suffix_to_DType
-from ..content.firmware_datatype import FirmwareDType
-from ..experiment.experiment import Experiment
-from ..testbed.cape import TargetPort
-from ..testbed.mcu import ProgrammerProtocol
-from ..testbed.target import MCUPort
-from ..testbed.testbed import Testbed
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.content.firmware import suffix_to_DType
+from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
+from shepherd_core.data_models.experiment.experiment import Experiment
+from shepherd_core.data_models.testbed.cape import TargetPort
+from shepherd_core.data_models.testbed.mcu import ProgrammerProtocol
+from shepherd_core.data_models.testbed.target import MCUPort
+from shepherd_core.data_models.testbed.testbed import Testbed
 
 
 class ProgrammingTask(ShpModel):

@@ -1,20 +1,20 @@
 """Configuration related to Target Nodes (DuT)."""
 
-from typing import List
+from typing import Annotated
 from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
-from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ..base.content import IdInt
-from ..base.shepherd import ShpModel
-from ..content.energy_environment import EnergyEnvironment
-from ..content.firmware import Firmware
-from ..content.virtual_source import VirtualSourceConfig
-from ..testbed.target import IdInt16
-from ..testbed.target import Target
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
+from shepherd_core.data_models.content.firmware import Firmware
+from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.testbed.target import IdInt16
+from shepherd_core.data_models.testbed.target import Target
+
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing
@@ -23,15 +23,15 @@ from .observer_features import PowerTracing
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration related to Target Nodes (DuT)."""
 
-    target_IDs: Annotated[List[IdInt], Field(min_length=1, max_length=128)]
-    custom_IDs: Optional[Annotated[List[IdInt16], Field(min_length=1, max_length=128)]] = None
+    target_IDs: Annotated[list[IdInt], Field(min_length=1, max_length=128)]
+    custom_IDs: Optional[Annotated[list[IdInt16], Field(min_length=1, max_length=128)]] = None
     # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
     #   if no custom ID is provided, the original ID of target is used
 
     energy_env: EnergyEnvironment  # alias: input
     virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
     target_delays: Optional[
-        Annotated[List[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)]
+        Annotated[list[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)]
     ] = None
     # ⤷ individual starting times -> allows to use the same environment
     # TODO: delays not used ATM

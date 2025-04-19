@@ -1,19 +1,19 @@
 """Hardware related inventory model."""
 
-from typing import List
+from collections.abc import Sequence
 from typing import Optional
 
 from pydantic import ConfigDict
 from typing_extensions import Self
 
-from ..data_models import ShpModel
+from shepherd_core.data_models import ShpModel
 
 
 class TargetInventory(ShpModel):
     """Hardware related inventory model."""
 
     cape: Optional[str] = None
-    targets: List[str] = []  # noqa: RUF012
+    targets: Sequence[str] = ()
 
     model_config = ConfigDict(str_min_length=0)
 

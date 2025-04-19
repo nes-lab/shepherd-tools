@@ -3,14 +3,13 @@
 import logging
 import math
 import pathlib
+from collections.abc import Mapping
 from datetime import timedelta
 from itertools import product
 from pathlib import Path
 from types import TracebackType
 from typing import Any
-from typing import Mapping
 from typing import Optional
-from typing import Type
 from typing import Union
 
 import h5py
@@ -18,11 +17,10 @@ import numpy as np
 import yaml
 from pydantic import validate_call
 from typing_extensions import Self
-from yaml import Dumper
+from yaml import Node
 from yaml import SafeDumper
-from yaml import ScalarNode
 
-from .commons import samplerate_sps_default
+from .commons import SAMPLERATE_SPS_DEFAULT
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
@@ -34,13 +32,13 @@ from .reader import Reader
 
 # copy of core/models/base/shepherd - needed also here
 def path2str(
-    dumper: Dumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
-) -> ScalarNode:
+    dumper: SafeDumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
+) -> Node:
     """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
-def time2int(dumper: Dumper, data: timedelta) -> ScalarNode:
+def time2int(dumper: SafeDumper, data: timedelta) -> Node:
     """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
 
@@ -93,11 +91,10 @@ class Writer(Reader):
 
     """
 
-    comp_default: int = 1
-    mode_default: str = "harvester"
-    datatype_default: EnergyDType = EnergyDType.ivsample
+    MODE_DEFAULT: str = "harvester"
+    DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
 
-    _chunk_shape: tuple = (Reader.samples_per_buffer,)
+    _CHUNK_SHAPE: tuple = (Reader.BUFFER_SAMPLES_N,)
 
     @validate_call
     def __init__(
@@ -111,7 +108,7 @@ class Writer(Reader):
         *,
         modify_existing: bool = False,
         force_overwrite: bool = False,
-        verbose: Optional[bool] = True,
+        verbose: bool = True,
     ) -> None:
         self._modify = modify_existing
         if compression is not None:
@@ -124,41 +121,42 @@ class Writer(Reader):
         # -> logger gets configured in reader()
 
         if self._modify or force_overwrite or not file_path.exists():
-            self.file_path: Path = file_path.resolve()
-            self._logger.info("Storing data to   '%s'", self.file_path)
+            file_path = file_path.resolve()
+            self._logger.info("Storing data to   '%s'", file_path)
         elif file_path.exists() and not file_path.is_file():
             msg = f"Path is not a file ({file_path})"
             raise TypeError(msg)
         else:
             base_dir = file_path.resolve().parents[0]
-            self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
+            file_path_new = unique_path(base_dir / file_path.stem, file_path.suffix)
             self._logger.warning(
                 "File '%s' already exists -> storing under '%s' instead",
                 file_path,
-                self.file_path.name,
+                file_path_new.name,
             )
+            file_path = file_path_new
 
         # open file
         if self._modify:
-            self.h5file = h5py.File(self.file_path, "r+")  # = rw
+            self.h5file = h5py.File(file_path, "r+")  # = rw
         else:
-            if not self.file_path.parent.exists():
-                self.file_path.parent.mkdir(parents=True)
-            self.h5file = h5py.File(self.file_path, "w")
+            if not file_path.parent.exists():
+                file_path.parent.mkdir(parents=True)
+            self.h5file = h5py.File(file_path, "w")
             # ⤷ write, truncate if exist
             self._create_skeleton()
 
         # Handle Mode
-        if isinstance(mode, str) and mode not in self.mode_dtype_dict:
-            msg = f"Can't handle mode '{mode}' (choose one of {self.mode_dtype_dict})"
+        if isinstance(mode, str) and mode not in self.MODE_TO_DTYPE:
+            msg = f"Can't handle mode '{mode}' (choose one of {self.MODE_TO_DTYPE})"
             raise ValueError(msg)
 
         if mode is not None:
             self.h5file.attrs["mode"] = mode
         if "mode" not in self.h5file.attrs:
-            self.h5file.attrs["mode"] = self.mode_default
+            self.h5file.attrs["mode"] = self.MODE_DEFAULT
 
-        _dtypes = self.mode_dtype_dict[self.get_mode()]
+        _dtypes = self.MODE_TO_DTYPE[self.get_mode()]
 
         # Handle Datatype
         if isinstance(datatype, str):
@@ -170,7 +168,7 @@ class Writer(Reader):
         if isinstance(datatype, EnergyDType):
             self.h5file["data"].attrs["datatype"] = datatype.name
         if "datatype" not in self.h5file["data"].attrs:
-            self.h5file["data"].attrs["datatype"] = self.datatype_default.name
+            self.h5file["data"].attrs["datatype"] = self.DATATYPE_DEFAULT.name
         if self.get_datatype() not in _dtypes:
             msg = (
                 f"Can't handle value '{self.get_datatype()}' of datatype (choose one of {_dtypes})"
@@ -204,7 +202,7 @@ class Writer(Reader):
         settings = list(self.h5file.id.get_access_plist().get_cache())
         self._logger.debug("H5Py Cache_setting=%s (_mdc, _nslots, _nbytes, _w0)", settings)
 
-        super().__init__(file_path=None, verbose=verbose)
+        super().__init__(file_path=file_path, verbose=verbose)
 
     def __enter__(self) -> Self:
         super().__enter__()
@@ -212,7 +210,7 @@ class Writer(Reader):
 
     def __exit__(
         self,
-        typ: Optional[Type[BaseException]] = None,
+        typ: Optional[type[BaseException]] = None,
         exc: Optional[BaseException] = None,
         tb: Optional[TracebackType] = None,
         extra_arg: int = 0,
@@ -251,7 +249,7 @@ class Writer(Reader):
             (0,),
             dtype="u8",
             maxshape=(None,),
-            chunks=self._chunk_shape,
+            chunks=self._CHUNK_SHAPE,
             compression=self._compression,
         )
         grp_data["time"].attrs["unit"] = "s"
@@ -262,7 +260,7 @@ class Writer(Reader):
             (0,),
             dtype="u4",
             maxshape=(None,),
-            chunks=self._chunk_shape,
+            chunks=self._CHUNK_SHAPE,
             compression=self._compression,
         )
         grp_data["current"].attrs["unit"] = "A"
@@ -273,7 +271,7 @@ class Writer(Reader):
             (0,),
             dtype="u4",
             maxshape=(None,),
-            chunks=self._chunk_shape,
+            chunks=self._CHUNK_SHAPE,
             compression=self._compression,
         )
         grp_data["voltage"].attrs["unit"] = "V"
@@ -347,10 +345,10 @@ class Writer(Reader):
     def _align(self) -> None:
         """Align datasets with buffer-size of shepherd."""
         self._refresh_file_stats()
-        n_buff = self.ds_voltage.size / self.samples_per_buffer
-        size_new = int(math.floor(n_buff) * self.samples_per_buffer)
+        n_buff = self.ds_voltage.size / self.BUFFER_SAMPLES_N
+        size_new = int(math.floor(n_buff) * self.BUFFER_SAMPLES_N)
         if size_new < self.ds_voltage.size:
-            if self.samplerate_sps != samplerate_sps_default:
+            if self.samplerate_sps != SAMPLERATE_SPS_DEFAULT:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(

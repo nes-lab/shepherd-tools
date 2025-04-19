@@ -1,13 +1,13 @@
 """Wrapper-related ecosystem for transferring models."""
 
 from datetime import datetime
+from typing import Annotated
 from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import StringConstraints
-from typing_extensions import Annotated
 
-from ...version import version
+from shepherd_core.version import version
 
 SafeStrClone = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ copy avoids circular import

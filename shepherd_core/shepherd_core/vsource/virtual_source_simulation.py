@@ -14,13 +14,14 @@ from typing import Optional
 import numpy as np
 from tqdm import tqdm
 
-from .. import CalibrationEmulator
-from .. import Reader
-from .. import Writer
-from ..data_models import VirtualSourceConfig
-from ..logger import logger
-from . import VirtualSourceModel
+from shepherd_core.data_models.base.calibration import CalibrationEmulator
+from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.logger import logger
+from shepherd_core.reader import Reader
+from shepherd_core.writer import Writer
+
 from .target_model import TargetABC
+from .virtual_source_model import VirtualSourceModel
 
 
 def simulate_source(

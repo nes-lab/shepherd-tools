@@ -1,20 +1,22 @@
 """meta-data representation of a testbed-component (physical object)."""
 
 from datetime import datetime
+from typing import Annotated
+from typing import Any
 from typing import Optional
 
 from pydantic import Field
 from pydantic import IPvAnyAddress
 from pydantic import StringConstraints
 from pydantic import model_validator
-from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ...testbed_client import tb_client
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.testbed_client import tb_client
+
 from .cape import Cape
 from .cape import TargetPort
 from .target import Target
@@ -56,7 +58,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values
 

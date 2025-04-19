@@ -12,11 +12,12 @@ NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 
 from typing import Optional
 
-from ..data_models import CalibrationEmulator
-from ..data_models import EnergyDType
-from ..data_models import VirtualSourceConfig
-from ..data_models.content.virtual_harvester import HarvesterPRUConfig
-from ..data_models.content.virtual_source import ConverterPRUConfig
+from shepherd_core.data_models.base.calibration import CalibrationEmulator
+from shepherd_core.data_models.content.energy_environment import EnergyDType
+from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
+from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+
 from .virtual_converter_model import PruCalibration
 from .virtual_converter_model import VirtualConverterModel
 from .virtual_harvester_model import VirtualHarvesterModel

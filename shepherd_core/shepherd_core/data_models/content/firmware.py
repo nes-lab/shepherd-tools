@@ -4,6 +4,8 @@ TODO: should be more generalized - currently only supports msp & nRF
 """
 
 from pathlib import Path
+from typing import Annotated
+from typing import Any
 from typing import Optional
 from typing import TypedDict
 from typing import Union
@@ -11,15 +13,15 @@ from typing import Union
 from pydantic import StringConstraints
 from pydantic import model_validator
 from pydantic import validate_call
-from typing_extensions import Annotated
 from typing_extensions import Self
 from typing_extensions import Unpack
 
-from ... import fw_tools
-from ...logger import logger
-from ...testbed_client import tb_client
-from ..base.content import ContentModel
-from ..testbed.mcu import MCU
+from shepherd_core import fw_tools
+from shepherd_core.data_models.base.content import ContentModel
+from shepherd_core.data_models.testbed.mcu import MCU
+from shepherd_core.logger import logger
+from shepherd_core.testbed_client import tb_client
+
 from .firmware_datatype import FirmwareDType
 
 suffix_to_DType: dict = {
@@ -64,7 +66,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         # crosscheck type with actual data
         _type = values.get("data_type")

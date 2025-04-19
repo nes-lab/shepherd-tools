@@ -5,26 +5,26 @@ from datetime import datetime
 from datetime import timedelta
 from enum import Enum
 from pathlib import Path
+from typing import Annotated
 from typing import Optional
 from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
-from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ..base.content import IdInt
-from ..base.shepherd import ShpModel
-from ..base.timezone import local_tz
-from ..content.virtual_source import VirtualSourceConfig
-from ..experiment.experiment import Experiment
-from ..experiment.observer_features import GpioActuation
-from ..experiment.observer_features import GpioTracing
-from ..experiment.observer_features import PowerTracing
-from ..experiment.observer_features import SystemLogging
-from ..testbed import Testbed
-from ..testbed.cape import TargetPort
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.timezone import local_tz
+from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.experiment.experiment import Experiment
+from shepherd_core.data_models.experiment.observer_features import GpioActuation
+from shepherd_core.data_models.experiment.observer_features import GpioTracing
+from shepherd_core.data_models.experiment.observer_features import PowerTracing
+from shepherd_core.data_models.experiment.observer_features import SystemLogging
+from shepherd_core.data_models.testbed import Testbed
+from shepherd_core.data_models.testbed.cape import TargetPort
 
 
 class Compression(str, Enum):
@@ -111,9 +111,8 @@ class EmulationTask(ShpModel):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         # TODO: limit paths
-        has_time = self.time_start is not None
         time_now = datetime.now().astimezone()
-        if has_time and self.time_start < time_now:
+        if self.time_start is not None and self.time_start < time_now:
             msg = (
                 "Start-Time for Emulation can't be in the past "
                 f"('{self.time_start}' vs '{time_now}'."

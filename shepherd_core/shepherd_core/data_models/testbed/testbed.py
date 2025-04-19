@@ -2,21 +2,22 @@
 
 from datetime import timedelta
 from pathlib import Path
-from typing import List
+from typing import Annotated
+from typing import Any
 from typing import Optional
 
 from pydantic import Field
 from pydantic import HttpUrl
 from pydantic import model_validator
-from typing_extensions import Annotated
 from typing_extensions import Self
 
-from ... import logger
-from ...testbed_client import tb_client
-from ..base.content import IdInt
-from ..base.content import NameStr
-from ..base.content import SafeStr
-from ..base.shepherd import ShpModel
+from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.logger import logger
+from shepherd_core.testbed_client import tb_client
+
 from .observer import Observer
 
 
@@ -30,7 +31,7 @@ class Testbed(ShpModel):
 
     url: Optional[HttpUrl] = None
 
-    observers: Annotated[List[Observer], Field(min_length=1, max_length=128)]
+    observers: Annotated[list[Observer], Field(min_length=1, max_length=128)]
 
     shared_storage: bool = True
     data_on_server: Path
@@ -42,7 +43,7 @@ class Testbed(ShpModel):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         # allow instantiating an empty Testbed
         #   -> query the first (and only) entry of client
         if len(values) == 0:

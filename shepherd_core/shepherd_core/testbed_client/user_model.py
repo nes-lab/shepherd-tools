@@ -2,6 +2,8 @@
 
 import secrets
 from hashlib import pbkdf2_hmac
+from typing import Annotated
+from typing import Any
 from typing import Optional
 from typing import Union
 from uuid import uuid4
@@ -14,11 +16,10 @@ from pydantic import SecretStr
 from pydantic import StringConstraints
 from pydantic import model_validator
 from pydantic import validate_call
-from typing_extensions import Annotated
 
-from ..data_models.base.content import NameStr
-from ..data_models.base.content import SafeStr
-from ..data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.content import NameStr
+from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.shepherd import ShpModel
 
 
 @validate_call
@@ -63,7 +64,7 @@ class User(ShpModel):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         # TODO:
 
         # post correction

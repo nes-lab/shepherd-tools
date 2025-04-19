@@ -46,7 +46,7 @@ if __name__ == "__main__":
                 fh = shp.Reader(file, verbose=False)  # reopen file
 
         # unaligned datasets
-        remaining_size = fh.h5file["data"]["voltage"].shape[0] % shp.Reader.samples_per_buffer
+        remaining_size = fh.h5file["data"]["voltage"].shape[0] % shp.Reader.BUFFER_SAMPLES_N
         if remaining_size != 0:
             print(" -> will align datasets")
             fh.__exit__()
@@ -56,8 +56,8 @@ if __name__ == "__main__":
 
         # invalid modes
         mode = fh.get_mode()
-        if mode not in shp.Reader.mode_dtype_dict:
-            mode = shp.Writer.mode_default
+        if mode not in shp.Reader.MODE_TO_DTYPE:
+            mode = shp.Writer.MODE_DEFAULT
             if "har" in fh.get_mode():  # can be harvest, harvesting, ...
                 mode = "harvester"
             elif "emu" in fh.get_mode():  # can be emulation, emulate
@@ -70,8 +70,8 @@ if __name__ == "__main__":
 
         # invalid datatype
         datatype = fh.get_datatype()
-        if datatype not in shp.Reader.mode_dtype_dict[mode]:
-            datatype = shp.Writer.datatype_default
+        if datatype not in shp.Reader.MODE_TO_DTYPE[mode]:
+            datatype = shp.Writer.DATATYPE_DEFAULT
             if "curv" in str(fh.get_datatype()):
                 datatype = EnergyDType.ivcurve
             print(f" -> will set datatype = {datatype}")

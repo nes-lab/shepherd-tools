@@ -3,15 +3,18 @@
 import platform
 import subprocess
 import time
+from collections.abc import Mapping
+from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from types import MappingProxyType
+from typing import Any
 from typing import Optional
 
 from typing_extensions import Self
 
-from ..data_models.base.timezone import local_now
-from ..logger import logger
+from shepherd_core.data_models.base.timezone import local_now
+from shepherd_core.logger import logger
 
 try:
     import psutil
@@ -21,7 +24,7 @@ except ImportError:
 from pydantic import ConfigDict
 from pydantic.types import PositiveInt
 
-from ..data_models import ShpModel
+from shepherd_core.data_models import ShpModel
 
 
 class SystemInventory(ShpModel):
@@ -30,7 +33,7 @@ class SystemInventory(ShpModel):
     uptime: PositiveInt
     # ⤷ seconds
     timestamp: datetime
-    # time_delta: timedelta = timedelta(0)  # noqa: ERA001
+    # time_delta: timedelta = timedelta(seconds=0)  # noqa: ERA001
     # ⤷ lag behind earliest observer, TODO: wrong place
 
     system: str
@@ -44,13 +47,13 @@ class SystemInventory(ShpModel):
 
     hostname: str
 
-    interfaces: dict = {}  # noqa: RUF012
+    interfaces: Mapping[str, Any] = MappingProxyType({})
     # ⤷ tuple with
     #   ip IPvAnyAddress
     #   mac MACStr
 
-    fs_root: List[str] = None
-    beagle: List[str] = None
+    fs_root: Sequence[str] = ()
+    beagle: Sequence[str] = ()
 
     model_config = ConfigDict(str_min_length=0)
 

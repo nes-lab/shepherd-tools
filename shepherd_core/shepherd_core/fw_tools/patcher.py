@@ -1,15 +1,16 @@
 """Read and modify symbols in ELF-files."""
 
 from pathlib import Path
+from typing import Annotated
 from typing import Optional
 
 from pydantic import Field
 from pydantic import validate_call
-from typing_extensions import Annotated
 
-from ..commons import uid_len_default
-from ..commons import uid_str_default
-from ..logger import logger
+from shepherd_core.commons import UID_NAME
+from shepherd_core.commons import UID_SIZE
+from shepherd_core.logger import logger
+
 from .validation import is_elf
 
 try:
@@ -49,7 +50,7 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
 
 
 @validate_call
-def read_symbol(file_elf: Path, symbol: str, length: int = uid_len_default) -> Optional[int]:
+def read_symbol(file_elf: Path, symbol: str, length: int = UID_SIZE) -> Optional[int]:
     """Read value of symbol in ELF-File.
 
     Will be interpreted as int.
@@ -67,7 +68,7 @@ def read_symbol(file_elf: Path, symbol: str, length: int = uid_len_default) -> O
 
 def read_uid(file_elf: Path) -> Optional[int]:
     """Read value of UID-symbol for shepherd testbed."""
-    return read_symbol(file_elf, symbol=uid_str_default, length=uid_len_default)
+    return read_symbol(file_elf, symbol=UID_NAME, length=UID_SIZE)
 
 
 def read_arch(file_elf: Path) -> Optional[str]:
@@ -87,7 +88,7 @@ def read_arch(file_elf: Path) -> Optional[str]:
 def modify_symbol_value(
     file_elf: Path,
     symbol: str,
-    value: Annotated[int, Field(ge=0, lt=2 ** (8 * uid_len_default))],
+    value: Annotated[int, Field(ge=0, lt=2 ** (8 * UID_SIZE))],
     *,
     overwrite: bool = False,
 ) -> Optional[Path]:
@@ -105,20 +106,18 @@ def modify_symbol_value(
         raise RuntimeError(elf_error_text)
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]
-    value_raw = elf.read(address=addr, count=uid_len_default)[-uid_len_default:]
+    value_raw = elf.read(address=addr, count=UID_SIZE)[-UID_SIZE:]
     # ⤷ cutting needed -> msp produces 4b instead of 2
     value_old = int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
-    value_raw = value.to_bytes(length=uid_len_default, byteorder=elf.endian, signed=False)
+    value_raw = value.to_bytes(length=UID_SIZE, byteorder=elf.endian, signed=False)
+
     try:
         elf.write(address=addr, data=value_raw)
     except AttributeError:
         logger.warning("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
         return None
-    if overwrite:
-        file_new = file_elf
-    else:
-        file_new = file_elf.with_name(file_elf.stem + "_" + str(value) + file_elf.suffix)
-        # could be simplified, but py3.8-- doesn't know .with_stem()
+
+    file_new = file_elf if overwrite else file_elf.with_stem(file_elf.stem + "_" + str(value))
     elf.save(path=file_new)
     elf.close()
     logger.debug(
@@ -133,4 +132,4 @@ def modify_symbol_value(
 
 def modify_uid(file_elf: Path, value: int) -> Optional[Path]:
     """Replace value of UID-symbol for shepherd testbed."""
-    return modify_symbol_value(file_elf, symbol=uid_str_default, value=value, overwrite=True)
+    return modify_symbol_value(file_elf, symbol=UID_NAME, value=value, overwrite=True)

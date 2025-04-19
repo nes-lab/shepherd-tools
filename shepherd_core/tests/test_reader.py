@@ -4,6 +4,7 @@ from pathlib import Path
 import h5py
 import pytest
 import yaml
+from pydantic import ValidationError
 
 from shepherd_core import Reader
 from shepherd_core import Writer
@@ -33,7 +34,7 @@ def test_reader_items(data_h5: Path) -> None:
 
 
 def test_reader_open(tmp_path: Path) -> None:
-    with pytest.raises(TypeError):
+    with pytest.raises(ValidationError):
         Reader(file_path=None)
 
     tmp_file = (tmp_path / "data.h5").resolve()
@@ -189,7 +190,7 @@ def test_reader_fault_non_eq_time(data_h5: Path) -> None:
 
 def test_reader_fault_unaligned(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
-        new_size = sfw.samples_per_buffer / 2
+        new_size = sfw.BUFFER_SAMPLES_N / 2
         sfw.h5file["data"]["time"].resize((new_size,))
         sfw.h5file["data"]["voltage"].resize((new_size,))
         sfw.h5file["data"]["current"].resize((new_size,))
@@ -251,7 +252,7 @@ def test_reader_fault_jumps_timestamp(data_h5: Path) -> None:
     with Reader(data_h5, verbose=True) as sfr:
         assert sfr.check_timediffs()
     with Writer(data_h5, modify_existing=True) as sfw:
-        sfw.h5file["data"]["time"][sfw.samples_per_buffer] = 0
+        sfw.h5file["data"]["time"][sfw.BUFFER_SAMPLES_N] = 0
     with Reader(data_h5, verbose=True) as sfr:
         assert not sfr.check_timediffs()
 
