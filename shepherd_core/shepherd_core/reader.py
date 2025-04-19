@@ -111,6 +111,8 @@ class Reader:
                     self.file_path.name,
                 )
 
+        if not isinstance(self.file_path, Path):
+            raise TypeError("Provide a valid Path-Object to Base-Reader.file_path!")
         if not isinstance(self.h5file, h5py.File):
             raise TypeError("Type of opened file is not h5py.File, for %s", self.file_path.name)
 

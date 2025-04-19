@@ -17,9 +17,8 @@ import numpy as np
 import yaml
 from pydantic import validate_call
 from typing_extensions import Self
-from yaml import Dumper
+from yaml import Node
 from yaml import SafeDumper
-from yaml import ScalarNode
 
 from .commons import samplerate_sps_default
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
@@ -33,13 +32,13 @@ from .reader import Reader
 
 # copy of core/models/base/shepherd - needed also here
 def path2str(
-    dumper: Dumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
-) -> ScalarNode:
+    dumper: SafeDumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
+) -> Node:
     """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
 
 
-def time2int(dumper: Dumper, data: timedelta) -> ScalarNode:
+def time2int(dumper: SafeDumper, data: timedelta) -> Node:
     """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
 

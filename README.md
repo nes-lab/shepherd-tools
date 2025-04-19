@@ -107,7 +107,8 @@ bump2version --allow-dirty --new-version 2025.04.2 patch
 pre-commit run --all-files
 
 # additional QA-Tests (currently with open issues)
-pyright
+cd shepherd_core
+mypy .
 
 # inside sub-modules unittests
 cd shepherd_core

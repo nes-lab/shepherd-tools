@@ -53,11 +53,11 @@ class AbcClient(ABC):
         pass
 
     @abstractmethod
-    def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
+    def try_inheritance(self, model_type: str, values: dict) -> tuple[dict, list]:
         # TODO: maybe internal? yes
         pass
 
-    def try_completing_model(self, model_type: str, values: dict) -> (dict, list):
+    def try_completing_model(self, model_type: str, values: dict) -> tuple[dict, list]:
         """Init by name/id, for none existing instances raise Exception.
 
         This is the main entry-point for querying a model (used be the core-lib).
@@ -82,7 +82,7 @@ class FixturesClient(AbcClient):
 
     def __init__(self) -> None:
         super().__init__()
-        self._fixtures: Optional[Fixtures] = Fixtures()
+        self._fixtures: Fixtures = Fixtures()
 
     def insert(self, data: ShpModel) -> bool:
         wrap = Wrapper(
@@ -107,7 +107,7 @@ class FixturesClient(AbcClient):
             return self._fixtures[model_type].query_name(name)
         raise ValueError("Query needs either uid or name of object")
 
-    def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
+    def try_inheritance(self, model_type: str, values: dict) -> tuple[dict, list]:
         return self._fixtures[model_type].inheritance(values)
 
     def fill_in_user_data(self, values: dict) -> dict:

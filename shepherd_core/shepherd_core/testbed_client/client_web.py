@@ -48,6 +48,8 @@ class WebClient(AbcClient):
     # ABC Functions below
 
     def insert(self, data: ShpModel) -> bool:
+        if self._req is None:
+            return False
         wrap = Wrapper(
             datatype=type(data).__name__,
             parameters=data.model_dump(),
@@ -67,10 +69,12 @@ class WebClient(AbcClient):
     ) -> dict:
         raise NotImplementedError("TODO")
 
-    def try_inheritance(self, model_type: str, values: dict) -> (dict, list):
+    def try_inheritance(self, model_type: str, values: dict) -> tuple[dict, list]:
         raise NotImplementedError("TODO")
 
     def fill_in_user_data(self, values: dict) -> dict:
+        if self._user is None:
+            return values
         if values.get("owner") is None:
             values["owner"] = self._user.name
         if values.get("group") is None:
@@ -104,7 +108,7 @@ class WebClient(AbcClient):
         return self._query_user_data()
 
     def _query_session_key(self) -> bool:
-        if self._server:
+        if self._server and self._req is not None:
             r = self._req.get(self._server + "/session_key", timeout=2)
             r.raise_for_status()
             self._key = r.json()["value"]  # TODO: not finished
@@ -112,7 +116,7 @@ class WebClient(AbcClient):
         return False
 
     def _query_user_data(self) -> bool:
-        if self._server:
+        if self._server and self._req is not None:
             r = self._req.get(self._server + "/user?token=" + self._token, timeout=2)
             # TODO: possibly a security nightmare (send via json or encrypted via public key?)
             r.raise_for_status()

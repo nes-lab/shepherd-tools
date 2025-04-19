@@ -42,25 +42,26 @@ class Fixture:
     def insert(self, data: Wrapper) -> None:
         # ⤷ TODO: could get easier
         #    - when not model_name but class used
-        #    - use doubleref name->id->data (safes RAM)
+        #    - use doubleref name->id->data (saves RAM)
         if data.datatype.lower() != self.model_type.lower():
             return
         if "name" not in data.parameters:
             return
         name = str(data.parameters["name"]).lower()
         _id = data.parameters["id"]
-        data = data.parameters
-        self.elements_by_name[name] = data
-        self.elements_by_id[_id] = data
+        data_model = data.parameters
+        self.elements_by_name[name] = data_model
+        self.elements_by_id[_id] = data_model
         # update iterator
-        self._iter_list: list = list(self.elements_by_name.values())
+        self._iter_list = list(self.elements_by_name.values())
 
     def __getitem__(self, key: Union[str, int]) -> dict:
         if isinstance(key, str):
             key = key.lower()
             if key in self.elements_by_name:
                 return self.elements_by_name[key]
-            key = int(key) if key.isdigit() else None
+            if key.isdigit():
+                key = int(key)
         if key in self.elements_by_id:
             return self.elements_by_id[int(key)]
         msg = f"{self.model_type} '{key}' not found!"
@@ -84,7 +85,9 @@ class Fixture:
     def refs(self) -> dict:
         return {_i["id"]: _i["name"] for _i in self.elements_by_id.values()}
 
-    def inheritance(self, values: dict, chain: Optional[list] = None) -> (dict, list):
+    def inheritance(
+        self, values: dict[str, Union[str, int]], chain: Optional[list] = None
+    ) -> tuple[dict, list]:
         if chain is None:
             chain = []
         values = copy.copy(values)
