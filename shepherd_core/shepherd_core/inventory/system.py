@@ -29,7 +29,7 @@ class SystemInventory(ShpModel):
     uptime: PositiveInt
     # ⤷ seconds
     timestamp: datetime
-    # time_delta: timedelta = timedelta(0)  # noqa: ERA001
+    # time_delta: timedelta = timedelta(seconds=0)  # noqa: ERA001
     # ⤷ lag behind earliest observer, TODO: wrong place
 
     system: str

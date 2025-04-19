@@ -2,6 +2,7 @@
 
 from enum import Enum
 from typing import Annotated
+from typing import Any
 from typing import Optional
 
 from pydantic import Field
@@ -45,6 +46,6 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values

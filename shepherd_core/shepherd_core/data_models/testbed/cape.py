@@ -3,6 +3,7 @@
 from datetime import date
 from datetime import datetime
 from enum import Enum
+from typing import Any
 from typing import Optional
 from typing import Union
 
@@ -42,6 +43,6 @@ class Cape(ShpModel, title="Shepherd-Cape"):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values

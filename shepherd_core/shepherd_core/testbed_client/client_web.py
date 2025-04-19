@@ -2,6 +2,7 @@
 
 from importlib import import_module
 from pathlib import Path
+from typing import Any
 from typing import Optional
 from typing import Union
 
@@ -69,10 +70,12 @@ class WebClient(AbcClient):
     ) -> dict:
         raise NotImplementedError("TODO")
 
-    def try_inheritance(self, model_type: str, values: dict) -> tuple[dict, list]:
+    def try_inheritance(
+        self, model_type: str, values: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[str]]:
         raise NotImplementedError("TODO")
 
-    def fill_in_user_data(self, values: dict) -> dict:
+    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
         if self._user is None:
             return values
         if values.get("owner") is None:

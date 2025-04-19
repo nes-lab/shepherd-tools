@@ -1,7 +1,9 @@
 """Generalized energy harvester data models."""
 
+from collections.abc import Mapping
 from enum import Enum
 from typing import Annotated
+from typing import Any
 from typing import Optional
 
 from pydantic import Field
@@ -72,7 +74,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, chain = tb_client.try_completing_model(cls.__name__, values)
         values = tb_client.fill_in_user_data(values)
         if values["name"] == "neutral":
@@ -113,14 +115,14 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return 1 * int(for_emu) + 2 * self.rising + 4 * self.enable_linear_extrapolation
 
     def calc_algorithm_num(self, *, for_emu: bool) -> int:
-        num = algo_to_num.get(self.algorithm)
+        num: int = ALGO_TO_NUM.get(self.algorithm, ALGO_TO_NUM["neutral"])
         if for_emu and self.get_datatype() != EnergyDType.ivsample:
             msg = (
                 f"[{self.name}] Select valid harvest-algorithm for emulator, "
                 f"current usage = {self.algorithm}"
             )
             raise ValueError(msg)
-        if not for_emu and num < algo_to_num["isc_voc"]:
+        if not for_emu and num < ALGO_TO_NUM["isc_voc"]:
             msg = (
                 f"[{self.name}] Select valid harvest-algorithm for harvester, "
                 f"current usage = {self.algorithm}"
@@ -148,7 +150,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return interval_ms, duration_ms
 
     def get_datatype(self) -> EnergyDType:
-        return algo_to_dtype[self.algorithm]
+        return ALGO_TO_DTYPE[self.algorithm]
 
     def calc_window_size(
         self,
@@ -183,7 +185,7 @@ u32 = Annotated[int, Field(ge=0, lt=2**32)]
 # - harvesting on "neutral" is not possible - direct pass-through
 # - emulation with "ivcurve" or lower is also resulting in Error
 # - "_opt" has its own algo for emulation, but is only a fast mppt_po for harvesting
-algo_to_num = {
+ALGO_TO_NUM: Mapping[str, int] = {
     "neutral": 2**0,
     "isc_voc": 2**3,
     "ivcurve": 2**4,
@@ -194,7 +196,7 @@ algo_to_num = {
     "mppt_opt": 2**14,
 }
 
-algo_to_dtype = {
+ALGO_TO_DTYPE: Mapping[str, EnergyDType] = {
     "neutral": EnergyDType.ivsample,
     "isc_voc": EnergyDType.isc_voc,
     "ivcurve": EnergyDType.ivcurve,
@@ -265,9 +267,15 @@ class HarvesterPRUConfig(ShpModel):
             if window_size is not None
             else data.calc_window_size(dtype_in, for_emu=for_emu)
         )
-        voltage_step_mV = (
-            1e3 * voltage_step_V if voltage_step_V is not None else data.voltage_step_mV
-        )
+        if voltage_step_V is not None:
+            voltage_step_mV = 1e3 * voltage_step_V
+        elif data.voltage_step_mV is not None:
+            voltage_step_mV = data.voltage_step_mV
+        else:
+            raise ValueError(
+                "For correct emulation specify voltage_step used by harvester "
+                "e.g. via file_src.get_voltage_step()"
+            )
 
         return cls(
             algorithm=data.calc_algorithm_num(for_emu=for_emu),

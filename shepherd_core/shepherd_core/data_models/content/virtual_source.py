@@ -1,6 +1,7 @@
 """Generalized virtual source data models."""
 
 from typing import Annotated
+from typing import Any
 
 from pydantic import Field
 from pydantic import model_validator
@@ -112,7 +113,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, chain = tb_client.try_completing_model(cls.__name__, values)
         values = tb_client.fill_in_user_data(values)
         logger.debug("VSrc-Inheritances: %s", chain)

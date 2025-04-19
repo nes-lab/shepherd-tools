@@ -4,6 +4,7 @@ from pathlib import Path
 import h5py
 import pytest
 import yaml
+from pydantic import ValidationError
 
 from shepherd_core import Reader
 from shepherd_core import Writer
@@ -33,7 +34,7 @@ def test_reader_items(data_h5: Path) -> None:
 
 
 def test_reader_open(tmp_path: Path) -> None:
-    with pytest.raises(TypeError):
+    with pytest.raises(ValidationError):
         Reader(file_path=None)
 
     tmp_file = (tmp_path / "data.h5").resolve()

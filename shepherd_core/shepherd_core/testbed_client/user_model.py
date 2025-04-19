@@ -3,6 +3,7 @@
 import secrets
 from hashlib import pbkdf2_hmac
 from typing import Annotated
+from typing import Any
 from typing import Optional
 from typing import Union
 from uuid import uuid4
@@ -63,7 +64,7 @@ class User(ShpModel):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         # TODO:
 
         # post correction

@@ -5,6 +5,7 @@ TODO: should be more generalized - currently only supports msp & nRF
 
 from pathlib import Path
 from typing import Annotated
+from typing import Any
 from typing import Optional
 from typing import TypedDict
 from typing import Union
@@ -64,7 +65,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         # crosscheck type with actual data
         _type = values.get("data_type")

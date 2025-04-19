@@ -109,7 +109,7 @@ class Writer(Reader):
         *,
         modify_existing: bool = False,
         force_overwrite: bool = False,
-        verbose: Optional[bool] = True,
+        verbose: bool = True,
     ) -> None:
         self._modify = modify_existing
         if compression is not None:
@@ -122,27 +122,28 @@ class Writer(Reader):
         # -> logger gets configured in reader()
 
         if self._modify or force_overwrite or not file_path.exists():
-            self.file_path: Path = file_path.resolve()
-            self._logger.info("Storing data to   '%s'", self.file_path)
+            file_path = file_path.resolve()
+            self._logger.info("Storing data to   '%s'", file_path)
         elif file_path.exists() and not file_path.is_file():
             msg = f"Path is not a file ({file_path})"
             raise TypeError(msg)
         else:
             base_dir = file_path.resolve().parents[0]
-            self.file_path = unique_path(base_dir / file_path.stem, file_path.suffix)
+            file_path_new = unique_path(base_dir / file_path.stem, file_path.suffix)
             self._logger.warning(
                 "File '%s' already exists -> storing under '%s' instead",
                 file_path,
-                self.file_path.name,
+                file_path_new.name,
             )
+            file_path = file_path_new
 
         # open file
         if self._modify:
-            self.h5file = h5py.File(self.file_path, "r+")  # = rw
+            self.h5file = h5py.File(file_path, "r+")  # = rw
         else:
-            if not self.file_path.parent.exists():
-                self.file_path.parent.mkdir(parents=True)
-            self.h5file = h5py.File(self.file_path, "w")
+            if not file_path.parent.exists():
+                file_path.parent.mkdir(parents=True)
+            self.h5file = h5py.File(file_path, "w")
             # ⤷ write, truncate if exist
             self._create_skeleton()
 
@@ -202,7 +203,7 @@ class Writer(Reader):
         settings = list(self.h5file.id.get_access_plist().get_cache())
         self._logger.debug("H5Py Cache_setting=%s (_mdc, _nslots, _nbytes, _w0)", settings)
 
-        super().__init__(file_path=None, verbose=verbose)
+        super().__init__(file_path=file_path, verbose=verbose)
 
     def __enter__(self) -> Self:
         super().__enter__()

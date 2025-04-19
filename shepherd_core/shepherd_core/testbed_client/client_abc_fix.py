@@ -17,6 +17,7 @@ TODO: Comfort functions missing
 
 from abc import ABC
 from abc import abstractmethod
+from typing import Any
 from typing import Optional
 
 from ..data_models.base.shepherd import ShpModel
@@ -53,11 +54,15 @@ class AbcClient(ABC):
         pass
 
     @abstractmethod
-    def try_inheritance(self, model_type: str, values: dict) -> tuple[dict, list]:
+    def try_inheritance(
+        self, model_type: str, values: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[str]]:
         # TODO: maybe internal? yes
         pass
 
-    def try_completing_model(self, model_type: str, values: dict) -> tuple[dict, list]:
+    def try_completing_model(
+        self, model_type: str, values: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[str]]:
         """Init by name/id, for none existing instances raise Exception.
 
         This is the main entry-point for querying a model (used be the core-lib).
@@ -72,7 +77,7 @@ class AbcClient(ABC):
         return self.try_inheritance(model_type, values)
 
     @abstractmethod
-    def fill_in_user_data(self, values: dict) -> dict:
+    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
         # TODO: is it really helpful and needed?
         pass
 
@@ -107,10 +112,12 @@ class FixturesClient(AbcClient):
             return self._fixtures[model_type].query_name(name)
         raise ValueError("Query needs either uid or name of object")
 
-    def try_inheritance(self, model_type: str, values: dict) -> tuple[dict, list]:
+    def try_inheritance(
+        self, model_type: str, values: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[str]]:
         return self._fixtures[model_type].inheritance(values)
 
-    def fill_in_user_data(self, values: dict) -> dict:
+    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
         """Add fake user-data when offline-client is used.
 
         Hotfix until WebClient is working.

@@ -2,6 +2,7 @@
 
 from enum import Enum
 from pathlib import Path
+from typing import Any
 from typing import Optional
 
 from pydantic import PositiveFloat
@@ -46,7 +47,7 @@ class EnergyEnvironment(ContentModel):
 
     @model_validator(mode="before")
     @classmethod
-    def query_database(cls, values: dict) -> dict:
+    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         # TODO: figure out a way to crosscheck type with actual data
         return tb_client.fill_in_user_data(values)

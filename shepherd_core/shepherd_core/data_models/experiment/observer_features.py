@@ -26,7 +26,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     #            this also includes current!
 
     # time
-    delay: timedelta = 0  # seconds
+    delay: timedelta = timedelta(seconds=0)
     duration: Optional[timedelta] = None  # till EOF
 
     # post-processing
@@ -64,7 +64,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     # ⤷ TODO: list of GPIO to build mask, one of both should be internal / computed field
 
     # time
-    delay: timedelta = 0  # seconds
+    delay: timedelta = timedelta(seconds=0)
     duration: Optional[timedelta] = None  # till EOF
 
     # post-processing,

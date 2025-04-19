@@ -86,8 +86,8 @@ class Fixture:
         return {_i["id"]: _i["name"] for _i in self.elements_by_id.values()}
 
     def inheritance(
-        self, values: dict[str, Union[str, int]], chain: Optional[list] = None
-    ) -> tuple[dict, list]:
+        self, values: dict[str, Any], chain: Optional[list[str]] = None
+    ) -> tuple[dict[str, Any], list[str]]:
         if chain is None:
             chain = []
         values = copy.copy(values)

@@ -34,9 +34,9 @@ class Reader(CoreReader):
 
     def __init__(
         self,
-        file_path: Optional[Path],
+        file_path: Path,
         *,
-        verbose: Optional[bool] = True,
+        verbose: bool = True,
     ) -> None:
         super().__init__(file_path, verbose=verbose)
 

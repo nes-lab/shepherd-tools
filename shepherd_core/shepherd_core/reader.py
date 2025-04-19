@@ -57,14 +57,11 @@ class Reader:
     @validate_call
     def __init__(
         self,
-        file_path: Optional[Path],
+        file_path: Path,
         *,
-        verbose: Optional[bool] = True,
+        verbose: bool = True,
     ) -> None:
-        if not hasattr(self, "file_path"):
-            self.file_path: Optional[Path] = None
-            if isinstance(file_path, (Path, str)):
-                self.file_path = Path(file_path).resolve()
+        self.file_path: Path = file_path.resolve()
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Reader")
@@ -111,8 +108,6 @@ class Reader:
                     self.file_path.name,
                 )
 
-        if not isinstance(self.file_path, Path):
-            raise TypeError("Provide a valid Path-Object to Base-Reader.file_path!")
         if not isinstance(self.h5file, h5py.File):
             raise TypeError("Type of opened file is not h5py.File, for %s", self.file_path.name)
 
