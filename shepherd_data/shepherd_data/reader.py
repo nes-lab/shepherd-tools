@@ -175,7 +175,8 @@ class Reader(CoreReader):
     ) -> Union[None, h5py.Dataset, np.ndarray]:
         """Sample down iv-data.
 
-        Warning: only valid for IV-Stream, not IV-Curves
+        Warning: only valid for IV-Stream, not IV-Curves,
+        TODO: globally rename to IVTrace, IVSurface
 
         :param data_src: a h5-dataset to digest, can be external
         :param data_dst: can be a dataset, numpy-array or None (will be created internally then)
@@ -224,6 +225,7 @@ class Reader(CoreReader):
         f_state = np.zeros((filter_.shape[0], 2))
 
         slice_len = 0
+        output_pos = 0
         for _iter in trange(
             0,
             iterations,
@@ -235,12 +237,16 @@ class Reader(CoreReader):
             if not is_time and ds_factor > 1:
                 slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
             slice_ds = slice_ds[::ds_factor]
-            slice_len = min(dest_len - _iter * oblock_len, oblock_len)
-            data_dst[_iter * oblock_len : (_iter + 1) * oblock_len] = slice_ds[:slice_len]
+            slice_len = min(dest_len - _iter * oblock_len, oblock_len, len(slice_ds))
+            data_dst[output_pos : output_pos + slice_len] = slice_ds[:slice_len]
+            # workaround to allow processing last slice (often smaller than expected),
+            # wanted: data_dst[_iter * oblock_len : (_iter + 1) * oblock_len]
+            # this prevents future parallel processing!
+            output_pos += slice_len
         if isinstance(data_dst, np.ndarray):
-            data_dst.resize((oblock_len * (iterations - 1) + slice_len,), refcheck=False)
+            data_dst.resize((output_pos,), refcheck=False)
         else:
-            data_dst.resize((oblock_len * (iterations - 1) + slice_len,))
+            data_dst.resize((output_pos,))
         return data_dst
 
     def cut_and_downsample_to_file(
