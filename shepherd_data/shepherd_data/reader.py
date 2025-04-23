@@ -240,7 +240,7 @@ class Reader(CoreReader):
             slice_len = min(dest_len - _iter * oblock_len, oblock_len, len(slice_ds))
             data_dst[output_pos : output_pos + slice_len] = slice_ds[:slice_len]
             # workaround to allow processing last slice (often smaller than expected),
-            # wanted: data_dst[_iter * oblock_len : (_iter + 1) * oblock_len]
+            # wanted: [_iter * oblock_len : (_iter + 1) * oblock_len]
             # this prevents future parallel processing!
             output_pos += slice_len
         if isinstance(data_dst, np.ndarray):
@@ -542,11 +542,20 @@ class Reader(CoreReader):
             # last axis is set below
 
         for date in data:
+            samples_n = min(len(date["time"]), len(date["voltage"]), len(date["current"]))
             if not only_pwr:
-                axs[0].plot(date["time"], date["voltage"], label=date["name"])
-                axs[1].plot(date["time"], date["current"] * 10**3, label=date["name"])
+                axs[0].plot(
+                    date["time"][:samples_n], date["voltage"][:samples_n], label=date["name"]
+                )
+                axs[1].plot(
+                    date["time"][:samples_n],
+                    date["current"][:samples_n] * 10**3,
+                    label=date["name"],
+                )
             axs[-1].plot(
-                date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
+                date["time"][:samples_n],
+                date["voltage"][:samples_n] * date["current"][:samples_n] * 10**3,
+                label=date["name"],
             )
 
         if len(data) > 1:

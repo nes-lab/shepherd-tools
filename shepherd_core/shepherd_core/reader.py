@@ -82,6 +82,7 @@ class Reader:
 
         # init stats
         self.runtime_s: float = 0
+        self.samples_n: int = 0
         self.buffers_n: int = 0
         self.file_size: int = 0
         self.data_rate: float = 0
@@ -169,19 +170,23 @@ class Reader:
     def _refresh_file_stats(self) -> None:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
-        sample_count = self.ds_time.shape[0]
+        self.samples_n = min(
+            self.ds_time.shape[0], self.ds_current.shape[0], self.ds_voltage.shape[0]
+        )
         duration_raw = (
-            (int(self.ds_time[sample_count - 1]) - int(self.ds_time[0])) if sample_count > 0 else 0
+            (int(self.ds_time[self.samples_n - 1]) - int(self.ds_time[0]))
+            if self.samples_n > 0
+            else 0
         )
         # above's typecasting prevents overflow in u64-format
-        if (sample_count > 0) and (duration_raw > 0):
+        if (self.samples_n > 0) and (duration_raw > 0):
             # this assumes iso-chronous sampling
             duration_s = self._cal.time.raw_to_si(duration_raw)
-            self.sample_interval_s = duration_s / sample_count
+            self.sample_interval_s = duration_s / self.samples_n
             self.sample_interval_ns = round(10**9 * self.sample_interval_s)
-            self.samplerate_sps = max(round((sample_count - 1) / duration_s), 1)
-        self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
-        self.buffers_n = int(self.ds_voltage.shape[0] // self.BUFFER_SAMPLES_N)
+            self.samplerate_sps = max(round((self.samples_n - 1) / duration_s), 1)
+        self.runtime_s = round(self.samples_n / self.samplerate_sps, 1)
+        self.buffers_n = int(self.samples_n // self.BUFFER_SAMPLES_N)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:
@@ -213,7 +218,7 @@ class Reader:
         """
         if n_samples_per_buffer is None:
             n_samples_per_buffer = self.BUFFER_SAMPLES_N
-        end_max = int(self.ds_voltage.shape[0] // n_samples_per_buffer)
+        end_max = int(self.samples_n // n_samples_per_buffer)
         end_n = end_max if end_n is None else min(end_n, end_max)
         self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
         _raw = is_raw
@@ -384,20 +389,19 @@ class Reader:
                 self.file_path.name,
             )
         # same length of datasets:
-        ds_volt_size = self.h5file["data"]["voltage"].shape[0]
         for dset in ["current", "time"]:
             ds_size = self.h5file["data"][dset].shape[0]
-            if ds_volt_size != ds_size:
+            if ds_size != self.samples_n:
                 self._logger.warning(
                     "[FileValidation] dataset '%s' has different size (=%d), "
-                    "compared to time-ds (=%d), in '%s'",
+                    "compared to smallest set (=%d), in '%s'",
                     dset,
                     ds_size,
-                    ds_volt_size,
+                    self.samples_n,
                     self.file_path.name,
                 )
         # dataset-length should be multiple of buffersize
-        remaining_size = ds_volt_size % self.BUFFER_SAMPLES_N
+        remaining_size = self.samples_n % self.BUFFER_SAMPLES_N
         if remaining_size != 0:
             self._logger.warning(
                 "[FileValidation] datasets are not aligned with buffer-size in '%s'",
@@ -455,19 +459,18 @@ class Reader:
 
         :return: sampled energy in Ws (watt-seconds)
         """
-        iterations = math.ceil(self.ds_voltage.shape[0] / self.max_elements)
+        iterations = math.ceil(self.samples_n / self.max_elements)
         job_iter = trange(
             0,
-            self.ds_voltage.shape[0],
+            self.samples_n,
             self.max_elements,
             desc="energy",
             leave=False,
             disable=iterations < 8,
         )
-        max_length = min(self.ds_voltage.shape[0], self.ds_voltage.shape[0])
 
         def _calc_energy(idx_start: int) -> float:
-            idx_stop = min(idx_start + self.max_elements, max_length)
+            idx_stop = min(idx_start + self.max_elements, self.samples_n)
             vol_v = self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_stop])
             cur_a = self._cal.current.raw_to_si(self.ds_current[idx_start:idx_stop])
             return (vol_v[:] * cur_a[:]).sum() * self.sample_interval_s
@@ -527,10 +530,10 @@ class Reader:
 
         :return: list of (unique) time-deltas between buffers [s]
         """
-        iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
+        iterations = math.ceil(self.samples_n / self.max_elements)
         job_iter = trange(
             0,
-            self.h5file["data"]["time"].shape[0],
+            self.samples_n,
             self.max_elements,
             desc="timediff",
             leave=False,
