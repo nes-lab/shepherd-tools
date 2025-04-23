@@ -116,38 +116,46 @@ class Reader:
         if not isinstance(self.h5file, h5py.File):
             raise TypeError("Type of opened file is not h5py.File, for %s", self.file_path.name)
 
-        self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
-        self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]
-        self.ds_current: h5py.Dataset = self.h5file["data"]["current"]
+        try:
+            self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
+            self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]
+            self.ds_current: h5py.Dataset = self.h5file["data"]["current"]
 
-        # retrieve cal-data
-        if not hasattr(self, "_cal"):
-            cal_dict = CalibrationSeries().model_dump()
-            for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
-                try:
-                    cal_dict[ds][param] = self.h5file["data"][ds].attrs[param]
-                except KeyError:  # noqa: PERF203
-                    self._logger.debug("Cal-Param '%s' for dataset '%s' not found!", param, ds)
-            self._cal = CalibrationSeries(**cal_dict)
+            # retrieve cal-data
+            if not hasattr(self, "_cal"):
+                cal_dict = CalibrationSeries().model_dump()
+                for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
+                    try:
+                        cal_dict[ds][param] = self.h5file["data"][ds].attrs[param]
+                    except KeyError:  # noqa: PERF203
+                        self._logger.debug("Cal-Param '%s' for dataset '%s' not found!", param, ds)
+                self._cal = CalibrationSeries(**cal_dict)
 
-        self._refresh_file_stats()
+            self._refresh_file_stats()
 
-        if file_path is not None:
-            # file opened by this reader
-            self._logger.debug(
-                "Reading data from '%s'\n"
-                "\t- runtime %.1f s\n"
-                "\t- mode = %s\n"
-                "\t- window_size = %d\n"
-                "\t- size = %.3f MiB\n"
-                "\t- rate = %.0f KiB/s",
-                self.file_path.name,
-                self.runtime_s,
-                self.get_mode(),
-                self.get_window_samples(),
-                self.file_size / 2**20,
-                self.data_rate / 2**10,
-            )
+            if file_path is not None:
+                # file opened by this reader
+                self._logger.debug(
+                    "Reading data from '%s'\n"
+                    "\t- runtime %.1f s\n"
+                    "\t- mode = %s\n"
+                    "\t- window_size = %d\n"
+                    "\t- size = %.3f MiB\n"
+                    "\t- rate = %.0f KiB/s",
+                    self.file_path.name,
+                    self.runtime_s,
+                    self.get_mode(),
+                    self.get_window_samples(),
+                    self.file_size / 2**20,
+                    self.data_rate / 2**10,
+                )
+        except KeyError:
+            self._logger.warning("Basic Datesets Voltage, Current or Time NOT found.")
+            for key in ["ds_time", "ds_voltage", "ds_current"]:
+                if not hasattr(self, key):
+                    setattr(self, key, np.empty((0, 0)))
+            return
+
 
     def __enter__(self) -> Self:
         return self
@@ -615,16 +623,19 @@ class Reader:
                 metadata["_dataset_info"]["statistics"] = self._dset_statistics(node)
                 # TODO: put this into metadata["_dataset_statistics"] ??
         for attr in node.attrs:
-            attr_value = node.attrs[attr]
-            if isinstance(attr_value, str):
-                with contextlib.suppress(yaml.YAMLError):
-                    attr_value = yaml.safe_load(attr_value)
-            elif "int" in str(type(attr_value)):
-                # TODO: why not isinstance? can it be list[int] other complex type?
-                attr_value = int(attr_value)
-            else:
-                attr_value = float(attr_value)
-            metadata[attr] = attr_value
+            try:
+                attr_value = node.attrs[attr]
+                if isinstance(attr_value, str):
+                    with contextlib.suppress(yaml.YAMLError):
+                        attr_value = yaml.safe_load(attr_value)
+                elif "int" in str(type(attr_value)):
+                    # TODO: why not isinstance? can it be list[int] other complex type?
+                    attr_value = int(attr_value)
+                else:
+                    attr_value = float(attr_value)
+                metadata[attr] = attr_value
+            except TypeError:
+                continue
         if isinstance(node, h5py.Group):
             if node.name == "/data" and not minimal:
                 metadata["_group_info"] = {
