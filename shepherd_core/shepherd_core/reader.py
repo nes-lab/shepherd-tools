@@ -464,9 +464,10 @@ class Reader:
             leave=False,
             disable=iterations < 8,
         )
+        max_length = min(self.ds_voltage.shape[0], self.ds_voltage.shape[0])
 
         def _calc_energy(idx_start: int) -> float:
-            idx_stop = min(idx_start + self.max_elements, self.ds_voltage.shape[0])
+            idx_stop = min(idx_start + self.max_elements, max_length)
             vol_v = self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_stop])
             cur_a = self._cal.current.raw_to_si(self.ds_current[idx_start:idx_stop])
             return (vol_v[:] * cur_a[:]).sum() * self.sample_interval_s
