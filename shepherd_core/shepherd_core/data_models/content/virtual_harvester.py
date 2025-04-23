@@ -23,9 +23,9 @@ from .energy_environment import EnergyDType
 class AlgorithmDType(str, Enum):
     """Options for choosing a harvesting algorithm."""
 
-    direct = disable = neutral = "neutral"
-    isc_voc = "isc_voc"
-    ivcurve = ivcurves = ("ivcurve",)
+    direct = disable = neutral = "neutral" # for just using IVTrace, IVSamples
+    isc_voc = "isc_voc"  # only recordable ATM
+    ivcurve = ivcurves = ivsurface = ("ivcurve",)
     constant = cv = "cv"
     # ci .. constant current -> is this desired?
     mppt_voc = "mppt_voc"

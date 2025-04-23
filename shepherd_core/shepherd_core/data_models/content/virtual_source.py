@@ -82,6 +82,8 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     C_output_uF: Annotated[float, Field(ge=0, le=4.29e6)] = 1.0
     # TODO: C_output is handled internally as delta-V, but should be a I_transient
     #       that makes it visible in simulation as additional i_out_drain
+    # TODO: potential weakness, ACD lowpass is capturing transient,
+    #       but energy is LOST with this model
 
     # Extra
     V_output_log_gpio_threshold_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 1_400
@@ -105,7 +107,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # Buck Converter
     V_output_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_400
     V_buck_drop_mV: Annotated[float, Field(ge=0, le=5_000)] = 0
-    # ⤷ simulate LDO min voltage differential or output-diode
+    # ⤷ simulate LDO / diode min voltage differential or output-diode
 
     LUT_output_efficiency: LUT1D = 12 * [1.00]
     # ⤷ array[12] depending on output_current
