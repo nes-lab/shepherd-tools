@@ -1,5 +1,11 @@
 # History of Changes
 
+## v2025.04.3
+
+- change wording for IVTrace and IVSurface instead of IVSamples and IVCurve
+- fix plotting for large datasets
+- fix energy-calculations and more metadata-calculations for uneven array-sizes of datasets
+
 ## v2025.04.2
 
 - drop python 3.8 support
