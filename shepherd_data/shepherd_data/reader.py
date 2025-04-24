@@ -223,8 +223,12 @@ class Reader(CoreReader):
         )
         # filter state - needed for sliced calculation
         f_state = np.zeros((filter_.shape[0], 2))
+        # prime the state to avoid starting from 0
+        if not is_time and ds_factor > 1:
+            slice_ds = data_src[start_n : start_n + iblock_len]
+            slice_ds[:] = slice_ds[:].mean()
+            slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
 
-        slice_len = 0
         output_pos = 0
         for _iter in trange(
             0,
