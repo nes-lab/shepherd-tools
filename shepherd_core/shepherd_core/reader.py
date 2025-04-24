@@ -527,6 +527,8 @@ class Reader:
         """Calculate list of unique time-deltas [s] between buffers.
 
         Optimized version that only looks at the start of each buffer.
+        Timestamps get converted to signed (it still fits > 100 years)
+        to allow calculating negative diffs.
 
         :return: list of (unique) time-deltas between buffers [s]
         """
@@ -543,7 +545,7 @@ class Reader:
         def calc_timediffs(idx_start: int) -> list:
             ds_time = self.ds_time[
                 idx_start : (idx_start + self.max_elements) : self.BUFFER_SAMPLES_N
-            ]
+            ].astype(np.int64)
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
             return list(np.array(diffs_np))
 

@@ -7,6 +7,7 @@
 - fix energy-calculations and more metadata-calculations for uneven array-sizes of datasets
 - plotting - add a thin and light gray grid
 - downsampling - prime state to NOT start at zero
+- fix detection of negative timejumps
 
 ## v2025.04.2
 
