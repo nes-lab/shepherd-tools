@@ -5,6 +5,8 @@
 - change wording for IVTrace and IVSurface instead of IVSamples and IVCurve
 - fix plotting for large datasets
 - fix energy-calculations and more metadata-calculations for uneven array-sizes of datasets
+- plotting - add a thin and light gray grid
+- downsampling - prime state to NOT start at zero
 
 ## v2025.04.2
 
