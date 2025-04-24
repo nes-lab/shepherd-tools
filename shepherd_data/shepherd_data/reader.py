@@ -225,7 +225,7 @@ class Reader(CoreReader):
         f_state = np.zeros((filter_.shape[0], 2))
         # prime the state to avoid starting from 0
         if not is_time and ds_factor > 1:
-            slice_ds = data_src[start_n : start_n + iblock_len]
+            slice_ds = data_src[start_n : start_n + self.BUFFER_SAMPLES_N]
             slice_ds[:] = slice_ds[:].mean()
             slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
 
@@ -570,6 +570,8 @@ class Reader(CoreReader):
             # deactivates offset-creation for ax-ticks
             ax.get_yaxis().get_major_formatter().set_useOffset(False)
             ax.get_xaxis().get_major_formatter().set_useOffset(False)
+            # add a thin and light grey grid
+            ax.grid(color='0.8', linewidth=0.5)
         return fig
 
     def plot_to_file(
