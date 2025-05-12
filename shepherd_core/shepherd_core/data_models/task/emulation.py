@@ -23,6 +23,7 @@ from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
+from shepherd_core.data_models.experiment.observer_features import UartTracing
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
 
@@ -89,6 +90,7 @@ class EmulationTask(ShpModel):
 
     power_tracing: Optional[PowerTracing] = PowerTracing()
     gpio_tracing: Optional[GpioTracing] = GpioTracing()
+    uart_tracing: Optional[UartTracing] = UartTracing()
     gpio_actuation: Optional[GpioActuation] = None
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
@@ -147,6 +149,7 @@ class EmulationTask(ShpModel):
             virtual_source=tgt_cfg.virtual_source,
             power_tracing=tgt_cfg.power_tracing,
             gpio_tracing=tgt_cfg.gpio_tracing,
+            uart_tracing=tgt_cfg.uart_tracing,
             gpio_actuation=tgt_cfg.gpio_actuation,
             sys_logging=xp.sys_logging,
         )
