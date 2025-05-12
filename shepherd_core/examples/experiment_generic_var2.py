@@ -14,12 +14,8 @@
 
 from pathlib import Path
 
+import shepherd_core.data_models as sm
 from shepherd_core import WebClient
-from shepherd_core.data_models import GpioTracing
-from shepherd_core.data_models.content import EnergyEnvironment
-from shepherd_core.data_models.content import Firmware
-from shepherd_core.data_models.experiment import Experiment
-from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 
 # For online-queries the lib can be connected to the testbed-server.
@@ -31,24 +27,21 @@ do_connect = False
 if do_connect:
     WebClient()
 
-xp = Experiment(
+xp = sm.Experiment(
     id="4567",
     name="meaningful_TestName",
     # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
     duration=30,
     target_configs=[
-        TargetConfig(
+        sm.TargetConfig(
             target_IDs=range(7, 12),
             custom_IDs=range(1, 100),  # note: longer list is OK
-            energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
-            firmware1=Firmware.from_firmware(
+            energy_env=sm.EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
+            firmware1=sm.Firmware.from_firmware(
                 file=Path("./firmware_nrf.elf").absolute(),
             ),
             power_tracing=None,
-            gpio_tracing=GpioTracing(
-                uart_decode=True,  # enables logging uart from userspace
-                uart_baudrate=115_200,
-            ),
+            gpio_tracing=sm.GpioTracing(),
         ),
     ],
 )
