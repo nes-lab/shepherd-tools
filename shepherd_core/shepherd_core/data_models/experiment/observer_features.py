@@ -51,6 +51,70 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         return self
 
 
+# NOTE: this was taken from pyserial (removes one dependency)
+BAUDRATES = (
+    50,
+    75,
+    110,
+    134,
+    150,
+    200,
+    300,
+    600,
+    1200,
+    1800,
+    2400,
+    4800,
+    9600,
+    19200,
+    38400,
+    57600,
+    115200,
+    230400,
+    460800,
+    500000,
+    576000,
+    921600,
+    1000000,
+    1152000,
+    1500000,
+    2000000,
+    2500000,
+    3000000,
+    3500000,
+    4000000,
+)
+
+PARITY_NONE, PARITY_EVEN, PARITY_ODD, PARITY_MARK, PARITY_SPACE = "N", "E", "O", "M", "S"
+PARITIES = (PARITY_NONE, PARITY_EVEN, PARITY_ODD, PARITY_MARK, PARITY_SPACE)
+
+STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO = (1, 1.5, 2)
+STOPBITS = (STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO)
+
+
+class UartTracing(ShpModel, title="Config for UART Tracing"):
+    """Configuration for recording UART-Output of the Target Nodes.
+
+    Note that the Communication has to be on a specific port that reaches the hardware-module of the SBC.
+    """
+
+    baudrate: Annotated[int, Field(ge=2_400, le=460_800)] = 115_200
+    # ⤷ TODO: find maximum that the system can handle
+    bytesize: Annotated[int, Field(ge=5, le=8)] = 8
+    stopbits: Annotated[float, Field(ge=1, le=2)] = 1
+    parity: str = PARITY_NONE
+
+    @model_validator(mode="after")
+    def post_validation(self) -> Self:
+        if self.baudrate not in BAUDRATES:
+            raise ValueError(f"Error in config -> baudrate must be one of: {BAUDRATES}")
+        if self.stopbits not in STOPBITS:
+            raise ValueError(f"Error in config -> stopbits must be one of: {STOPBITS}")
+        if self.parity not in PARITIES:
+            raise ValueError(f"Error in config -> parity must be one of: {PARITIES}")
+        return self
+
+
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """Configuration for recording the GPIO-Output of the Target Nodes.
 

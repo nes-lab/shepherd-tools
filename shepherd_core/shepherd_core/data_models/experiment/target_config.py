@@ -18,6 +18,7 @@ from shepherd_core.data_models.testbed.target import Target
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing
+from .observer_features import UartTracing
 
 
 class TargetConfig(ShpModel, title="Target Config"):
@@ -38,9 +39,11 @@ class TargetConfig(ShpModel, title="Target Config"):
 
     firmware1: Firmware
     firmware2: Optional[Firmware] = None
+    # ⤷ omitted FW gets set to neutral deep-sleep
 
     power_tracing: Optional[PowerTracing] = None
     gpio_tracing: Optional[GpioTracing] = None
+    uart_tracing: Optional[UartTracing] = None
     gpio_actuation: Optional[GpioActuation] = None
 
     @model_validator(mode="after")
