@@ -180,7 +180,7 @@ class Reader:
         )
         # above's typecasting prevents overflow in u64-format
         if (self.samples_n > 0) and (duration_raw > 0):
-            # this assumes iso-chronous sampling
+            # this assumes iso-chronous sampling, TODO: not the best choice?
             duration_s = self._cal.time.raw_to_si(duration_raw)
             self.sample_interval_s = duration_s / self.samples_n
             self.sample_interval_ns = round(10**9 * self.sample_interval_s)
