@@ -11,7 +11,7 @@ from shepherd_core import Writer
 
 from .reader import Reader
 
-__version__ = "2025.04.2"
+__version__ = "2025.05.1"
 
 __all__ = [
     "Reader",
