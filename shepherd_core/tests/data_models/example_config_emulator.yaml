@@ -37,5 +37,5 @@ parameters:
     uart_decode: true
     uart_baudrate: 9600
   sys_logging:
-    dmesg: true
+    kernel: true
 verbose: 2 # serious performance impact for value > 3

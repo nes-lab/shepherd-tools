@@ -46,7 +46,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # feedback
     email_results: bool = False
 
-    sys_logging: SystemLogging = SystemLogging(dmesg=True, ptp=True, shepherd=True)
+    sys_logging: SystemLogging = SystemLogging(kernel=True, time_sync=True, sheep=True)
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP

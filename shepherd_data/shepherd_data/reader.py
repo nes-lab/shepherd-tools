@@ -92,7 +92,7 @@ class Reader(CoreReader):
         return h5_group["time"][:].shape[0]
 
     def save_log(self, h5_group: h5py.Group, *, add_timestamp: bool = True) -> int:
-        """Save dataset from group as log, optimal for logged 'dmesg' and console-output.
+        """Save dataset from groups as log, optimal for logged kernel- and console-output.
 
         :param h5_group: can be external
         :param add_timestamp: can be external

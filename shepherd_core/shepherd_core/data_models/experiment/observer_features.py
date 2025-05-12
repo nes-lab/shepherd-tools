@@ -140,7 +140,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     # TODO: quickfix - uart-log currently done online in userspace
     # NOTE: gpio-tracing currently shows rather big - but rare - "blind" windows (~1-4us)
     uart_pin: GPIO = GPIO(name="GPIO8")
-    uart_baudrate: Annotated[int, Field(ge=2_400, le=921_600)] = 115_200
+    uart_baudrate: Annotated[int, Field(ge=2_400, le=1_152_000)] = 115_200
     # TODO: add a "discard_gpio" (if only uart is wanted)
 
     @model_validator(mode="after")
@@ -201,11 +201,10 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 class SystemLogging(ShpModel, title="Config for System-Logging"):
     """Configuration for recording Debug-Output of the Observers System-Services."""
 
-    dmesg: bool = True
-    ptp: bool = True
-    shepherd: bool = True
-    # TODO: rename to kernel, timesync, sheep
-    # TODO: add utilization as option
+    kernel: bool = True
+    time_sync: bool = True
+    sheep: bool = True
+    sys_util: bool = True
 
 
 # TODO: some more interaction would be good

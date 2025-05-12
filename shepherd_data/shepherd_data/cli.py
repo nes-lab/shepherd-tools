@@ -189,12 +189,12 @@ def extract_meta(in_data: Path, separator: str, *, recurse: bool = False) -> Non
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 shpr.save_metadata()
                 csvs_depr = ["sysutil", "timesync"]
-                csvs = ["ptp", "sys_util", "pru_util"]
+                csvs = ["ptp", "phc2sys", "sys_util", "pru_util"]
                 for element in csvs + csvs_depr:
                     if element in shpr.h5file:
                         shpr.save_csv(shpr[element], separator)
                 logs_depr = ["shepherd-log", "dmesg", "exceptions"]
-                logs = ["sheep", "kernel", "phc2sys", "uart"]
+                logs = ["sheep", "kernel", "ntp", "uart"]
                 for element in logs + logs_depr:
                     if element in shpr.h5file:
                         shpr.save_log(shpr[element])

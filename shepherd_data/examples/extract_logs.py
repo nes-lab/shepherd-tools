@@ -38,11 +38,13 @@ if __name__ == "__main__":
                     f"data-rate = {round(fh.data_rate / 2**10)} KiB/s"
                 )
 
-            if "timesync" in fh.h5file:
+            if "timesync" in fh.h5file:  # TODO: deprecated
                 fh.save_csv(fh["timesync"])
 
-            if "dmesg" in fh.h5file:
+            if "dmesg" in fh.h5file:  # TODO: deprecated
                 fh.save_log(fh["dmesg"])
+            if "kernel" in fh.h5file:
+                fh.save_log(fh["kernel"])
             if "exceptions" in fh.h5file:
                 fh.save_log(fh["exceptions"])
             if "uart" in fh.h5file:
