@@ -101,14 +101,10 @@ class Fixture:
                 base_name = values.get("name")
                 if base_name in chain:
                     msg = f"Inheritance-Circle detected ({base_name} already in {chain})"
-                    raise ValueError(
-                        msg,
-                    )
+                    raise ValueError(msg)
                 if base_name == fixture_name:
                     msg = f"Inheritance-Circle detected ({base_name} == {fixture_name})"
-                    raise ValueError(
-                        msg,
-                    )
+                    raise ValueError(msg)
                 chain.append(base_name)
             fixture_base = copy.copy(self[fixture_name])
             logger.debug("'%s' will inherit from '%s'", self.model_type, fixture_name)

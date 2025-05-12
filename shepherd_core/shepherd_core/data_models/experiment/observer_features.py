@@ -95,7 +95,8 @@ STOPBITS = (STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO)
 class UartTracing(ShpModel, title="Config for UART Tracing"):
     """Configuration for recording UART-Output of the Target Nodes.
 
-    Note that the Communication has to be on a specific port that reaches the hardware-module of the SBC.
+    Note that the Communication has to be on a specific port that
+    reaches the hardware-module of the SBC.
     """
 
     baudrate: Annotated[int, Field(ge=2_400, le=460_800)] = 115_200
@@ -107,11 +108,14 @@ class UartTracing(ShpModel, title="Config for UART Tracing"):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         if self.baudrate not in BAUDRATES:
-            raise ValueError(f"Error in config -> baudrate must be one of: {BAUDRATES}")
+            msg = f"Error in config -> baudrate must be one of: {BAUDRATES}"
+            raise ValueError(msg)
         if self.stopbits not in STOPBITS:
-            raise ValueError(f"Error in config -> stopbits must be one of: {STOPBITS}")
+            msg = f"Error in config -> stopbits must be one of: {STOPBITS}"
+            raise ValueError(msg)
         if self.parity not in PARITIES:
-            raise ValueError(f"Error in config -> parity must be one of: {PARITIES}")
+            msg = f"Error in config -> parity must be one of: {PARITIES}"
+            raise ValueError(msg)
         return self
 
 

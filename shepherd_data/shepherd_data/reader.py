@@ -279,24 +279,20 @@ class Reader(CoreReader):
 
         # test input-parameters
         if end_sample < start_sample:
-            raise ValueError(
-                "Cut & downsample for %s failed because "
-                "end-mark (%.3f) is before start-mark (%.3f).",
-                self.file_path.name,
-                end_s,
-                start_s,
+            msg = (
+                f"Cut & downsample for {self.file_path.name} failed because "
+                f"end-mark ({end_s:.3f}) is before start-mark ({start_s:.3f})."
             )
+            raise ValueError(msg)
         if ds_factor < 1:
-            raise ValueError(
-                "Cut & downsample for %s failed because factor < 1",
-                self.file_path.name,
-            )
+            msg = f"Cut & downsample for {self.file_path.name} failed because factor < 1"
+            raise ValueError(msg)
         if ((end_sample - start_sample) / ds_factor) < 1000:
-            raise ValueError(
-                "Cut & downsample for %s failed because resulting sample-size is too small",
-                self.file_path.name,
+            msg = (
+                f"Cut & downsample for {self.file_path.name} failed because "
+                f"resulting sample-size is too small",
             )
-
+            raise ValueError(msg)
         # assemble file-name of output
         if start_s != 0.0 or end_s != self.runtime_s:
             start_str = f"{start_s:.3f}".replace(".", "s")

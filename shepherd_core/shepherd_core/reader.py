@@ -114,7 +114,8 @@ class Reader:
                 )
 
         if not isinstance(self.h5file, h5py.File):
-            raise TypeError("Type of opened file is not h5py.File, for %s", self.file_path.name)
+            msg = (f"Type of opened file is not h5py.File, for {self.file_path.name}",)
+            raise TypeError(msg)
 
         self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
         self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]

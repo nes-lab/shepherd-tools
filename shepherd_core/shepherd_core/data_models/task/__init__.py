@@ -54,7 +54,8 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
             parameters=config.model_dump(),
         )
     else:
-        raise TypeError("had unknown input: %s", type(config))
+        msg = f"had unknown input: {type(config)}"
+        raise TypeError(msg)
 
     if shp_wrap.datatype == TestbedTasks.__name__:
         if observer is None:
@@ -66,7 +67,8 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
         logger.debug("Loading Testbed-Tasks %s for %s", tbt.name, observer)
         obt = tbt.get_observer_tasks(observer)
         if obt is None:
-            raise ValueError("Observer '%s' is not in TestbedTask-Set", observer)
+            msg = f"Observer '{observer}' is not in TestbedTask-Set"
+            raise ValueError(msg)
         shp_wrap = Wrapper(
             datatype=type(obt).__name__,
             parameters=obt.model_dump(),
@@ -92,6 +94,7 @@ def extract_tasks(shp_wrap: Wrapper, *, no_task_sets: bool = True) -> list[ShpMo
             raise ValueError("Model in Wrapper was TestbedTasks -> Task-Sets not allowed!")
         content = [TestbedTasks(**shp_wrap.parameters)]
     else:
-        raise ValueError("Extractor had unknown task: %s", shp_wrap.datatype)
+        msg = f"Extractor had unknown task: {shp_wrap.datatype}"
+        raise ValueError(msg)
 
     return content
