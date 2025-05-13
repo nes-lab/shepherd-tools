@@ -26,6 +26,7 @@ from shepherd_core.data_models.experiment.observer_features import SystemLogging
 from shepherd_core.data_models.experiment.observer_features import UartTracing
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
+from shepherd_core.logger import logger
 
 
 class Compression(str, Enum):
@@ -68,10 +69,10 @@ class EmulationTask(ShpModel):
     use_cal_default: bool = False
     # ⤷ Use default calibration values, skip loading from EEPROM
 
-    enable_io: bool = False
+    enable_io: bool = True
     # TODO: add direction of pins! also it seems error-prone when only setting _tracing
     # ⤷ Switch the GPIO level converter to targets on/off
-    #   pre-req for sampling gpio,
+    #   pre-req for sampling gpio / uart,
     io_port: TargetPort = TargetPort.A
     # ⤷ Either Port A or B that gets connected to IO
     pwr_port: TargetPort = TargetPort.A
@@ -129,6 +130,14 @@ class EmulationTask(ShpModel):
             raise ValueError("Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'.")
         if self.gpio_actuation is not None:
             raise ValueError("GPIO Actuation not yet implemented!")
+
+        io_requested = any(
+            _io is not None for _io in (self.gpio_actuation, self.gpio_tracing, self.uart_tracing)
+        )
+        if self.enable_io and not io_requested:
+            logger.warning("Target IO enabled, but no feature requested IO")
+        if not self.enable_io and io_requested:
+            logger.warning("Target IO not enabled, but a feature requested IO")
         return self
 
     @classmethod
