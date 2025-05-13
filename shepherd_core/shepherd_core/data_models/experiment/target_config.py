@@ -82,6 +82,8 @@ class TargetConfig(ShpModel, title="Target Config"):
             msg = f"Provided custom IDs {c_ids} not enough to cover target range {t_ids}"
             raise ValueError(msg)
         # TODO: if custom ids present, firmware must be ELF
+        if self.gpio_actuation is not None:
+            raise NotImplementedError("Feature GpioActuation reserved for future use.")
         return self
 
     def get_custom_id(self, target_id: int) -> Optional[int]:

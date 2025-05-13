@@ -10,6 +10,7 @@ from pydantic import Field
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.gpio import GPIO
@@ -47,7 +48,19 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         if not self.calculate_power and discard_all:
             raise ValueError("Error in config -> tracing enabled, but output gets discarded")
         if self.calculate_power:
-            raise NotImplementedError("postprocessing not implemented ATM")
+            raise NotImplementedError(
+                "Feature PowerTracing.calculate_power reserved for future use."
+            )
+        if self.samplerate != 100_000:
+            raise NotImplementedError("Feature PowerTracing.samplerate reserved for future use.")
+        if self.discard_current:
+            raise NotImplementedError(
+                "Feature PowerTracing.discard_current reserved for future use."
+            )
+        if self.discard_voltage:
+            raise NotImplementedError(
+                "Feature PowerTracing.discard_voltage reserved for future use."
+            )
         return self
 
 
@@ -108,10 +121,10 @@ class UartTracing(ShpModel, title="Config for UART Tracing"):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         if self.baudrate not in BAUDRATES:
-            msg = f"Error in config -> baudrate must be one of: {BAUDRATES}"
+            msg = f"Error in config -> baud-rate must be one of: {BAUDRATES}"
             raise ValueError(msg)
         if self.stopbits not in STOPBITS:
-            msg = f"Error in config -> stopbits must be one of: {STOPBITS}"
+            msg = f"Error in config -> stop-bits must be one of: {STOPBITS}"
             raise ValueError(msg)
         if self.parity not in PARITIES:
             msg = f"Error in config -> parity must be one of: {PARITIES}"
@@ -151,6 +164,15 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
             raise ValueError("Delay can't be negative.")
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration can't be negative.")
+        if self.mask != 0b11_1111_1111:  # GpioTracing.mask
+            raise NotImplementedError("Feature GpioTracing.mask reserved for future use.")
+        if self.gpios is not None:
+            raise NotImplementedError("Feature GpioTracing.gpios reserved for future use.")
+        if self.uart_decode:
+            raise NotImplementedError(
+                "Feature GpioTracing.uart_decode reserved for future use. "
+                "Use UartTracing or manually decode serial with the provided waveform decoder."
+            )
         return self
 
 
@@ -205,6 +227,11 @@ class SystemLogging(ShpModel, title="Config for System-Logging"):
     time_sync: bool = True
     sheep: bool = True
     sys_util: bool = True
+
+    # TODO: remove lines below in 2026
+    dmesg: Annotated[bool, deprecated("for sheep v0.9.0+, use 'kernel' instead")] = True
+    ptp: Annotated[bool, deprecated("for sheep v0.9.0+, use 'time_sync' instead")] = True
+    shepherd: Annotated[bool, deprecated("for sheep v0.9.0+, use 'sheep' instead")] = True
 
 
 # TODO: some more interaction would be good
