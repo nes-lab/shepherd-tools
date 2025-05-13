@@ -3,9 +3,8 @@
 from pathlib import Path
 
 from shepherd_core import WebClient
-from shepherd_core import logger
 from shepherd_core import data_models as sm
-
+from shepherd_core import logger
 from shepherd_core.data_models.task import TestbedTasks
 
 if __name__ == "__main__":
