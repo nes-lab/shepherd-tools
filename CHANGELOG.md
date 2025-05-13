@@ -1,13 +1,18 @@
 # History of Changes
 
-## v2025.04.3
+## v2025.05.1
 
-- change wording for IVTrace and IVSurface instead of IVSamples and IVCurve
+- establish consistent naming scheme `IVTrace` for a stream of samples and `IVSurface` for a stream of `IVCurve`s
 - fix plotting for large datasets
-- fix energy-calculations and more metadata-calculations for uneven array-sizes of datasets
+- fix potential bugs resulting from unequal array size for faulty data (i.e. energy calculation)
 - plotting - add a thin and light gray grid
-- downsampling - prime state to NOT start at zero
+- downsampling - prime the state of downsampler to NOT start at zero
 - fix detection of negative timejumps
+- add separate `UartTracer` with new config options (**breaking change**) instead of misusing GPIOTracer
+- adapt fixtures to the newest target and use sleep-firmware as default for nRF52
+- fix exception messages that falsely used string-format
+- rename system-logging services (now `kernel`, `time_sync` and `sheep` instead of dmesg, ptp and shepherd)
+- simplify examples
 
 ## v2025.04.2
 
@@ -15,11 +20,11 @@
 - supported python is now 3.9 - 3.13
 - heavy changes in typesystem - mypy was used to find possible bugs (NOTE: still work in progress)
 - user facing interfaces should be safer to use
-- pathlib now has .with_stem() to simplify code
+- pathlib now has `.with_stem()` to simplify code (py 3.9+)
 - rename constants to upper-case
   - 1-to-1: samplerate_sps_default,
-  - core.Reader().mode_dtype_dict -> .MODE_TO_DTYPE
-  - core.Reader().samples_per_buffer -> .BUFFER_SAMPLES_N
+  - `core.Reader().mode_dtype_dict` -> `.MODE_TO_DTYPE`
+  - `core.Reader().samples_per_buffer` -> `.BUFFER_SAMPLES_N`
 - replace relative imports from parent with absolute ones
 
 ## v2025.04.1
