@@ -3,12 +3,8 @@
 from pathlib import Path
 
 from shepherd_core import WebClient
-from shepherd_core.data_models import EnergyEnvironment
-from shepherd_core.data_models import Experiment
-from shepherd_core.data_models import Firmware
-from shepherd_core.data_models import GpioTracing
-from shepherd_core.data_models import PowerTracing
-from shepherd_core.data_models import TargetConfig
+from shepherd_core import data_models as sm
+
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.logger import logger
 
@@ -35,21 +31,19 @@ if __name__ == "__main__":
     ]
 
     for fw_nrf, fw_msp, name in tests:
-        xp = Experiment(
+        xp = sm.Experiment(
             name=name,
             comment="T1: shared-gpio, T2: rf-demo, T3: deep-sleep",
             duration=30,
             target_configs=[
-                TargetConfig(
+                sm.TargetConfig(
                     target_IDs=list(range(1, 12)),
-                    energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
-                    firmware1=Firmware(name=fw_nrf),
-                    firmware2=Firmware(name=fw_msp),
-                    power_tracing=PowerTracing(),
-                    gpio_tracing=GpioTracing(
-                        uart_decode=True,  # enables logging uart from userspace
-                        uart_baudrate=115_200,
-                    ),
+                    energy_env=sm.EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
+                    firmware1=sm.Firmware(name=fw_nrf),
+                    firmware2=sm.Firmware(name=fw_msp),
+                    power_tracing=sm.PowerTracing(),
+                    gpio_tracing=sm.GpioTracing(),
+                    uart_tracing=sm.UartTracing(baudrate=115_200),
                 )
             ],
         )

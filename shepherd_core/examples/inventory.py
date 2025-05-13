@@ -4,12 +4,12 @@ from pathlib import Path
 
 import shepherd_core.inventory as si
 
-pi = si.PythonInventory.collect()
-print(f"PyInv: {pi}")
-si = si.SystemInventory.collect()
-print(f"SysInv: {si}")
-ti = si.TargetInventory.collect()
-print(f"TgtInv: {ti}")
+pyt_inv = si.PythonInventory.collect()
+print(f"PyInv: {pyt_inv}")
+sys_inv = si.SystemInventory.collect()
+print(f"SysInv: {sys_inv}")
+tgt_inv = si.TargetInventory.collect()
+print(f"TgtInv: {tgt_inv}")
 
 
 inv = si.Inventory.collect()
