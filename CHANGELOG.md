@@ -1,5 +1,13 @@
 # History of Changes
 
+## v2025.05.2
+
+- GitHub-workflows
+  - clean up
+  - fix release to PyPI
+  - avoid workflows running twice (PR & push)
+  - only release when a commit in main is tagged with `v*.*.*`
+
 ## v2025.05.1
 
 - add separate `UartTracer` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer

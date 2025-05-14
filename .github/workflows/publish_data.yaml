@@ -1,8 +1,12 @@
-name: Upload Data-Package to PyPi
+name: Publish Data-Package to PyPi
 
 on:
   release:
     types: [published]
+  push:
+    # branches: [ main ]  # this is handled as OR (push to main OR tagged)
+    tags:
+      - 'v*.*.*'
 
 permissions:
   contents: read

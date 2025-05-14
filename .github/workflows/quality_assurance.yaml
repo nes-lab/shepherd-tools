@@ -1,0 +1,21 @@
+name: Quality Control
+
+on:
+  push:
+    branches: [ main, dev ]
+  workflow_call:
+
+jobs:
+  static-analysis:
+    uses: ./.github/workflows/static_analysis.yaml
+  test-python:
+    uses: ./.github/workflows/py_tests.yaml
+
+  quality-control:
+    runs-on: ubuntu-latest
+    needs:
+      - static-analysis
+      - test-python
+    steps:
+      - name: Finished
+        run: echo "finished"

@@ -50,35 +50,18 @@ repos:
       - id: rst-inline-touching-normal
       - id: text-unicode-replacement-char
 
-#  - repo: https://github.com/RobertCraigie/pyright-python
-#    rev: v1.1.331
-#    hooks:
-#    - id: pyright
-#      additional_dependencies:
-#      - shepherd-core[elf,inventory,dev,test]
-#      - shepherd-data[dev,test]
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: 'v0.11.9'
     hooks:
       - id: ruff-format
       - id: ruff
         args: ["--fix", "--exit-non-zero-on-fix"]
-        # manual run: ruff check . --preview
-
-#  - repo: https://github.com/pre-commit/mirrors-mypy
-#    rev: "v1.6.1"
-#    hooks:
-#      - id: mypy
-# TODO: activate mypy -> some work to fix type-annotations
-# run manually in subproject for now: mypy .
 
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.4.1"
     hooks:
       - id: codespell
         additional_dependencies: ["tomli"]  # for py<3.11
-#        exclude: \.(sch|brd|lbr)$
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.44.0
@@ -90,5 +73,3 @@ repos:
     rev: v0.24.1
     hooks:
       - id: validate-pyproject
-
-# TODO: github.com/PyCQA/pydocstyle
