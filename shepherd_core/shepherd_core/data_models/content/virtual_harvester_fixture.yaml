@@ -21,7 +21,7 @@
   parameters:
     id: 1100
     name: ivcurve
-    description: Postpone harvesting by sampling ivcurves (voltage stepped as sawtooth-wave)
+    description: Postpone harvesting by sampling ivsurface / curves (voltage stepped as sawtooth-wave)
     comment: ~110 Hz, Between 50 & 60 Hz line-frequency to avoid standing waves
     inherit_from: neutral
     algorithm: ivcurve
@@ -36,7 +36,7 @@
 - datatype: VirtualHarvesterConfig
   parameters:
     id: 1101
-    name: ivcurves  # synonym
+    name: ivsurface  # synonym
     inherit_from: ivcurve
 
 - datatype: VirtualHarvesterConfig

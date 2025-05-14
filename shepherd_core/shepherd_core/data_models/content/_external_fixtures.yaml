@@ -1,5 +1,5 @@
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.488609+02:00
+  created: 2025-05-12 17:28:39.756999+02:00
   parameters:
     id: 2639560972524229652
     name: eenv_static_2000mV_10mA_3600s
@@ -22,7 +22,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.497654+02:00
+  created: 2025-05-12 17:28:39.764595+02:00
   parameters:
     id: 9823394105967169626
     name: eenv_static_2000mV_1mA_3600s
@@ -45,7 +45,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.506739+02:00
+  created: 2025-05-12 17:28:39.772144+02:00
   parameters:
     id: 3900615675169501222
     name: eenv_static_2000mV_50mA_3600s
@@ -68,7 +68,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.515790+02:00
+  created: 2025-05-12 17:28:39.779737+02:00
   parameters:
     id: 14796673729431137386
     name: eenv_static_2000mV_5mA_3600s
@@ -91,7 +91,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.524761+02:00
+  created: 2025-05-12 17:28:39.787329+02:00
   parameters:
     id: 6648482606607441403
     name: eenv_static_3000mV_10mA_3600s
@@ -114,7 +114,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.533513+02:00
+  created: 2025-05-12 17:28:39.794922+02:00
   parameters:
     id: 13566000951043177991
     name: eenv_static_3000mV_1mA_3600s
@@ -137,7 +137,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.542278+02:00
+  created: 2025-05-12 17:28:39.802410+02:00
   parameters:
     id: 7977778327156610158
     name: eenv_static_3000mV_50mA_3600s
@@ -160,7 +160,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
-  created: 2024-02-25 12:45:58.550974+02:00
+  created: 2025-05-12 17:28:39.810147+02:00
   parameters:
     id: 4900162978999238419
     name: eenv_static_3000mV_5mA_3600s
@@ -183,7 +183,7 @@
     indoor: true
     location: Lab-VSrc
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.568363+02:00
+  created: 2025-05-12 17:28:39.825659+02:00
   parameters:
     id: 3000
     name: msp430_deep_sleep
@@ -198,10 +198,10 @@
     mcu:
       id: 1002
       name: MSP430FR
-      description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
+      description: 16MHz Ultra-Low-Pwr MCU with 256 KB FRAM
       comment: null
       platform: MSP430
-      core: MSP430FR5962
+      core: MSP430FR5994
       prog_protocol: SBW
       prog_voltage: 3.0
       prog_datarate: 500000
@@ -211,7 +211,7 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.578594+02:00
+  created: 2025-05-12 17:28:39.834276+02:00
   parameters:
     id: 3001
     name: msp430_spi_fram
@@ -226,10 +226,10 @@
     mcu:
       id: 1002
       name: MSP430FR
-      description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
+      description: 16MHz Ultra-Low-Pwr MCU with 256 KB FRAM
       comment: null
       platform: MSP430
-      core: MSP430FR5962
+      core: MSP430FR5994
       prog_protocol: SBW
       prog_voltage: 3.0
       prog_datarate: 500000
@@ -239,7 +239,7 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.589223+02:00
+  created: 2025-05-12 17:28:39.842993+02:00
   parameters:
     id: 3002
     name: msp430_testable
@@ -254,10 +254,10 @@
     mcu:
       id: 1002
       name: MSP430FR
-      description: 16MHz Ultra-Low-Pwr MCU with 128 KB FRAM
+      description: 16MHz Ultra-Low-Pwr MCU with 256 KB FRAM
       comment: null
       platform: MSP430
-      core: MSP430FR5962
+      core: MSP430FR5994
       prog_protocol: SBW
       prog_voltage: 3.0
       prog_datarate: 500000
@@ -267,7 +267,7 @@
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.599274+02:00
+  created: 2025-05-12 17:28:39.851412+02:00
   parameters:
     id: 7163917825449888392
     name: nrf52_deep_sleep
@@ -282,20 +282,20 @@
     mcu:
       id: 1001
       name: nRF52
-      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
       platform: nRF52
       core: nRF52840
       prog_protocol: SWD
       prog_voltage: 3.0
       prog_datarate: 500000
-      fw_name_default: nrf52_demo_rf
+      fw_name_default: nrf52_deep_sleep
     data: /var/shepherd/content/fw/nes_lab/nrf52_deep_sleep/build.elf
     data_type: path_elf
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.609313+02:00
+  created: 2025-05-12 17:28:39.859962+02:00
   parameters:
     id: 2000
     name: nrf52_demo_rf
@@ -310,20 +310,20 @@
     mcu:
       id: 1001
       name: nRF52
-      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
       platform: nRF52
       core: nRF52840
       prog_protocol: SWD
       prog_voltage: 3.0
       prog_datarate: 500000
-      fw_name_default: nrf52_demo_rf
+      fw_name_default: nrf52_deep_sleep
     data: /var/shepherd/content/fw/nes_lab/nrf52_demo_rf/build.elf
     data_type: path_elf
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.619155+02:00
+  created: 2025-05-12 17:28:39.868340+02:00
   parameters:
     id: 3174430733058172825
     name: nrf52_rf_survey
@@ -339,20 +339,20 @@
     mcu:
       id: 1001
       name: nRF52
-      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
       platform: nRF52
       core: nRF52840
       prog_protocol: SWD
       prog_voltage: 3.0
       prog_datarate: 500000
-      fw_name_default: nrf52_demo_rf
+      fw_name_default: nrf52_deep_sleep
     data: /var/shepherd/content/fw/nes_lab/nrf52_rf_survey/build.elf
     data_type: path_elf
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.628815+02:00
+  created: 2025-05-12 17:28:39.876819+02:00
   parameters:
     id: 16381936580724580968
     name: nrf52_rf_test
@@ -367,20 +367,20 @@
     mcu:
       id: 1001
       name: nRF52
-      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
       platform: nRF52
       core: nRF52840
       prog_protocol: SWD
       prog_voltage: 3.0
       prog_datarate: 500000
-      fw_name_default: nrf52_demo_rf
+      fw_name_default: nrf52_deep_sleep
     data: /var/shepherd/content/fw/nes_lab/nrf52_rf_test/build.elf
     data_type: path_elf
     data_hash: null
     data_local: false
 - datatype: Firmware
-  created: 2024-02-25 12:45:58.638812+02:00
+  created: 2025-05-12 17:28:39.885271+02:00
   parameters:
     id: 2002
     name: nrf52_testable
@@ -396,14 +396,14 @@
     mcu:
       id: 1001
       name: nRF52
-      description: Panasonic PAN1780, ENW-89854A1KF, Bluetooth 5 Low Energy Module
+      description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
       platform: nRF52
       core: nRF52840
       prog_protocol: SWD
       prog_voltage: 3.0
       prog_datarate: 500000
-      fw_name_default: nrf52_demo_rf
+      fw_name_default: nrf52_deep_sleep
     data: /var/shepherd/content/fw/nes_lab/nrf52_testable/build.elf
     data_type: path_elf
     data_hash: null

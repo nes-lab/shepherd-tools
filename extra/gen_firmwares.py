@@ -34,7 +34,7 @@ if __name__ == "__main__":
     with ZipFile(BytesIO(data), "r") as zip_ref:
         zip_ref.extractall(path_here / "temp")
 
-    shutil.move(path_here / "temp/content", path_fw)
+    shutil.move(path_here / "temp/content/", path_fw)
 
     if not path_meta.exists():
         logger.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
         for _fw, _descr in metadata.items():
             path_sub = path_fw / _fw
-            files_elf = [each for each in path_sub.iterdir() if each.endswith(".elf")]
+            files_elf = [each for each in path_sub.iterdir() if each.suffix == ".elf"]
 
             if len(files_elf) > 1:
                 logger.warning("More than one .ELF in directory -> will use first of %s", files_elf)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
             # debug-part below
             sizeof: dict[str, int] = {}
             sizeof["elf"] = path_elf.stat().st_size
-            files_hex = [each for each in path_sub.iterdir() if each.endswith(".hex")]
+            files_hex = [each for each in path_sub.iterdir() if each.suffix == ".hex"]
             if files_hex:
                 sizeof["hex"] = (path_sub / files_hex[0]).stat().st_size
             file_temp = path_here / "temp" / "demo_fw.yaml"

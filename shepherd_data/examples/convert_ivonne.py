@@ -4,8 +4,8 @@ The folder contains a recording from ivonne
 -> consisting of voc- & isc-readings with a 50 Hz sampling rate.
 
 Three different file-formats are produced:
-- ivcurves -> can be harvested during emulation
-- ivsamples -> directly usable for emulation
+- ivsurface / curves -> can be harvested during emulation
+- ivtrace / samples -> directly usable for emulation
   (already harvested with two different algorithms)
 - isc_voc -> not directly usable (for now)
 """
@@ -28,10 +28,10 @@ if __name__ == "__main__":
     with ivonne.Reader(inp_file_path) as db:
         db.upsample_2_isc_voc(isc_file_path, duration_s=duration)
 
-        db.convert_2_ivcurves(ivc_file_path, duration_s=duration)
+        db.convert_2_ivsurface(ivc_file_path, duration_s=duration)
 
         tr_voc = mppt.OpenCircuitTracker(ratio=0.76)
         tr_opt = mppt.OptimalTracker()
 
-        db.convert_2_ivsamples(voc_file_path, tracker=tr_voc, duration_s=duration)
-        db.convert_2_ivsamples(opt_file_path, tracker=tr_opt, duration_s=duration)
+        db.convert_2_ivtrace(voc_file_path, tracker=tr_voc, duration_s=duration)
+        db.convert_2_ivtrace(opt_file_path, tracker=tr_opt, duration_s=duration)

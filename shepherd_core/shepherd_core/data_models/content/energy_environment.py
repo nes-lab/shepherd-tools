@@ -15,8 +15,8 @@ from shepherd_core.testbed_client import tb_client
 class EnergyDType(str, Enum):
     """Data-Type-Options for energy environments."""
 
-    ivsample = ivsamples = "ivsample"
-    ivcurve = ivcurves = ivsurface = "ivcurve"
+    ivtrace = ivsample = ivsamples = "ivsample"
+    ivsurface = ivcurve = ivcurves = "ivcurve"
     isc_voc = "isc_voc"
 
 

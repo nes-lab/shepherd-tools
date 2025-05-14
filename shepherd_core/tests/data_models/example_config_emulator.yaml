@@ -33,9 +33,8 @@ parameters:
     V_output_mV: 3000
 
   power_tracing: null
-  gpio_tracing:
-    uart_decode: true
-    uart_baudrate: 9600
+  uart_tracing:
+    baudrate: 9600
   sys_logging:
-    dmesg: true
+    kernel: true
 verbose: 2 # serious performance impact for value > 3

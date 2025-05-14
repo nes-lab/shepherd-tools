@@ -18,17 +18,12 @@ How to define an experiment:
 
 """
 
+import shepherd_core.data_models as sm
 from shepherd_core import WebClient
-from shepherd_core.data_models.content import EnergyEnvironment
-from shepherd_core.data_models.content import Firmware
-from shepherd_core.data_models.content import VirtualHarvesterConfig
-from shepherd_core.data_models.content import VirtualSourceConfig
-from shepherd_core.data_models.experiment import Experiment
-from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 
 # generate description for all parameters -> base for web-forms
-Experiment.schema_to_file("experiment_schema.yaml")
+sm.Experiment.schema_to_file("experiment_schema.yaml")
 
 # For online-queries the lib can be connected to the testbed-server.
 # NOTE: there are 3 states:
@@ -40,11 +35,11 @@ if do_connect:
     WebClient()
 
 # Defining an Experiment in Python
-hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
+hrv = sm.VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
 
 target_cfgs = [
     # first Instance similar to yaml-syntax
-    TargetConfig(
+    sm.TargetConfig(
         target_IDs=[9, 10, 11],
         custom_IDs=[0, 1, 2],
         energy_env={"name": "SolarSunny"},
@@ -52,17 +47,17 @@ target_cfgs = [
         firmware1={"name": "nrf52_demo_rf"},
     ),
     # second Instance fully object-oriented (recommended)
-    TargetConfig(
+    sm.TargetConfig(
         target_IDs=list(range(1, 5)),
         custom_IDs=list(range(7, 18)),  # note: longer list is OK
-        energy_env=EnergyEnvironment(name="ThermoelectricWashingMachine"),
-        virtual_source=VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
-        firmware1=Firmware(name="nrf52_demo_rf"),
-        firmware2=Firmware(name="msp430_deep_sleep"),
+        energy_env=sm.EnergyEnvironment(name="ThermoelectricWashingMachine"),
+        virtual_source=sm.VirtualSourceConfig(name="BQ25570-Schmitt", harvester=hrv),
+        firmware1=sm.Firmware(name="nrf52_demo_rf"),
+        firmware2=sm.Firmware(name="msp430_deep_sleep"),
     ),
 ]
 
-xperi1 = Experiment(
+xperi1 = sm.Experiment(
     id="4567",
     name="meaningful Test-Name",
     time_start="2033-03-13 14:15:16",  # or: datetime.now() + timedelta(minutes=30)
@@ -71,12 +66,12 @@ xperi1 = Experiment(
 
 # Safe, reload and compare content
 xperi1.to_file("experiment_from_py.yaml", minimal=False)
-xperi2 = Experiment.from_file("experiment_from_py.yaml")
+xperi2 = sm.Experiment.from_file("experiment_from_py.yaml")
 print(f"xp1 hash: {xperi1.get_hash()}")
 print(f"xp2 hash: {xperi2.get_hash()}")
 
 # comparison to same config (in yaml) fails due to internal variables, BUT:
-xperi3 = Experiment.from_file("experiment_from_yaml.yaml")
+xperi3 = sm.Experiment.from_file("experiment_from_yaml.yaml")
 print(f"xp3 hash: {xperi3.get_hash()} (won't match)")
 
 # Create a tasks-list for the testbed

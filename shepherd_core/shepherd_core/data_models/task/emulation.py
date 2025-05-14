@@ -23,8 +23,10 @@ from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
+from shepherd_core.data_models.experiment.observer_features import UartTracing
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
+from shepherd_core.logger import logger
 
 
 class Compression(str, Enum):
@@ -67,10 +69,10 @@ class EmulationTask(ShpModel):
     use_cal_default: bool = False
     # ⤷ Use default calibration values, skip loading from EEPROM
 
-    enable_io: bool = False
+    enable_io: bool = True
     # TODO: add direction of pins! also it seems error-prone when only setting _tracing
     # ⤷ Switch the GPIO level converter to targets on/off
-    #   pre-req for sampling gpio,
+    #   pre-req for sampling gpio / uart,
     io_port: TargetPort = TargetPort.A
     # ⤷ Either Port A or B that gets connected to IO
     pwr_port: TargetPort = TargetPort.A
@@ -89,6 +91,7 @@ class EmulationTask(ShpModel):
 
     power_tracing: Optional[PowerTracing] = PowerTracing()
     gpio_tracing: Optional[GpioTracing] = GpioTracing()
+    uart_tracing: Optional[UartTracing] = UartTracing()
     gpio_actuation: Optional[GpioActuation] = None
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
@@ -127,6 +130,14 @@ class EmulationTask(ShpModel):
             raise ValueError("Voltage Aux must be in float (0 - 4.5) or string 'main' / 'mid'.")
         if self.gpio_actuation is not None:
             raise ValueError("GPIO Actuation not yet implemented!")
+
+        io_requested = any(
+            _io is not None for _io in (self.gpio_actuation, self.gpio_tracing, self.uart_tracing)
+        )
+        if self.enable_io and not io_requested:
+            logger.warning("Target IO enabled, but no feature requested IO")
+        if not self.enable_io and io_requested:
+            logger.warning("Target IO not enabled, but a feature requested IO")
         return self
 
     @classmethod
@@ -134,6 +145,10 @@ class EmulationTask(ShpModel):
     def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
+        io_requested = any(
+            _io is not None
+            for _io in (tgt_cfg.gpio_actuation, tgt_cfg.gpio_tracing, tgt_cfg.uart_tracing)
+        )
 
         return cls(
             input_path=tgt_cfg.energy_env.data_path,
@@ -141,12 +156,13 @@ class EmulationTask(ShpModel):
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
             abort_on_error=xp.abort_on_error,
-            enable_io=(tgt_cfg.gpio_tracing is not None) or (tgt_cfg.gpio_actuation is not None),
+            enable_io=io_requested,
             io_port=obs.get_target_port(tgt_id),
             pwr_port=obs.get_target_port(tgt_id),
             virtual_source=tgt_cfg.virtual_source,
             power_tracing=tgt_cfg.power_tracing,
             gpio_tracing=tgt_cfg.gpio_tracing,
+            uart_tracing=tgt_cfg.uart_tracing,
             gpio_actuation=tgt_cfg.gpio_actuation,
             sys_logging=xp.sys_logging,
         )

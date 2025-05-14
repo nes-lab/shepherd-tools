@@ -18,6 +18,7 @@ from shepherd_core.data_models.testbed.target import Target
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing
+from .observer_features import UartTracing
 
 
 class TargetConfig(ShpModel, title="Target Config"):
@@ -38,9 +39,11 @@ class TargetConfig(ShpModel, title="Target Config"):
 
     firmware1: Firmware
     firmware2: Optional[Firmware] = None
+    # ⤷ omitted FW gets set to neutral deep-sleep
 
     power_tracing: Optional[PowerTracing] = None
     gpio_tracing: Optional[GpioTracing] = None
+    uart_tracing: Optional[UartTracing] = None
     gpio_actuation: Optional[GpioActuation] = None
 
     @model_validator(mode="after")
@@ -79,6 +82,8 @@ class TargetConfig(ShpModel, title="Target Config"):
             msg = f"Provided custom IDs {c_ids} not enough to cover target range {t_ids}"
             raise ValueError(msg)
         # TODO: if custom ids present, firmware must be ELF
+        if self.gpio_actuation is not None:
+            raise NotImplementedError("Feature GpioActuation reserved for future use.")
         return self
 
     def get_custom_id(self, target_id: int) -> Optional[int]:

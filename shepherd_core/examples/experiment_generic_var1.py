@@ -15,13 +15,8 @@ What the code does:
 
 from pathlib import Path
 
+import shepherd_core.data_models as sm
 from shepherd_core import WebClient
-from shepherd_core.data_models import FirmwareDType
-from shepherd_core.data_models import GpioTracing
-from shepherd_core.data_models.content import EnergyEnvironment
-from shepherd_core.data_models.content import Firmware
-from shepherd_core.data_models.experiment import Experiment
-from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import MCU
 
@@ -34,28 +29,26 @@ do_connect = False
 if do_connect:
     WebClient()
 
-xp = Experiment(
+xp = sm.Experiment(
     id="4567",
     name="meaningful_TestName",
     # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
     duration=30,
     target_configs=[
-        TargetConfig(
+        sm.TargetConfig(
             target_IDs=range(7, 12),
             custom_IDs=range(1, 100),  # note: longer list is OK
-            energy_env=EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
-            firmware1=Firmware(
+            energy_env=sm.EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
+            firmware1=sm.Firmware(
                 name="FW_TestXYZ",
                 data=Path("/var/shepherd/content/fw/nes_lab/nrf52_demo_rf/build.elf"),
-                data_type=FirmwareDType.path_elf,
+                data_type=sm.FirmwareDType.path_elf,
                 data_local=False,
                 mcu=MCU(name="nRF52"),
             ),
             power_tracing=None,
-            gpio_tracing=GpioTracing(
-                uart_decode=True,  # enables logging uart from userspace
-                uart_baudrate=115_200,
-            ),
+            gpio_tracing=sm.GpioTracing(),
+            uart_tracing=sm.UartTracing(baudrate=115_200),
         ),
     ],
 )

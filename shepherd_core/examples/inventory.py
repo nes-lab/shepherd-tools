@@ -2,23 +2,19 @@
 
 from pathlib import Path
 
-from shepherd_core.inventory import Inventory
-from shepherd_core.inventory import InventoryList
-from shepherd_core.inventory import PythonInventory
-from shepherd_core.inventory import SystemInventory
-from shepherd_core.inventory import TargetInventory
+import shepherd_core.inventory as si
 
-pi = PythonInventory.collect()
-print(f"PyInv: {pi}")
-si = SystemInventory.collect()
-print(f"SysInv: {si}")
-ti = TargetInventory.collect()
-print(f"TgtInv: {ti}")
+pyt_inv = si.PythonInventory.collect()
+print(f"PyInv: {pyt_inv}")
+sys_inv = si.SystemInventory.collect()
+print(f"SysInv: {sys_inv}")
+tgt_inv = si.TargetInventory.collect()
+print(f"TgtInv: {tgt_inv}")
 
 
-inv = Inventory.collect()
+inv = si.Inventory.collect()
 print(f"Complete Inventory: {inv}")
 inv.to_file("inventory.yaml", minimal=True, comment="just a test")
 
-inl = InventoryList(elements=[inv])
+inl = si.InventoryList(elements=[inv])
 inl.to_csv(Path(__file__).parent / "inventory.csv")

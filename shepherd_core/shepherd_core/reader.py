@@ -11,6 +11,7 @@ from itertools import product
 from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING
+from typing import Annotated
 from typing import Any
 from typing import Optional
 from typing import Union
@@ -21,6 +22,7 @@ import yaml
 from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from .commons import SAMPLERATE_SPS_DEFAULT
 from .data_models.base.calibration import CalibrationPair
@@ -45,7 +47,7 @@ class Reader:
 
     """
 
-    BUFFER_SAMPLES_N: int = 10_000
+    CHUNK_SAMPLES_N: int = 10_000
 
     MODE_TO_DTYPE: Mapping[str, Sequence[EnergyDType]] = MappingProxyType(
         {
@@ -82,9 +84,12 @@ class Reader:
 
         # init stats
         self.runtime_s: float = 0
-        self.buffers_n: int = 0
+        self.samples_n: int = 0
+        self.chunks_n: int = 0
         self.file_size: int = 0
         self.data_rate: float = 0
+
+        self.buffers_n: Annotated[int, deprecated("use .chunk_n instead")] = 0
 
         # open file (if not already done by writer)
         self._reader_opened: bool = False
@@ -113,7 +118,8 @@ class Reader:
                 )
 
         if not isinstance(self.h5file, h5py.File):
-            raise TypeError("Type of opened file is not h5py.File, for %s", self.file_path.name)
+            msg = (f"Type of opened file is not h5py.File, for {self.file_path.name}",)
+            raise TypeError(msg)
 
         self.ds_time: h5py.Dataset = self.h5file["data"]["time"]
         self.ds_voltage: h5py.Dataset = self.h5file["data"]["voltage"]
@@ -169,59 +175,63 @@ class Reader:
     def _refresh_file_stats(self) -> None:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
-        sample_count = self.ds_time.shape[0]
+        self.samples_n = min(
+            self.ds_time.shape[0], self.ds_current.shape[0], self.ds_voltage.shape[0]
+        )
         duration_raw = (
-            (int(self.ds_time[sample_count - 1]) - int(self.ds_time[0])) if sample_count > 0 else 0
+            (int(self.ds_time[self.samples_n - 1]) - int(self.ds_time[0]))
+            if self.samples_n > 0
+            else 0
         )
         # above's typecasting prevents overflow in u64-format
-        if (sample_count > 0) and (duration_raw > 0):
-            # this assumes iso-chronous sampling
+        if (self.samples_n > 0) and (duration_raw > 0):
+            # this assumes iso-chronous sampling, TODO: not the best choice?
             duration_s = self._cal.time.raw_to_si(duration_raw)
-            self.sample_interval_s = duration_s / sample_count
+            self.sample_interval_s = duration_s / self.samples_n
             self.sample_interval_ns = round(10**9 * self.sample_interval_s)
-            self.samplerate_sps = max(round((sample_count - 1) / duration_s), 1)
-        self.runtime_s = round(self.ds_voltage.shape[0] / self.samplerate_sps, 1)
-        self.buffers_n = int(self.ds_voltage.shape[0] // self.BUFFER_SAMPLES_N)
+            self.samplerate_sps = max(round((self.samples_n - 1) / duration_s), 1)
+        self.runtime_s = round(self.samples_n / self.samplerate_sps, 1)
+        self.chunks_n = self.buffers_n = int(self.samples_n // self.CHUNK_SAMPLES_N)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:
             self.file_size = 0
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
-    def read_buffers(
+    def read(
         self,
         start_n: int = 0,
         end_n: Optional[int] = None,
-        n_samples_per_buffer: Optional[int] = None,
+        n_samples_per_chunk: Optional[int] = None,
         *,
         is_raw: bool = False,
-        omit_ts: bool = False,
+        omit_timestamps: bool = False,
     ) -> Generator[tuple, None, None]:
-        """Read the specified range of buffers from the hdf5 file.
+        """Read the specified range of chunks from the hdf5 file.
 
         Generator - can be configured on first call
 
         Args:
         ----
-            :param start_n: (int) Index of first buffer to be read
-            :param end_n: (int) Index of last buffer to be read
-            :param n_samples_per_buffer: (int) allows changing
+            :param start_n: (int) Index of first chunk to be read
+            :param end_n: (int) Index of last chunk to be read
+            :param n_samples_per_chunk: (int) allows changing
             :param is_raw: (bool) output original data, not transformed to SI-Units
-            :param omit_ts: (bool) optimize reading if timestamp is never used
-        Yields: Buffers between start and end (tuple with time, voltage, current)
+            :param omit_timestamps: (bool) optimize reading if timestamp is never used
+        Yields: chunks between start and end (tuple with time, voltage, current)
 
         """
-        if n_samples_per_buffer is None:
-            n_samples_per_buffer = self.BUFFER_SAMPLES_N
-        end_max = int(self.ds_voltage.shape[0] // n_samples_per_buffer)
+        if n_samples_per_chunk is None:
+            n_samples_per_chunk = self.CHUNK_SAMPLES_N
+        end_max = int(self.samples_n // n_samples_per_chunk)
         end_n = end_max if end_n is None else min(end_n, end_max)
-        self._logger.debug("Reading blocks %d to %d from source-file", start_n, end_n)
+        self._logger.debug("Reading chunk %d to %d from source-file", start_n, end_n)
         _raw = is_raw
-        _wts = not omit_ts
+        _wts = not omit_timestamps
 
         for i in range(start_n, end_n):
-            idx_start = i * n_samples_per_buffer
-            idx_end = idx_start + n_samples_per_buffer
+            idx_start = i * n_samples_per_chunk
+            idx_end = idx_start + n_samples_per_chunk
             if _raw:
                 yield (
                     self.ds_time[idx_start:idx_end] if _wts else None,
@@ -234,6 +244,24 @@ class Reader:
                     self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_end]),
                     self._cal.current.raw_to_si(self.ds_current[idx_start:idx_end]),
                 )
+
+    @deprecated("use .read() instead")
+    def read_buffers(
+        self,
+        start_n: int = 0,
+        end_n: Optional[int] = None,
+        n_samples_per_buffer: Optional[int] = None,
+        *,
+        is_raw: bool = False,
+        omit_ts: bool = False,
+    ) -> Generator[tuple, None, None]:
+        return self.read(
+            start_n=start_n,
+            end_n=end_n,
+            n_samples_per_chunk=n_samples_per_buffer,
+            is_raw=is_raw,
+            omit_timestamps=omit_ts,
+        )
 
     def get_calibration_data(self) -> CalibrationSeries:
         """Read calibration-data from hdf5 file.
@@ -384,23 +412,22 @@ class Reader:
                 self.file_path.name,
             )
         # same length of datasets:
-        ds_volt_size = self.h5file["data"]["voltage"].shape[0]
         for dset in ["current", "time"]:
             ds_size = self.h5file["data"][dset].shape[0]
-            if ds_volt_size != ds_size:
+            if ds_size != self.samples_n:
                 self._logger.warning(
                     "[FileValidation] dataset '%s' has different size (=%d), "
-                    "compared to time-ds (=%d), in '%s'",
+                    "compared to smallest set (=%d), in '%s'",
                     dset,
                     ds_size,
-                    ds_volt_size,
+                    self.samples_n,
                     self.file_path.name,
                 )
-        # dataset-length should be multiple of buffersize
-        remaining_size = ds_volt_size % self.BUFFER_SAMPLES_N
+        # dataset-length should be multiple of chunk-size
+        remaining_size = self.samples_n % self.CHUNK_SAMPLES_N
         if remaining_size != 0:
             self._logger.warning(
-                "[FileValidation] datasets are not aligned with buffer-size in '%s'",
+                "[FileValidation] datasets are not aligned with chunk-size in '%s'",
                 self.file_path.name,
             )
         # check compression
@@ -455,10 +482,10 @@ class Reader:
 
         :return: sampled energy in Ws (watt-seconds)
         """
-        iterations = math.ceil(self.ds_voltage.shape[0] / self.max_elements)
+        iterations = math.ceil(self.samples_n / self.max_elements)
         job_iter = trange(
             0,
-            self.ds_voltage.shape[0],
+            self.samples_n,
             self.max_elements,
             desc="energy",
             leave=False,
@@ -466,7 +493,7 @@ class Reader:
         )
 
         def _calc_energy(idx_start: int) -> float:
-            idx_stop = min(idx_start + self.max_elements, self.ds_voltage.shape[0])
+            idx_stop = min(idx_start + self.max_elements, self.samples_n)
             vol_v = self._cal.voltage.raw_to_si(self.ds_voltage[idx_start:idx_stop])
             cur_a = self._cal.current.raw_to_si(self.ds_current[idx_start:idx_stop])
             return (vol_v[:] * cur_a[:]).sum() * self.sample_interval_s
@@ -520,16 +547,18 @@ class Reader:
         return stats
 
     def _data_timediffs(self) -> list[float]:
-        """Calculate list of unique time-deltas [s] between buffers.
+        """Calculate list of unique time-deltas [s] between chunks.
 
-        Optimized version that only looks at the start of each buffer.
+        Optimized version that only looks at the start of each chunk.
+        Timestamps get converted to signed (it still fits > 100 years)
+        to allow calculating negative diffs.
 
-        :return: list of (unique) time-deltas between buffers [s]
+        :return: list of (unique) time-deltas between chunks [s]
         """
-        iterations = math.ceil(self.ds_time.shape[0] / self.max_elements)
+        iterations = math.ceil(self.samples_n / self.max_elements)
         job_iter = trange(
             0,
-            self.h5file["data"]["time"].shape[0],
+            self.samples_n,
             self.max_elements,
             desc="timediff",
             leave=False,
@@ -538,14 +567,14 @@ class Reader:
 
         def calc_timediffs(idx_start: int) -> list:
             ds_time = self.ds_time[
-                idx_start : (idx_start + self.max_elements) : self.BUFFER_SAMPLES_N
-            ]
+                idx_start : (idx_start + self.max_elements) : self.CHUNK_SAMPLES_N
+            ].astype(np.int64)
             diffs_np = np.unique(ds_time[1:] - ds_time[0:-1], return_counts=False)
             return list(np.array(diffs_np))
 
         diffs_ll = [calc_timediffs(i) for i in job_iter]
         diffs = {
-            round(self._cal.time.raw_to_si(j) / self.BUFFER_SAMPLES_N, 6)
+            round(self._cal.time.raw_to_si(j) / self.CHUNK_SAMPLES_N, 6)
             for i in diffs_ll
             for j in i
         }
@@ -563,7 +592,7 @@ class Reader:
             self._logger.warning(
                 "Time-jumps detected -> expected equal steps, but got: %s s", diffs
             )
-        return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.BUFFER_SAMPLES_N, 6)
+        return (len(diffs) <= 1) and diffs[0] == round(0.1 / self.CHUNK_SAMPLES_N, 6)
 
     def count_errors_in_log(self, group_name: str = "sheep", min_level: int = 40) -> int:
         if group_name not in self.h5file:

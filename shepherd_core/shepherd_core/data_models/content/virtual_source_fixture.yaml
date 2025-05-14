@@ -93,7 +93,7 @@
   parameters:
     id: 1011
     name: diode+capacitor
-    description: Simple Converter based on diode and buffer capacitor
+    description: Simple Converter based on diode and storage capacitor
     inherit_from: neutral
     V_input_drop_mV: 300  # simulate input-diode
     C_intermediate_uF: 47  # primary storage-Cap
@@ -114,7 +114,7 @@
   parameters:
     id: 1013
     name: diode+resistor+capacitor
-    description: Simple Converter based on diode, current limiting resistor and buffer capacitor
+    description: Simple Converter based on diode, current limiting resistor and storage capacitor
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
@@ -133,7 +133,7 @@
     enable_boost: true # if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
 
     harvester:
-      name: mppt_bq_solar # harvester only active if input is "ivcurves"
+      name: mppt_bq_solar # harvester only active if input is ivsurface / curves
 
     V_input_max_mV: 3000
     I_input_max_mA: 100

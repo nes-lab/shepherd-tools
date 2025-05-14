@@ -1,6 +1,6 @@
 """Demonstrate behavior of Virtual Harvester Algorithms.
 
-- simulation is based on ivsamples derived from a solar-isc-voc-recording during a jogging-trip
+- simulation is based on IVTrace derived from a solar-isc-voc-recording during a jogging-trip
 - harvesting is done by various algorithms and preconfigured virtual harvesters
 - results are printed on console (harvested energy)
 
@@ -44,13 +44,13 @@ save_files: bool = False
 # convert IVonne to IVCurve
 if not file_ivcurve.exists():
     with ivonne.Reader(file_ivonne) as db:
-        db.convert_2_ivcurves(file_ivcurve, duration_s=sim_duration)
+        db.convert_2_ivsurface(file_ivcurve, duration_s=sim_duration)
 
 # Input Statistics
 with Reader(file_ivcurve, verbose=False) as file:
     window_size = file.get_window_samples()
     I_in_max = 0.0
-    for _t, _v, _i in file.read_buffers():
+    for _t, _v, _i in file.read():
         I_in_max = max(I_in_max, _i.max())
     print(
         f"Input-file: \n"

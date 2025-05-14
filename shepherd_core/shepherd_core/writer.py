@@ -94,7 +94,7 @@ class Writer(Reader):
     MODE_DEFAULT: str = "harvester"
     DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
 
-    _CHUNK_SHAPE: tuple = (Reader.BUFFER_SAMPLES_N,)
+    _CHUNK_SHAPE: tuple = (Reader.CHUNK_SAMPLES_N,)
 
     @validate_call
     def __init__(
@@ -240,7 +240,7 @@ class Writer(Reader):
         # Store voltage and current samples in the data group,
         # both are stored as 4 Byte unsigned int
         grp_data = self.h5file.create_group("data")
-        # the size of window_samples-attribute in harvest-data indicates ivcurves as input
+        # the size of window_samples-attribute in harvest-data indicates ivsurface / curves as input
         # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
         grp_data.attrs["window_samples"] = 0
 
@@ -287,7 +287,7 @@ class Writer(Reader):
 
         Args:
         ----
-            timestamp: just start of buffer or whole ndarray
+            timestamp: just start of chunk (1 timestamp) or whole ndarray
             voltage: ndarray as raw unsigned integers
             current: ndarray as raw unsigned integers
 
@@ -331,7 +331,7 @@ class Writer(Reader):
         Args:
         ----
             timestamp: python timestamp (time.time()) in seconds (si-unit)
-                       -> provide start of buffer or whole ndarray
+                       -> provide start of chunk (1 timestamp) or whole ndarray
             voltage: ndarray in physical-unit V
             current: ndarray in physical-unit A
 
@@ -343,16 +343,16 @@ class Writer(Reader):
         self.append_iv_data_raw(timestamp, voltage, current)
 
     def _align(self) -> None:
-        """Align datasets with buffer-size of shepherd."""
+        """Align datasets with chunk-size of shepherd."""
         self._refresh_file_stats()
-        n_buff = self.ds_voltage.size / self.BUFFER_SAMPLES_N
-        size_new = int(math.floor(n_buff) * self.BUFFER_SAMPLES_N)
+        chunks_n = self.ds_voltage.size / self.CHUNK_SAMPLES_N
+        size_new = int(math.floor(chunks_n) * self.CHUNK_SAMPLES_N)
         if size_new < self.ds_voltage.size:
             if self.samplerate_sps != SAMPLERATE_SPS_DEFAULT:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(
-                "aligning with buffer-size, discarding last %d entries",
+                "aligning with chunk-size, discarding last %d entries",
                 self.ds_voltage.size - size_new,
             )
             self.ds_time.resize((size_new,))

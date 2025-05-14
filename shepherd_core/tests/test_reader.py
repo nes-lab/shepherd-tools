@@ -57,25 +57,25 @@ def test_reader_meta_repr(data_h5: Path) -> None:
 
 def test_reader_read_open_end(data_h5: Path) -> None:
     with Reader(data_h5, verbose=True) as sfr:
-        for buf in sfr.read_buffers():
+        for buf in sfr.read():
             print(len(buf[0]))
 
 
 def test_reader_read_5(data_h5: Path) -> None:
     with Reader(data_h5, verbose=True) as sfr:
-        for buf in sfr.read_buffers(end_n=5):
+        for buf in sfr.read(end_n=5):
             print(len(buf[0]))
 
 
 def test_reader_read_start_late(data_h5: Path) -> None:
     with Reader(data_h5, verbose=True) as sfr:
-        for buf in sfr.read_buffers(start_n=2):
+        for buf in sfr.read(start_n=2):
             print(len(buf[0]))
 
 
 def test_reader_read_raw(data_h5: Path) -> None:
     with Reader(data_h5, verbose=True) as sfr:
-        for buf in sfr.read_buffers(is_raw=True):
+        for buf in sfr.read(is_raw=True):
             print(len(buf[0]))
 
 
@@ -190,7 +190,7 @@ def test_reader_fault_non_eq_time(data_h5: Path) -> None:
 
 def test_reader_fault_unaligned(data_h5: Path) -> None:
     with Writer(data_h5, modify_existing=True) as sfw:
-        new_size = sfw.BUFFER_SAMPLES_N / 2
+        new_size = sfw.CHUNK_SAMPLES_N / 2
         sfw.h5file["data"]["time"].resize((new_size,))
         sfw.h5file["data"]["voltage"].resize((new_size,))
         sfw.h5file["data"]["current"].resize((new_size,))
@@ -252,7 +252,7 @@ def test_reader_fault_jumps_timestamp(data_h5: Path) -> None:
     with Reader(data_h5, verbose=True) as sfr:
         assert sfr.check_timediffs()
     with Writer(data_h5, modify_existing=True) as sfw:
-        sfw.h5file["data"]["time"][sfw.BUFFER_SAMPLES_N] = 0
+        sfw.h5file["data"]["time"][sfw.CHUNK_SAMPLES_N] = 0
     with Reader(data_h5, verbose=True) as sfr:
         assert not sfr.check_timediffs()
 

@@ -56,7 +56,7 @@ class MPPTracker(ABC):
         """Apply harvesting model to input data.
 
         :param coeffs: ivonne coefficients
-        :return: ivsample-data
+        :return: ivtrace-data
         """
 
 
@@ -76,7 +76,7 @@ class OpenCircuitTracker(MPPTracker):
         """Apply harvesting model to input data.
 
         :param coeffs: ivonne coefficients
-        :return: ivsample-data
+        :return: ivtrace-data
         """
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         if "voc" not in coeffs.columns:
@@ -106,7 +106,7 @@ class OptimalTracker(MPPTracker):
         """Apply harvesting model to input data.
 
         :param coeffs: ivonne coefficients
-        :return: ivsample-data
+        :return: ivtrace-data
         """
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         coeffs["pcurve"] = coeffs.apply(lambda x: self.v_proto * x["icurve"], axis=1)

@@ -46,7 +46,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # feedback
     email_results: bool = False
 
-    sys_logging: SystemLogging = SystemLogging(dmesg=True, ptp=True, shepherd=True)
+    sys_logging: SystemLogging = SystemLogging()  # = all active
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP
@@ -56,7 +56,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # targets
     target_configs: Annotated[list[TargetConfig], Field(min_length=1, max_length=128)]
 
-    # for debug-purposes and later comp-checks
+    # debug
     lib_ver: Optional[str] = version
 
     @model_validator(mode="after")

@@ -1,16 +1,33 @@
 # History of Changes
 
+## v2025.05.1
+
+- add separate `UartTracer` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer
+- usage of not (yet) implemented features in an `Experiment()` now raises an exception
+- establish consistent naming scheme
+  - `IVTrace` for a stream of `IVSample`s and `IVSurface` for a stream of `IVCurve`s
+  - buffers & blocks are now chunks -> `Reader.CHUNK_SAMPLES_N`, `Reader.chunks_n`, `Reader.read()`
+- fix plotting for large datasets
+- fix potential bugs resulting from unequal array size for faulty data (i.e. energy calculation)
+- plotting: add a thin & light gray grid
+- downsampling: prime the state of downsampler to NOT start at zero
+- fix detection of negative timejumps
+- adapt fixtures to the newest target and use sleep-firmware as default for nRF52
+- fix exception messages that falsely used string-format-style
+- rename system-logging services (**breaking change, required for sheep v0.9.0**, now `kernel`, `time_sync` and `sheep` instead of dmesg, ptp and shepherd)
+- simplify examples
+
 ## v2025.04.2
 
 - drop python 3.8 support
 - supported python is now 3.9 - 3.13
 - heavy changes in typesystem - mypy was used to find possible bugs (NOTE: still work in progress)
 - user facing interfaces should be safer to use
-- pathlib now has .with_stem() to simplify code
+- pathlib now has `.with_stem()` to simplify code (py 3.9+)
 - rename constants to upper-case
   - 1-to-1: samplerate_sps_default,
-  - core.Reader().mode_dtype_dict -> .MODE_TO_DTYPE
-  - core.Reader().samples_per_buffer -> .BUFFER_SAMPLES_N
+  - `core.Reader().mode_dtype_dict` -> `.MODE_TO_DTYPE`
+  - `core.Reader().samples_per_buffer` -> `.BUFFER_SAMPLES_N`
 - replace relative imports from parent with absolute ones
 
 ## v2025.04.1
@@ -43,7 +60,7 @@
 - Core.Reader can now determine voltage_step from source-file
 - HarvesterPRUConfig.from_vhrv() needs voltage_step IF input is IVCurve for emulation
   - same for init() of VirtualSourceModel
-  - this fixes a bug that could ruin emulations with ivcurves (#72)
+  - this fixes a bug that could ruin emulations with ivsurface / curves (#72)
 
 ## v2024.11.2
 
@@ -118,7 +135,7 @@
 
 - fix two bugs in calibration
 - plotting
-  - re-enable plotting of ivcurves (but still warn about it)
+  - re-enable plotting of ivsurfaces / curves (but still warn about it)
   - add plot for power (IV combined)
   - add option to only plot power
   - switch from uA & uW to mA & mW for plots

@@ -16,6 +16,7 @@ from tqdm import trange
 from shepherd_core import Reader as CoreReader
 from shepherd_core import Writer as CoreWriter
 from shepherd_core import local_tz
+from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import get_verbose_level
 from shepherd_core.logger import logger
 
@@ -92,7 +93,7 @@ class Reader(CoreReader):
         return h5_group["time"][:].shape[0]
 
     def save_log(self, h5_group: h5py.Group, *, add_timestamp: bool = True) -> int:
-        """Save dataset from group as log, optimal for logged 'dmesg' and console-output.
+        """Save dataset from groups as log, optimal for logged kernel- and console-output.
 
         :param h5_group: can be external
         :param add_timestamp: can be external
@@ -175,7 +176,8 @@ class Reader(CoreReader):
     ) -> Union[None, h5py.Dataset, np.ndarray]:
         """Sample down iv-data.
 
-        Warning: only valid for IV-Stream, not IV-Curves
+        Warning: only valid for IV-Stream, not IV-Curves,
+        TODO: globally rename to IVTrace, IVSurface
 
         :param data_src: a h5-dataset to digest, can be external
         :param data_dst: can be a dataset, numpy-array or None (will be created internally then)
@@ -187,8 +189,8 @@ class Reader(CoreReader):
         """
         from scipy import signal  # here due to massive delay
 
-        if self.get_datatype() == "ivcurve":
-            self._logger.warning("Downsampling-Function was not written for IVCurves")
+        if self.get_datatype() == EnergyDType.ivsurface:
+            self._logger.warning("Downsampling-Function was not written for IVSurfaces")
         ds_factor = max(1, math.floor(ds_factor))
 
         if isinstance(end_n, (int, float)):
@@ -201,9 +203,9 @@ class Reader(CoreReader):
         if data_len == 0:
             self._logger.warning("downsampling failed because of data_len = 0")
             return data_dst
-        iblock_len = min(self.max_elements, data_len)
-        oblock_len = round(iblock_len / ds_factor)
-        iterations = math.ceil(data_len / iblock_len)
+        chunk_size_inp = min(self.max_elements, data_len)
+        chunk_size_out = round(chunk_size_inp / ds_factor)
+        iterations = math.ceil(data_len / chunk_size_inp)
         dest_len = math.floor(data_len / ds_factor)
         if data_dst is None:
             data_dst = np.empty((dest_len,))
@@ -222,8 +224,13 @@ class Reader(CoreReader):
         )
         # filter state - needed for sliced calculation
         f_state = np.zeros((filter_.shape[0], 2))
+        # prime the state to avoid starting from 0
+        if not is_time and ds_factor > 1:
+            slice_ds = data_src[start_n : start_n + self.CHUNK_SAMPLES_N]
+            slice_ds[:] = slice_ds[:].mean()
+            slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
 
-        slice_len = 0
+        output_pos = 0
         for _iter in trange(
             0,
             iterations,
@@ -231,16 +238,22 @@ class Reader(CoreReader):
             leave=False,
             disable=iterations < 8,
         ):
-            slice_ds = data_src[start_n + _iter * iblock_len : start_n + (_iter + 1) * iblock_len]
+            slice_ds = data_src[
+                start_n + _iter * chunk_size_inp : start_n + (_iter + 1) * chunk_size_inp
+            ]
             if not is_time and ds_factor > 1:
                 slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
             slice_ds = slice_ds[::ds_factor]
-            slice_len = min(dest_len - _iter * oblock_len, oblock_len)
-            data_dst[_iter * oblock_len : (_iter + 1) * oblock_len] = slice_ds[:slice_len]
+            slice_len = min(dest_len - _iter * chunk_size_out, chunk_size_out, len(slice_ds))
+            data_dst[output_pos : output_pos + slice_len] = slice_ds[:slice_len]
+            # workaround to allow processing last slice (often smaller than expected),
+            # wanted: [_iter * chunk_size_out : (_iter + 1) * chunk_size_out]
+            # this prevents future parallel processing!
+            output_pos += slice_len
         if isinstance(data_dst, np.ndarray):
-            data_dst.resize((oblock_len * (iterations - 1) + slice_len,), refcheck=False)
+            data_dst.resize((output_pos,), refcheck=False)
         else:
-            data_dst.resize((oblock_len * (iterations - 1) + slice_len,))
+            data_dst.resize((output_pos,))
         return data_dst
 
     def cut_and_downsample_to_file(
@@ -269,24 +282,20 @@ class Reader(CoreReader):
 
         # test input-parameters
         if end_sample < start_sample:
-            raise ValueError(
-                "Cut & downsample for %s failed because "
-                "end-mark (%.3f) is before start-mark (%.3f).",
-                self.file_path.name,
-                end_s,
-                start_s,
+            msg = (
+                f"Cut & downsample for {self.file_path.name} failed because "
+                f"end-mark ({end_s:.3f}) is before start-mark ({start_s:.3f})."
             )
+            raise ValueError(msg)
         if ds_factor < 1:
-            raise ValueError(
-                "Cut & downsample for %s failed because factor < 1",
-                self.file_path.name,
-            )
+            msg = f"Cut & downsample for {self.file_path.name} failed because factor < 1"
+            raise ValueError(msg)
         if ((end_sample - start_sample) / ds_factor) < 1000:
-            raise ValueError(
-                "Cut & downsample for %s failed because resulting sample-size is too small",
-                self.file_path.name,
+            msg = (
+                f"Cut & downsample for {self.file_path.name} failed because "
+                f"resulting sample-size is too small",
             )
-
+            raise ValueError(msg)
         # assemble file-name of output
         if start_s != 0.0 or end_s != self.runtime_s:
             start_str = f"{start_s:.3f}".replace(".", "s")
@@ -370,8 +379,8 @@ class Reader(CoreReader):
         :return: resampled iv-data
         """
         self._logger.error("Resampling is still under construction - do not use for now!")
-        if self.get_datatype() == "ivcurve":
-            self._logger.warning("Resampling-Function was not written for IVCurves")
+        if self.get_datatype() == EnergyDType.ivsurface:
+            self._logger.warning("Resampling-Function was not written for IVSurfaces")
             return data_dst
         if isinstance(end_n, (int, float)):
             _end_n = min(data_src.shape[0], round(end_n))
@@ -466,8 +475,8 @@ class Reader(CoreReader):
         :param relative_timestamp: treat
         :return: down-sampled size of ~ self.max_elements
         """
-        if self.get_datatype() == "ivcurve":
-            self._logger.warning("Plot-Function was not written for IVCurves.")
+        if self.get_datatype() == EnergyDType.ivsurface:
+            self._logger.warning("Plot-Function was not written for IVSurfaces.")
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):
@@ -536,11 +545,20 @@ class Reader(CoreReader):
             # last axis is set below
 
         for date in data:
+            samples_n = min(len(date["time"]), len(date["voltage"]), len(date["current"]))
             if not only_pwr:
-                axs[0].plot(date["time"], date["voltage"], label=date["name"])
-                axs[1].plot(date["time"], date["current"] * 10**3, label=date["name"])
+                axs[0].plot(
+                    date["time"][:samples_n], date["voltage"][:samples_n], label=date["name"]
+                )
+                axs[1].plot(
+                    date["time"][:samples_n],
+                    date["current"][:samples_n] * 10**3,
+                    label=date["name"],
+                )
             axs[-1].plot(
-                date["time"], date["voltage"] * date["current"] * 10**3, label=date["name"]
+                date["time"][:samples_n],
+                date["voltage"][:samples_n] * date["current"][:samples_n] * 10**3,
+                label=date["name"],
             )
 
         if len(data) > 1:
@@ -551,6 +569,8 @@ class Reader(CoreReader):
             # deactivates offset-creation for ax-ticks
             ax.get_yaxis().get_major_formatter().set_useOffset(False)
             ax.get_xaxis().get_major_formatter().set_useOffset(False)
+            # add a thin and light gray grid, TODO: add option to switch off?
+            ax.grid(color="0.8", linewidth=0.5)
         return fig
 
     def plot_to_file(

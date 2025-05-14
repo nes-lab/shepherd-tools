@@ -72,9 +72,8 @@ class AbcClient(ABC):
             try:
                 values = self.query_item(model_type, name=values.get("name"), uid=values.get("id"))
             except ValueError as err:
-                raise ValueError(
-                    "Query %s by name / ID failed - %s is unknown!", model_type, values
-                ) from err
+                msg = f"Query {model_type} by name / ID failed - {values} is unknown!"
+                raise ValueError(msg) from err
         return self.try_inheritance(model_type, values)
 
     @abstractmethod

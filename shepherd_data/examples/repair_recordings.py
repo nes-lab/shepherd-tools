@@ -46,7 +46,7 @@ if __name__ == "__main__":
                 fh = shp.Reader(file, verbose=False)  # reopen file
 
         # unaligned datasets
-        remaining_size = fh.h5file["data"]["voltage"].shape[0] % shp.Reader.BUFFER_SAMPLES_N
+        remaining_size = fh.h5file["data"]["voltage"].shape[0] % shp.Reader.CHUNK_SAMPLES_N
         if remaining_size != 0:
             print(" -> will align datasets")
             fh.__exit__()
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         # missing window_samples
         if "window_samples" not in fh.h5file["data"].attrs:
             if datatype == EnergyDType.ivcurve:
-                print("Window size missing, but ivcurves detected -> no repair")
+                print("Window size missing, but ivsurface detected -> no repair")
                 continue
             print(" -> will set window size = 0")
             fh.__exit__()
