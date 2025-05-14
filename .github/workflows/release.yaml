@@ -3,7 +3,8 @@ name: Release tagged Commit
 on:
   workflow_call:
   push:
-    # branches: [ main ]  # this is handled as OR (push to main OR tagged)
+    branches:
+      - 'main'
     tags:
       - 'v*.*.*'
 

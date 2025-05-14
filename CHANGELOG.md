@@ -2,7 +2,11 @@
 
 ## v2025.05.2
 
-- clean up GitHub-workflows & fix release to PyPI
+- GitHub-workflows
+  - clean up
+  - fix release to PyPI
+  - avoid workflows running twice (PR & push)
+  - only release when a commit in main is tagged with `v*.*.*`
 
 ## v2025.05.1
 
