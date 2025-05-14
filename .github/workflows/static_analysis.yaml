@@ -1,0 +1,22 @@
+name: Static analysis / pre-commit
+
+on:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run Pre-Commit Tests 🧪
+        uses: pre-commit/action@v3.0.1

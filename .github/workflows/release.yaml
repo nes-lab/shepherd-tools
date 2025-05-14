@@ -11,12 +11,12 @@ permissions:
   contents: write
 
 jobs:
-  run-unittests:
-    uses: ./.github/workflows/py_unittest.yml
+  run-quality-control:
+    uses: ./.github/workflows/quality_assurance.yaml
   release:
     runs-on: ubuntu-latest
     needs:
-      - run-unittests
+      - run-quality-control
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4

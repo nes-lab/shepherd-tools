@@ -1,17 +1,14 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: PyTest
+name: Build, install & pytest
 
 on:
-  push:
-    branches: [ main, dev ]
-  pull_request:
-    branches: [ main ]
   workflow_call:
 
-permissions:
-  contents: read
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   utest:
@@ -37,7 +34,6 @@ jobs:
       - name: Install apt-dependencies 🔧
         run: sudo apt install build-essential
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        #python -m pip install --upgrade pip
 
       - name: Test-Build core-package 🧱
         run: python -m build
@@ -64,18 +60,3 @@ jobs:
         run: pytest
         working-directory: "./shepherd_data"
 
-  lint:
-
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
-      - name: Set up Python 🐍
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Run Pre-Commit Tests 🧪
-        uses: pre-commit/action@v3.0.1
