@@ -1,5 +1,9 @@
 # History of Changes
 
+## v2025.05.2
+
+- clean up GitHub-workflows & fix release to PyPI
+
 ## v2025.05.1
 
 - add separate `UartTracer` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer

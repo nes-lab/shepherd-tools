@@ -21,5 +21,12 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
+      - id: extract-changelog
+        uses: sean0x42/markdown-extract@v4
+        with:
+          file: ./CHANGELOG.md
+          pattern: ${{ github.ref_name }}
       - name: Release 🏃
         uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.extract-changelog.outputs.markdown }}
