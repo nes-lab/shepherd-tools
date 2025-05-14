@@ -9,12 +9,12 @@
   - buffers & blocks are now chunks -> `Reader.CHUNK_SAMPLES_N`, `Reader.chunks_n`, `Reader.read()`
 - fix plotting for large datasets
 - fix potential bugs resulting from unequal array size for faulty data (i.e. energy calculation)
-- plotting - add a thin & light gray grid
-- downsampling - prime the state of downsampler to NOT start at zero
+- plotting: add a thin & light gray grid
+- downsampling: prime the state of downsampler to NOT start at zero
 - fix detection of negative timejumps
 - adapt fixtures to the newest target and use sleep-firmware as default for nRF52
-- fix exception messages that falsely used string-format
-- rename system-logging services (now `kernel`, `time_sync` and `sheep` instead of dmesg, ptp and shepherd)
+- fix exception messages that falsely used string-format-style
+- rename system-logging services (**breaking change, required for sheep v0.9.0**, now `kernel`, `time_sync` and `sheep` instead of dmesg, ptp and shepherd)
 - simplify examples
 
 ## v2025.04.2
@@ -60,7 +60,7 @@
 - Core.Reader can now determine voltage_step from source-file
 - HarvesterPRUConfig.from_vhrv() needs voltage_step IF input is IVCurve for emulation
   - same for init() of VirtualSourceModel
-  - this fixes a bug that could ruin emulations with ivcurves (#72)
+  - this fixes a bug that could ruin emulations with ivsurface / curves (#72)
 
 ## v2024.11.2
 
@@ -135,7 +135,7 @@
 
 - fix two bugs in calibration
 - plotting
-  - re-enable plotting of ivcurves (but still warn about it)
+  - re-enable plotting of ivsurfaces / curves (but still warn about it)
   - add plot for power (IV combined)
   - add option to only plot power
   - switch from uA & uW to mA & mW for plots

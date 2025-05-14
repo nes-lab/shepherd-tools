@@ -102,7 +102,7 @@ class Reader:
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
-    def convert_2_ivcurves(
+    def convert_2_ivsurface(
         self,
         shp_output: Path,
         v_max: float = 5.0,
@@ -137,7 +137,9 @@ class Reader:
             curve_interval_us = round(sfw.sample_interval_ns * pts_per_curve / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
             max_elements = math.ceil(sfw.max_elements // up_factor)
-            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivcurves", leave=False)
+            job_iter = trange(
+                0, df_elements_n, max_elements, desc="generate ivsurface", leave=False
+            )
 
             for idx in job_iter:
                 idx_top = min(idx + max_elements, df_elements_n)
@@ -164,14 +166,14 @@ class Reader:
                 #   - time can be generated and set as a whole
                 #   - v_proto is repetitive, can also be set as a whole
 
-    def convert_2_ivsamples(
+    def convert_2_ivtrace(
         self,
         shp_output: Path,
         v_max: float = 5.0,
         duration_s: Optional[float] = None,
         tracker: Optional[MPPTracker] = None,
     ) -> None:
-        """Transform shepherd IV curves to shepherd IV samples / traces.
+        """Transform shepherd IV surface / curves to shepherd IV trace / samples .
 
         For the 'buck' and 'buck-boost' modes, shepherd takes voltage and current traces.
         These can be recorded with shepherd or generated from existing IV curves by, for
@@ -212,9 +214,7 @@ class Reader:
             interval_us = round(sfw.sample_interval_ns / 1000)
             up_factor = self.sample_interval_ns // sfw.sample_interval_ns
             max_elements = math.ceil(sfw.max_elements // up_factor)
-            job_iter = trange(
-                0, df_elements_n, max_elements, desc="generate ivsamples", leave=False
-            )
+            job_iter = trange(0, df_elements_n, max_elements, desc="generate ivtrace", leave=False)
 
             for idx in job_iter:
                 # select (max_elements + 1) elements, so upsampling is without gaps

@@ -240,7 +240,7 @@ class Writer(Reader):
         # Store voltage and current samples in the data group,
         # both are stored as 4 Byte unsigned int
         grp_data = self.h5file.create_group("data")
-        # the size of window_samples-attribute in harvest-data indicates ivcurves as input
+        # the size of window_samples-attribute in harvest-data indicates ivsurface / curves as input
         # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
         grp_data.attrs["window_samples"] = 0
 

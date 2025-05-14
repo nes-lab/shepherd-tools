@@ -160,7 +160,7 @@ coverage html
   - generalize converters (currently in IVonne)
     - isc&voc <-> ivcurve
     - ivcurve ⇾ ivsample
-  - plotting and downsampling for IVCurves ()
+  - plotting and downsampling for IVSurface
   - plotting more generalized (power, cpu-util, ..., if IV then offer power as well)
   - some metadata is calculated wrong (non-scalar datasets)
   - unittests & codecoverage ⇾ 79% with v22.5.4, https://pytest-cov.readthedocs.io/en/latest/config.html
@@ -173,7 +173,7 @@ coverage html
   - proper validation first
   - update commentary
   - pin-description should be in yaml (and other descriptions for cpu, io, ...)
-  - datatype-hint in h5-file (ivcurve, ivsample, isc_voc), add mechanism to prevent misuse
+  - datatype-hint in h5-file (`ivcurve`, `ivsample`, `isc_voc`), add mechanism to prevent misuse
   - hostname for emulation
   - full and minimal config into h5
   - use the datalib as a base

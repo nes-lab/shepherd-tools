@@ -92,7 +92,7 @@ def validate(in_data: Path, *, recurse: bool = False) -> None:
     sys.exit(int(not valid_dir))
 
 
-@cli.command(short_help="Extracts recorded IVSamples and stores it to csv")
+@cli.command(short_help="Extracts recorded IVTrace and stores it to csv")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--start",
@@ -143,7 +143,7 @@ def extract(
     raw: bool = False,
     recurse: bool = False,
 ) -> None:
-    """Extract recorded IVSamples and store them to csv."""
+    """Extract recorded IVTrace and store them to csv."""
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     if not isinstance(ds_factor, (float, int)) or ds_factor < 1:

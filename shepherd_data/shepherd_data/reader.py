@@ -16,6 +16,7 @@ from tqdm import trange
 from shepherd_core import Reader as CoreReader
 from shepherd_core import Writer as CoreWriter
 from shepherd_core import local_tz
+from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import get_verbose_level
 from shepherd_core.logger import logger
 
@@ -188,8 +189,8 @@ class Reader(CoreReader):
         """
         from scipy import signal  # here due to massive delay
 
-        if self.get_datatype() == "ivcurve":
-            self._logger.warning("Downsampling-Function was not written for IVCurves")
+        if self.get_datatype() == EnergyDType.ivsurface:
+            self._logger.warning("Downsampling-Function was not written for IVSurfaces")
         ds_factor = max(1, math.floor(ds_factor))
 
         if isinstance(end_n, (int, float)):
@@ -378,8 +379,8 @@ class Reader(CoreReader):
         :return: resampled iv-data
         """
         self._logger.error("Resampling is still under construction - do not use for now!")
-        if self.get_datatype() == "ivcurve":
-            self._logger.warning("Resampling-Function was not written for IVCurves")
+        if self.get_datatype() == EnergyDType.ivsurface:
+            self._logger.warning("Resampling-Function was not written for IVSurfaces")
             return data_dst
         if isinstance(end_n, (int, float)):
             _end_n = min(data_src.shape[0], round(end_n))
@@ -474,8 +475,8 @@ class Reader(CoreReader):
         :param relative_timestamp: treat
         :return: down-sampled size of ~ self.max_elements
         """
-        if self.get_datatype() == "ivcurve":
-            self._logger.warning("Plot-Function was not written for IVCurves.")
+        if self.get_datatype() == EnergyDType.ivsurface:
+            self._logger.warning("Plot-Function was not written for IVSurfaces.")
         if not isinstance(start_s, (float, int)):
             start_s = 0
         if not isinstance(end_s, (float, int)):

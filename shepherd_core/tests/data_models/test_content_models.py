@@ -207,7 +207,7 @@ def test_content_model_hrv_by_id(uid: int) -> None:
 
 def test_content_model_hrv_steps() -> None:
     hrv = VirtualHarvesterConfig(
-        name="ivcurves", voltage_min_mV=1000, voltage_max_mV=4000, samples_n=11
+        name="ivsurface", voltage_min_mV=1000, voltage_max_mV=4000, samples_n=11
     )
     assert hrv.voltage_step_mV == 300
 
@@ -234,7 +234,7 @@ def test_content_model_hrv_faulty_voltage3() -> None:
         _ = VirtualHarvesterConfig(name="iv110", voltage_mV=4000, voltage_min_mV=4001)
 
 
-@pytest.mark.parametrize("name", ["ivcurves", "iv1000", "isc_voc"])
+@pytest.mark.parametrize("name", ["ivsurface", "iv1000", "isc_voc"])
 def test_content_model_hrv_faulty_emu(name: str) -> None:
     hrv = VirtualHarvesterConfig(name=name)
     with pytest.raises(ValidationError):

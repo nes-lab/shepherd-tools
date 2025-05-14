@@ -64,7 +64,7 @@ def test_writer_basics(h5_path: Path) -> None:
         assert file.get_window_samples() == 0
         assert file.get_mode() == "harvester"
         assert file.get_config() == {}
-        assert file.get_datatype() == "ivsample"
+        assert file.get_datatype() == EnergyDType.ivsample
         assert file.get_hostname() == "unknown"
 
 

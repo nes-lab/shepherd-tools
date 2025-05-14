@@ -23,13 +23,13 @@ def test_convert_ivonne(tmp_path: Path, example_path: Path) -> None:
 
     with ivonne.Reader(inp_path) as ifr:
         ifr.upsample_2_isc_voc(isc_path, duration_s=20)
-        ifr.convert_2_ivcurves(ivc_path, duration_s=20)
+        ifr.convert_2_ivsurface(ivc_path, duration_s=20)
 
         tr_voc = mppt.OpenCircuitTracker(ratio=0.76)
         tr_opt = mppt.OptimalTracker()
 
-        ifr.convert_2_ivsamples(voc_path, tracker=tr_voc, duration_s=20)
-        ifr.convert_2_ivsamples(opt_path, tracker=tr_opt, duration_s=20)
+        ifr.convert_2_ivtrace(voc_path, tracker=tr_voc, duration_s=20)
+        ifr.convert_2_ivtrace(opt_path, tracker=tr_opt, duration_s=20)
 
     energies = {}
     for file_path in [isc_path, ivc_path, voc_path, opt_path]:

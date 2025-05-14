@@ -83,7 +83,7 @@ if __name__ == "__main__":
         # missing window_samples
         if "window_samples" not in fh.h5file["data"].attrs:
             if datatype == EnergyDType.ivcurve:
-                print("Window size missing, but ivcurves detected -> no repair")
+                print("Window size missing, but ivsurface detected -> no repair")
                 continue
             print(" -> will set window size = 0")
             fh.__exit__()

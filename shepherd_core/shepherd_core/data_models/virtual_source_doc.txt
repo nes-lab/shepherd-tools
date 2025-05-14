@@ -42,7 +42,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
     )
 
     harvester: VirtualHarvesterConfig = Field(
-        description="Only active / needed if input is 'ivcurves'",
+        description="Only active / needed if input is ivsurface / curves,
         default=VirtualHarvesterConfig(name="mppt_opt"),
     )
 

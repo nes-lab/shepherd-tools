@@ -28,7 +28,7 @@ def file_ivcurve(file_ivonne: Path) -> Path:
     path = file_ivonne.parent / "jogging_10m_ivcurve.h5"
     if not path.exists():
         with ivonne.Reader(file_ivonne) as db:
-            db.convert_2_ivcurves(path, duration_s=1)
+            db.convert_2_ivsurface(path, duration_s=1)
     return path
 
 
@@ -38,7 +38,7 @@ def file_ivsample(file_ivonne: Path) -> Path:
     if not path.exists():
         with ivonne.Reader(file_ivonne) as db:
             tr_opt = mppt.OptimalTracker()
-            db.convert_2_ivsamples(path, tracker=tr_opt, duration_s=1)
+            db.convert_2_ivtrace(path, tracker=tr_opt, duration_s=1)
     return path
 
 
