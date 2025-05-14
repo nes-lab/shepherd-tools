@@ -23,7 +23,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """
 
     intermediate_voltage: bool = False
-    # ⤷ for EMU: record buffer capacitor instead of output (good for V_out = const)
+    # ⤷ for EMU: record storage capacitor instead of output (good for V_out = const)
     #            this also includes current!
 
     # time

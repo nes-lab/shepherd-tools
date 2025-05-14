@@ -2,13 +2,16 @@
 
 ## v2025.05.1
 
-- establish consistent naming scheme `IVTrace` for a stream of samples and `IVSurface` for a stream of `IVCurve`s
+- add separate `UartTracer` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer
+- usage of not (yet) implemented features in an `Experiment()` now raises an exception
+- establish consistent naming scheme
+  - `IVTrace` for a stream of `IVSample`s and `IVSurface` for a stream of `IVCurve`s
+  - buffers & blocks are now chunks -> `Reader.CHUNK_SAMPLES_N`, `Reader.chunks_n`, `Reader.read()`
 - fix plotting for large datasets
 - fix potential bugs resulting from unequal array size for faulty data (i.e. energy calculation)
-- plotting - add a thin and light gray grid
+- plotting - add a thin & light gray grid
 - downsampling - prime the state of downsampler to NOT start at zero
 - fix detection of negative timejumps
-- add separate `UartTracer` with new config options (**breaking change**) instead of misusing GPIOTracer
 - adapt fixtures to the newest target and use sleep-firmware as default for nRF52
 - fix exception messages that falsely used string-format
 - rename system-logging services (now `kernel`, `time_sync` and `sheep` instead of dmesg, ptp and shepherd)

@@ -33,7 +33,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     The converter-stage is software defined and offers:
     - buck-boost-combinations,
     - a simple diode + resistor and
-    - an intermediate buffer capacitor.
+    - an intermediate storage capacitor.
     """
 
     # TODO: I,V,R should be in regular unit (V, A, Ohm)

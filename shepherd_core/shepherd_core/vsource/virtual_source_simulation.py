@@ -74,7 +74,7 @@ def simulate_source(
         stats_internal = None
 
     for _t, v_inp, i_inp in tqdm(
-        file_inp.read_buffers(is_raw=True), total=file_inp.buffers_n, desc="Buffers", leave=False
+        file_inp.read(is_raw=True), total=file_inp.chunks_n, desc="Chunk", leave=False
     ):
         v_uV = 1e6 * cal_inp.voltage.raw_to_si(v_inp)
         i_nA = 1e9 * cal_inp.current.raw_to_si(i_inp)

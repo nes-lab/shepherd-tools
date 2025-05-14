@@ -35,7 +35,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
     )
 
     interval_startup_delay_drain_ms: float = Field(
-        description="Model begins running but Target is not draining the buffer",
+        description="Model begins running but Target is not draining the storage capacitor",
         default=0,
         ge=0,
         le=10e3,
@@ -85,7 +85,7 @@ class VirtualSourceDoc(ShpModel, title="Virtual Source (Documented, Testversion)
         le=10_000,
     )
     I_intermediate_leak_nA: float = Field(
-        description="Current leakage of intermediate buffer capacitor",
+        description="Current leakage of intermediate storage capacitor",
         default=0,
         ge=0,
         le=4.29e9,

@@ -137,7 +137,7 @@ def test_writer_faulty_window(h5_path: Path) -> None:
 
 def test_writer_append_raw(h5_path: Path) -> None:
     with Writer(h5_path) as sfw:
-        data_nd = np.zeros((sfw.BUFFER_SAMPLES_N,))
+        data_nd = np.zeros((sfw.CHUNK_SAMPLES_N,))
         time_float = 5.5
         time_int = 3
         time_nd = 3 + data_nd
@@ -150,7 +150,7 @@ def test_writer_append_raw(h5_path: Path) -> None:
 
 def test_writer_align(h5_path: Path) -> None:
     with Writer(h5_path) as sfw:
-        length = int(5.5 * sfw.BUFFER_SAMPLES_N)
+        length = int(5.5 * sfw.CHUNK_SAMPLES_N)
         time_nd = np.arange(0, length * sfw.sample_interval_ns, sfw.sample_interval_ns)
         data_nd = np.zeros((int(length),))
         sfw.append_iv_data_raw(time_nd, data_nd, data_nd)
@@ -160,7 +160,7 @@ def test_writer_align(h5_path: Path) -> None:
 
 def test_writer_not_align(h5_path: Path) -> None:
     with Writer(h5_path) as sfw:
-        length = int(5.5 * sfw.BUFFER_SAMPLES_N)
+        length = int(5.5 * sfw.CHUNK_SAMPLES_N)
         sample_interval = 10 * sfw.sample_interval_ns
         time_nd = np.arange(0, length * sample_interval, sample_interval)
         data_nd = np.zeros((int(length),))

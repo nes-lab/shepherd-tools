@@ -50,7 +50,7 @@ if not file_ivcurve.exists():
 with Reader(file_ivcurve, verbose=False) as file:
     window_size = file.get_window_samples()
     I_in_max = 0.0
-    for _t, _v, _i in file.read_buffers():
+    for _t, _v, _i in file.read():
         I_in_max = max(I_in_max, _i.max())
     print(
         f"Input-file: \n"

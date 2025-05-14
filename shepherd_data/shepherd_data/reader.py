@@ -202,9 +202,9 @@ class Reader(CoreReader):
         if data_len == 0:
             self._logger.warning("downsampling failed because of data_len = 0")
             return data_dst
-        iblock_len = min(self.max_elements, data_len)
-        oblock_len = round(iblock_len / ds_factor)
-        iterations = math.ceil(data_len / iblock_len)
+        chunk_size_inp = min(self.max_elements, data_len)
+        chunk_size_out = round(chunk_size_inp / ds_factor)
+        iterations = math.ceil(data_len / chunk_size_inp)
         dest_len = math.floor(data_len / ds_factor)
         if data_dst is None:
             data_dst = np.empty((dest_len,))
@@ -225,7 +225,7 @@ class Reader(CoreReader):
         f_state = np.zeros((filter_.shape[0], 2))
         # prime the state to avoid starting from 0
         if not is_time and ds_factor > 1:
-            slice_ds = data_src[start_n : start_n + self.BUFFER_SAMPLES_N]
+            slice_ds = data_src[start_n : start_n + self.CHUNK_SAMPLES_N]
             slice_ds[:] = slice_ds[:].mean()
             slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
 
@@ -237,14 +237,16 @@ class Reader(CoreReader):
             leave=False,
             disable=iterations < 8,
         ):
-            slice_ds = data_src[start_n + _iter * iblock_len : start_n + (_iter + 1) * iblock_len]
+            slice_ds = data_src[
+                start_n + _iter * chunk_size_inp : start_n + (_iter + 1) * chunk_size_inp
+            ]
             if not is_time and ds_factor > 1:
                 slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
             slice_ds = slice_ds[::ds_factor]
-            slice_len = min(dest_len - _iter * oblock_len, oblock_len, len(slice_ds))
+            slice_len = min(dest_len - _iter * chunk_size_out, chunk_size_out, len(slice_ds))
             data_dst[output_pos : output_pos + slice_len] = slice_ds[:slice_len]
             # workaround to allow processing last slice (often smaller than expected),
-            # wanted: [_iter * oblock_len : (_iter + 1) * oblock_len]
+            # wanted: [_iter * chunk_size_out : (_iter + 1) * chunk_size_out]
             # this prevents future parallel processing!
             output_pos += slice_len
         if isinstance(data_dst, np.ndarray):

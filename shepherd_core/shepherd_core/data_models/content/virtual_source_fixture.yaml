@@ -93,7 +93,7 @@
   parameters:
     id: 1011
     name: diode+capacitor
-    description: Simple Converter based on diode and buffer capacitor
+    description: Simple Converter based on diode and storage capacitor
     inherit_from: neutral
     V_input_drop_mV: 300  # simulate input-diode
     C_intermediate_uF: 47  # primary storage-Cap
@@ -114,7 +114,7 @@
   parameters:
     id: 1013
     name: diode+resistor+capacitor
-    description: Simple Converter based on diode, current limiting resistor and buffer capacitor
+    description: Simple Converter based on diode, current limiting resistor and storage capacitor
     inherit_from: diode+capacitor
     R_input_mOhm: 10000
 
