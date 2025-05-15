@@ -221,3 +221,20 @@
     target_a:
       name: nRF52_FRAM_1392_390
     created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    id: 42
+    name: unit_testing_sheep
+    ip: 0.0.0.0
+    mac: 00:00:00:00:00:00
+    room: none
+    eth_port: none
+    description: unit testing
+    longitude: 0
+    latitude: 0
+    cape:
+      name: unit_testing_cape
+    target_a:
+      name: unit_testing_target
+    created: 2025-04-29 13:07:00
+    active: true

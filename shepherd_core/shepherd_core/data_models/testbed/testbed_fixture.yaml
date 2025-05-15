@@ -23,3 +23,14 @@
       - name: sheep12
       - name: sheep13
       - name: sheep14
+
+- datatype: testbed
+  parameters:
+    id: 42
+    name: unit_testing_testbed
+    description: "Artificial Testbed used in unit testing"
+    shared_storage: true
+    data_on_server: /tmp/
+    data_on_observer: /tmp/
+    observers:
+      - name: unit_testing_sheep
