@@ -57,6 +57,7 @@ class Fixture:
         self._iter_list = list(self.elements_by_name.values())
 
     def __getitem__(self, key: Union[str, int]) -> dict:
+        original_key = key
         if isinstance(key, str):
             key = key.lower()
             if key in self.elements_by_name:
@@ -65,7 +66,7 @@ class Fixture:
                 key = int(key)
         if key in self.elements_by_id:
             return self.elements_by_id[int(key)]
-        msg = f"{self.model_type} '{key}' not found!"
+        msg = f"{self.model_type} '{original_key}' not found!"
         raise ValueError(msg)
 
     def __iter__(self) -> Self:
