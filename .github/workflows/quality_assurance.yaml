@@ -1,4 +1,4 @@
-name: Quality Control
+name: QA-Tests
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
   test-python:
     uses: ./.github/workflows/py_tests.yaml
 
-  quality-control:
+  quality-assurance:
     runs-on: ubuntu-latest
     needs:
       - static-analysis
