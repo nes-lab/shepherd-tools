@@ -5,10 +5,7 @@ from hashlib import pbkdf2_hmac
 from typing import Annotated
 from typing import Any
 from typing import Optional
-from typing import Union
-from uuid import uuid4
 
-from pydantic import UUID4
 from pydantic import EmailStr
 from pydantic import Field
 from pydantic import SecretBytes
@@ -19,6 +16,7 @@ from pydantic import validate_call
 
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.content import id_default
 from shepherd_core.data_models.base.shepherd import ShpModel
 
 
@@ -41,10 +39,9 @@ def hash_password(pw: Annotated[str, StringConstraints(min_length=20, max_length
 class User(ShpModel):
     """meta-data representation of a testbed-component (physical object)."""
 
-    # id: UUID4 = Field(  # TODO: db-migration - temp fix for documentation
-    id: Union[UUID4, int] = Field(
+    id: int = Field(
         description="Unique ID",
-        default_factory=uuid4,
+        default_factory=id_default,
     )
     name: NameStr
     description: Optional[SafeStr] = None

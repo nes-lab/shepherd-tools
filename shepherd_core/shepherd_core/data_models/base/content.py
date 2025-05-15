@@ -1,21 +1,16 @@
 """Base-Model for all content."""
 
-import hashlib
 from datetime import datetime
 from typing import Annotated
 from typing import Optional
-from typing import Union
 from uuid import uuid4
 
-from pydantic import UUID4
 from pydantic import Field
 from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Self
-from typing_extensions import deprecated
 
 from .shepherd import ShpModel
-from .timezone import local_now
 
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
@@ -26,24 +21,20 @@ SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ Regex = All Printable ASCII-Characters with Space
 
 
-@deprecated("use UUID4 instead")
 def id_default() -> int:
     """Generate a unique ID - usable as default value.
 
-    Note: IdInt has space for 128 bit, so 128/4 = 32 hex-chars
+    Note: IdInt in mongoDB can currently handle 8 bytes (16 hex-values)
     """
-    time_stamp = str(local_now()).encode("utf-8")
-    time_hash = hashlib.sha3_224(time_stamp).hexdigest()[-32:]
-    return int(time_hash, 16)
+    return int(uuid4().hex[-15:], 16)
 
 
 class ContentModel(ShpModel):
     """Base-Model for content with generalized properties."""
 
-    # id: UUID4 = Field(  # TODO: db-migration - temp fix for documentation
-    id: Union[UUID4, int] = Field(
+    id: int = Field(
         description="Unique ID",
-        default_factory=uuid4,
+        default_factory=id_default,
     )
     name: NameStr
     description: Annotated[Optional[SafeStr], Field(description="Required when public")] = None

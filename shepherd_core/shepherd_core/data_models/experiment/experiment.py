@@ -5,10 +5,7 @@ from datetime import datetime
 from datetime import timedelta
 from typing import Annotated
 from typing import Optional
-from typing import Union
-from uuid import uuid4
 
-from pydantic import UUID4
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
@@ -16,6 +13,7 @@ from typing_extensions import Self
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
+from shepherd_core.data_models.base.content import id_default
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.target import Target
 from shepherd_core.data_models.testbed.testbed import Testbed
@@ -29,8 +27,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     """Config for experiments on the testbed emulating energy environments for target nodes."""
 
     # General Properties
-    # id: UUID4 ... # TODO: db-migration - temp fix for documentation
-    id: Union[UUID4, int] = Field(default_factory=uuid4)
+    id: int = Field(description="Unique ID", default_factory=id_default)
     # ⤷ TODO: automatic ID is problematic for identification by hash
 
     name: NameStr
