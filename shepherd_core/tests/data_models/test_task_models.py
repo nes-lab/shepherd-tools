@@ -106,7 +106,6 @@ def test_task_model_observer_min1() -> None:
         owner_id=666,
         time_prep="2044-01-01 12:13:14",
         root_path="/usr",
-        abort_on_error=False,
     )
 
 

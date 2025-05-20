@@ -156,7 +156,6 @@ class EmulationTask(ShpModel):
             output_path=root_path / f"emu_{obs.name}.h5",
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
-            abort_on_error=xp.abort_on_error,
             enable_io=io_requested,
             io_port=obs.get_target_port(tgt_id),
             pwr_port=obs.get_target_port(tgt_id),

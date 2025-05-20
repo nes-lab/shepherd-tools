@@ -30,7 +30,7 @@ class ObserverTasks(ShpModel):
     # PRE PROCESS
     time_prep: datetime  # TODO: should be optional
     root_path: Path
-    abort_on_error: Annotated[bool, deprecated("has no effect")]
+    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # fw mod, store as hex-file and program
     fw1_mod: Optional[FirmwareModTask] = None
@@ -72,7 +72,6 @@ class ObserverTasks(ShpModel):
             owner_id=xp.owner_id,
             time_prep=t_start - tb.prep_duration,
             root_path=root_path,
-            abort_on_error=xp.abort_on_error,
             fw1_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
             fw2_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
             fw1_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
