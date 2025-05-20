@@ -60,9 +60,10 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         # TODO: only do deep validation with active connection to TB-client
-        # testbed = Testbed()  # this will query the first (and only) entry of client
+        #       or with cached fixtures
+        testbed = Testbed()  # this will query the first (and only) entry of client
         self._validate_targets(self.target_configs)
-        # self._validate_observers(self.target_configs, testbed)
+        self._validate_observers(self.target_configs, testbed)
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration of experiment can't be negative.")
         return self
