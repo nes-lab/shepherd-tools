@@ -1,5 +1,14 @@
 # History of Changes
 
+## v2025.05.3
+
+- fix naming of `UartTracer` in favor of `UartLogger` (**breaking change, required for sheep v0.9.0**)
+- change ID generation for compat with WebAPI
+- allow publishing to PyPI by dispatch
+- add separate mock testbed into fixtures
+- deprecate `.abort_on_error`
+- detailed doc for harvester config
+
 ## v2025.05.2
 
 - GitHub-workflows
@@ -10,7 +19,7 @@
 
 ## v2025.05.1
 
-- add separate `UartTracer` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer
+- add separate ~~`UartTracer`~~ `UartLogger` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer
 - usage of not (yet) implemented features in an `Experiment()` now raises an exception
 - establish consistent naming scheme
   - `IVTrace` for a stream of `IVSample`s and `IVSurface` for a stream of `IVCurve`s
