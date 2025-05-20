@@ -23,54 +23,283 @@ from .energy_environment import EnergyDType
 class AlgorithmDType(str, Enum):
     """Options for choosing a harvesting algorithm."""
 
-    direct = disable = neutral = "neutral"  # for just using IVTrace / samples
-    isc_voc = "isc_voc"  # only recordable ATM
+    direct = disable = neutral = "neutral"
+    """
+    Reads an energy environment as is without selecting a harvesting
+    voltage.
+
+    Used to play "constant-power" energy environments or simple
+    "on-off-patterns". Generally, not useful for virtual source
+    emulation.
+
+    Not applicable to real harvesting, only emulation with IVTrace / samples.
+    """
+
+    isc_voc = "isc_voc"
+    """
+    Short Circuit Current, Open Circuit Voltage.
+
+    This is not relevant for emulation, but used to configure recording of
+    energy environments.
+
+    This mode samples the two extremes of an IV curve, which may be
+    interesting to characterize a transducer/energy environment.
+
+    Not applicable to emulation - only recordable during harvest-recording ATM.
+    """
+
     ivcurve = ivcurves = ivsurface = "ivcurve"
+    """
+    Used during harvesting to record the full IV surface.
+
+    When configuring the energy environment recording, this algorithm
+    records the IV surface by repeatedly recording voltage and current
+    while ramping the voltage.
+
+    Cannot be used as output of emulation.
+    """
+
     constant = cv = "cv"
+    """
+    Harvest energy at a fixed predefined voltage ('voltage_mV').
+
+    For harvesting, this records the IV samples at the specified voltage.
+    For emulation, this virtually harvests the IV surface at the specified voltage.
+
+    In addition to constant voltage harvesting, this can be used together
+    with the 'feedback_to_hrv' flag to implement a "Capacitor and Diode"
+    topology, where the harvesting voltage depends dynamically on the
+    capacitor voltage.
+    """
+
     # ci .. constant current -> is this desired?
+
     mppt_voc = "mppt_voc"
+    """
+    Emulate a harvester with maximum power point (MPP) tracking based on
+    open circuit voltage measurements.
+
+    This MPPT heuristic estimates the MPP as a constant ratio of the open
+    circuit voltage.
+
+    Used in conjunction with 'setpoint_n', 'interval_ms', and 'duration_ms'.
+    """
+
     mppt_po = perturb_observe = "mppt_po"
+    """
+    Emulate a harvester with perturb and observe maximum power point
+    tracking.
+
+    This MPPT heuristic adjusts the harvesting voltage by small amounts and
+    checks if the power increases. Eventually, the tracking changes the
+    direction of adjustments and oscillates around the MPP.
+    """
+
     mppt_opt = optimal = "mppt_opt"
+    """
+    A theoretical harvester that identifies the MPP by reading it from the
+    IV curve during emulation.
+
+    Note that this is not possible for real-world harvesting as the system would
+    not know the entire IV curve. In that case a very fast and detailed mppt_po is
+    used.
+    """
 
 
 class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
-    """A vHrv makes a source-characterization (i.e. ivcurve) usable for the vSrc.
+    """The virtual harvester configuration characterizes usage of an energy environment.
 
-    Mostly used when the file-based energy environment of the virtual source
-    is not already supplied as pre-harvested ivtrace.
+    It is used to both harvesting during emulation and to record
+    energy environments (sometimes referred to as "harvesting traces").
+
+    For emulation:
+
+    The virtual harvester configuration describes how energy from a recorded
+    energy environment is harvested. Typically, the energy environment provides
+    an IV-surface, which is a continuous function in three dimensions: voltage,
+    current, and time. Based on this surface, the emulation can derive the
+    available IV-curve at each point in time. The harvester looks up the current
+    that is available (according to the energy environment) from a given
+    harvesting voltage. The harvesting voltage may be dynamically chosen by the
+    harvester based on the implemented harvesting algorithm, which models
+    different real-world harvesters. For example, a maximum power point tracking
+    harvester may choose a harvesting voltage as a ratio of the open circuit
+    voltage available from the energy environment (or transducer in practice).
+
+    The energy environments are encoded not as a three-dimensional function, but
+    as IV tuples over time (sampled at a constant frequency). This originates
+    from the technical implementation when recording the IV-surface, where the
+    recorder provides the IV-curve by measuring the current for a given voltage
+    and ramping the voltage from minimal to maximum.
+
+    For harvest-recordings:
+
+    An energy environment is fully described by the IV surface, which are IV
+    curves over time. Shepherd approximates this by sampling the current at
+    equidistant steps of a voltage ramp. The VirtualHarvesterConfig is also used
+    to parameterize the recording process, typically, it should be configured to
+    record a full IV surface, as this contains the full information of the energy
+    environment. The postponed harvesting is then performed during emulation.
+
+    However, it is also possible to record a "pre-harvested" energy environment
+    by performing the harvesting during recording. This results in a recording
+    containing IV samples over time that represent the harvesting voltage
+    (chosen by the virtual harvester during recording) and the current available
+    from the energy environment for that voltage. Together, these represent the
+    power available for harvesting at the time, and during emulation, this power
+    can be converted by the input stage (boost converter) to charge the energy
+    storage.
     """
 
     # General Metadata & Ownership -> ContentModel
 
     algorithm: AlgorithmDType
-    # ⤷ used to harvest energy
+    """The algorithm determines how the harvester chooses the harvesting voltage.
+    """
 
     samples_n: Annotated[int, Field(ge=8, le=2_000)] = 8
-    # ⤷ for & of ivcurve (and more?`)
+    """How many IV samples are measured for one IV curve.
+
+    The curve is recorded by measuring the el. current available from the
+    transducer at equidistant voltage intervals. These voltages are
+    probed by ramping between `voltage_min_mV` and `voltage_max_mV` at
+    `samples_n` points equally distributed over the voltage range. After
+    setting the voltage, the recorder waits for a short period - allowing
+    the analog frontend and transducer to settle - before recording the
+    harvesting current. This wait duration is influenced by
+    `wait_cycles`.
+
+    Selecting all these parameters is a tradeoff between accuracy of the IV
+    curve (density of IV samples) and measurement duration, hence the time
+    accuracy (density of points) of the IV-surface.
+
+    Only applicable to recording, not used in emulation.
+
+    Used together with `voltage_min_mV`, `voltage_max_mV`, `rising`, and
+    `wait_cycles`.
+    """
 
     voltage_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_500
-    # ⤷ starting-point for some algorithms (mppt_po)
+    """The harvesting voltage for constant voltage harvesting.
+
+    Additionally, for Perturb-and-Observe MPPT, this defines the voltage at
+    startup.
+    """
+
     voltage_min_mV: Annotated[float, Field(ge=0, le=5_000)] = 0
+    """Minimum voltage recorded for the IV curve.
+
+    See `samples_n` for further details.
+
+    In emulation, this can be used to "block" parts of the recorded IV curve
+    and not utilize them in the virtual source. However, this is generally
+    discouraged as it can result in discontinuities in the curve and is not
+    well tested.
+    For emulation, this value ideally corresponds to the value of the
+    recorded energy environment.
+    """
+
     voltage_max_mV: Annotated[float, Field(ge=0, le=5_000)] = 5_000
+    """Maximum voltage sampled for the curve.
+
+    See `voltage_min_mV` and `samples_n`.
+    """
+
     current_limit_uA: Annotated[float, Field(ge=1, le=50_000)] = 50_000
-    # ⤷ allows to keep trajectory in special region (or constant current tracking)
-    # ⤷ boundary for detecting open circuit in emulated version (working on IV-Curves)
+    """
+    For MPPT VOC, the open circuit voltage is identified as the el. current
+    crosses below this threshold.
+
+    During recording it allows to keep trajectory in special region
+    (constant current tracking).
+    """
+
     voltage_step_mV: Optional[Annotated[float, Field(ge=1, le=1_000_000)]] = None
+    """The difference between two adjacent voltage samples.
+
+    This value is implicitly derived from the other ramp parameters:
+    (voltage_max_mV - voltage_min_mV) / (samples_n - 1)
+    """
 
     setpoint_n: Annotated[float, Field(ge=0, le=1.0)] = 0.70
-    # ⤷ ie. for mppt_voc
+    """
+    The "Open Circuit Voltage Maximum Power Point Tracker" estimates the MPP
+    by taking a constant fraction defined by this parameter of the open
+    circuit voltage. For example, if the IV curve shows an open circuit
+    voltage of 2V and the setpoint is 0.75, then the harvester selects
+    1.5 volts as the harvesting voltage.
+
+    This value is only relevant when 'algorithm == mppt_voc'.
+    """
+
     interval_ms: Annotated[float, Field(ge=0.01, le=1_000_000)] = 100
-    # ⤷ between start of measurements (ie. V_OC) or steps in mppt-po
+    """The MPP is repeatedly estimated at fixed intervals defined by this duration.
+
+    Note that the energy environment can still change in between MPP
+    estimations, but the harvesting voltage is not updated in between.
+
+    This value is relevant for all MPP algorithms.
+    For Perturb and Observe, this value is the wait interval between steps.
+
+    When an energy environment is recorded with `mppt_opt`, the optimal
+    harvester is approximated with a very fast Perturb-Observe algorithm,
+    where this interval should be set to a very small value.
+    When emulating with `mppt_opt`, this value is not relevant as the
+    emulation simply picks the maximum power point from the IV-curve.
+    """
+
     duration_ms: Annotated[float, Field(ge=0.01, le=1_000_000)] = 0.1
-    # ⤷ of (open voltage) measurement
+    """The duration of MPP sampling.
+
+    While performing an MPP sampling every 'interval_ms', the input is
+    disconnected to accurately measure the open circuit voltage.
+
+    This value is only relevant for `mppt_voc`.
+    """
+
     rising: bool = True
-    # ⤷ direction of sawtooth
+    """Ramp direction for sampling the IV curve.
+
+    When set to true, sampling starts at the minimum voltage and ramps up to
+    the maximum.
+
+    See `samples_n` for further details.
+    Not relevant for emulation.
+    """
+
     enable_linear_extrapolation: bool = True
-    # ⤷ improves slow cv-algo that is base of most ivcurve-harvesters
-    #   (update-freq dependent on window-size)
+    """
+    Because the IV curve is not stored fully in PRU memory but streamed
+    sequentially to the PRU, looking up any IV value at any time is not
+    possible. However, because the precision of the emulation degrades
+    until the relevant IV sample passes by, it can extrapolate the available data
+    to estimate the required IV sample.
+
+    Enabling extrapolation can yield a better numeric simulation, especially
+    if the harvesting voltage changes rapidly or the IV surface is steep in
+    relevant regions. For example, when emulating a capacitor diode
+    setup and the current falls at high voltages.
+
+    This value is only relevant for emulation.
+    """
 
     # Underlying recorder
     wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
+    """
+    The wait duration to let the analog frontend settle before taking a
+    measurement.
+
+    When recording the energy environment, the voltage is set by the
+    digital-to-analog-converter. This parameter delays the current
+    measurement performed by the analog-to-digital converter to allow the
+    harvesting transducer to settle at the defined voltage.
+
+    When recording with `IscVoc`, wait cycles should be added as the analog
+    changes are more significant.
+
+    Not relevant for emulation.
+    """
+
     # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
 
     @model_validator(mode="before")
