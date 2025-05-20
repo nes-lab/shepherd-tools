@@ -45,7 +45,7 @@ if __name__ == "__main__":
                 ),
                 firmware2=sm.Firmware(name="msp430_deep_sleep"),
                 power_tracing=None,
-                uart_tracing=sm.UartTracing(baudrate=115_200),
+                uart_logging=sm.UartLogging(baudrate=115_200),
             )
         ],
     )

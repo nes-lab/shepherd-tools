@@ -105,7 +105,7 @@ STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO = (1, 1.5, 2)
 STOPBITS = (STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO)
 
 
-class UartTracing(ShpModel, title="Config for UART Tracing"):
+class UartLogging(ShpModel, title="Config for UART Logging"):
     """Configuration for recording UART-Output of the Target Nodes.
 
     Note that the Communication has to be on a specific port that
@@ -169,9 +169,9 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
         if self.gpios is not None:
             raise NotImplementedError("Feature GpioTracing.gpios reserved for future use.")
         if self.uart_decode:
-            raise NotImplementedError(
+            logger.error(
                 "Feature GpioTracing.uart_decode reserved for future use. "
-                "Use UartTracing or manually decode serial with the provided waveform decoder."
+                "Use UartLogging or manually decode serial with the provided waveform decoder."
             )
         return self
 

@@ -23,7 +23,7 @@ from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
-from shepherd_core.data_models.experiment.observer_features import UartTracing
+from shepherd_core.data_models.experiment.observer_features import UartLogging
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.logger import logger
@@ -91,7 +91,7 @@ class EmulationTask(ShpModel):
 
     power_tracing: Optional[PowerTracing] = PowerTracing()
     gpio_tracing: Optional[GpioTracing] = GpioTracing()
-    uart_tracing: Optional[UartTracing] = UartTracing()
+    uart_logging: Optional[UartLogging] = UartLogging()
     gpio_actuation: Optional[GpioActuation] = None
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
@@ -132,7 +132,7 @@ class EmulationTask(ShpModel):
             raise ValueError("GPIO Actuation not yet implemented!")
 
         io_requested = any(
-            _io is not None for _io in (self.gpio_actuation, self.gpio_tracing, self.uart_tracing)
+            _io is not None for _io in (self.gpio_actuation, self.gpio_tracing, self.uart_logging)
         )
         if self.enable_io and not io_requested:
             logger.warning("Target IO enabled, but no feature requested IO")
@@ -147,7 +147,7 @@ class EmulationTask(ShpModel):
         tgt_cfg = xp.get_target_config(tgt_id)
         io_requested = any(
             _io is not None
-            for _io in (tgt_cfg.gpio_actuation, tgt_cfg.gpio_tracing, tgt_cfg.uart_tracing)
+            for _io in (tgt_cfg.gpio_actuation, tgt_cfg.gpio_tracing, tgt_cfg.uart_logging)
         )
 
         return cls(
@@ -162,7 +162,7 @@ class EmulationTask(ShpModel):
             virtual_source=tgt_cfg.virtual_source,
             power_tracing=tgt_cfg.power_tracing,
             gpio_tracing=tgt_cfg.gpio_tracing,
-            uart_tracing=tgt_cfg.uart_tracing,
+            uart_logging=tgt_cfg.uart_logging,
             gpio_actuation=tgt_cfg.gpio_actuation,
             sys_logging=xp.sys_logging,
         )

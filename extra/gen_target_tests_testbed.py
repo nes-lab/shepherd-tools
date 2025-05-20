@@ -42,7 +42,7 @@ if __name__ == "__main__":
                     firmware2=sm.Firmware(name=fw_msp),
                     power_tracing=sm.PowerTracing(),
                     gpio_tracing=sm.GpioTracing(),
-                    uart_tracing=sm.UartTracing(baudrate=115_200),
+                    uart_logging=sm.UartLogging(baudrate=115_200),
                 )
             ],
         )
