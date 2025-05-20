@@ -13,6 +13,7 @@ from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -63,7 +64,7 @@ class EmulationTask(ShpModel):
     # timestamp or unix epoch time, None = ASAP
     duration: Optional[timedelta] = None
     # ⤷ Duration of recording in seconds, None = till EOF
-    abort_on_error: bool = False  # TODO: remove, should not exist
+    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # emulation-specific
     use_cal_default: bool = False

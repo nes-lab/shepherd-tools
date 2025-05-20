@@ -9,6 +9,7 @@ from typing import Optional
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
@@ -48,7 +49,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # schedule
     time_start: Optional[datetime] = None  # = ASAP
     duration: Optional[timedelta] = None  # = till EOF
-    abort_on_error: bool = False
+    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # targets
     target_configs: Annotated[list[TargetConfig], Field(min_length=1, max_length=128)]

@@ -9,6 +9,7 @@ from typing import Optional
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
@@ -37,7 +38,7 @@ class HarvestTask(ShpModel):
     # timestamp or unix epoch time, None = ASAP
     duration: Optional[timedelta] = None
     # ⤷ Duration of recording in seconds, None = till EOFSys
-    abort_on_error: bool = False
+    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # emulation-specific
     use_cal_default: bool = False
