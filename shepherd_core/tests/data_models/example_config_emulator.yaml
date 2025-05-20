@@ -33,7 +33,7 @@ parameters:
     V_output_mV: 3000
 
   power_tracing: null
-  uart_tracing:
+  uart_logging:
     baudrate: 9600
   sys_logging:
     kernel: true
