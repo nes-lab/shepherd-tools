@@ -91,8 +91,8 @@ class ObserverTasks(ShpModel):
             tasks.append(task)
         return tasks
 
-    def get_output_paths(self) -> dict:
-        values = {}
+    def get_output_paths(self) -> dict[str, Path]:
+        values: dict[str, Path] = {}
         if isinstance(self.emulation, EmulationTask):
             if self.emulation.output_path is None:
                 raise ValueError("Emu-Task should have a valid output-path")
