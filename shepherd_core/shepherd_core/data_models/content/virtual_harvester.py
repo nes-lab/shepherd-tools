@@ -60,7 +60,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     setpoint_n: Annotated[float, Field(ge=0, le=1.0)] = 0.70
     # ⤷ ie. for mppt_voc
     interval_ms: Annotated[float, Field(ge=0.01, le=1_000_000)] = 100
-    # ⤷ between start of measurements (ie. V_OC)
+    # ⤷ between start of measurements (ie. V_OC) or steps in mppt-po
     duration_ms: Annotated[float, Field(ge=0.01, le=1_000_000)] = 0.1
     # ⤷ of (open voltage) measurement
     rising: bool = True

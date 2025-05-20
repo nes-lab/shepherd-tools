@@ -36,7 +36,7 @@ class HarvestTask(ShpModel):
     time_start: Optional[datetime] = None
     # timestamp or unix epoch time, None = ASAP
     duration: Optional[timedelta] = None
-    # ⤷ Duration of recording in seconds, None = till EOF
+    # ⤷ Duration of recording in seconds, None = till EOFSys
     abort_on_error: bool = False
 
     # emulation-specific

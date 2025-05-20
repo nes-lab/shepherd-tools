@@ -33,6 +33,7 @@ class ProgrammingTask(ShpModel):
     voltage: Annotated[float, Field(ge=1, lt=5)] = 3
     datarate: Annotated[int, Field(gt=0, le=1_000_000)] = 200_000
     protocol: ProgrammerProtocol
+    # TODO: eradicate - should not exist. derive protocol from mcu_type
 
     simulate: bool = False
 

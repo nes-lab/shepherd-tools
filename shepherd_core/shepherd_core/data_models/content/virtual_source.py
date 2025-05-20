@@ -70,6 +70,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # ⤷ target gets disconnected
     interval_check_thresholds_ms: Annotated[float, Field(ge=0, le=4.29e3)] = 0
     # ⤷ some ICs (BQ) check every 64 ms if output should be disconnected
+    # TODO: add intervals for input-disable, output-disable & power-good-signal
 
     # pwr-good: target is informed on output-pin (hysteresis) -> for intermediate voltage
     V_pwr_good_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2_800
