@@ -6,6 +6,7 @@ from typing import Annotated
 from typing import Optional
 
 import numpy as np
+from annotated_types import Interval
 from pydantic import Field
 from pydantic import PositiveFloat
 from pydantic import model_validator
@@ -133,17 +134,28 @@ class UartLogging(ShpModel, title="Config for UART Logging"):
         return self
 
 
+GpioInt = Annotated[int, Interval(ge=0, le=17)]
+GpioList = Annotated[list[GpioInt], Field(min_length=1, max_length=18)]
+all_gpio = list(range(18))
+
+
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """Configuration for recording the GPIO-Output of the Target Nodes.
 
     TODO: postprocessing not implemented ATM
     """
 
-    # initial recording
-    mask: Annotated[int, Field(ge=0, lt=2**10)] = 0b11_1111_1111  # all
-    # ⤷ TODO: custom mask not implemented in PRU, ATM
-    gpios: Optional[Annotated[list[GPIO], Field(min_length=1, max_length=10)]] = None  # = all
-    # ⤷ TODO: list of GPIO to build mask, one of both should be internal / computed field
+    gpios: GpioList = all_gpio
+    """List of GPIO to record.
+
+    Numbering is based on the Target-Port and its GPIO.
+    To make the Port future-safer it offers 16x GPIO and 2x PwrGood.
+    See doc for nRF_FRAM_Target_v1.3+ to see mapping of target port.
+
+    Note:
+    - Cape 2.4 (2023) and lower only has 9x GPIO + 1x PwrGood
+    - Cape 2.5 (2025) has 12x GPIO & both PwrGood
+    """
 
     # time
     delay: timedelta = timedelta(seconds=0)
@@ -151,30 +163,29 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
     # post-processing,
     uart_decode: bool = False
-    # TODO: quickfix - uart-log currently done online in userspace
-    # NOTE: gpio-tracing currently shows rather big - but rare - "blind" windows (~1-4us)
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: Annotated[int, Field(ge=2_400, le=1_152_000)] = 115_200
-    # TODO: add a "discard_gpio" (if only uart is wanted)
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        if self.mask == 0:
-            raise ValueError("Error in config -> tracing enabled but mask is 0")
         if self.delay and self.delay.total_seconds() < 0:
             raise ValueError("Delay can't be negative.")
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration can't be negative.")
-        if self.mask != 0b11_1111_1111:  # GpioTracing.mask
-            raise NotImplementedError("Feature GpioTracing.mask reserved for future use.")
-        if self.gpios is not None:
-            raise NotImplementedError("Feature GpioTracing.gpios reserved for future use.")
         if self.uart_decode:
             logger.error(
                 "Feature GpioTracing.uart_decode reserved for future use. "
                 "Use UartLogging or manually decode serial with the provided waveform decoder."
             )
         return self
+
+    @property
+    def gpio_mask(self) -> int:
+        # valid for cape v2.5
+        mask = 0
+        for gpio in set(self.gpios):
+            mask |= 2**gpio
+        return mask
 
 
 class GpioLevel(str, Enum):

@@ -65,3 +65,10 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
 
     def user_controllable(self) -> bool:
         return ("gpio" in self.name.lower()) and (self.direction in {"IO", "OUT"})
+
+    def user_recordable(self) -> bool:
+        return (
+            ("gpio" in self.name.lower())
+            and (self.direction in {"IO", "IN"})
+            and (self.pin_pru is not None)
+        )
