@@ -412,19 +412,20 @@ class Reader:
                 self.file_path.name,
             )
         # same length of datasets:
-        for dset in ["current", "time"]:
+        samples_n = self.h5file["data"]["time"].shape[0]
+        for dset in ["voltage", "current"]:
             ds_size = self.h5file["data"][dset].shape[0]
-            if ds_size != self.samples_n:
+            if ds_size != samples_n:
                 self._logger.warning(
                     "[FileValidation] dataset '%s' has different size (=%d), "
-                    "compared to smallest set (=%d), in '%s'",
+                    "compared to time (=%d), in '%s'",
                     dset,
                     ds_size,
-                    self.samples_n,
+                    samples_n,
                     self.file_path.name,
                 )
         # dataset-length should be multiple of chunk-size
-        remaining_size = self.samples_n % self.CHUNK_SAMPLES_N
+        remaining_size = samples_n % self.CHUNK_SAMPLES_N
         if remaining_size != 0:
             self._logger.warning(
                 "[FileValidation] datasets are not aligned with chunk-size in '%s'",
