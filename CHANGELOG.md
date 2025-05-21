@@ -1,5 +1,17 @@
 # History of Changes
 
+## v2025.05.3
+
+- fix naming of `UartTracer` in favor of separate `UartLogger` (**breaking change, required for sheep v0.9.0**)
+- `UartLogger` allows setting baudrate, parity, stopbits, bytesize
+- `GPIOTracer` can now be used to mask off unwanted pins
+  - `.gpio` receives a list of int that corresponds with GPIO-number of TargetPort (new 2025 edge connector)
+- change ID generation for compat with WebAPI
+- allow publishing to PyPI by dispatch
+- add separate mock testbed into fixtures (will be replaced soon, by testbed-client)
+- deprecate `.abort_on_error`
+- detailed doc for harvester config
+
 ## v2025.05.2
 
 - GitHub-workflows
@@ -10,7 +22,7 @@
 
 ## v2025.05.1
 
-- add separate `UartTracer` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer
+- add separate ~~`UartTracer`~~ `UartLogger` with new config options (**breaking change, required for sheep v0.9.0**) instead of misusing GPIOTracer
 - usage of not (yet) implemented features in an `Experiment()` now raises an exception
 - establish consistent naming scheme
   - `IVTrace` for a stream of `IVSample`s and `IVSurface` for a stream of `IVCurve`s

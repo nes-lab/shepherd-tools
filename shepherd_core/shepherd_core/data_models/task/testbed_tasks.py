@@ -1,5 +1,6 @@
 """Collection of tasks for all observers included in experiment."""
 
+from pathlib import Path
 from typing import Annotated
 from typing import Optional
 
@@ -50,11 +51,11 @@ class TestbedTasks(ShpModel):
                 return tasks
         return None
 
-    def get_output_paths(self) -> dict:
+    def get_output_paths(self) -> dict[str, Path]:
         # TODO: computed field preferred, but they don't work here, as
         #  - they are always stored in yaml despite "repr=False"
         #  - solution will shift to some kind of "result"-datatype that is combinable
-        values = {}
+        values: dict[str, Path] = {}
         for obt in self.observer_tasks:
             values = {**values, **obt.get_output_paths()}
         return values

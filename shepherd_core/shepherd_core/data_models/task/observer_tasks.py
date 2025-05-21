@@ -3,10 +3,12 @@
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
+from typing import Annotated
 from typing import Optional
 
 from pydantic import validate_call
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
@@ -28,7 +30,7 @@ class ObserverTasks(ShpModel):
     # PRE PROCESS
     time_prep: datetime  # TODO: should be optional
     root_path: Path
-    abort_on_error: bool
+    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # fw mod, store as hex-file and program
     fw1_mod: Optional[FirmwareModTask] = None
@@ -70,7 +72,6 @@ class ObserverTasks(ShpModel):
             owner_id=xp.owner_id,
             time_prep=t_start - tb.prep_duration,
             root_path=root_path,
-            abort_on_error=xp.abort_on_error,
             fw1_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
             fw2_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
             fw1_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
@@ -91,8 +92,8 @@ class ObserverTasks(ShpModel):
             tasks.append(task)
         return tasks
 
-    def get_output_paths(self) -> dict:
-        values = {}
+    def get_output_paths(self) -> dict[str, Path]:
+        values: dict[str, Path] = {}
         if isinstance(self.emulation, EmulationTask):
             if self.emulation.output_path is None:
                 raise ValueError("Emu-Task should have a valid output-path")

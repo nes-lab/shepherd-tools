@@ -92,3 +92,11 @@
     id: 1270065
     name: cape65
     comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    id: 42000
+    name: unit_testing_cape
+    version: none
+    description: for unit testing
+    created: 2025-04-29
+    calibrated: 2025-04-29

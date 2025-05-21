@@ -1,7 +1,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.756999+02:00
   parameters:
-    id: 2639560972524229652
+    id: 263956097252422
     name: eenv_static_2000mV_10mA_3600s
     description: Artificial static Energy Environment, 2000mV, 10mA, 3600s
     comment: null
@@ -24,7 +24,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.764595+02:00
   parameters:
-    id: 9823394105967169626
+    id: 98233941059
     name: eenv_static_2000mV_1mA_3600s
     description: Artificial static Energy Environment, 2000mV, 1mA, 3600s
     comment: null
@@ -47,7 +47,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.772144+02:00
   parameters:
-    id: 3900615675169501222
+    id: 39006156751
     name: eenv_static_2000mV_50mA_3600s
     description: Artificial static Energy Environment, 2000mV, 50mA, 3600s
     comment: null
@@ -70,7 +70,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.779737+02:00
   parameters:
-    id: 14796673729431137386
+    id: 1479667372943113
     name: eenv_static_2000mV_5mA_3600s
     description: Artificial static Energy Environment, 2000mV, 5mA, 3600s
     comment: null
@@ -93,7 +93,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.787329+02:00
   parameters:
-    id: 6648482606607441403
+    id: 664848260660744
     name: eenv_static_3000mV_10mA_3600s
     description: Artificial static Energy Environment, 3000mV, 10mA, 3600s
     comment: null
@@ -116,7 +116,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.794922+02:00
   parameters:
-    id: 13566000951043177991
+    id: 1356600095104317
     name: eenv_static_3000mV_1mA_3600s
     description: Artificial static Energy Environment, 3000mV, 1mA, 3600s
     comment: null
@@ -139,7 +139,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.802410+02:00
   parameters:
-    id: 7977778327156610158
+    id: 797777832715661
     name: eenv_static_3000mV_50mA_3600s
     description: Artificial static Energy Environment, 3000mV, 50mA, 3600s
     comment: null
@@ -162,7 +162,7 @@
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.810147+02:00
   parameters:
-    id: 4900162978999238419
+    id: 490016297899923
     name: eenv_static_3000mV_5mA_3600s
     description: Artificial static Energy Environment, 3000mV, 5mA, 3600s
     comment: null
@@ -269,7 +269,7 @@
 - datatype: Firmware
   created: 2025-05-12 17:28:39.851412+02:00
   parameters:
-    id: 7163917825449888392
+    id: 716391782544988
     name: nrf52_deep_sleep
     description: practically turned off MCU with the lowest possible consumption
     comment: null
@@ -325,7 +325,7 @@
 - datatype: Firmware
   created: 2025-05-12 17:28:39.868340+02:00
   parameters:
-    id: 3174430733058172825
+    id: 317443073305817
     name: nrf52_rf_survey
     description: Link Matrix Generator - TX-Unit - sends packet with every possible
       P_TX, loops until stopped
@@ -354,7 +354,7 @@
 - datatype: Firmware
   created: 2025-05-12 17:28:39.876819+02:00
   parameters:
-    id: 16381936580724580968
+    id: 1638193658072458
     name: nrf52_rf_test
     description: sends out 1 BLE-Packet per second (verify with an app like 'RaMBLE')
     comment: null

@@ -16,3 +16,6 @@ exclude = [
     "build/",
     ".egg-info/",
 ]
+
+[tool.ty.terminal]
+output-format = "concise"

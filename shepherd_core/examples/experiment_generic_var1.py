@@ -48,7 +48,7 @@ xp = sm.Experiment(
             ),
             power_tracing=None,
             gpio_tracing=sm.GpioTracing(),
-            uart_tracing=sm.UartTracing(baudrate=115_200),
+            uart_logging=sm.UartLogging(baudrate=115_200),
         ),
     ],
 )

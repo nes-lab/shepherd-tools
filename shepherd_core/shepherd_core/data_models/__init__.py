@@ -31,7 +31,7 @@ from .experiment.observer_features import GpioLevel
 from .experiment.observer_features import GpioTracing
 from .experiment.observer_features import PowerTracing
 from .experiment.observer_features import SystemLogging
-from .experiment.observer_features import UartTracing
+from .experiment.observer_features import UartLogging
 from .experiment.target_config import TargetConfig
 
 __all__ = [
@@ -55,7 +55,7 @@ __all__ = [
     "ShpModel",
     "SystemLogging",
     "TargetConfig",
-    "UartTracing",
+    "UartLogging",
     "VirtualHarvesterConfig",
     "VirtualSourceConfig",
     "Wrapper",
