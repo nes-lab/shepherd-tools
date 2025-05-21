@@ -148,13 +148,18 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     gpios: GpioList = all_gpio
     """List of GPIO to record.
 
-    Numbering is based on the Target-Port and its GPIO.
-    To make the Port future-safer it offers 16x GPIO and 2x PwrGood.
+    This feature allows to remove unwanted pins from recording,
+    i.e. for chatty pins with separate UART Logging enabled.
+    Numbering is based on the Target-Port and its 16x GPIO and two PwrGood-Signals.
     See doc for nRF_FRAM_Target_v1.3+ to see mapping of target port.
+
+    Example for skipping UART (pin 0 & 1):
+    .gpio = range(2,18)
 
     Note:
     - Cape 2.4 (2023) and lower only has 9x GPIO + 1x PwrGood
-    - Cape 2.5 (2025) has 12x GPIO & both PwrGood
+    - Cape 2.5 (2025) has first 12 GPIO & both PwrGood
+    - this will be mapped accordingly by the observer
     """
 
     # time
