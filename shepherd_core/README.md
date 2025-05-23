@@ -1,15 +1,15 @@
 # Core Library
 
-[![PyPiVersion](https://img.shields.io/pypi/v/shepherd_core.svg)](https://pypi.org/project/shepherd_core)
+[![PyPIVersion](https://img.shields.io/pypi/v/shepherd_core.svg)](https://pypi.org/project/shepherd_core)
 [![image](https://img.shields.io/pypi/pyversions/shepherd_core.svg)](https://pypi.python.org/pypi/shepherd-core)
-[![Pytest](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/py_unittest.yml)
+[![QA-Tests](https://github.com/nes-lab/shepherd-tools/actions/workflows/quality_assurance.yaml/badge.svg)](https://github.com/nes-lab/shepherd-tools/actions/workflows/quality_assurance.yaml)
 [![CodeStyle](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-**Main Documentation**: <https://orgua.github.io/shepherd>
+**Main Documentation**: <https://nes-lab.github.io/shepherd>
 
-**Source Code**: <https://github.com/orgua/shepherd-datalib>
+**Source Code**: <https://github.com/nes-lab/shepherd-tools>
 
-**Main Project**: <https://github.com/orgua/shepherd>
+**Main Project**: <https://github.com/nes-lab/shepherd>
 
 ---
 
@@ -31,7 +31,7 @@ For postprocessing shepherds .h5-files usage of [shepherd_data](https://pypi.org
 - decode waveforms (gpio-state & timestamp) to UART
 - create an inventory (for deployed versions of software, hardware)
 
-See [official documentation](https://orgua.github.io/shepherd) or [example scripts](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased in both. The [extra](https://github.com/orgua/shepherd-datalib/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a [trafficbench](https://github.com/orgua/TrafficBench)-experiment that's used to derive the link-matrix of the testbed-nodes.
+See [official documentation](https://nes-lab.github.io/shepherd) or [example scripts](https://github.com/nes-lab/shepherd-tools/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased in both. The [extra](https://github.com/nes-lab/shepherd-tools/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a [trafficbench](https://github.com/nes-lab/TrafficBench)-experiment that's used to derive the link-matrix of the testbed-nodes.
 
 ## Config-Models in Detail
 
@@ -89,9 +89,9 @@ pip install shepherd-data -U
 For bleeding-edge-features or dev-work it is possible to install directly from GitHub-Sources (here `dev`-branch):
 
 ```Shell
-pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U
+pip install git+https://github.com/nes-lab/shepherd-tools.git@dev#subdirectory=shepherd_core -U
 # and on sheep with newer debian
-sudo pip install git+https://github.com/orgua/shepherd-datalib.git@dev#subdirectory=shepherd_core -U --break-system-packages
+sudo pip install git+https://github.com/nes-lab/shepherd-tools.git@dev#subdirectory=shepherd_core -U --break-system-packages
 ```
 
 If you are working with ``.elf``-files (embedding into experiments) you make "objcopy" accessible to python. In Ubuntu, you can either install ``build-essential`` or ``binutils-$ARCH`` with arch being ``msp430`` or ``arm-none-eabi`` for the nRF52.
@@ -123,7 +123,7 @@ To run the testbench, follow these steps:
 3. run the testbench (~ 320 tests):
 
 ```Shell
-cd shepherd-datalib/shepherd_core
+cd shepherd-tools/shepherd_core
 pip3 install ./[tests]
 pytest
 ```

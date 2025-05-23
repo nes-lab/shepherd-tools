@@ -1,7 +1,7 @@
 ---
 
 # more human-readable test-protocol @
-# https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
+# https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
 - datatype: cape
   parameters:
     id: 1270051

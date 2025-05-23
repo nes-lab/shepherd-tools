@@ -1,23 +1,23 @@
-# Shepherd - Datalib
+# Shepherd - Tools
 
-[![PyPiVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
+[![PyPIVersion](https://img.shields.io/pypi/v/shepherd_data.svg)](https://pypi.org/project/shepherd_data)
 [![image](https://img.shields.io/pypi/pyversions/shepherd_data.svg)](https://pypi.python.org/pypi/shepherd-data)
-[![QA-Tests](https://github.com/orgua/shepherd-datalib/actions/workflows/quality_assurance.yaml/badge.svg)](https://github.com/orgua/shepherd-datalib/actions/workflows/quality_assurance.yaml)
+[![QA-Tests](https://github.com/nes-lab/shepherd-tools/actions/workflows/quality_assurance.yaml/badge.svg)](https://github.com/nes-lab/shepherd-tools/actions/workflows/quality_assurance.yaml)
 [![CodeStyle](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 **Data-Package**: <https://pypi.org/project/shepherd_data>
 
 **Core-library**: <https://pypi.org/project/shepherd_core>
 
-**Main Documentation**: <https://orgua.github.io/shepherd>
+**Main Documentation**: <https://nes-lab.github.io/shepherd>
 
-**Main Project**: <https://github.com/orgua/shepherd>
+**Main Project**: <https://github.com/nes-lab/shepherd>
 
-**Source Code**: <https://github.com/orgua/shepherd-datalib>
+**Source Code**: <https://github.com/nes-lab/shepherd-tools>
 
 ---
 
-The Repository contains python packages for the [shepherd](https://github.com/orgua/shepherd)-testbed
+The Repository contains python packages for the [shepherd](https://github.com/nes-lab/shepherd)-testbed
 
 - `/shepherd_core` bundles functionality that is used by multiple tools and the community
 - `/shepherd_data` holds the data-module that is designed for users of the testbed
@@ -39,8 +39,8 @@ The environment brings everything needed for dev-work, steps for installing are 
   - add special packages with `-dev` switch
 
 ```Shell
-git clone https://github.com/orgua/shepherd-datalib
-cd .\shepherd-datalib
+git clone https://github.com/nes-lab/shepherd-tools
+cd .\shepherd-tools
 
 pipenv install --dev
 pipenv shell
@@ -51,7 +51,7 @@ pipenv install --dev pytest
 
 ### Update dynamic Fixtures
 
-When external dependencies ([Target-Lib](https://github.com/orgua/shepherd-targets/)) or core-models change, the fixtures should be also updated for the testbed.
+When external dependencies ([Targets-Repo](https://github.com/nes-lab/shepherd-targets/)) or core-models change, the fixtures should be also updated for the testbed.
 
 ```shell
 python3 extra/gen_firmwares.py
@@ -176,6 +176,6 @@ coverage html
   - datatype-hint in h5-file (`ivcurve`, `ivsample`, `isc_voc`), add mechanism to prevent misuse
   - hostname for emulation
   - full and minimal config into h5
-  - use the datalib as a base
+  - use shepherd-core as a base
   - isc-voc-harvesting
   - directly process isc-voc ⇾ resample to ivcurve?
