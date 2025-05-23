@@ -1,6 +1,6 @@
 ---
-# observer-cape-target-relation: https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
-# network data: https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/ethernet_MAC_addresses_bbones.ods
+# observer-cape-target-relation: https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
+# network data: https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/ethernet_MAC_addresses_bbones.ods
 - datatype: observer
   parameters:
     id: 0

@@ -1,6 +1,6 @@
 # info:
 # - compendium of all parameters & description
-# - base for neutral fallback values if provided yml is sparse
+# - base for neutral fallback values if provided yaml is sparse
 # - -> it is encouraged to omit redundant parameters
 ---
 - datatype: VirtualSourceConfig

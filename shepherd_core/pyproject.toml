@@ -71,8 +71,8 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.urls]
-Documentation = "https://github.com/orgua/shepherd-datalib/blob/main/README.md"
-Issues = "https://github.com/orgua/shepherd-datalib/issues"
+Documentation = "https://github.com/nes-lab/shepherd-tools/blob/main/README.md"
+Issues = "https://github.com/nes-lab/shepherd-tools/issues"
 Source = "https://pypi.org/project/shepherd-core/"
 
 [build-system]

@@ -1,6 +1,6 @@
 """This script will download & prepare target-firmwares.
 
-- download and extract firmwares from https://github.com/orgua/shepherd-targets/releases
+- download and extract firmwares from https://github.com/nes-lab/shepherd-targets/releases
 - generate embedded firmware-models
 - it assumes sub-dirs in the same dir with ./build.elf in it
 """
@@ -24,7 +24,7 @@ if __name__ == "__main__":
         path_fw = path_here / "content/fw/nes_lab/"
 
     # config
-    link = "https://github.com/orgua/shepherd-targets/releases/latest/download/firmwares.zip"
+    link = "https://github.com/nes-lab/shepherd-targets/releases/latest/download/firmwares.zip"
     # ⤷ already includes embedded-firmware-models
     path_meta = path_fw / "metadata_fw.yaml"
 

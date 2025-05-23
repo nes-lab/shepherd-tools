@@ -1,6 +1,6 @@
 ---
 # more human-readable test-protocol @
-# https://github.com/orgua/shepherd_v2_planning/blob/main/doc_testbed/Target_pre-deployment-tests.xlsx
+# https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Target_pre-deployment-tests.xlsx
 - datatype: target
   parameters:
     id: 6  # Outer ID - selected by user for XP - can be rearranged
