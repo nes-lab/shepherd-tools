@@ -1,5 +1,12 @@
 # History of Changes
 
+## v2025.05.4
+
+- cli-cmd `extract-uart` is renamed to `decode-uart` - to better describe what it does
+- cli-cmd `extract-uart` now only saves the UART-log (decoded from Linux on observer)
+- cli-cmd `extract-meta` now mainly saves a YAML that describes the content of the hdf5-file (add `--debug` for all system-logs)
+- update all links and referenced for moving repos to `nes-lab`
+
 ## v2025.05.3
 
 - fix naming of `UartTracer` in favor of separate `UartLogger` (**breaking change, required for sheep v0.9.0**)
