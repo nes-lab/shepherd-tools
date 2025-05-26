@@ -62,7 +62,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
     data_type: FirmwareDType
     data_hash: Optional[str] = None
     data_local: bool = True
-    # ⤷ signals that file has to be copied to testbed
+    """ ⤷ signals that file has to be copied to testbed"""
 
     @model_validator(mode="before")
     @classmethod

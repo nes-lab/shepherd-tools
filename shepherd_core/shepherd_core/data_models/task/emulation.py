@@ -49,46 +49,55 @@ class EmulationTask(ShpModel):
 
     # General config
     input_path: Path
-    # ⤷ hdf5 file containing harvesting data
+    """ ⤷ hdf5 file containing harvesting data"""
     output_path: Optional[Path] = None
-    # ⤷ dir- or file-path for storing the recorded data:
-    #   - providing a directory -> file is named emu_timestamp.h5
-    #   - for a complete path the filename is not changed except it exists and
-    #     overwrite is disabled -> emu#num.h5
-    # TODO: should the output-path be mandatory?
+    """ ⤷ dir- or file-path for storing the recorded data:
+
+    - providing a directory -> file is named emu_timestamp.h5
+    - for a complete path the filename is not changed except it exists and
+      overwrite is disabled -> emu#num.h5
+    TODO: should the output-path be mandatory?
+    """
     force_overwrite: bool = False
-    # ⤷ Overwrite existing file
+    """ ⤷ Overwrite existing file"""
     output_compression: Optional[Compression] = Compression.default
-    # ⤷ should be lzf, 1 (gzip level 1) or None (order of recommendation)
+    """ ⤷ should be lzf, 1 (gzip level 1) or None (order of recommendation)"""
     time_start: Optional[datetime] = None
-    # timestamp or unix epoch time, None = ASAP
+    """ timestamp or unix epoch time, None = ASAP"""
     duration: Optional[timedelta] = None
-    # ⤷ Duration of recording in seconds, None = till EOF
+    """ ⤷ Duration of recording in seconds, None = till EOF"""
     abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # emulation-specific
     use_cal_default: bool = False
-    # ⤷ Use default calibration values, skip loading from EEPROM
+    """ ⤷ Use default calibration values, skip loading from EEPROM"""
 
     enable_io: bool = True
     # TODO: add direction of pins! also it seems error-prone when only setting _tracing
-    # ⤷ Switch the GPIO level converter to targets on/off
-    #   pre-req for sampling gpio / uart,
-    io_port: TargetPort = TargetPort.A
-    # ⤷ Either Port A or B that gets connected to IO
-    pwr_port: TargetPort = TargetPort.A
-    # ⤷ chosen port will be current-monitored (main, connected to virtual Source),
-    #   the other port is aux
-    voltage_aux: Union[Annotated[float, Field(ge=0, le=4.5)], str] = 0
-    # ⤷ aux_voltage options:
-    #   - 0-4.5 for specific const Voltage (0 V = disabled),
-    #   - "buffer" will output intermediate voltage (storage cap of vsource),
-    #   - "main" will mirror main target voltage
+    """ ⤷ Switch the GPIO level converter to targets on/off
 
+    pre-req for sampling gpio / uart,
+    """
+    io_port: TargetPort = TargetPort.A
+    """ ⤷ Either Port A or B that gets connected to IO"""
+    pwr_port: TargetPort = TargetPort.A
+    """ ⤷ selected port will be current-monitored
+
+    - main channel is nnected to virtual Source
+    - the other port is aux
+    """
+    voltage_aux: Union[Annotated[float, Field(ge=0, le=4.5)], str] = 0
+    """ ⤷ aux_voltage options
+    - 0-4.5 for specific const Voltage (0 V = disabled),
+    - "buffer" will output intermediate voltage (storage cap of vsource),
+    - "main" will mirror main target voltage
+    """
     # sub-elements, could be partly moved to emulation
     virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
-    # ⤷ Use the desired setting for the virtual source,
-    #   provide parameters or name like BQ25570
+    """ ⤷ Use the desired setting for the virtual source,
+
+    provide parameters or name like BQ25570
+    """
 
     power_tracing: Optional[PowerTracing] = PowerTracing()
     gpio_tracing: Optional[GpioTracing] = GpioTracing()
@@ -97,7 +106,10 @@ class EmulationTask(ShpModel):
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
-    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug, TODO: just bool now, systemwide
+    """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug,
+
+    TODO: just bool now, systemwide
+    """
 
     @model_validator(mode="before")
     @classmethod

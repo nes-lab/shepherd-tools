@@ -31,10 +31,8 @@ class SystemInventory(ShpModel):
     """System / OS related inventory model."""
 
     uptime: PositiveInt
-    # ⤷ seconds
+    """ ⤷ seconds"""
     timestamp: datetime
-    # time_delta: timedelta = timedelta(seconds=0)  # noqa: ERA001
-    # ⤷ lag behind earliest observer, TODO: wrong place
 
     system: str
     release: str

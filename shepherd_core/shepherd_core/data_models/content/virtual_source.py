@@ -41,11 +41,11 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # General Metadata & Ownership -> ContentModel
 
     enable_boost: bool = False
-    # ⤷ if false -> v_intermediate = v_input, output-switch-hysteresis is still usable
+    """ ⤷ if false -> v_intermediate = v_input, output-switch-hysteresis is still usable"""
     enable_buck: bool = False
-    # ⤷ if false -> v_output = v_intermediate
+    """ ⤷ if false -> v_output = v_intermediate"""
     enable_feedback_to_hrv: bool = False
-    # src can control a cv-harvester for ivcurve
+    """ src can control a cv-harvester for ivcurve"""
 
     interval_startup_delay_drain_ms: Annotated[float, Field(ge=0, le=10_000)] = 0
 
@@ -54,33 +54,35 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     V_input_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
     I_input_max_mA: Annotated[float, Field(ge=0, le=4.29e3)] = 4_200
     V_input_drop_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 0
-    # ⤷ simulate input-diode
+    """ ⤷ simulate input-diode"""
     R_input_mOhm: Annotated[float, Field(ge=0, le=4.29e6)] = 0
-    # ⤷ resistance only active with disabled boost, range [1 mOhm; 1MOhm]
+    """ ⤷ resistance only active with disabled boost, range [1 mOhm; 1MOhm]"""
 
     # primary storage-Cap
     C_intermediate_uF: Annotated[float, Field(ge=0, le=100_000)] = 0
     V_intermediate_init_mV: Annotated[float, Field(ge=0, le=10_000)] = 3_000
-    # ⤷ allow a proper / fast startup
+    """ ⤷ allow a proper / fast startup"""
     I_intermediate_leak_nA: Annotated[float, Field(ge=0, le=4.29e9)] = 0
 
     V_intermediate_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 1
-    # ⤷ target gets connected (hysteresis-combo with next value)
+    """ ⤷ target gets connected (hysteresis-combo with next value)"""
     V_intermediate_disable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 0
-    # ⤷ target gets disconnected
+    """ ⤷ target gets disconnected"""
     interval_check_thresholds_ms: Annotated[float, Field(ge=0, le=4.29e3)] = 0
-    # ⤷ some ICs (BQ) check every 64 ms if output should be disconnected
+    """ ⤷ some ICs (BQ) check every 64 ms if output should be disconnected"""
     # TODO: add intervals for input-disable, output-disable & power-good-signal
 
     # pwr-good: target is informed on output-pin (hysteresis) -> for intermediate voltage
     V_pwr_good_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2_800
     V_pwr_good_disable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2200
     immediate_pwr_good_signal: bool = True
-    # ⤷ 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
+    """ ⤷ 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds"""
 
-    # final (always last) stage to compensate undetectable current spikes
-    # when enabling power for target
     C_output_uF: Annotated[float, Field(ge=0, le=4.29e6)] = 1.0
+    """
+    final (always last) stage to compensate undetectable current spikes when
+    enabling power for target
+    """
     # TODO: C_output is handled internally as delta-V, but should be a I_transient
     #       that makes it visible in simulation as additional i_out_drain
     # TODO: potential weakness, ACD lowpass is capturing transient,
@@ -88,32 +90,35 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     # Extra
     V_output_log_gpio_threshold_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 1_400
-    # ⤷ min voltage needed to enable recording changes in gpio-bank
+    """ ⤷ min voltage needed to enable recording changes in gpio-bank"""
 
     # Boost Converter
     V_input_boost_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 0
-    # ⤷ min input-voltage for the boost converter to work
+    """ ⤷ min input-voltage for the boost converter to work"""
     V_intermediate_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
-    # ⤷ boost converter shuts off
+    """ ⤷ boost converter shuts off"""
 
     LUT_input_efficiency: LUT2D = 12 * [12 * [1.00]]
-    # ⤷ rows are current -> first row a[V=0][:]
-    # input-LUT[12][12] depending on array[inp_voltage][log(inp_current)],
-    # influence of cap-voltage is not implemented
+    """ ⤷ rows are current -> first row a[V=0][:]
+
+    input-LUT[12][12] depending on array[inp_voltage][log(inp_current)],
+    influence of cap-voltage is not implemented
+    """
+
     LUT_input_V_min_log2_uV: Annotated[int, Field(ge=0, le=20)] = 0
-    # ⤷ 2^7 = 128 uV -> LUT[0][:] is for inputs < 128 uV
+    """ ⤷ i.e. 2^7 = 128 uV -> LUT[0][:] is for inputs < 128 uV"""
     LUT_input_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 1
-    # ⤷ 2^8 = 256 nA -> LUT[:][0] is for inputs < 256 nA
+    """ ⤷ i.e. 2^8 = 256 nA -> LUT[:][0] is for inputs < 256 nA"""
 
     # Buck Converter
     V_output_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_400
     V_buck_drop_mV: Annotated[float, Field(ge=0, le=5_000)] = 0
-    # ⤷ simulate LDO / diode min voltage differential or output-diode
+    """ ⤷ simulate LDO / diode min voltage differential or output-diode"""
 
     LUT_output_efficiency: LUT1D = 12 * [1.00]
-    # ⤷ array[12] depending on output_current
+    """ ⤷ array[12] depending on output_current"""
     LUT_output_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 1
-    # ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation
+    """ ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation"""
 
     @model_validator(mode="before")
     @classmethod

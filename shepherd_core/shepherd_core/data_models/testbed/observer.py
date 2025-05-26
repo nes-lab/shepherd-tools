@@ -43,7 +43,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
 
     latitude: Annotated[float, Field(ge=-90, le=90)] = 51.026573
     longitude: Annotated[float, Field(ge=-180, le=180)] = 13.723291
-    # ⤷ cfaed-floor
+    """ ⤷ cfaed-floor"""
 
     active: bool = True
     cape: Optional[Cape] = None

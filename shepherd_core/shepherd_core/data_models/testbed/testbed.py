@@ -19,6 +19,8 @@ from shepherd_core.testbed_client import tb_client
 
 from .observer import Observer
 
+duration_5min = timedelta(minutes=5)
+
 
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)."""
@@ -35,9 +37,10 @@ class Testbed(ShpModel):
     shared_storage: bool = True
     data_on_server: Path
     data_on_observer: Path
-    # ⤷ storage layout: root_path/content_type/group/owner/[object]
+    """ ⤷ storage layout: root_path/content_type/group/owner/[object]"""
+    # TODO: we might need individual paths for experiments & content
 
-    prep_duration: timedelta = timedelta(minutes=5)
+    prep_duration: timedelta = duration_5min
     # TODO: one BBone is currently time-keeper
 
     @model_validator(mode="before")

@@ -25,34 +25,35 @@ class HarvestTask(ShpModel):
 
     # General config
     output_path: Path
-    # ⤷ dir- or file-path for storing the recorded data:
-    #   - providing a directory -> file is named hrv_timestamp.h5
-    #   - for a complete path the filename is not changed except it exists and
-    #     overwrite is disabled -> name#num.h5
+    """ ⤷ dir- or file-path for storing the recorded data:
+
+    - providing a directory -> file is named hrv_timestamp.h5
+    - for a complete path the filename is not changed except it exists and
+      overwrite is disabled -> name#num.h5
+    """
     force_overwrite: bool = False
-    # ⤷ Overwrite existing file
+    """ ⤷ Overwrite existing file"""
     output_compression: Optional[Compression] = Compression.default
-    # ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)
+    """ ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)"""
 
     time_start: Optional[datetime] = None
-    # timestamp or unix epoch time, None = ASAP
+    """ timestamp or unix epoch time, None = ASAP"""
     duration: Optional[timedelta] = None
-    # ⤷ Duration of recording in seconds, None = till EOFSys
+    """ ⤷ Duration of recording in seconds, None = till EOFSys"""
     abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # emulation-specific
     use_cal_default: bool = False
-    # ⤷ Use default calibration values, skip loading from EEPROM
+    """ ⤷ Use default calibration values, skip loading from EEPROM"""
 
     virtual_harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
-    # ⤷ Choose one of the predefined virtual harvesters
-    #   or configure a new one
-
+    """ ⤷ Choose one of the predefined virtual harvesters or configure a new one
+    """
     power_tracing: PowerTracing = PowerTracing()
     sys_logging: Optional[SystemLogging] = SystemLogging()
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
-    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
+    """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug"""
 
     # TODO: there is an unused DAC-Output patched to the harvesting-port
 

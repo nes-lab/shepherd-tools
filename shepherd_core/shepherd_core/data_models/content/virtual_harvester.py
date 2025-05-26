@@ -453,16 +453,16 @@ class HarvesterPRUConfig(ShpModel):
     voltage_min_uV: u32
     voltage_max_uV: u32
     voltage_step_uV: u32
-    # ⤷ for window-based algo like ivcurve
+    """ ⤷ for window-based algo like ivcurve"""
     current_limit_nA: u32
-    # ⤷ lower bound to detect zero current
+    """ ⤷ lower bound to detect zero current"""
     setpoint_n8: u32
     interval_n: u32
-    # ⤷ between measurements
+    """ ⤷ between measurements"""
     duration_n: u32
-    # ⤷ of measurement
+    """ ⤷ of measurement"""
     wait_cycles_n: u32
-    # ⤷ for DAC to settle
+    """ ⤷ for DAC to settle"""
 
     @classmethod
     def from_vhrv(

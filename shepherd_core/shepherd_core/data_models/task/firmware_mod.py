@@ -34,7 +34,7 @@ class FirmwareModTask(ShpModel):
     firmware_file: Path
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
-    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
+    """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug"""
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
