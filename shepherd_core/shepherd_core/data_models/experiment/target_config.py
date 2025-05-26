@@ -20,6 +20,9 @@ from .observer_features import GpioTracing
 from .observer_features import PowerTracing
 from .observer_features import UartLogging
 
+# defaults (pre-init complex types)
+vsrc_neutral = VirtualSourceConfig(name="neutral")
+
 
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration related to Target Nodes (DuT)."""
@@ -33,7 +36,7 @@ class TargetConfig(ShpModel, title="Target Config"):
 
     energy_env: EnergyEnvironment
     """ input for the virtual source """
-    virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
+    virtual_source: VirtualSourceConfig = vsrc_neutral
     target_delays: Optional[
         Annotated[list[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)]
     ] = None

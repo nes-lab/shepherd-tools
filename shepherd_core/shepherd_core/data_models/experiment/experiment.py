@@ -23,6 +23,9 @@ from shepherd_core.version import version
 from .observer_features import SystemLogging
 from .target_config import TargetConfig
 
+# defaults (pre-init complex types)
+sys_log_all = SystemLogging()  # = all active
+
 
 class Experiment(ShpModel, title="Config of an Experiment"):
     """Config for experiments on the testbed emulating energy environments for target nodes."""
@@ -44,7 +47,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # feedback
     email_results: bool = False
 
-    sys_logging: SystemLogging = SystemLogging()  # = all active
+    sys_logging: SystemLogging = sys_log_all
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP

@@ -23,6 +23,9 @@ NormedNum = Annotated[float, Field(ge=0.0, le=1.0)]
 LUT1D = Annotated[list[NormedNum], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 LUT2D = Annotated[list[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
+# defaults (pre-init complex types)
+vhrv_mppt_opt = VirtualHarvesterConfig(name="mppt_opt")
+
 
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     """The vSrc uses the energy environment (file) for supplying the Target Node.
@@ -49,7 +52,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     interval_startup_delay_drain_ms: Annotated[float, Field(ge=0, le=10_000)] = 0
 
-    harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
+    harvester: VirtualHarvesterConfig = vhrv_mppt_opt
 
     V_input_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
     I_input_max_mA: Annotated[float, Field(ge=0, le=4.29e3)] = 4_200

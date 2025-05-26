@@ -25,6 +25,7 @@ from shepherd_core.data_models.experiment.observer_features import GpioTracing
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
 from shepherd_core.data_models.experiment.observer_features import UartLogging
+from shepherd_core.data_models.experiment.target_config import vsrc_neutral
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.logger import logger
@@ -93,7 +94,7 @@ class EmulationTask(ShpModel):
     - "main" will mirror main target voltage
     """
     # sub-elements, could be partly moved to emulation
-    virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
+    virtual_source: VirtualSourceConfig = vsrc_neutral
     """ ⤷ Use the desired setting for the virtual source,
 
     provide parameters or name like BQ25570

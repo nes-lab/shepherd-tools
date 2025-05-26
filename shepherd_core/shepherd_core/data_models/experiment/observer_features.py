@@ -17,6 +17,7 @@ from shepherd_core import logger
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.gpio import GPIO
 
+# defaults (pre-init complex types)
 zero_duration = timedelta(seconds=0)
 
 
