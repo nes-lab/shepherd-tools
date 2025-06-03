@@ -28,7 +28,7 @@ class EnergyEnvironment(ContentModel):
     data_path: Path
     data_type: EnergyDType
     data_local: bool = True
-    # ⤷ signals that file has to be copied to testbed
+    """ ⤷ signals that file has to be copied to testbed"""
 
     duration: PositiveFloat
     energy_Ws: PositiveFloat

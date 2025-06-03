@@ -95,14 +95,19 @@ cal_hrv_legacy = {  # legacy translator
     "adc_voltage": "adc_V_Sense",  # datalog voltage
 }
 
+# defaults (pre-init complex types)
+cal_pair_dac_V = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
+cal_pair_adc_V = CalibrationPair.from_fn(adc_voltage_to_raw, unit="V")
+cal_pair_adc_C = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
+
 
 class CalibrationHarvester(ShpModel):
     """Container for all calibration-pairs for that device."""
 
-    dac_V_Hrv: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
-    dac_V_Sim: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
-    adc_V_Sense: CalibrationPair = CalibrationPair.from_fn(adc_voltage_to_raw, unit="V")
-    adc_C_Hrv: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
+    dac_V_Hrv: CalibrationPair = cal_pair_dac_V
+    dac_V_Sim: CalibrationPair = cal_pair_dac_V
+    adc_V_Sense: CalibrationPair = cal_pair_adc_V
+    adc_C_Hrv: CalibrationPair = cal_pair_adc_C
 
     def export_for_sysfs(self) -> dict:
         """Convert and write the essential data.
@@ -143,10 +148,10 @@ class CalibrationEmulator(ShpModel):
     Differentiates between both target-ports A/B.
     """
 
-    dac_V_A: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
-    dac_V_B: CalibrationPair = CalibrationPair.from_fn(dac_voltage_to_raw, unit="V")
-    adc_C_A: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
-    adc_C_B: CalibrationPair = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
+    dac_V_A: CalibrationPair = cal_pair_dac_V
+    dac_V_B: CalibrationPair = cal_pair_dac_V
+    adc_C_A: CalibrationPair = cal_pair_adc_C
+    adc_C_B: CalibrationPair = cal_pair_adc_C
 
     def export_for_sysfs(self) -> dict:
         """Convert and write the essential data.

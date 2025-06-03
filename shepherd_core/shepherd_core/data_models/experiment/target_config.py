@@ -20,26 +20,36 @@ from .observer_features import GpioTracing
 from .observer_features import PowerTracing
 from .observer_features import UartLogging
 
+# defaults (pre-init complex types)
+vsrc_neutral = VirtualSourceConfig(name="neutral")
+
 
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration related to Target Nodes (DuT)."""
 
     target_IDs: Annotated[list[IdInt], Field(min_length=1, max_length=128)]
     custom_IDs: Optional[Annotated[list[IdInt16], Field(min_length=1, max_length=128)]] = None
-    # ⤷ will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware
-    #   if no custom ID is provided, the original ID of target is used
+    """ ⤷ custom ID will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware.
 
-    energy_env: EnergyEnvironment  # alias: input
-    virtual_source: VirtualSourceConfig = VirtualSourceConfig(name="neutral")
+    if no custom ID is provided, the original ID of target is used
+    """
+
+    energy_env: EnergyEnvironment
+    """ input for the virtual source """
+    virtual_source: VirtualSourceConfig = vsrc_neutral
     target_delays: Optional[
         Annotated[list[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)]
     ] = None
-    # ⤷ individual starting times -> allows to use the same environment
-    # TODO: delays not used ATM
+    """ ⤷ individual starting times
+
+    - allows to use the same environment
+    - not implemented ATM
+    """
 
     firmware1: Firmware
+    """ ⤷ omitted FW gets set to neutral deep-sleep"""
     firmware2: Optional[Firmware] = None
-    # ⤷ omitted FW gets set to neutral deep-sleep
+    """ ⤷ omitted FW gets set to neutral deep-sleep"""
 
     power_tracing: Optional[PowerTracing] = None
     gpio_tracing: Optional[GpioTracing] = None

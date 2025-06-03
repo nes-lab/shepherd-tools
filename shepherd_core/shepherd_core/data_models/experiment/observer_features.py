@@ -17,6 +17,9 @@ from shepherd_core import logger
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.gpio import GPIO
 
+# defaults (pre-init complex types)
+zero_duration = timedelta(seconds=0)
+
 
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """Configuration for recording the Power-Consumption of the Target Nodes.
@@ -25,19 +28,27 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """
 
     intermediate_voltage: bool = False
-    # ⤷ for EMU: record storage capacitor instead of output (good for V_out = const)
-    #            this also includes current!
-
+    """
+    ⤷ for EMU: record storage capacitor instead of output (good for V_out = const)
+               this also includes current!
+    """
     # time
-    delay: timedelta = timedelta(seconds=0)
+    delay: timedelta = zero_duration
+    """start recording after experiment started"""
     duration: Optional[timedelta] = None  # till EOF
+    """duration of recording after delay starts the process.
+
+    default is None, recording till EOF"""
 
     # post-processing
     calculate_power: bool = False
-    samplerate: Annotated[int, Field(ge=10, le=100_000)] = 100_000  # down-sample
+    """ ⤷ reduce file-size by calculating power -> not implemented ATM"""
+    samplerate: Annotated[int, Field(ge=10, le=100_000)] = 100_000
+    """ ⤷ reduce file-size by down-sampling -> not implemented ATM"""
     discard_current: bool = False
+    """ ⤷ reduce file-size by omitting current -> not implemented ATM"""
     discard_voltage: bool = False
-    # ⤷ reduce file-size by omitting current / voltage
+    """ ⤷ reduce file-size by omitting voltage -> not implemented ATM"""
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
@@ -163,11 +174,12 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """
 
     # time
-    delay: timedelta = timedelta(seconds=0)
+    delay: timedelta = zero_duration
     duration: Optional[timedelta] = None  # till EOF
 
     # post-processing,
     uart_decode: bool = False
+    """Automatic decoding from gpio-trace not implemented ATM."""
     uart_pin: GPIO = GPIO(name="GPIO8")
     uart_baudrate: Annotated[int, Field(ge=2_400, le=1_152_000)] = 115_200
 
@@ -205,12 +217,14 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
     """Configuration for a single GPIO-Event (Actuation)."""
 
     delay: PositiveFloat
-    # ⤷ from start_time
-    # ⤷ resolution 10 us (guaranteed, but finer steps are possible)
+    """ ⤷ from start_time
+
+    - resolution 10 us (guaranteed, but finer steps are possible)
+    """
     gpio: GPIO
     level: GpioLevel
     period: Annotated[float, Field(ge=10e-6)] = 1
-    # ⤷ time base of periodicity in s
+    """ ⤷ time base of periodicity in s"""
     count: Annotated[int, Field(ge=1, le=4096)] = 1
 
     @model_validator(mode="after")

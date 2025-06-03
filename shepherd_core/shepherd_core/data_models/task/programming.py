@@ -29,7 +29,7 @@ class ProgrammingTask(ShpModel):
     target_port: TargetPort = TargetPort.A
     mcu_port: MCUPort = 1
     mcu_type: SafeStr
-    # ⤷ must be either "nrf52" or "msp430" ATM, TODO: clean xp to tasks
+    """ ⤷ must be either "nrf52" or "msp430" ATM, TODO: clean xp to tasks"""
     voltage: Annotated[float, Field(ge=1, lt=5)] = 3
     datarate: Annotated[int, Field(gt=0, le=1_000_000)] = 200_000
     protocol: ProgrammerProtocol
@@ -38,7 +38,7 @@ class ProgrammingTask(ShpModel):
     simulate: bool = False
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
-    # ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug
+    """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug"""
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:

@@ -177,7 +177,15 @@ def extract(
     is_flag=True,
     help="Also consider files in sub-folders",
 )
-def extract_meta(in_data: Path, separator: str, *, recurse: bool = False) -> None:
+@click.option(
+    "--debug",
+    "-d",
+    is_flag=True,
+    help="Also extract system logs like kernel, ",
+)
+def extract_meta(
+    in_data: Path, separator: str, *, recurse: bool = False, debug: bool = False
+) -> None:
     """Extract metadata and logs from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
@@ -188,26 +196,30 @@ def extract_meta(in_data: Path, separator: str, *, recurse: bool = False) -> Non
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 shpr.save_metadata()
-                csvs_depr = ["sysutil", "timesync"]
-                csvs = ["ptp", "phc2sys", "sys_util", "pru_util"]
-                for element in csvs + csvs_depr:
-                    if element in shpr.h5file:
-                        shpr.save_csv(shpr[element], separator)
+                if "uart" in shpr.h5file:
+                    shpr.save_log(shpr["uart"])
+
                 logs_depr = ["shepherd-log", "dmesg", "exceptions"]
-                logs = ["sheep", "kernel", "ntp", "uart"]
-                for element in logs + logs_depr:
+                logs_meta = ["sheep", "kernel", "ntp"]
+                for element in logs_meta + logs_depr:
                     if element in shpr.h5file:
-                        shpr.save_log(shpr[element])
+                        if debug:
+                            shpr.save_log(shpr[element])
                         # TODO: allow omitting timestamp,
                         #       also test if segmented uart is correctly written
                         shpr.warn_logs(element, show=True)
+                if not debug:
+                    continue
+                csv_depr = ["sysutil", "timesync"]
+                csv_meta = ["ptp", "phc2sys", "sys_util", "pru_util"]
+                for element in csv_meta + csv_depr:
+                    if element in shpr.h5file:
+                        shpr.save_csv(shpr[element], separator)
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
-@cli.command(
-    short_help="Extracts uart from gpio-trace in file or directory containing shepherd-recordings"
-)
+@cli.command()
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
@@ -216,7 +228,32 @@ def extract_meta(in_data: Path, separator: str, *, recurse: bool = False) -> Non
     help="Also consider files in sub-folders",
 )
 def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
-    """Extract UART from GPIO-trace in file or directory containing shepherd-recordings."""
+    """Log from file or directory containing shepherd-recordings."""
+    files = path_to_flist(in_data, recurse=recurse)
+    verbose_level = get_verbose_level()
+    for file in files:
+        logger.info("Extracting UART-log from '%s' ...", file.name)
+        try:
+            with Reader(file, verbose=verbose_level > 2) as shpr:
+                shpr.save_metadata()
+                if "uart" in shpr.h5file:
+                    shpr.save_log(shpr["uart"])
+        except TypeError:
+            logger.exception("ERROR: Will skip file. It caused an exception.")
+
+
+@cli.command(
+    short_help="Decode uart from gpio-trace in file or directory containing shepherd-recordings"
+)
+@click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
+@click.option(
+    "--recurse",
+    "-a",
+    is_flag=True,
+    help="Also consider files in sub-folders",
+)
+def decode_uart(in_data: Path, *, recurse: bool = False) -> None:
+    """Decode UART from GPIO-trace in file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     for file in files:

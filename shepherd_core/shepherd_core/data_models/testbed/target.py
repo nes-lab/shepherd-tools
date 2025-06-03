@@ -36,7 +36,7 @@ class Target(ShpModel, title="Target Node (DuT)"):
     created: datetime = Field(default_factory=datetime.now)
 
     testbed_id: Optional[IdInt16] = None
-    # ⤷ is derived from ID (targets are still selected by id!)
+    """ ⤷ is derived from ID (targets are still selected by id!)"""
     mcu1: Union[MCU, NameStr]
     mcu2: Union[MCU, NameStr, None] = None
 
