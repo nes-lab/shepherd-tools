@@ -38,7 +38,7 @@ class EEnv2(BaseModel):
     data_paths: Annotated[list[PurePosixPath], Field(min_length=1, max_length=128)]
     """⤷ relative paths to content."""
     repetitions_ok: bool = False
-    """⤷ emit no warning if single eenv-path is used more than once."""
+    """⤷ emit no warning if single eenv-path is used more than once. unwanted correlation effects might appear."""
     is_atomic: bool = False
     """⤷ atoms can't be sliced further - will be True if sliced once."""
 
