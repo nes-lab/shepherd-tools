@@ -32,13 +32,11 @@ class EEnvGenerator(ABC):
 
 
 def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, generator: EEnvGenerator):
-    # Prepare datafiles
-    file_handles: list[ShepherdWriter] = []
-    stack = ExitStack()
-
-    for i in range(generator.node_count):
-        file_handles.append(
-            ShepherdWriter(
+    with ExitStack() as stack:
+        # Prepare datafiles
+        file_handles: list[ShepherdWriter] = []
+        for i in range(generator.node_count):
+            writer = ShepherdWriter(
                 file_path=output_dir / f"node{i}.h5",
                 compression=Compression.gzip1,
                 mode="harvester",
@@ -50,24 +48,23 @@ def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, genera
                     current=CalibrationPair(gain=1e-9, offset=0),
                 ),
             )
-        )
-        stack.enter_context(file_handles[i])
-        file_handles[i].store_hostname(f"node{i}.h5")
+            file_handles.append(stack.enter_context(writer))
+            writer.store_hostname(f"node{i}.h5")
 
-    logger.info("Generating energy environment...")
-    chunk_duration = chunk_size * STEP_WIDTH
-    chunk_count = math.ceil(duration / chunk_duration)
-    times_per_chunk = np.arange(0, chunk_size) * STEP_WIDTH
+        logger.info("Generating energy environment...")
+        chunk_duration = chunk_size * STEP_WIDTH
+        chunk_count = math.ceil(duration / chunk_duration)
+        times_per_chunk = np.arange(0, chunk_size) * STEP_WIDTH
 
-    start_time = time.time()
-    for i in trange(chunk_count, desc="Generating chunk: ", leave=False):
-        times_unfiltered = chunk_duration * i + times_per_chunk
-        times = times_unfiltered[np.where(times_unfiltered <= duration)]
-        count = len(times)
+        start_time = time.time()
+        for i in trange(chunk_count, desc="Generating chunk: ", leave=False):
+            times_unfiltered = chunk_duration * i + times_per_chunk
+            times = times_unfiltered[np.where(times_unfiltered <= duration)]
+            count = len(times)
 
-        iv_pairs = generator.generate_iv_pairs(count=count)
+            iv_pairs = generator.generate_iv_pairs(count=count)
 
-        for file, (voltages, currents) in zip(file_handles, iv_pairs):
-            file.append_iv_data_si(times, voltages, currents)
-    end_time = time.time()
-    logger.info("Done! Generation took %.2f s", end_time - start_time)
+            for file, (voltages, currents) in zip(file_handles, iv_pairs):
+                file.append_iv_data_si(times, voltages, currents)
+        end_time = time.time()
+        logger.info("Done! Generation took %.2f s", end_time - start_time)
