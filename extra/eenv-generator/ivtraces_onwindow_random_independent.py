@@ -15,11 +15,18 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
     duty cycle and on duration match the given values using a markov process.
     """
 
-    def __init__(self, node_count, seed, period, duty_cycle, on_voltage, on_current) -> None:
+    def __init__(
+        self,
+        node_count: int,
+        seed: int,
+        period: float,
+        duty_cycle: float,
+        on_voltage: float,
+        on_current: float,
+    ) -> None:
         self.period = round(period / STEP_WIDTH)
-        assert math.isclose(self.period, period / STEP_WIDTH), (
-            "Period * STEP_WIDTH is not an integer"
-        )
+        if not math.isclose(self.period, period / STEP_WIDTH):
+            raise ValueError("Period * STEP_WIDTH is not an integer")
 
         self.on_duration = round(duty_cycle * period / STEP_WIDTH)
 
@@ -31,7 +38,8 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
         self.on_current = on_current
 
     def generate_random_pattern(self, count: int) -> np.ndarray:
-        assert count % self.period == 0, "Count is not divisible by period step count"
+        if count % self.period != 0:
+            raise ValueError("Count is not divisible by period step count")
 
         period_count = round(count / self.period)
         max_start = self.period - self.on_duration
@@ -48,11 +56,10 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
 
     def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
         pattern = self.generate_random_pattern(count)
-        result = [
+        return [
             (self.on_voltage * pattern[::, i], self.on_current * pattern[::, i])
             for i in range(self.node_count)
         ]
-        return result
 
 
 if __name__ == "__main__":
@@ -70,8 +77,7 @@ if __name__ == "__main__":
     )
 
     # Create folder
-    name = "random_window_test"
-    folder_path = path_eenv / name
+    folder_path = path_eenv / "random_window_test"
     folder_path.mkdir(parents=True, exist_ok=False)
 
     generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)

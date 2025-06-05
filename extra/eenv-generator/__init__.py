@@ -4,6 +4,7 @@ from abc import ABC
 from abc import abstractmethod
 from contextlib import ExitStack
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 from tqdm import trange
@@ -20,9 +21,10 @@ STEP_WIDTH = 1.0 / SAMPLERATE_SPS_DEFAULT  # 10 us
 
 
 class EEnvGenerator(ABC):
-    def __init__(self, node_count: int, seed: int) -> None:
+    def __init__(self, node_count: int, seed: Optional[int]) -> None:
         self.node_count = node_count
-        self.rnd_gen = np.random.Generator(bit_generator=np.random.PCG64(seed))
+        if seed is not None:
+            self.rnd_gen = np.random.Generator(bit_generator=np.random.PCG64(seed))
 
     @abstractmethod
     def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
@@ -37,7 +39,7 @@ def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, genera
     for i in range(generator.node_count):
         file_handles.append(
             ShepherdWriter(
-                file_path=output_dir / f"sheep{i}.h5",
+                file_path=output_dir / f"_sheep{i}.h5",
                 compression=Compression.gzip1,
                 mode="harvester",
                 datatype=EnergyDType.ivtrace,  # IV-trace

@@ -14,7 +14,15 @@ class RndIndepPatternGenerator(EEnvGenerator):
     duty cycle and on duration match the given values using a markov process.
     """
 
-    def __init__(self, node_count, seed, avg_duty_cycle, avg_on_duration, on_voltage, on_current):
+    def __init__(
+        self,
+        node_count: int,
+        seed: int,
+        avg_duty_cycle: float,
+        avg_on_duration: float,
+        on_voltage: float,
+        on_current: float,
+    ) -> None:
         super().__init__(node_count, seed)
 
         avg_on_steps = avg_on_duration / STEP_WIDTH
@@ -45,13 +53,12 @@ class RndIndepPatternGenerator(EEnvGenerator):
 
         return samples
 
-    def generate_iv_pairs(self, count) -> list[tuple[np.ndarray, np.ndarray]]:
+    def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
         pattern = self.generate_random_pattern(count)
-        result = [
+        return [
             (self.on_voltage * pattern[::, i], self.on_current * pattern[::, i])
             for i in range(self.node_count)
         ]
-        return result
 
 
 if __name__ == "__main__":
@@ -74,8 +81,7 @@ if __name__ == "__main__":
     )
 
     # Create folder
-    name = "random_pattern_test"
-    folder_path = path_eenv / name
+    folder_path = path_eenv / "random_pattern_test"
     folder_path.mkdir(parents=True, exist_ok=False)
 
     generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)
