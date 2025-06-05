@@ -1,0 +1,71 @@
+import math
+import time
+from abc import ABC
+from abc import abstractmethod
+from contextlib import ExitStack
+from pathlib import Path
+
+import numpy as np
+from tqdm import trange
+
+from shepherd_core import Writer as ShepherdWriter
+from shepherd_core import logger
+from shepherd_core.commons import SAMPLERATE_SPS_DEFAULT
+from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models.base.calibration import CalibrationPair
+from shepherd_core.data_models.base.calibration import CalibrationSeries
+from shepherd_core.data_models.task import Compression
+
+STEP_WIDTH = 1.0 / SAMPLERATE_SPS_DEFAULT  # 10 us
+
+
+class EEnvGenerator(ABC):
+    def __init__(self, node_count: int, seed: int) -> None:
+        self.node_count = node_count
+        self.rnd_gen = np.random.Generator(bit_generator=np.random.PCG64(seed))
+
+    @abstractmethod
+    def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
+        pass
+
+
+def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, generator: EEnvGenerator):
+    # Prepare datafiles
+    file_handles: list[ShepherdWriter] = []
+    stack = ExitStack()
+
+    for i in range(generator.node_count):
+        file_handles.append(
+            ShepherdWriter(
+                file_path=output_dir / f"sheep{i}.h5",
+                compression=Compression.gzip1,
+                mode="harvester",
+                datatype=EnergyDType.ivtrace,  # IV-trace
+                window_samples=0,  # 0 since dt is IV-trace
+                cal_data=CalibrationSeries(
+                    # sheep can skip scaling if cal is ideal
+                    voltage=CalibrationPair(gain=1e-6, offset=0),
+                    current=CalibrationPair(gain=1e-9, offset=0),
+                ),
+            )
+        )
+        stack.enter_context(file_handles[i])
+        file_handles[i].store_hostname(f"sheep{i}.h5")
+
+    logger.info("Generating energy environment...")
+    chunk_duration = chunk_size * STEP_WIDTH
+    chunk_count = math.ceil(duration / chunk_duration)
+    times_per_chunk = np.arange(0, chunk_size) * STEP_WIDTH
+
+    start_time = time.time()
+    for i in trange(chunk_count, desc="Generating chunk: ", leave=False):
+        times_unfiltered = chunk_duration * i + times_per_chunk
+        times = times_unfiltered[np.where(times_unfiltered <= duration)]
+        count = len(times)
+
+        iv_pairs = generator.generate_iv_pairs(count=count)
+
+        for file, (voltages, currents) in zip(file_handles, iv_pairs):
+            file.append_iv_data_si(times, voltages, currents)
+    end_time = time.time()
+    logger.info("Done! Generation took %.2f s", end_time - start_time)

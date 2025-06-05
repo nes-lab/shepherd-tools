@@ -2,8 +2,9 @@ from itertools import product
 from pathlib import Path
 
 import numpy as np
-from common import EEnvGenerator
-from common import generate_h5_files
+
+from . import EEnvGenerator
+from . import generate_h5_files
 
 
 class StaticGenerator(EEnvGenerator):
