@@ -39,7 +39,7 @@ def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, genera
     for i in range(generator.node_count):
         file_handles.append(
             ShepherdWriter(
-                file_path=output_dir / f"_sheep{i}.h5",
+                file_path=output_dir / f"node{i}.h5",
                 compression=Compression.gzip1,
                 mode="harvester",
                 datatype=EnergyDType.ivtrace,  # IV-trace
@@ -52,7 +52,7 @@ def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, genera
             )
         )
         stack.enter_context(file_handles[i])
-        file_handles[i].store_hostname(f"sheep{i}.h5")
+        file_handles[i].store_hostname(f"node{i}.h5")
 
     logger.info("Generating energy environment...")
     chunk_duration = chunk_size * STEP_WIDTH

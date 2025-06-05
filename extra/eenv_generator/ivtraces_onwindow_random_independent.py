@@ -1,13 +1,13 @@
+import math
 from pathlib import Path
 
 import numpy as np
+from commons import STEP_WIDTH
+from commons import EEnvGenerator
+from commons import generate_h5_files
 
-from . import STEP_WIDTH
-from . import EEnvGenerator
-from . import generate_h5_files
 
-
-class RndIndepPatternGenerator(EEnvGenerator):
+class RndPeriodicWindowGenerator(EEnvGenerator):
     """
     Generates a random on-off pattern with fixed on-voltage/-current.
     Each node's state is independently generated such that the average
@@ -18,17 +18,18 @@ class RndIndepPatternGenerator(EEnvGenerator):
         self,
         node_count: int,
         seed: int,
-        avg_duty_cycle: float,
-        avg_on_duration: float,
+        period: float,
+        duty_cycle: float,
         on_voltage: float,
         on_current: float,
     ) -> None:
-        super().__init__(node_count, seed)
+        self.period = round(period / STEP_WIDTH)
+        if not math.isclose(self.period, period / STEP_WIDTH):
+            raise ValueError("Period * STEP_WIDTH is not an integer")
 
-        avg_on_steps = avg_on_duration / STEP_WIDTH
-        p2 = 1.0 - (1.0 / avg_on_steps)
-        p1 = avg_duty_cycle * (1 - p2) / (1 - avg_duty_cycle)
-        self.transition_probs = np.array([p1, p2])
+        self.on_duration = round(duty_cycle * period / STEP_WIDTH)
+
+        super().__init__(node_count, seed)
 
         # Start at off
         self.states = np.zeros(node_count)
@@ -36,20 +37,19 @@ class RndIndepPatternGenerator(EEnvGenerator):
         self.on_current = on_current
 
     def generate_random_pattern(self, count: int) -> np.ndarray:
+        if count % self.period != 0:
+            raise ValueError("Count is not divisible by period step count")
+
+        period_count = round(count / self.period)
+        max_start = self.period - self.on_duration
+
         samples = np.zeros((count, self.node_count))
 
-        for i in range(count):
-            # Start from last states
-            last = samples[i - 1] if i > 0 else self.states
-            # Generate random vector (1 value per node)
-            random = self.rnd_gen.random(self.node_count)
-            # Get probability vector
-            probabilities = self.transition_probs[samples[i - 1].astype(int)]
-            # Generate updated states
-            samples[i] = random < probabilities
-
-        # Save last states for next chunk
-        self.states = samples[len(samples) - 1]
+        for i in range(period_count):
+            period_start = i * self.period
+            window_starts = self.rnd_gen.integers(low=0, high=max_start, size=self.node_count)
+            for j, start in enumerate(window_starts):
+                samples[period_start + start : period_start + start + self.on_duration, j] = 1.0
 
         return samples
 
@@ -71,17 +71,12 @@ if __name__ == "__main__":
     seed = 32220789340897324098232347119065234157809
     duration = 1 * 60 * 60.0
 
-    generator = RndIndepPatternGenerator(
-        node_count=10,
-        seed=seed,
-        avg_duty_cycle=0.5,
-        avg_on_duration=10e-3,
-        on_voltage=1,
-        on_current=100e-3,
+    generator = RndPeriodicWindowGenerator(
+        node_count=10, seed=seed, period=10e-3, duty_cycle=0.2, on_voltage=1, on_current=100e-3
     )
 
     # Create folder
-    folder_path = path_eenv / "random_pattern_test"
+    folder_path = path_eenv / "random_window_test"
     folder_path.mkdir(parents=True, exist_ok=False)
 
     generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)
