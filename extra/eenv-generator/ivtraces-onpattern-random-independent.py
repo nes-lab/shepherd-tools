@@ -1,13 +1,17 @@
-from common import generate_h5_files, EEnvGenerator, STEP_WIDTH
 from pathlib import Path
+
 import numpy as np
+from common import STEP_WIDTH
+from common import EEnvGenerator
+from common import generate_h5_files
+
 
 class RndIndepPatternGenerator(EEnvGenerator):
-    '''
+    """
     Generates a random on-off pattern with fixed on-voltage/-current.
     Each node's state is independently generated such that the average
     duty cycle and on duration match the given values using a markov process.
-    '''
+    """
 
     def __init__(self, node_count, seed, avg_duty_cycle, avg_on_duration, on_voltage, on_current):
         super().__init__(node_count, seed)
@@ -18,11 +22,11 @@ class RndIndepPatternGenerator(EEnvGenerator):
         self.transition_probs = np.array([p1, p2])
 
         # Start at off
-        self.states = np.zeros((node_count))
+        self.states = np.zeros(node_count)
         self.on_voltage = on_voltage
         self.on_current = on_current
 
-    def generate_random_pattern(self, count):
+    def generate_random_pattern(self, count: int) -> np.ndarray:
         samples = np.zeros((count, self.node_count))
 
         for i in range(count):
@@ -40,13 +44,16 @@ class RndIndepPatternGenerator(EEnvGenerator):
 
         return samples
 
-    def generate_iv_pairs(self, count):
+    def generate_iv_pairs(self, count) -> list[tuple[np.ndarray, np.ndarray]]:
         pattern = self.generate_random_pattern(count)
-        result = [(self.on_voltage * pattern[::, i], self.on_current * pattern[::, i])
-                    for i in range(self.node_count)]
+        result = [
+            (self.on_voltage * pattern[::, i], self.on_current * pattern[::, i])
+            for i in range(self.node_count)
+        ]
         return result
 
-if __name__ == "__main__":    
+
+if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
     if Path("/var/shepherd/").exists():
         path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
@@ -56,15 +63,17 @@ if __name__ == "__main__":
     seed = 32220789340897324098232347119065234157809
     duration = 1 * 60 * 60.0
 
-    generator = RndIndepPatternGenerator(node_count=10, 
-                                         seed=seed,
-                                         avg_duty_cycle=0.5,
-                                         avg_on_duration=10e-3,
-                                         on_voltage=1,
-                                         on_current=100e-3)
+    generator = RndIndepPatternGenerator(
+        node_count=10,
+        seed=seed,
+        avg_duty_cycle=0.5,
+        avg_on_duration=10e-3,
+        on_voltage=1,
+        on_current=100e-3,
+    )
 
     # Create folder
-    name = f"random_pattern_test"
+    name = "random_pattern_test"
     folder_path = path_eenv / name
     folder_path.mkdir(parents=True, exist_ok=False)
 

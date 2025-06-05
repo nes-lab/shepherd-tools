@@ -1,53 +1,62 @@
 import math
 import time
-import numpy as np
+from abc import ABC
+from abc import abstractmethod
+from contextlib import ExitStack
 from pathlib import Path
+
+import numpy as np
 from tqdm import trange
 
 from shepherd_core import Writer as ShepherdWriter
-from shepherd_core.data_models.base.calibration import CalibrationPair, CalibrationSeries
+from shepherd_core import logger
 from shepherd_core.commons import SAMPLERATE_SPS_DEFAULT
 from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models.base.calibration import CalibrationPair
+from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
 
-STEP_WIDTH = 1.0 / SAMPLERATE_SPS_DEFAULT # 10 us
-IDEAL_VOLTAGE_GAIN = 1e-6 # PRU uses uV
-IDEAL_CURRENT_GAIN = 1e-9 # PRU uses nA
-
-def _gen_ideal_calibration_series():
-    # Generate calibration series using ideal voltage and current gain
-    return CalibrationSeries(voltage=CalibrationPair(gain=IDEAL_VOLTAGE_GAIN, offset=0),
-                             current=CalibrationPair(gain=IDEAL_CURRENT_GAIN, offset=0))
-
-def gen_ivtrace_writer(file_path):
-    return ShepherdWriter(file_path=file_path,
-                   compression=Compression.gzip1,
-                   mode='harvester',
-                   datatype=EnergyDType.ivsample, # IV-trace
-                   window_samples=0, # 0 since dt is IV-trace
-                   cal_data = _gen_ideal_calibration_series())
+STEP_WIDTH = 1.0 / SAMPLERATE_SPS_DEFAULT  # 10 us
 
 
-class EEnvGenerator:
-    def __init__(self, node_count, seed):
+class EEnvGenerator(ABC):
+    def __init__(self, node_count: int, seed: int) -> None:
         self.node_count = node_count
         self.rnd_gen = np.random.Generator(bit_generator=np.random.PCG64(seed))
 
-    def generate_iv_pairs(self, count):
-        raise RuntimeError("this is an abstract class")
+    @abstractmethod
+    def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
+        pass
+
 
 def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, generator: EEnvGenerator):
+    # Prepare datafiles
+    file_handles: list[ShepherdWriter] = []
+    stack = ExitStack()
+
+    for i in range(generator.node_count):
+        file_handles.append(
+            ShepherdWriter(
+                file_path=output_dir / f"sheep{i}.h5",
+                compression=Compression.gzip1,
+                mode="harvester",
+                datatype=EnergyDType.ivtrace,  # IV-trace
+                window_samples=0,  # 0 since dt is IV-trace
+                cal_data=CalibrationSeries(
+                    # sheep can skip scaling if cal is ideal
+                    voltage=CalibrationPair(gain=1e-6, offset=0),
+                    current=CalibrationPair(gain=1e-9, offset=0),
+                ),
+            )
+        )
+        stack.enter_context(file_handles[i])
+        file_handles[i].store_hostname(f"sheep{i}.h5")
+
+    logger.info("Generating energy environment...")
     chunk_duration = chunk_size * STEP_WIDTH
     chunk_count = math.ceil(duration / chunk_duration)
-
-    # Prepare datafiles
-    files = [gen_ivtrace_writer(file_path=output_dir / f'sheep{i}.h5') for i in range(generator.node_count)]
-    for (i, file) in enumerate(files):
-        file.store_hostname(f'sheep{i}.h5')
-
     times_per_chunk = np.arange(0, chunk_size) * STEP_WIDTH
 
-    print('Generating energy environment...')
     start_time = time.time()
     for i in trange(chunk_count, desc="Generating chunk: ", leave=False):
         times_unfiltered = chunk_duration * i + times_per_chunk
@@ -56,11 +65,7 @@ def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, genera
 
         iv_pairs = generator.generate_iv_pairs(count=count)
 
-        for (file, (voltages, currents)) in zip(files, iv_pairs):
+        for file, (voltages, currents) in zip(file_handles, iv_pairs):
             file.append_iv_data_si(times, voltages, currents)
     end_time = time.time()
-    print(f'Done! Generation took {end_time - start_time}')
-
-    for file in files:
-        # TODO Reader has no .close()
-        file.h5file.close()
+    logger.info("Done! Generation took %.2f s", end_time - start_time)
