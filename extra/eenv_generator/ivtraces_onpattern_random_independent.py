@@ -1,3 +1,4 @@
+from itertools import product
 from pathlib import Path
 
 import numpy as np
@@ -68,19 +69,26 @@ if __name__ == "__main__":
         path_eenv = path_here / "content/eenv/nes_lab/"
 
     seed = 32220789340897324098232347119065234157809
-    duration = 1 * 60 * 60.0
+    duty_cycles = [ 0.01, 0.02, 0.05, 0.1, 0.2]
+    on_durations = [ 100e-6, 500e-6, 1e-3, 5e-3 ]
+    duration = 4 * 60 * 60.0
 
-    generator = RndIndepPatternGenerator(
-        node_count=10,
-        seed=seed,
-        avg_duty_cycle=0.5,
-        avg_on_duration=10e-3,
-        on_voltage=1,
-        on_current=100e-3,
-    )
+    for duty_cycle, on_duration in product(duty_cycles, on_durations):
+        generator = RndIndepPatternGenerator(
+            node_count=20,
+            seed=seed,
+            avg_duty_cycle=duty_cycle,
+            avg_on_duration=on_duration,
+            on_voltage=2,
+            on_current=10e-3,
+        )
 
-    # Create folder
-    folder_path = path_eenv / "random_pattern_test"
-    folder_path.mkdir(parents=True, exist_ok=False)
+        # Create output folder (or skip)
+        name = f"eenv_random_markov_{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us"
+        folder_path = path_eenv / name
+        if folder_path.exists():
+            print(f'Folder {folder_path} exists. Skipping combination.')
+            continue
+        folder_path.mkdir(parents=True, exist_ok=False)
 
-    generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)
+        generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)

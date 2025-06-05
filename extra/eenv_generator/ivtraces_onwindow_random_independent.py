@@ -1,4 +1,5 @@
 import math
+from itertools import product
 from pathlib import Path
 
 import numpy as np
@@ -69,14 +70,21 @@ if __name__ == "__main__":
         path_eenv = path_here / "content/eenv/nes_lab/"
 
     seed = 32220789340897324098232347119065234157809
-    duration = 1 * 60 * 60.0
+    periods = [ 10e-3, 100e-3, 1, 10 ]
+    duty_cycles = [ 0.01, 0.02, 0.05, 0.1, 0.2]
+    duration = 4 * 60 * 60.0
 
-    generator = RndPeriodicWindowGenerator(
-        node_count=10, seed=seed, period=10e-3, duty_cycle=0.2, on_voltage=1, on_current=100e-3
-    )
+    for period, duty_cycle in product(periods, duty_cycles):
+        generator = RndPeriodicWindowGenerator(
+            node_count=20, seed=seed, period=period, duty_cycle=duty_cycle, on_voltage=2, on_current=10e-3
+        )
 
-    # Create folder
-    folder_path = path_eenv / "random_window_test"
-    folder_path.mkdir(parents=True, exist_ok=False)
+        # Create output folder (or skip)
+        name = f"eenv_random_onwidows_{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
+        folder_path = path_eenv / name
+        if folder_path.exists():
+            print(f'Folder {folder_path} exists. Skipping combination.')
+            continue
+        folder_path.mkdir(parents=True, exist_ok=False)
 
-    generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)
+        generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)

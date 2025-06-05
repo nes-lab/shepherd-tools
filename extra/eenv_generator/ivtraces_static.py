@@ -34,9 +34,12 @@ if __name__ == "__main__":
     for voltage, current in product(voltages, currents):
         generator = StaticGenerator(voltage=voltage, current=current)
 
-        # Create folder
+        # Create output folder (or skip)
         name = f"eenv_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
         folder_path = path_eenv / name
+        if folder_path.exists():
+            print(f'Folder {folder_path} exists. Skipping combination.')
+            continue
         folder_path.mkdir(parents=True, exist_ok=False)
 
         generate_h5_files(
