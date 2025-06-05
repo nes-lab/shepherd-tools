@@ -9,7 +9,7 @@ from commons import generate_h5_files
 class StaticGenerator(EEnvGenerator):
     def __init__(self, voltage: float, current: float) -> None:
         # No seed required since no randomness is used
-        # 1 Node is sufficient since
+        # 1 Node is sufficient since the eenv is identical for all nodes
         super().__init__(node_count=1, seed=None)
         self.voltage = voltage
         self.current = current

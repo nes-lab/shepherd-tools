@@ -8,11 +8,11 @@ from commons import generate_h5_files
 
 
 class RndPeriodicWindowGenerator(EEnvGenerator):
-    """
-    Generates a random on-off pattern with fixed on-voltage/-current.
-    Each node's state is independently generated such that the average
-    duty cycle and on duration match the given values using a markov process.
-    """
+    '''
+    Generates a periodic on-off pattern with fixed on-voltage/-current.
+    Each node's has fixed-length on windows placed independently such that the
+    duty cycle matches the given value.
+    '''
 
     def __init__(
         self,
