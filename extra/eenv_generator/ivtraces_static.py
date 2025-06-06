@@ -1,3 +1,5 @@
+"""Generator for static Energy-Environments."""
+
 from itertools import product
 from pathlib import Path
 
@@ -5,11 +7,18 @@ import numpy as np
 from commons import EEnvGenerator
 from commons import generate_h5_files
 
+from shepherd_core import logger
+
 
 class StaticGenerator(EEnvGenerator):
+    """Generator for static Energy-Environments.
+
+    There is only one file needed per use-case since the eenv is
+    identical for all nodes.
+    Also, no seed is required since no randomness is used.
+    """
+
     def __init__(self, voltage: float, current: float) -> None:
-        # No seed required since no randomness is used
-        # 1 Node is sufficient since the eenv is identical for all nodes
         super().__init__(node_count=1, seed=None)
         self.voltage = voltage
         self.current = current
@@ -38,7 +47,7 @@ if __name__ == "__main__":
         name = f"eenv_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
         folder_path = path_eenv / name
         if folder_path.exists():
-            print(f'Folder {folder_path} exists. Skipping combination.')
+            logger.info("Folder %s exists. Skipping combination.", folder_path)
             continue
         folder_path.mkdir(parents=True, exist_ok=False)
 
