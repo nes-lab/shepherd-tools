@@ -62,6 +62,7 @@ def generate_h5_files(
                     voltage=CalibrationPair(gain=1e-6, offset=0),
                     current=CalibrationPair(gain=1e-9, offset=0),
                 ),
+                verbose=False,
             )
             file_handles.append(stack.enter_context(writer))
             writer.store_hostname(f"node{i}.h5")

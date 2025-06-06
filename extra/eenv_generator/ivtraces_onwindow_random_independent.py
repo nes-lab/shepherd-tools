@@ -43,7 +43,8 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
 
     def generate_random_pattern(self, count: int) -> np.ndarray:
         if count % self.period != 0:
-            raise ValueError("Count is not divisible by period step count")
+            logger.warning("Count is not divisible by period step count (%d vs %d)", count, self.period)
+            count = (round(count / self.period) + 1) * self.period
 
         period_count = round(count / self.period)
         max_start = self.period - self.on_duration
@@ -84,16 +85,16 @@ if __name__ == "__main__":
             seed=seed,
             period=period,
             duty_cycle=duty_cycle,
-            on_voltage=2,
+            on_voltage=2.0,
             on_current=10e-3,
         )
 
         # Create output folder (or skip)
-        name = f"eenv_random_onwidows_{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
+        name = f"eenv_on_off_random_windows_{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
         folder_path = path_eenv / name
         if folder_path.exists():
             logger.info("Folder %s exists. Skipping combination.", folder_path)
             continue
         folder_path.mkdir(parents=True, exist_ok=False)
 
-        generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)
+        generate_h5_files(folder_path, duration=duration, chunk_size=1_000_000, generator=generator)

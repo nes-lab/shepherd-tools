@@ -83,12 +83,12 @@ if __name__ == "__main__":
             seed=seed,
             avg_duty_cycle=duty_cycle,
             avg_on_duration=on_duration,
-            on_voltage=2,
+            on_voltage=2.0,
             on_current=10e-3,
         )
 
         # Create output folder (or skip)
-        name = f"eenv_random_markov_{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us"
+        name = f"eenv_on_off_random_markov_avg_{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us"
         folder_path = path_eenv / name
         if folder_path.exists():
             logger.info("Folder %s exists. Skipping combination.", folder_path)
