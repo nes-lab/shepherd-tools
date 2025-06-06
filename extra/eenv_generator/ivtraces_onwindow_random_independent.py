@@ -43,7 +43,9 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
 
     def generate_random_pattern(self, count: int) -> np.ndarray:
         if count % self.period != 0:
-            logger.warning("Count is not divisible by period step count (%d vs %d)", count, self.period)
+            logger.warning(
+                "Count is not divisible by period step count (%d vs %d)", count, self.period
+            )
             count = (round(count / self.period) + 1) * self.period
 
         period_count = round(count / self.period)

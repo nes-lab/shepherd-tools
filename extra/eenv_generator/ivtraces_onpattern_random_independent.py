@@ -88,7 +88,10 @@ if __name__ == "__main__":
         )
 
         # Create output folder (or skip)
-        name = f"eenv_on_off_random_markov_avg_{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us"
+        name = (
+            "eenv_on_off_random_markov_avg_"
+            f"{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us"
+        )
         folder_path = path_eenv / name
         if folder_path.exists():
             logger.info("Folder %s exists. Skipping combination.", folder_path)
