@@ -8,7 +8,7 @@
 - update all links and referenced for moving repos to `nes-lab`
 - add beta of new generators for energy-environments
 - adding firmware is now less prone to error - ARCH and MCU can be added manually
--
+- experiment now suggests its own directory-name
 
 ## v2025.05.3
 

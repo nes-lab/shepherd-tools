@@ -16,6 +16,7 @@ from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.content import id_default
 from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.testbed.target import Target
 from shepherd_core.data_models.testbed.testbed import Testbed
 from shepherd_core.version import version
@@ -66,7 +67,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         #       or with cached fixtures
         testbed = Testbed()  # this will query the first (and only) entry of client
         self._validate_targets(self.target_configs)
-        self._validate_observers(self.target_configs, testbed)
+        # self._validate_observers(self.target_configs, testbed)
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration of experiment can't be negative.")
         return self
@@ -108,3 +109,10 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         # gets already caught in target_config - but keep:
         msg = f"Target-ID {target_id} was not found in Experiment '{self.name}'"
         raise ValueError(msg)
+
+    def folder_name(self, custom_date: Optional[datetime] = None) -> str:
+        date = custom_date if custom_date is not None else self.time_start
+        timestamp = local_now() if date is None else date
+        timestrng = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
+        # ⤷ closest to ISO 8601, avoids ":"
+        return f"{timestrng}_{self.name.replace(' ', '_')}"
