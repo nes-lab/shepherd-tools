@@ -125,12 +125,17 @@ class Firmware(ContentModel, title="Firmware of Target"):
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
 
+        # verification of ELF - warn if something is off
+        # -> adds ARCH if it is able to derive
         if kwargs["data_type"] == FirmwareDType.base64_elf:
             arch = fw_tools.read_arch(file)
-            if "msp430" in arch and not fw_tools.is_elf_msp430(file):
-                raise ValueError("File is not a ELF for msp430")
-            if ("nrf52" in arch or "arm" in arch) and not fw_tools.is_elf_nrf52(file):
-                raise ValueError("File is not a ELF for nRF52")
+            try:
+                if "msp430" in arch and not fw_tools.is_elf_msp430(file):
+                    raise ValueError("File is not a ELF for msp430")
+                if ("nrf52" in arch or "arm" in arch) and not fw_tools.is_elf_nrf52(file):
+                    raise ValueError("File is not a ELF for nRF52")
+            except RuntimeError:
+                logger.warning("ObjCopy not found -> Arch of Firmware can't be verified")
             logger.debug("ELF-File '%s' has arch: %s", file.name, arch)
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]

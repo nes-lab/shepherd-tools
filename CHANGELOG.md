@@ -1,11 +1,14 @@
 # History of Changes
 
-## v2025.05.4
+## v2025.06.1
 
 - cli-cmd `extract-uart` is renamed to `decode-uart` - to better describe what it does
 - cli-cmd `extract-uart` now only saves the UART-log (decoded from Linux on observer)
 - cli-cmd `extract-meta` now mainly saves a YAML that describes the content of the hdf5-file (add `--debug` for all system-logs)
 - update all links and referenced for moving repos to `nes-lab`
+- add beta of new generators for energy-environments
+- adding firmware is now less prone to error - ARCH and MCU can be added manually
+-
 
 ## v2025.05.3
 
