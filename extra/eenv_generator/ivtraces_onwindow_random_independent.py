@@ -92,7 +92,10 @@ if __name__ == "__main__":
         )
 
         # Create output folder (or skip)
-        name = f"artificial_on_off_random_windows_{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
+        name = (
+            f"artificial_on_off_random_windows_"
+            f"{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
+        )
         folder_path = path_eenv / name
         if folder_path.exists():
             logger.info("Folder %s exists. Skipping combination.", folder_path)
