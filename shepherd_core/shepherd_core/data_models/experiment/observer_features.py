@@ -247,6 +247,11 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
     events: Annotated[list[GpioEvent], Field(min_length=1, max_length=1024)]
 
+    @model_validator(mode="after")
+    def post_validation(self) -> Self:
+        msg = "not implemented ATM"
+        raise ValueError(msg)
+
     def get_gpios(self) -> set:
         return {_ev.gpio for _ev in self.events}
 
@@ -259,7 +264,7 @@ class SystemLogging(ShpModel, title="Config for System-Logging"):
     sheep: bool = True
     sys_util: bool = True
 
-    # TODO: remove lines below in 2026
+    # deprecated, TODO: remove lines below before public release
     dmesg: Annotated[bool, deprecated("for sheep v0.9.0+, use 'kernel' instead")] = True
     ptp: Annotated[bool, deprecated("for sheep v0.9.0+, use 'time_sync' instead")] = True
     shepherd: Annotated[bool, deprecated("for sheep v0.9.0+, use 'sheep' instead")] = True

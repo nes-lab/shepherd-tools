@@ -11,6 +11,7 @@ from pydantic import HttpUrl
 from pydantic import model_validator
 from typing_extensions import Self
 
+from shepherd_core.config import config
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
@@ -46,12 +47,9 @@ class Testbed(ShpModel):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        # allow instantiating an empty Testbed
-        #   -> query the first (and usually only) entry of client
+        # allow instantiating an empty Testbed, take default in config
         if len(values) == 0:
-            ids = tb_client.query_ids(cls.__name__)
-            # warning for "More than one testbed defined?!?" if len(ids) > 1
-            values = {"id": ids[0]}
+            values = {"name": config.TESTBED}
 
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values

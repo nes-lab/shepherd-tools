@@ -11,10 +11,10 @@ from pydantic import model_validator
 from typing_extensions import Self
 from typing_extensions import deprecated
 
+from shepherd_core.config import config
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
-from shepherd_core.data_models.base.content import id_default
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.testbed.target import Target
@@ -32,28 +32,20 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     """Config for experiments on the testbed emulating energy environments for target nodes."""
 
     # General Properties
-    id: int = Field(description="Unique ID", default_factory=id_default)
-    # ⤷ TODO: automatic ID is problematic for identification by hash
-
     name: NameStr
     description: Annotated[
         Optional[SafeStr], Field(description="Required for public instances")
     ] = None
     comment: Optional[SafeStr] = None
-    created: datetime = Field(default_factory=datetime.now)
-
-    # Ownership & Access
-    owner_id: Optional[IdInt] = None
 
     # feedback
-    email_results: bool = False
+    email_results: bool = True
 
     sys_logging: SystemLogging = sys_log_all
 
     # schedule
     time_start: Optional[datetime] = None  # = ASAP
     duration: Optional[timedelta] = None  # = till EOF
-    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # targets
     target_configs: Annotated[list[TargetConfig], Field(min_length=1, max_length=128)]
@@ -61,13 +53,16 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # debug
     lib_ver: Optional[str] = version
 
+    # deprecated fields, TODO: remove before public release
+    id: Annotated[Optional[int], deprecated("not needed")] = None
+    created: Annotated[Optional[datetime], deprecated("not needed")] = None
+    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
+    owner_id: Annotated[Optional[IdInt], deprecated("not needed")] = None
+
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        # TODO: only do deep validation with active connection to TB-client
-        #       or with cached fixtures
-        testbed = Testbed()  # this will query the first (and only) entry of client
+        self._validate_observers(self.target_configs)
         self._validate_targets(self.target_configs)
-        # self._validate_observers(self.target_configs, testbed)
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration of experiment can't be negative.")
         return self
@@ -79,8 +74,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         for _config in configs:
             for _id in _config.target_IDs:
                 target_ids.append(_id)
-                Target(id=_id)
-                # ⤷ this can raise exception for non-existing targets
+                if config.VALIDATE_INFRA:
+                    Target(id=_id)
+                    # ⤷ this can raise exception for non-existing targets
             if _config.custom_IDs is not None:
                 custom_ids = custom_ids + _config.custom_IDs[: len(_config.target_IDs)]
             else:
@@ -91,7 +87,10 @@ class Experiment(ShpModel, title="Config of an Experiment"):
             raise ValueError("Custom Target-ID are faulty (some form of id-collisions)!")
 
     @staticmethod
-    def _validate_observers(configs: Iterable[TargetConfig], testbed: Testbed) -> None:
+    def _validate_observers(configs: Iterable[TargetConfig]) -> None:
+        if not config.VALIDATE_INFRA:
+            return
+        testbed = Testbed()
         target_ids = [_id for _config in configs for _id in _config.target_IDs]
         obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
         if len(target_ids) > len(set(obs_ids)):
