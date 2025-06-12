@@ -9,6 +9,8 @@
 - add beta of new generators for energy-environments
 - adding firmware is now less prone to error - ARCH and MCU can be added manually
 - experiment now suggests its own directory-name
+- added reader.get_time_start()
+- establish a user-changeable config (former Reader.commons)
 
 ## v2025.05.3
 

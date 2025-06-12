@@ -13,13 +13,13 @@ from tqdm import trange
 
 from shepherd_core import Writer as ShepherdWriter
 from shepherd_core import logger
-from shepherd_core.commons import SAMPLERATE_SPS_DEFAULT
+from shepherd_core.config import config
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
 
-STEP_WIDTH = 1.0 / SAMPLERATE_SPS_DEFAULT  # 10 us
+STEP_WIDTH = 1.0 / config.SAMPLERATE_SPS  # 10 us
 
 
 class EEnvGenerator(ABC):

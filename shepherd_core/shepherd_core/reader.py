@@ -7,6 +7,7 @@ import errno
 import logging
 import math
 import os
+from datetime import datetime
 from itertools import product
 from pathlib import Path
 from types import MappingProxyType
@@ -24,9 +25,10 @@ from tqdm import trange
 from typing_extensions import Self
 from typing_extensions import deprecated
 
-from .commons import SAMPLERATE_SPS_DEFAULT
+from .config import config
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
+from .data_models.base.timezone import local_tz
 from .data_models.content.energy_environment import EnergyDType
 from .decoder_waveform import Uart
 
@@ -75,7 +77,7 @@ class Reader:
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
         if not hasattr(self, "samplerate_sps"):
-            self.samplerate_sps: int = SAMPLERATE_SPS_DEFAULT
+            self.samplerate_sps: int = config.SAMPLERATE_SPS
         self.sample_interval_ns: int = round(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
@@ -262,6 +264,11 @@ class Reader:
             is_raw=is_raw,
             omit_timestamps=omit_ts,
         )
+
+    def get_time_start(self) -> Optional[datetime]:
+        if self.samples_n < 1:
+            return None
+        return datetime.fromtimestamp(self._cal.time.raw_to_si(self.ds_time[0]), tz=local_tz())
 
     def get_calibration_data(self) -> CalibrationSeries:
         """Read calibration-data from hdf5 file.
