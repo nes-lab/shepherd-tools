@@ -44,7 +44,7 @@ if __name__ == "__main__":
         generator = StaticGenerator(voltage=voltage, current=current)
 
         # Create output folder (or skip)
-        name = f"eenv_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
+        name = f"artificial_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
         folder_path = path_eenv / name
         if folder_path.exists():
             logger.info("Folder %s exists. Skipping combination.", folder_path)

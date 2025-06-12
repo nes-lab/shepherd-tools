@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
         # Create output folder (or skip)
         name = (
-            "eenv_on_off_random_markov_avg_"
+            "artificial_on_off_random_markov_avg_"
             f"{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us"
         )
         folder_path = path_eenv / name
