@@ -52,9 +52,7 @@ def test_experiment_model_exp_yaml_comparison() -> None:
         firmware1={"name": "nrf52_demo_rf"},
     )
     exp2 = Experiment(
-        id=4567,
         name="meaningful Test-Name",
-        created="2023-11-11 11:11:11",
         time_start="2033-12-12 12:12:12",
         target_configs=[target_cfgs],
     )
@@ -83,7 +81,6 @@ def test_experiment_model_exp_collision_target_id() -> None:
     ]
     with pytest.raises(ValidationError):
         _ = Experiment(
-            id="4567",
             name="meaningful Test-Name",
             time_start=local_now() + timedelta(minutes=30),
             target_configs=target_cfgs,
@@ -111,7 +108,6 @@ def test_experiment_model_exp_collision_custom_id() -> None:
     ]
     with pytest.raises(ValidationError):
         _ = Experiment(
-            id="4567",
             name="meaningful Test-Name",
             time_start=local_now() + timedelta(minutes=30),
             target_configs=target_cfgs,
@@ -132,7 +128,6 @@ def test_experiment_model_exp_collision_observer() -> None:
     ]
     with pytest.raises(ValidationError):
         _ = Experiment(
-            id="4567",
             name="meaningful Test-Name",
             time_start=local_now() + timedelta(minutes=30),
             target_configs=target_cfgs,

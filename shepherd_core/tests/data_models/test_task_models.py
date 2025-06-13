@@ -102,7 +102,6 @@ def test_task_model_hrv_too_late() -> None:
 def test_task_model_observer_min1() -> None:
     ObserverTasks(
         observer="peeping tom",
-        owner_id=666,
         time_prep="2044-01-01 12:13:14",
         root_path="/usr",
     )
