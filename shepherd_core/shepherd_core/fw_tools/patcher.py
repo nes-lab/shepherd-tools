@@ -2,7 +2,6 @@
 
 from pathlib import Path
 from typing import Annotated
-from typing import Optional
 
 from pydantic import Field
 from pydantic import validate_call
@@ -49,7 +48,7 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
 
 
 @validate_call
-def read_symbol(file_elf: Path, symbol: str, length: int) -> Optional[int]:
+def read_symbol(file_elf: Path, symbol: str, length: int) -> int | None:
     """Read value of symbol in ELF-File.
 
     Will be interpreted as int.
@@ -65,12 +64,12 @@ def read_symbol(file_elf: Path, symbol: str, length: int) -> Optional[int]:
     return int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
 
 
-def read_uid(file_elf: Path) -> Optional[int]:
+def read_uid(file_elf: Path) -> int | None:
     """Read value of UID-symbol for shepherd testbed."""
     return read_symbol(file_elf, symbol=config.UID_NAME, length=config.UID_SIZE)
 
 
-def read_arch(file_elf: Path) -> Optional[str]:
+def read_arch(file_elf: Path) -> str | None:
     """Determine chip-architecture from elf-metadata."""
     if not is_elf(file_elf):
         return None
@@ -90,7 +89,7 @@ def modify_symbol_value(
     value: Annotated[int, Field(ge=0, lt=2 ** (8 * config.UID_SIZE))],
     *,
     overwrite: bool = False,
-) -> Optional[Path]:
+) -> Path | None:
     """Replace value of uint16-symbol in ELF-File.
 
     Hardcoded for uint16_t (2 byte).
@@ -129,6 +128,6 @@ def modify_symbol_value(
     return file_new
 
 
-def modify_uid(file_elf: Path, value: int) -> Optional[Path]:
+def modify_uid(file_elf: Path, value: int) -> Path | None:
     """Replace value of UID-symbol for shepherd testbed."""
     return modify_symbol_value(file_elf, symbol=config.UID_NAME, value=value, overwrite=True)

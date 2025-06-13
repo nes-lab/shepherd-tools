@@ -1,13 +1,11 @@
 """Models for the calibration-data to convert between raw & SI-Values."""
 
 import struct
+from collections.abc import Callable
 from collections.abc import Generator
 from collections.abc import Mapping
 from collections.abc import Sequence
-from typing import Callable
-from typing import Optional
 from typing import TypeVar
-from typing import Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -29,7 +27,7 @@ Calc_t = TypeVar("Calc_t", NDArray[np.float64], float)
 
 
 def dict_generator(
-    in_dict: Union[Mapping, Sequence], pre: Optional[list] = None
+    in_dict: Mapping | Sequence, pre: list | None = None
 ) -> Generator[list, None, None]:
     """Recursive helper-function to generate a 1D-List(or not?).
 
@@ -54,7 +52,7 @@ class CalibrationPair(ShpModel):
 
     gain: PositiveFloat
     offset: float = 0
-    unit: Optional[str] = None  # TODO: add units when used
+    unit: str | None = None  # TODO: add units when used
 
     def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
         """Convert between physical units and raw unsigned integers."""
@@ -81,7 +79,7 @@ class CalibrationPair(ShpModel):
         return values_raw
 
     @classmethod
-    def from_fn(cls, fn: Callable, unit: Optional[str] = None) -> Self:
+    def from_fn(cls, fn: Callable, unit: str | None = None) -> Self:
         """Probe linear function to determine scaling values."""
         offset = fn(0, limited=False)
         gain_inv = fn(1.0, limited=False) - offset
@@ -217,14 +215,14 @@ class CalibrationCape(ShpModel):
     YAML: .to_file() and .from_file() already in ShpModel
     """
 
-    cape: Optional[CapeData] = None
-    host: Optional[str] = None
+    cape: CapeData | None = None
+    host: str | None = None
 
     harvester: CalibrationHarvester = CalibrationHarvester()
     emulator: CalibrationEmulator = CalibrationEmulator()
 
     @classmethod
-    def from_bytestr(cls, data: bytes, cape: Optional[CapeData] = None) -> Self:
+    def from_bytestr(cls, data: bytes, cape: CapeData | None = None) -> Self:
         """Instantiate calibration data based on byte string.
 
         This is mainly used to deserialize data read from an EEPROM memory.
@@ -276,7 +274,7 @@ class CalibrationSeries(ShpModel):
     @validate_call(validate_return=False)
     def from_cal(
         cls,
-        cal: Union[CalibrationHarvester, CalibrationEmulator],
+        cal: CalibrationHarvester | CalibrationEmulator,
         *,
         emu_port_a: bool = True,
     ) -> Self:

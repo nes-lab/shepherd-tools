@@ -3,7 +3,6 @@
 from enum import Enum
 from pathlib import Path
 from typing import Any
-from typing import Optional
 
 from pydantic import PositiveFloat
 from pydantic import model_validator
@@ -40,10 +39,10 @@ class EnergyEnvironment(ContentModel):
     # TODO: harvester, transducer
 
     # additional descriptive metadata, TODO: these are very solar-centered -> generalize
-    light_source: Optional[str] = None
-    weather_conditions: Optional[str] = None
-    indoor: Optional[bool] = None
-    location: Optional[str] = None
+    light_source: str | None = None
+    weather_conditions: str | None = None
+    indoor: bool | None = None
+    location: str | None = None
 
     @model_validator(mode="before")
     @classmethod

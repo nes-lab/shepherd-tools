@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from typing import Annotated
-from typing import Optional
 from uuid import uuid4
 
 from pydantic import Field
@@ -37,8 +36,8 @@ class ContentModel(ShpModel):
         default_factory=id_default,
     )
     name: NameStr
-    description: Annotated[Optional[SafeStr], Field(description="Required when public")] = None
-    comment: Optional[SafeStr] = None
+    description: Annotated[SafeStr | None, Field(description="Required when public")] = None
+    comment: SafeStr | None = None
     created: datetime = Field(default_factory=datetime.now)
     updated_last: datetime = Field(default_factory=datetime.now)
 

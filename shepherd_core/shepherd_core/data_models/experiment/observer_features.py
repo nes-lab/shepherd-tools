@@ -3,7 +3,6 @@
 from datetime import timedelta
 from enum import Enum
 from typing import Annotated
-from typing import Optional
 
 import numpy as np
 from annotated_types import Interval
@@ -11,7 +10,6 @@ from pydantic import Field
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from typing_extensions import Self
-from typing_extensions import deprecated
 
 from shepherd_core import logger
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -35,7 +33,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     # time
     delay: timedelta = zero_duration
     """start recording after experiment started"""
-    duration: Optional[timedelta] = None  # till EOF
+    duration: timedelta | None = None  # till EOF
     """duration of recording after delay starts the process.
 
     default is None, recording till EOF"""
@@ -175,7 +173,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
     # time
     delay: timedelta = zero_duration
-    duration: Optional[timedelta] = None  # till EOF
+    duration: timedelta | None = None  # till EOF
 
     # post-processing,
     uart_decode: bool = False

@@ -3,12 +3,9 @@
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
-from typing import Annotated
-from typing import Optional
 
 from pydantic import validate_call
 from typing_extensions import Self
-from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
@@ -31,13 +28,13 @@ class ObserverTasks(ShpModel):
     root_path: Path
 
     # fw mod, store as hex-file and program
-    fw1_mod: Optional[FirmwareModTask] = None
-    fw2_mod: Optional[FirmwareModTask] = None
-    fw1_prog: Optional[ProgrammingTask] = None
-    fw2_prog: Optional[ProgrammingTask] = None
+    fw1_mod: FirmwareModTask | None = None
+    fw2_mod: FirmwareModTask | None = None
+    fw1_prog: ProgrammingTask | None = None
+    fw2_prog: ProgrammingTask | None = None
 
     # MAIN PROCESS
-    emulation: Optional[EmulationTask] = None
+    emulation: EmulationTask | None = None
 
     # post_copy / cleanup, Todo: could also just intake emuTask
     #  - delete firmwares

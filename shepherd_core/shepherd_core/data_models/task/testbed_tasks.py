@@ -2,14 +2,11 @@
 
 from pathlib import Path
 from typing import Annotated
-from typing import Optional
 
 from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Self
-from typing_extensions import deprecated
 
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.experiment.experiment import Experiment
@@ -26,7 +23,7 @@ class TestbedTasks(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None) -> Self:
+    def from_xp(cls, xp: Experiment, tb: Testbed | None = None) -> Self:
         if tb is None:
             # TODO: is tb-argument really needed? prob. not
             tb = Testbed()  # this will query the first (and only) entry of client
@@ -38,7 +35,7 @@ class TestbedTasks(ShpModel):
             observer_tasks=obs_tasks,
         )
 
-    def get_observer_tasks(self, observer: str) -> Optional[ObserverTasks]:
+    def get_observer_tasks(self, observer: str) -> ObserverTasks | None:
         for tasks in self.observer_tasks:
             if observer == tasks.observer:
                 return tasks

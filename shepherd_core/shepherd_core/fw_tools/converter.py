@@ -4,7 +4,6 @@ import base64
 import hashlib
 import shutil
 from pathlib import Path
-from typing import Union
 
 import zstandard as zstd
 from pydantic import validate_call
@@ -81,7 +80,7 @@ def base64_to_hash(content: str) -> str:
 
 
 @validate_call
-def extract_firmware(data: Union[str, Path], data_type: FirmwareDType, file_path: Path) -> Path:
+def extract_firmware(data: str | Path, data_type: FirmwareDType, file_path: Path) -> Path:
     """Make embedded firmware-data usable in filesystem.
 
     - base64-string will be transformed to file

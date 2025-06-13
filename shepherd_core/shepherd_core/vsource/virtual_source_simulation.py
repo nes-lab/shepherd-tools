@@ -9,7 +9,6 @@ The output file can be analyzed and plotted with shepherds tool suite.
 
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 from tqdm import tqdm
@@ -28,7 +27,7 @@ def simulate_source(
     config: VirtualSourceConfig,
     target: TargetABC,
     path_input: Path,
-    path_output: Optional[Path] = None,
+    path_output: Path | None = None,
     *,
     monitor_internals: bool = False,
 ) -> float:

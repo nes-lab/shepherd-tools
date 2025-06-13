@@ -3,7 +3,6 @@
 from enum import Enum
 from typing import Annotated
 from typing import Any
-from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
@@ -30,7 +29,7 @@ class MCU(ShpModel, title="Microcontroller of the Target Node"):
     id: IdInt
     name: NameStr
     description: SafeStr
-    comment: Optional[SafeStr] = None
+    comment: SafeStr | None = None
 
     platform: NameStr
     core: NameStr

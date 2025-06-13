@@ -2,7 +2,6 @@
 
 import sys
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -15,7 +14,7 @@ from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.logger import logger
 
 
-def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
+def load_model(_model: type(ShpModel), path: Path) -> ShpModel | None:
     """Open and unwrap a shepherd data-model."""
     try:
         return _model.from_file(path)

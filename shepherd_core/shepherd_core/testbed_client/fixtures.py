@@ -8,8 +8,6 @@ from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
-from typing import Optional
-from typing import Union
 
 import yaml
 from pydantic import validate_call
@@ -57,7 +55,7 @@ class Fixture:
         # update iterator
         self._iter_list: list[dict[str, Any]] = list(self.elements_by_name.values())
 
-    def __getitem__(self, key: Union[str, int]) -> dict[str, Any]:
+    def __getitem__(self, key: str | int) -> dict[str, Any]:
         original_key = key
         if isinstance(key, str):
             key = key.lower()
@@ -89,7 +87,7 @@ class Fixture:
         return {_i["id"]: _i["name"] for _i in self.elements_by_id.values()}
 
     def inheritance(
-        self, values: dict[str, Any], chain: Optional[list[str]] = None
+        self, values: dict[str, Any], chain: list[str] | None = None
     ) -> tuple[dict[str, Any], list[str]]:
         if chain is None:
             chain = []
@@ -177,7 +175,7 @@ class Fixtures:
     suffix = ".yaml"
 
     @validate_call
-    def __init__(self, file_path: Optional[Path] = None, *, reset: bool = False) -> None:
+    def __init__(self, file_path: Path | None = None, *, reset: bool = False) -> None:
         if file_path is None:
             self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
         else:

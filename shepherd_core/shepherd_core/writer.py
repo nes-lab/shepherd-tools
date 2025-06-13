@@ -9,8 +9,6 @@ from itertools import product
 from pathlib import Path
 from types import TracebackType
 from typing import Any
-from typing import Optional
-from typing import Union
 
 import h5py
 import numpy as np
@@ -32,7 +30,7 @@ from .reader import Reader
 
 # copy of core/models/base/shepherd - needed also here
 def path2str(
-    dumper: SafeDumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
+    dumper: SafeDumper, data: pathlib.Path | pathlib.WindowsPath | pathlib.PosixPath
 ) -> Node:
     """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
@@ -49,7 +47,7 @@ yaml.add_representer(pathlib.Path, path2str, SafeDumper)
 yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
-def unique_path(base_path: Union[str, Path], suffix: str) -> Path:
+def unique_path(base_path: str | Path, suffix: str) -> Path:
     """Find an unused filename in case it already exists.
 
     :param base_path: file-path to test
@@ -100,11 +98,11 @@ class Writer(Reader):
     def __init__(
         self,
         file_path: Path,
-        mode: Optional[str] = None,
-        datatype: Union[str, EnergyDType, None] = None,
-        window_samples: Optional[int] = None,
-        cal_data: Union[CalSeries, CalEmu, CalHrv, None] = None,
-        compression: Optional[Compression] = Compression.default,
+        mode: str | None = None,
+        datatype: str | EnergyDType | None = None,
+        window_samples: int | None = None,
+        cal_data: CalSeries | CalEmu | CalHrv | None = None,
+        compression: Compression | None = Compression.default,
         *,
         modify_existing: bool = False,
         force_overwrite: bool = False,
@@ -210,9 +208,9 @@ class Writer(Reader):
 
     def __exit__(
         self,
-        typ: Optional[type[BaseException]] = None,
-        exc: Optional[BaseException] = None,
-        tb: Optional[TracebackType] = None,
+        typ: type[BaseException] | None = None,
+        exc: BaseException | None = None,
+        tb: TracebackType | None = None,
         extra_arg: int = 0,
     ) -> None:
         self._align()
@@ -279,7 +277,7 @@ class Writer(Reader):
 
     def append_iv_data_raw(
         self,
-        timestamp: Union[np.ndarray, float, int],  # noqa: PYI041
+        timestamp: np.ndarray | float | int,  # noqa: PYI041
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:
@@ -318,7 +316,7 @@ class Writer(Reader):
 
     def append_iv_data_si(
         self,
-        timestamp: Union[np.ndarray, float],
+        timestamp: np.ndarray | float,
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:

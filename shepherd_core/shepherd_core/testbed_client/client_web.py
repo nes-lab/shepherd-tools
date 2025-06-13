@@ -3,8 +3,6 @@
 from importlib import import_module
 from pathlib import Path
 from typing import Any
-from typing import Optional
-from typing import Union
 
 from pydantic import validate_call
 
@@ -28,7 +26,7 @@ class WebClient(AbcClient):
 
     testbed_server_default = "https://shepherd.cfaed.tu-dresden.de:8000/testbed"
 
-    def __init__(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> None:
+    def __init__(self, server: str | None = None, token: str | Path | None = None) -> None:
         """Connect to Testbed-Server with optional token and server-address.
 
         server: optional address to shepherd-server-endpoint
@@ -39,8 +37,8 @@ class WebClient(AbcClient):
             # add default values
             self._token: str = "basic_public_access"  # noqa: S105
             self._server: str = config.TESTBED_SERVER
-            self._user: Optional[User] = None
-            self._key: Optional[str] = None
+            self._user: User | None = None
+            self._key: str | None = None
             self._connected: bool = False
             self._req = None
 
@@ -66,9 +64,7 @@ class WebClient(AbcClient):
     def query_names(self, model_type: str) -> list[str]:
         raise NotImplementedError("TODO")
 
-    def query_item(
-        self, model_type: str, uid: Optional[int] = None, name: Optional[str] = None
-    ) -> dict:
+    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
         raise NotImplementedError("TODO")
 
     def try_inheritance(
@@ -88,7 +84,7 @@ class WebClient(AbcClient):
     # Below are extra FNs not in ABC
 
     @validate_call
-    def _connect(self, server: Optional[str] = None, token: Union[str, Path, None] = None) -> bool:
+    def _connect(self, server: str | None = None, token: str | Path | None = None) -> bool:
         """Establish connection to testbed-server.
 
         TODO: totally not finished

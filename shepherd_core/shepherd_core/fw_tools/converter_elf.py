@@ -2,7 +2,6 @@
 
 import subprocess
 from pathlib import Path
-from typing import Optional
 
 from pydantic import validate_call
 
@@ -10,7 +9,7 @@ from pydantic import validate_call
 
 
 @validate_call
-def elf_to_hex(file_elf: Path, file_hex: Optional[Path] = None) -> Path:
+def elf_to_hex(file_elf: Path, file_hex: Path | None = None) -> Path:
     """Convert ELF to hex file using objcopy."""
     if not file_elf.is_file():
         raise ValueError("Fn needs an existing file as input")

@@ -1,7 +1,6 @@
 """Models for the process of calibration a device by measurements."""
 
 from typing import Annotated
-from typing import Optional
 
 import numpy as np
 from pydantic import Field
@@ -91,11 +90,11 @@ class CalMeasurementEmulator(ShpModel):
 class CalMeasurementCape(ShpModel):
     """Container for the values of the calibration-measurement."""
 
-    cape: Optional[CapeData] = None
-    host: Optional[str] = None
+    cape: CapeData | None = None
+    host: str | None = None
 
-    harvester: Optional[CalMeasurementHarvester] = None
-    emulator: Optional[CalMeasurementEmulator] = None
+    harvester: CalMeasurementHarvester | None = None
+    emulator: CalMeasurementEmulator | None = None
 
     def to_cal(self) -> CalibrationCape:
         dv = self.model_dump()

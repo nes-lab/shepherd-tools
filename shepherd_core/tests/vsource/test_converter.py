@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 import pytest
 
@@ -25,8 +24,8 @@ src_list = [
 def src_model(
     name: str,
     dtype_in: EnergyDType = EnergyDType.ivsample,
-    window_size: Optional[int] = None,
-    voltage_step_V: Optional[float] = None,
+    window_size: int | None = None,
+    voltage_step_V: float | None = None,
 ) -> VirtualSourceModel:
     src_config = VirtualSourceConfig(name=name, V_intermediate_init_mV=2000)
     cal_emu = CalibrationEmulator()

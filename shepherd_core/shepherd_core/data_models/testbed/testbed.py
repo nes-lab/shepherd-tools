@@ -4,7 +4,6 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Annotated
 from typing import Any
-from typing import Optional
 
 from pydantic import Field
 from pydantic import HttpUrl
@@ -29,9 +28,9 @@ class Testbed(ShpModel):
     id: IdInt
     name: NameStr
     description: SafeStr
-    comment: Optional[SafeStr] = None
+    comment: SafeStr | None = None
 
-    url: Optional[HttpUrl] = None
+    url: HttpUrl | None = None
 
     observers: Annotated[list[Observer], Field(min_length=1, max_length=128)]
 

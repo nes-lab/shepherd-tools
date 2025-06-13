@@ -3,9 +3,7 @@
 import copy
 from pathlib import Path
 from typing import Annotated
-from typing import Optional
 from typing import TypedDict
-from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
@@ -28,9 +26,9 @@ from shepherd_core.logger import logger
 class FirmwareModTask(ShpModel):
     """Config for Task that adds the custom ID to the firmware & stores it into a file."""
 
-    data: Union[FirmwareStr, Path]
+    data: FirmwareStr | Path
     data_type: FirmwareDType
-    custom_id: Optional[IdInt16] = None
+    custom_id: IdInt16 | None = None
     firmware_file: Path
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2

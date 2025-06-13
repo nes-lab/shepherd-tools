@@ -3,7 +3,6 @@
 from enum import Enum
 from typing import Annotated
 from typing import Any
-from typing import Optional
 
 from pydantic import Field
 from pydantic import StringConstraints
@@ -30,16 +29,16 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
 
     id: IdInt
     name: NameStr
-    description: Optional[SafeStr] = None
-    comment: Optional[SafeStr] = None
+    description: SafeStr | None = None
+    comment: SafeStr | None = None
 
     direction: Direction = Direction.Input
-    dir_switch: Optional[Annotated[str, StringConstraints(max_length=32)]] = None
+    dir_switch: Annotated[str, StringConstraints(max_length=32)] | None = None
 
-    reg_pru: Optional[Annotated[str, StringConstraints(max_length=10)]] = None
-    pin_pru: Optional[Annotated[str, StringConstraints(max_length=10)]] = None
-    reg_sys: Optional[Annotated[int, Field(ge=0)]] = None
-    pin_sys: Optional[Annotated[str, StringConstraints(max_length=10)]] = None
+    reg_pru: Annotated[str, StringConstraints(max_length=10)] | None = None
+    pin_pru: Annotated[str, StringConstraints(max_length=10)] | None = None
+    reg_sys: Annotated[int, Field(ge=0)] | None = None
+    pin_sys: Annotated[str, StringConstraints(max_length=10)] | None = None
 
     def __str__(self) -> str:
         return self.name

@@ -9,7 +9,6 @@ The output file can be analyzed and plotted with shepherds tool suite.
 
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Optional
 
 from tqdm import tqdm
 
@@ -23,7 +22,7 @@ from .virtual_harvester_model import VirtualHarvesterModel
 
 
 def simulate_harvester(
-    config: VirtualHarvesterConfig, path_input: Path, path_output: Optional[Path] = None
+    config: VirtualHarvesterConfig, path_input: Path, path_output: Path | None = None
 ) -> float:
     """Simulate behavior of virtual harvester algorithms.
 

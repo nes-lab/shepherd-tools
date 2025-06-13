@@ -4,15 +4,12 @@ from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta
 from typing import Annotated
-from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
-from typing_extensions import deprecated
 
 from shepherd_core.config import config
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -33,10 +30,10 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     # General Properties
     name: NameStr
-    description: Annotated[
-        Optional[SafeStr], Field(description="Required for public instances")
-    ] = None
-    comment: Optional[SafeStr] = None
+    description: Annotated[SafeStr | None, Field(description="Required for public instances")] = (
+        None
+    )
+    comment: SafeStr | None = None
 
     # feedback
     email_results: bool = True
@@ -44,14 +41,14 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     sys_logging: SystemLogging = sys_log_all
 
     # schedule
-    time_start: Optional[datetime] = None  # = ASAP
-    duration: Optional[timedelta] = None  # = till EOF
+    time_start: datetime | None = None  # = ASAP
+    duration: timedelta | None = None  # = till EOF
 
     # targets
     target_configs: Annotated[list[TargetConfig], Field(min_length=1, max_length=128)]
 
     # debug
-    lib_ver: Optional[str] = version
+    lib_ver: str | None = version
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
@@ -103,7 +100,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         msg = f"Target-ID {target_id} was not found in Experiment '{self.name}'"
         raise ValueError(msg)
 
-    def folder_name(self, custom_date: Optional[datetime] = None) -> str:
+    def folder_name(self, custom_date: datetime | None = None) -> str:
         date = custom_date if custom_date is not None else self.time_start
         timestamp = local_now() if date is None else date
         timestrng = timestamp.strftime("%Y-%m-%d_%H-%M-%S")

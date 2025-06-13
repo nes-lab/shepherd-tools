@@ -23,8 +23,6 @@ https://sigrok.org/wiki/Protocol_decoder:Uart
 
 from enum import Enum
 from pathlib import Path
-from typing import Optional
-from typing import Union
 
 import numpy as np
 
@@ -51,12 +49,12 @@ class Uart:
 
     def __init__(
         self,
-        content: Union[Path, np.ndarray],
-        baud_rate: Optional[int] = None,
-        frame_length: Optional[int] = 8,
-        inversion: Optional[bool] = None,
-        parity: Optional[Parity] = Parity.no,
-        bit_order: Optional[BitOrder] = BitOrder.lsb_first,
+        content: Path | np.ndarray,
+        baud_rate: int | None = None,
+        frame_length: int | None = 8,
+        inversion: bool | None = None,
+        parity: Parity | None = Parity.no,
+        bit_order: BitOrder | None = BitOrder.lsb_first,
     ) -> None:
         """Provide a file with two columns: TS & Signal.
 
@@ -115,9 +113,9 @@ class Uart:
             logger.error("Signal still inverted?!? Check parameters and input")
 
         # results
-        self.events_symbols: Optional[np.ndarray] = None
-        self.events_lines: Optional[np.ndarray] = None
-        self.text: Optional[str] = None
+        self.events_symbols: np.ndarray | None = None
+        self.events_lines: np.ndarray | None = None
+        self.text: str | None = None
 
     def _convert_analog2digital(self, *, invert: bool = False) -> None:
         """Divide dimension in two, divided by mean-value."""
@@ -208,9 +206,9 @@ class Uart:
         if self.events_symbols is not None:
             return self.events_symbols
 
-        pos_df: Optional[int] = None
+        pos_df: int | None = None
         symbol: int = 0
-        t_start: Optional[float] = None
+        t_start: float | None = None
         content: list = []
 
         for time, value, steps in self.events_sig:

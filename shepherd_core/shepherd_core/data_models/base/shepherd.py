@@ -7,8 +7,6 @@ from datetime import timedelta
 from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Any
-from typing import Optional
-from typing import Union
 from uuid import UUID
 
 import yaml
@@ -23,7 +21,7 @@ from .wrapper import Wrapper
 
 
 def path2str(
-    dumper: SafeDumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
+    dumper: SafeDumper, data: pathlib.Path | pathlib.WindowsPath | pathlib.PosixPath
 ) -> Node:
     """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
@@ -113,7 +111,7 @@ class ShpModel(BaseModel):
             yield key, self[key]
 
     @classmethod
-    def schema_to_file(cls, path: Union[str, Path]) -> None:
+    def schema_to_file(cls, path: str | Path) -> None:
         """Store schema to yaml (for frontend-generators)."""
         model_dict = cls.model_json_schema()
         model_yaml = yaml.safe_dump(model_dict, default_flow_style=False, sort_keys=False)
@@ -122,8 +120,8 @@ class ShpModel(BaseModel):
 
     def to_file(
         self,
-        path: Union[str, Path],
-        comment: Optional[str] = None,
+        path: str | Path,
+        comment: str | None = None,
         *,
         minimal: bool = True,
     ) -> Path:
@@ -153,7 +151,7 @@ class ShpModel(BaseModel):
         return model_path
 
     @classmethod
-    def from_file(cls, path: Union[str, Path]) -> Self:
+    def from_file(cls, path: str | Path) -> Self:
         """Load from yaml."""
         with Path(path).open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)

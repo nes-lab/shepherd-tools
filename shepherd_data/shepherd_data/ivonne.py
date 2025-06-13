@@ -16,7 +16,6 @@ import os
 import pickle
 from pathlib import Path
 from types import TracebackType
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -48,7 +47,7 @@ class Reader:
     def __init__(
         self,
         file_path: Path,
-        samplerate_sps: Optional[int] = None,
+        samplerate_sps: int | None = None,
         *,
         verbose: bool = True,
     ) -> None:
@@ -66,7 +65,7 @@ class Reader:
         self.file_size: int = 0
         self.data_rate: float = 0
 
-        self._df: Optional[pd.DataFrame] = None
+        self._df: pd.DataFrame | None = None
 
     def __enter__(self) -> Self:
         if not self.file_path.exists():
@@ -88,9 +87,9 @@ class Reader:
 
     def __exit__(
         self,
-        typ: Optional[type[BaseException]] = None,
-        exc: Optional[BaseException] = None,
-        tb: Optional[TracebackType] = None,
+        typ: type[BaseException] | None = None,
+        exc: BaseException | None = None,
+        tb: TracebackType | None = None,
         extra_arg: int = 0,
     ) -> None:
         pass
@@ -107,7 +106,7 @@ class Reader:
         shp_output: Path,
         v_max: float = 5.0,
         pts_per_curve: int = 1000,
-        duration_s: Optional[float] = None,
+        duration_s: float | None = None,
     ) -> None:
         """Transform recorded parameters to shepherd hdf database with IV curves.
 
@@ -170,8 +169,8 @@ class Reader:
         self,
         shp_output: Path,
         v_max: float = 5.0,
-        duration_s: Optional[float] = None,
-        tracker: Optional[MPPTracker] = None,
+        duration_s: float | None = None,
+        tracker: MPPTracker | None = None,
     ) -> None:
         """Transform shepherd IV surface / curves to shepherd IV trace / samples .
 
@@ -240,7 +239,7 @@ class Reader:
         self,
         shp_output: Path,
         v_max: float = 5.0,
-        duration_s: Optional[float] = None,
+        duration_s: float | None = None,
     ) -> None:
         """Transform ivonne-parameters to up-sampled versions for shepherd.
 

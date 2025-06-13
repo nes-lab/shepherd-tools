@@ -4,12 +4,12 @@ include = [
     './shepherd_core/',
     './shepherd_data/',
 ]
-pythonVersion = "3.9"
+pythonVersion = "3.10"
 pythonPlatform = "All"
 reportMissingParameterType = true
 
 [tool.mypy]
-python_version = 3.9
+python_version = 3.10
 ignore_missing_imports = true
 disable_error_code = ["call-arg", ]
 exclude = [

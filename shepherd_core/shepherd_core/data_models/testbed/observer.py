@@ -3,7 +3,6 @@
 from datetime import datetime
 from typing import Annotated
 from typing import Any
-from typing import Optional
 
 from pydantic import Field
 from pydantic import IPvAnyAddress
@@ -33,7 +32,7 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     id: IdInt
     name: NameStr
     description: SafeStr
-    comment: Optional[SafeStr] = None
+    comment: SafeStr | None = None
 
     ip: IPvAnyAddress
     mac: MACStr
@@ -46,12 +45,12 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
     """ ⤷ cfaed-floor"""
 
     active: bool = True
-    cape: Optional[Cape] = None
-    target_a: Optional[Target] = None
-    target_b: Optional[Target] = None
+    cape: Cape | None = None
+    target_a: Target | None = None
+    target_b: Target | None = None
 
     created: datetime = Field(default_factory=datetime.now)
-    alive_last: Optional[datetime] = None
+    alive_last: datetime | None = None
 
     def __str__(self) -> str:
         return self.name

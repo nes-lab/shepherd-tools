@@ -4,12 +4,10 @@ from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 from typing import Annotated
-from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
-from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
@@ -33,12 +31,12 @@ class HarvestTask(ShpModel):
     """
     force_overwrite: bool = False
     """ ⤷ Overwrite existing file"""
-    output_compression: Optional[Compression] = Compression.default
+    output_compression: Compression | None = Compression.default
     """ ⤷ should be 1 (level 1 gzip), lzf, or None (order of recommendation)"""
 
-    time_start: Optional[datetime] = None
+    time_start: datetime | None = None
     """ timestamp or unix epoch time, None = ASAP"""
-    duration: Optional[timedelta] = None
+    duration: timedelta | None = None
     """ ⤷ Duration of recording in seconds, None = till EOFSys"""
 
     # emulation-specific
@@ -49,7 +47,7 @@ class HarvestTask(ShpModel):
     """ ⤷ Choose one of the predefined virtual harvesters or configure a new one
     """
     power_tracing: PowerTracing = PowerTracing()
-    sys_logging: Optional[SystemLogging] = SystemLogging()
+    sys_logging: SystemLogging | None = SystemLogging()
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
     """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug"""

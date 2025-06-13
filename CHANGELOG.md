@@ -3,9 +3,10 @@
 ## v2025.06.2
 
 - remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks, EmulationTask, HarvestTask
-- remove deprecated Reader.buffers_n 
+- remove deprecated Reader.buffers_n
 - allow configuring battery in vsource
 - allow configuring energy environment with multiple recordings
+- drop support for python 3.9 -> support is now v3.10 to 3.13
 
 ## v2025.06.1
 
