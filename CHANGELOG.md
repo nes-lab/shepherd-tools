@@ -13,6 +13,7 @@
 - cli-cmd `extract-meta` now mainly saves a YAML that describes the content of the hdf5-file (add `--debug` for all system-logs)
 - update all links and referenced for moving repos to `nes-lab`
 - add beta of new generators for energy-environments
+- add converter for
 - adding firmware is now less prone to raise exception - ARCH and MCU can be added manually
 - experiment now suggests its own directory-name
 - added reader.get_time_start()
