@@ -91,8 +91,6 @@ class Reader:
         self.file_size: int = 0
         self.data_rate: float = 0
 
-        self.buffers_n: Annotated[int, deprecated("use .chunk_n instead")] = 0
-
         # open file (if not already done by writer)
         self._reader_opened: bool = False
         if not hasattr(self, "h5file"):
@@ -193,7 +191,7 @@ class Reader:
             self.sample_interval_ns = round(10**9 * self.sample_interval_s)
             self.samplerate_sps = max(round((self.samples_n - 1) / duration_s), 1)
         self.runtime_s = round(self.samples_n / self.samplerate_sps, 1)
-        self.chunks_n = self.buffers_n = int(self.samples_n // self.CHUNK_SAMPLES_N)
+        self.chunks_n = int(self.samples_n // self.CHUNK_SAMPLES_N)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:

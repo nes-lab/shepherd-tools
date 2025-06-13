@@ -53,12 +53,6 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # debug
     lib_ver: Optional[str] = version
 
-    # deprecated fields, TODO: remove before public release
-    id: Annotated[Optional[int], deprecated("not needed")] = None
-    created: Annotated[Optional[datetime], deprecated("not needed")] = None
-    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
-    owner_id: Annotated[Optional[IdInt], deprecated("not needed")] = None
-
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         self._validate_observers(self.target_configs)

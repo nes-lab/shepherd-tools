@@ -264,11 +264,6 @@ class SystemLogging(ShpModel, title="Config for System-Logging"):
     sheep: bool = True
     sys_util: bool = True
 
-    # deprecated, TODO: remove lines below before public release
-    dmesg: Annotated[bool, deprecated("for sheep v0.9.0+, use 'kernel' instead")] = True
-    ptp: Annotated[bool, deprecated("for sheep v0.9.0+, use 'time_sync' instead")] = True
-    shepherd: Annotated[bool, deprecated("for sheep v0.9.0+, use 'sheep' instead")] = True
-
 
 # TODO: some more interaction would be good
 #     - execute limited python-scripts

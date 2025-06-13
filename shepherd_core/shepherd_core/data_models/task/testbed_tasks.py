@@ -24,10 +24,6 @@ class TestbedTasks(ShpModel):
     name: NameStr
     observer_tasks: Annotated[list[ObserverTasks], Field(min_length=1, max_length=128)]
 
-    # deprecated, TODO: remove before public release
-    email_results: Annotated[Optional[bool], deprecated("not needed anymore")] = False
-    owner_id: Annotated[Optional[IdInt], deprecated("not needed anymore")] = None
-
     @classmethod
     @validate_call
     def from_xp(cls, xp: Experiment, tb: Optional[Testbed] = None) -> Self:

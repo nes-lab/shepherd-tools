@@ -39,10 +39,6 @@ class ObserverTasks(ShpModel):
     # MAIN PROCESS
     emulation: Optional[EmulationTask] = None
 
-    # deprecations, TODO: remove before public release
-    owner_id: Annotated[Optional[IdInt], deprecated("not needed anymore")] = None
-    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
-
     # post_copy / cleanup, Todo: could also just intake emuTask
     #  - delete firmwares
     #  - decode uart
