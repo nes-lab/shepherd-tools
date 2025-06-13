@@ -1,6 +1,6 @@
 # History of Changes
 
-## (future) v2025.06.2
+## v2025.06.2
 
 - remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
 - allow configuring battery in vsource
