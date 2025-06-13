@@ -64,7 +64,7 @@ def find_continuous_ranges(ds_time: h5py.Dataset, count: int) -> list[int]:
     continuous_ranges = []
     trailing_zeros = False
 
-    for chunk_idx in trange(1, chunk_count, desc="Finding continous time ranges"):
+    for chunk_idx in trange(1, chunk_count, desc="Finding continuous time ranges"):
         sample_idx = chunk_idx * SHP_V1_CHUNK_STEPS
         now = ds_time[sample_idx]
         prev = ds_time[sample_idx - 1]
