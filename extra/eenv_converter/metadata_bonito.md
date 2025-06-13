@@ -23,10 +23,11 @@
   - sheep3,4,5 on person 1
 - remaining questions
   - Which person (0/1) is f(29) and which is m(29)?
-  - Precise Location (address / GPS coords)
-  - Date of recording (optionally precise time of day)
+  + Precise Location (address / GPS coords): H942+CX Berlin
+  - Date of recording (optionally precise time of day) -> timestamp in data
   - Weather (might be able to get that from location + date)
   - Optional: Any more information about the route and when/where breaks where?
+    - As far as I remember the route was something like this (and back): https://maps.app.goo.gl/qjWAJeZZfLec4cCE8
 
 ### Stairs (folder data_step)
 - based on paper
@@ -46,7 +47,9 @@
   - Precise Location (address / GPS coords) -> https://www.openstreetmap.org/directions?from=51.026467%2C13.723217
   - Node locations (order from left to right)
   - pv model (same as jogging dataset?)
+    - No, I think it was the smaller KXOB25-05X3F-TR
   - Setup (power source, synchronization)
+    - All recorders connected to PoE Ethernet switch for power and control. Synchronized via PTP to one GPS reference clock.
 
 ### Stairs 2 (solar_step_2020_02_06)
 - discarded because of too static env (constant cloudy)
@@ -65,8 +68,10 @@
 - remaining questions
   - More accurate node layout
   - Location (address / GPS), might be irrelevant
+    - I don't remember (Dresden, Brisbane or Berlin)
   - Date
   - Setup (power source, synchronization)
+    - 95% sure it was PoE and PTP
   - Did room/hallway have windows? If so:
     - time of day
     - weather (might be able to get that from location + date)
@@ -83,20 +88,25 @@
   - sheep4: leading car
   - sheep5: following car, windshield
 - remaining questions
-  - Date
+  - ASK MARCO, he was driving the second car
+  + Date -> Same as Washer.
   - Location (address / GPS), Route Taken
+    - Windischleuba - Dresden, don't remember exactly
   - Node locations in leading car
-  - Piezo model (same as jogging dataset?)
+  + Piezo model -> same as jogging dataset
   - Setup (power source, synchronization)
+    -  I don't remember. Probably power banks and GPS
   - Any info about the cars
+    - One yellow Opel Corsa, the other I don't remember
   - Any info about speed (typical, top), stops (traffic lights, etc)
+
 
 ### Washer (folder washing_machine)
 - based on paper
   - 5 piezo
   - WPB4700H industrial washing machine (confirmed by pictures / video)
   - washing program with maximum load
-- based on file `notes` 
+- based on file `notes`
   - all locations from pov of looking at the front of the machine
   - sheep0: top (likely top side of the machine)
   - sheep1: back left (likely back side of the machine; left part viewing 'through' the machine?)
@@ -121,9 +131,15 @@
   - one node (front?) middle of the top side -> sheep0
 - remaining questions
   - Date (is 11.05.2021 correct?)
-  - Location (addess / GPS), might be irrelevant
+    - Sounds about right
+  - Location (address / GPS) -> 295M+PC Rositz
   - synchronization via GPS? (capelet is visible in photos)
+    - Maybe one GPS server. Other nodes PTP via Ethernet.
   - Piezo model (same as jogging dataset?)
+    - Yes
   - Is Sheep 4 on the door or the top right of the front side?
+    - I don't remember.
   - Are Sheep 1 and 5 (back side) also in the top corners?
+    - I don't remember but very likely yes.
   - Is interpretation of `notes` right in regards of viewing 'through' the machine for the back side nodes?
+    - I don't remember, but very likely yes, everything is with respect to standing in front of the machine.
