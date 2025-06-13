@@ -22,6 +22,6 @@ class Wrapper(BaseModel):
     created: Optional[datetime] = None
     """ ⤷ Optional metadata"""
     lib_ver: Optional[str] = version
-    """ ⤷ for debug-purposes and later comp-checks"""
+    """ ⤷ for debug-purposes and later compatibility-checks"""
     parameters: dict
     """ ⤷ ShpModel"""

@@ -10,7 +10,7 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.commons import SAMPLERATE_SPS_DEFAULT
+from shepherd_core.config import config
 from shepherd_core.data_models.base.calibration import CalibrationHarvester
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -363,9 +363,9 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     def calc_timings_ms(self, *, for_emu: bool) -> tuple[float, float]:
         """factor-in model-internal timing-constraints."""
         window_length = self.samples_n * (1 + self.wait_cycles)
-        time_min_ms = (1 + self.wait_cycles) * 1_000 / SAMPLERATE_SPS_DEFAULT
+        time_min_ms = (1 + self.wait_cycles) * 1_000 / config.SAMPLERATE_SPS
         if for_emu:
-            window_ms = window_length * 1_000 / SAMPLERATE_SPS_DEFAULT
+            window_ms = window_length * 1_000 / config.SAMPLERATE_SPS
             time_min_ms = max(time_min_ms, window_ms)
 
         interval_ms = min(max(self.interval_ms, time_min_ms), 1_000_000)
@@ -517,7 +517,7 @@ class HarvesterPRUConfig(ShpModel):
             voltage_step_uV=round(voltage_step_mV * 10**3),
             current_limit_nA=round(data.current_limit_uA * 10**3),
             setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
-            interval_n=round(interval_ms * SAMPLERATE_SPS_DEFAULT * 1e-3),
-            duration_n=round(duration_ms * SAMPLERATE_SPS_DEFAULT * 1e-3),
+            interval_n=round(interval_ms * config.SAMPLERATE_SPS * 1e-3),
+            duration_n=round(duration_ms * config.SAMPLERATE_SPS * 1e-3),
             wait_cycles_n=data.wait_cycles,
         )

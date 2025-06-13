@@ -1,3 +1,5 @@
+"""Generator for random on-off-pattern with fixed periodic window-length and duty cycle."""
+
 import math
 from itertools import product
 from pathlib import Path
@@ -7,13 +9,15 @@ from commons import STEP_WIDTH
 from commons import EEnvGenerator
 from commons import generate_h5_files
 
+from shepherd_core import logger
+
 
 class RndPeriodicWindowGenerator(EEnvGenerator):
-    '''
-    Generates a periodic on-off pattern with fixed on-voltage/-current.
+    """Generates a periodic on-off pattern with fixed on-voltage/-current.
+
     Each node's has fixed-length on windows placed independently such that the
     duty cycle matches the given value.
-    '''
+    """
 
     def __init__(
         self,
@@ -39,7 +43,10 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
 
     def generate_random_pattern(self, count: int) -> np.ndarray:
         if count % self.period != 0:
-            raise ValueError("Count is not divisible by period step count")
+            logger.warning(
+                "Count is not divisible by period step count (%d vs %d)", count, self.period
+            )
+            count = (round(count / self.period) + 1) * self.period
 
         period_count = round(count / self.period)
         max_start = self.period - self.on_duration
@@ -70,21 +77,29 @@ if __name__ == "__main__":
         path_eenv = path_here / "content/eenv/nes_lab/"
 
     seed = 32220789340897324098232347119065234157809
-    periods = [ 10e-3, 100e-3, 1, 10 ]
-    duty_cycles = [ 0.01, 0.02, 0.05, 0.1, 0.2]
+    periods = [10e-3, 100e-3, 1, 10]
+    duty_cycles = [0.01, 0.02, 0.05, 0.1, 0.2]
     duration = 4 * 60 * 60.0
 
     for period, duty_cycle in product(periods, duty_cycles):
         generator = RndPeriodicWindowGenerator(
-            node_count=20, seed=seed, period=period, duty_cycle=duty_cycle, on_voltage=2, on_current=10e-3
+            node_count=20,
+            seed=seed,
+            period=period,
+            duty_cycle=duty_cycle,
+            on_voltage=2.0,
+            on_current=10e-3,
         )
 
         # Create output folder (or skip)
-        name = f"eenv_random_onwidows_{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
+        name = (
+            f"artificial_on_off_random_windows_"
+            f"{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
+        )
         folder_path = path_eenv / name
         if folder_path.exists():
-            print(f'Folder {folder_path} exists. Skipping combination.')
+            logger.info("Folder %s exists. Skipping combination.", folder_path)
             continue
         folder_path.mkdir(parents=True, exist_ok=False)
 
-        generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)
+        generate_h5_files(folder_path, duration=duration, chunk_size=1_000_000, generator=generator)

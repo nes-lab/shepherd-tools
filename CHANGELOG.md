@@ -1,11 +1,26 @@
 # History of Changes
 
-## v2025.05.4
+## (future) v2025.06.2
+
+- remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
+- allow configuring battery in vsource
+- allow configuring energy environment with multiple recordings
+
+## v2025.06.1
 
 - cli-cmd `extract-uart` is renamed to `decode-uart` - to better describe what it does
 - cli-cmd `extract-uart` now only saves the UART-log (decoded from Linux on observer)
 - cli-cmd `extract-meta` now mainly saves a YAML that describes the content of the hdf5-file (add `--debug` for all system-logs)
 - update all links and referenced for moving repos to `nes-lab`
+- add beta of new generators for energy-environments
+- adding firmware is now less prone to raise exception - ARCH and MCU can be added manually
+- experiment now suggests its own directory-name
+- added reader.get_time_start()
+- establish a user-changeable config (former Reader.commons)
+- deprecation of experiment-fields: id, created, abort_on_error, owner_id
+- deprecation of ObserverTasks-fields: owner_id, abort_on_error
+- deprecation of TestbedTasks-fields: owner_id, email_results
+- deprecation of abort_on_error-field in: EmulationTask, HarvestTask, owner_id, email_results
 
 ## v2025.05.3
 

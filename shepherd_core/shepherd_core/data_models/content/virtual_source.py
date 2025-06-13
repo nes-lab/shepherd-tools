@@ -7,7 +7,7 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.commons import SAMPLERATE_SPS_DEFAULT
+from shepherd_core.config import config
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import logger
@@ -23,7 +23,7 @@ NormedNum = Annotated[float, Field(ge=0.0, le=1.0)]
 LUT1D = Annotated[list[NormedNum], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 LUT2D = Annotated[list[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
-# defaults (pre-init complex types)
+# defaults (pre-init complex types for improved perf) TODO: is documentation still fine?
 vhrv_mppt_opt = VirtualHarvesterConfig(name="mppt_opt")
 
 
@@ -250,7 +250,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         dV[uV] = constant[us/nF] * current[nA] = constant[us*V/nAs] * current[nA]
         """
         C_cap_uF = max(self.C_intermediate_uF, 0.001)
-        return int((10**3 * (2**28)) // (C_cap_uF * SAMPLERATE_SPS_DEFAULT))
+        return int((10**3 * (2**28)) // (C_cap_uF * config.SAMPLERATE_SPS))
 
 
 u32 = Annotated[int, Field(ge=0, lt=2**32)]
@@ -325,7 +325,7 @@ class ConverterPRUConfig(ShpModel):
                 dtype_in, log_intermediate_node=log_intermediate_node
             ),
             interval_startup_delay_drain_n=round(
-                data.interval_startup_delay_drain_ms * SAMPLERATE_SPS_DEFAULT * 1e-3
+                data.interval_startup_delay_drain_ms * config.SAMPLERATE_SPS * 1e-3
             ),
             V_input_max_uV=round(data.V_input_max_mV * 1e3),
             I_input_max_nA=round(data.I_input_max_mA * 1e6),
@@ -338,7 +338,7 @@ class ConverterPRUConfig(ShpModel):
             V_disable_output_threshold_uV=round(states["V_disable_output_threshold_mV"] * 1e3),
             dV_enable_output_uV=round(states["dV_enable_output_mV"] * 1e3),
             interval_check_thresholds_n=round(
-                data.interval_check_thresholds_ms * SAMPLERATE_SPS_DEFAULT * 1e-3
+                data.interval_check_thresholds_ms * config.SAMPLERATE_SPS * 1e-3
             ),
             V_pwr_good_enable_threshold_uV=round(data.V_pwr_good_enable_threshold_mV * 1e3),
             V_pwr_good_disable_threshold_uV=round(data.V_pwr_good_disable_threshold_mV * 1e3),

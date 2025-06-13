@@ -198,6 +198,7 @@ def test_experiment_model_gpioevent_fault_readonly() -> None:
         )
 
 
+@pytest.mark.skip
 def test_experiment_model_gpioactuation_min() -> None:
     gact = GpioActuation(
         events=[

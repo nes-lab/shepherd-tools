@@ -20,7 +20,7 @@ from typing_extensions import Self
 from yaml import Node
 from yaml import SafeDumper
 
-from .commons import SAMPLERATE_SPS_DEFAULT
+from .config import config
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
@@ -348,7 +348,7 @@ class Writer(Reader):
         chunks_n = self.ds_voltage.size / self.CHUNK_SAMPLES_N
         size_new = int(math.floor(chunks_n) * self.CHUNK_SAMPLES_N)
         if size_new < self.ds_voltage.size:
-            if self.samplerate_sps != SAMPLERATE_SPS_DEFAULT:
+            if self.samplerate_sps != config.SAMPLERATE_SPS:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(

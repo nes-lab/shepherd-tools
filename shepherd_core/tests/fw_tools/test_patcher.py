@@ -17,7 +17,7 @@ def test_sym_finding(path_elf: Path) -> None:
 @pytest.mark.elf
 @pytest.mark.parametrize("path_elf", files_elf)
 def test_sym_reading(path_elf: Path) -> None:
-    assert fw_tools.read_symbol(path_elf, "SHEPHERD_NODE_ID")
+    assert fw_tools.read_symbol(path_elf, "SHEPHERD_NODE_ID", 2)
 
 
 @pytest.mark.elf
@@ -30,9 +30,9 @@ def test_sym_mod(path_elf: Path, tmp_path: Path) -> None:
     path_gen = fw_tools.modify_symbol_value(path_new, sym, value, overwrite=False)
     assert path_gen.is_file()
     assert path_gen.as_posix() != path_new.as_posix()
-    value_new = fw_tools.read_symbol(path_gen, sym)
+    value_new = fw_tools.read_symbol(path_gen, sym, 2)
     assert value == value_new
-    value_old = fw_tools.read_symbol(path_elf, sym)
+    value_old = fw_tools.read_symbol(path_elf, sym, 2)
     assert value_new != value_old
 
 
@@ -48,9 +48,9 @@ def test_sym_mod_overwrite(path_elf: Path, tmp_path: Path) -> None:
     )  # TODO: WinOS-trouble
     assert path_gen.is_file()
     assert path_gen.as_posix() == path_new.as_posix()
-    value_new = fw_tools.read_symbol(path_gen, sym)
+    value_new = fw_tools.read_symbol(path_gen, sym, 2)
     assert value == value_new
-    value_old = fw_tools.read_symbol(path_elf, sym)
+    value_old = fw_tools.read_symbol(path_elf, sym, 2)
     assert value_new != value_old
 
 
@@ -62,5 +62,5 @@ def test_id_mod(path_elf: Path, tmp_path: Path) -> None:
     shutil.copy(path_elf, path_new)
     path_gen = fw_tools.modify_uid(path_new, value)
     assert path_gen.as_posix() == path_new.as_posix()
-    value_new = fw_tools.read_symbol(path_gen, "SHEPHERD_NODE_ID")
+    value_new = fw_tools.read_symbol(path_gen, "SHEPHERD_NODE_ID", 2)
     assert value == value_new

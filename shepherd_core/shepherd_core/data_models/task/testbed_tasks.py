@@ -7,6 +7,7 @@ from typing import Optional
 from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
@@ -23,11 +24,9 @@ class TestbedTasks(ShpModel):
     name: NameStr
     observer_tasks: Annotated[list[ObserverTasks], Field(min_length=1, max_length=128)]
 
-    # POST PROCESS
-    email_results: bool = False
-    owner_id: Optional[IdInt]
-    # TODO: had real email previously, does it really need these at all?
-    #  DB stores experiment and knows when to email
+    # deprecated, TODO: remove before public release
+    email_results: Annotated[Optional[bool], deprecated("not needed anymore")] = False
+    owner_id: Annotated[Optional[IdInt], deprecated("not needed anymore")] = None
 
     @classmethod
     @validate_call
@@ -41,8 +40,6 @@ class TestbedTasks(ShpModel):
         return cls(
             name=xp.name,
             observer_tasks=obs_tasks,
-            email_results=xp.email_results,
-            owner_id=xp.owner_id,
         )
 
     def get_observer_tasks(self, observer: str) -> Optional[ObserverTasks]:

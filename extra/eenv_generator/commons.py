@@ -1,3 +1,5 @@
+"""Shared Generator-Function."""
+
 import math
 import time
 from abc import ABC
@@ -11,16 +13,22 @@ from tqdm import trange
 
 from shepherd_core import Writer as ShepherdWriter
 from shepherd_core import logger
-from shepherd_core.commons import SAMPLERATE_SPS_DEFAULT
+from shepherd_core.config import config
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
 
-STEP_WIDTH = 1.0 / SAMPLERATE_SPS_DEFAULT  # 10 us
+STEP_WIDTH = 1.0 / config.SAMPLERATE_SPS  # 10 us
 
 
 class EEnvGenerator(ABC):
+    """Abstract Base Class for defining custom environment-generators.
+
+    It handled reproducible randomness.
+    The main method produces data for a specific time-frame for all nodes.
+    """
+
     def __init__(self, node_count: int, seed: Optional[int]) -> None:
         self.node_count = node_count
         if seed is not None:
@@ -31,7 +39,14 @@ class EEnvGenerator(ABC):
         pass
 
 
-def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, generator: EEnvGenerator):
+def generate_h5_files(
+    output_dir: Path, duration: float, chunk_size: int, generator: EEnvGenerator
+) -> None:
+    """Apply Generator to create valid shepherd files.
+
+    All files are created in parallel with custom chunk-size and duration.
+    This function handles the file-format and other parameters.
+    """
     with ExitStack() as stack:
         # Prepare datafiles
         file_handles: list[ShepherdWriter] = []
@@ -47,6 +62,7 @@ def generate_h5_files(output_dir: Path, duration: float, chunk_size: int, genera
                     voltage=CalibrationPair(gain=1e-6, offset=0),
                     current=CalibrationPair(gain=1e-9, offset=0),
                 ),
+                verbose=False,
             )
             file_handles.append(stack.enter_context(writer))
             writer.store_hostname(f"node{i}.h5")
