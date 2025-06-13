@@ -1,6 +1,6 @@
 # History of Changes
 
-## v2025.06.2 (future)
+## (future) v2025.06.2
 
 - remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
 - allow configuring battery in vsource
@@ -17,7 +17,7 @@
 - experiment now suggests its own directory-name
 - added reader.get_time_start()
 - establish a user-changeable config (former Reader.commons)
-- deprecation of experiment-fields: id, created, abort on error, owner id
+- deprecation of experiment-fields: id, created, abort_on_error, owner_id
 - deprecation of ObserverTasks-fields: owner_id, abort_on_error
 - deprecation of TestbedTasks-fields: owner_id, email_results
 - deprecation of abort_on_error-field in: EmulationTask, HarvestTask, owner_id, email_results
