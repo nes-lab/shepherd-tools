@@ -45,10 +45,10 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
     if isinstance(config, str):
         config = Path(config)
 
-    if isinstance(config, Path) and config.exists() and config.with_suffix(".pickle"):
+    if isinstance(config, Path) and config.exists() and config.suffix.lower() == ".pickle":
         with config.resolve().open("rb") as shp_file:
             shp_wrap = pickle.load(shp_file, fix_imports=True)  # noqa: S301
-    elif isinstance(config, Path) and config.exists() and config.with_suffix(".yaml"):
+    elif isinstance(config, Path) and config.exists() and config.suffix.lower() == ".yaml":
         with config.resolve().open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)

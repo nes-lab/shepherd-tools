@@ -164,10 +164,17 @@ class ShpModel(BaseModel):
 
     @classmethod
     def from_file(cls, path: Union[str, Path]) -> Self:
-        """Load from yaml."""
-        with Path(path).open() as shp_file:
-            shp_dict = yaml.safe_load(shp_file)
-        shp_wrap = Wrapper(**shp_dict)
+        """Load from YAML or pickle file."""
+        path: Path = Path(path)
+        if not Path(path).exists():
+            raise FileNotFoundError
+        if path.suffix.lower() == ".pickle":
+            with Path(path).open("rb") as shp_file:
+                shp_wrap = pickle.load(shp_file, fix_imports=True)  # noqa: S301
+        else:
+            with Path(path).open() as shp_file:
+                shp_dict = yaml.safe_load(shp_file)
+            shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:
             raise ValueError("Model in file does not match the requirement")
         return cls(**shp_wrap.parameters)
