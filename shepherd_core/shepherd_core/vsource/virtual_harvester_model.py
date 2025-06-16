@@ -17,7 +17,7 @@ Compromises:
 """
 
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 
 class VirtualHarvesterModel:
@@ -37,7 +37,7 @@ class VirtualHarvesterModel:
 
         self.is_emu: bool = bool(self._cfg.hrv_mode & (2**0))
         if not self.is_emu:
-            logger.warning(
+            log.warning(
                 "This VSrc-config is not meant for emulation-mode -> activate 'is_emu' flag."
             )
 

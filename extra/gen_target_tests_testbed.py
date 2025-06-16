@@ -5,7 +5,7 @@ from pathlib import Path
 from shepherd_core import WebClient
 from shepherd_core import data_models as sm
 from shepherd_core.data_models.task import TestbedTasks
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
@@ -47,4 +47,4 @@ if __name__ == "__main__":
             ],
         )
         path_ret = TestbedTasks.from_xp(xp).to_file(path_task / name)
-        logger.info("Wrote: %s", path_ret.as_posix())
+        log.info("Wrote: %s", path_ret.as_posix())

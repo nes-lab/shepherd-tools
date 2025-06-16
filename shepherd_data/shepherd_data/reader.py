@@ -18,7 +18,7 @@ from shepherd_core import Writer as CoreWriter
 from shepherd_core import local_tz
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import get_verbose_level
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 # import samplerate  # noqa: ERA001, TODO: just a test-fn for now
 
@@ -308,12 +308,12 @@ class Reader(CoreReader):
 
         dst_file = self.file_path.resolve().with_suffix(cut_str + ds_str + ".h5")
         if dst_file.exists():
-            logger.warning(
+            self._logger.warning(
                 "Cut & Downsample skipped because output-file %s already exists.", dst_file.name
             )
             return dst_file
 
-        logger.debug(
+        self._logger.debug(
             "Cut & Downsample '%s' from %.3f s to %.3f s with factor = %.1f ...",
             self.file_path.name,
             start_s,
@@ -635,7 +635,7 @@ class Reader(CoreReader):
             Path(plot_path).resolve().with_suffix(f".multiplot_{start_str}_to_{end_str}.png")
         )
         if plot_path.exists():
-            logger.warning("Plot exists, will skip & not overwrite!")
+            log.warning("Plot exists, will skip & not overwrite!")
             return None
         fig = Reader.assemble_plot(data, width, height, only_pwr=only_pwr)
         plt.savefig(plot_path)

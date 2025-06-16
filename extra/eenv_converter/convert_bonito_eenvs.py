@@ -4,7 +4,7 @@ from pathlib import Path
 
 from convert_v1_eenv import convert as convert_eenv
 
-from shepherd_core import logger
+from shepherd_core.logger import log
 
 DATASETS = {
     "bonito_jogging_mixed": {
@@ -72,7 +72,7 @@ def convert_bonito_eenvs() -> None:
 
         outpath = output_dir / new_name
         if outpath.exists():
-            logger.warning(f"Output path exists: {outpath}. Skipping environment {new_name}")
+            log.warning(f"Output path exists: {outpath}. Skipping environment {new_name}")
             continue
         outpath.mkdir(exist_ok=True)
 

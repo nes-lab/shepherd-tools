@@ -8,7 +8,7 @@ from commons import STEP_WIDTH
 from commons import EEnvGenerator
 from commons import generate_h5_files
 
-from shepherd_core import logger
+from shepherd_core.logger import log
 
 
 class RndIndepPatternGenerator(EEnvGenerator):
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         )
         folder_path = path_eenv / name
         if folder_path.exists():
-            logger.info("Folder %s exists. Skipping combination.", folder_path)
+            log.info("Folder %s exists. Skipping combination.", folder_path)
             continue
         folder_path.mkdir(parents=True, exist_ok=False)
 

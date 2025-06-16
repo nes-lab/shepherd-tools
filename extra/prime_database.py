@@ -12,7 +12,7 @@ from shepherd_core.data_models import ShpModel
 from shepherd_core.data_models import Wrapper
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 
 def load_model(_model: type(ShpModel), path: Path) -> Optional[ShpModel]:
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     #  ⤷ can be derived from tb.data_on_server
 
     if not path_db.exists() or not path_db.is_dir():
-        logger.error("Path to db must exist and be a directory!")
+        log.error("Path to db must exist and be a directory!")
         sys.exit(1)
 
     if Path("/var/shepherd/").exists():
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         path_content.mkdir(parents=True)
 
     files = list(path_content.glob("**/*.yaml"))  # for py>=3.12: case_sensitive=False
-    logger.debug(" -> got %s YAML-files", len(files))
+    log.debug(" -> got %s YAML-files", len(files))
     fixtures = []
 
     for file in files:

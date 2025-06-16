@@ -2,9 +2,9 @@
 
 from pathlib import Path
 
-from shepherd_core import logger
 from shepherd_core.data_models.testbed import Target
 from shepherd_core.data_models.testbed import Testbed
+from shepherd_core.logger import log
 from shepherd_core.testbed_client.fixtures import Fixtures
 
 if __name__ == "__main__":
@@ -66,4 +66,4 @@ if __name__ == "__main__":
                 ]
                 string = separator.join(elements)
                 csv.write(string + "\n")
-    logger.info("Wrote: %s", path_csv.as_posix())
+    log.info("Wrote: %s", path_csv.as_posix())

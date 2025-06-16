@@ -28,7 +28,7 @@ from typing import Union
 
 import numpy as np
 
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 
 class Parity(str, Enum):
@@ -109,10 +109,10 @@ class Uart:
             raise ValueError("Only bit-order LSB-first is supported ATM")
 
         if self.inversion:
-            logger.debug("inversion was detected / issued -> will invert signal")
+            log.debug("inversion was detected / issued -> will invert signal")
             self._convert_analog2digital(invert=True)
         if self.detect_inversion():
-            logger.error("Signal still inverted?!? Check parameters and input")
+            log.error("Signal still inverted?!? Check parameters and input")
 
         # results
         self.events_symbols: Optional[np.ndarray] = None
@@ -136,7 +136,7 @@ class Uart:
         self.events_sig = self.events_sig[data_f == 1]
 
         if len(data_0) > len(self.events_sig):
-            logger.debug(
+            log.debug(
                 "filtered out %d/%d events (redundant)",
                 len(data_0) - len(self.events_sig),
                 len(data_0),
@@ -145,7 +145,7 @@ class Uart:
     def _add_duration(self) -> None:
         """Calculate third column -> duration of state in [baud-ticks]."""
         if self.events_sig.shape[1] > 2:
-            logger.warning("Tried to add state-duration, but it seems already present")
+            log.warning("Tried to add state-duration, but it seems already present")
             return
         if not hasattr(self, "dur_tick"):
             raise ValueError("Make sure that baud-rate was calculated before running add_dur()")
@@ -223,7 +223,7 @@ class Uart:
                         symbol = 0
                     pos_df = None
                 else:
-                    logger.debug("Error - Long pause - but SigLow (@%d)", time)
+                    log.debug("Error - Long pause - but SigLow (@%d)", time)
                 continue
             if pos_df is None and value == 0:
                 # Start of frame (first low after pause / EOF)
@@ -245,7 +245,7 @@ class Uart:
                         symbol = 0
                     pos_df = None
                     if off_tick and value == 0:
-                        logger.debug("Error - Off-sized step - but SigLow (@%d)", time)
+                        log.debug("Error - Off-sized step - but SigLow (@%d)", time)
         self.events_symbols = np.concatenate(content).reshape((len(content), 2))
         # TODO: numpy is converting timestamp to string -> must be added as tuple (ts, symbol)
         # symbol_events[:, 0] = symbol_events[:, 0].astype(float)  # noqa: ERA001

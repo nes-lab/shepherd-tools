@@ -21,8 +21,8 @@ from pydantic import BaseModel
 from pydantic import Field
 from pydantic import model_validator
 
-from shepherd_core import logger
 from shepherd_core.data_models import ShpModel
+from shepherd_core.logger import log
 
 # TODO: should dtype, duration, energy_Ws be kept with the path?
 #       So we would have to create a scalar energy profile
@@ -82,7 +82,7 @@ class EEnv2(BaseModel):
                         paths_rel.append(path.relative_to(path_cwd))
                         continue
                     msg = f"Use relative paths - can't derive from absolute '{path}'"
-                    logger.warning(msg)
+                    log.warning(msg)
                 paths_rel.append(path)
             values["data_paths"] = paths_rel
         return values
@@ -145,4 +145,4 @@ if __name__ == "__main__":
         #       OK 2:     eemv1[:] + eenv2[:]
     )
 
-    logger.info("done")
+    log.info("done")

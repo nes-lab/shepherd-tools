@@ -13,9 +13,9 @@ from pydantic import model_validator
 from typing_extensions import Self
 from typing_extensions import deprecated
 
-from shepherd_core import logger
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.gpio import GPIO
+from shepherd_core.logger import log
 
 # defaults (pre-init complex types)
 zero_duration = timedelta(seconds=0)
@@ -190,7 +190,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration can't be negative.")
         if self.uart_decode:
-            logger.error(
+            log.error(
                 "Feature GpioTracing.uart_decode reserved for future use. "
                 "Use UartLogging or manually decode serial with the provided waveform decoder."
             )

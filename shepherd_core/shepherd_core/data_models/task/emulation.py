@@ -30,7 +30,7 @@ from shepherd_core.data_models.experiment.observer_features import UartLogging
 from shepherd_core.data_models.experiment.target_config import vsrc_neutral
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 from .helper_paths import path_posix
 
@@ -153,9 +153,9 @@ class EmulationTask(ShpModel):
             _io is not None for _io in (self.gpio_actuation, self.gpio_tracing, self.uart_logging)
         )
         if self.enable_io and not io_requested:
-            logger.warning("Target IO enabled, but no feature requested IO")
+            log.warning("Target IO enabled, but no feature requested IO")
         if not self.enable_io and io_requested:
-            logger.warning("Target IO not enabled, but a feature requested IO")
+            log.warning("Target IO not enabled, but a feature requested IO")
         return self
 
     @classmethod

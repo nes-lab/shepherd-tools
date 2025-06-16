@@ -14,7 +14,7 @@ from zipfile import ZipFile
 import yaml
 
 from shepherd_core.data_models.content.firmware import Firmware
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()
@@ -28,16 +28,16 @@ if __name__ == "__main__":
     # ⤷ already includes embedded-firmware-models
     path_meta = path_fw / "metadata_fw.yaml"
 
-    logger.info("Downloading latest release")
+    log.info("Downloading latest release")
     data = urlopen(link).read()  # noqa: S310
-    logger.info("Unpacking Archive")
+    log.info("Unpacking Archive")
     with ZipFile(BytesIO(data), "r") as zip_ref:
         zip_ref.extractall(path_here / "temp")
 
     shutil.move(path_here / "temp/content/", path_fw)
 
     if not path_meta.exists():
-        logger.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
+        log.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
     else:
         with path_meta.open() as file_meta:
             metadata = yaml.safe_load(file_meta)["metadata"]
@@ -47,7 +47,7 @@ if __name__ == "__main__":
             files_elf = [each for each in path_sub.iterdir() if each.suffix == ".elf"]
 
             if len(files_elf) > 1:
-                logger.warning("More than one .ELF in directory -> will use first of %s", files_elf)
+                log.warning("More than one .ELF in directory -> will use first of %s", files_elf)
             path_elf = path_sub / files_elf[0]
 
             if path_elf.exists():
@@ -61,9 +61,9 @@ if __name__ == "__main__":
                     visible2group=True,
                     visible2all=True,
                 ).to_file(path_elf.with_suffix(".yaml"))
-                logger.info("saved FW %s", path_elf)
+                log.info("saved FW %s", path_elf)
             else:
-                logger.error("FW not found, will skip: %s", path_elf.as_posix())
+                log.error("FW not found, will skip: %s", path_elf.as_posix())
 
             # debug-part below
             sizeof: dict[str, int] = {}
@@ -78,4 +78,4 @@ if __name__ == "__main__":
             with file_temp.open("w") as fh:
                 fh.write(fw.model_dump_json(exclude_unset=True, exclude_defaults=True))
             sizeof["json"] = file_temp.stat().st_size
-            logger.info(" -> size-stat: %s", sizeof)
+            log.info(" -> size-stat: %s", sizeof)

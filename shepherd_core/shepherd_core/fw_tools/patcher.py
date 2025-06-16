@@ -8,7 +8,7 @@ from pydantic import Field
 from pydantic import validate_call
 
 from shepherd_core.config import config
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 from .validation import is_elf
 
@@ -35,9 +35,9 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
     except KeyError:
         addr = None
     if addr is None:
-        logger.debug("Symbol '%s' not found in ELF-File %s", symbol, file_elf.name)
+        log.debug("Symbol '%s' not found in ELF-File %s", symbol, file_elf.name)
         return False
-    logger.debug(
+    log.debug(
         "Symbol '%s' found in ELF-File %s, arch=%s, order=%s",
         symbol,
         file_elf.name,
@@ -79,7 +79,7 @@ def read_arch(file_elf: Path) -> Optional[str]:
     elf = ELF(path=file_elf)
     if "exec" in elf.elftype.lower():
         return elf.arch.lower()
-    logger.error("ELF is not Executable")
+    log.error("ELF is not Executable")
     return None
 
 
@@ -113,13 +113,13 @@ def modify_symbol_value(
     try:
         elf.write(address=addr, data=value_raw)
     except AttributeError:
-        logger.warning("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
+        log.warning("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
         return None
 
     file_new = file_elf if overwrite else file_elf.with_stem(file_elf.stem + "_" + str(value))
     elf.save(path=file_new)
     elf.close()
-    logger.debug(
+    log.debug(
         "Value of Symbol '%s' modified: %s -> %s @%s",
         symbol,
         hex(value_old),

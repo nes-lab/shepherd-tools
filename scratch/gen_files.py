@@ -32,7 +32,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 
-from shepherd_core import logger
+from shepherd_core.logger import log
 
 duration_s = 60
 samplerate_sps = 100_000
@@ -54,7 +54,7 @@ for content_name, content in contents.items():
     for compression_name, compression in compressions.items():
         # inner duplication
         file_path = path_here / f"{content_name}_{compression_name}_{duplication}in1.h5"
-        logger.info(f"Generating {file_path}")
+        log.info(f"Generating {file_path}")
         h5file = h5py.File(file_path, "w")
         grp_data = h5file.create_group("data")
 
@@ -78,7 +78,7 @@ for content_name, content in contents.items():
         ds_name = "current"
         for _i in range(duplication):
             file_path = path_here / f"{content_name}_{compression_name}_entity{_i}.h5"
-            logger.info(f"Generating {file_path}")
+            log.info(f"Generating {file_path}")
             h5file = h5py.File(file_path, "w")
             grp_data = h5file.create_group("data")
             grp_data.create_dataset(
