@@ -21,8 +21,8 @@ from pydantic import BaseModel
 from pydantic import Field
 from pydantic import model_validator
 
-from shepherd_core.logger import log
 from shepherd_core.data_models import ShpModel
+from shepherd_core.logger import log
 
 # TODO: should dtype, duration, energy_Ws be kept with the path?
 #       So we would have to create a scalar energy profile

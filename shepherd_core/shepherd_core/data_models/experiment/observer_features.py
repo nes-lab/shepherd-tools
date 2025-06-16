@@ -13,9 +13,9 @@ from pydantic import model_validator
 from typing_extensions import Self
 from typing_extensions import deprecated
 
-from shepherd_core.logger import log
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.gpio import GPIO
+from shepherd_core.logger import log
 
 # defaults (pre-init complex types)
 zero_duration = timedelta(seconds=0)

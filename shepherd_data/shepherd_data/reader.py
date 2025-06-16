@@ -308,12 +308,12 @@ class Reader(CoreReader):
 
         dst_file = self.file_path.resolve().with_suffix(cut_str + ds_str + ".h5")
         if dst_file.exists():
-            log.warning(
+            self._logger.warning(
                 "Cut & Downsample skipped because output-file %s already exists.", dst_file.name
             )
             return dst_file
 
-        log.debug(
+        self._logger.debug(
             "Cut & Downsample '%s' from %.3f s to %.3f s with factor = %.1f ...",
             self.file_path.name,
             start_s,
