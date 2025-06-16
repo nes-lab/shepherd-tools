@@ -29,7 +29,7 @@ class ObserverTasks(ShpModel):
     observer: NameStr
 
     # PRE PROCESS
-    time_prep: Optional[datetime]
+    time_prep: Optional[datetime] = None  # TODO: currently not used
     root_path: Path
 
     # fw mod, store as hex-file and program
