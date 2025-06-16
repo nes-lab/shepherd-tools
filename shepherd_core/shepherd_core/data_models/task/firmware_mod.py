@@ -19,6 +19,7 @@ from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.content.firmware import FirmwareDType
 from shepherd_core.data_models.content.firmware import FirmwareStr
 from shepherd_core.data_models.experiment.experiment import Experiment
+from .helper_paths import path_posix
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import MCUPort
@@ -68,10 +69,10 @@ class FirmwareModTask(ShpModel):
             fw_id = obs.get_target(tgt_id).testbed_id
 
         return cls(
-            data=fw.data,
+            data=path_posix(fw.data) if isinstance(fw.data, Path) else fw.data,
             data_type=fw.data_type,
             custom_id=fw_id,
-            firmware_file=copy.copy(fw_path),
+            firmware_file=path_posix(fw_path),
         )
 
     @classmethod

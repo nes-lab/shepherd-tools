@@ -26,6 +26,7 @@ from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
 from shepherd_core.data_models.experiment.observer_features import UartLogging
 from shepherd_core.data_models.experiment.target_config import vsrc_neutral
+from shepherd_core.data_models.task.helper_paths import path_posix
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.logger import logger
@@ -165,8 +166,8 @@ class EmulationTask(ShpModel):
         )
 
         return cls(
-            input_path=tgt_cfg.energy_env.data_path,
-            output_path=root_path / f"emu_{obs.name}.h5",
+            input_path=path_posix(tgt_cfg.energy_env.data_path),
+            output_path=path_posix(root_path / f"emu_{obs.name}.h5"),
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
             enable_io=io_requested,

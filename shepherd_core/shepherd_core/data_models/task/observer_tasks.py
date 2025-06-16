@@ -18,6 +18,7 @@ from shepherd_core.data_models.testbed.testbed import Testbed
 
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask
+from .helper_paths import path_posix
 from .programming import ProgrammingTask
 
 
@@ -27,7 +28,7 @@ class ObserverTasks(ShpModel):
     observer: NameStr
 
     # PRE PROCESS
-    time_prep: datetime  # TODO: should be optional
+    time_prep: Optional[datetime]
     root_path: Path
 
     # fw mod, store as hex-file and program
@@ -55,15 +56,9 @@ class ObserverTasks(ShpModel):
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
 
-        t_start = (
-            xp.time_start
-            if isinstance(xp.time_start, datetime)
-            else datetime.now().astimezone() + timedelta(minutes=3)
-        )  # TODO: this is messed up, just a hotfix
 
         obs = tb.get_observer(tgt_id)
-        xp_dir = "experiments/" + xp.name + "_" + t_start.strftime("%Y-%m-%d_%H-%M-%S")
-        root_path = tb.data_on_observer / xp_dir
+        root_path = tb.data_on_observer / "experiments" / xp.folder_name()
         # TODO: Paths should be "friendlier"
         #    - replace whitespace with "_" and remove non-alphanum?
 
@@ -71,8 +66,8 @@ class ObserverTasks(ShpModel):
 
         return cls(
             observer=obs.name,
-            time_prep=t_start - tb.prep_duration,
-            root_path=root_path,
+            # time_prep=
+            root_path=path_posix(root_path),
             fw1_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),
             fw2_mod=FirmwareModTask.from_xp(xp, tb, tgt_id, 2, fw_paths[1]),
             fw1_prog=ProgrammingTask.from_xp(xp, tb, tgt_id, 1, fw_paths[0]),

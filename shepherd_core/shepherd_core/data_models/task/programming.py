@@ -16,6 +16,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.content.firmware import suffix_to_DType
 from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
 from shepherd_core.data_models.experiment.experiment import Experiment
+from shepherd_core.data_models.task.helper_paths import path_posix
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.data_models.testbed.mcu import ProgrammerProtocol
 from shepherd_core.data_models.testbed.target import MCUPort
@@ -66,7 +67,7 @@ class ProgrammingTask(ShpModel):
             return None
 
         return cls(
-            firmware_file=copy.copy(fw_path),
+            firmware_file=path_posix(fw.data) if isinstance(fw.data, Path) else fw.data,
             target_port=obs.get_target_port(tgt_id),
             mcu_port=mcu_port,
             mcu_type=fw.mcu.name,
