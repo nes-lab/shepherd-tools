@@ -10,7 +10,7 @@ from typing_extensions import Self
 from shepherd_core.config import config
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.base.shepherd import ShpModel
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
 from .energy_environment import EnergyDType
@@ -128,7 +128,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, chain = tb_client.try_completing_model(cls.__name__, values)
         values = tb_client.fill_in_user_data(values)
-        logger.debug("VSrc-Inheritances: %s", chain)
+        log.debug("VSrc-Inheritances: %s", chain)
         return values
 
     @model_validator(mode="after")
@@ -187,7 +187,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         if not (isinstance(dV_output_en_thrs_mV, (int, float)) and (dV_output_en_thrs_mV >= 0)):
             dV_output_en_thrs_mV = 0
         if not (isinstance(dV_output_imed_low_mV, (int, float)) and (dV_output_imed_low_mV >= 0)):
-            logger.warning("VSrc: C_output shouldn't be larger than C_intermediate")
+            log.warning("VSrc: C_output shouldn't be larger than C_intermediate")
             dV_output_imed_low_mV = 0
 
         # decide which hysteresis-thresholds to use for buck-converter
@@ -224,7 +224,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         enable_storage = self.C_intermediate_uF > 0
         enable_boost = self.enable_boost and enable_storage
         if enable_boost != self.enable_boost:
-            logger.warning("VSrc - boost was disabled due to missing storage capacitor!")
+            log.warning("VSrc - boost was disabled due to missing storage capacitor!")
         enable_feedback = (
             self.enable_feedback_to_hrv
             and enable_storage
@@ -235,7 +235,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             reason = "enabled boost, " if enable_boost else ""
             reason += "" if dtype_in == EnergyDType.ivcurve else "input not ivcurve, "
             reason += "" if enable_storage else "no storage capacitor"
-            logger.warning("VSRC - feedback to harvester was disabled! Reasons: %s", reason)
+            log.warning("VSRC - feedback to harvester was disabled! Reasons: %s", reason)
         return (
             1 * int(enable_storage)
             + 2 * int(enable_boost)

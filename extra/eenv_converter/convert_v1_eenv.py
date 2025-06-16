@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import trange
 
 from shepherd_core import Writer as ShepherdWriter
-from shepherd_core import logger
+from shepherd_core.logger import log
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
@@ -33,7 +33,7 @@ def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int
     Only uses values within the specified time range.
     Ensures that the data has continuous timesteps.
     """
-    logger.info(f"Converting {in_file} -> {out_file}")
+    log.info(f"Converting {in_file} -> {out_file}")
 
     if tstart_ns % SHP_V1_STEP_WIDTH != 0:
         msg = f"tstart not divisible by ShpV1's step width: {SHP_V1_STEP_WIDTH}"
@@ -137,7 +137,7 @@ def convert(input_files: list[Path], output_dir: Path, start_ns: int, duration_n
     for i, input_file in enumerate(input_files):
         output_file = output_dir / f"node{i}.h5"
         if output_file.exists():
-            logger.warning(
+            log.warning(
                 f"Output file {output_file} exists. Skipping corresponding input file {input_file}"
             )
             continue

@@ -7,7 +7,7 @@ import numpy as np
 from commons import EEnvGenerator
 from commons import generate_h5_files
 
-from shepherd_core import logger
+from shepherd_core.logger import log
 
 
 class StaticGenerator(EEnvGenerator):
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         name = f"artificial_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
         folder_path = path_eenv / name
         if folder_path.exists():
-            logger.info("Folder %s exists. Skipping combination.", folder_path)
+            log.info("Folder %s exists. Skipping combination.", folder_path)
             continue
         folder_path.mkdir(parents=True, exist_ok=False)
 

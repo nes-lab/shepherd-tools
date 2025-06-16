@@ -11,7 +11,7 @@ import yaml
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 from .emulation import Compression
 from .emulation import EmulationTask
@@ -59,12 +59,12 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
 
     if shp_wrap.datatype == TestbedTasks.__name__:
         if observer is None:
-            logger.debug(
+            log.debug(
                 "Task-Set contained TestbedTasks & no observer was provided -> will return TB-Tasks"
             )
             return shp_wrap
         tbt = TestbedTasks(**shp_wrap.parameters)
-        logger.debug("Loading Testbed-Tasks %s for %s", tbt.name, observer)
+        log.debug("Loading Testbed-Tasks %s for %s", tbt.name, observer)
         obt = tbt.get_observer_tasks(observer)
         if obt is None:
             msg = f"Observer '{observer}' is not in TestbedTask-Set"

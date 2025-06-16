@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
 from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 from shepherd_core.reader import Reader
 from shepherd_core.writer import Writer
 
@@ -68,7 +68,7 @@ def simulate_source(
             # keep dependencies low
             from matplotlib import pyplot as plt
         except ImportError:
-            logger.warning("Matplotlib not installed, plotting of internals disabled")
+            log.warning("Matplotlib not installed, plotting of internals disabled")
             stats_internal = None
     else:
         stats_internal = None

@@ -13,7 +13,7 @@ from intelhex import IntelHexError
 from pydantic import validate_call
 
 from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 from .converter_elf import elf_to_hex
 
@@ -94,7 +94,7 @@ def is_elf(file: Path) -> bool:
     try:
         _ = ELF(path=file)
     except ELFError:
-        logger.debug("File %s is not ELF - Magic number does not match", file.name)
+        log.debug("File %s is not ELF - Magic number does not match", file.name)
         return False
     return True
 

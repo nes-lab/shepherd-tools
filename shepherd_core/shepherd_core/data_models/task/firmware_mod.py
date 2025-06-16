@@ -23,7 +23,7 @@ from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import MCUPort
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 from .helper_paths import path_posix
 
@@ -45,7 +45,7 @@ class FirmwareModTask(ShpModel):
             FirmwareDType.base64_hex,
             FirmwareDType.path_hex,
         }:
-            logger.warning("Firmware is scheduled to get custom-ID but is not in elf-format")
+            log.warning("Firmware is scheduled to get custom-ID but is not in elf-format")
         return self
 
     @classmethod

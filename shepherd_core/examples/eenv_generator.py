@@ -8,7 +8,7 @@ from tqdm import trange
 
 from shepherd_core import Reader as ShpReader
 from shepherd_core import Writer as ShpWriter
-from shepherd_core import logger
+from shepherd_core.logger import log
 
 # Config
 voltages_V = [4.0, 2.0]
@@ -26,7 +26,7 @@ for _v, _c in product(voltages_V, currents_A):
     file_path = path_here / f"{name}.h5"
 
     if file_path.exists():
-        logger.info("File exists, will skip: %s", file_path.name)
+        log.info("File exists, will skip: %s", file_path.name)
     else:
         with ShpWriter(file_path) as file:
             file.store_hostname("artificial")

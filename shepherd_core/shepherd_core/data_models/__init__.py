@@ -3,7 +3,7 @@
 Public models are directly referenced here and are usable like:
 
 '''python
-from shepherd-core import data_models
+from shepherd_core import data_models
 
 cdata = data_models.CapeData(serial_number="A123")
 '''
