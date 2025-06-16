@@ -1,7 +1,8 @@
 """Config for Task that adds the custom ID to the firmware & stores it into a file."""
 
-import copy
+from collections.abc import Set as AbstractSet
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Annotated
 from typing import Optional
 from typing import TypedDict
@@ -19,11 +20,12 @@ from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.content.firmware import FirmwareDType
 from shepherd_core.data_models.content.firmware import FirmwareStr
 from shepherd_core.data_models.experiment.experiment import Experiment
-from .helper_paths import path_posix
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import MCUPort
 from shepherd_core.logger import logger
+
+from .helper_paths import path_posix
 
 
 class FirmwareModTask(ShpModel):
@@ -91,3 +93,9 @@ class FirmwareModTask(ShpModel):
             path_new: Path = path / fw.name
             kwargs["firmware_file"] = path_new.with_suffix(".hex")
         return cls(**kwargs)
+
+    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        all_ok = any(self.firmware_file.is_relative_to(path) for path in paths)
+        if isinstance(self.data, Path):
+            all_ok = any(self.data.is_relative_to(path) for path in paths)
+        return all_ok

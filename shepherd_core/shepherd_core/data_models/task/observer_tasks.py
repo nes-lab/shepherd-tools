@@ -1,8 +1,9 @@
 """Collection of tasks for selected observer included in experiment."""
 
+from collections.abc import Set as AbstractSet
 from datetime import datetime
-from datetime import timedelta
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Annotated
 from typing import Optional
 
@@ -56,12 +57,8 @@ class ObserverTasks(ShpModel):
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
 
-
         obs = tb.get_observer(tgt_id)
         root_path = tb.data_on_observer / "experiments" / xp.folder_name()
-        # TODO: Paths should be "friendlier"
-        #    - replace whitespace with "_" and remove non-alphanum?
-
         fw_paths = [root_path / f"fw{_i}_{obs.name}.hex" for _i in [1, 2]]
 
         return cls(
@@ -95,3 +92,12 @@ class ObserverTasks(ShpModel):
                 raise ValueError("Emu-Task should have a valid output-path")
             values[self.observer] = self.emulation.output_path
         return values
+
+    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        all_ok = any(self.root_path.is_relative_to(path) for path in paths)
+        all_ok &= self.fw1_mod.is_contained(paths)
+        all_ok &= self.fw2_mod.is_contained(paths)
+        all_ok &= self.fw1_prog.is_contained(paths)
+        all_ok &= self.fw2_prog.is_contained(paths)
+        all_ok &= self.emulation.is_contained(paths)
+        return all_ok

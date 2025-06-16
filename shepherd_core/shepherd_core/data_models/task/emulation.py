@@ -1,10 +1,12 @@
 """Configuration for the Observer in Emulation-Mode."""
 
 import copy
+from collections.abc import Set as AbstractSet
 from datetime import datetime
 from datetime import timedelta
 from enum import Enum
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Annotated
 from typing import Optional
 from typing import Union
@@ -26,10 +28,11 @@ from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
 from shepherd_core.data_models.experiment.observer_features import UartLogging
 from shepherd_core.data_models.experiment.target_config import vsrc_neutral
-from shepherd_core.data_models.task.helper_paths import path_posix
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.logger import logger
+
+from .helper_paths import path_posix
 
 
 class Compression(str, Enum):
@@ -180,6 +183,11 @@ class EmulationTask(ShpModel):
             gpio_actuation=tgt_cfg.gpio_actuation,
             sys_logging=xp.sys_logging,
         )
+
+    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        all_ok = any(self.input_path.is_relative_to(path) for path in paths)
+        all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
+        return all_ok
 
 
 # TODO: herdConfig

@@ -1,7 +1,8 @@
 """Config for a Task programming the selected target."""
 
-import copy
+from collections.abc import Set as AbstractSet
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Annotated
 from typing import Optional
 
@@ -16,11 +17,12 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.content.firmware import suffix_to_DType
 from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
 from shepherd_core.data_models.experiment.experiment import Experiment
-from shepherd_core.data_models.task.helper_paths import path_posix
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.data_models.testbed.mcu import ProgrammerProtocol
 from shepherd_core.data_models.testbed.target import MCUPort
 from shepherd_core.data_models.testbed.testbed import Testbed
+
+from .helper_paths import path_posix
 
 
 class ProgrammingTask(ShpModel):
@@ -67,7 +69,7 @@ class ProgrammingTask(ShpModel):
             return None
 
         return cls(
-            firmware_file=path_posix(fw.data) if isinstance(fw.data, Path) else fw.data,
+            firmware_file=path_posix(fw_path),
             target_port=obs.get_target_port(tgt_id),
             mcu_port=mcu_port,
             mcu_type=fw.mcu.name,
@@ -75,3 +77,6 @@ class ProgrammingTask(ShpModel):
             datarate=fw.mcu.prog_datarate,
             protocol=fw.mcu.prog_protocol,
         )
+
+    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        return any(self.firmware_file.is_relative_to(path) for path in paths)
