@@ -47,7 +47,8 @@ def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = N
 
     if isinstance(config, Path) and config.exists() and config.suffix.lower() == ".pickle":
         with config.resolve().open("rb") as shp_file:
-            shp_wrap = pickle.load(shp_file, fix_imports=True)  # noqa: S301
+            shp_dict = pickle.load(shp_file)  # noqa: S301
+        shp_wrap = Wrapper(**shp_dict)
     elif isinstance(config, Path) and config.exists() and config.suffix.lower() == ".yaml":
         with config.resolve().open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)

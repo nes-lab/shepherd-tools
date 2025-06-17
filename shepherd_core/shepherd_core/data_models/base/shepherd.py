@@ -135,21 +135,21 @@ class ShpModel(BaseModel):
         pickle: uses pickle to serialize data, on BBB >100x faster for large files
         comment: documentation.
         """
-        model_dict = self.model_dump(exclude_unset=minimal)
         model_wrap = Wrapper(
             datatype=type(self).__name__,
             comment=comment,
             created=local_now(),
-            parameters=model_dict,
+            parameters=self.model_dump(exclude_unset=minimal),
         )
+        model_dict = model_wrap.model_dump(exclude_unset=minimal, exclude_defaults=minimal)
         if use_pickle:
-            model_serial = pickle.dumps(model_dict, fix_imports=True)
+            model_serial = pickle.dumps(model_dict)
             model_path = Path(path).resolve().with_suffix(".pickle")
         else:
             # TODO: x64 windows supports CSafeLoader/dumper,
             #       there are examples that replace load if avail
             model_serial = yaml.safe_dump(
-                model_wrap.model_dump(exclude_unset=minimal, exclude_defaults=minimal),
+                model_dict,
                 default_flow_style=False,
                 sort_keys=False,
             )
@@ -170,13 +170,13 @@ class ShpModel(BaseModel):
             raise FileNotFoundError
         if path.suffix.lower() == ".pickle":
             with Path(path).open("rb") as shp_file:
-                shp_wrap = pickle.load(shp_file, fix_imports=True)  # noqa: S301
+                shp_dict = pickle.load(shp_file)  # noqa: S301
         else:
             with Path(path).open() as shp_file:
                 shp_dict = yaml.safe_load(shp_file)
-            shp_wrap = Wrapper(**shp_dict)
+        shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:
-            raise ValueError("Model in file does not match the requirement")
+            raise ValueError("Model in file does not match the actual Class")
         return cls(**shp_wrap.parameters)
 
     def get_hash(self) -> str:
