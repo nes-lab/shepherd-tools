@@ -1,10 +1,17 @@
 # History of Changes
 
-## (future) v2025.06.2
+## (future) v2025.06.3
 
 - remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
 - allow configuring battery in vsource
 - allow configuring energy environment with multiple recordings
+
+## v2025.06.2
+
+- correct paths when deriving task-sets (on windows is works automatically, on Linux it doesn't)
+- tasks can now be checked if paths are contained in allowed lists
+- rename core.logger.logger to core.logger.log (avoids name collision)
+- add pickle-export to ShpModel and tasks, Model also has loader
 
 ## v2025.06.1
 
