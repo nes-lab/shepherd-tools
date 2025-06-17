@@ -101,6 +101,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         raise ValueError(msg)
 
     def folder_name(self, custom_date: datetime | None = None) -> str:
+        # TODO: custom date should not overrule time_start
         date = custom_date if custom_date is not None else self.time_start
         timestamp = local_now() if date is None else date
         timestrng = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
