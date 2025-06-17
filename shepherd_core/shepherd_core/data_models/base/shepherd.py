@@ -48,6 +48,24 @@ yaml.add_representer(IPv4Address, generic2str, SafeDumper)
 yaml.add_representer(UUID, generic2str, SafeDumper)
 
 
+def path_to_str(old: dict) -> dict:
+    r"""Allow platform-independent pickling of ShpModel.
+
+    Helper Fn
+    Posix-Paths (/xyz/abc) in WindowsPath gets converted to \\xyz\\abc when exported
+    intended usage: pickle.dump(path_to_str(model.model_dump()))
+    """
+    new: dict = {}
+    for key, value in old.items():
+        if isinstance(value, Path):
+            new[key] = value.as_posix().replace("\\", "/")
+        elif isinstance(value, dict):
+            new[key] = path_to_str(value)
+        else:
+            new[key] = value
+    return new
+
+
 class ShpModel(BaseModel):
     """Pre-configured Pydantic Base-Model (specifically for shepherd).
 
@@ -143,7 +161,7 @@ class ShpModel(BaseModel):
         )
         model_dict = model_wrap.model_dump(exclude_unset=minimal, exclude_defaults=minimal)
         if use_pickle:
-            model_serial = pickle.dumps(model_dict)
+            model_serial = pickle.dumps(path_to_str(model_dict))
             model_path = Path(path).resolve().with_suffix(".pickle")
         else:
             # TODO: x64 windows supports CSafeLoader/dumper,
