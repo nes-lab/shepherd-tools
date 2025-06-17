@@ -1,10 +1,16 @@
 # History of Changes
 
-## (future) v2025.06.3
+## (future) v2025.06.4
 
 - remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
 - allow configuring battery in vsource
 - allow configuring energy environment with multiple recordings
+
+## v2025.06.3
+
+- fix pickle-process
+  - only include builtins
+  - pre-convert pathlib.Path(), as it is platform-dependent
 
 ## v2025.06.2
 
