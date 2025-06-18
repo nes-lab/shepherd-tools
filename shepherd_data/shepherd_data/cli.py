@@ -211,7 +211,7 @@ def extract_meta(
                 if not debug:
                     continue
                 csv_depr = ["sysutil", "timesync"]
-                csv_meta = ["ptp", "phc2sys", "sys_util", "pru_util"]
+                csv_meta = ["ptp", "phc2sys", "sys_util", "pru_util", "power"]
                 for element in csv_meta + csv_depr:
                     if element in shpr.h5file:
                         shpr.save_csv(shpr[element], separator)

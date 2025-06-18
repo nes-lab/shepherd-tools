@@ -37,7 +37,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
 
     default is None, recording till EOF"""
 
-    # post-processing
+    # further processing of IV-Samples
     only_power: bool = False
     """ ⤷ reduce file-size by calculating power and automatically discard I&V"""
     samplerate: Annotated[int, Field(ge=10, le=100_000)] = 100_000
