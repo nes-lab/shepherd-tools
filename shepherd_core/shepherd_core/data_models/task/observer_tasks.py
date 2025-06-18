@@ -5,7 +5,6 @@ from datetime import datetime
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
-from typing import Optional
 
 from pydantic import validate_call
 from typing_extensions import Self
@@ -29,20 +28,20 @@ class ObserverTasks(ShpModel):
     observer: NameStr
 
     # PRE PROCESS
-    time_prep: Optional[datetime] = None  # TODO: currently not used
+    time_prep: datetime | None = None  # TODO: currently not used
     root_path: Path
 
     # fw mod, store as hex-file and program
-    fw1_mod: Optional[FirmwareModTask] = None
-    fw2_mod: Optional[FirmwareModTask] = None
-    fw1_prog: Optional[ProgrammingTask] = None
-    fw2_prog: Optional[ProgrammingTask] = None
+    fw1_mod: FirmwareModTask | None = None
+    fw2_mod: FirmwareModTask | None = None
+    fw1_prog: ProgrammingTask | None = None
+    fw2_prog: ProgrammingTask | None = None
 
     # MAIN PROCESS
-    emulation: Optional[EmulationTask] = None
+    emulation: EmulationTask | None = None
 
     # deprecations, TODO: remove before public release
-    owner_id: Annotated[Optional[IdInt], deprecated("not needed anymore")] = None
+    owner_id: Annotated[IdInt | None, deprecated("not needed anymore")] = None
     abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # post_copy / cleanup, Todo: could also just intake emuTask
