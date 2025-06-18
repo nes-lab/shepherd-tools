@@ -164,16 +164,19 @@ def test_experiment_model_pwrtracing_min() -> None:
 def test_experiment_model_pwrtracing_power_only() -> None:
     PowerTracing(only_power=True)
 
+
 def test_experiment_model_pwrtracing_sample_rate() -> None:
     PowerTracing(samplerate=10)
     PowerTracing(samplerate=100)
     PowerTracing(samplerate=100000)
+
 
 def test_experiment_model_pwrtracing_sample_rate_fail() -> None:
     with pytest.raises(ValidationError):
         PowerTracing(samplerate=1)
     with pytest.raises(ValidationError):
         PowerTracing(samplerate=111)
+
 
 def test_experiment_model_gpiotracing_min() -> None:
     GpioTracing()

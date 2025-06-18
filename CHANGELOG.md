@@ -2,9 +2,19 @@
 
 ## (future) v2025.06.4
 
-- remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
 - allow configuring battery in vsource
 - allow configuring energy environment with multiple recordings
+
+## v2025.06.4
+
+- PowerTracing
+  - remove .discard_voltage & .discard_current
+  - rename .calculate_power to .only_power
+  - allow .only_power, which will be calculated during recording (I&V will be discarded automatically)
+  - allow .samplerate to be 10, 100, 1000, 100_000 (original samples will be binned with .mean())
+  - both new options can be mixed
+- remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
+- Shpmodel - bugfix for pickling model
 
 ## v2025.06.3
 
