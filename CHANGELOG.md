@@ -2,7 +2,6 @@
 
 ## (future) v2025.06.5
 
-- remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks, EmulationTask, HarvestTask
 - allow configuring battery in vsource
 - allow configuring energy environment with multiple recordings
 
@@ -14,7 +13,7 @@
   - allow .only_power, which will be calculated during recording (I&V will be discarded automatically)
   - allow .samplerate to be 10, 100, 1000, 100_000 (original samples will be binned with .mean())
   - both new options can be mixed
-- remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
+- remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks, EmulationTask, HarvestTask
 - remove deprecated Reader.buffers_n
 - Shpmodel - bugfix for pickling model
 - drop support for python 3.9 -> support is now v3.10 to 3.13
