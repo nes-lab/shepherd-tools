@@ -6,9 +6,7 @@ TODO: should be more generalized - currently only supports msp & nRF
 from pathlib import Path
 from typing import Annotated
 from typing import Any
-from typing import Optional
 from typing import TypedDict
-from typing import Union
 
 from pydantic import StringConstraints
 from pydantic import model_validator
@@ -58,9 +56,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     mcu: MCU
 
-    data: Union[FirmwareStr, Path]
+    data: FirmwareStr | Path
     data_type: FirmwareDType
-    data_hash: Optional[str] = None
+    data_hash: str | None = None
     data_local: bool = True
     """ ⤷ signals that file has to be copied to testbed"""
 
@@ -147,7 +145,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             kwargs["name"] = file.name
         return cls(**kwargs)
 
-    def compare_hash(self, path: Optional[Path] = None) -> bool:
+    def compare_hash(self, path: Path | None = None) -> bool:
         if self.data_hash is None:
             return True
 

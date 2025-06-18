@@ -1,7 +1,6 @@
 """Configuration related to Target Nodes (DuT)."""
 
 from typing import Annotated
-from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
@@ -28,7 +27,7 @@ class TargetConfig(ShpModel, title="Target Config"):
     """Configuration related to Target Nodes (DuT)."""
 
     target_IDs: Annotated[list[IdInt], Field(min_length=1, max_length=128)]
-    custom_IDs: Optional[Annotated[list[IdInt16], Field(min_length=1, max_length=128)]] = None
+    custom_IDs: Annotated[list[IdInt16], Field(min_length=1, max_length=128)] | None = None
     """ ⤷ custom ID will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware.
 
     if no custom ID is provided, the original ID of target is used
@@ -37,9 +36,9 @@ class TargetConfig(ShpModel, title="Target Config"):
     energy_env: EnergyEnvironment
     """ input for the virtual source """
     virtual_source: VirtualSourceConfig = vsrc_neutral
-    target_delays: Optional[
-        Annotated[list[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)]
-    ] = None
+    target_delays: (
+        Annotated[list[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)] | None
+    ) = None
     """ ⤷ individual starting times
 
     - allows to use the same environment
@@ -48,13 +47,13 @@ class TargetConfig(ShpModel, title="Target Config"):
 
     firmware1: Firmware
     """ ⤷ omitted FW gets set to neutral deep-sleep"""
-    firmware2: Optional[Firmware] = None
+    firmware2: Firmware | None = None
     """ ⤷ omitted FW gets set to neutral deep-sleep"""
 
-    power_tracing: Optional[PowerTracing] = None
-    gpio_tracing: Optional[GpioTracing] = None
-    gpio_actuation: Optional[GpioActuation] = None
-    uart_logging: Optional[UartLogging] = None
+    power_tracing: PowerTracing | None = None
+    gpio_tracing: GpioTracing | None = None
+    gpio_actuation: GpioActuation | None = None
+    uart_logging: UartLogging | None = None
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
@@ -96,7 +95,7 @@ class TargetConfig(ShpModel, title="Target Config"):
             raise NotImplementedError("Feature GpioActuation reserved for future use.")
         return self
 
-    def get_custom_id(self, target_id: int) -> Optional[int]:
+    def get_custom_id(self, target_id: int) -> int | None:
         if self.custom_IDs is not None and target_id in self.target_IDs:
             return self.custom_IDs[self.target_IDs.index(target_id)]
         return None

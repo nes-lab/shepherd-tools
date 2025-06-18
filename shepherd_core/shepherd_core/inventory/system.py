@@ -9,7 +9,6 @@ from datetime import datetime
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
-from typing import Optional
 
 from typing_extensions import Self
 
@@ -41,7 +40,7 @@ class SystemInventory(ShpModel):
     machine: str
     processor: str
 
-    ptp: Optional[str] = None
+    ptp: str | None = None
 
     hostname: str
 

@@ -4,8 +4,6 @@ from datetime import date
 from datetime import datetime
 from enum import Enum
 from typing import Any
-from typing import Optional
-from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
@@ -31,12 +29,12 @@ class Cape(ShpModel, title="Shepherd-Cape"):
     name: NameStr
     version: NameStr
     description: SafeStr
-    comment: Optional[SafeStr] = None
+    comment: SafeStr | None = None
     # TODO: wake_interval, calibration
 
     active: bool = True
-    created: Union[date, datetime] = Field(default_factory=datetime.now)
-    calibrated: Union[date, datetime, None] = None
+    created: date | datetime = Field(default_factory=datetime.now)
+    calibrated: date | datetime | None = None
 
     def __str__(self) -> str:
         return self.name

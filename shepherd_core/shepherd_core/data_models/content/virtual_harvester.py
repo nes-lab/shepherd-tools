@@ -4,7 +4,6 @@ from collections.abc import Mapping
 from enum import Enum
 from typing import Annotated
 from typing import Any
-from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
@@ -214,7 +213,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     (constant current tracking).
     """
 
-    voltage_step_mV: Optional[Annotated[float, Field(ge=1, le=1_000_000)]] = None
+    voltage_step_mV: Annotated[float, Field(ge=1, le=1000000)] | None = None
     """The difference between two adjacent voltage samples.
 
     This value is implicitly derived from the other ramp parameters:
@@ -384,7 +383,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
     def calc_window_size(
         self,
-        dtype_in: Optional[EnergyDType] = None,
+        dtype_in: EnergyDType | None = None,
         *,
         for_emu: bool,
     ) -> int:
@@ -468,9 +467,9 @@ class HarvesterPRUConfig(ShpModel):
     def from_vhrv(
         cls,
         data: VirtualHarvesterConfig,
-        dtype_in: Optional[EnergyDType] = EnergyDType.ivsample,
-        window_size: Optional[u32] = None,
-        voltage_step_V: Optional[float] = None,
+        dtype_in: EnergyDType | None = EnergyDType.ivsample,
+        window_size: u32 | None = None,
+        voltage_step_V: float | None = None,
         *,
         for_emu: bool = False,
     ) -> Self:

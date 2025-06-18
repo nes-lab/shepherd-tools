@@ -5,8 +5,6 @@ These models import externally from all other model-modules!
 
 import pickle
 from pathlib import Path
-from typing import Optional
-from typing import Union
 
 import yaml
 
@@ -35,7 +33,7 @@ __all__ = [
 ]
 
 
-def prepare_task(config: Union[ShpModel, Path, str], observer: Optional[str] = None) -> Wrapper:
+def prepare_task(config: ShpModel | Path | str, observer: str | None = None) -> Wrapper:
     """Open file and extract tasks.
 
     - Open file (from Path or str of Path)

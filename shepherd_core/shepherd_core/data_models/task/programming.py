@@ -4,7 +4,6 @@ from collections.abc import Set as AbstractSet
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
-from typing import Optional
 
 from pydantic import Field
 from pydantic import model_validator
@@ -60,7 +59,7 @@ class ProgrammingTask(ShpModel):
         tgt_id: IdInt,
         mcu_port: MCUPort,
         fw_path: Path,
-    ) -> Optional[Self]:
+    ) -> Self | None:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 

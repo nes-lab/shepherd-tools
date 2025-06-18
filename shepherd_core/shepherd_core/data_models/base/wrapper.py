@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from typing import Annotated
-from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import StringConstraints
@@ -18,10 +17,10 @@ class Wrapper(BaseModel):
 
     datatype: str
     """ ⤷ model-name"""
-    comment: Optional[SafeStrClone] = None
-    created: Optional[datetime] = None
+    comment: SafeStrClone | None = None
+    created: datetime | None = None
     """ ⤷ Optional metadata"""
-    lib_ver: Optional[str] = version
+    lib_ver: str | None = version
     """ ⤷ for debug-purposes and later compatibility-checks"""
     parameters: dict
     """ ⤷ ShpModel"""

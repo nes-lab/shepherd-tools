@@ -1,6 +1,4 @@
 from pathlib import Path
-from typing import Optional
-from typing import Union
 
 import numpy as np
 import pytest
@@ -17,12 +15,12 @@ from shepherd_core.data_models.task import Compression
 
 def generate_shp_file(
     store_path: Path,
-    mode: Optional[str] = None,
-    datatype: Optional[str] = None,
-    window_samples: Optional[int] = None,
-    cal_data: Union[CalSeries, CalEmu, CalHrv, None] = None,
-    config: Optional[dict] = None,
-    compression: Optional[Compression] = Compression.default,
+    mode: str | None = None,
+    datatype: str | None = None,
+    window_samples: int | None = None,
+    cal_data: CalSeries | CalEmu | CalHrv | None = None,
+    config: dict | None = None,
+    compression: Compression | None = Compression.default,
     hostname: str = "unknown",
 ) -> Path:
     if config is None:

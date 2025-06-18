@@ -28,7 +28,6 @@ if do_connect:
     WebClient()
 
 xp = sm.Experiment(
-    id="4567",
     name="meaningful_TestName",
     # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
     duration=30,

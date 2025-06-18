@@ -15,7 +15,6 @@ Compromises:
 """
 
 import math
-from typing import Optional
 
 from shepherd_core.data_models import CalibrationEmulator
 from shepherd_core.data_models.content.virtual_source import LUT_SIZE
@@ -32,7 +31,7 @@ class PruCalibration:
     RESIDUE_MAX_nA: int = NOISE_ESTIMATE_nA * RESIDUE_SIZE_FACTOR
     negative_residue_nA = 0
 
-    def __init__(self, cal_emu: Optional[CalibrationEmulator] = None) -> None:
+    def __init__(self, cal_emu: CalibrationEmulator | None = None) -> None:
         self.cal = cal_emu if cal_emu else CalibrationEmulator()
 
     def conv_adc_raw_to_nA(self, current_raw: int) -> float:

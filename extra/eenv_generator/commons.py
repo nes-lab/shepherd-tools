@@ -6,7 +6,6 @@ from abc import ABC
 from abc import abstractmethod
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 from tqdm import trange
@@ -29,7 +28,7 @@ class EEnvGenerator(ABC):
     The main method produces data for a specific time-frame for all nodes.
     """
 
-    def __init__(self, node_count: int, seed: Optional[int]) -> None:
+    def __init__(self, node_count: int, seed: int | None) -> None:
         self.node_count = node_count
         if seed is not None:
             self.rnd_gen = np.random.Generator(bit_generator=np.random.PCG64(seed))
@@ -80,7 +79,7 @@ def generate_h5_files(
 
             iv_pairs = generator.generate_iv_pairs(count=count)
 
-            for file, (voltages, currents) in zip(file_handles, iv_pairs):
+            for file, (voltages, currents) in zip(file_handles, iv_pairs, strict=False):
                 file.append_iv_data_si(times, voltages, currents)
         end_time = time.time()
         log.info("Done! Generation took %.2f s", end_time - start_time)

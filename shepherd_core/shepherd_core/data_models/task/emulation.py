@@ -8,14 +8,11 @@ from enum import Enum
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
-from typing import Optional
-from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Self
-from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -55,7 +52,7 @@ class EmulationTask(ShpModel):
     # General config
     input_path: Path
     """ ⤷ hdf5 file containing harvesting data"""
-    output_path: Optional[Path] = None
+    output_path: Path | None = None
     """ ⤷ dir- or file-path for storing the recorded data:
 
     - providing a directory -> file is named emu_timestamp.h5
@@ -65,13 +62,12 @@ class EmulationTask(ShpModel):
     """
     force_overwrite: bool = False
     """ ⤷ Overwrite existing file"""
-    output_compression: Optional[Compression] = Compression.default
+    output_compression: Compression | None = Compression.default
     """ ⤷ should be lzf, 1 (gzip level 1) or None (order of recommendation)"""
-    time_start: Optional[datetime] = None
+    time_start: datetime | None = None
     """ timestamp or unix epoch time, None = ASAP"""
-    duration: Optional[timedelta] = None
+    duration: timedelta | None = None
     """ ⤷ Duration of recording in seconds, None = till EOF"""
-    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
 
     # emulation-specific
     use_cal_default: bool = False
@@ -91,7 +87,7 @@ class EmulationTask(ShpModel):
     - main channel is nnected to virtual Source
     - the other port is aux
     """
-    voltage_aux: Union[Annotated[float, Field(ge=0, le=4.5)], str] = 0
+    voltage_aux: Annotated[float, Field(ge=0, le=4.5)] | str = 0
     """ ⤷ aux_voltage options
     - 0-4.5 for specific const Voltage (0 V = disabled),
     - "buffer" will output intermediate voltage (storage cap of vsource),
@@ -104,11 +100,11 @@ class EmulationTask(ShpModel):
     provide parameters or name like BQ25570
     """
 
-    power_tracing: Optional[PowerTracing] = PowerTracing()
-    gpio_tracing: Optional[GpioTracing] = GpioTracing()
-    uart_logging: Optional[UartLogging] = UartLogging()
-    gpio_actuation: Optional[GpioActuation] = None
-    sys_logging: Optional[SystemLogging] = SystemLogging()
+    power_tracing: PowerTracing | None = PowerTracing()
+    gpio_tracing: GpioTracing | None = GpioTracing()
+    uart_logging: UartLogging | None = UartLogging()
+    gpio_actuation: GpioActuation | None = None
+    sys_logging: SystemLogging | None = SystemLogging()
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
     """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug,

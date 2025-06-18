@@ -58,7 +58,6 @@ target_cfgs = [
 ]
 
 xperi1 = sm.Experiment(
-    id="4567",
     name="meaningful Test-Name",
     time_start="2033-03-13 14:15:16",  # or: datetime.now() + timedelta(minutes=30)
     target_configs=target_cfgs,

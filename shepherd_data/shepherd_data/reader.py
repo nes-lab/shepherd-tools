@@ -5,8 +5,6 @@ from collections.abc import Mapping
 from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
-from typing import Union
 
 import h5py
 import numpy as np
@@ -166,14 +164,14 @@ class Reader(CoreReader):
 
     def downsample(
         self,
-        data_src: Union[h5py.Dataset, np.ndarray],
-        data_dst: Union[None, h5py.Dataset, np.ndarray],
+        data_src: h5py.Dataset | np.ndarray,
+        data_dst: None | h5py.Dataset | np.ndarray,
         start_n: int = 0,
-        end_n: Optional[int] = None,
+        end_n: int | None = None,
         ds_factor: float = 5,
         *,
         is_time: bool = False,
-    ) -> Union[None, h5py.Dataset, np.ndarray]:
+    ) -> None | h5py.Dataset | np.ndarray:
         """Sample down iv-data.
 
         Warning: only valid for IV-Stream, not IV-Curves,
@@ -258,8 +256,8 @@ class Reader(CoreReader):
 
     def cut_and_downsample_to_file(
         self,
-        start_s: Optional[float],
-        end_s: Optional[float],
+        start_s: float | None,
+        end_s: float | None,
         ds_factor: float,
     ) -> Path:
         """Cut source to given limits, downsample by factor and store result in separate file.
@@ -360,14 +358,14 @@ class Reader(CoreReader):
 
     def resample(
         self,
-        data_src: Union[h5py.Dataset, np.ndarray],
-        data_dst: Union[None, h5py.Dataset, np.ndarray],
+        data_src: h5py.Dataset | np.ndarray,
+        data_dst: None | h5py.Dataset | np.ndarray,
         start_n: int = 0,
-        end_n: Optional[int] = None,
+        end_n: int | None = None,
         samplerate_dst: float = 1000,
         *,
         is_time: bool = False,
-    ) -> Union[None, h5py.Dataset, np.ndarray]:
+    ) -> None | h5py.Dataset | np.ndarray:
         """Up- or down-sample the original trace-data.
 
         :param data_src: original iv-data
@@ -463,11 +461,11 @@ class Reader(CoreReader):
 
     def generate_plot_data(
         self,
-        start_s: Optional[float] = None,
-        end_s: Optional[float] = None,
+        start_s: float | None = None,
+        end_s: float | None = None,
         *,
         relative_timestamp: bool = True,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Provide down-sampled iv-data that can be fed into plot_to_file().
 
         :param start_s: time in seconds, relative to start of recording
@@ -517,7 +515,7 @@ class Reader(CoreReader):
 
     @staticmethod
     def assemble_plot(
-        data: Union[Mapping, Sequence], width: int = 20, height: int = 10, *, only_pwr: bool = False
+        data: Mapping | Sequence, width: int = 20, height: int = 10, *, only_pwr: bool = False
     ) -> plt.Figure:
         """Create the actual figure.
 
@@ -575,8 +573,8 @@ class Reader(CoreReader):
 
     def plot_to_file(
         self,
-        start_s: Optional[float] = None,
-        end_s: Optional[float] = None,
+        start_s: float | None = None,
+        end_s: float | None = None,
         width: int = 20,
         height: int = 10,
         *,
@@ -619,7 +617,7 @@ class Reader(CoreReader):
         height: int = 10,
         *,
         only_pwr: bool = False,
-    ) -> Optional[Path]:
+    ) -> Path | None:
         """Create (down-sampled) IV-Multi-Plots (of more than one trace).
 
         :param data: plottable / down-sampled iv-data with some meta-data

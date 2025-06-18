@@ -5,7 +5,6 @@ import sys
 from contextlib import suppress
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import click
 import pydantic
@@ -135,8 +134,8 @@ def validate(in_data: Path, *, recurse: bool = False) -> None:
 )
 def extract(
     in_data: Path,
-    start: Optional[float],
-    end: Optional[float],
+    start: float | None,
+    end: float | None,
     ds_factor: float,
     separator: str,
     *,
@@ -353,10 +352,10 @@ def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> Non
 )
 def downsample(
     in_data: Path,
-    ds_factor: Optional[float],
-    sample_rate: Optional[int],
-    start: Optional[float],
-    end: Optional[float],
+    ds_factor: float | None,
+    sample_rate: int | None,
+    start: float | None,
+    end: float | None,
     *,
     recurse: bool = False,
 ) -> None:
@@ -431,8 +430,8 @@ def downsample(
 )
 def plot(
     in_data: Path,
-    start: Optional[float],
-    end: Optional[float],
+    start: float | None,
+    end: float | None,
     width: int,
     height: int,
     *,

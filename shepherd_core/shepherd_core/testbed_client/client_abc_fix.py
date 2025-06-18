@@ -18,7 +18,6 @@ TODO: Comfort functions missing
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
-from typing import Optional
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
@@ -49,9 +48,7 @@ class AbcClient(ABC):
         pass
 
     @abstractmethod
-    def query_item(
-        self, model_type: str, uid: Optional[int] = None, name: Optional[str] = None
-    ) -> dict:
+    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
         pass
 
     @abstractmethod
@@ -103,9 +100,7 @@ class FixturesClient(AbcClient):
     def query_names(self, model_type: str) -> list[str]:
         return list(self._fixtures[model_type].elements_by_name.keys())
 
-    def query_item(
-        self, model_type: str, uid: Optional[int] = None, name: Optional[str] = None
-    ) -> dict:
+    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
         if uid is not None:
             return self._fixtures[model_type].query_id(uid)
         if name is not None:

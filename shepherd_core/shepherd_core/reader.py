@@ -12,10 +12,7 @@ from itertools import product
 from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING
-from typing import Annotated
 from typing import Any
-from typing import Optional
-from typing import Union
 
 import h5py
 import numpy as np
@@ -91,8 +88,6 @@ class Reader:
         self.file_size: int = 0
         self.data_rate: float = 0
 
-        self.buffers_n: Annotated[int, deprecated("use .chunk_n instead")] = 0
-
         # open file (if not already done by writer)
         self._reader_opened: bool = False
         if not hasattr(self, "h5file"):
@@ -161,9 +156,9 @@ class Reader:
 
     def __exit__(
         self,
-        typ: Optional[type[BaseException]] = None,
-        exc: Optional[BaseException] = None,
-        tb: Optional[TracebackType] = None,
+        typ: type[BaseException] | None = None,
+        exc: BaseException | None = None,
+        tb: TracebackType | None = None,
         extra_arg: int = 0,
     ) -> None:
         if self._reader_opened:
@@ -193,7 +188,7 @@ class Reader:
             self.sample_interval_ns = round(10**9 * self.sample_interval_s)
             self.samplerate_sps = max(round((self.samples_n - 1) / duration_s), 1)
         self.runtime_s = round(self.samples_n / self.samplerate_sps, 1)
-        self.chunks_n = self.buffers_n = int(self.samples_n // self.CHUNK_SAMPLES_N)
+        self.chunks_n = int(self.samples_n // self.CHUNK_SAMPLES_N)
         if isinstance(self.file_path, Path):
             self.file_size = self.file_path.stat().st_size
         else:
@@ -203,8 +198,8 @@ class Reader:
     def read(
         self,
         start_n: int = 0,
-        end_n: Optional[int] = None,
-        n_samples_per_chunk: Optional[int] = None,
+        end_n: int | None = None,
+        n_samples_per_chunk: int | None = None,
         *,
         is_raw: bool = False,
         omit_timestamps: bool = False,
@@ -251,8 +246,8 @@ class Reader:
     def read_buffers(
         self,
         start_n: int = 0,
-        end_n: Optional[int] = None,
-        n_samples_per_buffer: Optional[int] = None,
+        end_n: int | None = None,
+        n_samples_per_buffer: int | None = None,
         *,
         is_raw: bool = False,
         omit_ts: bool = False,
@@ -265,7 +260,7 @@ class Reader:
             omit_timestamps=omit_ts,
         )
 
-    def get_time_start(self) -> Optional[datetime]:
+    def get_time_start(self) -> datetime | None:
         if self.samples_n < 1:
             return None
         return datetime.fromtimestamp(self._cal.time.raw_to_si(self.ds_time[0]), tz=local_tz())
@@ -297,7 +292,7 @@ class Reader:
             return self.h5file.attrs["hostname"]
         return "unknown"
 
-    def get_datatype(self) -> Optional[EnergyDType]:
+    def get_datatype(self) -> EnergyDType | None:
         try:
             if "datatype" in self.h5file["data"].attrs:
                 return EnergyDType[self.h5file["data"].attrs["datatype"]]
@@ -308,7 +303,7 @@ class Reader:
         else:
             return None
 
-    def get_voltage_step(self) -> Optional[float]:
+    def get_voltage_step(self) -> float | None:
         """Informs about the voltage step (in volts) used during harvesting the ivcurve.
 
         Options for figuring out the real step:
@@ -316,7 +311,7 @@ class Reader:
         - analyze recorded data for most often used delta
         - calculate with 'steps_n * (1 + wait_cycles)' (done for calculating window_size)
         """
-        voltage_step: Optional[float] = (
+        voltage_step: float | None = (
             self.get_config().get("virtual_harvester", {}).get("voltage_step_mV", None)
         )
         if voltage_step is None:
@@ -510,7 +505,7 @@ class Reader:
         return float(sum(energy_ws))
 
     def _dset_statistics(
-        self, dset: h5py.Dataset, cal: Optional[CalibrationPair] = None
+        self, dset: h5py.Dataset, cal: CalibrationPair | None = None
     ) -> dict[str, float]:
         """Create basic stats for a provided dataset.
 
@@ -615,7 +610,7 @@ class Reader:
 
     def get_metadata(
         self,
-        node: Union[h5py.Dataset, h5py.Group, None] = None,
+        node: h5py.Dataset | h5py.Group | None = None,
         *,
         minimal: bool = False,
     ) -> dict[str, dict]:
@@ -670,7 +665,7 @@ class Reader:
 
         return metadata
 
-    def save_metadata(self, node: Union[h5py.Dataset, h5py.Group, None] = None) -> dict:
+    def save_metadata(self, node: h5py.Dataset | h5py.Group | None = None) -> dict:
         """Get structure of file and dump content to yaml-file with same name as original.
 
         :param node: starting node, leave free to go through whole file
@@ -688,7 +683,7 @@ class Reader:
             metadata = {}
         return metadata
 
-    def get_gpio_pin_num(self, name: str) -> Optional[int]:
+    def get_gpio_pin_num(self, name: str) -> int | None:
         # reverse lookup in a 2D-dict: key1 are pin_num, key2 are descriptor-names
         if "gpio" not in self.h5file:
             return None
@@ -709,7 +704,7 @@ class Reader:
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 
-    def gpio_to_waveforms(self, name: Optional[str] = None) -> dict:
+    def gpio_to_waveforms(self, name: str | None = None) -> dict:
         waveforms: dict[str, np.ndarray] = {}
         if "gpio" not in self.h5file:
             return waveforms
@@ -744,7 +739,7 @@ class Reader:
             for row in pin_wf:
                 csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")
 
-    def gpio_to_uart(self) -> Optional[np.ndarray]:
+    def gpio_to_uart(self) -> np.ndarray | None:
         wfs = self.gpio_to_waveforms("uart")
         if len(wfs) < 1:
             return None

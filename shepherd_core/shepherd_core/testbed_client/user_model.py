@@ -4,7 +4,6 @@ import secrets
 from hashlib import pbkdf2_hmac
 from typing import Annotated
 from typing import Any
-from typing import Optional
 
 from pydantic import EmailStr
 from pydantic import Field
@@ -44,14 +43,14 @@ class User(ShpModel):
         default_factory=id_default,
     )
     name: NameStr
-    description: Optional[SafeStr] = None
-    comment: Optional[SafeStr] = None
+    description: SafeStr | None = None
+    comment: SafeStr | None = None
 
-    name_full: Optional[NameStr] = None
+    name_full: NameStr | None = None
     group: NameStr
     email: EmailStr
 
-    pw_hash: Optional[SecretBytes] = None
+    pw_hash: SecretBytes | None = None
     # ⤷ was hash_password("this_will_become_a_salted_slow_hash") -> slowed BBB down
     # ⤷ TODO (min_length=128, max_length=512)
 

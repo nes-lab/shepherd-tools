@@ -42,7 +42,6 @@ def test_task_generation_script(tmp_path: Path) -> None:
     ]
 
     xperi = Experiment(
-        id="4567",
         name="meaningful Test-Name",
         time_start=local_now() + timedelta(minutes=30),
         target_configs=target_cfgs,

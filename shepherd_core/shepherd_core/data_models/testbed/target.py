@@ -3,8 +3,6 @@
 from datetime import datetime
 from typing import Annotated
 from typing import Any
-from typing import Optional
-from typing import Union
 
 from pydantic import Field
 from pydantic import model_validator
@@ -30,15 +28,15 @@ class Target(ShpModel, title="Target Node (DuT)"):
     version: NameStr
     description: SafeStr
 
-    comment: Optional[SafeStr] = None
+    comment: SafeStr | None = None
 
     active: bool = True
     created: datetime = Field(default_factory=datetime.now)
 
-    testbed_id: Optional[IdInt16] = None
+    testbed_id: IdInt16 | None = None
     """ ⤷ is derived from ID (targets are still selected by id!)"""
-    mcu1: Union[MCU, NameStr]
-    mcu2: Union[MCU, NameStr, None] = None
+    mcu1: MCU | NameStr
+    mcu2: MCU | NameStr | None = None
 
     # TODO: programming pins per mcu should be here (or better in Cape)
 

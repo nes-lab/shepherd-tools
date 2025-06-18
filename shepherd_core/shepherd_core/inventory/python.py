@@ -3,7 +3,6 @@
 import platform
 from contextlib import suppress
 from importlib import import_module
-from typing import Optional
 
 from pydantic import ConfigDict
 from typing_extensions import Self
@@ -15,14 +14,14 @@ class PythonInventory(ShpModel):
     """Python related inventory model."""
 
     # program versions
-    h5py: Optional[str] = None
-    numpy: Optional[str] = None
-    pydantic: Optional[str] = None
-    python: Optional[str] = None
-    shepherd_core: Optional[str] = None
-    shepherd_sheep: Optional[str] = None
-    yaml: Optional[str] = None
-    zstandard: Optional[str] = None
+    h5py: str | None = None
+    numpy: str | None = None
+    pydantic: str | None = None
+    python: str | None = None
+    shepherd_core: str | None = None
+    shepherd_sheep: str | None = None
+    yaml: str | None = None
+    zstandard: str | None = None
 
     model_config = ConfigDict(str_min_length=0)
 

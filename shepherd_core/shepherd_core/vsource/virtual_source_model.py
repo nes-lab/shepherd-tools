@@ -10,8 +10,6 @@ NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 
 """
 
-from typing import Optional
-
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
 from shepherd_core.data_models.content.energy_environment import EnergyDType
 from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
@@ -28,11 +26,11 @@ class VirtualSourceModel:
 
     def __init__(
         self,
-        vsrc: Optional[VirtualSourceConfig],
+        vsrc: VirtualSourceConfig | None,
         cal_emu: CalibrationEmulator,
         dtype_in: EnergyDType = EnergyDType.ivsample,
-        window_size: Optional[int] = None,
-        voltage_step_V: Optional[float] = None,
+        window_size: int | None = None,
+        voltage_step_V: float | None = None,
         *,
         log_intermediate: bool = False,
     ) -> None:

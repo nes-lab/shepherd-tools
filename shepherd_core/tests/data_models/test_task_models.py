@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Union
 
 import pytest
 from pydantic import ValidationError
@@ -33,7 +32,7 @@ def test_task_model_emu_fault_in_past() -> None:
 
 
 @pytest.mark.parametrize("value", [0, 1, 2, 3, 4, 4.5, "buffer", "main"])
-def test_task_model_emu_custom_aux(value: Union[float, str]) -> None:
+def test_task_model_emu_custom_aux(value: float | str) -> None:
     EmulationTask(
         input_path="./here",
         voltage_aux=value,
@@ -41,7 +40,7 @@ def test_task_model_emu_custom_aux(value: Union[float, str]) -> None:
 
 
 @pytest.mark.parametrize("value", [-1.0, 5, "max", "something"])
-def test_task_model_emu_fault_aux(value: Union[float, str]) -> None:
+def test_task_model_emu_fault_aux(value: float | str) -> None:
     with pytest.raises(ValidationError):
         EmulationTask(
             input_path="./here",
@@ -103,7 +102,6 @@ def test_task_model_hrv_too_late() -> None:
 def test_task_model_observer_min1() -> None:
     ObserverTasks(
         observer="peeping tom",
-        owner_id=666,
         time_prep="2044-01-01 12:13:14",
         root_path="/usr",
     )
