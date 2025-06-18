@@ -176,7 +176,7 @@ class ShpModel(BaseModel):
 
         if not model_path.parent.exists():
             model_path.parent.mkdir(parents=True)
-        with model_path.open("w") as f:
+        with model_path.open("wb" if use_pickle else "w") as f:
             f.write(model_serial)
         return model_path
 
