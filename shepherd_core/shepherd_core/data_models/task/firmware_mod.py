@@ -1,7 +1,8 @@
 """Config for Task that adds the custom ID to the firmware & stores it into a file."""
 
-import copy
+from collections.abc import Set as AbstractSet
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Annotated
 from typing import TypedDict
 
@@ -20,7 +21,9 @@ from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import MCUPort
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
+
+from .helper_paths import path_posix
 
 
 class FirmwareModTask(ShpModel):
@@ -40,7 +43,7 @@ class FirmwareModTask(ShpModel):
             FirmwareDType.base64_hex,
             FirmwareDType.path_hex,
         }:
-            logger.warning("Firmware is scheduled to get custom-ID but is not in elf-format")
+            log.warning("Firmware is scheduled to get custom-ID but is not in elf-format")
         return self
 
     @classmethod
@@ -66,10 +69,10 @@ class FirmwareModTask(ShpModel):
             fw_id = obs.get_target(tgt_id).testbed_id
 
         return cls(
-            data=fw.data,
+            data=path_posix(fw.data) if isinstance(fw.data, Path) else fw.data,
             data_type=fw.data_type,
             custom_id=fw_id,
-            firmware_file=copy.copy(fw_path),
+            firmware_file=path_posix(fw_path),
         )
 
     @classmethod
@@ -88,3 +91,9 @@ class FirmwareModTask(ShpModel):
             path_new: Path = path / fw.name
             kwargs["firmware_file"] = path_new.with_suffix(".hex")
         return cls(**kwargs)
+
+    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        all_ok = any(self.firmware_file.is_relative_to(path) for path in paths)
+        if isinstance(self.data, Path):
+            all_ok = any(self.data.is_relative_to(path) for path in paths)
+        return all_ok

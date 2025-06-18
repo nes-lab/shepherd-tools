@@ -2,11 +2,14 @@
 
 import hashlib
 import pathlib
+import pickle
 from collections.abc import Generator
 from datetime import timedelta
 from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Any
+from typing import Optional
+from typing import Union
 from uuid import UUID
 
 import yaml
@@ -21,7 +24,7 @@ from .wrapper import Wrapper
 
 
 def path2str(
-    dumper: SafeDumper, data: pathlib.Path | pathlib.WindowsPath | pathlib.PosixPath
+    dumper: SafeDumper, data: Union[pathlib.Path, pathlib.WindowsPath, pathlib.PosixPath]
 ) -> Node:
     """Add a yaml-representation for a specific datatype."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
@@ -43,6 +46,24 @@ yaml.add_representer(pathlib.Path, path2str, SafeDumper)
 yaml.add_representer(timedelta, time2int, SafeDumper)
 yaml.add_representer(IPv4Address, generic2str, SafeDumper)
 yaml.add_representer(UUID, generic2str, SafeDumper)
+
+
+def path_to_str(old: dict) -> dict:
+    r"""Allow platform-independent pickling of ShpModel.
+
+    Helper Fn
+    Posix-Paths (/xyz/abc) in WindowsPath gets converted to \\xyz\\abc when exported
+    intended usage: pickle.dump(path_to_str(model.model_dump()))
+    """
+    new: dict = {}
+    for key, value in old.items():
+        if isinstance(value, Path):
+            new[key] = value.as_posix().replace("\\", "/")
+        elif isinstance(value, dict):
+            new[key] = path_to_str(value)
+        else:
+            new[key] = value
+    return new
 
 
 class ShpModel(BaseModel):
@@ -111,7 +132,7 @@ class ShpModel(BaseModel):
             yield key, self[key]
 
     @classmethod
-    def schema_to_file(cls, path: str | Path) -> None:
+    def schema_to_file(cls, path: Union[str, Path]) -> None:
         """Store schema to yaml (for frontend-generators)."""
         model_dict = cls.model_json_schema()
         model_yaml = yaml.safe_dump(model_dict, default_flow_style=False, sort_keys=False)
@@ -120,44 +141,60 @@ class ShpModel(BaseModel):
 
     def to_file(
         self,
-        path: str | Path,
-        comment: str | None = None,
+        path: Union[str, Path],
+        comment: Optional[str] = None,
         *,
         minimal: bool = True,
+        use_pickle: bool = False,
     ) -> Path:
         """Store data to yaml in a wrapper.
 
         minimal: stores minimal set (filters out unset & default parameters)
+        pickle: uses pickle to serialize data, on BBB >100x faster for large files
         comment: documentation.
         """
-        model_dict = self.model_dump(exclude_unset=minimal)
         model_wrap = Wrapper(
             datatype=type(self).__name__,
             comment=comment,
             created=local_now(),
-            parameters=model_dict,
+            parameters=self.model_dump(exclude_unset=minimal),
         )
-        model_yaml = yaml.safe_dump(
-            model_wrap.model_dump(exclude_unset=minimal, exclude_defaults=minimal),
-            default_flow_style=False,
-            sort_keys=False,
-        )
+        model_dict = model_wrap.model_dump(exclude_unset=minimal, exclude_defaults=minimal)
+        if use_pickle:
+            model_serial = pickle.dumps(path_to_str(model_dict))
+            model_path = Path(path).resolve().with_suffix(".pickle")
+        else:
+            # TODO: x64 windows supports CSafeLoader/dumper,
+            #       there are examples that replace load if avail
+            model_serial = yaml.safe_dump(
+                model_dict,
+                default_flow_style=False,
+                sort_keys=False,
+            )
+            model_path = Path(path).resolve().with_suffix(".yaml")
         # TODO: handle directory
-        model_path = Path(path).resolve().with_suffix(".yaml")
+
         if not model_path.parent.exists():
             model_path.parent.mkdir(parents=True)
-        with model_path.open("w") as f:
-            f.write(model_yaml)
+        with model_path.open("wb" if use_pickle else "w") as f:
+            f.write(model_serial)
         return model_path
 
     @classmethod
-    def from_file(cls, path: str | Path) -> Self:
-        """Load from yaml."""
-        with Path(path).open() as shp_file:
-            shp_dict = yaml.safe_load(shp_file)
+    def from_file(cls, path: Union[str, Path]) -> Self:
+        """Load from YAML or pickle file."""
+        path: Path = Path(path)
+        if not Path(path).exists():
+            raise FileNotFoundError
+        if path.suffix.lower() == ".pickle":
+            with Path(path).open("rb") as shp_file:
+                shp_dict = pickle.load(shp_file)  # noqa: S301
+        else:
+            with Path(path).open() as shp_file:
+                shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:
-            raise ValueError("Model in file does not match the requirement")
+            raise ValueError("Model in file does not match the actual Class")
         return cls(**shp_wrap.parameters)
 
     def get_hash(self) -> str:

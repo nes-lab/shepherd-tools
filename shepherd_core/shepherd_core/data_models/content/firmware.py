@@ -17,7 +17,7 @@ from typing_extensions import Unpack
 from shepherd_core import fw_tools
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.testbed.mcu import MCU
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
 from .firmware_datatype import FirmwareDType
@@ -133,8 +133,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
                 if ("nrf52" in arch or "arm" in arch) and not fw_tools.is_elf_nrf52(file):
                     raise ValueError("File is not a ELF for nRF52")
             except RuntimeError:
-                logger.warning("ObjCopy not found -> Arch of Firmware can't be verified")
-            logger.debug("ELF-File '%s' has arch: %s", file.name, arch)
+                log.warning("ObjCopy not found -> Arch of Firmware can't be verified")
+            log.debug("ELF-File '%s' has arch: %s", file.name, arch)
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
 
@@ -157,7 +157,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             match = self.data_hash == hash_new
 
         if not match:
-            logger.warning("FW-Hash does not match with stored value!")
+            log.warning("FW-Hash does not match with stored value!")
             # TODO: it might be more appropriate to raise here
         return match
 

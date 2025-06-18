@@ -6,8 +6,8 @@ import logging.handlers
 import chromalog
 
 chromalog.basicConfig(format="%(message)s")
-logger = logging.getLogger("SHPCore")
-logger.addHandler(logging.NullHandler())
+log = logging.getLogger("SHPCore")
+log.addHandler(logging.NullHandler())
 
 verbose_level: int = 2
 
@@ -46,7 +46,7 @@ def increase_verbose_level(verbose: int) -> None:
     global verbose_level  # noqa: PLW0603
     if verbose >= verbose_level:
         verbose_level = min(max(verbose, 0), 3)
-        set_log_verbose_level(logger, verbose_level)
+        set_log_verbose_level(log, verbose_level)
 
 
 increase_verbose_level(2)

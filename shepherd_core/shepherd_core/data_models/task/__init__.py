@@ -3,13 +3,14 @@
 These models import externally from all other model-modules!
 """
 
+import pickle
 from pathlib import Path
 
 import yaml
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 from .emulation import Compression
 from .emulation import EmulationTask
@@ -42,7 +43,11 @@ def prepare_task(config: ShpModel | Path | str, observer: str | None = None) -> 
     if isinstance(config, str):
         config = Path(config)
 
-    if isinstance(config, Path):
+    if isinstance(config, Path) and config.exists() and config.suffix.lower() == ".pickle":
+        with config.resolve().open("rb") as shp_file:
+            shp_dict = pickle.load(shp_file)  # noqa: S301
+        shp_wrap = Wrapper(**shp_dict)
+    elif isinstance(config, Path) and config.exists() and config.suffix.lower() == ".yaml":
         with config.resolve().open() as shp_file:
             shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
@@ -57,12 +62,12 @@ def prepare_task(config: ShpModel | Path | str, observer: str | None = None) -> 
 
     if shp_wrap.datatype == TestbedTasks.__name__:
         if observer is None:
-            logger.debug(
+            log.debug(
                 "Task-Set contained TestbedTasks & no observer was provided -> will return TB-Tasks"
             )
             return shp_wrap
         tbt = TestbedTasks(**shp_wrap.parameters)
-        logger.debug("Loading Testbed-Tasks %s for %s", tbt.name, observer)
+        log.debug("Loading Testbed-Tasks %s for %s", tbt.name, observer)
         obt = tbt.get_observer_tasks(observer)
         if obt is None:
             msg = f"Observer '{observer}' is not in TestbedTask-Set"

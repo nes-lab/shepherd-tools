@@ -1,10 +1,12 @@
 """Configuration for the Observer in Emulation-Mode."""
 
 import copy
+from collections.abc import Set as AbstractSet
 from datetime import datetime
 from datetime import timedelta
 from enum import Enum
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Annotated
 
 from pydantic import Field
@@ -25,7 +27,9 @@ from shepherd_core.data_models.experiment.observer_features import UartLogging
 from shepherd_core.data_models.experiment.target_config import vsrc_neutral
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
+
+from .helper_paths import path_posix
 
 
 class Compression(str, Enum):
@@ -145,9 +149,9 @@ class EmulationTask(ShpModel):
             _io is not None for _io in (self.gpio_actuation, self.gpio_tracing, self.uart_logging)
         )
         if self.enable_io and not io_requested:
-            logger.warning("Target IO enabled, but no feature requested IO")
+            log.warning("Target IO enabled, but no feature requested IO")
         if not self.enable_io and io_requested:
-            logger.warning("Target IO not enabled, but a feature requested IO")
+            log.warning("Target IO not enabled, but a feature requested IO")
         return self
 
     @classmethod
@@ -161,8 +165,8 @@ class EmulationTask(ShpModel):
         )
 
         return cls(
-            input_path=tgt_cfg.energy_env.data_path,
-            output_path=root_path / f"emu_{obs.name}.h5",
+            input_path=path_posix(tgt_cfg.energy_env.data_path),
+            output_path=path_posix(root_path / f"emu_{obs.name}.h5"),
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
             enable_io=io_requested,
@@ -175,6 +179,11 @@ class EmulationTask(ShpModel):
             gpio_actuation=tgt_cfg.gpio_actuation,
             sys_logging=xp.sys_logging,
         )
+
+    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        all_ok = any(self.input_path.is_relative_to(path) for path in paths)
+        all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
+        return all_ok
 
 
 # TODO: herdConfig

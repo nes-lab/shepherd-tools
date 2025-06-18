@@ -156,14 +156,21 @@ def test_experiment_model_pwrtracing_min() -> None:
     PowerTracing()
 
 
-def test_experiment_model_pwrtracing_fault_post() -> None:
-    with pytest.raises(NotImplementedError):
-        PowerTracing(calculate_power=True)
+def test_experiment_model_pwrtracing_power_only() -> None:
+    PowerTracing(only_power=True)
 
 
-def test_experiment_model_pwrtracing_fault_discard_all() -> None:
+def test_experiment_model_pwrtracing_sample_rate() -> None:
+    PowerTracing(samplerate=10)
+    PowerTracing(samplerate=100)
+    PowerTracing(samplerate=100000)
+
+
+def test_experiment_model_pwrtracing_sample_rate_fail() -> None:
     with pytest.raises(ValidationError):
-        PowerTracing(calculate_power=False, discard_current=True, discard_voltage=True)
+        PowerTracing(samplerate=1)
+    with pytest.raises(ValidationError):
+        PowerTracing(samplerate=111)
 
 
 def test_experiment_model_gpiotracing_min() -> None:

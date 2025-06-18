@@ -13,7 +13,7 @@ from typing import Any
 from typing_extensions import Self
 
 from shepherd_core.data_models.base.timezone import local_now
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 
 try:
     import psutil
@@ -61,7 +61,7 @@ class SystemInventory(ShpModel):
         if psutil is None:
             ifs2 = {}
             uptime = 0
-            logger.warning(
+            log.warning(
                 "Inventory-Parameters will be missing. "
                 "Please install functionality with "
                 "'pip install shepherd_core[inventory] -U' first"

@@ -1,12 +1,36 @@
 # History of Changes
 
-## v2025.06.2
+## (future) v2025.06.5
 
 - remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks, EmulationTask, HarvestTask
-- remove deprecated Reader.buffers_n
 - allow configuring battery in vsource
 - allow configuring energy environment with multiple recordings
+
+## v2025.06.4
+
+- PowerTracing
+  - remove .discard_voltage & .discard_current
+  - rename .calculate_power to .only_power
+  - allow .only_power, which will be calculated during recording (I&V will be discarded automatically)
+  - allow .samplerate to be 10, 100, 1000, 100_000 (original samples will be binned with .mean())
+  - both new options can be mixed
+- remove deprecated fields in Experiment, Systemlogging, Tasks, ObserverTasks, TestbedTasks
+- remove deprecated Reader.buffers_n
+- Shpmodel - bugfix for pickling model
 - drop support for python 3.9 -> support is now v3.10 to 3.13
+
+## v2025.06.3
+
+- fix pickle-process
+  - only include builtins
+  - pre-convert pathlib.Path(), as it is platform-dependent
+
+## v2025.06.2
+
+- correct paths when deriving task-sets (on windows is works automatically, on Linux it doesn't)
+- tasks can now be checked if paths are contained in allowed lists
+- rename core.logger.logger to core.logger.log (avoids name collision)
+- add pickle-export to ShpModel and tasks, Model also has loader
 
 ## v2025.06.1
 

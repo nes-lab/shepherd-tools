@@ -17,7 +17,7 @@ from .data_models.task.emulation import Compression
 from .inventory import Inventory
 from .logger import get_verbose_level
 from .logger import increase_verbose_level
-from .logger import logger
+from .logger import log
 from .reader import Reader
 from .testbed_client.client_web import WebClient
 from .version import version
@@ -41,5 +41,5 @@ __all__ = [
     "increase_verbose_level",
     "local_now",
     "local_tz",
-    "logger",
+    "log",
 ]

@@ -11,12 +11,12 @@ import numpy as np
 from tqdm import trange
 
 from shepherd_core import Writer as ShepherdWriter
-from shepherd_core import logger
 from shepherd_core.config import config
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
+from shepherd_core.logger import log
 
 STEP_WIDTH = 1.0 / config.SAMPLERATE_SPS  # 10 us
 
@@ -66,7 +66,7 @@ def generate_h5_files(
             file_handles.append(stack.enter_context(writer))
             writer.store_hostname(f"node{i}.h5")
 
-        logger.info("Generating energy environment...")
+        log.info("Generating energy environment...")
         chunk_duration = chunk_size * STEP_WIDTH
         chunk_count = math.ceil(duration / chunk_duration)
         times_per_chunk = np.arange(0, chunk_size) * STEP_WIDTH
@@ -82,4 +82,4 @@ def generate_h5_files(
             for file, (voltages, currents) in zip(file_handles, iv_pairs, strict=False):
                 file.append_iv_data_si(times, voltages, currents)
         end_time = time.time()
-        logger.info("Done! Generation took %.2f s", end_time - start_time)
+        log.info("Done! Generation took %.2f s", end_time - start_time)

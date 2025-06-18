@@ -13,7 +13,7 @@ from shepherd_core.config import config
 from shepherd_core.data_models.base.calibration import CalibrationHarvester
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.base.shepherd import ShpModel
-from shepherd_core.logger import logger
+from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
 from .energy_environment import EnergyDType
@@ -309,7 +309,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         if values["name"] == "neutral":
             # TODO: same test is later done in calc_algorithm_num() again
             raise ValueError("Resulting Harvester can't be neutral")
-        logger.debug("VHrv-Inheritances: %s", chain)
+        log.debug("VHrv-Inheritances: %s", chain)
 
         # post corrections -> should be in separate validator
         cal = CalibrationHarvester()  # TODO: as argument?
@@ -371,7 +371,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         duration_ms = min(max(self.duration_ms, time_min_ms), interval_ms)
         _ratio = (duration_ms / interval_ms) / (self.duration_ms / self.interval_ms)
         if (_ratio - 1) > 0.1:
-            logger.debug(
+            log.debug(
                 "Ratio between interval & duration has changed "
                 "more than 10%% due to constraints (%.4f)",
                 _ratio,

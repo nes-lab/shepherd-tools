@@ -3,8 +3,8 @@
 from pathlib import Path
 from timeit import timeit
 
-from shepherd_core import logger
 from shepherd_core.decoder_waveform import Uart
+from shepherd_core.logger import log
 
 # file captured with logic analyzer, 15.5k events (2700 symbols, 61 lines)
 trace = Path(__file__).parent / "uart_raw2.csv"
@@ -13,7 +13,7 @@ uwd = Uart(trace)
 sym = uwd.get_symbols()
 lne = uwd.get_lines()
 txt = uwd.get_text()
-logger.info(txt)
+log.info(txt)
 
 do_analysis = False
 if do_analysis:

@@ -1,8 +1,10 @@
 """Config for the Observer in Harvest-Mode to record IV data from a harvesting-source."""
 
+from collections.abc import Set as AbstractSet
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Annotated
 
 from pydantic import Field
@@ -81,3 +83,6 @@ class HarvestTask(ShpModel):
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
         return self
+
+    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        return any(self.output_path.is_relative_to(path) for path in paths)
