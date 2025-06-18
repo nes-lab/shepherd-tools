@@ -22,10 +22,7 @@ zero_duration = timedelta(seconds=0)
 
 
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):
-    """Configuration for recording the Power-Consumption of the Target Nodes.
-
-    TODO: postprocessing not implemented ATM
-    """
+    """Configuration for recording the Power-Consumption of the Target Nodes."""
 
     intermediate_voltage: bool = False
     """
@@ -41,14 +38,14 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     default is None, recording till EOF"""
 
     # post-processing
-    calculate_power: bool = False
-    """ ⤷ reduce file-size by calculating power -> not implemented ATM"""
+    only_power: bool = False
+    """ ⤷ reduce file-size by calculating power and automatically discard I&V"""
     samplerate: Annotated[int, Field(ge=10, le=100_000)] = 100_000
-    """ ⤷ reduce file-size by down-sampling -> not implemented ATM"""
-    discard_current: bool = False
-    """ ⤷ reduce file-size by omitting current -> not implemented ATM"""
-    discard_voltage: bool = False
-    """ ⤷ reduce file-size by omitting voltage -> not implemented ATM"""
+    """ ⤷ reduce file-size by re-sampling (mean over x samples)
+        Timestamps will be taken from the start of that sample-window.
+        example: 10 Hz samplerate will be binning 10k samples via mean() and
+                 the timestamp for that new sample will be value[0] of the 10k long vector
+    """
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
@@ -57,22 +54,10 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration can't be negative.")
 
-        discard_all = self.discard_current and self.discard_voltage
-        if not self.calculate_power and discard_all:
-            raise ValueError("Error in config -> tracing enabled, but output gets discarded")
-        if self.calculate_power:
-            raise NotImplementedError(
-                "Feature PowerTracing.calculate_power reserved for future use."
-            )
-        if self.samplerate != 100_000:
-            raise NotImplementedError("Feature PowerTracing.samplerate reserved for future use.")
-        if self.discard_current:
-            raise NotImplementedError(
-                "Feature PowerTracing.discard_current reserved for future use."
-            )
-        if self.discard_voltage:
-            raise NotImplementedError(
-                "Feature PowerTracing.discard_voltage reserved for future use."
+        rates_allowed = (10, 100, 1_000, 100_000)
+        if self.samplerate not in rates_allowed:
+            raise ValueError(
+                "Feature PowerTracing.samplerate only supports specific rates: %s", rates_allowed
             )
         return self
 
