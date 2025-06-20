@@ -40,19 +40,22 @@ class RndIndepPatternGenerator(EEnvGenerator):
 
     def generate_random_pattern(self, count: int) -> np.ndarray:
         samples = np.zeros((count, self.node_count))
+        # Pre-Generate random matrix (steps x nodes)
+        random = self.rnd_gen.random((count, self.node_count))
+
+        # Start from last states (from last chunk)
+        last_states = self.states
 
         for i in range(count):
-            # Start from last states
-            last_states = samples[i - 1] if i > 0 else self.states
-            # Generate random vector (1 value per node)
-            random = self.rnd_gen.random(self.node_count)
             # Get probability vector
             probabilities = self.transition_probs[last_states.astype(int)]
             # Generate updated states
-            samples[i] = random < probabilities
+            samples[i] = random[i] < probabilities
+            # Save state for next transition
+            last_states = samples[i]
 
         # Save last states for next chunk
-        self.states = samples[len(samples) - 1]
+        self.states = last_states
 
         return samples
 
