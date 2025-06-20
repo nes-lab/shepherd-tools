@@ -34,7 +34,8 @@ class TestbedTasks(ShpModel):
             tb = Testbed()  # this will query the first (and only) entry of client
 
         tgt_ids = xp.get_target_ids()
-        obs_tasks = [ObserverTasks.from_xp(xp, tb, _id) for _id in tgt_ids]
+        xp_folder = xp.folder_name()
+        obs_tasks = [ObserverTasks.from_xp(xp, xp_folder, tb, _id) for _id in tgt_ids]
         return cls(
             name=xp.name,
             observer_tasks=obs_tasks,
