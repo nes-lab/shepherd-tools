@@ -134,7 +134,7 @@ class EmulationTask(ShpModel):
                 "Start-Time for Emulation can't be in the past "
                 f"('{self.time_start}' vs '{time_now}'."
             )
-            raise ValueError(msg)
+            log.error(msg)  # do not raise anymore - server & clients do not have to match
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
         if isinstance(self.voltage_aux, str) and self.voltage_aux not in {
