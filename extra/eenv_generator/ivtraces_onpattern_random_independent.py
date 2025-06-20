@@ -6,7 +6,6 @@ from pathlib import Path
 import numpy as np
 from commons import STEP_WIDTH
 from commons import EEnvGenerator
-from commons import generate_h5_files
 
 from shepherd_core.logger import log
 
@@ -21,7 +20,7 @@ class RndIndepPatternGenerator(EEnvGenerator):
     def __init__(
         self,
         node_count: int,
-        seed: int,
+        seed: None | int | list[int],
         avg_duty_cycle: float,
         avg_on_duration: float,
         on_voltage: float,
@@ -72,30 +71,52 @@ if __name__ == "__main__":
     else:
         path_eenv = path_here / "content/eenv/nes_lab/"
 
-    seed = 32220789340897324098232347119065234157809
     duty_cycles = [0.01, 0.02, 0.05, 0.1, 0.2]
     on_durations = [100e-6, 500e-6, 1e-3, 5e-3]
     duration = 4 * 60 * 60.0
 
-    for duty_cycle, on_duration in product(duty_cycles, on_durations):
-        generator = RndIndepPatternGenerator(
-            node_count=20,
-            seed=seed,
-            avg_duty_cycle=duty_cycle,
-            avg_on_duration=on_duration,
-            on_voltage=2.0,
-            on_current=10e-3,
-        )
+    node_count = 20
+    seed = 32220789340897324098232347119065234157809
+    chunk_size = 10_000_000
 
-        # Create output folder (or skip)
+    for duty_cycle, on_duration in product(duty_cycles, on_durations):
+        # Ensure output folder exists
         name = (
             "artificial_on_off_random_markov_avg_"
             f"{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us"
         )
         folder_path = path_eenv / name
-        if folder_path.exists():
-            log.info("Folder %s exists. Skipping combination.", folder_path)
-            continue
-        folder_path.mkdir(parents=True, exist_ok=False)
 
-        generate_h5_files(folder_path, duration=duration, chunk_size=500_000, generator=generator)
+        if folder_path.exists():
+            log.warning("Folder %s exists. New node files will be added.", folder_path)
+        folder_path.mkdir(parents=True, exist_ok=True)
+
+        # Generate EEnv for this combination
+        # Note: Nodes are generated independently to allow adding
+        #       nodes without re-generating existing ones
+        log.info("Generating EEnv: %s", name)
+        for node_idx in range(node_count):
+            node_path = folder_path / f"node{node_idx}.h5"
+            if node_path.exists():
+                log.info("File %s exists. Skipping node %i.", node_path, node_idx)
+                continue
+
+            generator = RndIndepPatternGenerator(
+                node_count=1,
+                seed=[seed, node_idx],
+                avg_duty_cycle=duty_cycle,
+                avg_on_duration=on_duration,
+                on_voltage=2.0,
+                on_current=10e-3,
+            )
+
+            try:
+                generator.generate_h5_files(
+                    file_paths=[node_path], duration=duration, chunk_size=chunk_size
+                )
+            except:
+                # Ensure no unfinished node files remain on exception/interrupt
+                # These would be skipped when re-executing, resulting in a broken EEnv
+                log.error("Exception encountered. Removing incomplete node file: %s", node_path)
+                node_path.unlink()
+                raise
