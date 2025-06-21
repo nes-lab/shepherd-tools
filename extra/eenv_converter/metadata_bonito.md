@@ -21,13 +21,11 @@
 - based on file `notes`
   - sheep0,1,2 on person 0
   - sheep3,4,5 on person 1
-- remaining questions
-  - Which person (0/1) is f(29) and which is m(29)?
-  + Precise Location (address / GPS coords): H942+CX Berlin
-  - Date of recording (optionally precise time of day) -> timestamp in data
-  - Weather (might be able to get that from location + date)
-  - Optional: Any more information about the route and when/where breaks where?
-    - As far as I remember the route was something like this (and back): https://maps.app.goo.gl/qjWAJeZZfLec4cCE8
+- anwered by Kai
+  - Precise Location: H942+CX Berlin
+  - Route: https://maps.app.goo.gl/qjWAJeZZfLec4cCE8 (there and back)
+- based on timestamps: 
+  - Date: May 15 2021
 
 ### Stairs (folder data_step)
 - based on paper
@@ -43,17 +41,14 @@
     - starts moving in from the right at timestamp 01:36
     - covers the entire black strip by 02:05
     - afterwards refractions from the fence cause minor illumination?
-- remaining questions
-  - Precise Location (address / GPS coords) -> https://www.openstreetmap.org/directions?from=51.026467%2C13.723217
-  - Node locations (order from left to right)
-  - pv model (same as jogging dataset?)
-    - No, I think it was the smaller KXOB25-05X3F-TR
-  - Setup (power source, synchronization)
-    - All recorders connected to PoE Ethernet switch for power and control. Synchronized via PTP to one GPS reference clock.
+- answered by Kai
+  - Precise Location: https://www.openstreetmap.org/directions?from=51.026467%2C13.723217
+  - PV Model: (he thinks it was) KXOB25-05X3F-TR
+  - Power: Ethernet switch
+  - Synchronization: PTP to one GPS reference clock
 
 ### Stairs 2 (solar_step_2020_02_06)
 - discarded because of too static env (constant cloudy)
-
 
 ### Office (folder office_new)
 - based on paper
@@ -65,16 +60,11 @@
   - pv model: IXYS KX0B25-05X3F
   - sheep0,2,3: room
   - sheep4,5: hallway
-- remaining questions
-  - More accurate node layout
-  - Location (address / GPS), might be irrelevant
-    - I don't remember (Dresden, Brisbane or Berlin)
-  - Date
-  - Setup (power source, synchronization)
-    - 95% sure it was PoE and PTP
-  - Did room/hallway have windows? If so:
-    - time of day
-    - weather (might be able to get that from location + date)
+- answered by Kai
+  - Power: (95% sure) PoE (switch)
+  - Synchronization: (95% sure) PTP
+- based on timestamps:
+  - Date: July 01, 2021
 
 ### Cars (folder cars_convoi)
 - based on paper
@@ -87,26 +77,20 @@
   - sheep3: following car, dashboard
   - sheep4: leading car
   - sheep5: following car, windshield
-- remaining questions
-  - ASK MARCO, he was driving the second car
-  + Date -> Same as Washer.
-  - Location (address / GPS), Route Taken
-    - Windischleuba - Dresden, don't remember exactly
-  - Node locations in leading car
-  + Piezo model -> same as jogging dataset
-  - Setup (power source, synchronization)
-    -  I don't remember. Probably power banks and GPS
-  - Any info about the cars
-    - One yellow Opel Corsa, the other I don't remember
-  - Any info about speed (typical, top), stops (traffic lights, etc)
-
+- answered by Kai
+  - date: Same as Washer
+  - Location: Windischleuba, Dresden (exact location unknown)
+  - Piezo model: Mide S128-J1FR-1808YB
+  - Cars: (yellow) Opel Corsa, ?? (order unknown?)
+- based on timestamps:
+  - Date: May 11, 2021
 
 ### Washer (folder washing_machine)
 - based on paper
   - 5 piezo
   - WPB4700H industrial washing machine (confirmed by pictures / video)
   - washing program with maximum load
-- based on file `notes`
+- based on file `notes` 
   - all locations from pov of looking at the front of the machine
   - sheep0: top (likely top side of the machine)
   - sheep1: back left (likely back side of the machine; left part viewing 'through' the machine?)
@@ -115,7 +99,7 @@
   - sheep4: door
   - sheep5: back right (likely back side of the machine; right part viewing 'through' the machine?)
 - based on photos
-  - Date: 11.05.2021 (from filename `IMG_20210511_124937.jpg`)
+  - Date: 11.05.2021 (from filename `IMG_20210511_124937.jpg`) => verified from unix timestamp
   - connected via switch (PoE)
   - one node top left of the front side -> sheep2
   - one node top right of the front side
@@ -129,17 +113,79 @@
   - one node on the door
   - one node top middle of the right side -> sheep3
   - one node (front?) middle of the top side -> sheep0
-- remaining questions
-  - Date (is 11.05.2021 correct?)
-    - Sounds about right
-  - Location (address / GPS) -> 295M+PC Rositz
-  - synchronization via GPS? (capelet is visible in photos)
-    - Maybe one GPS server. Other nodes PTP via Ethernet.
-  - Piezo model (same as jogging dataset?)
-    - Yes
-  - Is Sheep 4 on the door or the top right of the front side?
-    - I don't remember.
-  - Are Sheep 1 and 5 (back side) also in the top corners?
-    - I don't remember but very likely yes.
-  - Is interpretation of `notes` right in regards of viewing 'through' the machine for the back side nodes?
-    - I don't remember, but very likely yes, everything is with respect to standing in front of the machine.
+- answered by Kai:
+  - Location: 295M+PC Rositz
+  - Piezo model: Mide S128-J1FR-1808YB
+  - Node location:
+    - sheep1 and sheep5 from `notes` confirmed
+    - sheep1 and sheep5 very likely at the top part of the backside
+  - synchronization: PTP via Ethernet + __MAYBE__ one GPS server
+
+# Dates
+
+## jogging
+first timestamp of sheep0: 1621081493000000000
+=> May 15 2021, 12:25 (UTC) / 14:25 (CEST)
+
+after processing: 1621081752600000000
+=> 12:29 (UTC) / 14:29 (CEST)
+
+with Location in Berlin (alexanderplatz is closest):
+https://meteostat.net/de/place/de/berlin?s=10389&t=2021-05-15/2021-05-15
+- Cloudy, 16C, slight rain
+- rain seems weird for running with exposed electronics
+=> probably unreliable; omit weather info
+
+## stairs
+first timestamp of sheep1: 1579168049700000000
+=> Jan 16 2020, 09:47 (UTC) / 10:47 (CET)
+=> fits with video (recording presumably started 10 min later)
+
+after processing: 1579171761700000000
+=> 10:49 (UTC) / 11:49 (CET)
+
+https://meteostat.net/de/place/de/dresden?s=10488&t=2020-01-16/2020-01-16
+- Sunny, 6C
+
+## office
+first timestamp of sheep0: 1625124516000000000
+=> july 01 2021, 7:30 (UTC) / 9:30 (CEST)
+
+after processing: 1625124518000000000
+=> ~same
+
+location unknown => weather unknown
+
+## cars
+first timestamp of sheep0: 1620739581000000000
+=> May 11 2021, 13:26 (UTC) / 15:26 (CEST)
+
+after processing: 1620739600000000000
+=> 13:27 (UTC) / 15:27 (CEST)
+
+## washer
+first timestamp of sheep0: 1620727646900000000
+=> May 11 2021, 10:07 (UTC) / 12:07 (CEST)
+
+after processing: 1620727713000000000
+=> 10:09 (UTC) / 12:09 (CEST)
+
+### washer_tumbling
+after processing: 1620729193200000000
+=> 10:33 (UTC) / 12:33 (CEST)
+
+# Remaining
+- "stairs" / "data_step" dataset (7 PV-Nodes embedded into an outdoor stair in front of a lecture hall)?
+  - In what order (left to right) were the nodes (sheep1 - sheep7)
+- "office" / "office_new" dataset (5 PV-Nodes mounted on doorframe and walls of an office)
+  - Where was this office?
+  - Node layout?
+  - Were the nodes exposed to sunlight (through windows)?
+- "cars" / "cars_convoi" dataset (3 Piezo-Nodes each in 2 cars that drive in convoi over various roads)
+  - Were were the nodes in the leading car?
+  - What kind of car was it?
+  - Any info about the location / route taken?
+  - How were the nodes powered / synchronized?
+- "washer" / "washing_machine" (5 Piezo-Nodes on an industrial washing machine)
+  - One sheep (sheep4) was visible (in pictures/videos) both on the door and in the upper right corner for the front face of the machine. Where was it during the recording?
+  - How were the nodes powered / synchronized?
