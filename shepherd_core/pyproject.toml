@@ -64,6 +64,7 @@ test = [
     "pytest",
     "coverage",
 ]
+all = ["shepherd-core[elf,inventory,dev,test]"]
 
 [project.readme]
 file = "README.md"

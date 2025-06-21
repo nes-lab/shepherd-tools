@@ -56,6 +56,7 @@ test = [
     "pytest-click",
     "coverage",
 ]
+all = ["shepherd-data[elf,dev,test]"]
 
 [project.urls]
 Documentation = "https://github.com/nes-lab/shepherd-tools/blob/main/README.md"
