@@ -24,7 +24,7 @@
 - anwered by Kai
   - Precise Location: H942+CX Berlin
   - Route: https://maps.app.goo.gl/qjWAJeZZfLec4cCE8 (there and back)
-- based on timestamps: 
+- based on timestamps:
   - Date: May 15 2021
 
 ### Stairs (folder data_step)
@@ -90,7 +90,7 @@
   - 5 piezo
   - WPB4700H industrial washing machine (confirmed by pictures / video)
   - washing program with maximum load
-- based on file `notes` 
+- based on file `notes`
   - all locations from pov of looking at the front of the machine
   - sheep0: top (likely top side of the machine)
   - sheep1: back left (likely back side of the machine; left part viewing 'through' the machine?)
