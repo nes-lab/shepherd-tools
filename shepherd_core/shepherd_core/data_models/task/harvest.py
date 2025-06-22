@@ -72,12 +72,11 @@ class HarvestTask(ShpModel):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         # TODO: limit paths
-        has_time = self.time_start is not None
+        has_time = False  # TODO: deactivated, self.time_start is not None
         time_now = datetime.now().astimezone()
         if has_time and self.time_start < time_now:
             msg = (
-                "Start-Time for Emulation can't be in the past "
-                f"('{self.time_start}' vs '{time_now}'."
+                f"Start-Time for Harvest can't be in the past ('{self.time_start}' vs '{time_now}'."
             )
             raise ValueError(msg)
         if self.duration and self.duration.total_seconds() < 0:
@@ -85,4 +84,5 @@ class HarvestTask(ShpModel):
         return self
 
     def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        """Limit paths to allowed directories."""
         return any(self.output_path.is_relative_to(path) for path in paths)
