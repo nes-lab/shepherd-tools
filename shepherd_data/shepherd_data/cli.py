@@ -67,7 +67,7 @@ def version() -> None:
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -128,7 +128,7 @@ def validate(in_data: Path, *, recurse: bool = False) -> None:
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -172,7 +172,7 @@ def extract(
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -222,7 +222,7 @@ def extract_meta(
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -247,7 +247,7 @@ def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -293,7 +293,7 @@ def decode_uart(in_data: Path, *, recurse: bool = False) -> None:
 )  # TODO: also configure decimal point
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -346,7 +346,7 @@ def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> Non
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -424,7 +424,7 @@ def downsample(
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )

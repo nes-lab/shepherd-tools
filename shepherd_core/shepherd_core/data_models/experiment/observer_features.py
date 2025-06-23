@@ -148,7 +148,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     See doc for nRF_FRAM_Target_v1.3+ to see mapping of target port.
 
     Example for skipping UART (pin 0 & 1):
-    .gpio = range(2,18)
+    .gpios = range(2,18)
 
     Note:
     - Cape 2.4 (2023) and lower only has 9x GPIO + 1x PwrGood
