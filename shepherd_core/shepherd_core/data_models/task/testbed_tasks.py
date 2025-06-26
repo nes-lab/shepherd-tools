@@ -47,6 +47,9 @@ class TestbedTasks(ShpModel):
                 return tasks
         return None
 
+    def get_observers(self) -> set[str]:
+        return {tasks.observer for tasks in self.observer_tasks}
+
     def get_output_paths(self) -> dict[str, Path]:
         # TODO: computed field preferred, but they don't work here, as
         #  - they are always stored in yaml despite "repr=False"
