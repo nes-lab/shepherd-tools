@@ -7,6 +7,7 @@ import numpy as np
 from commons import STEP_WIDTH
 from commons import EEnvGenerator
 
+from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
 
 
@@ -26,7 +27,7 @@ class RndIndepPatternGenerator(EEnvGenerator):
         on_voltage: float,
         on_current: float,
     ) -> None:
-        super().__init__(node_count, seed)
+        super().__init__(datatype=EnergyDType.ivtrace, node_count=node_count, seed=seed)
 
         avg_on_steps = avg_on_duration / STEP_WIDTH
         p2 = 1.0 - (1.0 / avg_on_steps)

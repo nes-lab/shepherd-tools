@@ -28,7 +28,15 @@ class EEnvGenerator(ABC):
     The main method produces data for a specific time-frame for all nodes.
     """
 
-    def __init__(self, node_count: int, seed: None | int | list[int]) -> None:
+    def __init__(
+        self,
+        datatype: EnergyDType,
+        node_count: int,
+        seed: None | int | list[int],
+        window_size: int = 0,
+    ) -> None:
+        self.datatype = datatype
+        self.window_size = window_size
         self.node_count = node_count
         self.rnd_gen = np.random.Generator(bit_generator=np.random.PCG64(seed))
 
@@ -51,8 +59,8 @@ class EEnvGenerator(ABC):
                     file_path=file_path,
                     compression=Compression.gzip1,
                     mode="harvester",
-                    datatype=EnergyDType.ivtrace,  # IV-trace
-                    window_samples=0,  # 0 since dt is IV-trace
+                    datatype=self.datatype,
+                    window_samples=self.window_size,
                     cal_data=CalibrationSeries(
                         # sheep can skip scaling if cal is ideal
                         voltage=CalibrationPair(gain=1e-6, offset=0),
