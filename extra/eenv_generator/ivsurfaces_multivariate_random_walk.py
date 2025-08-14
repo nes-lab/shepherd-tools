@@ -11,6 +11,7 @@ from typing import Self
 import numpy as np
 from commons import EEnvGenerator
 from scipy.optimize import newton
+from scipy.special import lambertw
 
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
@@ -20,6 +21,44 @@ k = 1.380649e-23  # Boltzmann constant
 q = 1.602176634e-19  # Elementary charge
 t_stc = 25 + 273.15  # 25 C in Kelvin
 g_stc = 1000  # W/m2
+
+
+class SDMNoRPCurve:
+    """I(V) function of the single-diode-model with series resistance."""
+
+    def __init__(self, i_ph: float, i_0: float, r_s: float, n: float, n_s: int, t: float) -> None:
+        self.i_ph = i_ph
+        self.i_0 = i_0
+        self.r_s = r_s
+        self.mn = q / (n_s * k * t * n)
+
+    def get_i(self, v: float) -> float:
+        """
+        Compute I(V) using the Lambert-W function.
+
+        Original SDM Equation:
+            i = i_pv - i_0 * (exp(mn * (v + i * r_s)) - 1)
+        where:
+            mn = q / (n_s * k * t * n)
+
+        Conditions:
+            i_0 != 0; otherwise the diodes in the SDM becomes meaningless
+            mn != 0; true since q != 0
+            r_s != 0; otherwise we have SDM without series resistance
+        """
+        tmp1 = (
+            self.i_0
+            * self.mn
+            * self.r_s
+            * math.exp(self.mn * (self.i_ph * self.r_s + self.i_0 * self.r_s + v))
+        )
+
+        tmp2 = lambertw(tmp1)
+        if tmp2.imag != 0:
+            msg = f"Lambert-W result is not a real number: W({tmp1}) = {tmp2}"
+            raise RuntimeError(msg)
+
+        return -tmp2.real / (self.mn * self.r_s) + self.i_ph + self.i_0
 
 
 class SDMNoRP:
@@ -123,26 +162,12 @@ class SDMNoRP:
             - self.v_mp_stc / self.i_mp_stc
         )
 
-        def iv(v: float) -> float:
-            def f(i: float) -> float:
-                # Equation 1
-                i_sdm = i_ph - i_0 * (math.exp(m * (v + i * r_s) / self.n) - 1)
-
-                return i_sdm - i
-
-            def df(i: float) -> float:
-                return -i_0 * r_s * m * math.exp(m * (v + i * r_s) / self.n) - 1
-
-            return newton(func=f, fprime=df, x0=self.i_mp_stc, tol=1e-9, maxiter=10000)
-
-        v_oc = math.log(i_ph / i_0 + 1) * self.n / m
-
-        return {"iv": iv, "v_oc": v_oc, "i_sc": i_sc, "i_ph": i_ph, "i_0": i_0, "r_s": r_s}
+        return SDMNoRPCurve(i_ph=i_ph, i_0=i_0, r_s=r_s, n=self.n, n_s=self.n_s, t=t)
 
     def get_i(self, v: float, v_oc: float, t: float = t_stc) -> float:
         g = self.get_g(v_oc=v_oc, t=t)
         curve = self.get_iv(g=g, t=t)
-        return curve["iv"](v)
+        return curve.get_i(v)
 
     @classmethod
     def KXOB201K04F(cls: Self) -> Self:
