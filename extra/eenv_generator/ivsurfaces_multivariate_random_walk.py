@@ -26,11 +26,11 @@ g_stc = 1000  # W/m2
 class SDMNoRPCurve:
     """I(V) function of the single-diode-model with series resistance."""
 
-    def __init__(self, i_ph: float, i_0: float, r_s: float, n: float, n_s: int, t: float) -> None:
+    def __init__(self, i_ph: float, i_0: float, r_s: float, mn: float) -> None:
         self.i_ph = i_ph
         self.i_0 = i_0
         self.r_s = r_s
-        self.mn = q / (n_s * k * t * n)
+        self.mn = mn
 
     def get_i(self, v: float) -> float:
         """
@@ -78,6 +78,7 @@ class SDMNoRP:
         n_s: int,
         di_scdt: float,
         dv_ocdt: float,
+        t: float,
     ) -> None:
         self.name = name
         self.i_sc_stc = i_sc_stc
@@ -88,8 +89,8 @@ class SDMNoRP:
         self.di_scdt = di_scdt
         self.dv_ocdt = dv_ocdt
 
+        # --- Precompute n (diode ideality factor) ---
         m_stc = q / (n_s * k * t_stc)
-        self.m_stc = m_stc
 
         def f(n: float) -> float:
             # Equation 6
@@ -131,48 +132,64 @@ class SDMNoRP:
 
         # Equation 22
         self.n = newton(func=f, fprime=df, x0=1, tol=1e-3, maxiter=10000)
+        # ---
 
-    def get_g(self, v_oc: float, t: float) -> float:
-        return g_stc * math.exp(
-            (v_oc - self.v_oc_stc - self.dv_ocdt * (t - t_stc)) * q / (t * self.n * self.n_s * k)
+        # --- Precompute r_s ---
+        # Equation 6
+        i_0_stc = self.i_sc_stc / (math.exp(m_stc / self.n * self.v_oc_stc) - 1)
+
+        # Equation 8
+        self.r_s = (
+            self.n
+            / (m_stc * self.i_mp_stc)
+            * math.log((self.i_sc_stc - self.i_mp_stc + i_0_stc) / i_0_stc)
+            - self.v_mp_stc / self.i_mp_stc
         )
+        # ---
 
-    def get_iv(self, g: float, t: float) -> dict:
-        # Equation 2
-        m = q / (self.n_s * k * t)
+        # --- Precompute various subexpressions ---
+        # v_oc at g=g_stc
+        self.v_oc_stcg = self.v_oc_stc + self.dv_ocdt * (t - t_stc)
+        # m (from Equation 2) over n
+        self.mn = q / (t * self.n * self.n_s * k)
+        # delta i_sc over delta (g/g_stc)
+        self.di_scdgg_stc = self.i_sc_stc * (1 + self.di_scdt * (t - t_stc))
+        # ---
 
+    def get_gg_stc(self, v_oc: float) -> float:
+        """Get g/g_stc (irradiance over STC irradiance) required for a given v_oc."""
+        return math.exp((v_oc - self.v_oc_stcg) * self.mn)
+
+    def get_iv(self, gg_stc: float) -> dict:
         # Equation 4
-        i_sc = self.i_sc_stc * g / g_stc * (1 + self.di_scdt * (t - t_stc))
+        i_sc = gg_stc * self.di_scdgg_stc
 
         # Equation 5
-        v_oc = self.v_oc_stc + self.dv_ocdt * (t - t_stc) + self.n / m * math.log(g / g_stc)
+        v_oc = self.v_oc_stcg + math.log(gg_stc) / self.mn
 
         # Equation 3
         i_ph = i_sc
 
         # Equation 6
-        i_0 = i_sc / (math.exp(m * v_oc / self.n) - 1)
-        i_0_stc = self.i_sc_stc / (math.exp(self.m_stc * self.v_oc_stc / self.n) - 1)
+        i_0 = i_sc / (math.exp(self.mn * v_oc) - 1)
 
-        # Equation 8
-        r_s = (
-            self.n
-            / (self.m_stc * self.i_mp_stc)
-            * math.log((self.i_sc_stc - self.i_mp_stc + i_0_stc) / i_0_stc)
-            - self.v_mp_stc / self.i_mp_stc
-        )
+        return SDMNoRPCurve(i_ph=i_ph, i_0=i_0, r_s=self.r_s, mn=self.mn)
 
-        return SDMNoRPCurve(i_ph=i_ph, i_0=i_0, r_s=r_s, n=self.n, n_s=self.n_s, t=t)
-
-    def get_i(self, v: float, v_oc: float, t: float = t_stc) -> float:
-        g = self.get_g(v_oc=v_oc, t=t)
-        curve = self.get_iv(g=g, t=t)
+    def get_i(self, v: float, v_oc: float) -> float:
+        gg_stc = self.get_gg_stc(v_oc=v_oc)
+        curve = self.get_iv(gg_stc=gg_stc)
         return curve.get_i(v)
 
     @classmethod
-    def KXOB201K04F(cls: Self) -> Self:
+    def KXOB201K04F(cls: Self, t: float | None = None) -> Self:
+        if t is None:
+            t_suffix = ""
+            t = t_stc
+        else:
+            t_suffix = f"_{t!s}"
+
         return cls(
-            name="ANYSOLAR_KXOB201K04F",
+            name=f"ANYSOLAR_KXOB201K04F{t_suffix}",
             i_sc_stc=83.8e-3,
             v_oc_stc=2.76,
             v_mp_stc=2.23,
@@ -180,6 +197,7 @@ class SDMNoRP:
             n_s=4,
             di_scdt=37.9e-6,
             dv_ocdt=-6.96e-3,
+            t=t,
         )
 
 
@@ -250,7 +268,7 @@ class MultivarRndWalk(EEnvGenerator):
         (pv, vs, v_ocs) = params
         cs = np.zeros(len(vs))
         for j in range(len(vs)):
-            cs[j] = pv.get_i(v=vs[j], v_oc=v_ocs[j], t=300)  # TODO: fixed T here
+            cs[j] = pv.get_i(v=vs[j], v_oc=v_ocs[j])
         return (vs, cs)
 
     def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
