@@ -23,44 +23,6 @@ t_stc = 25 + 273.15  # 25 C in Kelvin
 g_stc = 1000  # W/m2
 
 
-class SDMNoRPCurve:
-    """I(V) function of the single-diode-model with series resistance."""
-
-    def __init__(self, i_ph: float, i_0: float, r_s: float, mn: float) -> None:
-        self.i_ph = i_ph
-        self.i_0 = i_0
-        self.r_s = r_s
-        self.mn = mn
-
-    def get_i(self, v: float) -> float:
-        """
-        Compute I(V) using the Lambert-W function.
-
-        Original SDM Equation:
-            i = i_pv - i_0 * (exp(mn * (v + i * r_s)) - 1)
-        where:
-            mn = q / (n_s * k * t * n)
-
-        Conditions:
-            i_0 != 0; otherwise the diodes in the SDM becomes meaningless
-            mn != 0; true since q != 0
-            r_s != 0; otherwise we have SDM without series resistance
-        """
-        tmp1 = (
-            self.i_0
-            * self.mn
-            * self.r_s
-            * math.exp(self.mn * (self.i_ph * self.r_s + self.i_0 * self.r_s + v))
-        )
-
-        tmp2 = lambertw(tmp1)
-        if tmp2.imag != 0:
-            msg = f"Lambert-W result is not a real number: W({tmp1}) = {tmp2}"
-            raise RuntimeError(msg)
-
-        return -tmp2.real / (self.mn * self.r_s) + self.i_ph + self.i_0
-
-
 class SDMNoRP:
     """
     Single diode model using datasheet parameters.
@@ -156,29 +118,36 @@ class SDMNoRP:
         self.di_scdgg_stc = self.i_sc_stc * (1 + self.di_scdt * (t - t_stc))
         # ---
 
-    def get_gg_stc(self, v_oc: float) -> float:
-        """Get g/g_stc (irradiance over STC irradiance) required for a given v_oc."""
-        return math.exp((v_oc - self.v_oc_stcg) * self.mn)
+    def get_i(self, v: float, v_oc: float) -> float:
+        # Get required g/g_stc to reach the specified v_oc
+        # Derived from Equation 5
+        gg_stc = math.exp((v_oc - self.v_oc_stcg) * self.mn)
 
-    def get_iv(self, gg_stc: float) -> dict:
+        # Get model parameters
         # Equation 4
         i_sc = gg_stc * self.di_scdgg_stc
-
         # Equation 5
         v_oc = self.v_oc_stcg + math.log(gg_stc) / self.mn
-
         # Equation 3
         i_ph = i_sc
-
         # Equation 6
         i_0 = i_sc / (math.exp(self.mn * v_oc) - 1)
 
-        return SDMNoRPCurve(i_ph=i_ph, i_0=i_0, r_s=self.r_s, mn=self.mn)
-
-    def get_i(self, v: float, v_oc: float) -> float:
-        gg_stc = self.get_gg_stc(v_oc=v_oc)
-        curve = self.get_iv(gg_stc=gg_stc)
-        return curve.get_i(v)
+        # Calculate current using lambert-w function
+        #
+        # Original SDM Equation: i = i_pv - i_0 * (exp(mn * (v + i * r_s)) - 1)
+        # where mn = q / (n_s * k * t * n)
+        #
+        # Conditions:
+        #     i_0 != 0; otherwise the diodes in the SDM becomes meaningless
+        #     mn != 0; true since q != 0
+        #     r_s != 0; otherwise we have SDM without series resistance
+        tmp1 = i_0 * self.mn * self.r_s * math.exp(self.mn * (i_ph * self.r_s + i_0 * self.r_s + v))
+        tmp2 = lambertw(tmp1)
+        if tmp2.imag != 0:
+            msg = f"Lambert-W result is not a real number: W({tmp1}) = {tmp2}"
+            raise RuntimeError(msg)
+        return -tmp2.real / (self.mn * self.r_s) + i_ph + i_0
 
     @classmethod
     def KXOB201K04F(cls: Self, t: float | None = None) -> Self:
