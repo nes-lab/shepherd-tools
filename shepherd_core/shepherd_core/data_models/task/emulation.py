@@ -35,8 +35,8 @@ from .helper_paths import path_posix
 class Compression(str, Enum):
     """Options for choosing a dataset-compression."""
 
-    lzf = default = "lzf"  # not native hdf5
-    gzip1 = gzip = 1  # higher compr & load
+    lzf = "lzf"  # not native hdf5
+    gzip1 = gzip = default = 1  # higher compr & load
     null = None
     # NOTE: lzf & external file-compression (xz or zstd) work better than gzip
     #       -> even with additional compression
