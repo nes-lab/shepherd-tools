@@ -428,6 +428,7 @@ def downsample(
     is_flag=True,
     help="Also consider files in sub-folders",
 )
+# TODO: allow SVG-output
 def plot(
     in_data: Path,
     start: float | None,

@@ -65,7 +65,7 @@ def simulate_source(
         stats_internal = np.empty((round(file_inp.runtime_s * file_inp.samplerate_sps), 11))
         try:
             # keep dependencies low
-            from matplotlib import pyplot as plt
+            from matplotlib import pyplot as plt  # noqa: PLC0415
         except ImportError:
             log.warning("Matplotlib not installed, plotting of internals disabled")
             stats_internal = None

@@ -21,7 +21,7 @@
 - based on file `notes`
   - sheep0,1,2 on person 0
   - sheep3,4,5 on person 1
-- anwered by Kai
+- answered by Kai
   - Precise Location: H942+CX Berlin
   - Route: https://maps.app.goo.gl/qjWAJeZZfLec4cCE8 (there and back)
 - based on timestamps:

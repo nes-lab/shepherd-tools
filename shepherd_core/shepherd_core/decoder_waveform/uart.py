@@ -50,6 +50,7 @@ class Uart:
     def __init__(
         self,
         content: Path | np.ndarray,
+        *,
         baud_rate: int | None = None,
         frame_length: int | None = 8,
         inversion: bool | None = None,

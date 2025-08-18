@@ -185,19 +185,23 @@ class Reader(CoreReader):
         :param is_time: time is not really down-sampled, but decimated
         :return: resampled h5-dataset or numpy-array
         """
-        from scipy import signal  # here due to massive delay
+        # import only when needed, due to massive delay
+        from scipy import signal  # noqa: PLC0415
 
         if self.get_datatype() == EnergyDType.ivsurface:
             self._logger.warning("Downsampling-Function was not written for IVSurfaces")
         ds_factor = max(1, math.floor(ds_factor))
-
-        if isinstance(end_n, (int, float)):
-            _end_n = min(data_src.shape[0], round(end_n))
+        if not isinstance(start_n, int):
+            raise TypeError("start_n must be an integer")
+        if isinstance(end_n, int):
+            end_n = min(data_src.shape[0], end_n)
+        elif isinstance(end_n, float):
+            raise TypeError("end_n must be an integer")
         else:
-            _end_n = data_src.shape[0]
+            end_n = data_src.shape[0]
 
-        start_n = min(_end_n, round(start_n))
-        data_len = _end_n - start_n  # TODO: one-off to calculation below ?
+        start_n = min(end_n, start_n)
+        data_len = end_n - start_n  # TODO: one-off to calculation below ?
         if data_len == 0:
             self._logger.warning("downsampling failed because of data_len = 0")
             return data_dst
@@ -380,13 +384,17 @@ class Reader(CoreReader):
         if self.get_datatype() == EnergyDType.ivsurface:
             self._logger.warning("Resampling-Function was not written for IVSurfaces")
             return data_dst
-        if isinstance(end_n, (int, float)):
-            _end_n = min(data_src.shape[0], round(end_n))
+        if not isinstance(start_n, int):
+            raise TypeError("start_n must be an integer")
+        if isinstance(end_n, int):
+            end_n = min(data_src.shape[0], end_n)
+        elif isinstance(end_n, float):
+            raise TypeError("end_n must be an integer")
         else:
-            _end_n = data_src.shape[0]
+            end_n = data_src.shape[0]
 
-        start_n = min(_end_n, round(start_n))
-        data_len = _end_n - start_n
+        start_n = min(end_n, start_n)
+        data_len = end_n - start_n
         if data_len == 0:
             self._logger.warning("resampling failed because of data_len = 0")
             return data_dst
