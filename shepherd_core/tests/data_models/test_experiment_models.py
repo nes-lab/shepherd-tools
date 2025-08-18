@@ -200,7 +200,7 @@ def test_experiment_model_gpioevent_fault_readonly() -> None:
         )
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="Not implemented ATM")
 def test_experiment_model_gpioactuation_min() -> None:
     gact = GpioActuation(
         events=[

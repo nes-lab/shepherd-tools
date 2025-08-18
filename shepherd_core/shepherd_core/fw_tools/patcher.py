@@ -1,6 +1,8 @@
 """Read and modify symbols in ELF-files."""
 
+import shutil
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Annotated
 
 from pydantic import Field
@@ -28,22 +30,27 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
         return False
     if ELF is None:
         raise RuntimeError(elf_error_text)
-    elf = ELF(path=file_elf)
-    try:
-        addr = elf.symbols[symbol]
-    except KeyError:
-        addr = None
-    if addr is None:
-        log.debug("Symbol '%s' not found in ELF-File %s", symbol, file_elf.name)
-        return False
-    log.debug(
-        "Symbol '%s' found in ELF-File %s, arch=%s, order=%s",
-        symbol,
-        file_elf.name,
-        elf.arch,
-        elf.endian,
-    )
-    elf.close()
+    with TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+        # switcheroo that also prevents windows bug (overwrite fails)
+        file_tmp = Path(tmp) / file_elf.name
+        shutil.copy(file_elf, file_tmp)
+        elf = ELF(path=file_tmp)
+        try:
+            addr = elf.symbols[symbol]
+        except KeyError:
+            addr = None
+        if addr is None:
+            elf.close()  # better be safe
+            log.debug("Symbol '%s' not found in ELF-File %s", symbol, file_elf.name)
+            return False
+        log.debug(
+            "Symbol '%s' found in ELF-File %s, arch=%s, order=%s",
+            symbol,
+            file_elf.name,
+            elf.arch,
+            elf.endian,
+        )
+        elf.close()
     return True
 
 
@@ -60,8 +67,9 @@ def read_symbol(file_elf: Path, symbol: str, length: int) -> int | None:
     elf = ELF(path=file_elf)
     addr = elf.symbols[symbol]
     value_raw = elf.read(address=addr, count=length)[-length:]
+    endian = elf.endian
     elf.close()
-    return int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
+    return int.from_bytes(bytes=value_raw, byteorder=endian, signed=False)
 
 
 def read_uid(file_elf: Path) -> int | None:
@@ -76,8 +84,11 @@ def read_arch(file_elf: Path) -> str | None:
     if ELF is None:
         raise RuntimeError(elf_error_text)
     elf = ELF(path=file_elf)
-    if "exec" in elf.elftype.lower():
-        return elf.arch.lower()
+    elf_type = elf.elftype.lower()
+    elf_arch = elf.arch.lower()
+    elf.close()
+    if "exec" in elf_type:
+        return elf_arch
     log.error("ELF is not Executable")
     return None
 
@@ -102,22 +113,37 @@ def modify_symbol_value(
         return None
     if ELF is None:
         raise RuntimeError(elf_error_text)
-    elf = ELF(path=file_elf)
-    addr = elf.symbols[symbol]
-    value_raw = elf.read(address=addr, count=config.UID_SIZE)[-config.UID_SIZE :]
-    # ⤷ cutting needed -> msp produces 4b instead of 2
-    value_old = int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
-    value_raw = value.to_bytes(length=config.UID_SIZE, byteorder=elf.endian, signed=False)
+    with TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+        # switcheroo that also prevents windows bug (overwrite fails)
+        file_tmp = Path(tmp) / file_elf.name
+        shutil.copy(file_elf, file_tmp)
 
-    try:
-        elf.write(address=addr, data=value_raw)
-    except AttributeError:
-        log.warning("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
-        return None
+        elf = ELF(path=file_elf)
+        addr = elf.symbols[symbol]
+        value_raw = elf.read(address=addr, count=config.UID_SIZE)[-config.UID_SIZE :]
+        # ⤷ cutting needed -> msp produces 4b instead of 2
+        value_old = int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
+        value_raw = value.to_bytes(length=config.UID_SIZE, byteorder=elf.endian, signed=False)
 
-    file_new = file_elf if overwrite else file_elf.with_stem(file_elf.stem + "_" + str(value))
-    elf.save(path=file_new)
-    elf.close()
+        try:
+            elf.write(address=addr, data=value_raw)
+        except AttributeError:
+            log.warning("ELF-Modifier failed @%s for symbol '%s'", f"0x{addr:X}", symbol)
+            elf.close()
+            return None
+
+        file_new = file_elf if overwrite else file_elf.with_stem(file_elf.stem + "_" + str(value))
+        try:
+            file_new.unlink(missing_ok=True)
+        except PermissionError:
+            elf.close()
+            log.error(
+                "Failed to overwrite file, because it's somehow still in use (typical for WinOS)."
+            )
+            return None
+        elf.save(path=file_new)
+        elf.close()
+
     log.debug(
         "Value of Symbol '%s' modified: %s -> %s @%s",
         symbol,
