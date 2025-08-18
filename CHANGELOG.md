@@ -1,9 +1,14 @@
 # History of Changes
 
-## (future) v2025.06.5
+## (future) v2025.08.1
 
 - allow configuring battery in vsource
 - allow configuring energy environment with multiple recordings
+- relax validation
+  - EmulationTask can start in past
+- fix race-condition when deriving folder name of Tasks
+- allow installing packets with .\[all]
+- CLI commands with recursion changed from `-a` to `-R` 
 
 ## v2025.06.4
 
