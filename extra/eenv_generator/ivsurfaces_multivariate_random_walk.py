@@ -12,16 +12,10 @@ import numpy as np
 from commons import EEnvGenerator
 from scipy.optimize import newton
 from scipy.special import lambertw
+from scipy import constants as const
 
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
-
-# Constants
-k = 1.380649e-23  # Boltzmann constant
-q = 1.602176634e-19  # Elementary charge
-t_stc = 25 + 273.15  # 25 C in Kelvin
-g_stc = 1000  # W/m2
-
 
 class SDMNoRP:
     """
@@ -29,65 +23,69 @@ class SDMNoRP:
 
     See: https://doi.org/10.1109/ICIINFS.2011.6038128
     """
+    k: float = const.Boltzmann
+    q: float = const.elementary_charge
+    t_stc: float = 25 + const.zero_Celsius # 25 C in Kelvin
+    g_stc: float = 1000  # W/m2
 
     def __init__(
         self,
         name: str,
-        i_sc_stc: float,
-        v_oc_stc: float,
-        v_mp_stc: float,
-        i_mp_stc: float,
+        I_SC_stc: float,
+        V_OC_stc: float,
+        V_MP_stc: float,
+        I_MP_stc: float,
         n_s: int,
-        di_scdt: float,
-        dv_ocdt: float,
+        dI_SCdt: float,
+        dV_OCdt: float,
         t: float,
     ) -> None:
         self.name = name
-        self.i_sc_stc = i_sc_stc
-        self.v_oc_stc = v_oc_stc
-        self.v_mp_stc = v_mp_stc
-        self.i_mp_stc = i_mp_stc
+        self.I_SC_stc = I_SC_stc
+        self.V_OC_stc = V_OC_stc
+        self.V_MP_stc = V_MP_stc
+        self.I_MP_stc = I_MP_stc
         self.n_s = n_s
-        self.di_scdt = di_scdt
-        self.dv_ocdt = dv_ocdt
+        self.dI_SCdt = dI_SCdt
+        self.dV_OCdt = dV_OCdt
 
         # --- Precompute n (diode ideality factor) ---
-        m_stc = q / (n_s * k * t_stc)
+        m_stc = self.q / (n_s * self.k * self.t_stc)
 
         def f(n: float) -> float:
             # Equation 6
-            i_0_stc = i_sc_stc / (math.exp(m_stc * v_oc_stc / n) - 1)
+            I_0_stc = I_SC_stc / (math.exp(m_stc * V_OC_stc / n) - 1)
             # Equation 18
-            return n * i_mp_stc + (i_sc_stc - i_mp_stc + i_0_stc) * (
-                n * math.log((i_sc_stc - i_mp_stc + i_0_stc) / i_0_stc) - 2 * m_stc * v_mp_stc
+            return n * I_MP_stc + (I_SC_stc - I_MP_stc + I_0_stc) * (
+                    n * math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc) - 2 * m_stc * V_MP_stc
             )
 
         def df(n: float) -> float:
             # Equation 6
-            i_0_stc = i_sc_stc / (math.exp(m_stc * v_oc_stc / n) - 1)
+            I_0_stc = I_SC_stc / (math.exp(m_stc * V_OC_stc / n) - 1)
             # Equation 20
-            di_0dn = (
-                m_stc
-                * v_oc_stc
-                * i_sc_stc
-                * math.exp(m_stc * v_oc_stc / n)
-                / (n**2 * (math.exp(m_stc * v_oc_stc / n) - 1) ** 2)
+            dI_0dn = (
+                    m_stc
+                    * V_OC_stc
+                    * I_SC_stc
+                    * math.exp(m_stc * V_OC_stc / n)
+                    / (n ** 2 * (math.exp(m_stc * V_OC_stc / n) - 1) ** 2)
             )
             # Equation 19
             return (
-                i_mp_stc
-                + di_0dn
-                * (n * math.log((i_sc_stc - i_mp_stc + i_0_stc) / i_0_stc) - 2 * m_stc * v_mp_stc)
-                + (
-                    i_sc_stc
-                    - i_mp_stc
-                    + i_0_stc
-                    * (
-                        math.log((i_sc_stc - i_mp_stc + i_0_stc) / i_0_stc)
+                    I_MP_stc
+                    + dI_0dn
+                    * (n * math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc) - 2 * m_stc * V_MP_stc)
+                    + (
+                            I_SC_stc
+                            - I_MP_stc
+                            + I_0_stc
+                            * (
+                        math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc)
                         - n
-                        * (i_sc_stc - i_mp_stc)
-                        / ((i_sc_stc - i_mp_stc + i_0_stc) * i_0_stc)
-                        * di_0dn
+                        * (I_SC_stc - I_MP_stc)
+                        / ((I_SC_stc - I_MP_stc + I_0_stc) * I_0_stc)
+                        * dI_0dn
                     )
                 )
             )
@@ -98,40 +96,40 @@ class SDMNoRP:
 
         # --- Precompute r_s ---
         # Equation 6
-        i_0_stc = self.i_sc_stc / (math.exp(m_stc / self.n * self.v_oc_stc) - 1)
+        I_0_stc = self.I_SC_stc / (math.exp(m_stc / self.n * self.V_OC_stc) - 1)
 
         # Equation 8
         self.r_s = (
-            self.n
-            / (m_stc * self.i_mp_stc)
-            * math.log((self.i_sc_stc - self.i_mp_stc + i_0_stc) / i_0_stc)
-            - self.v_mp_stc / self.i_mp_stc
+                self.n
+                / (m_stc * self.I_MP_stc)
+                * math.log((self.I_SC_stc - self.I_MP_stc + I_0_stc) / I_0_stc)
+                - self.V_MP_stc / self.I_MP_stc
         )
         # ---
 
         # --- Precompute various subexpressions ---
         # v_oc at g=g_stc
-        self.v_oc_stcg = self.v_oc_stc + self.dv_ocdt * (t - t_stc)
+        self.V_OC_stcg = self.V_OC_stc + self.dV_OCdt * (t - self.t_stc)
         # m (from Equation 2) over n
-        self.mn = q / (t * self.n * self.n_s * k)
+        self.mn = self.q / (t * self.n * self.n_s * self.k)
         # delta i_sc over delta (g/g_stc)
-        self.di_scdgg_stc = self.i_sc_stc * (1 + self.di_scdt * (t - t_stc))
+        self.dI_SCdgg_stc = self.I_SC_stc * (1 + self.dI_SCdt * (t - self.t_stc))
         # ---
 
-    def get_i(self, v: float, v_oc: float) -> float:
+    def get_i(self, V: float, V_OC: float) -> float:
         # Get required g/g_stc to reach the specified v_oc
         # Derived from Equation 5
-        gg_stc = math.exp((v_oc - self.v_oc_stcg) * self.mn)
+        gg_stc = math.exp((V_OC - self.V_OC_stcg) * self.mn)
 
         # Get model parameters
         # Equation 4
-        i_sc = gg_stc * self.di_scdgg_stc
+        I_SC = gg_stc * self.dI_SCdgg_stc
         # Equation 5
-        v_oc = self.v_oc_stcg + math.log(gg_stc) / self.mn
+        V_OC = self.V_OC_stcg + math.log(gg_stc) / self.mn
         # Equation 3
-        i_ph = i_sc
+        I_ph = I_SC
         # Equation 6
-        i_0 = i_sc / (math.exp(self.mn * v_oc) - 1)
+        I_0 = I_SC / (math.exp(self.mn * V_OC) - 1)
 
         # Calculate current using lambert-w function
         #
@@ -142,31 +140,29 @@ class SDMNoRP:
         #     i_0 != 0; otherwise the diodes in the SDM becomes meaningless
         #     mn != 0; true since q != 0
         #     r_s != 0; otherwise we have SDM without series resistance
-        tmp1 = i_0 * self.mn * self.r_s * math.exp(self.mn * (i_ph * self.r_s + i_0 * self.r_s + v))
+        tmp1 = I_0 * self.mn * self.r_s * math.exp(self.mn * (I_ph * self.r_s + I_0 * self.r_s + V))
         tmp2 = lambertw(tmp1)
         if tmp2.imag != 0:
             msg = f"Lambert-W result is not a real number: W({tmp1}) = {tmp2}"
             raise RuntimeError(msg)
-        return -tmp2.real / (self.mn * self.r_s) + i_ph + i_0
+        return -tmp2.real / (self.mn * self.r_s) + I_ph + I_0
 
     @classmethod
-    def KXOB201K04F(cls: Self, t: float | None = None) -> Self:
-        if t is None:
-            t_suffix = ""
-            t = t_stc
-        else:
-            t_suffix = f"_{t!s}"
+    def KXOB201K04F(cls: Self, T_K: float | None = None) -> Self:
+        if T_K is None:
+            T_K = cls.t_stc
+        T_suffix = f"_{T_K!s}K"
 
         return cls(
-            name=f"ANYSOLAR_KXOB201K04F{t_suffix}",
-            i_sc_stc=83.8e-3,
-            v_oc_stc=2.76,
-            v_mp_stc=2.23,
-            i_mp_stc=78.7e-3,
+            name=f"ANYSOLAR_KXOB201K04F{T_suffix}",
+            I_SC_stc=83.8e-3,
+            V_OC_stc=2.76,
+            V_MP_stc=2.23,
+            I_MP_stc=78.7e-3,
             n_s=4,
-            di_scdt=37.9e-6,
-            dv_ocdt=-6.96e-3,
-            t=t,
+            dI_SCdt=37.9e-6,
+            dV_OCdt=-6.96e-3,
+            t=T_K,
         )
 
 
@@ -183,12 +179,12 @@ class MultivarRndWalk(EEnvGenerator):
         self,
         node_count: int,
         seed: int | None,
-        v_oc_min: float,
-        v_oc_max: float,
+        V_OC_min: float,
+        V_OC_max: float,
         correlation: float,
         variance: float,
-        v_ramp_start: float,
-        v_ramp_end: int,
+        V_ramp_start: float,
+        V_ramp_end: float,
         ramp_width: int,
         pv_model: SDMNoRP,
     ) -> None:
@@ -196,11 +192,11 @@ class MultivarRndWalk(EEnvGenerator):
             datatype=EnergyDType.ivsurface, window_size=ramp_width, node_count=node_count, seed=seed
         )
 
-        self.v_oc_min = v_oc_min
-        self.v_oc_max = v_oc_max
+        self.V_OC_min = V_OC_min
+        self.V_OC_max = V_OC_max
         self.ramp_width = ramp_width
-        self.v_ramp_start = v_ramp_start
-        self.v_ramp_end = v_ramp_end
+        self.V_ramp_start = V_ramp_start
+        self.V_ramp_end = V_ramp_end
         self.mean = np.zeros(node_count)
         # Create a correlation matrix with off-diagonal values set to the correlation coefficient
         self.cov_matrix = self.gen_covariance_matrix(node_count, variance, correlation)
@@ -243,9 +239,9 @@ class MultivarRndWalk(EEnvGenerator):
     def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
         # Generate a single voltage ramp
         ramp = np.arange(
-            self.v_ramp_start,
-            self.v_ramp_end,
-            (self.v_ramp_end - self.v_ramp_start) / self.ramp_width,
+            self.V_ramp_start,
+            self.V_ramp_end,
+            (self.V_ramp_end - self.V_ramp_start) / self.ramp_width,
         )
 
         # Tile the ramp. Consider offset from previously generated values
@@ -261,7 +257,7 @@ class MultivarRndWalk(EEnvGenerator):
 
         # Generate O-C voltage series. Generate pattern and scale to range(v_oc_min, v_oc_max)
         pattern = self.generate_random_pattern(count)
-        v_ocs = self.v_oc_min + (self.v_oc_max - self.v_oc_min) * pattern
+        v_ocs = self.V_OC_min + (self.V_OC_max - self.V_OC_min) * pattern
 
         # Generate current curves for the nodes in parallel
         pool = Pool(cpu_count())
@@ -279,7 +275,7 @@ if __name__ == "__main__":
         path_eenv = path_here / "content/eenv/nes_lab/"
 
     node_count = 20
-    seed = 32220789340897324098232347119065234157809
+    seed = 32220789340897324098232347119065234157809  # TODO: add changes of other PR
     duration = 4 * 60 * 60.0
 
     pv = SDMNoRP.KXOB201K04F()
@@ -288,10 +284,10 @@ if __name__ == "__main__":
         seed=seed,
         correlation=0.9,
         variance=100e-12,
-        v_oc_min=0.0,
-        v_oc_max=3.5,
-        v_ramp_start=0.0,
-        v_ramp_end=5.0,
+        V_OC_min=0.0,
+        V_OC_max=3.5,
+        V_ramp_start=0.0,
+        V_ramp_end=5.0,
         ramp_width=909,
         pv_model=pv,
     )
@@ -301,7 +297,7 @@ if __name__ == "__main__":
     folder_path = path_eenv / name
     # Check whether the output folder exists
     # Due to the multivariate generation method, nodes can not be generated
-    # independently. Therefore expanding an existing EEnv is not possible.
+    # independently. Therefore, expanding an existing EEnv is not possible.
     if folder_path.exists():
         log.info(
             "Folder %s exists. Skipping generation. "

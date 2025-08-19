@@ -18,15 +18,16 @@ from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
 from shepherd_core.logger import log
 
-STEP_WIDTH = 1.0 / config.SAMPLERATE_SPS  # 10 us
+
 
 
 class EEnvGenerator(ABC):
     """Abstract Base Class for defining custom environment-generators.
 
-    It handled reproducible randomness.
+    It handles reproducible randomness.
     The main method produces data for a specific time-frame for all nodes.
     """
+    STEP_WIDTH: float = 1.0 / config.SAMPLERATE_SPS  # 10 us
 
     def __init__(
         self,
@@ -62,7 +63,7 @@ class EEnvGenerator(ABC):
                     datatype=self.datatype,
                     window_samples=self.window_size,
                     cal_data=CalibrationSeries(
-                        # sheep can skip scaling if cal is ideal
+                        # sheep can skip scaling if cal is ideal (applied here)
                         voltage=CalibrationPair(gain=1e-6, offset=0),
                         current=CalibrationPair(gain=1e-9, offset=0),
                     ),
@@ -72,9 +73,9 @@ class EEnvGenerator(ABC):
                 writer.store_hostname(file_path.stem)
 
             log.info("Generating energy environment...")
-            chunk_duration = chunk_size * STEP_WIDTH
+            chunk_duration = chunk_size * self.STEP_WIDTH
             chunk_count = math.ceil(duration / chunk_duration)
-            times_per_chunk = np.arange(0, chunk_size) * STEP_WIDTH
+            times_per_chunk = np.arange(0, chunk_size) * self.STEP_WIDTH
 
             start_time = time.time()
             for i in trange(chunk_count, desc="Generating chunk: ", leave=False):
