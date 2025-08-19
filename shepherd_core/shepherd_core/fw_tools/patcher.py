@@ -31,7 +31,7 @@ def find_symbol(file_elf: Path, symbol: str) -> bool:
     if ELF is None:
         raise RuntimeError(elf_error_text)
     with TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
-        # switcheroo that also prevents windows bug (overwrite fails)
+        # switcheroo that might prevent windows bug - overwrite fails in modify_symbol_value()
         file_tmp = Path(tmp) / file_elf.name
         shutil.copy(file_elf, file_tmp)
         elf = ELF(path=file_tmp)

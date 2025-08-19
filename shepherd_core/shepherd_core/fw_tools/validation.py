@@ -94,7 +94,7 @@ def is_elf(file: Path) -> bool:
         return False
     try:
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
-            # switcheroo that also prevents windows bug (overwrite fails)
+            # switcheroo that might prevent windows bug - overwrite fails in modify_symbol_value()
             file_tmp = Path(tmp) / file.name
             shutil.copy(file, file_tmp)
             elf = ELF(path=file_tmp)
