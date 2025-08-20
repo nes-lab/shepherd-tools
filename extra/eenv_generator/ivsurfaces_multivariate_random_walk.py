@@ -27,7 +27,7 @@ class SDMNoRP:
 
     k: float = const.Boltzmann
     q: float = const.elementary_charge
-    t_stc: float = 25 + const.zero_Celsius  # 25 C in Kelvin
+    T_stc: float = 25 + const.zero_Celsius  # 25 C in Kelvin
     g_stc: float = 1000  # W/m2
 
     def __init__(
@@ -52,7 +52,7 @@ class SDMNoRP:
         self.dV_OCdt = dV_OCdt
 
         # --- Precompute n (diode ideality factor) ---
-        m_stc = self.q / (n_s * self.k * self.t_stc)
+        m_stc = self.q / (n_s * self.k * self.T_stc)
 
         def f(n: float) -> float:
             # Equation 6
@@ -111,11 +111,11 @@ class SDMNoRP:
 
         # --- Precompute various subexpressions ---
         # v_oc at g=g_stc
-        self.V_OC_stcg = self.V_OC_stc + self.dV_OCdt * (t - self.t_stc)
+        self.V_OC_stcg = self.V_OC_stc + self.dV_OCdt * (t - self.T_stc)
         # m (from Equation 2) over n
         self.mn = self.q / (t * self.n * self.n_s * self.k)
         # delta i_sc over delta (g/g_stc)
-        self.dI_SCdgg_stc = self.I_SC_stc * (1 + self.dI_SCdt * (t - self.t_stc))
+        self.dI_SCdgg_stc = self.I_SC_stc * (1 + self.dI_SCdt * (t - self.T_stc))
         # ---
 
     def get_i(self, V: float, V_OC: float) -> float:
@@ -150,9 +150,9 @@ class SDMNoRP:
         return -tmp2.real / (self.mn * self.r_s) + I_ph + I_0
 
     @classmethod
-    def KXOB201K04F(cls: Self, T_K: float | None = None) -> Self:
+    def KXOB201K04F(cls, T_K: float | None = None) -> Self:
         if T_K is None:
-            T_K = cls.t_stc
+            T_K = cls.T_stc
         T_suffix = f"_{T_K!s}K"
 
         return cls(
@@ -202,7 +202,7 @@ class MultivarRndWalk(EEnvGenerator):
         self.mean = np.zeros(node_count)
         # Create a correlation matrix with off-diagonal values set to the correlation coefficient
         self.cov_matrix = self.gen_covariance_matrix(node_count, variance, correlation)
-        self.pv = pv_model
+        self.pv: SDMNoRP = pv_model
 
         # Start pattern between the two bounds
         self.states = np.full(node_count, 0.5)
@@ -229,14 +229,14 @@ class MultivarRndWalk(EEnvGenerator):
 
     @staticmethod
     def generate_node_surface(
-        params: tuple[np.ndarray, np.ndarray, np.ndarray],
+        params: tuple[SDMNoRP, np.ndarray, np.ndarray],
     ) -> tuple[np.ndarray, np.ndarray]:
         """Generate an I-V surface from terminal voltages and O-C voltages."""
-        (pv, vs, v_ocs) = params
-        cs = np.zeros(len(vs))
-        for j in range(len(vs)):
-            cs[j] = pv.get_i(v=vs[j], v_oc=v_ocs[j])
-        return (vs, cs)
+        (pv, Vs, V_OCs) = params
+        cs = np.zeros(len(Vs))
+        for j in range(len(Vs)):
+            cs[j] = pv.get_i(V=Vs[j], V_OC=V_OCs[j])
+        return Vs, cs
 
     def generate_iv_pairs(self, count: int) -> list[tuple[np.ndarray, np.ndarray]]:
         # Generate a single voltage ramp
@@ -277,7 +277,7 @@ if __name__ == "__main__":
         path_eenv = path_here / "content/eenv/nes_lab/"
 
     node_count = 20
-    seed = 32220789340897324098232347119065234157809  # TODO: add changes of other PR
+    seed = 32220789340897324098232347119065234157809
     duration = 4 * 60 * 60.0
 
     pv = SDMNoRP.KXOB201K04F()

@@ -53,3 +53,6 @@ exclude = [
 
 [tool.ty.terminal]
 output-format = "concise"
+
+[tool.ty.src]
+exclude = ["*/tests/**"]
