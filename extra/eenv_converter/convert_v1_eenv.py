@@ -20,10 +20,10 @@ from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
 from shepherd_core.logger import log
 
-SHP_V1_STEP_WIDTH = 10_000  # 10 us
+SHP_V1_STEP_WIDTH: int = 10_000  # 10 us
 
-WRITE_CHUNK_WIDTH = 10_000 * SHP_V1_STEP_WIDTH  # 10_000 x 10 us -> 0.1 s
-PROCESS_CHUNK_SIZE = 1_000_000
+WRITE_CHUNK_WIDTH: int = 10_000 * SHP_V1_STEP_WIDTH  # 10_000 x 10 us -> 0.1 s
+PROCESS_CHUNK_SIZE: int = 1_000_000
 
 
 def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int) -> None:

@@ -153,7 +153,7 @@ class SDMNoRP:
     def KXOB201K04F(cls, T_K: float | None = None) -> Self:
         if T_K is None:
             T_K = cls.T_stc
-        T_suffix = f"_{T_K!s}K"
+        T_suffix = f"_{T_K:.0f}K"
 
         return cls(
             name=f"ANYSOLAR_KXOB201K04F{T_suffix}",
@@ -248,24 +248,24 @@ class MultivarRndWalk(EEnvGenerator):
 
         # Tile the ramp. Consider offset from previously generated values
         ramp_count = math.ceil((count + self.ramp_offset) / self.ramp_width)
-        vs = np.tile(ramp, ramp_count)
+        Vs = np.tile(ramp, ramp_count)
 
         # Truncate the voltage series according to the offset
         end = self.ramp_offset + count
-        vs = vs[self.ramp_offset : self.ramp_offset + count]
+        Vs = Vs[self.ramp_offset : self.ramp_offset + count]
 
         # Save the new ramp offset
         self.ramp_offset = end % self.ramp_width
 
         # Generate O-C voltage series. Generate pattern and scale to range(v_oc_min, v_oc_max)
         pattern = self.generate_random_pattern(count)
-        v_ocs = self.V_OC_min + (self.V_OC_max - self.V_OC_min) * pattern
+        V_OCs = self.V_OC_min + (self.V_OC_max - self.V_OC_min) * pattern
 
         # Generate current curves for the nodes in parallel
         pool = Pool(cpu_count())
         return pool.map(
             self.generate_node_surface,
-            [(self.pv, vs, v_ocs[::, i]) for i in range(self.node_count)],
+            [(self.pv, Vs, V_OCs[::, i]) for i in range(self.node_count)],
         )
 
 
@@ -276,9 +276,9 @@ if __name__ == "__main__":
     else:
         path_eenv = path_here / "content/eenv/nes_lab/"
 
-    node_count = 20
-    seed = 32220789340897324098232347119065234157809
-    duration = 4 * 60 * 60.0
+    node_count: int = 20
+    seed: int = 32220789340897324098232347119065234157809
+    duration: int = 4 * 60 * 60
 
     pv = SDMNoRP.KXOB201K04F()
     generator = MultivarRndWalk(
@@ -310,7 +310,7 @@ if __name__ == "__main__":
 
     try:
         folder_path.mkdir(parents=True, exist_ok=False)
-        node_paths = [folder_path / f"node{node_idx}.h5" for node_idx in range(node_count)]
+        node_paths = [folder_path / f"node{node_idx:03d}.h5" for node_idx in range(node_count)]
 
         generator.generate_h5_files(node_paths, duration=duration, chunk_size=1_000_000)
     except:

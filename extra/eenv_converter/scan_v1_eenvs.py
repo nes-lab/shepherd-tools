@@ -18,9 +18,9 @@ from tqdm import trange
 from shepherd_core import Reader as ShepherdReader
 from shepherd_core.data_models.base.shepherd import ShpModel
 
-SHP_V1_STEP_WIDTH = 10_000  # 10 us
-SHP_V1_CHUNK_STEPS = 10_000  # 0.1 s chunks
-SHP_V1_CHUNK_WIDTH = SHP_V1_STEP_WIDTH * SHP_V1_CHUNK_STEPS
+SHP_V1_STEP_WIDTH: int = 10_000  # 10 us
+SHP_V1_CHUNK_STEPS: int = 10_000  # 0.1 s chunks
+SHP_V1_CHUNK_WIDTH: int = SHP_V1_STEP_WIDTH * SHP_V1_CHUNK_STEPS
 
 
 class ScanReportProfile(ShpModel):
