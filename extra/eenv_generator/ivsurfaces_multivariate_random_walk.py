@@ -10,12 +10,13 @@ from typing import Self
 
 import numpy as np
 from commons import EEnvGenerator
+from scipy import constants as const
 from scipy.optimize import newton
 from scipy.special import lambertw
-from scipy import constants as const
 
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
+
 
 class SDMNoRP:
     """
@@ -23,9 +24,10 @@ class SDMNoRP:
 
     See: https://doi.org/10.1109/ICIINFS.2011.6038128
     """
+
     k: float = const.Boltzmann
     q: float = const.elementary_charge
-    t_stc: float = 25 + const.zero_Celsius # 25 C in Kelvin
+    t_stc: float = 25 + const.zero_Celsius  # 25 C in Kelvin
     g_stc: float = 1000  # W/m2
 
     def __init__(
@@ -57,7 +59,7 @@ class SDMNoRP:
             I_0_stc = I_SC_stc / (math.exp(m_stc * V_OC_stc / n) - 1)
             # Equation 18
             return n * I_MP_stc + (I_SC_stc - I_MP_stc + I_0_stc) * (
-                    n * math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc) - 2 * m_stc * V_MP_stc
+                n * math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc) - 2 * m_stc * V_MP_stc
             )
 
         def df(n: float) -> float:
@@ -65,22 +67,22 @@ class SDMNoRP:
             I_0_stc = I_SC_stc / (math.exp(m_stc * V_OC_stc / n) - 1)
             # Equation 20
             dI_0dn = (
-                    m_stc
-                    * V_OC_stc
-                    * I_SC_stc
-                    * math.exp(m_stc * V_OC_stc / n)
-                    / (n ** 2 * (math.exp(m_stc * V_OC_stc / n) - 1) ** 2)
+                m_stc
+                * V_OC_stc
+                * I_SC_stc
+                * math.exp(m_stc * V_OC_stc / n)
+                / (n**2 * (math.exp(m_stc * V_OC_stc / n) - 1) ** 2)
             )
             # Equation 19
             return (
-                    I_MP_stc
-                    + dI_0dn
-                    * (n * math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc) - 2 * m_stc * V_MP_stc)
-                    + (
-                            I_SC_stc
-                            - I_MP_stc
-                            + I_0_stc
-                            * (
+                I_MP_stc
+                + dI_0dn
+                * (n * math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc) - 2 * m_stc * V_MP_stc)
+                + (
+                    I_SC_stc
+                    - I_MP_stc
+                    + I_0_stc
+                    * (
                         math.log((I_SC_stc - I_MP_stc + I_0_stc) / I_0_stc)
                         - n
                         * (I_SC_stc - I_MP_stc)
@@ -100,10 +102,10 @@ class SDMNoRP:
 
         # Equation 8
         self.r_s = (
-                self.n
-                / (m_stc * self.I_MP_stc)
-                * math.log((self.I_SC_stc - self.I_MP_stc + I_0_stc) / I_0_stc)
-                - self.V_MP_stc / self.I_MP_stc
+            self.n
+            / (m_stc * self.I_MP_stc)
+            * math.log((self.I_SC_stc - self.I_MP_stc + I_0_stc) / I_0_stc)
+            - self.V_MP_stc / self.I_MP_stc
         )
         # ---
 
