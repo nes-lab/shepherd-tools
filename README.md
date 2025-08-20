@@ -26,27 +26,21 @@ Navigate there to get an in depth view for the tools.
 
 ## Development
 
-### PipEnv
+### Virtual Environment
 
 The environment brings everything needed for dev-work, steps for installing are described below also as shell-commands (OS-independent).
 
 - clone repository
 - navigate shell into directory
 - install environment
-- activate shell
-- optional
-  - update pipenv (optional)
-  - add special packages with `-dev` switch
+- activate shell (`uv` will tell you how to)
 
 ```Shell
 git clone https://github.com/nes-lab/shepherd-tools
 cd .\shepherd-tools
 
-pipenv install --dev
-pipenv shell
-
-pipenv update
-pipenv install --dev pytest
+uv venv
+uv pip install .
 ```
 
 ### Update dynamic Fixtures
@@ -99,8 +93,6 @@ coverage report
 - rebase dev-branch
 
 ```shell
-pipenv shell
-
 bump2version --allow-dirty --new-version 2025.08.1 patch
 # ⤷ format: year.month.patch_release
 

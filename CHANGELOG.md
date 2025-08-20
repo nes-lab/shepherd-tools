@@ -11,6 +11,8 @@
 - CLI commands with recursion changed from `-a` to `-R`
 - change default hdf5-compression to gzip (instead of non-native lzf)
 - make ELF-patcher safer to use (will create tmp-copy of file)
+- eEnv-generators - add solar with ivsurface
+- migrate dev-environment from pipenv to uv
 
 ## v2025.06.4
 

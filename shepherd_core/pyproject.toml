@@ -52,11 +52,6 @@ inventory = [
 ]
 
 dev = [
-    "twine",
-    "pre-commit",
-    "pyright",
-    "ruff",
-    "mypy",
     "types-PyYAML",
 ]
 

@@ -3,6 +3,7 @@ build/
 dist/
 *.egg-info/
 __pycache__
+*.lock
 
 # files below should only be added manually after consideration
 *.h5
