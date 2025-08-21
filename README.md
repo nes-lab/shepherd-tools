@@ -33,7 +33,7 @@ The environment brings everything needed for dev-work, steps for installing are 
 - clone repository
 - navigate shell into directory
 - install environment
-- activate shell (`uv` will tell you how to)
+- activate shell (`uv` will tell you how)
 
 ```Shell
 git clone https://github.com/nes-lab/shepherd-tools
