@@ -78,4 +78,5 @@ class ProgrammingTask(ShpModel):
         )
 
     def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        """Limit paths to allowed directories."""
         return any(self.firmware_file.is_relative_to(path) for path in paths)

@@ -14,6 +14,7 @@ def example_path() -> Path:
 
 
 examples = [
+    # could be automatic discovery, but this allows ordered exec
     "convert_ivonne.py",
     "extract_logs.py",
     "generate_sawtooth.py",

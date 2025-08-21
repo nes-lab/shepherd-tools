@@ -7,13 +7,11 @@ from datetime import datetime
 from pathlib import Path
 
 import click
-import pydantic
 
 from shepherd_core import get_verbose_level
 from shepherd_core import local_tz
 from shepherd_core.logger import set_log_verbose_level
 
-from . import __version__
 from .reader import Reader
 
 logger = logging.getLogger("SHPData.cli")
@@ -57,17 +55,22 @@ def cli(ctx: click.Context, *, verbose: bool) -> None:
 @cli.command(short_help="Print version-info (combine with -v for more)")
 def version() -> None:
     """Print version-info (combine with -v for more)."""
-    logger.info("Shepherd-Data v%s", __version__)
+    from importlib import metadata  # noqa: PLC0415
+
     logger.debug("Python v%s", sys.version)
-    logger.debug("Click v%s", click.__version__)
-    logger.debug("Pydantic v%s", pydantic.__version__)
+    logger.info("Shepherd-Data v%s", metadata.version("shepherd_data"))
+    logger.debug("Shepherd-Core v%s", metadata.version("shepherd_core"))
+    logger.debug("h5py v%s", metadata.version("h5py"))
+    logger.debug("numpy v%s", metadata.version("numpy"))
+    logger.debug("Click v%s", metadata.version("click"))
+    logger.debug("Pydantic v%s", metadata.version("pydantic"))
 
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -128,7 +131,7 @@ def validate(in_data: Path, *, recurse: bool = False) -> None:
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -172,7 +175,7 @@ def extract(
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -222,7 +225,7 @@ def extract_meta(
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -247,7 +250,7 @@ def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -293,7 +296,7 @@ def decode_uart(in_data: Path, *, recurse: bool = False) -> None:
 )  # TODO: also configure decimal point
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -346,7 +349,7 @@ def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> Non
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
@@ -424,10 +427,11 @@ def downsample(
 )
 @click.option(
     "--recurse",
-    "-a",
+    "-R",
     is_flag=True,
     help="Also consider files in sub-folders",
 )
+# TODO: allow SVG-output
 def plot(
     in_data: Path,
     start: float | None,

@@ -75,13 +75,13 @@ if __name__ == "__main__":
     else:
         path_eenv = path_here / "content/eenv/nes_lab/"
 
-    periods = [10e-3, 100e-3, 1, 10]
-    duty_cycles = [0.01, 0.02, 0.05, 0.1, 0.2]
-    duration = 4 * 60 * 60.0
+    periods: set[float] = {10e-3, 100e-3, 1, 10}
+    duty_cycles: set[float] = {0.01, 0.02, 0.05, 0.1, 0.2}
+    duration: int = 4 * 60 * 60
 
-    node_count = 20
-    seed = 32220789340897324098232347119065234157809
-    chunk_size = 10_000_000
+    node_count: int = 20
+    seed: int = 32220789340897324098232347119065234157809
+    chunk_size: int = 10_000_000
 
     for period, duty_cycle in product(periods, duty_cycles):
         # Ensure output folder exists
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         #       nodes without re-generating existing ones
         log.info(f"Generating EEnv: {name}")
         for node_idx in range(node_count):
-            node_path = folder_path / f"node{node_idx}.h5"
+            node_path = folder_path / f"node{node_idx:03d}.h5"
             if node_path.exists():
                 log.info("File %s exists. Skipping node %i.", node_path, node_idx)
                 continue

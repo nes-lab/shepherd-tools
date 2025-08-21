@@ -5,6 +5,7 @@ TODO: Work in Progress.
     - detection-functions that register in main validator.
 """
 
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -92,7 +93,12 @@ def is_elf(file: Path) -> bool:
     if not file.is_file():
         return False
     try:
-        _ = ELF(path=file)
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+            # switcheroo that might prevent windows bug - overwrite fails in modify_symbol_value()
+            file_tmp = Path(tmp) / file.name
+            shutil.copy(file, file_tmp)
+            elf = ELF(path=file_tmp)
+            elf.close()
     except ELFError:
         log.debug("File %s is not ELF - Magic number does not match", file.name)
         return False

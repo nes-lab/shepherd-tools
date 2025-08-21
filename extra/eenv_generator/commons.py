@@ -19,14 +19,13 @@ from shepherd_core.data_models.task import Compression
 from shepherd_core.logger import log
 
 
-
-
 class EEnvGenerator(ABC):
     """Abstract Base Class for defining custom environment-generators.
 
     It handles reproducible randomness.
     The main method produces data for a specific time-frame for all nodes.
     """
+
     STEP_WIDTH: float = 1.0 / config.SAMPLERATE_SPS  # 10 us
 
     def __init__(

@@ -40,7 +40,7 @@ def pytest_collection_modifyitems(
 ) -> None:
     # ELF
     try:
-        from pwnlib.elf import ELF
+        from pwnlib.elf import ELF  # noqa: PLC0415
     except ImportError:
         ELF = None
     skip_elf = pytest.mark.skip(

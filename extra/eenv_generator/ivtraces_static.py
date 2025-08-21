@@ -36,9 +36,9 @@ if __name__ == "__main__":
     else:
         path_eenv = path_here / "content/eenv/nes_lab/"
 
-    voltages = [3.0, 2.0]
-    currents = [50e-3, 10e-3, 5e-3, 1e-3]
-    duration = 10 * 60 * 60.0
+    voltages: set[float] = {3.0, 2.0}
+    currents: set[float] = {50e-3, 10e-3, 5e-3, 1e-3}
+    duration: int = 10 * 60 * 60
 
     for voltage, current in product(voltages, currents):
         generator = StaticGenerator(voltage=voltage, current=current)

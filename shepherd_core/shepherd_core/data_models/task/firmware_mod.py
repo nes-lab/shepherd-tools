@@ -93,6 +93,7 @@ class FirmwareModTask(ShpModel):
         return cls(**kwargs)
 
     def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        """Limit paths to allowed directories."""
         all_ok = any(self.firmware_file.is_relative_to(path) for path in paths)
         if isinstance(self.data, Path):
             all_ok = any(self.data.is_relative_to(path) for path in paths)

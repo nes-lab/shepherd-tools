@@ -52,12 +52,14 @@ class ObserverTasks(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt) -> Self:
+    def from_xp(cls, xp: Experiment, xp_folder: str | None, tb: Testbed, tgt_id: IdInt) -> Self:
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
 
         obs = tb.get_observer(tgt_id)
-        root_path = tb.data_on_observer / "experiments" / xp.folder_name()
+        if xp_folder is None:
+            xp_folder = xp.folder_name()  # moved a layer up for consistent naming
+        root_path = tb.data_on_observer / "experiments" / xp_folder
         fw_paths = [root_path / f"fw{_i}_{obs.name}.hex" for _i in [1, 2]]
 
         return cls(
@@ -93,6 +95,7 @@ class ObserverTasks(ShpModel):
         return values
 
     def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        """Limit paths to allowed directories."""
         all_ok = any(self.root_path.is_relative_to(path) for path in paths)
         all_ok &= self.fw1_mod.is_contained(paths)
         all_ok &= self.fw2_mod.is_contained(paths)

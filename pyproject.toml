@@ -1,3 +1,37 @@
+# virtual project for a dev-environment, usable via:
+# uv venv
+# uv pip install .
+[project]
+name = "shepherd-tools"
+version = "2025.08.1"
+description = "Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed"
+readme = "README.md"
+
+dependencies = [
+    "shepherd-core[all]",
+    "shepherd-data[all]",
+    # dev
+    "twine",  # TODO: could be done with uv
+    "pre-commit",
+    "pre-commit-uv", # check with `pre-commit --version`
+    "bump2version",
+    "ruff",
+    "ty",
+    "pyright",
+    "mypy",
+]
+requires-python = ">=3.10"
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+shepherd-core = { path = "./shepherd_core", editable = true}
+shepherd-data = { path = "./shepherd_data", editable = true}
+
+[tool.setuptools]
+packages = ["shepherd_core", "shepherd_data"]
+
 [tool.pyright]
 root = "./"
 include = [
@@ -19,3 +53,6 @@ exclude = [
 
 [tool.ty.terminal]
 output-format = "concise"
+
+[tool.ty.src]
+exclude = ["*/tests/**"]

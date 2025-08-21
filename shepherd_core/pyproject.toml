@@ -52,11 +52,6 @@ inventory = [
 ]
 
 dev = [
-    "twine",
-    "pre-commit",
-    "pyright",
-    "ruff",
-    "mypy",
     "types-PyYAML",
 ]
 
@@ -64,6 +59,7 @@ test = [
     "pytest",
     "coverage",
 ]
+all = ["shepherd-core[elf,inventory,dev,test]"]
 
 [project.readme]
 file = "README.md"

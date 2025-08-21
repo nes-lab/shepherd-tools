@@ -23,6 +23,7 @@ def test_task_model_emu_min() -> None:
     )
 
 
+@pytest.mark.skip(reason="Relaxed in v2025.08.01")
 def test_task_model_emu_fault_in_past() -> None:
     with pytest.raises(ValidationError):
         EmulationTask(
@@ -91,6 +92,7 @@ def test_task_model_hrv_duration() -> None:
     assert hrv.duration.total_seconds() == 42
 
 
+@pytest.mark.skip(reason="Relaxed in v2025.08.01")
 def test_task_model_hrv_too_late() -> None:
     with pytest.raises(ValidationError):
         HarvestTask(
@@ -110,7 +112,7 @@ def test_task_model_observer_min1() -> None:
 def test_task_model_observer_min2() -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
     xp = Experiment.from_file(path)
-    ObserverTasks.from_xp(xp=xp, tb=TasteBad(name="shepherd_tud_nes"), tgt_id=1)
+    ObserverTasks.from_xp(xp=xp, xp_folder=None, tb=TasteBad(name="shepherd_tud_nes"), tgt_id=1)
 
 
 def test_task_model_prog_min() -> None:

@@ -35,8 +35,8 @@ from .helper_paths import path_posix
 class Compression(str, Enum):
     """Options for choosing a dataset-compression."""
 
-    lzf = default = "lzf"  # not native hdf5
-    gzip1 = gzip = 1  # higher compr & load
+    lzf = "lzf"  # not native hdf5
+    gzip1 = gzip = default = 1  # higher compr & load
     null = None
     # NOTE: lzf & external file-compression (xz or zstd) work better than gzip
     #       -> even with additional compression
@@ -127,14 +127,13 @@ class EmulationTask(ShpModel):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        # TODO: limit paths
-        time_now = datetime.now().astimezone()
+        time_now = datetime.now().astimezone() - timedelta(hours=24)
         if self.time_start is not None and self.time_start < time_now:
             msg = (
                 "Start-Time for Emulation can't be in the past "
                 f"('{self.time_start}' vs '{time_now}'."
             )
-            raise ValueError(msg)
+            log.error(msg)  # do not raise anymore - server & clients do not have to match
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Task-Duration can't be negative.")
         if isinstance(self.voltage_aux, str) and self.voltage_aux not in {
@@ -181,6 +180,10 @@ class EmulationTask(ShpModel):
         )
 
     def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+        """Limit paths to allowed directories.
+
+        TODO: could be added to validator (with a switch)
+        """
         all_ok = any(self.input_path.is_relative_to(path) for path in paths)
         all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
         return all_ok

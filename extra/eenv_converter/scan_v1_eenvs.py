@@ -18,9 +18,9 @@ from tqdm import trange
 from shepherd_core import Reader as ShepherdReader
 from shepherd_core.data_models.base.shepherd import ShpModel
 
-SHP_V1_STEP_WIDTH = 10_000  # 10 us
-SHP_V1_CHUNK_STEPS = 10_000  # 0.1 s chunks
-SHP_V1_CHUNK_WIDTH = SHP_V1_STEP_WIDTH * SHP_V1_CHUNK_STEPS
+SHP_V1_STEP_WIDTH: int = 10_000  # 10 us
+SHP_V1_CHUNK_STEPS: int = 10_000  # 0.1 s chunks
+SHP_V1_CHUNK_WIDTH: int = SHP_V1_STEP_WIDTH * SHP_V1_CHUNK_STEPS
 
 
 class ScanReportProfile(ShpModel):
@@ -54,7 +54,7 @@ class ScanReport(ShpModel):
     common_ranges: list[CommonRange]
 
 
-def find_continuous_ranges(ds_time: h5py.Dataset, count: int) -> list[int]:
+def find_continuous_ranges(ds_time: h5py.Dataset, count: int) -> list[tuple[int, int]]:
     """Find ranges (indices) with continuous 10 us timesteps in a time dataset."""
     if not count % SHP_V1_CHUNK_STEPS == 0:
         raise RuntimeError("count not divisible by chunk size")
@@ -85,17 +85,17 @@ def find_continuous_ranges(ds_time: h5py.Dataset, count: int) -> list[int]:
         continuous_ranges.append((range_start, sample_idx - 1))
         range_start = sample_idx
 
-    if trailing_zeros:
-        # Ensure the recording actually ended
-        for trailing_idx in range(chunk_idx, chunk_count):
-            timestamps = ds_time[
-                trailing_idx * SHP_V1_CHUNK_STEPS : (trailing_idx + 1) * SHP_V1_CHUNK_STEPS
-            ]
-            if not np.all(timestamps == 0):
-                raise RuntimeError("Non-zero timestamp found after jump to zero")
-    else:
-        # Complete final range
-        continuous_ranges.append((range_start, count - 1))
+        if trailing_zeros:
+            # Ensure the recording actually ended
+            for trailing_idx in range(chunk_idx, chunk_count):
+                timestamps = ds_time[
+                    trailing_idx * SHP_V1_CHUNK_STEPS : (trailing_idx + 1) * SHP_V1_CHUNK_STEPS
+                ]
+                if not np.all(timestamps == 0):
+                    raise RuntimeError("Non-zero timestamp found after jump to zero")
+        else:
+            # Complete final range
+            continuous_ranges.append((range_start, count - 1))
 
     return continuous_ranges
 
