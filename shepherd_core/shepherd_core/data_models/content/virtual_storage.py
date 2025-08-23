@@ -1,7 +1,10 @@
+"""Generalized virtual energy storage data models (config)."""
+
 import copy
 import math
 import sys
 from collections.abc import Callable
+from collections.abc import Sequence
 from typing import Annotated
 from typing import Any
 
@@ -19,41 +22,43 @@ from shepherd_core.testbed_client import tb_client
 class VirtualStorageConfig(ContentModel, title="Config for the virtual energy storage"):
     """Battery model based on two papers.
 
-    Model An Accurate Electrical Battery Model Capable of Predicting Runtime and I–V Performance
+    Model An Accurate Electrical Battery Model Capable
+        of Predicting Runtime and I-V Performance
     https://rincon-mora.gatech.edu/publicat/jrnls/tec05_batt_mdl.pdf
 
-    A Hybrid Battery Model Capable of Capturing Dynamic Circuit Characteristics and Nonlinear Capacity Effects
+    A Hybrid Battery Model Capable of Capturing Dynamic Circuit
+        Characteristics and Nonlinear Capacity Effects
     https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1210&context=electricalengineeringfacpub
     """
 
     C_As: float  # TODO: is it really capacity? seems to be electrical charge q_As
     """ ⤷ Capacity """
-    p_VOC: Annotated[list[float], Field(min_length=6, max_length=6)] = [0, 0, 0, 1, 0, 0]
+    p_VOC: Annotated[Sequence[float], Field(min_length=6, max_length=6)] = [0, 0, 0, 1, 0, 0]
     """ ⤷ Parameters for V_OC-Mapping
         - direct SOC-Mapping by default
         - named a0 to a5 in paper
         """
-    p_Rs: Annotated[list[float], Field(min_length=6, max_length=6)] = [0, 0, 0, 0, 0, 0]
+    p_Rs: Annotated[Sequence[float], Field(min_length=6, max_length=6)] = [0, 0, 0, 0, 0, 0]
     """ ⤷ Parameters for series-resistance
         - no resistance set by default
         - named b0 to b5 in paper
         """
-    p_RtS: Annotated[list[float], Field(min_length=3, max_length=3)] = [0, 0, 0]
+    p_RtS: Annotated[Sequence[float], Field(min_length=3, max_length=3)] = [0, 0, 0]
     """ ⤷ Parameters for R_transient_S (short-term),
         - no transient active by default
         - named c0 to c2 in paper
         """
-    p_CtS: Annotated[list[float], Field(min_length=3, max_length=3)] = [0, 0, 0]  # no transient
+    p_CtS: Annotated[Sequence[float], Field(min_length=3, max_length=3)] = [0, 0, 0]
     """ ⤷ Parameters for C_transient_S (short-term)
         - no transient active by default
         - named d0 to d2 in paper
         """
-    p_RtL: Annotated[list[float], Field(min_length=3, max_length=3)] = [0, 0, 0]  # no transient
+    p_RtL: Annotated[Sequence[float], Field(min_length=3, max_length=3)] = [0, 0, 0]
     """ ⤷ Parameters for R_transient_L (long-term)
         - no transient active by default
         - named e0 to e2 in paper
         """
-    p_CtL: Annotated[list[float], Field(min_length=3, max_length=3)] = [0, 0, 0]  # no transient
+    p_CtL: Annotated[Sequence[float], Field(min_length=3, max_length=3)] = [0, 0, 0]
     """ ⤷ Parameters for C_transient_L (long-term)
         - no transient active by default
         - named f0 to f2 in paper
@@ -161,14 +166,14 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     def post_validation(self) -> Self:
         return self
 
-    def without_rate_capacity(self):
+    def without_rate_capacity(self) -> Self:
         # ⤷ TODO: won't work ATM, still needed?
         result = copy.deepcopy(self)
         result.p_rce = 1
         result.name += " no_rate_cap"
         return result
 
-    def without_transient_voltages(self):
+    def without_transient_voltages(self) -> Self:
         # ⤷ TODO: won't work ATM, still needed?
         result = copy.deepcopy(self)
         result.d2 = sys.float_info.max
@@ -176,13 +181,11 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         result.name += " no_tran_vs"
         return result
 
-    def with_self_discharge_experiment(self, duration, final_soc):
+    def with_self_discharge_experiment(self, duration: float, final_soc: float) -> Self:
         # ⤷ TODO: won't work ATM, still needed?
         # Example: 50mAh; SoC from 100 % to 85 % over 30 days => ~88.605 kOhm
         result = copy.deepcopy(self)
-        result.R_self_discharge = duration / (
-            -math.log(final_soc) * self.C_As
-        )
+        result.R_self_discharge = duration / (-math.log(final_soc) * self.C_As)
         # ⤷ TODO: is no resistance, but 1/A
         result.name += f" r_leak={result.R_self_discharge}"
         return result
@@ -225,6 +228,14 @@ lut_storage = Annotated[list[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZ
 
 
 class StoragePRUConfig(ShpModel):
+    """Map settings-list to internal state-vars struct StorageConfig.
+
+    NOTE:
+      - yaml is based on si-units like nA, mV, ms, uF
+      - c-code and py-copy is using nA, uV, ns, nF, fW, raw
+      - ordering is intentional and in sync with shepherd/commons.h
+    """
+
     Constant_s_per_mAs_n48: u32  # TODO: how n48?
     Constant_1_per_kOhm_n18: u32
     LuT_VOC_SoC_min_log2_u_n32: u32  # TODO: why _u_, just for 1e-6? and why n32?
@@ -233,11 +244,12 @@ class StoragePRUConfig(ShpModel):
     LuT_RSeries_kOhm_n32: lut_storage
 
     @classmethod
-    def from_vstorage(cls, data: VirtualStorageConfig, *, optimize_clamp: bool = True) -> Self:
+    def from_vstorage(cls, data: VirtualStorageConfig, *, optimize_clamp: bool = False) -> Self:
+        x_off = 0.5 if optimize_clamp else 1.0
         LuT_VOC_SoC_min = 1.0 / LUT_SIZE
-        V_OC_LuT = [data.V_OC(LuT_VOC_SoC_min * (x + 1)) for x in range(LUT_SIZE)]
+        V_OC_LuT = [data.V_OC(LuT_VOC_SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
         LuT_RSeries_SoC_min = 1.0 / LUT_SIZE
-        R_series_LuT = [data.R_series(LuT_RSeries_SoC_min * (x + 1)) for x in range(LUT_SIZE)]
+        R_series_LuT = [data.R_series(LuT_RSeries_SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
         Constant_s_per_As: float = 10e-6 / data.C_As
         Constant_1_per_Ohm: float = 1.0 / data.R_self_discharge  # TODO: Probably wrong
         return cls(
@@ -255,6 +267,8 @@ class StoragePRUConfig(ShpModel):
 
 
 class LUT(BaseModel):
+    """Dynamic look-up table that can automatically be generated from a function."""
+
     x_min: float
     y_values: list[float]
     scale: str
@@ -269,12 +283,13 @@ class LUT(BaseModel):
         lut_size: int = LUT_SIZE,
         scale: str = "linear",
         *,
-        optimize_clamp: bool = True,
+        optimize_clamp: bool = False,
     ) -> Self:
         """
-        Generates an n-dimensional LUT where n is the length of the input arrays.
-        Each dimension has a minimum value, a size and a scale (lin / log2).
-        y_fnc is a function that takes n arguments and produces the lookup value.
+        Generate a LUT with a specific width from a provided function.
+
+        It has a minimum value, a size / width and a scale (linear / log2).
+        y_fnc is a function that takes an argument and produces the lookup value.
         """
         if scale not in ["linear", "log2"]:
             raise ValueError("scale must be 'linear' or 'log2'")
@@ -294,9 +309,9 @@ class LUT(BaseModel):
     def get(self, x_value: float) -> float:
         # future extension: interpolation instead of clamping
         num = int(x_value / self.x_min)
-        # round() would be more appropriate, but in c/pru its just integer math
+        # ⤷ round() would be more appropriate, but in c/pru its just integer math
 
-        if self.scale == "linear":
+        if self.scale == "linear":  # noqa: SIM108
             idx = max(0, num)
         else:
             idx = int(math.log2(num)) if num > 0 else 0
@@ -306,11 +321,8 @@ class LUT(BaseModel):
         return self.y_values[idx]
 
 
-class ModelNaive:
-    """
-    Calculates the battery SoC and terminal voltage after drawing a current i_cell over a period of dt
-    Naive implementation of the full hybrid KiBaM model from the paper
-    """
+class ModelNaive:  # TODO: rename ModelKiBaM
+    """Naive implementation of the full hybrid KiBaM model from the paper."""
 
     def __init__(self, SoC: float, cfg: VirtualStorageConfig, dt_s: float = 10e-6) -> None:
         self.cfg: VirtualStorageConfig = cfg
@@ -333,11 +345,13 @@ class ModelNaive:
         self.V_transient_L: float = 0
 
     def step(self, I_cell: float) -> tuple[float, float, float]:
+        """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
         # Step 1 verified separately using Figure 4
         # Steps 1 and 2 verified separately using Figure 10
         # Complete model verified using Figures 8 (a, b) and Figure 9 (a, b)
 
-        # Step 0: Determine whether battery is charging or resting and calculate time since last switch
+        # Step 0: Determine whether battery is charging or resting and
+        #         calculate time since last switch
         if self.discharge_last != (I_cell > 0):  # Reset time delta when current sign changes
             self.discharge_last = I_cell > 0
             self.time_s = 0
@@ -345,10 +359,12 @@ class ModelNaive:
             # ⤷ Save C_unavailable at time of switch
 
         self.time_s += self.dt_s
-        # Consider time delta including this iteration (since we want v_trans after the current step)
+        # ⤷ Consider time delta including this iteration (we want v_trans after the current step)
 
-        # Step 1: Calculate unavailable capacity after dt (due to rate capacity and recovery effect) (equation 17)
-        # TODO might be possible to remove the 2nd branch if recovery is accelerated while recharging??
+        # Step 1: Calculate unavailable capacity after dt
+        #         (due to rate capacity and recovery effect) (equation 17)
+        # TODO: might be possible to remove the 2nd branch if
+        #       recovery is accelerated while recharging??
         if I_cell > 0:  # Discharging
             self.C_unavailable = (
                 self.C_unavailable_last * math.pow(math.e, -self.cfg.kdash * self.time_s)
@@ -399,10 +415,10 @@ class ModelNaive:
         return V_cell, SoC_eff, V_OC
 
 
-class ModelFull:
-    """
-    Calculates the battery SoC and terminal voltage after drawing a current i_cell over a period of dt
-    Implements the hybrid KiBaM model from the paper with certain modifications:
+class ModelFull:  # TODO: rename ModelKiBaMExtended ?
+    """Hybrid KiBaM model from the paper with certain extensions.
+
+    Modifications:
     1. support rate capacity during charging (Step 1)
     2. support transient tracking during charging (Step 5)
     3. support self discharge (step 2a)
@@ -427,21 +443,25 @@ class ModelFull:
         self.V_transient_L: float = 0
 
     def step(self, I_cell: float) -> tuple[float, float, float]:
+        """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
         # Step 1 verified separately using Figure 4
         # Steps 1 and 2 verified separately using Figure 10
         # Complete model verified using Figures 8 (a, b) and Figure 9 (a, b)
 
-        # Step 0: Determine whether battery is charging or resting and calculate time since last switch
+        # Step 0: Determine whether battery is charging or resting and
+        #         calculate time since last switch
         if self.discharge_last != (I_cell > 0):  # Reset time delta when current sign changes
             self.discharge_last = I_cell > 0
             self.time_s = 0
             self.C_unavailable_last = self.C_unavailable  # Save C_unavailable at time of switch
 
-        self.time_s += self.dt_s  # Consider time delta including this iteration (since we want v_trans after the current step)
+        self.time_s += self.dt_s
+        # ⤷ Consider time delta including this iteration (we want v_trans after the current step)
 
-        # Step 1: Calculate unavailable capacity after dt (due to rate capacity and recovery effect) (equation 17)
-        # TODO if this should be used in production, additional verification is required (analytically derive versions of
-        #                               equations 16/17 without time range restrictions)
+        # Step 1: Calculate unavailable capacity after dt
+        #         (due to rate capacity and recovery effect) (equation 17)
+        # TODO: if this should be used in production, additional verification is required
+        #      (analytically derive versions of eq. 16/17 without time range restrictions)
         self.C_unavailable = (
             self.C_unavailable_last * math.pow(math.e, -self.cfg.kdash * self.time_s)
             + (1 - self.cfg.p_rce)
@@ -452,9 +472,8 @@ class ModelFull:
         )
 
         # Step 2a: Calculate and add self-discharge current
-        I_leak = (
-            self.SoC / self.cfg.R_self_discharge
-        )  # TODO: is that correct? n / Ohm != A, but it seems [Rsd]=1/A
+        I_leak = self.SoC / self.cfg.R_self_discharge
+        # ⤷ TODO: is that correct? n / Ohm != A, but it seems [Rsd]=1/A
         I_cell += I_leak
 
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
@@ -488,10 +507,15 @@ class ModelFull:
         return V_cell, SoC_eff, V_OC
 
 
-class ModelLUTNoTransient:
-    """
-    Calculates the battery SoC and terminal voltage after drawing a current i_cell over a period of dt
-    MODIFIED model to omit transient voltages AND omit rate capacity effect
+class ModelLUTNoTransient:  # TODO: rename ModelPRU
+    """PRU-optimized model with a set of simplifications.
+
+    Modifications:
+    - omit transient voltages
+    - omit rate capacity effect.
+    - replace
+    - TODO: add self discharge
+    - TODO: add DC-Bias?
     """
 
     def __init__(
@@ -509,15 +533,16 @@ class ModelLUTNoTransient:
             1.0 / LUT_SIZE, y_fn=cfg.R_series, lut_size=LUT_SIZE, optimize_clamp=optimize_clamp
         )
         self.Constant_s_per_As: float = dt_s / cfg.C_As
-        # self.Constant_1_per_kOhm: float # TODO: leakage seems to be missing?
+        self.Constant_1_per_kOhm: float = sys.float_info.max  # TODO: leakage seems to be missing?
         # state
         self.SoC: float = SoC
 
     def step(self, I_cell: float) -> tuple[float, float, float]:
+        """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
-        # SoC = SoC - 1 / C * (i_cell * dt)
-        self.SoC = self.SoC - I_cell * self.Constant_s_per_As
-        SoC_eff = self.SoC  # MODIFIED: removed term due to omission of rate capacity effect
+        #       = SoC - 1 / C * (i_cell * dt)
+        SoC_eff = self.SoC = self.SoC - I_cell * self.Constant_s_per_As
+        # ⤷ MODIFIED: removed term due to omission of rate capacity effect
 
         # Step 3: Calculate V_OC after dt (equation 7)
         # MODIFIED to use a lookup table instead
