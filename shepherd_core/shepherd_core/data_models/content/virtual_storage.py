@@ -1,6 +1,5 @@
 """Generalized virtual energy storage data models (config)."""
 
-import copy
 import math
 import sys
 from collections.abc import Callable
@@ -72,19 +71,24 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         """
 
     p_rce: Annotated[float, Gt(0), Le(1.0)] = 1.0
-    """ ⤷ rate capacity effect
+    """ ⤷ Parameter for rate capacity effect
         - Set to 1 to disregard
         - named c in paper
         """
-    kdash: Annotated[float, Gt(0)] = sys.float_info.min  # TODO: description, renaming?
+    kdash: Annotated[float, Gt(0)] = sys.float_info.min  # TODO: use k directly
+    """ ⤷ Parameter for rate capacity effect
+        - temporary component of rate capacity effect, valve in KiBaM (eq 17)
+        - k' = k/c(1-c),
+        """
 
-    # Custom parameter extension
-    R_self_discharge: Annotated[float, Gt(0)] = sys.float_info.max
-    # TODO: code suggests its not Ohm but 1/A (see calc_R_self_discharge() for more)
-    #       maybe name it p_self_discharge_1_per_A
+    R_leak_Ohm: Annotated[float, Gt(0)] = sys.float_info.max
+    """ ⤷ Parameter for self discharge (custom extension)
+        - effect is often very small, mostly relevant for some capacitors
+        """
 
     @classmethod
-    def lipo(cls, capacity_mAh: float) -> Self:
+    @validate_call
+    def lipo(cls, capacity_mAh: Annotated[float, Gt(0)]) -> Self:
         """Modeled after the PL-383562 2C Polymer Lithium-ion Battery.
 
         Nominal Voltage     3.7 V
@@ -100,13 +104,13 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             p_VOC=[-0.852, 63.867, 3.6297, 0.559, 0.51, 0.508],
             p_Rs=[0.1463, 30.27, 0.1037, 0.0584, 0.1747, 0.1288],
             p_RtS=[0.1063, 62.49, 0.0437],
-            p_CtS=[-200, 128, 300],  # TODO: d1=-138 most likely a mistake in the table/paper!
+            p_CtS=[-200, 138, 300],  # most likely a mistake (d1=-138) in the table/paper!
             p_RtL=[0.0712, 61.4, 0.0288],
             p_CtL=[-3083, 180, 5088],
             # y10 = 2863.3, y20 = 232.66 # unused
             p_rce=0.9248,
             kdash=0.0008,
-            # content-fields
+            # content-fields below
             name=f"LiPo {capacity_mAh} mAh",
             description="Model of a standard LiPo battery (3 to 4.2 V) with adjustable capacity",
             owner="NES Lab",
@@ -116,7 +120,8 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         )
 
     @classmethod
-    def lead_acid(cls, capacity_mAh: float) -> Self:
+    @validate_call
+    def lead_acid(cls, capacity_mAh: Annotated[float, Gt(0)]) -> Self:
         """Modeled after the LEOCH LP12-1.2AH lead acid battery.
 
         Nominal Voltage     12 V
@@ -132,12 +137,14 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             p_Rs=[1.578, 8.527, 0.7808, -1.887, -2.404, -0.649],
             p_RtS=[2.771, 9.079, 0.22],
             p_CtS=[-2423, 75.14, 55],
-            p_RtL=[2.771, 9.079, 0.218],  # TODO: first 2 are identical with p_RtS in table/paper
+            p_RtL=[2.771, 9.079, 0.218],
+            # ⤷ first 2 values of p_RtL are identical with p_RtS in table/paper
+            #   (strange, but plots look fine)
             p_CtL=[-1240, 9.571, 3100],
             # y10 = 2592, y20 = 1728 # unused
             p_rce=0.6,
             kdash=0.0034,
-            # content-fields
+            # content-fields below
             name=f"Lead-Acid-battery {capacity_mAh} mAh",
             description="Model of a 12V lead acid battery with adjustable capacity",
             owner="NES Lab",
@@ -147,22 +154,28 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         )
 
     @classmethod
-    def mlcc(cls, C_uF: float, V_rated: float, R_series_Ohm: float = 0) -> Self:
+    @validate_call
+    def capacitor(
+        cls,
+        C_uF: Annotated[float, Gt(0)],
+        V_rated: Annotated[float, Gt(0)],
+        R_series_Ohm: Annotated[float, Ge(0)] = 0.0,
+        R_self_Ohm: Annotated[float, Gt(0)] = sys.float_info.max,
+    ) -> Self:
         return cls(
-            q_As=C_uF * V_rated,
-            # direct SOC-Mapping & no transients per default
-            p_VOC=[0, 0, 0, V_rated, 0, 0],  # TODO: Proposition - 100% SoC is @V_rated,
+            q_As=1e-6 * C_uF * V_rated,
+            p_VOC=[0, 0, 0, V_rated, 0, 0],  # 100% SoC is @V_rated,
+            # no transients per default
             p_Rs=[0, 0, R_series_Ohm, 0, 0, 0],  # const series resistance
-            R_self_discharge=100e3,  # TODO: just a test
-            # content-fields
-            name=f"MLCC-Capacitor {C_uF} uF",
-            description="Model of an MLCC-Capacitor with DC-Bias, series & leakage resistor",
+            R_leak_Ohm=R_self_Ohm,
+            # content-fields below
+            name=f"Capacitor {C_uF:.0f} uF",
+            description="Model of a Capacitor with [DC-Bias], series & leakage resistor",
             owner="NES Lab",
             group="NES Lab",
             visible2group=True,
             visible2all=True,
         )
-        # TODO: compare to current capacitor model in benchmark
 
     @model_validator(mode="before")
     @classmethod
@@ -178,28 +191,29 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         return self
 
     def without_rate_capacity(self) -> Self:
-        # ⤷ TODO: won't work ATM, still needed?
-        result = copy.deepcopy(self)
-        result.p_rce = 1
-        result.name += " no_rate_cap"
-        return result
+        # ⤷ TODO: still needed?
+        model_dict = self.model_dump()
+        model_dict["p_rce"] = 1
+        model_dict["name"] += " no_rate_cap"
+        return type(self)(**model_dict)
 
     def without_transient_voltages(self) -> Self:
-        # ⤷ TODO: won't work ATM, still needed?
-        result = copy.deepcopy(self)
-        result.d2 = sys.float_info.max
-        result.f2 = sys.float_info.max
-        result.name += " no_tran_vs"
-        return result
+        # ⤷ TODO: still needed?
+        # TODO: wouldn't it be more correct to set c0 to f2 to zero?
+        model_dict = self.model_dump()
+        model_dict["p_CtS"][2] = sys.float_info.max
+        model_dict["p_CtL"][2] = sys.float_info.max
+        model_dict["name"] += " no_transient_vs"
+        return type(self)(**model_dict)
 
-    def calc_R_self_discharge(self, duration: timedelta, final_soc: float) -> float:
-        # Example: 50mAh; SoC from 100 % to 85 % over 30 days => ~88.605 kOhm
-        return duration.total_seconds() / (-math.log(final_soc) * self.q_As)
-        # ⤷ TODO: it's not resistance, but 1/A -> missing voltage component
-        #         30d * (24*60*60) / (-math.log(0.85) * 50 * 3600/1000) = 88 k/A
-        #         -> @ 4.2 V it is 372 kOhm
-        #         more correct would be: (V_100%SoC + V_85%SoC) / 2 * formular
-        # TODO: why use final SOC? shouldn't it be SOC-delta?
+    def calc_R_self_discharge(
+        self, duration: timedelta, SoC_final: float, SoC_0: float = 1.0
+    ) -> float:
+        # based on capacitor discharge: U(t) = U0 * e ^ (-t/RC)
+        # Example: 50mAh; SoC from 100 % to 85 % over 30 days => ~1.8 MOhm
+        U0 = self.calc_V_OC(SoC_0)
+        Ut = self.calc_V_OC(SoC_final)
+        return duration.total_seconds() * U0 / (self.q_As * math.log(U0 / Ut))
 
     def calc_V_OC(self, SoC: float) -> float:
         return (
@@ -269,8 +283,7 @@ class StoragePRUConfig(ShpModel):
             data.calc_R_series(LuT_RSeries_SoC_min * (x + x_off)) for x in range(LUT_SIZE)
         ]
         Constant_s_per_As: float = 10e-6 / data.q_As
-        Constant_1_per_Ohm: float = 1.0 / data.R_self_discharge
-        # ⤷ TODO: recheck, resolve open todos above first
+        Constant_1_per_Ohm: float = 1.0 / data.R_leak_Ohm
         return cls(
             Constant_s_per_mAs_n48=int((2**48 / 1e3) * Constant_s_per_As),
             Constant_1_per_kOhm_n18=int((2**18 / 1e-3) * Constant_1_per_Ohm),
@@ -409,10 +422,11 @@ class ModelKiBaM(ModelStorage):
             )
 
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
-        # ⤷ MODIFIED: clamp SoC to 0..1
+        # ⤷ MODIFIED: clamp both SoC to 0..1
         self.SoC = self.SoC - 1 / self.cfg.q_As * (I_cell * self.dt_s)
         self.SoC = min(max(self.SoC, 0.0), 1.0)
-        SoC_eff = max(self.SoC - 1 / self.cfg.q_As * self.C_unavailable, 0.0)
+        SoC_eff = self.SoC - 1 / self.cfg.q_As * self.C_unavailable
+        SoC_eff = max(SoC_eff, 0.0)
 
         # Step 3: Calculate V_OC after dt (equation 7)
         V_OC = self.cfg.calc_V_OC(SoC_eff)
@@ -425,7 +439,7 @@ class ModelKiBaM(ModelStorage):
         C_transient_L = self.cfg.calc_C_transient_L(SoC_eff)
 
         # Step 5: Calculate transient voltages (equations 10 and 11)
-        # ⤷ MODIFIED: prevent tau_X from becoming 0
+        # ⤷ MODIFIED: prevent both tau_X from becoming 0
         tau_S = max(R_transient_S * C_transient_S, sys.float_info.min)
         if I_cell > 0:  # Discharging
             V_transient_S = R_transient_S * I_cell * (1 - math.pow(math.e, -self.time_s / tau_S))
@@ -441,8 +455,10 @@ class ModelKiBaM(ModelStorage):
             V_transient_L = self.V_transient_L_max * math.pow(math.e, -self.time_s / tau_L)
 
         # Step 6: Calculate cell voltage (equations 8 and 9)
+        # ⤷ MODIFIED: limit V_cell to >=0
         V_transient = V_transient_S + V_transient_L
         V_cell = V_OC - I_cell * R_series - V_transient
+        V_cell = max(V_cell, 0)
 
         return V_cell, SoC_eff, V_OC
 
@@ -510,17 +526,16 @@ class ModelKiBaMPlus(ModelStorage):
             / self.cfg.kdash
         )
 
-        # Step 2a: Calculate and add self-discharge current
-        I_leak = self.SoC / self.cfg.R_self_discharge
-        # ⤷ TODO: is that correct? n / Ohm != A, but it seems [Rsd]=1/A
-        #   TODO: why should I_leak run through R_series in Step 6? proposed fix in model below
-        I_cell += I_leak
+        # Step 2a: Calculate and add self-discharge current to SoC-Eq. below
+        I_leak = self.cfg.calc_V_OC(self.SoC) / self.cfg.R_leak_Ohm
 
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
-        # ⤷ MODIFIED: clamp SoC to 0..1
-        self.SoC = self.SoC - 1 / self.cfg.q_As * (I_cell * self.dt_s)
+        # ⤷ MODIFIED: clamp both SoC to 0..1
+        self.SoC = self.SoC - (I_cell + I_leak) * self.dt_s / self.cfg.q_As
         self.SoC = min(max(self.SoC, 0.0), 1.0)
-        SoC_eff = max(self.SoC - 1 / self.cfg.q_As * self.C_unavailable, 0.0)
+        SoC_eff = self.SoC - 1 / self.cfg.q_As * self.C_unavailable
+        SoC_eff = min(max(SoC_eff, 0.0), 1.0)
+        # TODO: limit to <=1 should NOT be needed, but it was.
 
         # Step 3: Calculate V_OC after dt (equation 7)
         V_OC = self.cfg.calc_V_OC(SoC_eff)
@@ -533,7 +548,7 @@ class ModelKiBaMPlus(ModelStorage):
         C_transient_L = self.cfg.calc_C_transient_L(SoC_eff)
 
         # Step 5: Calculate transient voltages (equations 10 and 11)
-        # ⤷ MODIFIED: prevent tau_X from becoming 0
+        # ⤷ MODIFIED: prevent both tau_X from becoming 0
         tau_S = max(R_transient_S * C_transient_S, sys.float_info.min)
         tau_L = max(R_transient_L * C_transient_L, sys.float_info.min)
         self.V_transient_S = R_transient_S * I_cell + (
@@ -544,8 +559,10 @@ class ModelKiBaMPlus(ModelStorage):
         ) * math.pow(math.e, -self.dt_s / tau_L)
 
         # Step 6: Calculate cell voltage (equations 8 and 9)
+        # ⤷ MODIFIED: limit V_cell to >=0
         V_transient = self.V_transient_S + self.V_transient_L
         V_cell = V_OC - I_cell * R_series - V_transient
+        V_cell = max(V_cell, 0)
 
         return V_cell, SoC_eff, V_OC
 
@@ -567,7 +584,7 @@ class ModelKiBaMSimple(ModelStorage):
         cfg: VirtualStorageConfig,
         dt_s: Annotated[float, Gt(0)] = 10e-6,
         *,
-        optimize_clamp: bool = False,
+        optimize_clamp: bool = True,
     ) -> None:
         self.dt_s = dt_s  # not used in step, just for simulator
         self.V_OC_LuT: LUT = LUT.generate(
@@ -577,21 +594,18 @@ class ModelKiBaMSimple(ModelStorage):
             1.0 / LUT_SIZE, y_fn=cfg.calc_R_series, lut_size=LUT_SIZE, optimize_clamp=optimize_clamp
         )
         self.Constant_s_per_As: float = dt_s / cfg.q_As
-        self.Constant_1_per_Ohm: float = 1.0 / cfg.R_self_discharge
+        self.Constant_1_per_Ohm: float = 1.0 / cfg.R_leak_Ohm
         # state
         self.SoC: float = SoC
 
     def step(self, I_cell: float) -> tuple[float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
-        # TODO: proposition
-        #       (constants can be combined, VOC_last be stored - or do it in step before)
         # Step 2a: Calculate self-discharge (drainage)
         I_leak = self.V_OC_LuT.get(self.SoC) * self.Constant_1_per_Ohm
-        SoC_leak = I_leak * self.Constant_s_per_As
 
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
         #       = SoC - 1 / C * (i_cell * dt)
-        self.SoC = self.SoC - I_cell * self.Constant_s_per_As - SoC_leak
+        self.SoC = self.SoC - (I_cell + I_leak) * self.Constant_s_per_As
         SoC_eff = self.SoC = min(max(self.SoC, 0.0), 1.0)
         # ⤷ MODIFIED: removed term due to omission of rate capacity effect
         # ⤷ MODIFIED: clamp SoC to 0..1
@@ -610,6 +624,39 @@ class ModelKiBaMSimple(ModelStorage):
 
         # Step 6: Calculate cell voltage (equations 8 and 9)
         # MODIFIED: removed term due to omission of transient voltages
+        # MODIFIED: limit V_cell to >=0
         V_cell = V_OC - I_cell * R_series
+        V_cell = max(V_cell, 0.0)
 
         return V_cell, SoC_eff, V_OC
+
+
+class ModelShpCap(ModelStorage):
+    """A derived model from shepherd-codebase for comparing KiBaM as capacitor."""
+
+    def __init__(
+        self,
+        SoC: Annotated[float, Ge(0), Le(1)],
+        cfg: VirtualStorageConfig,
+        dt_s: Annotated[float, Gt(0)] = 10e-6,
+    ) -> None:
+        self.dt_s = dt_s  # not used in step, just for simulator
+        self.V_intermediate_max_V = cfg.calc_V_OC(1.0)
+        C_intermediate_uF = 1e6 * cfg.q_As / self.V_intermediate_max_V
+        C_cap_uF = max(C_intermediate_uF, 0.001)
+        SAMPLERATE_SPS = 1.0 / dt_s
+        self.Constant_s_per_F = 1e6 / (C_cap_uF * SAMPLERATE_SPS)
+        self.Constant_1_per_Ohm: float = 1.0 / cfg.R_leak_Ohm
+        # state
+        self.V_mid_V = cfg.calc_V_OC(SoC)
+
+    def step(self, I_cell: float) -> tuple[float, float, float]:
+        # in PRU P_inp and P_out are calculated and combined to determine current
+        # similar to: P_sum_W = P_inp_W - P_out_W, I_mid_A = P_sum_W / V_mid_V
+        I_mid_A = -I_cell - self.V_mid_V * self.Constant_1_per_Ohm
+        dV_mid_V = I_mid_A * self.Constant_s_per_F
+        self.V_mid_V += dV_mid_V
+
+        self.V_mid_V = min(self.V_mid_V, self.V_intermediate_max_V)
+        self.V_mid_V = max(self.V_mid_V, sys.float_info.min)
+        return self.V_mid_V, self.V_mid_V / self.V_intermediate_max_V, self.V_mid_V
