@@ -37,28 +37,31 @@ class StorageSimulator:
 
         # models return V_cell, SoC_eff, V_OC
         self.I_input: list[list[float]] = [[] for _ in self.models]
-        self.V_cell: list[list[float]] = [[] for _ in self.models]
-        self.SoC_eff: list[list[float]] = [[] for _ in self.models]
         self.V_OC: list[list[float]] = [[] for _ in self.models]
+        self.V_cell: list[list[float]] = [[] for _ in self.models]
+        self.SoC: list[list[float]] = [[] for _ in self.models]
+        self.SoC_eff: list[list[float]] = [[] for _ in self.models]
 
     def run(self, fn: Callable, steps: int) -> None:
         self.t_s = [step * self.dt_s for step in range(steps)]
         for i, model in enumerate(self.models):
-            SoC_eff = 1.0
+            SoC = 1.0
             V_cell = 0.0
             for t_s in self.t_s:
-                I_cell = fn(t_s, SoC_eff, V_cell)
-                V_cell, SoC_eff, V_OC = model.step(I_cell)
-                self.I_input[i].append(I_cell)
-                self.V_cell[i].append(V_cell)
-                self.SoC_eff[i].append(SoC_eff)
+                I_charge = fn(t_s, SoC, V_cell)
+                V_OC, V_cell, SoC, SoC_eff = model.step(I_charge)
+                self.I_input[i].append(I_charge)
                 self.V_OC[i].append(V_OC)
+                self.V_cell[i].append(V_cell)
+                self.SoC[i].append(SoC)
+                self.SoC_eff[i].append(SoC_eff)
 
     def plot(self, title: str, *, plot_delta_v: bool = False) -> None:
         offset = 1 if plot_delta_v else 0
         fig, axs = plt.subplots(4 + offset, 1, sharex="all", figsize=(10, 2 * 6), layout="tight")
         axs[0].set_title(title)
         axs[0].set_ylabel("State of Charge [n]")
+        # ⤷ Note: SoC-eff is also available, but unused
         axs[0].grid(visible=True)
         axs[1].set_ylabel("Open-circuit voltage [V]")
         axs[1].grid(visible=True)
@@ -72,7 +75,7 @@ class StorageSimulator:
         axs[3 + offset].grid(visible=True)
 
         for i, model in enumerate(self.models):
-            axs[0].plot(self.t_s, self.SoC_eff[i], label=type(model).__name__, alpha=0.7)
+            axs[0].plot(self.t_s, self.SoC[i], label=type(model).__name__, alpha=0.7)
             axs[1].plot(self.t_s, self.V_OC[i], label=type(model).__name__, alpha=0.7)
             axs[2].plot(self.t_s, self.V_cell[i], label=type(model).__name__, alpha=0.7)
             if plot_delta_v:  # assumes that timestamps are identical

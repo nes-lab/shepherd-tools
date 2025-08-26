@@ -175,7 +175,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             group="NES Lab",
             visible2group=True,
             visible2all=True,
-        )
+        )  # TODO: model DC-Bias via p_VOC?
 
     @model_validator(mode="before")
     @classmethod
@@ -191,20 +191,31 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         return self
 
     def without_rate_capacity(self) -> Self:
-        # ⤷ TODO: still needed?
         model_dict = self.model_dump()
         model_dict["p_rce"] = 1
         model_dict["name"] += " no_rate_cap"
         return type(self)(**model_dict)
 
     def without_transient_voltages(self) -> Self:
-        # ⤷ TODO: still needed?
-        # TODO: wouldn't it be more correct to set c0 to f2 to zero?
         model_dict = self.model_dump()
-        model_dict["p_CtS"][2] = sys.float_info.max
-        model_dict["p_CtL"][2] = sys.float_info.max
+        model_dict["p_RtS"] = [0, 0, 0]
+        model_dict["p_CtS"] = [0, 0, 0]
+        model_dict["p_RtL"] = [0, 0, 0]
+        model_dict["p_CtL"] = [0, 0, 0]
         model_dict["name"] += " no_transient_vs"
         return type(self)(**model_dict)
+
+    @staticmethod
+    def calc_k(kdash: float, c: float) -> float:
+        """Translate between k & k'.
+
+        As explained below equation 4 in paper: k' = k / (c * (c - 1))
+        """
+        return kdash * c * (1 - c)
+
+    @property
+    def kdash_(self) -> float:
+        return self.k / (self.p_rce * (self.p_rce - 1))
 
     def calc_R_self_discharge(
         self, duration: timedelta, SoC_final: float, SoC_0: float = 1.0
@@ -302,9 +313,7 @@ class LUT(BaseModel):
 
     x_min: float
     y_values: list[float]
-    scale: str
     length: int
-    # ⤷ TODO: log-scale not used ATM, could be mapped to a gamma-curve (1.0 == linear)
 
     @classmethod
     def generate(
@@ -312,7 +321,6 @@ class LUT(BaseModel):
         x_min: float,
         y_fn: Callable,
         lut_size: int = LUT_SIZE,
-        scale: str = "linear",
         *,
         optimize_clamp: bool = False,
     ) -> Self:
@@ -322,39 +330,40 @@ class LUT(BaseModel):
         It has a minimum value, a size / width and a scale (linear / log2).
         y_fnc is a function that takes an argument and produces the lookup value.
         """
-        if scale not in ["linear", "log2"]:
-            raise ValueError("scale must be 'linear' or 'log2'")
-
-        if scale == "linear":
-            offset = 0.5 if optimize_clamp else 1
-            x_values = [(i + offset) * x_min for i in range(lut_size)]
-        else:
-            offset = math.sqrt(2) if optimize_clamp else 1  # TODO: untested
-            x_values = [x_min / offset * 2**i for i in range(lut_size)]
-
+        offset = 0.5 if optimize_clamp else 1
+        x_values = [(i + offset) * x_min for i in range(lut_size)]
         y_values = [y_fn(x) for x in x_values]
 
-        return cls(x_min=x_min, y_values=y_values, scale=scale, length=lut_size)
+        return cls(x_min=x_min, y_values=y_values, length=lut_size)
 
     def get(self, x_value: float) -> float:
-        # future extension: interpolation instead of clamping
         num = int(x_value / self.x_min)
         # ⤷ round() would be more appropriate, but in c/pru its just integer math
-
-        if self.scale == "linear":  # noqa: SIM108
-            idx = max(0, num)
-        else:
-            idx = int(math.log2(num)) if num > 0 else 0
-
+        idx = max(0, num)
         if idx >= self.length:  # len(self.y_values)
             idx = self.length - 1
         return self.y_values[idx]
+
+    def get_interpol(self, x_value: float) -> float:
+        # TODO: untested
+        num = x_value / self.x_min
+        if num <= 0:
+            return self.y_values[0]
+        if num >= self.length - 1:
+            return self.y_values[self.length - 1]
+
+        idx_l = math.floor(num)
+        idx_h = math.ceil(num)
+        num_f = num - idx_l
+        y_base = self.y_values[idx_l]
+        y_delta = self.y_values[idx_h] - y_base  # TODO: this could be a seconds LuT
+        return y_base + y_delta * num_f
 
 
 class ModelStorage:
     """Abstract base class for storage models."""
 
-    def step(self, I_cell: float) -> tuple[float, float, float]: ...
+    def step(self, I_charge: float) -> tuple[float, float, float, float]: ...
 
 
 class ModelKiBaM(ModelStorage):
@@ -386,11 +395,12 @@ class ModelKiBaM(ModelStorage):
         self.V_transient_S: float = 0
         self.V_transient_L: float = 0
 
-    def step(self, I_cell: float) -> tuple[float, float, float]:
+    def step(self, I_charge: float) -> tuple[float, float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
         # Step 1 verified separately using Figure 4
         # Steps 1 and 2 verified separately using Figure 10
         # Complete model verified using Figures 8 (a, b) and Figure 9 (a, b)
+        I_cell = -I_charge
 
         # Step 0: Determine whether battery is charging or resting and
         #         calculate time since last switch
@@ -405,8 +415,8 @@ class ModelKiBaM(ModelStorage):
 
         # Step 1: Calculate unavailable capacity after dt
         #         (due to rate capacity and recovery effect) (equation 17)
-        # TODO: might be possible to remove the 2nd branch if
-        #       recovery is accelerated while recharging??
+        # Note: it seems possible to remove the 2nd branch if
+        #       charging is considered (see Plus-Model)
         if I_cell > 0:  # Discharging
             self.C_unavailable = (
                 self.C_unavailable_last * math.pow(math.e, -self.cfg.kdash * self.time_s)
@@ -460,7 +470,7 @@ class ModelKiBaM(ModelStorage):
         V_cell = V_OC - I_cell * R_series - V_transient
         V_cell = max(V_cell, 0)
 
-        return V_cell, SoC_eff, V_OC
+        return V_OC, V_cell, self.SoC, SoC_eff
 
 
 class ModelKiBaMPlus(ModelStorage):
@@ -496,13 +506,15 @@ class ModelKiBaMPlus(ModelStorage):
         self.V_transient_S: float = 0
         self.V_transient_L: float = 0
 
-    def step(self, I_cell: float) -> tuple[float, float, float]:
+    def step(self, I_charge: float) -> tuple[float, float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step.
 
         - Step 1 verified separately using Figure 4
         - Steps 1 and 2 verified separately using Figure 10
         - Complete model verified using Figures 8 (a, b) and Figure 9 (a, b)
         """
+        I_cell = -I_charge
+
         # Step 0: Determine whether battery is charging or resting and
         #         calculate time since last switch
         if self.discharge_last != (I_cell > 0):  # Reset time delta when current sign changes
@@ -517,6 +529,8 @@ class ModelKiBaMPlus(ModelStorage):
         #         (due to rate capacity and recovery effect) (equation 17)
         # TODO: if this should be used in production, additional verification is required
         #      (analytically derive versions of eq. 16/17 without time range restrictions)
+        #       parameters for rate effect could only be valid for discharge
+        #       Note: other paper has charging-curves (fig9b) - could be used for verification
         self.C_unavailable = (
             self.C_unavailable_last * math.pow(math.e, -self.cfg.kdash * self.time_s)
             + (1 - self.cfg.p_rce)
@@ -535,7 +549,8 @@ class ModelKiBaMPlus(ModelStorage):
         self.SoC = min(max(self.SoC, 0.0), 1.0)
         SoC_eff = self.SoC - 1 / self.cfg.q_As * self.C_unavailable
         SoC_eff = min(max(SoC_eff, 0.0), 1.0)
-        # TODO: limit to <=1 should NOT be needed, but it was.
+        # ⤷ Note: limiting SoC_eff to <=1 should NOT be needed, but
+        #         C_unavailable can become negative during charging (see assumption in step1).
 
         # Step 3: Calculate V_OC after dt (equation 7)
         V_OC = self.cfg.calc_V_OC(SoC_eff)
@@ -564,7 +579,7 @@ class ModelKiBaMPlus(ModelStorage):
         V_cell = V_OC - I_cell * R_series - V_transient
         V_cell = max(V_cell, 0)
 
-        return V_cell, SoC_eff, V_OC
+        return V_OC, V_cell, self.SoC, SoC_eff
 
 
 class ModelKiBaMSimple(ModelStorage):
@@ -575,7 +590,6 @@ class ModelKiBaMSimple(ModelStorage):
     - omit rate capacity effect (step 1)
     - replace two expensive Fn by LuT (step 3 & 4)
     - add self discharge resistance (step 2a)
-    - TODO: add DC-Bias?
     """
 
     def __init__(
@@ -598,8 +612,9 @@ class ModelKiBaMSimple(ModelStorage):
         # state
         self.SoC: float = SoC
 
-    def step(self, I_cell: float) -> tuple[float, float, float]:
+    def step(self, I_charge: float) -> tuple[float, float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
+        I_cell = -I_charge
         # Step 2a: Calculate self-discharge (drainage)
         I_leak = self.V_OC_LuT.get(self.SoC) * self.Constant_1_per_Ohm
 
@@ -628,7 +643,7 @@ class ModelKiBaMSimple(ModelStorage):
         V_cell = V_OC - I_cell * R_series
         V_cell = max(V_cell, 0.0)
 
-        return V_cell, SoC_eff, V_OC
+        return V_OC, V_cell, self.SoC, SoC_eff
 
 
 class ModelShpCap(ModelStorage):
@@ -650,13 +665,14 @@ class ModelShpCap(ModelStorage):
         # state
         self.V_mid_V = cfg.calc_V_OC(SoC)
 
-    def step(self, I_cell: float) -> tuple[float, float, float]:
+    def step(self, I_charge: float) -> tuple[float, float, float, float]:
         # in PRU P_inp and P_out are calculated and combined to determine current
         # similar to: P_sum_W = P_inp_W - P_out_W, I_mid_A = P_sum_W / V_mid_V
-        I_mid_A = -I_cell - self.V_mid_V * self.Constant_1_per_Ohm
+        I_mid_A = I_charge - self.V_mid_V * self.Constant_1_per_Ohm
         dV_mid_V = I_mid_A * self.Constant_s_per_F
         self.V_mid_V += dV_mid_V
 
         self.V_mid_V = min(self.V_mid_V, self.V_intermediate_max_V)
         self.V_mid_V = max(self.V_mid_V, sys.float_info.min)
-        return self.V_mid_V, self.V_mid_V / self.V_intermediate_max_V, self.V_mid_V
+        SoC = self.V_mid_V / self.V_intermediate_max_V
+        return self.V_mid_V, self.V_mid_V, SoC, SoC

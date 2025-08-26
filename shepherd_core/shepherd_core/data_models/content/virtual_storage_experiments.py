@@ -23,8 +23,8 @@ class CurrentPulsed:
         self.SoC_target = SoC_target
 
     def step(self, t_s: float, SoC: float, _v: float) -> float:
-        if (self.I_pulse > 0 and SoC <= self.SoC_target) or (
-            self.I_pulse < 0 and SoC >= self.SoC_target
+        if (self.I_pulse < 0 and SoC <= self.SoC_target) or (
+            self.I_pulse > 0 and SoC >= self.SoC_target
         ):
             return 0
         return self.I_pulse if t_s % self.period_pulse < self.duration_pulse else 0
@@ -42,7 +42,7 @@ class ResistiveChargePulsed:
         self.duration_pulse = duration_pulse
 
     def step(self, t_s: float, _s: float, V: float) -> float:
-        I_A = -(self.V_target - V) / self.R_Ohm
+        I_A = (self.V_target - V) / self.R_Ohm
         return I_A if t_s % self.period_pulse < self.duration_pulse else 0
 
 
@@ -64,7 +64,7 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
         return 0.4 + 0.04 * t_s
 
     sim.run(fn=current_trace, steps=250)
-    sim.plot(f"XP {config.name}, current ramp positive")
+    sim.plot(f"XP {config.name}, current charge ramp (positive)")
 
 
 def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
@@ -85,7 +85,7 @@ def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
         return -(0.4 + 0.04 * t_s)
 
     sim.run(fn=current_trace, steps=250)
-    sim.plot(f"XP {config.name}, current ramp negative")
+    sim.plot(f"XP {config.name}, current discharge ramp (negative)")
 
 
 def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
@@ -94,7 +94,7 @@ def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
     SoC_start = 1.0
     SoC_target = 0.0
     i_pulse = CurrentPulsed(
-        I_pulse=0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
+        I_pulse=-0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
     )
     sim = StorageSimulator(
         models=[
@@ -113,9 +113,9 @@ def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a pulsed constant current."""
     dt_s = 1
     SoC_start = 0.0
-    SoC_target = 1.0  # TODO: invert current of pulse? draining and charging seems wrong
+    SoC_target = 1.0
     i_pulse = CurrentPulsed(
-        I_pulse=-0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
+        I_pulse=0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
     )
     sim = StorageSimulator(
         models=[
@@ -127,7 +127,7 @@ def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_pulse.step, steps=6_000)
-    sim.plot(f"XP {config.name}, pulsed charge .8A, 100 min")
+    sim.plot(f"XP {config.name}, pulsed charge .8A, 100 min (figure_9b)")
 
 
 def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
