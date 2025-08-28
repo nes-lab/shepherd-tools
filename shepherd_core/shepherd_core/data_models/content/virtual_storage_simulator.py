@@ -5,17 +5,7 @@ from collections.abc import Callable
 from matplotlib import pyplot as plt
 from pydantic import validate_call
 from pydantic.v1 import PositiveFloat
-from virtual_storage import ModelStorage
-from virtual_storage import StoragePRUConfig
-from virtual_storage import VirtualStorageConfig
-
-# just for validation ATM
-lipo = VirtualStorageConfig.lipo(capacity_mAh=600)
-lead = VirtualStorageConfig.lead_acid(capacity_mAh=600)
-mlcc = VirtualStorageConfig.capacitor(C_uF=600, V_rated=3.6)
-cfg_pru_lipo = StoragePRUConfig.from_vstorage(data=lipo)
-cfg_pru_lead = StoragePRUConfig.from_vstorage(data=lead)
-cfg_pru_mlcc = StoragePRUConfig.from_vstorage(data=mlcc)
+from virtual_storage_model import ModelStorage
 
 
 class StorageSimulator:
@@ -29,7 +19,6 @@ class StorageSimulator:
     The recorded data can be visualized by generating plots.
     """
 
-    @validate_call
     def __init__(self, models: list[ModelStorage], dt_s: PositiveFloat) -> None:
         self.models = models
         self.dt_s = dt_s
@@ -74,7 +63,7 @@ class StorageSimulator:
         if plot_delta_v:
             axs[3].set_ylabel("Cell voltage delta [V]")
             axs[3].grid(visible=True)
-        axs[3 + offset].set_ylabel("Cell current [A]")
+        axs[3 + offset].set_ylabel("Charge current [A]")
         axs[3 + offset].set_xlabel("time [s]")
         axs[3 + offset].grid(visible=True)
 

@@ -1,17 +1,24 @@
-"""A set of experiments to validate and qualify the virtual storage algorithms."""
+"""A set of experiments to validate and qualify the virtual storage algorithms.
+
+Some general Notes:
+
+- ShpCap is also displayed when emulating Lipo and lead-acid, but it can't and won't behave similar
+- during charging the model KiBaM-Plus will deviate from normal KiBaM and KiBaM-Simple,
+  as it supports the rate capacity effect and transients (during charging)
+
+"""
 
 from datetime import timedelta
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage import ModelKiBaM
-from virtual_storage import ModelKiBaMPlus
-from virtual_storage import ModelKiBaMSimple
 from virtual_storage import VirtualStorageConfig
 from virtual_storage import soc_t
-from virtual_storage_simulation import StorageSimulator
-
-from shepherd_core.data_models.content.virtual_storage import ModelShpCap
+from virtual_storage_models_kibam import ModelKiBaM
+from virtual_storage_models_kibam import ModelKiBaMPlus
+from virtual_storage_models_kibam import ModelKiBaMSimple
+from virtual_storage_models_kibam import ModelShpCap
+from virtual_storage_simulator import StorageSimulator
 
 
 class CurrentPulsed:
@@ -65,10 +72,10 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
     SoC_start = 0.5
     sim = StorageSimulator(
         models=[
-            ModelKiBaM(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
         ],
         dt_s=dt_s,
     )
@@ -86,10 +93,10 @@ def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
     SoC_start = 0.5
     sim = StorageSimulator(
         models=[
-            ModelKiBaM(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
         ],
         dt_s=dt_s,
     )
@@ -111,10 +118,10 @@ def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
     )
     sim = StorageSimulator(
         models=[
-            ModelKiBaM(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
         ],
         dt_s=dt_s,
     )
@@ -132,10 +139,10 @@ def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
     )
     sim = StorageSimulator(
         models=[
-            ModelKiBaM(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
         ],
         dt_s=dt_s,
     )
@@ -150,10 +157,10 @@ def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
     i_pulse = ResistiveChargePulsed(R_Ohm=10, V_target=4.2, period_pulse=1000, duration_pulse=600)
     sim = StorageSimulator(
         models=[
-            ModelKiBaM(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
         ],
         dt_s=dt_s,
     )
@@ -172,10 +179,10 @@ def experiment_self_discharge() -> None:
     config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_leak_Ohm=R_dis)
     sim = StorageSimulator(
         models=[
-            ModelKiBaM(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
+            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
         ],
         dt_s=dt_s,
     )
