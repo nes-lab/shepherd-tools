@@ -2,10 +2,13 @@
 
 from datetime import timedelta
 
+from pydantic import PositiveFloat
+from pydantic import validate_call
 from virtual_storage import ModelKiBaM
 from virtual_storage import ModelKiBaMPlus
 from virtual_storage import ModelKiBaMSimple
 from virtual_storage import VirtualStorageConfig
+from virtual_storage import soc_t
 from virtual_storage_simulation import StorageSimulator
 
 from shepherd_core.data_models.content.virtual_storage import ModelShpCap
@@ -14,8 +17,13 @@ from shepherd_core.data_models.content.virtual_storage import ModelShpCap
 class CurrentPulsed:
     """A simple constant current source that is pulsed until a target SoC is reached."""
 
+    @validate_call
     def __init__(
-        self, I_pulse: float, period_pulse: float, duration_pulse: float, SoC_target: float
+        self,
+        I_pulse: float,
+        period_pulse: PositiveFloat,
+        duration_pulse: PositiveFloat,
+        SoC_target: soc_t,
     ) -> None:
         self.I_pulse = I_pulse
         self.period_pulse = period_pulse
@@ -33,8 +41,13 @@ class CurrentPulsed:
 class ResistiveChargePulsed:
     """A pulsed charger that is 'current limited' by a resistor."""
 
+    @validate_call
     def __init__(
-        self, V_target: float, R_Ohm: float, period_pulse: float, duration_pulse: float
+        self,
+        V_target: PositiveFloat,
+        R_Ohm: PositiveFloat,
+        period_pulse: PositiveFloat,
+        duration_pulse: PositiveFloat,
     ) -> None:
         self.R_Ohm = R_Ohm
         self.V_target = V_target
@@ -156,7 +169,7 @@ def experiment_self_discharge() -> None:
     duration = timedelta(minutes=30)
     store = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3)
     R_dis = store.calc_R_self_discharge(duration=duration, SoC_final=SoC_target, SoC_0=SoC_start)
-    config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_self_Ohm=R_dis)
+    config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_leak_Ohm=R_dis)
     sim = StorageSimulator(
         models=[
             ModelKiBaM(SoC=SoC_start, cfg=config, dt_s=dt_s),

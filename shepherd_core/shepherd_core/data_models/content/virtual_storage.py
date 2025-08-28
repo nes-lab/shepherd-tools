@@ -13,14 +13,18 @@ from annotated_types import Gt
 from annotated_types import Le
 from pydantic import BaseModel
 from pydantic import Field
+from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
+from pydantic.v1 import NonNegativeFloat
 from typing_extensions import Self
 
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
+
+soc_t = Annotated[int, Ge(0.0), Le(1.0)]
 
 
 class VirtualStorageConfig(ContentModel, title="Config for the virtual energy storage"):
@@ -35,9 +39,10 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1210&context=electricalengineeringfacpub
     """
 
-    # TODO: refine value-boundaries
+    SoC_init: soc_t = 1.0
+    """ ⤷ State of Charge that is available when emulation starts."""
 
-    q_As: Annotated[float, Gt(0)]
+    q_As: PositiveFloat
     """ ⤷ Capacity (electrical charge) of Storage."""
     p_VOC: Annotated[Sequence[float], Field(min_length=6, max_length=6)] = [0, 0, 0, 1, 0, 0]
     """ ⤷ Parameters for V_OC-Mapping
@@ -75,20 +80,20 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         - Set to 1 to disregard
         - named c in paper
         """
-    kdash: Annotated[float, Gt(0)] = sys.float_info.min  # TODO: use k directly
+    kdash: PositiveFloat = sys.float_info.min  # TODO: use k directly?
     """ ⤷ Parameter for rate capacity effect
         - temporary component of rate capacity effect, valve in KiBaM (eq 17)
         - k' = k/c(1-c),
         """
 
-    R_leak_Ohm: Annotated[float, Gt(0)] = sys.float_info.max
+    R_leak_Ohm: PositiveFloat = sys.float_info.max
     """ ⤷ Parameter for self discharge (custom extension)
         - effect is often very small, mostly relevant for some capacitors
         """
 
     @classmethod
     @validate_call
-    def lipo(cls, capacity_mAh: Annotated[float, Gt(0)]) -> Self:
+    def lipo(cls, capacity_mAh: PositiveFloat) -> Self:
         """Modeled after the PL-383562 2C Polymer Lithium-ion Battery.
 
         Nominal Voltage     3.7 V
@@ -121,7 +126,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
     @classmethod
     @validate_call
-    def lead_acid(cls, capacity_mAh: Annotated[float, Gt(0)]) -> Self:
+    def lead_acid(cls, capacity_mAh: PositiveFloat) -> Self:
         """Modeled after the LEOCH LP12-1.2AH lead acid battery.
 
         Nominal Voltage     12 V
@@ -157,17 +162,17 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     @validate_call
     def capacitor(
         cls,
-        C_uF: Annotated[float, Gt(0)],
-        V_rated: Annotated[float, Gt(0)],
-        R_series_Ohm: Annotated[float, Ge(0)] = 0.0,
-        R_self_Ohm: Annotated[float, Gt(0)] = sys.float_info.max,
+        C_uF: PositiveFloat,
+        V_rated: PositiveFloat,
+        R_series_Ohm: NonNegativeFloat = 0.0,
+        R_leak_Ohm: PositiveFloat = sys.float_info.max,
     ) -> Self:
         return cls(
             q_As=1e-6 * C_uF * V_rated,
             p_VOC=[0, 0, 0, V_rated, 0, 0],  # 100% SoC is @V_rated,
             # no transients per default
             p_Rs=[0, 0, R_series_Ohm, 0, 0, 0],  # const series resistance
-            R_leak_Ohm=R_self_Ohm,
+            R_leak_Ohm=R_leak_Ohm,
             # content-fields below
             name=f"Capacitor {C_uF:.0f} uF",
             description="Model of a Capacitor with [DC-Bias], series & leakage resistor",
@@ -175,7 +180,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             group="NES Lab",
             visible2group=True,
             visible2all=True,
-        )  # TODO: model DC-Bias via p_VOC?
+        )  # TODO: add model DC-Bias via p_VOC?
 
     @model_validator(mode="before")
     @classmethod
@@ -206,7 +211,8 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         return type(self)(**model_dict)
 
     @staticmethod
-    def calc_k(kdash: float, c: float) -> float:
+    @validate_call
+    def calc_k(kdash: PositiveFloat, c: Annotated[float, Gt(0), Le(1)]) -> float:
         """Translate between k & k'.
 
         As explained below equation 4 in paper: k' = k / (c * (c - 1))
@@ -217,8 +223,12 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     def kdash_(self) -> float:
         return self.k / (self.p_rce * (self.p_rce - 1))
 
+    @validate_call
     def calc_R_self_discharge(
-        self, duration: timedelta, SoC_final: float, SoC_0: float = 1.0
+        self,
+        duration: timedelta,
+        SoC_final: Annotated[float, Ge(0), Le(1)],
+        SoC_0: Annotated[float, Ge(0), Le(1)] = 1.0,
     ) -> float:
         # based on capacitor discharge: U(t) = U0 * e ^ (-t/RC)
         # Example: 50mAh; SoC from 100 % to 85 % over 30 days => ~1.8 MOhm
@@ -274,33 +284,25 @@ class StoragePRUConfig(ShpModel):
 
     Constant_s_per_mAs_n48: u32
     Constant_1_per_kOhm_n18: u32
-    LuT_VOC_SoC_min_log2_1u_n32: u32
-    # ⤷ TODO: why n32? c-code is strange (could be taken upper u32 of u64 and only shift that)
-    #         guess u_n32 may be log2((2**32 * 1e6) * LuT_VOC_SoC_min) which is log2() + 32
+    LuT_SoC_min_log2_1u: u32
     LuT_VOC_uV_n8: lut_storage
     """⤷ ranges from 3.9 uV to 16.7 V"""
-    LuT_RSeries_SoC_min_log2_1u_n32: u32
-    # ⤷ TODO: see above
     LuT_RSeries_kOhm_n32: lut_storage
     """⤷ ranges from 233n to 1 kOhm"""
 
     @classmethod
-    def from_vstorage(cls, data: VirtualStorageConfig, *, optimize_clamp: bool = False) -> Self:
+    def from_vstorage(cls, data: VirtualStorageConfig, *, optimize_clamp: bool = True) -> Self:
         x_off = 0.5 if optimize_clamp else 1.0
-        LuT_VOC_SoC_min = 1.0 / LUT_SIZE
-        V_OC_LuT = [data.calc_V_OC(LuT_VOC_SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
-        LuT_RSeries_SoC_min = 1.0 / LUT_SIZE
-        R_series_LuT = [
-            data.calc_R_series(LuT_RSeries_SoC_min * (x + x_off)) for x in range(LUT_SIZE)
-        ]
+        LuT_SoC_min = 1.0 / LUT_SIZE
+        V_OC_LuT = [data.calc_V_OC(LuT_SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
+        R_series_LuT = [data.calc_R_series(LuT_SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
         Constant_s_per_As: float = 10e-6 / data.q_As
         Constant_1_per_Ohm: float = 1.0 / data.R_leak_Ohm
         return cls(
             Constant_s_per_mAs_n48=int((2**48 / 1e3) * Constant_s_per_As),
             Constant_1_per_kOhm_n18=int((2**18 / 1e-3) * Constant_1_per_Ohm),
-            LuT_VOC_SoC_min_log2_1u_n32=int(math.log2((2**32 * 1e6) * LuT_VOC_SoC_min)),
+            LuT_SoC_min_log2_1u=int(math.log2(1e6 * LuT_SoC_min)),
             LuT_VOC_uV_n8=[int((2**8 * 1e6) * y) for y in V_OC_LuT],
-            LuT_RSeries_SoC_min_log2_1u_n32=int(math.log2((2**32 * 1e6) * LuT_RSeries_SoC_min)),
             LuT_RSeries_kOhm_n32=[int((2**32 * 1e-3) * y) for y in R_series_LuT],
         )
 
@@ -316,13 +318,14 @@ class LUT(BaseModel):
     length: int
 
     @classmethod
+    @validate_call
     def generate(
         cls,
-        x_min: float,
+        x_min: PositiveFloat,
         y_fn: Callable,
-        lut_size: int = LUT_SIZE,
+        lut_size: PositiveFloat = LUT_SIZE,
         *,
-        optimize_clamp: bool = False,
+        optimize_clamp: bool = True,
     ) -> Self:
         """
         Generate a LUT with a specific width from a provided function.
@@ -344,8 +347,8 @@ class LUT(BaseModel):
             idx = self.length - 1
         return self.y_values[idx]
 
-    def get_interpol(self, x_value: float) -> float:
-        # TODO: untested
+    def geti(self, x_value: float) -> float:
+        # TODO: has strange offset
         num = x_value / self.x_min
         if num <= 0:
             return self.y_values[0]
@@ -356,7 +359,8 @@ class LUT(BaseModel):
         idx_h = math.ceil(num)
         num_f = num - idx_l
         y_base = self.y_values[idx_l]
-        y_delta = self.y_values[idx_h] - y_base  # TODO: this could be a seconds LuT
+        y_delta = self.y_values[idx_h] - y_base
+        # TODO: y_delta[idx_l] could be a seconds LuT
         return y_base + y_delta * num_f
 
 
@@ -372,9 +376,9 @@ class ModelKiBaM(ModelStorage):
     @validate_call
     def __init__(
         self,
-        SoC: Annotated[float, Ge(0), Le(1)],
+        SoC: soc_t,
         cfg: VirtualStorageConfig,
-        dt_s: Annotated[float, Gt(0)] = 10e-6,
+        dt_s: PositiveFloat = 10e-6,
     ) -> None:
         self.cfg: VirtualStorageConfig = cfg
         self.dt_s: float = dt_s
@@ -485,9 +489,9 @@ class ModelKiBaMPlus(ModelStorage):
     @validate_call
     def __init__(
         self,
-        SoC: Annotated[float, Ge(0), Le(1)],
+        SoC: soc_t,
         cfg: VirtualStorageConfig,
-        dt_s: Annotated[float, Gt(0)] = 10e-6,
+        dt_s: PositiveFloat = 10e-6,
     ) -> None:
         self.cfg: VirtualStorageConfig = cfg
         self.dt_s: float = dt_s
@@ -592,11 +596,12 @@ class ModelKiBaMSimple(ModelStorage):
     - add self discharge resistance (step 2a)
     """
 
+    @validate_call
     def __init__(
         self,
-        SoC: Annotated[float, Ge(0), Le(1)],
+        SoC: soc_t,
         cfg: VirtualStorageConfig,
-        dt_s: Annotated[float, Gt(0)] = 10e-6,
+        dt_s: PositiveFloat = 10e-6,
         *,
         optimize_clamp: bool = True,
     ) -> None:
@@ -649,11 +654,12 @@ class ModelKiBaMSimple(ModelStorage):
 class ModelShpCap(ModelStorage):
     """A derived model from shepherd-codebase for comparing KiBaM as capacitor."""
 
+    @validate_call
     def __init__(
         self,
-        SoC: Annotated[float, Ge(0), Le(1)],
+        SoC: soc_t,
         cfg: VirtualStorageConfig,
-        dt_s: Annotated[float, Gt(0)] = 10e-6,
+        dt_s: PositiveFloat = 10e-6,
     ) -> None:
         self.dt_s = dt_s  # not used in step, just for simulator
         self.V_intermediate_max_V = cfg.calc_V_OC(1.0)

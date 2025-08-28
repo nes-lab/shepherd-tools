@@ -3,6 +3,8 @@
 from collections.abc import Callable
 
 from matplotlib import pyplot as plt
+from pydantic import validate_call
+from pydantic.v1 import PositiveFloat
 from virtual_storage import ModelStorage
 from virtual_storage import StoragePRUConfig
 from virtual_storage import VirtualStorageConfig
@@ -27,7 +29,8 @@ class StorageSimulator:
     The recorded data can be visualized by generating plots.
     """
 
-    def __init__(self, models: list[ModelStorage], dt_s: float) -> None:
+    @validate_call
+    def __init__(self, models: list[ModelStorage], dt_s: PositiveFloat) -> None:
         self.models = models
         self.dt_s = dt_s
         for model in self.models:
@@ -56,6 +59,7 @@ class StorageSimulator:
                 self.SoC[i].append(SoC)
                 self.SoC_eff[i].append(SoC_eff)
 
+    @validate_call
     def plot(self, title: str, *, plot_delta_v: bool = False) -> None:
         offset = 1 if plot_delta_v else 0
         fig, axs = plt.subplots(4 + offset, 1, sharex="all", figsize=(10, 2 * 6), layout="tight")
