@@ -291,7 +291,7 @@ class StoragePRUConfig(ShpModel):
     SoC_init_1u: u32
     Constant_us_per_nAs_n40: u32
     Constant_1_per_kOhm_n18: u32
-    LuT_SoC_min_log2_1u: u32
+    LuT_inv_SoC_min_1M_n32: u32
     LuT_VOC_uV_n8: lut_storage
     """⤷ ranges from 3.9 uV to 16.7 V"""
     LuT_RSeries_kOhm_n32: lut_storage
@@ -307,16 +307,16 @@ class StoragePRUConfig(ShpModel):
         optimize_clamp: bool = True,
     ) -> Self:
         x_off = 0.5 if optimize_clamp else 1.0
-        LuT_SoC_min = 1.0 / LUT_SIZE
-        V_OC_LuT = [data.calc_V_OC(LuT_SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
-        R_series_LuT = [data.calc_R_series(LuT_SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
+        SoC_min = 1.0 / LUT_SIZE
+        V_OC_LuT = [data.calc_V_OC(SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
+        R_series_LuT = [data.calc_R_series(SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
         Constant_s_per_As: float = dt_s / data.q_As
         Constant_1_per_Ohm: float = 1.0 / data.R_leak_Ohm
         return cls(
             SoC_init_1u=round(data.SoC_init * 1e6),
             Constant_us_per_nAs_n40=round((2**40 / 1e3) * Constant_s_per_As),
             Constant_1_per_kOhm_n18=round((2**18 / 1e-3) * Constant_1_per_Ohm),
-            LuT_SoC_min_log2_1u=round(math.log2(1e6 * LuT_SoC_min)),
+            LuT_inv_SoC_min_1M_n32=round(2**32 / 1e6 / SoC_min),
             LuT_VOC_uV_n8=[round((2**8 * 1e6) * y) for y in V_OC_LuT],
             LuT_RSeries_kOhm_n32=[round((2**32 * 1e-3) * y) for y in R_series_LuT],
         )

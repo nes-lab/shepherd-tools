@@ -2,6 +2,7 @@
 
 from collections.abc import Callable
 
+import numpy as np
 from matplotlib import pyplot as plt
 from pydantic import PositiveFloat
 from pydantic import validate_call
@@ -25,29 +26,34 @@ class StorageSimulator:
         for model in self.models:
             if self.dt_s != model.dt_s:
                 raise ValueError("timebase on models do not match")
-        self.t_s: list[float] = []
+        self.t_s: np.ndarray | None = None
 
         # models return V_cell, SoC_eff, V_OC
-        self.I_input: list[list[float]] = [[] for _ in self.models]
-        self.V_OC: list[list[float]] = [[] for _ in self.models]
-        self.V_cell: list[list[float]] = [[] for _ in self.models]
-        self.SoC: list[list[float]] = [[] for _ in self.models]
-        self.SoC_eff: list[list[float]] = [[] for _ in self.models]
+        self.I_input: np.ndarray | None = None
+        self.V_OC: np.ndarray | None = None
+        self.V_cell: np.ndarray | None = None
+        self.SoC: np.ndarray | None = None
+        self.SoC_eff: np.ndarray | None = None
 
     @validate_call
     def run(self, fn: Callable, duration_s: PositiveFloat) -> None:
-        self.t_s = [step * self.dt_s for step in range(round(duration_s / self.dt_s))]
+        self.t_s = np.arange(0, duration_s, self.dt_s)
+        self.I_input = np.zeros((len(self.models), self.t_s.shape[0]))
+        self.V_OC = np.zeros((len(self.models), self.t_s.shape[0]))
+        self.V_cell = np.zeros((len(self.models), self.t_s.shape[0]))
+        self.SoC = np.zeros((len(self.models), self.t_s.shape[0]))
+        self.SoC_eff = np.zeros((len(self.models), self.t_s.shape[0]))
         for i, model in enumerate(self.models):
             SoC = 1.0
             V_cell = 0.0
-            for t_s in self.t_s:
+            for j, t_s in enumerate(self.t_s):
                 I_charge = fn(t_s, SoC, V_cell)
                 V_OC, V_cell, SoC, SoC_eff = model.step(I_charge)
-                self.I_input[i].append(I_charge)
-                self.V_OC[i].append(V_OC)
-                self.V_cell[i].append(V_cell)
-                self.SoC[i].append(SoC)
-                self.SoC_eff[i].append(SoC_eff)
+                self.I_input[i, j] = I_charge
+                self.V_OC[i, j] = V_OC
+                self.V_cell[i, j] = V_cell
+                self.SoC[i, j] = SoC
+                self.SoC_eff[i, j] = SoC_eff
 
     @validate_call
     def plot(self, title: str, *, plot_delta_v: bool = False) -> None:

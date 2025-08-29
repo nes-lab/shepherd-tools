@@ -2,17 +2,19 @@
 
 Goals:
 
-- stay close to original code-base
+- stay close to original code-base (fixed-point integer math)
 - offer a comparison for the tests
 - step 1 to a virtualization of emulation
 
 NOTE1: DO NOT OPTIMIZE -> stay close to original c-code-base
-NOTE2: adc-harvest-routines are not part of this model (virtual_harvester lines 66:289)
 
 Compromises:
 
 - Py has to map the settings-list to internal vars -> is kernel-task
-- Python has no static vars -> FName_reset is handling the class-vars
+
+Expected deviations:
+
+- lead charge ramp maxes out early on cell-voltage (max of V_uV_n8 is 16.78 V)
 
 """
 
@@ -66,33 +68,31 @@ class VirtualStorageModel(ModelStorage):
         *,
         optimize_clamp: bool = True,
     ) -> None:
-        self.dt_s = dt_s  # not used in step, just for simulator
-        self.cfg = StoragePRUConfig.from_vstorage(cfg, dt_s, optimize_clamp=optimize_clamp)
-        self.SoC_max_1u_n32 = int(1.0 * 1e6 * 2**32)
+        self.dt_s: float = dt_s  # not used in step, just for simulator
+        self.cfg: StoragePRUConfig = StoragePRUConfig.from_vstorage(
+            cfg, dt_s, optimize_clamp=optimize_clamp
+        )
+        self.SoC_max_1u_n32: int = int(1.0 * 1e6 * 2**32)
         # state
         SoC_1u: float = 1e6 * SoC_init if SoC_init is not None else self.cfg.SoC_init_1u
-        self.SoC_1u_n32 = 2**32 * SoC_1u
-        self.V_OC_uV_n8 = self.lookup_V_OC_uV_n8(self.SoC_1u_n32)
+        self.SoC_1u_n32 = round(2**32 * SoC_1u)
+        self.V_OC_uV_n8 = self.cfg.LuT_VOC_uV_n8[self.pos_LuT(self.SoC_1u_n32)]
 
-    def pos_SoC(self, SoC_1u_n32: float) -> int:
-        pos = int(SoC_1u_n32 / (2**32) / (2**self.cfg.LuT_SoC_min_log2_1u))
+    def pos_LuT(self, SoC_1u_n32: float) -> int:
+        pos = u32s((SoC_1u_n32 / 2**32) * self.cfg.LuT_inv_SoC_min_1M_n32 / 2**32)
         if pos >= LUT_SIZE:
             pos = LUT_SIZE - 1
         return pos
 
-    def lookup_V_OC_uV_n8(self, SoC_1u_n32: float) -> float:
-        return self.cfg.LuT_VOC_uV_n8[self.pos_SoC(SoC_1u_n32)]
-        # TODO: high inaccuracy - log2(1M/128) = 12.93 -> round to 13
-
-    def lookup_R_series_kOhm_n32(self, SoC_1u_n32: float) -> float:
-        return self.cfg.LuT_RSeries_kOhm_n32[self.pos_SoC(SoC_1u_n32)]
-
     def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
-        """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
+        """Calculate the battery SoC & cell-voltage after drawing a current over a time-step.
+
+        Note: 3x u64 multiplications,
+        """
         I_charge_nA_n4 = 1e9 * 2**4 * I_charge_A
         I_leak_nA_n4 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_kOhm_n18 / 2**22)
         # TODO: SoC_n63? 1 would be 2**63 (1 bit safety-margin to detect errors)
-        # TODO:
+        # TODO: or just SoC_n32, so 1 is 0xFFFFFFFF?
         if I_charge_nA_n4 >= I_leak_nA_n4:
             I_delta_nA_n4 = u64s(I_charge_nA_n4 - I_leak_nA_n4)
             SoC_delta_1u_n32 = u64s(I_delta_nA_n4 * self.cfg.Constant_us_per_nAs_n40 / (2**12))
@@ -108,8 +108,9 @@ class VirtualStorageModel(ModelStorage):
             else:
                 self.SoC_1u_n32 = 0
 
-        self.V_OC_uV_n8 = self.lookup_V_OC_uV_n8(self.SoC_1u_n32)
-        R_series_kOhm_n32 = self.lookup_R_series_kOhm_n32(self.SoC_1u_n32)
+        pos_LuT = self.pos_LuT(self.SoC_1u_n32)
+        self.V_OC_uV_n8 = self.cfg.LuT_VOC_uV_n8[pos_LuT]  # TODO: is interpolation possible?
+        R_series_kOhm_n32 = self.cfg.LuT_RSeries_kOhm_n32[pos_LuT]
 
         if I_charge_nA_n4 >= 0:
             V_gain_uV_n8 = u32s(u64s(I_charge_nA_n4 * R_series_kOhm_n32) / 2**28)
@@ -124,5 +125,7 @@ class VirtualStorageModel(ModelStorage):
         # just for simulation
         V_OC = self.V_OC_uV_n8 / 2**8 / 1e6
         V_cell = V_cell_uV_n8 / 2**8 / 1e6
+        # TODO: model matches completely, except self-discharge
+        # TODO: look at delta and describe deviations
         SoC = self.SoC_1u_n32 / 2**32 / 1e6
         return V_OC, V_cell, SoC, SoC

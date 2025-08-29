@@ -177,7 +177,7 @@ def experiment_self_discharge() -> None:
     def step(_t: float, _s: float, _v: float) -> float:
         return 0
 
-    sim.run(fn=step, duration_s=int(duration.total_seconds() / dt_s))
+    sim.run(fn=step, duration_s=int(duration.total_seconds()))
     sim.plot(
         f"XP {config.name}, self-discharge, "
         f"SoC {SoC_start} to {SoC_target} in {duration.total_seconds()} s"
