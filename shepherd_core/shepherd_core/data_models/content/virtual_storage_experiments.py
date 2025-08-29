@@ -28,6 +28,7 @@ from shepherd_core.data_models.content.virtual_storage_model import VirtualStora
 def get_models(
     SoC_init: soc_t, config: VirtualStorageConfig, dt_s: PositiveFloat
 ) -> list[ModelStorage]:
+    """Models to include in experiments."""
     return [
         ModelKiBaM(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
         ModelKiBaMPlus(SoC_init=SoC_init, cfg=config, dt_s=dt_s),

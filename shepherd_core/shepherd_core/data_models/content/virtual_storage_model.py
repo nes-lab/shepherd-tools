@@ -18,12 +18,13 @@ Compromises:
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-
-from shepherd_core import log
-from virtual_storage import StoragePRUConfig, LUT_SIZE
+from virtual_storage import LUT_SIZE
+from virtual_storage import StoragePRUConfig
 from virtual_storage import TIMESTEP_s_DEFAULT
 from virtual_storage import VirtualStorageConfig
 from virtual_storage import soc_t
+
+from shepherd_core import log
 
 
 class ModelStorage:
@@ -31,19 +32,24 @@ class ModelStorage:
 
     def step(self, I_charge_A: float) -> tuple[float, float, float, float]: ...
 
+
 def u32s(i: float) -> int:
+    """Guard to supervise calculated model-states."""
     if i > 2**32:
         log.warning("u32-overflow")
     if i < 0:
         log.warning("u32-underflow")
-    return int(min(max(i,0), 2**32))
+    return int(min(max(i, 0), 2**32))
+
 
 def u64s(i: float) -> int:
+    """Guard to supervise calculated model-states."""
     if i > 2**64:
         log.warning("u64-overflow")
     if i < 0:
         log.warning("u64-underflow")
-    return int(min(max(i,0), 2**64))
+    return int(min(max(i, 0), 2**64))
+
 
 class VirtualStorageModel(ModelStorage):
     """Ported python version of the pru vStorage.
@@ -69,7 +75,7 @@ class VirtualStorageModel(ModelStorage):
         self.V_OC_uV_n8 = self.lookup_V_OC_uV_n8(self.SoC_1u_n32)
 
     def pos_SoC(self, SoC_1u_n32: float) -> int:
-        pos = int(SoC_1u_n32 / (2 ** 32) / (2 ** self.cfg.LuT_SoC_min_log2_1u))
+        pos = int(SoC_1u_n32 / (2**32) / (2**self.cfg.LuT_SoC_min_log2_1u))
         if pos >= LUT_SIZE:
             pos = LUT_SIZE - 1
         return pos
@@ -83,20 +89,19 @@ class VirtualStorageModel(ModelStorage):
 
     def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
-        I_charge_nA_n4 = 1e9 * 2 ** 4 * I_charge_A
-        I_leak_nA_n4 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_kOhm_n18 / 2 ** 22)
+        I_charge_nA_n4 = 1e9 * 2**4 * I_charge_A
+        I_leak_nA_n4 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_kOhm_n18 / 2**22)
         # TODO: SoC_n63? 1 would be 2**63 (1 bit safety-margin to detect errors)
         # TODO:
         if I_charge_nA_n4 >= I_leak_nA_n4:
             I_delta_nA_n4 = u64s(I_charge_nA_n4 - I_leak_nA_n4)
-            SoC_delta_1u_n32 = u64s(I_delta_nA_n4 * self.cfg.Constant_us_per_nAs_n40 / (2 ** 12))
+            SoC_delta_1u_n32 = u64s(I_delta_nA_n4 * self.cfg.Constant_us_per_nAs_n40 / (2**12))
             self.SoC_1u_n32 = u64s(self.SoC_1u_n32 + SoC_delta_1u_n32)
 
-            if self.SoC_1u_n32 >= self.SoC_max_1u_n32:
-                self.SoC_1u_n32 = self.SoC_max_1u_n32
+            self.SoC_1u_n32 = min(self.SoC_max_1u_n32, self.SoC_1u_n32)
         else:
             I_delta_nA_n4 = u64s(I_leak_nA_n4 - I_charge_nA_n4)
-            SoC_delta_1u_n32 = u64s(I_delta_nA_n4 * self.cfg.Constant_us_per_nAs_n40 / (2 ** 12))
+            SoC_delta_1u_n32 = u64s(I_delta_nA_n4 * self.cfg.Constant_us_per_nAs_n40 / (2**12))
 
             if self.SoC_1u_n32 >= SoC_delta_1u_n32:
                 self.SoC_1u_n32 = u64s(self.SoC_1u_n32 - SoC_delta_1u_n32)
@@ -107,10 +112,10 @@ class VirtualStorageModel(ModelStorage):
         R_series_kOhm_n32 = self.lookup_R_series_kOhm_n32(self.SoC_1u_n32)
 
         if I_charge_nA_n4 >= 0:
-            V_gain_uV_n8 = u32s(u64s(I_charge_nA_n4 * R_series_kOhm_n32) / 2 ** 28)
+            V_gain_uV_n8 = u32s(u64s(I_charge_nA_n4 * R_series_kOhm_n32) / 2**28)
             V_cell_uV_n8 = u32s(self.V_OC_uV_n8 + V_gain_uV_n8)
         else:
-            V_drop_uV_n8 = u32s(u64s(-I_charge_nA_n4 * R_series_kOhm_n32) / 2 ** 28)
+            V_drop_uV_n8 = u32s(u64s(-I_charge_nA_n4 * R_series_kOhm_n32) / 2**28)
             if self.V_OC_uV_n8 > V_drop_uV_n8:
                 V_cell_uV_n8 = u32s(self.V_OC_uV_n8 - V_drop_uV_n8)
             else:
