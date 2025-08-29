@@ -20,6 +20,22 @@ from virtual_storage_models_kibam import ModelKiBaMSimple
 from virtual_storage_models_kibam import ModelShpCap
 from virtual_storage_simulator import StorageSimulator
 
+from shepherd_core.data_models.content.virtual_storage_model import ModelStorage
+from shepherd_core.data_models.content.virtual_storage_model import VirtualStorageModel
+
+
+@validate_call
+def get_models(
+    SoC_init: soc_t, config: VirtualStorageConfig, dt_s: PositiveFloat
+) -> list[ModelStorage]:
+    return [
+        ModelKiBaM(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
+        ModelKiBaMPlus(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
+        ModelKiBaMSimple(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
+        VirtualStorageModel(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
+        ModelShpCap(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
+    ][2:4]
+
 
 class CurrentPulsed:
     """A simple constant current source that is pulsed until a target SoC is reached."""
@@ -68,109 +84,84 @@ class ResistiveChargePulsed:
 
 def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a positive current ramp (increasing power)."""
-    dt_s = 1
+    dt_s = 1e-3
     SoC_start = 0.5
     sim = StorageSimulator(
-        models=[
-            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-        ],
+        models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
 
     def current_trace(t_s: float, _s: float, _v: float) -> float:
         return 0.4 + 0.04 * t_s
 
-    sim.run(fn=current_trace, steps=250)
+    sim.run(fn=current_trace, duration_s=250)
     sim.plot(f"XP {config.name}, current charge ramp (positive)")
 
 
 def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
     """Discharge virtual storage with a negative current ramp (increasing power)."""
-    dt_s = 1
+    dt_s = 1e-3
     SoC_start = 0.5
     sim = StorageSimulator(
-        models=[
-            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-        ],
+        models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
 
     def current_trace(t_s: float, _s: float, _v: float) -> float:
         return -(0.4 + 0.04 * t_s)
 
-    sim.run(fn=current_trace, steps=250)
+    sim.run(fn=current_trace, duration_s=250)
     sim.plot(f"XP {config.name}, current discharge ramp (negative)")
 
 
 def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
     """Discharge virtual storage with a pulsed constant current."""
-    dt_s = 1
+    dt_s = 1e-3
     SoC_start = 1.0
     SoC_target = 0.0
     i_pulse = CurrentPulsed(
         I_pulse=-0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
     )
     sim = StorageSimulator(
-        models=[
-            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-        ],
+        models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, steps=6_000)
+    sim.run(fn=i_pulse.step, duration_s=6_000)
     sim.plot(f"XP {config.name}, pulsed discharge .8A, 100 min (figure_9a)")
 
 
 def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a pulsed constant current."""
-    dt_s = 1
+    dt_s = 1e-3
     SoC_start = 0.0
     SoC_target = 1.0
     i_pulse = CurrentPulsed(
         I_pulse=0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
     )
     sim = StorageSimulator(
-        models=[
-            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-        ],
+        models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, steps=6_000)
+    sim.run(fn=i_pulse.step, duration_s=6_000)
     sim.plot(f"XP {config.name}, pulsed charge .8A, 100 min (figure_9b)")
 
 
 def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a resistive constant voltage."""
-    dt_s = 1
+    dt_s = 1e-3
     SoC_start = 0.0
     i_pulse = ResistiveChargePulsed(R_Ohm=10, V_target=4.2, period_pulse=1000, duration_pulse=600)
     sim = StorageSimulator(
-        models=[
-            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-        ],
+        models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, steps=6_000)
+    sim.run(fn=i_pulse.step, duration_s=6_000)
     sim.plot(f"XP {config.name}, pulsed resistive charge 10 Ohm to 4.2 V, 100 min")
 
 
 def experiment_self_discharge() -> None:
     """Observe self-discharge behavior of virtual storage models."""
-    dt_s = 1
+    dt_s = 1e-3
     SoC_start = 1.0
     SoC_target = 0.9
     duration = timedelta(minutes=30)
@@ -178,19 +169,14 @@ def experiment_self_discharge() -> None:
     R_dis = store.calc_R_self_discharge(duration=duration, SoC_final=SoC_target, SoC_0=SoC_start)
     config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_leak_Ohm=R_dis)
     sim = StorageSimulator(
-        models=[
-            ModelKiBaM(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMPlus(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelKiBaMSimple(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-            ModelShpCap(SoC_init=SoC_start, cfg=config, dt_s=dt_s),
-        ],
+        models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
 
     def step(_t: float, _s: float, _v: float) -> float:
         return 0
 
-    sim.run(fn=step, steps=int(duration.total_seconds() / dt_s))
+    sim.run(fn=step, duration_s=int(duration.total_seconds() / dt_s))
     sim.plot(
         f"XP {config.name}, self-discharge, "
         f"SoC {SoC_start} to {SoC_target} in {duration.total_seconds()} s"

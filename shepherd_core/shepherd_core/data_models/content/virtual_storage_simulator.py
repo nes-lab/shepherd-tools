@@ -3,8 +3,8 @@
 from collections.abc import Callable
 
 from matplotlib import pyplot as plt
+from pydantic import PositiveFloat
 from pydantic import validate_call
-from pydantic.v1 import PositiveFloat
 from virtual_storage_model import ModelStorage
 
 
@@ -34,8 +34,9 @@ class StorageSimulator:
         self.SoC: list[list[float]] = [[] for _ in self.models]
         self.SoC_eff: list[list[float]] = [[] for _ in self.models]
 
-    def run(self, fn: Callable, steps: int) -> None:
-        self.t_s = [step * self.dt_s for step in range(steps)]
+    @validate_call
+    def run(self, fn: Callable, duration_s: PositiveFloat) -> None:
+        self.t_s = [step * self.dt_s for step in range(round(duration_s / self.dt_s))]
         for i, model in enumerate(self.models):
             SoC = 1.0
             V_cell = 0.0

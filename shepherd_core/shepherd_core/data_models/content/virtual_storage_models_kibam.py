@@ -108,12 +108,12 @@ class ModelKiBaM(ModelStorage):
         self.V_transient_S: float = 0
         self.V_transient_L: float = 0
 
-    def step(self, I_charge: float) -> tuple[float, float, float, float]:
+    def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
         # Step 1 verified separately using Figure 4
         # Steps 1 and 2 verified separately using Figure 10
         # Complete model verified using Figures 8 (a, b) and Figure 9 (a, b)
-        I_cell = -I_charge
+        I_cell = -I_charge_A
 
         # Step 0: Determine whether battery is charging or resting and
         #         calculate time since last switch
@@ -222,14 +222,14 @@ class ModelKiBaMPlus(ModelStorage):
         self.V_transient_S: float = 0
         self.V_transient_L: float = 0
 
-    def step(self, I_charge: float) -> tuple[float, float, float, float]:
+    def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step.
 
         - Step 1 verified separately using Figure 4
         - Steps 1 and 2 verified separately using Figure 10
         - Complete model verified using Figures 8 (a, b) and Figure 9 (a, b)
         """
-        I_cell = -I_charge
+        I_cell = -I_charge_A
 
         # Step 0: Determine whether battery is charging or resting and
         #         calculate time since last switch
@@ -340,9 +340,9 @@ class ModelKiBaMSimple(ModelStorage):
         # state
         self.SoC: float = SoC_init if SoC_init is not None else cfg.SoC_init
 
-    def step(self, I_charge: float) -> tuple[float, float, float, float]:
+    def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step."""
-        I_cell = -I_charge
+        I_cell = -I_charge_A
         # Step 2a: Calculate self-discharge (drainage)
         I_leak = self.V_OC_LuT.get(self.SoC) * self.Constant_1_per_Ohm
 
@@ -395,10 +395,10 @@ class ModelShpCap(ModelStorage):
         SoC_init = SoC_init if SoC_init is not None else cfg.SoC_init
         self.V_mid_V = cfg.calc_V_OC(SoC_init)
 
-    def step(self, I_charge: float) -> tuple[float, float, float, float]:
+    def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
         # in PRU P_inp and P_out are calculated and combined to determine current
         # similar to: P_sum_W = P_inp_W - P_out_W, I_mid_A = P_sum_W / V_mid_V
-        I_mid_A = I_charge - self.V_mid_V * self.Constant_1_per_Ohm
+        I_mid_A = I_charge_A - self.V_mid_V * self.Constant_1_per_Ohm
         dV_mid_V = I_mid_A * self.Constant_s_per_F
         self.V_mid_V += dV_mid_V
 

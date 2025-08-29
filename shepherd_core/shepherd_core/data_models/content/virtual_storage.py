@@ -24,6 +24,7 @@ from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
 soc_t = Annotated[float, Ge(0.0), Le(1.0)]
+# TODO: adapt V_max in vsrc,
 
 
 class VirtualStorageConfig(ContentModel, title="Config for the virtual energy storage"):
@@ -287,7 +288,8 @@ class StoragePRUConfig(ShpModel):
       - ordering is intentional and in sync with shepherd/commons.h
     """
 
-    Constant_s_per_mAs_n48: u32
+    SoC_init_1u: u32
+    Constant_us_per_nAs_n40: u32
     Constant_1_per_kOhm_n18: u32
     LuT_SoC_min_log2_1u: u32
     LuT_VOC_uV_n8: lut_storage
@@ -296,6 +298,7 @@ class StoragePRUConfig(ShpModel):
     """⤷ ranges from 233n to 1 kOhm"""
 
     @classmethod
+    @validate_call
     def from_vstorage(
         cls,
         data: VirtualStorageConfig,
@@ -310,9 +313,10 @@ class StoragePRUConfig(ShpModel):
         Constant_s_per_As: float = dt_s / data.q_As
         Constant_1_per_Ohm: float = 1.0 / data.R_leak_Ohm
         return cls(
-            Constant_s_per_mAs_n48=int((2**48 / 1e3) * Constant_s_per_As),
-            Constant_1_per_kOhm_n18=int((2**18 / 1e-3) * Constant_1_per_Ohm),
-            LuT_SoC_min_log2_1u=int(math.log2(1e6 * LuT_SoC_min)),
-            LuT_VOC_uV_n8=[int((2**8 * 1e6) * y) for y in V_OC_LuT],
-            LuT_RSeries_kOhm_n32=[int((2**32 * 1e-3) * y) for y in R_series_LuT],
+            SoC_init_1u=round(data.SoC_init * 1e6),
+            Constant_us_per_nAs_n40=round((2**40 / 1e3) * Constant_s_per_As),
+            Constant_1_per_kOhm_n18=round((2**18 / 1e-3) * Constant_1_per_Ohm),
+            LuT_SoC_min_log2_1u=round(math.log2(1e6 * LuT_SoC_min)),
+            LuT_VOC_uV_n8=[round((2**8 * 1e6) * y) for y in V_OC_LuT],
+            LuT_RSeries_kOhm_n32=[round((2**32 * 1e-3) * y) for y in R_series_LuT],
         )
