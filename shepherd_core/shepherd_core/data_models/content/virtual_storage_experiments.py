@@ -85,7 +85,7 @@ class ResistiveChargePulsed:
 
 def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a positive current ramp (increasing power)."""
-    dt_s = 1e-3
+    dt_s = 1
     SoC_start = 0.5
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
@@ -101,7 +101,7 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
 
 def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
     """Discharge virtual storage with a negative current ramp (increasing power)."""
-    dt_s = 1e-3
+    dt_s = 1
     SoC_start = 0.5
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
@@ -117,7 +117,7 @@ def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
 
 def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
     """Discharge virtual storage with a pulsed constant current."""
-    dt_s = 1e-3
+    dt_s = 1
     SoC_start = 1.0
     SoC_target = 0.0
     i_pulse = CurrentPulsed(
@@ -133,7 +133,7 @@ def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
 
 def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a pulsed constant current."""
-    dt_s = 1e-3
+    dt_s = 1
     SoC_start = 0.0
     SoC_target = 1.0
     i_pulse = CurrentPulsed(
@@ -149,7 +149,7 @@ def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
 
 def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a resistive constant voltage."""
-    dt_s = 1e-3
+    dt_s = 1
     SoC_start = 0.0
     i_pulse = ResistiveChargePulsed(R_Ohm=10, V_target=4.2, period_pulse=1000, duration_pulse=600)
     sim = StorageSimulator(
@@ -162,7 +162,7 @@ def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
 
 def experiment_self_discharge() -> None:
     """Observe self-discharge behavior of virtual storage models."""
-    dt_s = 1e-3
+    dt_s = 1
     SoC_start = 1.0
     SoC_target = 0.9
     duration = timedelta(minutes=25)
@@ -188,9 +188,9 @@ if __name__ == "__main__":
     experiment_self_discharge()
 
     configs = [
-        VirtualStorageConfig.capacitor(C_uF=600e6, V_rated=3.6),  # match charge with batteries
-        VirtualStorageConfig.lipo(capacity_mAh=600),
-        VirtualStorageConfig.lead_acid(capacity_mAh=600),
+        VirtualStorageConfig.capacitor(C_uF=10e6, V_rated=3.6),  # match charge with batteries
+        VirtualStorageConfig.lipo(capacity_mAh=10),
+        VirtualStorageConfig.lead_acid(capacity_mAh=10),
     ]
 
     for cfg in configs:
