@@ -8,6 +8,7 @@ Some general Notes:
 
 """
 
+import multiprocessing
 from datetime import timedelta
 
 from pydantic import PositiveFloat
@@ -85,15 +86,16 @@ class ResistiveChargePulsed:
 
 def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a positive current ramp (increasing power)."""
-    dt_s = 1
+    dt_s = 0.1
     SoC_start = 0.5
+    duration_s = 200
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
 
     def current_trace(t_s: float, _s: float, _v: float) -> float:
-        return 0.4 + 0.04 * t_s
+        return 0.1 + 0.15 * t_s / duration_s  # pru-model can handle +- 268 mA
 
     sim.run(fn=current_trace, duration_s=250)
     sim.plot(f"XP {config.name}, current charge ramp (positive)")
@@ -101,68 +103,69 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
 
 def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
     """Discharge virtual storage with a negative current ramp (increasing power)."""
-    dt_s = 1
+    dt_s = 0.1
     SoC_start = 0.5
+    duration_s = 200
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
 
     def current_trace(t_s: float, _s: float, _v: float) -> float:
-        return -(0.4 + 0.04 * t_s)
+        return -(0.1 + 0.14 * t_s / duration_s)  # pru-model can handle +- 268 mA
 
-    sim.run(fn=current_trace, duration_s=250)
+    sim.run(fn=current_trace, duration_s=duration_s)
     sim.plot(f"XP {config.name}, current discharge ramp (negative)")
 
 
 def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
     """Discharge virtual storage with a pulsed constant current."""
-    dt_s = 1
+    dt_s = 0.2
     SoC_start = 1.0
     SoC_target = 0.0
     i_pulse = CurrentPulsed(
-        I_pulse=-0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
-    )
+        I_pulse=-0.1, period_pulse=200, duration_pulse=100, SoC_target=SoC_target
+    )  # pru-model can handle +- 268 mA
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, duration_s=6_000)
-    sim.plot(f"XP {config.name}, pulsed discharge .8A, 100 min (figure_9a)")
+    sim.run(fn=i_pulse.step, duration_s=1_000)
+    sim.plot(f"XP {config.name}, pulsed discharge .1A, 1000 s (figure_9a)")
 
 
 def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a pulsed constant current."""
-    dt_s = 1
+    dt_s = 0.2
     SoC_start = 0.0
     SoC_target = 1.0
     i_pulse = CurrentPulsed(
-        I_pulse=0.8, period_pulse=1200, duration_pulse=600, SoC_target=SoC_target
-    )
+        I_pulse=0.1, period_pulse=200, duration_pulse=100, SoC_target=SoC_target
+    )  # pru-model can handle +- 268 mA
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, duration_s=6_000)
-    sim.plot(f"XP {config.name}, pulsed charge .8A, 100 min (figure_9b)")
+    sim.run(fn=i_pulse.step, duration_s=1_000)
+    sim.plot(f"XP {config.name}, pulsed charge .1A, 1000 s (figure_9b)")
 
 
 def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a resistive constant voltage."""
-    dt_s = 1
+    dt_s = 0.5
     SoC_start = 0.0
-    i_pulse = ResistiveChargePulsed(R_Ohm=10, V_target=4.2, period_pulse=1000, duration_pulse=600)
+    i_pulse = ResistiveChargePulsed(R_Ohm=20, V_target=4.2, period_pulse=200, duration_pulse=100)
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, duration_s=6_000)
-    sim.plot(f"XP {config.name}, pulsed resistive charge 10 Ohm to 4.2 V, 100 min")
+    sim.run(fn=i_pulse.step, duration_s=3_000)
+    sim.plot(f"XP {config.name}, pulsed resistive charge 20 Ohm to 4.2 V, 3000 s")
 
 
 def experiment_self_discharge() -> None:
     """Observe self-discharge behavior of virtual storage models."""
-    dt_s = 1
+    dt_s = 0.2
     SoC_start = 1.0
     SoC_target = 0.9
     duration = timedelta(minutes=25)
@@ -185,19 +188,23 @@ def experiment_self_discharge() -> None:
 
 
 if __name__ == "__main__":
-    experiment_self_discharge()
+    with multiprocessing.Pool() as pool:
+        pool.apply_async(experiment_self_discharge)
 
-    configs = [
-        VirtualStorageConfig.capacitor(C_uF=10e6, V_rated=3.6),  # match charge with batteries
-        VirtualStorageConfig.lipo(capacity_mAh=10),
-        VirtualStorageConfig.lead_acid(capacity_mAh=10),
-    ]
+        configs = [
+            VirtualStorageConfig.capacitor(C_uF=10e6, V_rated=4.2),  # match charge with batteries
+            VirtualStorageConfig.lipo(capacity_mAh=10),
+            VirtualStorageConfig.lead_acid(capacity_mAh=10),
+        ]
 
-    for cfg in configs:
-        experiment_pulsed_charge(cfg)
-        experiment_pulsed_discharge(cfg)
-        experiment_current_ramp_pos(cfg)
-        experiment_current_ramp_neg(cfg)
+        for cfg in configs:
+            pool.apply_async(experiment_pulsed_charge, args=(cfg,))
+            pool.apply_async(experiment_pulsed_discharge, args=(cfg,))
+            pool.apply_async(experiment_current_ramp_pos, args=(cfg,))
+            pool.apply_async(experiment_current_ramp_neg, args=(cfg,))
 
-    for cfg in configs[0:2]:
-        experiment_pulsed_resistive_charge(cfg)
+        for cfg in configs[0:2]:
+            pool.apply_async(experiment_pulsed_resistive_charge, args=(cfg,))
+
+        pool.close()
+        pool.join()
