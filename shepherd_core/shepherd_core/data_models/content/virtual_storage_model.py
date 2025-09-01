@@ -20,7 +20,7 @@ Expected deviations:
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage_config import LUT_SIZE
+from virtual_storage_config import LuT_SIZE
 from virtual_storage_config import StoragePRUConfig
 from virtual_storage_config import TIMESTEP_s_DEFAULT
 from virtual_storage_config import VirtualStorageConfig
@@ -41,7 +41,7 @@ def u32s(i: float) -> int:
         log.warning("u32-overflow")
     if i < 0:
         log.warning("u32-underflow")
-    return int(min(max(i, 0), 2**32 -1))
+    return int(min(max(i, 0), 2**32 - 1))
 
 
 def u64s(i: float) -> int:
@@ -59,6 +59,9 @@ class VirtualStorageModel(ModelStorage):
     This model should behave like ModelKiBaMSimple
     """
 
+    SoC_MAX_1_n62: int = 2**62
+    LuT_SIZE_n2: int = 2**2 * LuT_SIZE
+
     @validate_call
     def __init__(
         self,
@@ -72,57 +75,52 @@ class VirtualStorageModel(ModelStorage):
         self.cfg: StoragePRUConfig = StoragePRUConfig.from_vstorage(
             cfg, TIMESTEP_s_DEFAULT, optimize_clamp=optimize_clamp
         )
-        self.SoC_max_1_n62: int = int(2 ** 62)
 
         # state
         SoC_1_n30: float = 2**30 * SoC_init if SoC_init is not None else self.cfg.SoC_init_1_n30
-        self.SoC_1_n62 = round(2 ** 32 * SoC_1_n30)
+        self.SoC_1_n62 = round(2**32 * SoC_1_n30)
         self.V_OC_uV_n8 = self.cfg.LuT_VOC_uV_n8[self.pos_LuT(self.SoC_1_n62)]
 
         # just for simulation
         self.steps_per_frame = round(dt_s / TIMESTEP_s_DEFAULT)
 
     def pos_LuT(self, SoC_1_n62: float) -> int:
-        pos = u32s((SoC_1_n62 / 2 ** 32) * self.cfg.LuT_size / 2 ** 30)
-        if pos >= LUT_SIZE:
-            pos = LUT_SIZE - 1
+        pos = u32s((SoC_1_n62 / 2**32) * self.LuT_SIZE_n2 / 2**32)
+        if pos >= LuT_SIZE:
+            pos = LuT_SIZE - 1
         return pos
 
     def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
-        """Slower outer step with step-size of simulation"""
-        I_charge_nA_n4 = u32s((1e9 * 2 ** 4) * I_charge_A)
-        for _ in range(self.steps_per_frame-1):
+        """Slower outer step with step-size of simulation."""
+        I_charge_nA_n4 = (1e9 * 2**4) * I_charge_A
+        for _ in range(self.steps_per_frame - 1):
             self.step_10us(I_charge_nA_n4)
         V_cell_uV_n8 = self.step_10us(I_charge_nA_n4)
-        # just for simulation
+        # code below just for simulation
         V_OC = (1e-6 / 2**8) * self.V_OC_uV_n8
         V_cell = (1e-6 / 2**8) * V_cell_uV_n8
-        # TODO: model matches completely, except self-discharge
-        # TODO: look at delta and describe deviations
         SoC = (1 / 2**62) * self.SoC_1_n62
         return V_OC, V_cell, SoC, SoC
-
 
     def step_10us(self, I_charge_nA_n4: float) -> float:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step.
 
         Note: 3x u64 multiplications,
         """
-        dSoC_leak_1_n62 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_uV_n60 / 2 ** 6)
+        dSoC_leak_1_n62 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_uV_n60 / 2**6)
         if self.SoC_1_n62 >= dSoC_leak_1_n62:
             self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_leak_1_n62)
         else:
             self.SoC_1_n62 = 0
 
         if I_charge_nA_n4 >= 0:
-            dSoC_charge_1_n62 = u64s(I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 / (2 ** 2))
+            dSoC_charge_1_n62 = u64s(I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 / (2**2))
             self.SoC_1_n62 = u64s(self.SoC_1_n62 + dSoC_charge_1_n62)
-            self.SoC_1_n62 = min(self.SoC_max_1_n62, self.SoC_1_n62)
+            self.SoC_1_n62 = min(self.SoC_MAX_1_n62, self.SoC_1_n62)
         else:
-            dSoC_charge_1_n62 = u64s(-I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 / (2 ** 2))
-
-            if self.SoC_1_n62 >= dSoC_charge_1_n62:
-                self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_charge_1_n62)
+            dSoC_discharge_1_n62 = u64s(-I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 / (2**2))
+            if self.SoC_1_n62 > dSoC_discharge_1_n62:
+                self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_discharge_1_n62)
             else:
                 self.SoC_1_n62 = 0
 

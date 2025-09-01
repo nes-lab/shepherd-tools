@@ -274,9 +274,9 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
 # constants & custom types
 TIMESTEP_s_DEFAULT = 1.0 / config.SAMPLERATE_SPS
-LUT_SIZE = 128
+LuT_SIZE = 128
 u32 = Annotated[int, Field(ge=0, lt=2**32)]
-lut_storage = Annotated[list[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
+lut_storage = Annotated[list[u32], Field(min_length=LuT_SIZE, max_length=LuT_SIZE)]
 
 
 class StoragePRUConfig(ShpModel):
@@ -289,13 +289,13 @@ class StoragePRUConfig(ShpModel):
     """
 
     SoC_init_1_n30: u32
+    """ ⤷ initial charge of storage """
     Constant_1_per_nA_n60: u32
-    """ ⤷ Convert Charge-Current to delta-SoC with one multiplication."""
+    """ ⤷ Convert I_charge to delta-SoC with one multiplication."""
     Constant_1_per_uV_n60: u32
-    """ ⤷ Leakage - Convert V_OC to delta-SoC with one multiplication. 
-    
-    Combines prior constant and R_leak, to maximize resolution."""
-    LuT_size: u32
+    """ ⤷ Leakage - Convert V_OC to delta-SoC with one multiplication.
+    Combines prior constant and R_leak, to maximize resolution.
+    """
     LuT_VOC_uV_n8: lut_storage
     """⤷ ranges from 3.9 uV to 16.7 V"""
     LuT_RSeries_kOhm_n32: lut_storage
@@ -311,16 +311,15 @@ class StoragePRUConfig(ShpModel):
         optimize_clamp: bool = True,
     ) -> Self:
         x_off = 0.5 if optimize_clamp else 1.0
-        SoC_min = 1.0 / LUT_SIZE
-        V_OC_LuT = [data.calc_V_OC(SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
-        R_series_LuT = [data.calc_R_series(SoC_min * (x + x_off)) for x in range(LUT_SIZE)]
+        SoC_min = 1.0 / LuT_SIZE
+        V_OC_LuT = [data.calc_V_OC(SoC_min * (x + x_off)) for x in range(LuT_SIZE)]
+        R_series_LuT = [data.calc_R_series(SoC_min * (x + x_off)) for x in range(LuT_SIZE)]
         Constant_1_per_A: float = dt_s / data.q_As
         Constant_1_per_V: float = Constant_1_per_A / data.R_leak_Ohm
         return cls(
-            SoC_init_1_n30=round(2 ** 30 * data.SoC_init),
-            Constant_1_per_nA_n60=round((2 ** 60 / 1e9) * Constant_1_per_A),
-            Constant_1_per_uV_n60=round((2 ** 60 / 1e6) * Constant_1_per_V),
-            LuT_size=round(LUT_SIZE),
+            SoC_init_1_n30=round(2**30 * data.SoC_init),
+            Constant_1_per_nA_n60=round((2**60 / 1e9) * Constant_1_per_A),
+            Constant_1_per_uV_n60=round((2**60 / 1e6) * Constant_1_per_V),
             LuT_VOC_uV_n8=[round((2**8 * 1e6) * y) for y in V_OC_LuT],
             LuT_RSeries_kOhm_n32=[round((2**32 * 1e-3) * y) for y in R_series_LuT],
         )

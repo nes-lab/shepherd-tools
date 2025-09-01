@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from pydantic import PositiveFloat
 from pydantic import PositiveInt
 from pydantic import validate_call
-from virtual_storage_config import LUT_SIZE
+from virtual_storage_config import LuT_SIZE
 from virtual_storage_config import TIMESTEP_s_DEFAULT
 from virtual_storage_config import VirtualStorageConfig
 from virtual_storage_config import soc_t
@@ -29,7 +29,7 @@ class LUT(BaseModel):
         cls,
         x_min: PositiveFloat,
         y_fn: Callable,
-        lut_size: PositiveInt = LUT_SIZE,
+        lut_size: PositiveInt = LuT_SIZE,
         *,
         optimize_clamp: bool = True,
     ) -> Self:
@@ -330,10 +330,10 @@ class ModelKiBaMSimple(ModelStorage):
     ) -> None:
         self.dt_s = dt_s  # not used in step, just for simulator
         self.V_OC_LuT: LUT = LUT.generate(
-            1.0 / LUT_SIZE, y_fn=cfg.calc_V_OC, lut_size=LUT_SIZE, optimize_clamp=optimize_clamp
+            1.0 / LuT_SIZE, y_fn=cfg.calc_V_OC, lut_size=LuT_SIZE, optimize_clamp=optimize_clamp
         )
         self.R_series_LuT: LUT = LUT.generate(
-            1.0 / LUT_SIZE, y_fn=cfg.calc_R_series, lut_size=LUT_SIZE, optimize_clamp=optimize_clamp
+            1.0 / LuT_SIZE, y_fn=cfg.calc_R_series, lut_size=LuT_SIZE, optimize_clamp=optimize_clamp
         )
         self.Constant_s_per_As: float = dt_s / cfg.q_As
         self.Constant_1_per_Ohm: float = 1.0 / cfg.R_leak_Ohm
