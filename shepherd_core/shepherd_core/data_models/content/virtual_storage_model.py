@@ -85,7 +85,7 @@ class VirtualStorageModel(ModelStorage):
         self.steps_per_frame = round(dt_s / TIMESTEP_s_DEFAULT)
 
     def pos_LuT(self, SoC_1_n62: float) -> int:
-        pos = u32s((SoC_1_n62 / 2**32) * self.LuT_SIZE_n2 / 2**32)
+        pos = u32s((SoC_1_n62 // 2**32) * self.LuT_SIZE_n2 // 2**32)
         if pos >= LuT_SIZE:
             pos = LuT_SIZE - 1
         return pos
@@ -107,18 +107,18 @@ class VirtualStorageModel(ModelStorage):
 
         Note: 3x u64 multiplications,
         """
-        dSoC_leak_1_n62 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_uV_n60 / 2**6)
+        dSoC_leak_1_n62 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_uV_n60 // 2**6)
         if self.SoC_1_n62 >= dSoC_leak_1_n62:
             self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_leak_1_n62)
         else:
             self.SoC_1_n62 = 0
 
         if I_charge_nA_n4 >= 0:
-            dSoC_charge_1_n62 = u64s(I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 / (2**2))
+            dSoC_charge_1_n62 = u64s(I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 // (2**2))
             self.SoC_1_n62 = u64s(self.SoC_1_n62 + dSoC_charge_1_n62)
             self.SoC_1_n62 = min(self.SoC_MAX_1_n62, self.SoC_1_n62)
         else:
-            dSoC_discharge_1_n62 = u64s(-I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 / (2**2))
+            dSoC_discharge_1_n62 = u64s(-I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 // (2**2))
             if self.SoC_1_n62 > dSoC_discharge_1_n62:
                 self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_discharge_1_n62)
             else:
@@ -129,10 +129,10 @@ class VirtualStorageModel(ModelStorage):
         R_series_kOhm_n32 = self.cfg.LuT_RSeries_kOhm_n32[pos_LuT]
 
         if I_charge_nA_n4 >= 0:
-            V_gain_uV_n8 = u32s(u64s(I_charge_nA_n4 * R_series_kOhm_n32) / 2**28)
+            V_gain_uV_n8 = u32s(u64s(I_charge_nA_n4 * R_series_kOhm_n32) // 2**28)
             V_cell_uV_n8 = u32s(self.V_OC_uV_n8 + V_gain_uV_n8)
         else:
-            V_drop_uV_n8 = u32s(u64s(-I_charge_nA_n4 * R_series_kOhm_n32) / 2**28)
+            V_drop_uV_n8 = u32s(u64s(-I_charge_nA_n4 * R_series_kOhm_n32) // 2**28)
             if self.V_OC_uV_n8 > V_drop_uV_n8:
                 V_cell_uV_n8 = u32s(self.V_OC_uV_n8 - V_drop_uV_n8)
             else:
