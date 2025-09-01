@@ -20,11 +20,11 @@ Expected deviations:
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage import LUT_SIZE
-from virtual_storage import StoragePRUConfig
-from virtual_storage import TIMESTEP_s_DEFAULT
-from virtual_storage import VirtualStorageConfig
-from virtual_storage import soc_t
+from virtual_storage_config import LUT_SIZE
+from virtual_storage_config import StoragePRUConfig
+from virtual_storage_config import TIMESTEP_s_DEFAULT
+from virtual_storage_config import VirtualStorageConfig
+from virtual_storage_config import soc_t
 
 from shepherd_core import log
 
@@ -37,20 +37,20 @@ class ModelStorage:
 
 def u32s(i: float) -> int:
     """Guard to supervise calculated model-states."""
-    if i > 2**32:
+    if i >= 2**32:
         log.warning("u32-overflow")
     if i < 0:
         log.warning("u32-underflow")
-    return int(min(max(i, 0), 2**32))
+    return int(min(max(i, 0), 2**32 -1))
 
 
 def u64s(i: float) -> int:
     """Guard to supervise calculated model-states."""
-    if i > 2**64:
+    if i >= 2**64:
         log.warning("u64-overflow")
     if i < 0:
         log.warning("u64-underflow")
-    return int(min(max(i, 0), 2**64))
+    return int(min(max(i, 0), 2**64 - 1))
 
 
 class VirtualStorageModel(ModelStorage):
@@ -89,22 +89,23 @@ class VirtualStorageModel(ModelStorage):
 
         Note: 3x u64 multiplications,
         """
-        I_charge_nA_n4 = 1e9 * 2**4 * I_charge_A
-        I_leak_nA_n4 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_kOhm_n18 / 2**22)
+        dSoC_leak_1u_n32 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1u_per_uV_n40 / 2 ** 16)
+        if self.SoC_1u_n32 >= dSoC_leak_1u_n32:
+            self.SoC_1u_n32 = u64s(self.SoC_1u_n32 - dSoC_leak_1u_n32)
+        else:
+            self.SoC_1u_n32 = 0
         # TODO: SoC_n63? 1 would be 2**63 (1 bit safety-margin to detect errors)
         # TODO: or just SoC_n32, so 1 is 0xFFFFFFFF?
-        if I_charge_nA_n4 >= I_leak_nA_n4:
-            I_delta_nA_n4 = u64s(I_charge_nA_n4 - I_leak_nA_n4)
-            SoC_delta_1u_n32 = u64s(I_delta_nA_n4 * self.cfg.Constant_us_per_nAs_n40 / (2**12))
-            self.SoC_1u_n32 = u64s(self.SoC_1u_n32 + SoC_delta_1u_n32)
-
+        I_charge_nA_n4 = 1e9 * 2 ** 4 * I_charge_A
+        if I_charge_nA_n4 >= 0:
+            dSoC_charge_1u_n32 = u64s(I_charge_nA_n4 * self.cfg.Constant_1u_per_nA_n40 / (2 ** 12))
+            self.SoC_1u_n32 = u64s(self.SoC_1u_n32 + dSoC_charge_1u_n32)
             self.SoC_1u_n32 = min(self.SoC_max_1u_n32, self.SoC_1u_n32)
         else:
-            I_delta_nA_n4 = u64s(I_leak_nA_n4 - I_charge_nA_n4)
-            SoC_delta_1u_n32 = u64s(I_delta_nA_n4 * self.cfg.Constant_us_per_nAs_n40 / (2**12))
+            dSoC_charge_1u_n32 = u64s(-I_charge_nA_n4 * self.cfg.Constant_1u_per_nA_n40 / (2 ** 12))
 
-            if self.SoC_1u_n32 >= SoC_delta_1u_n32:
-                self.SoC_1u_n32 = u64s(self.SoC_1u_n32 - SoC_delta_1u_n32)
+            if self.SoC_1u_n32 >= dSoC_charge_1u_n32:
+                self.SoC_1u_n32 = u64s(self.SoC_1u_n32 - dSoC_charge_1u_n32)
             else:
                 self.SoC_1u_n32 = 0
 

@@ -9,10 +9,10 @@ from pydantic import BaseModel
 from pydantic import PositiveFloat
 from pydantic import PositiveInt
 from pydantic import validate_call
-from virtual_storage import LUT_SIZE
-from virtual_storage import TIMESTEP_s_DEFAULT
-from virtual_storage import VirtualStorageConfig
-from virtual_storage import soc_t
+from virtual_storage_config import LUT_SIZE
+from virtual_storage_config import TIMESTEP_s_DEFAULT
+from virtual_storage_config import VirtualStorageConfig
+from virtual_storage_config import soc_t
 from virtual_storage_model import ModelStorage
 
 

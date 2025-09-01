@@ -12,8 +12,8 @@ from datetime import timedelta
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage import VirtualStorageConfig
-from virtual_storage import soc_t
+from virtual_storage_config import VirtualStorageConfig
+from virtual_storage_config import soc_t
 from virtual_storage_models_kibam import ModelKiBaM
 from virtual_storage_models_kibam import ModelKiBaMPlus
 from virtual_storage_models_kibam import ModelKiBaMSimple
@@ -35,7 +35,7 @@ def get_models(
         ModelKiBaMSimple(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
         VirtualStorageModel(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
         ModelShpCap(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
-    ][2:4]
+    ][1:4]
 
 
 class CurrentPulsed:
@@ -165,7 +165,7 @@ def experiment_self_discharge() -> None:
     dt_s = 1e-3
     SoC_start = 1.0
     SoC_target = 0.9
-    duration = timedelta(minutes=30)
+    duration = timedelta(minutes=25)
     store = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3)
     R_dis = store.calc_R_self_discharge(duration=duration, SoC_final=SoC_target, SoC_0=SoC_start)
     config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_leak_Ohm=R_dis)
