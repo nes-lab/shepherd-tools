@@ -21,6 +21,7 @@ Expected deviations:
 from pydantic import PositiveFloat
 from pydantic import validate_call
 from virtual_storage_config import LuT_SIZE
+from virtual_storage_config import LuT_SIZE_LOG
 from virtual_storage_config import StoragePRUConfig
 from virtual_storage_config import TIMESTEP_s_DEFAULT
 from virtual_storage_config import VirtualStorageConfig
@@ -60,7 +61,7 @@ class VirtualStorageModel(ModelStorage):
     """
 
     SoC_MAX_1_n62: int = 2**62
-    LuT_SIZE_n2: int = 2**2 * LuT_SIZE
+    SoC_TO_POS_DIV: int = 2 ** (62 - LuT_SIZE_LOG)
 
     @validate_call
     def __init__(
@@ -84,8 +85,8 @@ class VirtualStorageModel(ModelStorage):
         # just for simulation
         self.steps_per_frame = round(dt_s / TIMESTEP_s_DEFAULT)
 
-    def pos_LuT(self, SoC_1_n62: float) -> int:
-        pos = u32s((SoC_1_n62 // 2**32) * self.LuT_SIZE_n2 // 2**32)
+    def pos_LuT(self, SoC_1_n62: int) -> int:
+        pos = u32s(SoC_1_n62 // self.SoC_TO_POS_DIV)
         if pos >= LuT_SIZE:
             pos = LuT_SIZE - 1
         return pos

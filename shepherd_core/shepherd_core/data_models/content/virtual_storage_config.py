@@ -273,8 +273,9 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
 
 # constants & custom types
-TIMESTEP_s_DEFAULT = 1.0 / config.SAMPLERATE_SPS
-LuT_SIZE = 128
+TIMESTEP_s_DEFAULT: float = 1.0 / config.SAMPLERATE_SPS
+LuT_SIZE_LOG: int = 7
+LuT_SIZE: int = 2**LuT_SIZE_LOG
 u32 = Annotated[int, Field(ge=0, lt=2**32)]
 lut_storage = Annotated[list[u32], Field(min_length=LuT_SIZE, max_length=LuT_SIZE)]
 
