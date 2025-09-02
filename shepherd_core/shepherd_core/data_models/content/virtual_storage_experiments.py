@@ -33,10 +33,11 @@ def get_models(
     return [
         ModelKiBaM(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
         ModelKiBaMPlus(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
-        ModelKiBaMSimple(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
+        ModelKiBaMSimple(SoC_init=SoC_init, cfg=config, dt_s=dt_s, optimize_clamp=True),
+        ModelKiBaMSimple(SoC_init=SoC_init, cfg=config, dt_s=dt_s, interpolate=True),
         VirtualStorageModel(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
         ModelShpCap(SoC_init=SoC_init, cfg=config, dt_s=dt_s),
-    ][1:4]
+    ][1:5]
 
 
 class CurrentPulsed:

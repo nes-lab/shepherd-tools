@@ -22,6 +22,7 @@ class LUT(BaseModel):
     x_min: float
     y_values: list[float]
     length: int
+    interpolate: bool = False
 
     @classmethod
     @validate_call
@@ -31,7 +32,8 @@ class LUT(BaseModel):
         y_fn: Callable,
         lut_size: PositiveInt = LuT_SIZE,
         *,
-        optimize_clamp: bool = True,
+        optimize_clamp: bool = False,
+        interpolate: bool = False,
     ) -> Self:
         """
         Generate a LUT with a specific width from a provided function.
@@ -39,13 +41,20 @@ class LUT(BaseModel):
         It has a minimum value, a size / width and a scale (linear / log2).
         y_fnc is a function that takes an argument and produces the lookup value.
         """
-        offset = 0.5 if optimize_clamp else 1
+        if interpolate:
+            # Note: dynamically creating .get() with setattr() was not successful
+            optimize_clamp = False
+
+        offset = 0.5 if optimize_clamp else 0
         x_values = [(i + offset) * x_min for i in range(lut_size)]
         y_values = [y_fn(x) for x in x_values]
-
-        return cls(x_min=x_min, y_values=y_values, length=lut_size)
+        return cls(x_min=x_min, y_values=y_values, length=lut_size, interpolate=interpolate)
 
     def get(self, x_value: float) -> float:
+        return self.get_interpol(x_value) if self.interpolate else self.get_discrete(x_value)
+
+    def get_discrete(self, x_value: float) -> float:
+        """Discrete LuT-lookup with typical stairs."""
         num = int(x_value / self.x_min)
         # ⤷ round() would be more appropriate, but in c/pru its just integer math
         idx = max(0, num)
@@ -53,19 +62,22 @@ class LUT(BaseModel):
             idx = self.length - 1
         return self.y_values[idx]
 
-    def geti(self, x_value: float) -> float:
-        # TODO: has strange offset
+    def get_interpol(self, x_value: float) -> float:
+        """LuT-lookup with additional interpolation.
+
+        Note: optimize-clamp must be disabled, otherwise this produces an offset
+        """
         num = x_value / self.x_min
         if num <= 0:
             return self.y_values[0]
         if num >= self.length - 1:
             return self.y_values[self.length - 1]
 
-        idx_l = math.floor(num)
-        idx_h = math.ceil(num)
-        num_f = num - idx_l
-        y_base = self.y_values[idx_l]
-        y_delta = self.y_values[idx_h] - y_base
+        idx: int = math.floor(num)
+        # high could be math.ceil(num), but also idx+1
+        num_f: float = num - idx
+        y_base = self.y_values[idx]
+        y_delta = self.y_values[idx + 1] - y_base
         # TODO: y_delta[idx_l] could be a seconds LuT
         return y_base + y_delta * num_f
 
@@ -326,14 +338,23 @@ class ModelKiBaMSimple(ModelStorage):
         SoC_init: soc_t | None = None,
         dt_s: PositiveFloat = TIMESTEP_s_DEFAULT,
         *,
-        optimize_clamp: bool = True,
+        optimize_clamp: bool = False,
+        interpolate: bool = False,
     ) -> None:
         self.dt_s = dt_s  # not used in step, just for simulator
         self.V_OC_LuT: LUT = LUT.generate(
-            1.0 / LuT_SIZE, y_fn=cfg.calc_V_OC, lut_size=LuT_SIZE, optimize_clamp=optimize_clamp
+            1.0 / LuT_SIZE,
+            y_fn=cfg.calc_V_OC,
+            lut_size=LuT_SIZE,
+            optimize_clamp=optimize_clamp,
+            interpolate=interpolate,
         )
         self.R_series_LuT: LUT = LUT.generate(
-            1.0 / LuT_SIZE, y_fn=cfg.calc_R_series, lut_size=LuT_SIZE, optimize_clamp=optimize_clamp
+            1.0 / LuT_SIZE,
+            y_fn=cfg.calc_R_series,
+            lut_size=LuT_SIZE,
+            optimize_clamp=optimize_clamp,
+            interpolate=interpolate,
         )
         self.Constant_s_per_As: float = dt_s / cfg.q_As
         self.Constant_1_per_Ohm: float = 1.0 / cfg.R_leak_Ohm

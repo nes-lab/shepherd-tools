@@ -311,7 +311,7 @@ class StoragePRUConfig(ShpModel):
         *,
         optimize_clamp: bool = True,
     ) -> Self:
-        x_off = 0.5 if optimize_clamp else 1.0
+        x_off = 0.5 if optimize_clamp else 0.0
         SoC_min = 1.0 / LuT_SIZE
         V_OC_LuT = [data.calc_V_OC(SoC_min * (x + x_off)) for x in range(LuT_SIZE)]
         R_series_LuT = [data.calc_R_series(SoC_min * (x + x_off)) for x in range(LuT_SIZE)]
