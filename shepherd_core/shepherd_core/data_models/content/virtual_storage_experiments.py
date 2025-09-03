@@ -21,6 +21,7 @@ from virtual_storage_models_kibam import ModelKiBaMSimple
 from virtual_storage_models_kibam import ModelShpCap
 from virtual_storage_simulator import StorageSimulator
 
+from shepherd_core import log
 from shepherd_core.data_models.content.virtual_storage_model import ModelStorage
 from shepherd_core.data_models.content.virtual_storage_model import VirtualStorageModel
 
@@ -164,6 +165,22 @@ def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
     sim.plot(f"XP {config.name}, pulsed resistive charge 20 Ohm to 4.2 V, 3000 s")
 
 
+def experiment_resistive_load(config: VirtualStorageConfig) -> None:
+    """Charge virtual storage with a resistive constant voltage."""
+    dt_s = 0.5
+    SoC_start = 1.0
+
+    def i_charge(_t_s: float, _s: float, V: float) -> float:
+        return -V / 20
+
+    sim = StorageSimulator(
+        models=get_models(SoC_start, config, dt_s),
+        dt_s=dt_s,
+    )
+    sim.run(fn=i_charge, duration_s=1_000)
+    sim.plot(f"XP {config.name}, resistive load 20 Ohm from 4.2 V, 1000 s")
+
+
 def experiment_self_discharge() -> None:
     """Observe self-discharge behavior of virtual storage models."""
     dt_s = 0.2
@@ -171,8 +188,9 @@ def experiment_self_discharge() -> None:
     SoC_target = 0.9
     duration = timedelta(minutes=25)
     store = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3)
-    R_dis = store.calc_R_self_discharge(duration=duration, SoC_final=SoC_target, SoC_0=SoC_start)
-    config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_leak_Ohm=R_dis)
+    R_leak = store.calc_R_self_discharge(duration=duration, SoC_final=SoC_target, SoC_0=SoC_start)
+    log.info("R_leak = %.2f Ohm", R_leak)
+    config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_leak_Ohm=R_leak)
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
@@ -181,7 +199,7 @@ def experiment_self_discharge() -> None:
     def step(_t: float, _s: float, _v: float) -> float:
         return 0
 
-    sim.run(fn=step, duration_s=int(duration.total_seconds()))
+    sim.run(fn=step, duration_s=duration.total_seconds())
     sim.plot(
         f"XP {config.name}, self-discharge, "
         f"SoC {SoC_start} to {SoC_target} in {duration.total_seconds()} s"
@@ -206,6 +224,7 @@ if __name__ == "__main__":
 
         for cfg in configs[0:2]:
             pool.apply_async(experiment_pulsed_resistive_charge, args=(cfg,))
+            pool.apply_async(experiment_resistive_load, args=(cfg,))
 
         pool.close()
         pool.join()

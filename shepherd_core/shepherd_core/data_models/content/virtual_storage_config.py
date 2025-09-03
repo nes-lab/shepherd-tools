@@ -93,7 +93,13 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
     @classmethod
     @validate_call
-    def lipo(cls, capacity_mAh: PositiveFloat, SoC_init: soc_t = 1.0) -> Self:
+    def lipo(
+        cls,
+        capacity_mAh: PositiveFloat,
+        SoC_init: soc_t | None = None,
+        name: str | None = None,
+        description: str | None = None,
+    ) -> Self:
         """Modeled after the PL-383562 2C Polymer Lithium-ion Battery.
 
         Nominal Voltage     3.7 V
@@ -104,8 +110,13 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         https://www.batteryspace.com/prod-specs/pl383562.pdf
 
         """
+        name_lmnts: list[str] = ["LiPo", f"{capacity_mAh:.0f}mAh", "3.7V"]
+        if name is not None:
+            name_lmnts = [name]  # specific name overrules params
+        if description is None:
+            description = "Model of a LiPo battery (3 to 4.2 V) with adjustable capacity"
         return cls(
-            SoC_init=SoC_init,
+            SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
             q_As=capacity_mAh * 3600 / 1000,
             p_VOC=[-0.852, 63.867, 3.6297, 0.559, 0.51, 0.508],
             p_Rs=[0.1463, 30.27, 0.1037, 0.0584, 0.1747, 0.1288],
@@ -116,9 +127,10 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             # y10 = 2863.3, y20 = 232.66 # unused
             p_rce=0.9248,
             kdash=0.0008,
+            R_leak_Ohm=23.1e6 / capacity_mAh,  # from wiki ~ 5 % discharge/month
             # content-fields below
-            name=f"LiPo {capacity_mAh} mAh",
-            description="Model of a standard LiPo battery (3 to 4.2 V) with adjustable capacity",
+            name="_".join(name_lmnts),
+            description=description,
             owner="NES Lab",
             group="NES Lab",
             visible2group=True,
@@ -127,7 +139,13 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
     @classmethod
     @validate_call
-    def lead_acid(cls, capacity_mAh: PositiveFloat, SoC_init: soc_t = 1.0) -> Self:
+    def lead_acid(
+        cls,
+        capacity_mAh: PositiveFloat,
+        SoC_init: soc_t | None = None,
+        name: str | None = None,
+        description: str | None = None,
+    ) -> Self:
         """Modeled after the LEOCH LP12-1.2AH lead acid battery.
 
         Nominal Voltage     12 V
@@ -136,9 +154,16 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         Charge Cutoff       13.5 V
         Max Discharge       15 C / 18 A
         https://www.leoch.com/pdf/reserve-power/agm-vrla/lp-general/LP12-1.2.pdf
+        # TODO: 1 cell has 2.1 V nom, cell-count as param?
+        # TODO: add temperature-component? -5mV/cell/K, also capacity-decrease
         """
+        name_lmnts: list[str] = ["Lead-Acid", f"{capacity_mAh:.0f}mAh", "12V"]
+        if name is not None:
+            name_lmnts = [name]  # specific name overrules params
+        if description is None:
+            description = "Model of a 12V lead acid battery with adjustable capacity"
         return cls(
-            SoC_init=SoC_init,
+            SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
             q_As=capacity_mAh * 3600 / 1000,
             p_VOC=[5.429, 117.5, 11.32, 2.706, 2.04, 1.026],
             p_Rs=[1.578, 8.527, 0.7808, -1.887, -2.404, -0.649],
@@ -151,9 +176,11 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             # y10 = 2592, y20 = 1728 # unused
             p_rce=0.6,
             kdash=0.0034,
+            R_leak_Ohm=1.37e9 / capacity_mAh,
+            # ⤷ from datasheet - 3-20 % discharge/month for 1.2 Ah, here 5%
             # content-fields below
-            name=f"Lead-Acid-battery {capacity_mAh} mAh",
-            description="Model of a 12V lead acid battery with adjustable capacity",
+            name="_".join(name_lmnts),
+            description=description,
             owner="NES Lab",
             group="NES Lab",
             visible2group=True,
@@ -167,19 +194,32 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         C_uF: PositiveFloat,
         V_rated: PositiveFloat,
         SoC_init: soc_t = 1.0,
-        R_series_Ohm: NonNegativeFloat = 0.0,
-        R_leak_Ohm: PositiveFloat = sys.float_info.max,
+        R_series_Ohm: NonNegativeFloat | None = None,
+        R_leak_Ohm: PositiveFloat | None = None,
+        name: str | None = None,
+        description: str | None = None,
     ) -> Self:
+        name_lmnts: list[str] = ["Capacitor", f"{C_uF:.0f}uF", f"{V_rated:.1f}V"]
+        if name is not None:
+            name_lmnts = [name]  # specific name overrules params
+        if description is None:
+            description = "Model of a standard Capacitor"
+        if R_leak_Ohm is not None:
+            description += f", R_leak = {R_leak_Ohm / 1e3:.3f} Ohm"
+        if R_series_Ohm is not None:
+            description += f", R_serial = {R_series_Ohm:.0f} Ohm"
         return cls(
-            SoC_init=SoC_init,
+            SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
             q_As=1e-6 * C_uF * V_rated,
             p_VOC=[0, 0, 0, V_rated, 0, 0],  # 100% SoC is @V_rated,
             # no transients per default
-            p_Rs=[0, 0, R_series_Ohm, 0, 0, 0],  # const series resistance
-            R_leak_Ohm=R_leak_Ohm,
+            p_Rs=[0, 0, R_series_Ohm, 0, 0, 0]
+            if R_series_Ohm
+            else cls.model_fields["p_Rs"].default,  # const series resistance
+            R_leak_Ohm=R_leak_Ohm if R_leak_Ohm else cls.model_fields["R_leak_Ohm"].default,
             # content-fields below
-            name=f"Capacitor {C_uF:.0f} uF",
-            description="Model of a Capacitor with [DC-Bias], series & leakage resistor",
+            name="_".join(name_lmnts),
+            description=description,
             owner="NES Lab",
             group="NES Lab",
             visible2group=True,
