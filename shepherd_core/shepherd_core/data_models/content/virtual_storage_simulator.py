@@ -75,7 +75,9 @@ class StorageSimulator:
         axs[3 + offset].grid(visible=True)
 
         for i, model in enumerate(self.models):
-            axs[0].plot(self.t_s, self.SoC[i], label=type(model).__name__, alpha=0.7)
+            axs[0].plot(
+                self.t_s, self.SoC[i], label=f"{type(model).__name__} {model.cfg.name}", alpha=0.7
+            )
             axs[1].plot(self.t_s, self.V_OC[i], label=type(model).__name__, alpha=0.7)
             axs[2].plot(self.t_s, self.V_cell[i], label=type(model).__name__, alpha=0.7)
             if plot_delta_v:  # assumes that timestamps are identical

@@ -188,7 +188,7 @@ def experiment_self_discharge() -> None:
     SoC_target = 0.9
     duration = timedelta(minutes=25)
     store = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3)
-    R_leak = store.calc_R_self_discharge(duration=duration, SoC_final=SoC_target, SoC_0=SoC_start)
+    R_leak = store.calc_R_leak_capacitor(duration=duration, SoC_final=SoC_target, SoC_0=SoC_start)
     log.info("R_leak = %.2f Ohm", R_leak)
     config = VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, R_leak_Ohm=R_leak)
     sim = StorageSimulator(

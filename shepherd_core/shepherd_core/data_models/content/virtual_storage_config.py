@@ -1,4 +1,14 @@
-"""Generalized virtual energy storage data models (config)."""
+"""Generalized virtual energy storage data models (config).
+
+Additions in near future:
+- TODO: DC Bias to improve Capacitor-behavior, p_VOC / LuT
+
+Possible Extensions:
+- scale cell-count (determine how to change parameters) as
+    2 cell Lipo or 2 cell lead would be advantageous
+- add temperature-component?
+
+"""
 
 import math
 import sys
@@ -25,6 +35,7 @@ from shepherd_core.testbed_client import tb_client
 
 soc_t = Annotated[float, Ge(0.0), Le(1.0)]
 # TODO: adapt V_max in vsrc,
+# TODO: do we need to set initial voltage, or is SoC ok? add V_OC_to_SoC()
 
 
 class VirtualStorageConfig(ContentModel, title="Config for the virtual energy storage"):
@@ -127,7 +138,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             # y10 = 2863.3, y20 = 232.66 # unused
             p_rce=0.9248,
             kdash=0.0008,
-            R_leak_Ohm=23.1e6 / capacity_mAh,  # from wiki ~ 5 % discharge/month
+            R_leak_Ohm=55.9e6 / capacity_mAh,  # from wiki ~ 5 % discharge/month
             # content-fields below
             name="_".join(name_lmnts),
             description=description,
@@ -148,14 +159,14 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     ) -> Self:
         """Modeled after the LEOCH LP12-1.2AH lead acid battery.
 
-        Nominal Voltage     12 V
+        Nominal Voltage     12 V (6 Cell)
         Nominal Capacity    1.2 Ah
         Discharge Cutoff    10.8 V
         Charge Cutoff       13.5 V
         Max Discharge       15 C / 18 A
         https://www.leoch.com/pdf/reserve-power/agm-vrla/lp-general/LP12-1.2.pdf
-        # TODO: 1 cell has 2.1 V nom, cell-count as param?
-        # TODO: add temperature-component? -5mV/cell/K, also capacity-decrease
+        # NOTE: 1 cell has 2.1 V nom, cell-count as param?
+        # NOTE: add temperature-component? -5mV/cell/K, also capacity-decrease
         """
         name_lmnts: list[str] = ["Lead-Acid", f"{capacity_mAh:.0f}mAh", "12V"]
         if name is not None:
@@ -176,7 +187,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             # y10 = 2592, y20 = 1728 # unused
             p_rce=0.6,
             kdash=0.0034,
-            R_leak_Ohm=1.37e9 / capacity_mAh,
+            R_leak_Ohm=174e6 / capacity_mAh,
             # ⤷ from datasheet - 3-20 % discharge/month for 1.2 Ah, here 5%
             # content-fields below
             name="_".join(name_lmnts),
@@ -203,7 +214,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         if name is not None:
             name_lmnts = [name]  # specific name overrules params
         if description is None:
-            description = "Model of a standard Capacitor"
+            description = "Model of an ideal Capacitor (~Tantal)"
         if R_leak_Ohm is not None:
             description += f", R_leak = {R_leak_Ohm / 1e3:.3f} Ohm"
         if R_series_Ohm is not None:
@@ -225,7 +236,6 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             visible2group=True,
             visible2all=True,
         )
-        # TODO: add model DC-Bias via p_VOC?
 
     @model_validator(mode="before")
     @classmethod
@@ -269,7 +279,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         return self.k / (self.p_rce * (self.p_rce - 1))
 
     @validate_call
-    def calc_R_self_discharge(
+    def calc_R_leak_capacitor(
         self,
         duration: timedelta,
         SoC_final: Annotated[float, Ge(0), Le(1)],
@@ -280,6 +290,18 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         U0 = self.calc_V_OC(SoC_0)
         Ut = self.calc_V_OC(SoC_final)
         return duration.total_seconds() * U0 / (self.q_As * math.log(U0 / Ut))
+
+    @validate_call
+    def calc_R_leak_battery(
+        self,
+        duration: timedelta,
+        SoC_final: Annotated[float, Ge(0), Le(1)],
+        SoC_0: Annotated[float, Ge(0), Le(1)] = 1.0,
+    ) -> float:
+        U0 = self.calc_V_OC(SoC_0)
+        U1 = self.calc_V_OC(SoC_final)
+        current_A = (SoC_0 - SoC_final) * self.q_As / duration.total_seconds()
+        return (U0 + U1) / 2 / current_A
 
     def calc_V_OC(self, SoC: float) -> float:
         return (
@@ -310,6 +332,29 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
     def calc_C_transient_L(self, SoC: float) -> float:
         return self.p_CtL[0] * math.pow(math.e, -self.p_CtL[1] * SoC) + self.p_CtL[2]
+
+    def approximate_SoC(self, V_OC: float) -> float:
+        SoC_next = SoC_now = 0.5
+        step_size = 0.05
+        go_up = True
+        match = 5
+        counter = 0
+
+        while match > 0.001:
+            SoC_now = SoC_next
+            V_OC_now = self.calc_V_OC(SoC_now)
+            match_new = abs(V_OC_now / V_OC - 1)
+            if match_new > match:
+                go_up = not go_up
+                if go_up:
+                    step_size /= 2
+            SoC_next += step_size if go_up else -step_size
+            match = match_new
+            counter += 1
+            if counter > 100:
+                raise RuntimeError("Could not approximate SoC for given Voltage")
+
+        return SoC_now
 
 
 # constants & custom types

@@ -72,15 +72,17 @@ class VirtualStorageModel(ModelStorage):
         *,
         optimize_clamp: bool = True,
     ) -> None:
-        self.dt_s: float = dt_s  # not used in step, just for simulator
-        self.cfg: StoragePRUConfig = StoragePRUConfig.from_vstorage(
+        # not used in step, just for simulator
+        self.dt_s = dt_s
+        self.cfg = cfg
+        # constants
+        self.pru: StoragePRUConfig = StoragePRUConfig.from_vstorage(
             cfg, TIMESTEP_s_DEFAULT, optimize_clamp=optimize_clamp
         )
-
         # state
-        SoC_1_n30: float = 2**30 * SoC_init if SoC_init is not None else self.cfg.SoC_init_1_n30
+        SoC_1_n30: float = 2**30 * SoC_init if SoC_init is not None else self.pru.SoC_init_1_n30
         self.SoC_1_n62 = round(2**32 * SoC_1_n30)
-        self.V_OC_uV_n8 = self.cfg.LuT_VOC_uV_n8[self.pos_LuT(self.SoC_1_n62)]
+        self.V_OC_uV_n8 = self.pru.LuT_VOC_uV_n8[self.pos_LuT(self.SoC_1_n62)]
 
         # just for simulation
         self.steps_per_frame = round(dt_s / TIMESTEP_s_DEFAULT)
@@ -108,26 +110,26 @@ class VirtualStorageModel(ModelStorage):
 
         Note: 3x u64 multiplications,
         """
-        dSoC_leak_1_n62 = u64s(self.V_OC_uV_n8 * self.cfg.Constant_1_per_uV_n60 // 2**6)
+        dSoC_leak_1_n62 = u64s(self.V_OC_uV_n8 * self.pru.Constant_1_per_uV_n60 // 2**6)
         if self.SoC_1_n62 >= dSoC_leak_1_n62:
             self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_leak_1_n62)
         else:
             self.SoC_1_n62 = 0
 
         if I_charge_nA_n4 >= 0:
-            dSoC_charge_1_n62 = u64s(I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 // (2**2))
+            dSoC_charge_1_n62 = u64s(I_charge_nA_n4 * self.pru.Constant_1_per_nA_n60 // (2**2))
             self.SoC_1_n62 = u64s(self.SoC_1_n62 + dSoC_charge_1_n62)
             self.SoC_1_n62 = min(self.SoC_MAX_1_n62, self.SoC_1_n62)
         else:
-            dSoC_discharge_1_n62 = u64s(-I_charge_nA_n4 * self.cfg.Constant_1_per_nA_n60 // (2**2))
+            dSoC_discharge_1_n62 = u64s(-I_charge_nA_n4 * self.pru.Constant_1_per_nA_n60 // (2**2))
             if self.SoC_1_n62 > dSoC_discharge_1_n62:
                 self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_discharge_1_n62)
             else:
                 self.SoC_1_n62 = 0
 
         pos_LuT = self.pos_LuT(self.SoC_1_n62)
-        self.V_OC_uV_n8 = self.cfg.LuT_VOC_uV_n8[pos_LuT]  # TODO: is interpolation possible?
-        R_series_kOhm_n32 = self.cfg.LuT_RSeries_kOhm_n32[pos_LuT]
+        self.V_OC_uV_n8 = self.pru.LuT_VOC_uV_n8[pos_LuT]  # TODO: is interpolation possible?
+        R_series_kOhm_n32 = self.pru.LuT_RSeries_kOhm_n32[pos_LuT]
 
         if I_charge_nA_n4 >= 0:
             V_gain_uV_n8 = u32s(u64s(I_charge_nA_n4 * R_series_kOhm_n32) // 2**28)

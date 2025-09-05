@@ -405,7 +405,10 @@ class ModelShpCap(ModelStorage):
         SoC_init: soc_t | None = None,
         dt_s: PositiveFloat = TIMESTEP_s_DEFAULT,
     ) -> None:
-        self.dt_s = dt_s  # not used in step, just for simulator
+        # not used in step, just for simulator
+        self.dt_s = dt_s
+        self.cfg = cfg
+        # pre-calculate constants
         self.V_intermediate_max_V = cfg.calc_V_OC(1.0)
         C_intermediate_uF = 1e6 * cfg.q_As / self.V_intermediate_max_V
         C_cap_uF = max(C_intermediate_uF, 0.001)
