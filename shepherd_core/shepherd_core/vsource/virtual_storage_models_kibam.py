@@ -9,11 +9,12 @@ from pydantic import BaseModel
 from pydantic import PositiveFloat
 from pydantic import PositiveInt
 from pydantic import validate_call
-from virtual_storage_config import LuT_SIZE
-from virtual_storage_config import TIMESTEP_s_DEFAULT
-from virtual_storage_config import VirtualStorageConfig
-from virtual_storage_config import soc_t
 from virtual_storage_model import ModelStorage
+
+from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE
+from shepherd_core.data_models.content.virtual_storage_config import TIMESTEP_s_DEFAULT
+from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
+from shepherd_core.data_models.content.virtual_storage_config import soc_t
 
 
 class LUT(BaseModel):
@@ -396,7 +397,11 @@ class ModelKiBaMSimple(ModelStorage):
 
 
 class ModelShpCap(ModelStorage):
-    """A derived model from shepherd-codebase for comparing to KiBaM-capacitor."""
+    """A derived model from shepherd-codebase for comparing to KiBaM-capacitor.
+
+    This model was used for the intermediate storage capacitor until
+    the battery-model was implemented.
+    """
 
     @validate_call
     def __init__(

@@ -20,14 +20,14 @@ Expected deviations:
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage_config import LuT_SIZE
-from virtual_storage_config import LuT_SIZE_LOG
-from virtual_storage_config import StoragePRUConfig
-from virtual_storage_config import TIMESTEP_s_DEFAULT
-from virtual_storage_config import VirtualStorageConfig
-from virtual_storage_config import soc_t
 
 from shepherd_core import log
+from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE
+from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE_LOG
+from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
+from shepherd_core.data_models.content.virtual_storage_config import TIMESTEP_s_DEFAULT
+from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
+from shepherd_core.data_models.content.virtual_storage_config import soc_t
 
 
 class ModelStorage:

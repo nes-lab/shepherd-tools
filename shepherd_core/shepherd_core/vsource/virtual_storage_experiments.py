@@ -13,8 +13,8 @@ from datetime import timedelta
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage_config import VirtualStorageConfig
-from virtual_storage_config import soc_t
+from virtual_storage_model import ModelStorage
+from virtual_storage_model import VirtualStorageModel
 from virtual_storage_models_kibam import ModelKiBaM
 from virtual_storage_models_kibam import ModelKiBaMPlus
 from virtual_storage_models_kibam import ModelKiBaMSimple
@@ -22,8 +22,8 @@ from virtual_storage_models_kibam import ModelShpCap
 from virtual_storage_simulator import StorageSimulator
 
 from shepherd_core import log
-from shepherd_core.data_models.content.virtual_storage_model import ModelStorage
-from shepherd_core.data_models.content.virtual_storage_model import VirtualStorageModel
+from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
+from shepherd_core.data_models.content.virtual_storage_config import soc_t
 
 
 @validate_call

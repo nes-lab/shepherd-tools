@@ -1,4 +1,4 @@
-"""Playground to determine the best integer-math and fit constants."""
+"""Playground to determine the best integer-math and fit for constants."""
 
 from itertools import product
 
