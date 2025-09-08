@@ -1,0 +1,80 @@
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.139208+02:00
+  parameters:
+    name: Capacitor_10uF_6.3V
+    description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
+      R_leak = 9780.000 Ohm
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 6.299999999999999e-05
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+    R_leak_Ohm: 9780000.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.139250+02:00
+  parameters:
+    name: Capacitor_33uF_6.3V
+    description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
+      R_leak = 2963.636 Ohm
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.00020789999999999996
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+    R_leak_Ohm: 2963636.3636363638
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.139272+02:00
+  parameters:
+    name: Capacitor_47uF_6.3V
+    description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
+      R_leak = 2080.851 Ohm
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0002961
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+    R_leak_Ohm: 2080851.0638297873
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.139293+02:00
+  parameters:
+    name: Capacitor_100uF_6.3V
+    description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
+      R_leak = 978.000 Ohm
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0006299999999999999
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+    R_leak_Ohm: 978000.0

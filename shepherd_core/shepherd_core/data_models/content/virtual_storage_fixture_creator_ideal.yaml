@@ -1,0 +1,234 @@
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121465+02:00
+  parameters:
+    name: Capacitor_10uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 6.299999999999999e-05
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121514+02:00
+  parameters:
+    name: Capacitor_15uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 9.449999999999999e-05
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121541+02:00
+  parameters:
+    name: Capacitor_22uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.00013859999999999998
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121562+02:00
+  parameters:
+    name: Capacitor_33uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.00020789999999999996
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121582+02:00
+  parameters:
+    name: Capacitor_47uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0002961
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121600+02:00
+  parameters:
+    name: Capacitor_68uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0004284
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121619+02:00
+  parameters:
+    name: Capacitor_100uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0006299999999999999
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121637+02:00
+  parameters:
+    name: Capacitor_150uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0009449999999999999
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121655+02:00
+  parameters:
+    name: Capacitor_220uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0013859999999999999
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121673+02:00
+  parameters:
+    name: Capacitor_330uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.002079
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121691+02:00
+  parameters:
+    name: Capacitor_470uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0029609999999999997
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121709+02:00
+  parameters:
+    name: Capacitor_680uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.004284
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.121727+02:00
+  parameters:
+    name: Capacitor_1000uF_6.3V
+    description: Model of an ideal Capacitor (~Tantal)
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 0.0063
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.3
+    - 0.0
+    - 0.0

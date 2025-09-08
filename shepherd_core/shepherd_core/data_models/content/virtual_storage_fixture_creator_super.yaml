@@ -1,0 +1,81 @@
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.142375+02:00
+  parameters:
+    name: Maxwell BCAP0025 P300 X11
+    description: SuperCapacitor with typically 1000 hours / 500 k cycles (not modeled),
+      R_leak = 54.545 Ohm, R_serial = 0 Ohm
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 75.0
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 3.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.017
+    - 0.0
+    - 0.0
+    - 0.0
+    R_leak_Ohm: 54545.454545454544
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.142410+02:00
+  parameters:
+    name: Abracon ADCM-S06R0SA126RB
+    description: SuperCapacitor with typically 1000 hours / 500 k cycles (not modeled),
+      R_leak = 75.000 Ohm, R_serial = 0 Ohm
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 72.0
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 6.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.09
+    - 0.0
+    - 0.0
+    - 0.0
+    R_leak_Ohm: 75000.0
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.142434+02:00
+  parameters:
+    name: AVX SCMT32F755SRBA0
+    description: SuperCapacitor with typically 1000 hours / 500 k cycles (not modeled),
+      R_leak = 76.923 Ohm, R_serial = 0 Ohm
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 41.25
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 5.5
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.09
+    - 0.0
+    - 0.0
+    - 0.0
+    R_leak_Ohm: 76923.07692307692

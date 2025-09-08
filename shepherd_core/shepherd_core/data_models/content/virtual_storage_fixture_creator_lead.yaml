@@ -1,0 +1,44 @@
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-08 16:19:39.162301+02:00
+  parameters:
+    name: LEOCH_LP12-1.2AH
+    description: Model of a 12V lead acid battery with adjustable capacity
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    q_As: 4320.0
+    p_VOC:
+    - 5.429
+    - 117.5
+    - 11.32
+    - 2.706
+    - 2.04
+    - 1.026
+    p_Rs:
+    - 1.578
+    - 8.527
+    - 0.7808
+    - -1.887
+    - -2.404
+    - -0.649
+    p_RtS:
+    - 2.771
+    - 9.079
+    - 0.22
+    p_CtS:
+    - -2423.0
+    - 75.14
+    - 55.0
+    p_RtL:
+    - 2.771
+    - 9.079
+    - 0.218
+    p_CtL:
+    - -1240.0
+    - 9.571
+    - 3100.0
+    p_rce: 0.6
+    kdash: 0.0034
+    R_leak_Ohm: 145000.0
