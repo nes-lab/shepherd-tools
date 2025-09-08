@@ -214,7 +214,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         if name is not None:
             name_lmnts = [name]  # specific name overrules params
         if description is None:
-            description = "Model of an ideal Capacitor (~Tantal)"
+            description = "Model of an Capacitor with various effects"
         if R_leak_Ohm is not None:
             description += f", R_leak = {R_leak_Ohm / 1e3:.3f} Ohm"
         if R_series_Ohm is not None:

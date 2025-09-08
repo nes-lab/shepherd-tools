@@ -1,6 +1,6 @@
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.139208+02:00
+  created: 2025-09-08 16:28:00.900388+02:00
   parameters:
     name: Capacitor_10uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
@@ -20,7 +20,7 @@
     R_leak_Ohm: 9780000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.139250+02:00
+  created: 2025-09-08 16:28:00.900434+02:00
   parameters:
     name: Capacitor_33uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
@@ -40,7 +40,7 @@
     R_leak_Ohm: 2963636.3636363638
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.139272+02:00
+  created: 2025-09-08 16:28:00.900460+02:00
   parameters:
     name: Capacitor_47uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
@@ -60,7 +60,7 @@
     R_leak_Ohm: 2080851.0638297873
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.139293+02:00
+  created: 2025-09-08 16:28:00.900481+02:00
   parameters:
     name: Capacitor_100uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,

@@ -1,6 +1,6 @@
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145167+02:00
+  created: 2025-09-08 16:28:00.906529+02:00
   parameters:
     name: LPM1254
     description: LiPo-Coin-Cell 80mAh, 1 cell, w=12mm, d=5.4mm
@@ -44,7 +44,7 @@
     R_leak_Ohm: 698750.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145213+02:00
+  created: 2025-09-08 16:28:00.906576+02:00
   parameters:
     name: LPM1154
     description: LiPo-Coin-Cell 65mAh, 1 cell, w=11mm, d=5.4mm
@@ -88,7 +88,7 @@
     R_leak_Ohm: 860000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145249+02:00
+  created: 2025-09-08 16:28:00.906611+02:00
   parameters:
     name: LPM1054
     description: LiPo-Coin-Cell 50mAh, 1 cell, w=10mm, d=5.4mm
@@ -132,7 +132,7 @@
     R_leak_Ohm: 1118000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145280+02:00
+  created: 2025-09-08 16:28:00.906642+02:00
   parameters:
     name: LPM0954
     description: LiPo-Coin-Cell 40mAh, 1 cell, w=9mm, d=5.4mm
@@ -176,7 +176,7 @@
     R_leak_Ohm: 1397500.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145310+02:00
+  created: 2025-09-08 16:28:00.906673+02:00
   parameters:
     name: LPM0854
     description: LiPo-Coin-Cell 35mAh, 1 cell, w=8mm, d=5.4mm
@@ -220,7 +220,7 @@
     R_leak_Ohm: 1597142.857142857
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145346+02:00
+  created: 2025-09-08 16:28:00.906709+02:00
   parameters:
     name: LPM1240
     description: LiPo-Coin-Cell 55mAh, 1 cell, w=12mm, d=4.0mm
@@ -264,7 +264,7 @@
     R_leak_Ohm: 1016363.6363636364
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145376+02:00
+  created: 2025-09-08 16:28:00.906741+02:00
   parameters:
     name: LPM1140
     description: LiPo-Coin-Cell 45mAh, 1 cell, w=11mm, d=4.0mm
@@ -308,7 +308,7 @@
     R_leak_Ohm: 1242222.2222222222
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145406+02:00
+  created: 2025-09-08 16:28:00.906771+02:00
   parameters:
     name: LPM1040
     description: LiPo-Coin-Cell 35mAh, 1 cell, w=10mm, d=4.0mm
@@ -352,7 +352,7 @@
     R_leak_Ohm: 1597142.857142857
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145436+02:00
+  created: 2025-09-08 16:28:00.906801+02:00
   parameters:
     name: LPM0940
     description: LiPo-Coin-Cell 30mAh, 1 cell, w=9mm, d=4.0mm
@@ -396,7 +396,7 @@
     R_leak_Ohm: 1863333.3333333333
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145465+02:00
+  created: 2025-09-08 16:28:00.906831+02:00
   parameters:
     name: LPM0840
     description: LiPo-Coin-Cell 18mAh, 1 cell, w=8mm, d=4.0mm
@@ -440,7 +440,7 @@
     R_leak_Ohm: 3105555.5555555555
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145494+02:00
+  created: 2025-09-08 16:28:00.906861+02:00
   parameters:
     name: LP151020
     description: LiPo-Pouch 12mAh, 1 cell, 20x10x1.5mm
@@ -484,7 +484,7 @@
     R_leak_Ohm: 4658333.333333333
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145523+02:00
+  created: 2025-09-08 16:28:00.906891+02:00
   parameters:
     name: LP251212
     description: LiPo-Pouch 15mAh, 1 cell, 12x12x2.5mm
@@ -528,7 +528,7 @@
     R_leak_Ohm: 3726666.6666666665
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145552+02:00
+  created: 2025-09-08 16:28:00.906921+02:00
   parameters:
     name: LP500522
     description: LiPo-Pouch 20mAh, 1 cell, 22x05x5.0mm
@@ -572,7 +572,7 @@
     R_leak_Ohm: 2540909.090909091
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145582+02:00
+  created: 2025-09-08 16:28:00.906951+02:00
   parameters:
     name: LP271015
     description: LiPo-Pouch 22mAh, 1 cell, 15x10x2.7mm
@@ -616,7 +616,7 @@
     R_leak_Ohm: 2540909.090909091
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:19:39.145611+02:00
+  created: 2025-09-08 16:28:00.906981+02:00
   parameters:
     name: PL-383562
     description: Model of a LiPo battery (3 to 4.2 V) with adjustable capacity

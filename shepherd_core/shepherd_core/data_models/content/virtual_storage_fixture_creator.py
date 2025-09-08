@@ -20,19 +20,19 @@ dsc_super = "SuperCapacitor with typically 1000 hours / 500 k cycles (not modele
 # Ideal Capacitor, E6 row 10 to 1000 uF
 # typical voltage-ratings: 2.5, 4.0, 6.3, 10, 16, 20 V
 fixture_ideal: list[VirtualStorageConfig] = [
-    VirtualStorageConfig.capacitor(C_uF=10, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=15, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=22, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=33, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=47, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=68, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=150, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=220, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=330, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=470, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=680, V_rated=6.3),
-    VirtualStorageConfig.capacitor(C_uF=1000, V_rated=6.3),
+    VirtualStorageConfig.capacitor(C_uF=10, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=15, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=22, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=33, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=47, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=68, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=150, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=220, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=330, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=470, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=680, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=1000, V_rated=6.3, description=dsc_ideal),
 ]
 
 # Tantal Capacitors, E6 row
