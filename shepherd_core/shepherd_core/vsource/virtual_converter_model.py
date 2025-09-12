@@ -19,6 +19,9 @@ import math
 from shepherd_core.data_models import CalibrationEmulator
 from shepherd_core.data_models.content.virtual_source import LUT_SIZE
 from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
+
+from .virtual_storage_model import VirtualStorageModelPRU
 
 
 class PruCalibration:
@@ -59,13 +62,16 @@ class PruCalibration:
 class VirtualConverterModel:
     """Ported python version of the pru vCnv."""
 
-    def __init__(self, cfg: ConverterPRUConfig, cal: PruCalibration) -> None:
+    def __init__(
+        self, cfg: ConverterPRUConfig, cal: PruCalibration, storage_cfg: StoragePRUConfig
+    ) -> None:
         self._cal: PruCalibration = cal
         self._cfg: ConverterPRUConfig = cfg
 
+        self.storage = VirtualStorageModelPRU(storage_cfg)
+
         # simplifications for python
         self.R_input_kOhm = float(self._cfg.R_input_kOhm_n22) / 2**22
-        self.Constant_us_per_nF = float(self._cfg.Constant_us_per_nF_n28) / 2**28
 
         # boost internal state
         self.V_input_uV: float = 0.0
@@ -74,7 +80,7 @@ class VirtualConverterModel:
         self.interval_startup_disabled_drain_n: int = self._cfg.interval_startup_delay_drain_n
 
         # container for the stored energy
-        self.V_mid_uV: float = self._cfg.V_intermediate_init_uV
+        self.V_mid_uV: float = self.storage.calc_V_OC_uV()
 
         # buck internal state
         self.enable_storage: bool = (int(self._cfg.converter_mode) & 0b0001) > 0
@@ -83,19 +89,19 @@ class VirtualConverterModel:
         self.enable_log_mid: bool = (int(self._cfg.converter_mode) & 0b1000) > 0
         # back-channel to hrv
         self.feedback_to_hrv: bool = (int(self._cfg.converter_mode) & 0b1_0000) > 0
-        self.V_input_request_uV: int = self._cfg.V_intermediate_init_uV
+        self.V_input_request_uV: int = int(self.V_mid_uV)
 
         self.V_out_dac_uV: float = self._cfg.V_output_uV
         self.V_out_dac_raw: int = self._cal.conv_uV_to_dac_raw(self._cfg.V_output_uV)
         self.power_good: bool = True
 
         # prepare hysteresis-thresholds
-        self.dV_enable_output_uV: float = self._cfg.dV_enable_output_uV
-        self.V_enable_output_threshold_uV: float = self._cfg.V_enable_output_threshold_uV
-        self.V_disable_output_threshold_uV: float = self._cfg.V_disable_output_threshold_uV
+        self.dV_mid_enable_output_uV: float = self._cfg.dV_mid_enable_output_uV
+        self.V_mid_enable_output_threshold_uV: float = self._cfg.V_mid_enable_output_threshold_uV
+        self.V_mid_disable_output_threshold_uV: float = self._cfg.V_mid_disable_output_threshold_uV
 
-        self.V_enable_output_threshold_uV = max(
-            self.dV_enable_output_uV, self.V_enable_output_threshold_uV
+        self.V_mid_enable_output_threshold_uV = max(
+            self.dV_mid_enable_output_uV, self.V_mid_enable_output_threshold_uV
         )
 
         # pulled from update_states_and_output() due to easier static init
@@ -125,7 +131,7 @@ class VirtualConverterModel:
                 input_voltage_uV = 0.0
             # TODO: vdrop in case of v_input > v_storage (non-boost)
         elif self.enable_storage:
-            # no boost, but cap, for ie. diode+cap (+resistor)
+            # no boost, but cap, for i.e. diode+cap (+resistor)
             V_diff_uV = (
                 (input_voltage_uV - self.V_mid_uV) if (input_voltage_uV >= self.V_mid_uV) else 0
             )
@@ -162,14 +168,14 @@ class VirtualConverterModel:
         current_adc_raw = max(0, current_adc_raw)
         current_adc_raw = min((2**18) - 1, current_adc_raw)
 
-        P_leak_fW = self.V_mid_uV * self._cfg.I_intermediate_leak_nA
+        # TODO: remove P_leak in C-Code
         I_out_nA = self._cal.conv_adc_raw_to_nA(current_adc_raw)
         if self.enable_buck:  # noqa: SIM108
             eta_inv_out = self.get_output_inv_efficiency(I_out_nA)
         else:
             eta_inv_out = 1.0
 
-        self.P_out_fW = eta_inv_out * self.V_out_dac_uV * I_out_nA + P_leak_fW
+        self.P_out_fW = eta_inv_out * self.V_out_dac_uV * I_out_nA
 
         if self.interval_startup_disabled_drain_n > 0:
             self.interval_startup_disabled_drain_n -= 1
@@ -177,16 +183,9 @@ class VirtualConverterModel:
 
         return round(self.P_out_fW)  # Python-specific, added for easier testing
 
-    # TODO: add range-checks for add, sub Ops
     def update_cap_storage(self) -> int:
-        # TODO: this calculation is wrong for everything beside boost-cnv
         if self.enable_storage:
-            V_mid_prot_uV = max(1.0, self.V_mid_uV)
-            P_sum_fW = self.P_inp_fW - self.P_out_fW
-            I_mid_nA = P_sum_fW / V_mid_prot_uV
-            dV_mid_uV = I_mid_nA * self.Constant_us_per_nF
-            self.V_mid_uV += dV_mid_uV
-
+            self.V_mid_uV = self.storage.step(self.P_inp_fW - self.P_out_fW)
         self.V_mid_uV = min(self.V_mid_uV, self._cfg.V_intermediate_max_uV)
         self.V_mid_uV = max(self.V_mid_uV, 1)
         return round(self.V_mid_uV)  # Python-specific, added for easier testing
@@ -200,11 +199,11 @@ class VirtualConverterModel:
         if check_thresholds:
             self.sample_count = 0
             if self.is_outputting:
-                if V_mid_uV_now < self.V_disable_output_threshold_uV:
+                if V_mid_uV_now < self.V_mid_disable_output_threshold_uV:
                     self.is_outputting = False
-            elif V_mid_uV_now >= self.V_enable_output_threshold_uV:
+            elif V_mid_uV_now >= self.V_mid_enable_output_threshold_uV:
                 self.is_outputting = True
-                self.V_mid_uV -= self.dV_enable_output_uV
+                self.V_mid_uV -= self.dV_mid_enable_output_uV
 
         if check_thresholds or self._cfg.immediate_pwr_good_signal:
             # generate power-good-signal

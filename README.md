@@ -129,7 +129,7 @@ coverage html
   - shepherd-dataset must be explained more clearly
   - common time-vector for all? or can hdf5 compress 5 copies of the same vector? TEST
 - clearer rules on how delta-time can be generated
-  - generally: t[1:] - t[:-1], but last sample is missing (fill with min or mean dt)
+  - generally: t[1:] - t[:-1], but last sample is missing (fill with minimum or mean dt)
   - more advanced integration methods (trapezoidal, polynomial, ..)
   - resulting energy-vectors can be base for more precise upsampling-routines
 - more generalized hdf5-structure-explorer (yaml-export) to allow opening all variants

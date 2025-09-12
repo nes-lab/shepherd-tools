@@ -1,12 +1,14 @@
 """Simulator for the virtual storage models / algorithms."""
 
 from collections.abc import Callable
+from pathlib import Path
 
 import numpy as np
 from matplotlib import pyplot as plt
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage_model import ModelStorage
+
+from .virtual_storage_model import ModelStorage
 
 
 class StorageSimulator:
@@ -89,6 +91,6 @@ class StorageSimulator:
                 )
             axs[3 + offset].plot(self.t_s, self.I_input[i], label=type(model).__name__, alpha=0.7)
         axs[0].legend()
-        plt.savefig(title + ".png")
+        plt.savefig(Path(__file__).parent / f"{title}.png")
         plt.close(fig)
         plt.clf()

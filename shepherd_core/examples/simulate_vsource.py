@@ -17,11 +17,21 @@ E_out = 14.962 mWs -> BQ25504s
 E_out = 14.397 mWs -> BQ25570
 E_out = 14.232 mWs -> BQ25570s
 
+New Storage
+E_out = 220.001 mWs -> direct
+E_out = 11.352 mWs -> diode+capacitor
+E_out = 14.629 mWs -> diode+resistor+capacitor
+E_out = 0.000 mWs -> BQ25504
+E_out = 0.000 mWs -> BQ25504s
+E_out = 0.000 mWs -> BQ25570
+E_out = 0.000 mWs -> BQ25570s
+
 """
 
 from pathlib import Path
 
 from shepherd_core.data_models import VirtualSourceConfig
+from shepherd_core.data_models import VirtualStorageConfig
 from shepherd_core.vsource import ResistiveTarget
 from shepherd_core.vsource import simulate_source
 from shepherd_data import Reader
@@ -48,10 +58,12 @@ for src_name in src_list:
         config=VirtualSourceConfig(
             name=src_name,
             C_output_uF=0,
-            V_intermediate_enable_threshold_mV=1,
-            V_intermediate_disable_threshold_mV=0,
-            # jogging-dataset has max VOC of ~1.6 V -> lower set-point for non-boost
-            C_intermediate_uF=100 if "direct" not in src_name else 0,
+            V_intermediate_enable_output_threshold_mV=1,
+            V_intermediate_disable_output_threshold_mV=0,
+            # jogging-dataset has maximum VOC of ~1.6 V -> lower set-point for non-boost
+            storage=VirtualStorageConfig.capacitor(C_uF=100, V_rated=10.0)
+            if "direct" not in src_name
+            else None,
             V_pwr_good_enable_threshold_mV=1300 if "dio" in src_name else 2800,
             V_pwr_good_disable_threshold_mV=1000 if "dio" in src_name else 2400,
             V_input_drop_mV=150 if "dio" in src_name else 0,

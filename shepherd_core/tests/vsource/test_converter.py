@@ -27,7 +27,7 @@ def src_model(
     window_size: int | None = None,
     voltage_step_V: float | None = None,
 ) -> VirtualSourceModel:
-    src_config = VirtualSourceConfig(name=name, V_intermediate_init_mV=2000)
+    src_config = VirtualSourceConfig(name=name)
     cal_emu = CalibrationEmulator()
     return VirtualSourceModel(
         src_config,
@@ -40,7 +40,8 @@ def src_model(
 
 
 def c_leak_fWs(src: VirtualSourceModel, iterations: int) -> float:
-    return iterations * src.cnv.V_mid_uV * src.cfg_src.I_intermediate_leak_nA
+    V_OC_V = 1e-6 * (src.storage.V_OC_uV_n8 / 2**8)
+    return iterations * 1e15 * V_OC_V * V_OC_V / src.storage.cfg.R_leak_Ohm
 
 
 @pytest.mark.parametrize("src_name", src_list)

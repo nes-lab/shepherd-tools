@@ -1,14 +1,19 @@
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891327+02:00
+  created: 2025-09-11 19:47:04.417937+02:00
   parameters:
+    id: 658115076921762514
     name: AVX TAJB106x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 19600.000 Ohm, R_serial = 3 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396525
+    updated_last: 2025-09-11 19:47:04.396525
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 6.299999999999999e-05
     p_VOC:
     - 0.0
@@ -24,18 +29,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 19600000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891377+02:00
+  created: 2025-09-11 19:47:04.417991+02:00
   parameters:
+    id: 717348422201116595
     name: AVX TAJB156x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 13066.667 Ohm, R_serial = 2 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396569
+    updated_last: 2025-09-11 19:47:04.396569
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 9.449999999999999e-05
     p_VOC:
     - 0.0
@@ -51,18 +79,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 13066666.666666666
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891402+02:00
+  created: 2025-09-11 19:47:04.418033+02:00
   parameters:
+    id: 259188812671774089
     name: AVX TAJB226x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 8909.091 Ohm, R_serial = 2 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396610
+    updated_last: 2025-09-11 19:47:04.396611
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.00013859999999999998
     p_VOC:
     - 0.0
@@ -78,18 +129,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 8909090.909090908
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891425+02:00
+  created: 2025-09-11 19:47:04.418067+02:00
   parameters:
+    id: 405126271430376935
     name: AVX TAJB336x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 5939.394 Ohm, R_serial = 2 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396648
+    updated_last: 2025-09-11 19:47:04.396649
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.00020789999999999996
     p_VOC:
     - 0.0
@@ -105,18 +179,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 5939393.939393939
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891448+02:00
+  created: 2025-09-11 19:47:04.418098+02:00
   parameters:
+    id: 438724114000062422
     name: AVX TAJB476x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 4170.213 Ohm, R_serial = 2 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396689
+    updated_last: 2025-09-11 19:47:04.396689
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0002961
     p_VOC:
     - 0.0
@@ -132,18 +229,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 4170212.765957447
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891470+02:00
+  created: 2025-09-11 19:47:04.418129+02:00
   parameters:
+    id: 1009176866204862382
     name: AVX TAJB686x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 2882.353 Ohm, R_serial = 1 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396727
+    updated_last: 2025-09-11 19:47:04.396727
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0004284
     p_VOC:
     - 0.0
@@ -159,18 +279,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 2882352.9411764704
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891492+02:00
+  created: 2025-09-11 19:47:04.418164+02:00
   parameters:
+    id: 729681208823285712
     name: AVX TAJB107x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 1960.000 Ohm, R_serial = 2 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396770
+    updated_last: 2025-09-11 19:47:04.396770
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0006299999999999999
     p_VOC:
     - 0.0
@@ -186,18 +329,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 1960000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891515+02:00
+  created: 2025-09-11 19:47:04.418195+02:00
   parameters:
+    id: 978798746708642073
     name: AVX TAJC157x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 1306.667 Ohm, R_serial = 1 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396807
+    updated_last: 2025-09-11 19:47:04.396807
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0009449999999999999
     p_VOC:
     - 0.0
@@ -213,18 +379,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 1306666.6666666667
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891536+02:00
+  created: 2025-09-11 19:47:04.418225+02:00
   parameters:
+    id: 403726628035571227
     name: AVX TAJC227x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 890.909 Ohm, R_serial = 1 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396844
+    updated_last: 2025-09-11 19:47:04.396845
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0013859999999999999
     p_VOC:
     - 0.0
@@ -240,18 +429,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 890909.0909090909
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891558+02:00
+  created: 2025-09-11 19:47:04.418255+02:00
   parameters:
+    id: 9706982809086515
     name: AVX TAJC337x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 593.939 Ohm, R_serial = 0 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396886
+    updated_last: 2025-09-11 19:47:04.396886
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.002079
     p_VOC:
     - 0.0
@@ -267,18 +479,41 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 593939.3939393939
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.891579+02:00
+  created: 2025-09-11 19:47:04.418284+02:00
   parameters:
+    id: 472122620116510153
     name: AVX TAJD477x006
     description: Tantal-Capacitor similar to ideal Model, but with R_leak & R_series,
       R_leak = 417.021 Ohm, R_serial = 0 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396929
+    updated_last: 2025-09-11 19:47:04.396929
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0029609999999999997
     p_VOC:
     - 0.0
@@ -294,4 +529,22 @@
     - 0.0
     - 0.0
     - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 417021.27659574465

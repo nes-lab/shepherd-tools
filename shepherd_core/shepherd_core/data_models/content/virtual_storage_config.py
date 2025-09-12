@@ -50,8 +50,10 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1210&context=electricalengineeringfacpub
     """
 
-    SoC_init: soc_t = 1.0
-    """ ⤷ State of Charge that is available when emulation starts."""
+    SoC_init: soc_t = 0.8
+    """ ⤷ State of Charge that is available when emulation starts.
+    Allows a proper / fast startup.
+    """
 
     q_As: PositiveFloat
     """ ⤷ Capacity (electrical charge) of Storage."""
@@ -204,7 +206,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         cls,
         C_uF: PositiveFloat,
         V_rated: PositiveFloat,
-        SoC_init: soc_t = 1.0,
+        SoC_init: soc_t | None = None,
         R_series_Ohm: NonNegativeFloat | None = None,
         R_leak_Ohm: PositiveFloat | None = None,
         name: str | None = None,
@@ -391,13 +393,15 @@ class StoragePRUConfig(ShpModel):
     @validate_call
     def from_vstorage(
         cls,
-        data: VirtualStorageConfig,
+        data: VirtualStorageConfig | None,
         dt_s: PositiveFloat = TIMESTEP_s_DEFAULT,
         *,
         optimize_clamp: bool = True,
     ) -> Self:
         x_off = 0.5 if optimize_clamp else 0.0
         SoC_min = 1.0 / LuT_SIZE
+        if data is None:
+            data = VirtualStorageConfig.capacitor(C_uF=100, V_rated=10)
         V_OC_LuT = [data.calc_V_OC(SoC_min * (x + x_off)) for x in range(LuT_SIZE)]
         R_series_LuT = [data.calc_R_series(SoC_min * (x + x_off)) for x in range(LuT_SIZE)]
         Constant_1_per_A: float = dt_s / data.q_As

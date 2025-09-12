@@ -102,6 +102,7 @@ class ModelKiBaM(ModelStorage):
         SoC_init: soc_t | None = None,
         dt_s: PositiveFloat = TIMESTEP_s_DEFAULT,
     ) -> None:
+        # metadata for simulator
         self.cfg: VirtualStorageConfig = cfg
         self.dt_s: float = dt_s
         # state
@@ -218,6 +219,7 @@ class ModelKiBaMPlus(ModelStorage):
         SoC_init: soc_t | None = None,
         dt_s: PositiveFloat = TIMESTEP_s_DEFAULT,
     ) -> None:
+        # metadata for simulator
         self.cfg: VirtualStorageConfig = cfg
         self.dt_s: float = dt_s
         # state
@@ -342,7 +344,10 @@ class ModelKiBaMSimple(ModelStorage):
         optimize_clamp: bool = False,
         interpolate: bool = False,
     ) -> None:
-        self.dt_s = dt_s  # not used in step, just for simulator
+        # metadata for simulator
+        self.cfg: VirtualStorageConfig = cfg
+        self.dt_s = dt_s
+        # pre-calculate constants
         self.V_OC_LuT: LUT = LUT.generate(
             1.0 / LuT_SIZE,
             y_fn=cfg.calc_V_OC,
@@ -410,15 +415,15 @@ class ModelShpCap(ModelStorage):
         SoC_init: soc_t | None = None,
         dt_s: PositiveFloat = TIMESTEP_s_DEFAULT,
     ) -> None:
-        # not used in step, just for simulator
+        # metadata for simulator
+        self.cfg: VirtualStorageConfig = cfg
         self.dt_s = dt_s
-        self.cfg = cfg
         # pre-calculate constants
-        self.V_intermediate_max_V = cfg.calc_V_OC(1.0)
-        C_intermediate_uF = 1e6 * cfg.q_As / self.V_intermediate_max_V
-        C_cap_uF = max(C_intermediate_uF, 0.001)
+        self.V_mid_max_V = cfg.calc_V_OC(1.0)
+        C_mid_uF = 1e6 * cfg.q_As / self.V_mid_max_V
+        C_mid_uF = max(C_mid_uF, 0.001)
         SAMPLERATE_SPS = 1.0 / dt_s
-        self.Constant_s_per_F = 1e6 / (C_cap_uF * SAMPLERATE_SPS)
+        self.Constant_s_per_F = 1e6 / (C_mid_uF * SAMPLERATE_SPS)
         self.Constant_1_per_Ohm: float = 1.0 / cfg.R_leak_Ohm
         # state
         SoC_init = SoC_init if SoC_init is not None else cfg.SoC_init
@@ -431,7 +436,7 @@ class ModelShpCap(ModelStorage):
         dV_mid_V = I_mid_A * self.Constant_s_per_F
         self.V_mid_V += dV_mid_V
 
-        self.V_mid_V = min(self.V_mid_V, self.V_intermediate_max_V)
+        self.V_mid_V = min(self.V_mid_V, self.V_mid_max_V)
         self.V_mid_V = max(self.V_mid_V, sys.float_info.min)
-        SoC = self.V_mid_V / self.V_intermediate_max_V
+        SoC = self.V_mid_V / self.V_mid_max_V
         return self.V_mid_V, self.V_mid_V, SoC, SoC

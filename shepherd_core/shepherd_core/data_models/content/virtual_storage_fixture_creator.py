@@ -10,8 +10,6 @@ from shepherd_core import local_now
 from shepherd_core.data_models import Wrapper
 from shepherd_core.logger import log
 
-# TODO: move to extra/gen_xyz
-
 dsc_ideal = "Model of an ideal Capacitor (true to spec, no losses)"
 dsc_tantal = "Tantal-Capacitor similar to ideal Model, but with R_leak & R_series"
 dsc_mlcc = "MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect"
@@ -19,20 +17,9 @@ dsc_super = "SuperCapacitor with typically 1000 hours / 500 k cycles (not modele
 
 # Ideal Capacitor, E6 row 10 to 1000 uF
 # typical voltage-ratings: 2.5, 4.0, 6.3, 10, 16, 20 V
+E6: list[int] = [10, 15, 22, 33, 47, 68, 100, 150, 220, 330, 470, 680, 1000]
 fixture_ideal: list[VirtualStorageConfig] = [
-    VirtualStorageConfig.capacitor(C_uF=10, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=15, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=22, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=33, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=47, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=68, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=150, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=220, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=330, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=470, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=680, V_rated=6.3, description=dsc_ideal),
-    VirtualStorageConfig.capacitor(C_uF=1000, V_rated=6.3, description=dsc_ideal),
+    VirtualStorageConfig.capacitor(C_uF=_v, V_rated=10.0, description=dsc_ideal) for _v in E6
 ]
 
 # Tantal Capacitors, E6 row
@@ -261,10 +248,12 @@ if __name__ == "__main__":
     for name, fixture in fixtures.items():
         file_path = path_db / f"virtual_storage_fixture_{name}.yaml"
         if file_path.exists():
-            log.warning("File %s already exists! -> will skip", file_path)
+            log.warning("File %s already exists! -> will skip", file_path.name)
         models_wrap = []
         for model in fixture:
-            model_dict = model.model_dump(exclude_unset=True, exclude_defaults=True)
+            model_dict = (
+                model.model_dump()
+            )  # exclude_unset=True, exclude_defaults=True, include={"id",})
             model_wrap = Wrapper(
                 datatype=type(model).__name__,
                 created=local_now(),

@@ -1,14 +1,19 @@
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.900388+02:00
+  created: 2025-09-11 19:47:04.433082+02:00
   parameters:
+    id: 419607010409477957
     name: Capacitor_10uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
       R_leak = 9780.000 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.396971
+    updated_last: 2025-09-11 19:47:04.396972
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 6.299999999999999e-05
     p_VOC:
     - 0.0
@@ -17,18 +22,48 @@
     - 6.3
     - 0.0
     - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 9780000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.900434+02:00
+  created: 2025-09-11 19:47:04.433129+02:00
   parameters:
+    id: 1124861888666195714
     name: Capacitor_33uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
       R_leak = 2963.636 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.399112
+    updated_last: 2025-09-11 19:47:04.399113
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.00020789999999999996
     p_VOC:
     - 0.0
@@ -37,18 +72,48 @@
     - 6.3
     - 0.0
     - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 2963636.3636363638
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.900460+02:00
+  created: 2025-09-11 19:47:04.433168+02:00
   parameters:
+    id: 660779979738076740
     name: Capacitor_47uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
       R_leak = 2080.851 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.399155
+    updated_last: 2025-09-11 19:47:04.399156
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0002961
     p_VOC:
     - 0.0
@@ -57,18 +122,48 @@
     - 6.3
     - 0.0
     - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 2080851.0638297873
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.900481+02:00
+  created: 2025-09-11 19:47:04.433200+02:00
   parameters:
+    id: 51678003530735820
     name: Capacitor_100uF_6.3V
     description: MLCC-Capacitor with R_leak & R_series and planned DC-Bias-Effect,
       R_leak = 978.000 Ohm
+    comment: null
+    created: 2025-09-11 19:47:04.399199
+    updated_last: 2025-09-11 19:47:04.399200
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 0.0006299999999999999
     p_VOC:
     - 0.0
@@ -77,4 +172,29 @@
     - 6.3
     - 0.0
     - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
     R_leak_Ohm: 978000.0

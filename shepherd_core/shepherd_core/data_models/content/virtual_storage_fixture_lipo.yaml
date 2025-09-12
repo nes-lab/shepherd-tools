@@ -1,13 +1,18 @@
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906529+02:00
+  created: 2025-09-11 19:47:04.443105+02:00
   parameters:
+    id: 475921601246480694
     name: LPM1254
     description: LiPo-Coin-Cell 80mAh, 1 cell, w=12mm, d=5.4mm
+    comment: null
+    created: 2025-09-11 19:47:04.399367
+    updated_last: 2025-09-11 19:47:04.399368
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 288.0
     p_VOC:
     - -0.852
@@ -44,14 +49,19 @@
     R_leak_Ohm: 698750.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906576+02:00
+  created: 2025-09-11 19:47:04.443149+02:00
   parameters:
+    id: 954696946833213361
     name: LPM1154
     description: LiPo-Coin-Cell 65mAh, 1 cell, w=11mm, d=5.4mm
+    comment: null
+    created: 2025-09-11 19:47:04.399398
+    updated_last: 2025-09-11 19:47:04.399398
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 234.0
     p_VOC:
     - -0.852
@@ -88,14 +98,19 @@
     R_leak_Ohm: 860000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906611+02:00
+  created: 2025-09-11 19:47:04.443183+02:00
   parameters:
+    id: 885133183825959385
     name: LPM1054
     description: LiPo-Coin-Cell 50mAh, 1 cell, w=10mm, d=5.4mm
+    comment: null
+    created: 2025-09-11 19:47:04.399424
+    updated_last: 2025-09-11 19:47:04.399425
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 180.0
     p_VOC:
     - -0.852
@@ -132,14 +147,19 @@
     R_leak_Ohm: 1118000.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906642+02:00
+  created: 2025-09-11 19:47:04.443214+02:00
   parameters:
+    id: 114340516224554833
     name: LPM0954
     description: LiPo-Coin-Cell 40mAh, 1 cell, w=9mm, d=5.4mm
+    comment: null
+    created: 2025-09-11 19:47:04.399452
+    updated_last: 2025-09-11 19:47:04.399452
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 144.0
     p_VOC:
     - -0.852
@@ -176,14 +196,19 @@
     R_leak_Ohm: 1397500.0
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906673+02:00
+  created: 2025-09-11 19:47:04.443245+02:00
   parameters:
+    id: 72431925024878562
     name: LPM0854
     description: LiPo-Coin-Cell 35mAh, 1 cell, w=8mm, d=5.4mm
+    comment: null
+    created: 2025-09-11 19:47:04.399478
+    updated_last: 2025-09-11 19:47:04.399478
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 126.0
     p_VOC:
     - -0.852
@@ -220,14 +245,19 @@
     R_leak_Ohm: 1597142.857142857
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906709+02:00
+  created: 2025-09-11 19:47:04.443275+02:00
   parameters:
+    id: 599623190428960198
     name: LPM1240
     description: LiPo-Coin-Cell 55mAh, 1 cell, w=12mm, d=4.0mm
+    comment: null
+    created: 2025-09-11 19:47:04.399503
+    updated_last: 2025-09-11 19:47:04.399504
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 198.0
     p_VOC:
     - -0.852
@@ -264,14 +294,19 @@
     R_leak_Ohm: 1016363.6363636364
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906741+02:00
+  created: 2025-09-11 19:47:04.443306+02:00
   parameters:
+    id: 499942680260964806
     name: LPM1140
     description: LiPo-Coin-Cell 45mAh, 1 cell, w=11mm, d=4.0mm
+    comment: null
+    created: 2025-09-11 19:47:04.399531
+    updated_last: 2025-09-11 19:47:04.399531
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 162.0
     p_VOC:
     - -0.852
@@ -308,14 +343,19 @@
     R_leak_Ohm: 1242222.2222222222
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906771+02:00
+  created: 2025-09-11 19:47:04.443336+02:00
   parameters:
+    id: 767805549898634264
     name: LPM1040
     description: LiPo-Coin-Cell 35mAh, 1 cell, w=10mm, d=4.0mm
+    comment: null
+    created: 2025-09-11 19:47:04.399558
+    updated_last: 2025-09-11 19:47:04.399558
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 126.0
     p_VOC:
     - -0.852
@@ -352,14 +392,19 @@
     R_leak_Ohm: 1597142.857142857
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906801+02:00
+  created: 2025-09-11 19:47:04.443366+02:00
   parameters:
+    id: 483239736020435752
     name: LPM0940
     description: LiPo-Coin-Cell 30mAh, 1 cell, w=9mm, d=4.0mm
+    comment: null
+    created: 2025-09-11 19:47:04.399583
+    updated_last: 2025-09-11 19:47:04.399584
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 108.0
     p_VOC:
     - -0.852
@@ -396,14 +441,19 @@
     R_leak_Ohm: 1863333.3333333333
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906831+02:00
+  created: 2025-09-11 19:47:04.443396+02:00
   parameters:
+    id: 380294983109469856
     name: LPM0840
     description: LiPo-Coin-Cell 18mAh, 1 cell, w=8mm, d=4.0mm
+    comment: null
+    created: 2025-09-11 19:47:04.399610
+    updated_last: 2025-09-11 19:47:04.399610
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 64.8
     p_VOC:
     - -0.852
@@ -440,14 +490,19 @@
     R_leak_Ohm: 3105555.5555555555
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906861+02:00
+  created: 2025-09-11 19:47:04.443426+02:00
   parameters:
+    id: 1025978342863442293
     name: LP151020
     description: LiPo-Pouch 12mAh, 1 cell, 20x10x1.5mm
+    comment: null
+    created: 2025-09-11 19:47:04.399635
+    updated_last: 2025-09-11 19:47:04.399636
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 43.2
     p_VOC:
     - -0.852
@@ -484,14 +539,19 @@
     R_leak_Ohm: 4658333.333333333
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906891+02:00
+  created: 2025-09-11 19:47:04.443456+02:00
   parameters:
+    id: 901680171623605362
     name: LP251212
     description: LiPo-Pouch 15mAh, 1 cell, 12x12x2.5mm
+    comment: null
+    created: 2025-09-11 19:47:04.399662
+    updated_last: 2025-09-11 19:47:04.399663
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 54.0
     p_VOC:
     - -0.852
@@ -528,14 +588,19 @@
     R_leak_Ohm: 3726666.6666666665
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906921+02:00
+  created: 2025-09-11 19:47:04.443485+02:00
   parameters:
+    id: 127063249884804865
     name: LP500522
     description: LiPo-Pouch 20mAh, 1 cell, 22x05x5.0mm
+    comment: null
+    created: 2025-09-11 19:47:04.399687
+    updated_last: 2025-09-11 19:47:04.399688
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 79.2
     p_VOC:
     - -0.852
@@ -572,14 +637,19 @@
     R_leak_Ohm: 2540909.090909091
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906951+02:00
+  created: 2025-09-11 19:47:04.443514+02:00
   parameters:
+    id: 777880167585570972
     name: LP271015
     description: LiPo-Pouch 22mAh, 1 cell, 15x10x2.7mm
+    comment: null
+    created: 2025-09-11 19:47:04.399714
+    updated_last: 2025-09-11 19:47:04.399714
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 79.2
     p_VOC:
     - -0.852
@@ -616,14 +686,19 @@
     R_leak_Ohm: 2540909.090909091
 - datatype: VirtualStorageConfig
   comment: created by script 'virtual_storage_fixture_creator.py'
-  created: 2025-09-08 16:28:00.906981+02:00
+  created: 2025-09-11 19:47:04.443544+02:00
   parameters:
+    id: 306072558856130513
     name: PL-383562
     description: Model of a LiPo battery (3 to 4.2 V) with adjustable capacity
+    comment: null
+    created: 2025-09-11 19:47:04.399744
+    updated_last: 2025-09-11 19:47:04.399744
     owner: NES Lab
     group: NES Lab
     visible2group: true
     visible2all: true
+    SoC_init: 0.8
     q_As: 3096.0
     p_VOC:
     - -0.852

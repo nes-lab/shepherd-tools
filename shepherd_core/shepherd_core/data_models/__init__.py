@@ -24,6 +24,7 @@ from .content.firmware import Firmware
 from .content.firmware import FirmwareDType
 from .content.virtual_harvester import VirtualHarvesterConfig
 from .content.virtual_source import VirtualSourceConfig
+from .content.virtual_storage_config import VirtualStorageConfig
 from .experiment.experiment import Experiment
 from .experiment.observer_features import GpioActuation
 from .experiment.observer_features import GpioEvent
@@ -58,5 +59,6 @@ __all__ = [
     "UartLogging",
     "VirtualHarvesterConfig",
     "VirtualSourceConfig",
+    "VirtualStorageConfig",
     "Wrapper",
 ]
