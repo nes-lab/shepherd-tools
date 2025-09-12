@@ -9,12 +9,13 @@ from pydantic import BaseModel
 from pydantic import PositiveFloat
 from pydantic import PositiveInt
 from pydantic import validate_call
-from virtual_storage_model import ModelStorage
 
 from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE
 from shepherd_core.data_models.content.virtual_storage_config import TIMESTEP_s_DEFAULT
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.content.virtual_storage_config import soc_t
+
+from .virtual_storage_model import ModelStorage
 
 
 class LUT(BaseModel):

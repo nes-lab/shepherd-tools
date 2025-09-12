@@ -58,7 +58,7 @@ class StorageSimulator:
                 self.SoC_eff[i, j] = SoC_eff
 
     @validate_call
-    def plot(self, title: str, *, plot_delta_v: bool = False) -> None:
+    def plot(self, path: Path, title: str, *, plot_delta_v: bool = False) -> None:
         offset = 1 if plot_delta_v else 0
         fig, axs = plt.subplots(4 + offset, 1, sharex="all", figsize=(10, 2 * 6), layout="tight")
         axs[0].set_title(title)
@@ -91,6 +91,6 @@ class StorageSimulator:
                 )
             axs[3 + offset].plot(self.t_s, self.I_input[i], label=type(model).__name__, alpha=0.7)
         axs[0].legend()
-        plt.savefig(Path(__file__).parent / f"{title}.png")
+        plt.savefig(path / f"{title}.png")
         plt.close(fig)
         plt.clf()

@@ -10,20 +10,23 @@ Some general Notes:
 
 import multiprocessing
 from datetime import timedelta
+from pathlib import Path
 
 from pydantic import PositiveFloat
 from pydantic import validate_call
-from virtual_storage_model import ModelStorage
-from virtual_storage_model import VirtualStorageModel
-from virtual_storage_models_kibam import ModelKiBaM
-from virtual_storage_models_kibam import ModelKiBaMPlus
-from virtual_storage_models_kibam import ModelKiBaMSimple
-from virtual_storage_models_kibam import ModelShpCap
-from virtual_storage_simulator import StorageSimulator
 
 from shepherd_core import log
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.content.virtual_storage_config import soc_t
+from shepherd_core.vsource.virtual_storage_model import ModelStorage
+from shepherd_core.vsource.virtual_storage_model import VirtualStorageModel
+from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaM
+from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaMPlus
+from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaMSimple
+from shepherd_core.vsource.virtual_storage_models_kibam import ModelShpCap
+from shepherd_core.vsource.virtual_storage_simulator import StorageSimulator
+
+path_here = Path(__file__).parent
 
 
 @validate_call
@@ -100,7 +103,7 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
         return 0.1 + 0.15 * t_s / duration_s  # pru-model can handle +- 268 mA
 
     sim.run(fn=current_trace, duration_s=250)
-    sim.plot(f"XP {config.name}, current charge ramp (positive)")
+    sim.plot(path_here, f"XP {config.name}, current charge ramp (positive)")
 
 
 def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
@@ -117,7 +120,7 @@ def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
         return -(0.1 + 0.14 * t_s / duration_s)  # pru-model can handle +- 268 mA
 
     sim.run(fn=current_trace, duration_s=duration_s)
-    sim.plot(f"XP {config.name}, current discharge ramp (negative)")
+    sim.plot(path_here, f"XP {config.name}, current discharge ramp (negative)")
 
 
 def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
@@ -133,7 +136,7 @@ def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_pulse.step, duration_s=1_000)
-    sim.plot(f"XP {config.name}, pulsed discharge .1A, 1000 s (figure_9a)")
+    sim.plot(path_here, f"XP {config.name}, pulsed discharge .1A, 1000 s (figure_9a)")
 
 
 def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
@@ -149,7 +152,7 @@ def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_pulse.step, duration_s=1_000)
-    sim.plot(f"XP {config.name}, pulsed charge .1A, 1000 s (figure_9b)")
+    sim.plot(path_here, f"XP {config.name}, pulsed charge .1A, 1000 s (figure_9b)")
 
 
 def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
@@ -162,7 +165,7 @@ def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_pulse.step, duration_s=3_000)
-    sim.plot(f"XP {config.name}, pulsed resistive charge 20 Ohm to 4.2 V, 3000 s")
+    sim.plot(path_here, f"XP {config.name}, pulsed resistive charge 20 Ohm to 4.2 V, 3000 s")
 
 
 def experiment_resistive_load(config: VirtualStorageConfig) -> None:
@@ -178,7 +181,7 @@ def experiment_resistive_load(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_charge, duration_s=1_000)
-    sim.plot(f"XP {config.name}, resistive load 20 Ohm from 4.2 V, 1000 s")
+    sim.plot(path_here, f"XP {config.name}, resistive load 20 Ohm from 4.2 V, 1000 s")
 
 
 def experiment_self_discharge() -> None:
@@ -201,8 +204,9 @@ def experiment_self_discharge() -> None:
 
     sim.run(fn=step, duration_s=duration.total_seconds())
     sim.plot(
+        path_here,
         f"XP {config.name}, self-discharge, "
-        f"SoC {SoC_start} to {SoC_target} in {duration.total_seconds()} s"
+        f"SoC {SoC_start} to {SoC_target} in {duration.total_seconds()} s",
     )
 
 

@@ -12,6 +12,19 @@ E_out = 17.242 mWs -> mppt_bq_solar
 E_out = 13.998 mWs -> mppt_bq_thermoelectric
 E_out = 15.202 mWs -> mppt_po
 E_out = 17.811 mWs -> mppt_opt
+
+Currently: TODO: shouldn't have changed
+E_out = 0.000 mWs -> cv20
+E_out = 13.715 mWs -> cv10
+E_out = 13.496 mWs -> mppt_voc
+E_out = 13.201 mWs -> mppt_bq_solar
+E_out = 11.805 mWs -> mppt_bq_thermoelectric
+E_out = 0.000 mWs -> mppt_po
+E_out = 17.811 mWs -> mppt_opt
+Input-file:
+        E_in = 3.354 mWs (not representative)
+        I_in_max = 0.740 mA
+        window_size = 1000 n
 """
 
 from pathlib import Path
@@ -23,8 +36,11 @@ from shepherd_data import ivonne
 
 # config simulation
 sim_duration = 32
-file_ivonne = Path(__file__).parent.parent.parent / "shepherd_data/examples/jogging_10m.iv"
+file_ivonne = Path(__file__).parents[3] / "shepherd_data/examples/jogging_10m.iv"
 file_ivcurve = Path(__file__).parent / "jogging_ivcurve.h5"
+
+if not file_ivonne.exists():
+    raise FileNotFoundError("Input-File not found - check path")
 
 hrv_list = [
     "cv20",

@@ -204,7 +204,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             # TODO: storage could have maximum at a different SoC, is this needed at all?
             values["V_mid_max_mV"] = min(
                 self.V_intermediate_max_mV,
-                self.storage.calc_V_OC(SoC=1.0),
+                1e3 * self.storage.calc_V_OC(SoC=1.0),
                 10_000,
             )
         else:
@@ -322,7 +322,7 @@ class ConverterPRUConfig(ShpModel):
     V_output_log_gpio_threshold_uV: u32
 
     V_input_boost_threshold_uV: u32
-    V_intermediate_max_uV: u32
+    V_mid_max_uV: u32
 
     V_output_uV: u32
     V_buck_drop_uV: u32
@@ -370,7 +370,7 @@ class ConverterPRUConfig(ShpModel):
             V_output_log_gpio_threshold_uV=round(data.V_output_log_gpio_threshold_mV * 1e3),
             # Boost-Converter
             V_input_boost_threshold_uV=round(data.V_input_boost_threshold_mV * 1e3),
-            V_intermediate_max_uV=round(states["V_mid_max_mV"] * 1e3),
+            V_mid_max_uV=round(states["V_mid_max_mV"] * 1e3),
             # Buck-Converter
             V_output_uV=round(data.V_output_mV * 1e3),
             V_buck_drop_uV=round(data.V_buck_drop_mV * 1e3),

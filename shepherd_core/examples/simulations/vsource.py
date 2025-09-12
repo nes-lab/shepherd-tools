@@ -19,12 +19,14 @@ E_out = 14.232 mWs -> BQ25570s
 
 New Storage
 E_out = 220.001 mWs -> direct
+
 E_out = 11.352 mWs -> diode+capacitor
 E_out = 14.629 mWs -> diode+resistor+capacitor
-E_out = 0.000 mWs -> BQ25504
-E_out = 0.000 mWs -> BQ25504s
-E_out = 0.000 mWs -> BQ25570
-E_out = 0.000 mWs -> BQ25570s
+
+E_out = 14.259 mWs -> BQ25504
+E_out = 14.263 mWs -> BQ25504s
+E_out = 13.358 mWs -> BQ25570
+E_out = 13.450 mWs -> BQ25570s
 
 """
 
@@ -50,6 +52,11 @@ src_list = [
 ]
 tgt = ResistiveTarget(R_Ohm=1_000, controlled=True)
 save_files = True
+
+if not file_input.exists():
+    raise FileNotFoundError(
+        "Input-File not found - please run harvester-simulation first to create it."
+    )
 
 for src_name in src_list:
     file_output = file_input.with_stem(file_input.stem + "_emu_" + src_name) if save_files else None
