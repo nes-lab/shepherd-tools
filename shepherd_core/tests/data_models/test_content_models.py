@@ -2,8 +2,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
-from shepherd_core import fw_tools
 from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
@@ -13,6 +11,8 @@ from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.testbed import MCU
+
+from shepherd_core import fw_tools
 
 from .conftest import files_elf
 

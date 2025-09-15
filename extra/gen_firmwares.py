@@ -12,7 +12,6 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 
 import yaml
-
 from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.logger import log
 

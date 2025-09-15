@@ -3,7 +3,6 @@
 from pathlib import Path
 
 from convert_v1_eenv import convert as convert_eenv
-
 from shepherd_core.logger import log
 
 DATASETS = {

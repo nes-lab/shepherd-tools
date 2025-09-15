@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from shepherd_core.decoder_waveform import Uart
 
 

@@ -1,9 +1,9 @@
 from pathlib import Path
 
 import pytest
+from shepherd_core.data_models import FirmwareDType
 
 from shepherd_core import fw_tools
-from shepherd_core.data_models import FirmwareDType
 
 from .conftest import files_elf
 

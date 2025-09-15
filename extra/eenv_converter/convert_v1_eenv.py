@@ -11,14 +11,14 @@ from pathlib import Path
 import click
 import h5py
 import numpy as np
-from tqdm import trange
-
-from shepherd_core import Writer as ShepherdWriter
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
 from shepherd_core.logger import log
+from tqdm import trange
+
+from shepherd_core import Writer as ShepherdWriter
 
 SHP_V1_STEP_WIDTH: int = 10_000  # 10 us
 

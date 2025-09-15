@@ -29,9 +29,10 @@ Input-file:
 
 from pathlib import Path
 
-from shepherd_core import Reader
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.vsource import simulate_harvester
+
+from shepherd_core import Reader
 from shepherd_data import ivonne
 
 # config simulation

@@ -36,6 +36,7 @@ from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models import VirtualStorageConfig
 from shepherd_core.vsource import ResistiveTarget
 from shepherd_core.vsource import simulate_source
+
 from shepherd_data import Reader
 
 # config simulation

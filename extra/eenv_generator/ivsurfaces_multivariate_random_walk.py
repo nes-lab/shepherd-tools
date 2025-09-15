@@ -13,7 +13,6 @@ from commons import EEnvGenerator
 from scipy import constants as const
 from scipy.optimize import newton
 from scipy.special import lambertw
-
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
 
