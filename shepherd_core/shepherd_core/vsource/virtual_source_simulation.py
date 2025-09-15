@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import tqdm
 
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
-from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.logger import log
 from shepherd_core.reader import Reader
 from shepherd_core.writer import Writer

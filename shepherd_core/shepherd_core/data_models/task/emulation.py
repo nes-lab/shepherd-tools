@@ -17,7 +17,7 @@ from typing_extensions import Self
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
-from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing

@@ -13,7 +13,7 @@ from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
-from shepherd_core.data_models.content.virtual_harvester import VirtualHarvesterConfig
+from shepherd_core.data_models.content.virtual_harvester_config import VirtualHarvesterConfig
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
 

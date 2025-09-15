@@ -17,8 +17,8 @@ Compromises:
 import math
 
 from shepherd_core.data_models import CalibrationEmulator
-from shepherd_core.data_models.content.virtual_source import LUT_SIZE
-from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_source_config import LUT_SIZE
+from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
 from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
 
 from .virtual_storage_model import VirtualStorageModelPRU
