@@ -14,8 +14,8 @@ from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
 from .energy_environment import EnergyDType
-from .virtual_harvester import HarvesterPRUConfig
-from .virtual_harvester import VirtualHarvesterConfig
+from .virtual_harvester_config import HarvesterPRUConfig
+from .virtual_harvester_config import VirtualHarvesterConfig
 from .virtual_storage_config import VirtualStorageConfig
 
 # Custom Types
