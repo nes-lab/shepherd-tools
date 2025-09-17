@@ -211,6 +211,7 @@ class ModelKiBaMPlus(ModelStorage):
     1. support rate capacity during charging (Step 1)
     2. support transient tracking during charging (Step 5)
     3. support self discharge (step 2a) via a parallel leakage resistor
+    4. support signaling 0 % SoC by nulling voltage
     """
 
     @validate_call
@@ -310,6 +311,8 @@ class ModelKiBaMPlus(ModelStorage):
         V_transient = self.V_transient_S + self.V_transient_L
         V_cell = V_OC - I_cell * R_series - V_transient
         V_cell = max(V_cell, 0)
+        if self.SoC == 0:
+            V_cell = 0  # make sure no energy can be extracted when empty
 
         return V_OC, V_cell, self.SoC, SoC_eff
 
@@ -325,6 +328,7 @@ class ModelKiBaMSimple(ModelStorage):
         - mapping SoC to open circuit voltage (step 3)
         - mapping SoC to series resistance (step 4)
     - add self discharge resistance (step 2a)
+    - support signaling 0 % SoC by nulling voltage
 
     Compared to the current shepherd capacitor (charge-based), it:
 
@@ -398,6 +402,8 @@ class ModelKiBaMSimple(ModelStorage):
         # MODIFIED: limit V_cell to >=0
         V_cell = V_OC - I_cell * R_series
         V_cell = max(V_cell, 0.0)
+        if self.SoC == 0:
+            V_cell = 0  # make sure no energy can be extracted when empty
 
         return V_OC, V_cell, self.SoC, SoC_eff
 

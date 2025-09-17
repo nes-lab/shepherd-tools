@@ -60,7 +60,7 @@ class VirtualStorageModelPRU:
     This model should behave like ModelKiBaMSimple
     """
 
-    SoC_MAX_1_n62: int = 2**62
+    SoC_MAX_1_n62: int = 2**62 - 1
     SoC_TO_POS_DIV: int = 2 ** (62 - LuT_SIZE_LOG)
 
     @validate_call
@@ -85,46 +85,42 @@ class VirtualStorageModelPRU:
         pos_LuT = self.pos_LuT(self.SoC_1_n62)
         return round(self.cfg_pru.LuT_VOC_uV_n8[pos_LuT] // 2**8)
 
-    def step(self, P_charge_fW: float) -> float:
+    def step(self, I_delta_nA_n4: float, *, is_charging: bool) -> float:
         """Calculate the battery SoC & cell-voltage after drawing a current over a time-step.
 
-        Note: 3x u64 multiplications, 1x u64 division
+        Note: 3x u64 multiplications
         """
         dSoC_leak_1_n62 = u64s((self.V_OC_uV_n8 // 2**6) * self.cfg_pru.Constant_1_per_uV_n60)
-        # TODO: alternatively this can be added to P_out_fW (like before)
         if self.SoC_1_n62 >= dSoC_leak_1_n62:
             self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_leak_1_n62)
         else:
             self.SoC_1_n62 = 0
 
-        V_OC_prot_uV = max(1.0, self.V_OC_uV_n8 // 2**8)
-        if P_charge_fW >= 0:
-            I_delta_nA_n4 = u64s(2**4 * P_charge_fW / V_OC_prot_uV)
-            # ⤷ TODO: using V_cell seems more correct
-            dSoC_1_n62 = u64s(I_delta_nA_n4 * self.cfg_pru.Constant_1_per_nA_n60 // (2**2))
+        dSoC_1_n62 = u64s(I_delta_nA_n4 * self.cfg_pru.Constant_1_per_nA_n60 // (2**2))
+        if is_charging:
             self.SoC_1_n62 = u64s(self.SoC_1_n62 + dSoC_1_n62)
             self.SoC_1_n62 = min(self.SoC_MAX_1_n62, self.SoC_1_n62)
+        elif self.SoC_1_n62 > dSoC_1_n62:
+            self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_1_n62)
         else:
-            I_delta_nA_n4 = u64s(2**4 * -P_charge_fW / V_OC_prot_uV)
-            dSoC_1_n62 = u64s(I_delta_nA_n4 * self.cfg_pru.Constant_1_per_nA_n60 // (2**2))
-            if self.SoC_1_n62 > dSoC_1_n62:
-                self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_1_n62)
-            else:
-                self.SoC_1_n62 = 0
+            self.SoC_1_n62 = 0
 
         pos_LuT = self.pos_LuT(self.SoC_1_n62)
-        self.V_OC_uV_n8 = self.cfg_pru.LuT_VOC_uV_n8[pos_LuT]  # TODO: is interpolation possible?
+        self.V_OC_uV_n8 = self.cfg_pru.LuT_VOC_uV_n8[pos_LuT]
+        # TODO: is interpolation possible?
         R_series_kOhm_n32 = self.cfg_pru.LuT_RSeries_kOhm_n32[pos_LuT]
         V_delta_uV_n8 = u32s(u64s(I_delta_nA_n4 * R_series_kOhm_n32) // 2**28)
 
-        if P_charge_fW >= 0:
+        if is_charging:
             V_cell_uV_n8 = u32s(self.V_OC_uV_n8 + V_delta_uV_n8)
         elif self.V_OC_uV_n8 > V_delta_uV_n8:
             V_cell_uV_n8 = u32s(self.V_OC_uV_n8 - V_delta_uV_n8)
         else:
             V_cell_uV_n8 = 0
 
-        return V_cell_uV_n8 // 2**8  # uV
+        if self.SoC_1_n62 == 0:
+            return 0  # cell voltage breaks down
+        return V_cell_uV_n8 // 2**8  # u32 uV
 
 
 class VirtualStorageModel(VirtualStorageModelPRU, ModelStorage):
@@ -156,10 +152,11 @@ class VirtualStorageModel(VirtualStorageModelPRU, ModelStorage):
 
     def step(self, I_charge_A: float) -> tuple[float, float, float, float]:
         """Slower outer step with step-size of simulation."""
-        P_charge_fW = (1e9 * I_charge_A) * (self.V_OC_uV_n8 / 2**8)
+        I_delta_nA_n4 = abs(2**4 * (1e9 * I_charge_A))
+        is_charging = I_charge_A >= 0
         for _ in range(self.steps_per_frame - 1):
-            super().step(P_charge_fW)
-        V_cell_uV = super().step(P_charge_fW)
+            super().step(I_delta_nA_n4, is_charging=is_charging)
+        V_cell_uV = super().step(I_delta_nA_n4, is_charging=is_charging)
         # code below just for simulation
         V_OC = (1e-6 / 2**8) * self.V_OC_uV_n8
         V_cell = 1e-6 * V_cell_uV
