@@ -322,6 +322,10 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     def charge_in_mAh(self) -> float:
         return 1e3 * self.q_As / 3600
 
+    @property
+    def V_init(self) -> float:
+        return self.calc_V_OC(1.0)
+
     def calc_R_series(self, SoC: float) -> float:
         return (
             self.p_Rs[0] * math.pow(math.e, -self.p_Rs[1] * SoC)
