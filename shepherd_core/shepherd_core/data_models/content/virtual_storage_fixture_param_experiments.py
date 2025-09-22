@@ -23,11 +23,11 @@ def experiment_self_discharge_lead_acid() -> None:
     SoC_init = 1.0
     SoC_final = 0.95
     duration = timedelta(weeks=4)
-    R_leak1 = VirtualStorageConfig.lead_acid(capacity_mAh=1).calc_R_leak_battery(
+    R_leak1 = VirtualStorageConfig.lead_acid(q_mAh=1).calc_R_leak_battery(
         duration, SoC_0=SoC_init, SoC_final=SoC_final
     )
     R_leak2 = (
-        VirtualStorageConfig.lead_acid(capacity_mAh=10).calc_R_leak_battery(
+        VirtualStorageConfig.lead_acid(q_mAh=10).calc_R_leak_battery(
             duration, SoC_0=SoC_init, SoC_final=SoC_final
         )
         * 10
@@ -35,7 +35,7 @@ def experiment_self_discharge_lead_acid() -> None:
     log.info("R_leak_lead \t= %.0f Ohm [@1mAh]", R_leak1)
     if round(R_leak1) != round(R_leak2):
         raise ValueError("Values should match")
-    cfg1 = VirtualStorageConfig.lead_acid(capacity_mAh=1200)
+    cfg1 = VirtualStorageConfig.lead_acid(q_mAh=1200)
     sim = StorageSimulator(
         models=[ModelKiBaMPlus(SoC_init=SoC_init, cfg=cfg1, dt_s=dt_s)],
         dt_s=dt_s,
@@ -60,11 +60,11 @@ def experiment_self_discharge_lipo() -> None:
     SoC_init = 1.0
     SoC_final = 0.95
     duration = timedelta(weeks=4)
-    R_leak1 = VirtualStorageConfig.lipo(capacity_mAh=1).calc_R_leak_battery(
+    R_leak1 = VirtualStorageConfig.lipo(q_mAh=1).calc_R_leak_battery(
         duration, SoC_0=SoC_init, SoC_final=SoC_final
     )
     R_leak2 = (
-        VirtualStorageConfig.lipo(capacity_mAh=10).calc_R_leak_battery(
+        VirtualStorageConfig.lipo(q_mAh=10).calc_R_leak_battery(
             duration, SoC_0=SoC_init, SoC_final=SoC_final
         )
         * 10
@@ -72,7 +72,7 @@ def experiment_self_discharge_lipo() -> None:
     log.info("R_leak_lipo \t= %.0f Ohm [@1mAh]", R_leak1)
     if round(R_leak1) != round(R_leak2):
         raise ValueError("Values should match")
-    cfg1 = VirtualStorageConfig.lipo(capacity_mAh=860)
+    cfg1 = VirtualStorageConfig.lipo(q_mAh=860)
     sim = StorageSimulator(
         models=[ModelKiBaMPlus(SoC_init=SoC_init, cfg=cfg1, dt_s=dt_s)],
         dt_s=dt_s,

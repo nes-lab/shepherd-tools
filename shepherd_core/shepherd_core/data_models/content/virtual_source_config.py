@@ -185,7 +185,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             # first case: storage cap outside of en/dis-thresholds
             v_old = self.V_intermediate_enable_output_threshold_mV
             v_out = self.V_output_mV
-            c_store = 1e6 * self.storage.q_As / self.storage.calc_V_OC(SoC=1.0)
+            c_store = self.storage.capacity_in_uF
             c_out = self.C_output_uF
             dV_output_en_thrs_mV = v_old - pow(
                 pow(v_old, 2) - (c_out / c_store) * pow(v_out, 2),

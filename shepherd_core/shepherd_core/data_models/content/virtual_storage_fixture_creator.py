@@ -175,56 +175,56 @@ fixture_super: list[VirtualStorageConfig] = [
 fixture_lipo: list[VirtualStorageConfig] = [
     # LiPo-Coin-cells 5.4mm, https://www.lipobatteries.net/3-8v-rechargeable-mini-button-lipo-coin-cell-battery/
     VirtualStorageConfig.lipo(
-        capacity_mAh=80, name="LPM1254", description="LiPo-Coin-Cell 80mAh, 1 cell, w=12mm, d=5.4mm"
+        q_mAh=80, name="LPM1254", description="LiPo-Coin-Cell 80mAh, 1 cell, w=12mm, d=5.4mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=65, name="LPM1154", description="LiPo-Coin-Cell 65mAh, 1 cell, w=11mm, d=5.4mm"
+        q_mAh=65, name="LPM1154", description="LiPo-Coin-Cell 65mAh, 1 cell, w=11mm, d=5.4mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=50, name="LPM1054", description="LiPo-Coin-Cell 50mAh, 1 cell, w=10mm, d=5.4mm"
+        q_mAh=50, name="LPM1054", description="LiPo-Coin-Cell 50mAh, 1 cell, w=10mm, d=5.4mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=40, name="LPM0954", description="LiPo-Coin-Cell 40mAh, 1 cell, w=9mm, d=5.4mm"
+        q_mAh=40, name="LPM0954", description="LiPo-Coin-Cell 40mAh, 1 cell, w=9mm, d=5.4mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=35, name="LPM0854", description="LiPo-Coin-Cell 35mAh, 1 cell, w=8mm, d=5.4mm"
+        q_mAh=35, name="LPM0854", description="LiPo-Coin-Cell 35mAh, 1 cell, w=8mm, d=5.4mm"
     ),
     # LiPo-Coin-cells 4.0mm, https://www.lipobatteries.net/3-8v-rechargeable-mini-button-lipo-coin-cell-battery/
     VirtualStorageConfig.lipo(
-        capacity_mAh=55, name="LPM1240", description="LiPo-Coin-Cell 55mAh, 1 cell, w=12mm, d=4.0mm"
+        q_mAh=55, name="LPM1240", description="LiPo-Coin-Cell 55mAh, 1 cell, w=12mm, d=4.0mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=45, name="LPM1140", description="LiPo-Coin-Cell 45mAh, 1 cell, w=11mm, d=4.0mm"
+        q_mAh=45, name="LPM1140", description="LiPo-Coin-Cell 45mAh, 1 cell, w=11mm, d=4.0mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=35, name="LPM1040", description="LiPo-Coin-Cell 35mAh, 1 cell, w=10mm, d=4.0mm"
+        q_mAh=35, name="LPM1040", description="LiPo-Coin-Cell 35mAh, 1 cell, w=10mm, d=4.0mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=30, name="LPM0940", description="LiPo-Coin-Cell 30mAh, 1 cell, w=9mm, d=4.0mm"
+        q_mAh=30, name="LPM0940", description="LiPo-Coin-Cell 30mAh, 1 cell, w=9mm, d=4.0mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=18, name="LPM0840", description="LiPo-Coin-Cell 18mAh, 1 cell, w=8mm, d=4.0mm"
+        q_mAh=18, name="LPM0840", description="LiPo-Coin-Cell 18mAh, 1 cell, w=8mm, d=4.0mm"
     ),
     # small LiPos, https://www.lipobatteries.net/lipo-batteries-within-100mah/
     VirtualStorageConfig.lipo(
-        capacity_mAh=12, name="LP151020", description="LiPo-Pouch 12mAh, 1 cell, 20x10x1.5mm"
+        q_mAh=12, name="LP151020", description="LiPo-Pouch 12mAh, 1 cell, 20x10x1.5mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=15, name="LP251212", description="LiPo-Pouch 15mAh, 1 cell, 12x12x2.5mm"
+        q_mAh=15, name="LP251212", description="LiPo-Pouch 15mAh, 1 cell, 12x12x2.5mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=22, name="LP500522", description="LiPo-Pouch 20mAh, 1 cell, 22x05x5.0mm"
+        q_mAh=22, name="LP500522", description="LiPo-Pouch 20mAh, 1 cell, 22x05x5.0mm"
     ),
     VirtualStorageConfig.lipo(
-        capacity_mAh=22, name="LP271015", description="LiPo-Pouch 22mAh, 1 cell, 15x10x2.7mm"
+        q_mAh=22, name="LP271015", description="LiPo-Pouch 22mAh, 1 cell, 15x10x2.7mm"
     ),
     # Example from the paper
-    VirtualStorageConfig.lipo(capacity_mAh=860, name="PL-383562"),
+    VirtualStorageConfig.lipo(q_mAh=860, name="PL-383562"),
 ]
 
 fixture_lead: list[VirtualStorageConfig] = [
     # Example from the paper
-    VirtualStorageConfig.lead_acid(capacity_mAh=1200, name="LEOCH_LP12-1.2AH"),
+    VirtualStorageConfig.lead_acid(q_mAh=1200, name="LEOCH_LP12-1.2AH"),
 ]
 
 

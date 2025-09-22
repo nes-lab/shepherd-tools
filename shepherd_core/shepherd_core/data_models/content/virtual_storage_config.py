@@ -108,7 +108,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     @validate_call
     def lipo(
         cls,
-        capacity_mAh: PositiveFloat,
+        q_mAh: PositiveFloat,  # TODO: charge is more correct
         SoC_init: soc_t | None = None,
         name: str | None = None,
         description: str | None = None,
@@ -123,14 +123,14 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         https://www.batteryspace.com/prod-specs/pl383562.pdf
 
         """
-        name_lmnts: list[str] = ["LiPo", f"{capacity_mAh:.0f}mAh", "3.7V"]
+        name_lmnts: list[str] = ["LiPo", f"{q_mAh:.0f}mAh", "3.7V"]
         if name is not None:
             name_lmnts = [name]  # specific name overrules params
         if description is None:
             description = "Model of a LiPo battery (3 to 4.2 V) with adjustable capacity"
         return cls(
             SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
-            q_As=capacity_mAh * 3600 / 1000,
+            q_As=q_mAh * 3600 / 1000,
             p_VOC=[-0.852, 63.867, 3.6297, 0.559, 0.51, 0.508],
             p_Rs=[0.1463, 30.27, 0.1037, 0.0584, 0.1747, 0.1288],
             p_RtS=[0.1063, 62.49, 0.0437],
@@ -140,7 +140,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             # y10 = 2863.3, y20 = 232.66 # unused
             p_rce=0.9248,
             kdash=0.0008,
-            R_leak_Ohm=55.9e6 / capacity_mAh,  # from wiki ~ 5 % discharge/month
+            R_leak_Ohm=55.9e6 / q_mAh,  # from wiki ~ 5 % discharge/month
             # content-fields below
             name="_".join(name_lmnts),
             description=description,
@@ -154,7 +154,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     @validate_call
     def lead_acid(
         cls,
-        capacity_mAh: PositiveFloat,
+        q_mAh: PositiveFloat,
         SoC_init: soc_t | None = None,
         name: str | None = None,
         description: str | None = None,
@@ -170,14 +170,14 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         # NOTE: 1 cell has 2.1 V nom, cell-count as param?
         # NOTE: add temperature-component? -5mV/cell/K, also capacity-decrease
         """
-        name_lmnts: list[str] = ["Lead-Acid", f"{capacity_mAh:.0f}mAh", "12V"]
+        name_lmnts: list[str] = ["Lead-Acid", f"{q_mAh:.0f}mAh", "12V"]
         if name is not None:
             name_lmnts = [name]  # specific name overrules params
         if description is None:
             description = "Model of a 12V lead acid battery with adjustable capacity"
         return cls(
             SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
-            q_As=capacity_mAh * 3600 / 1000,
+            q_As=q_mAh * 3600 / 1000,
             p_VOC=[5.429, 117.5, 11.32, 2.706, 2.04, 1.026],
             p_Rs=[1.578, 8.527, 0.7808, -1.887, -2.404, -0.649],
             p_RtS=[2.771, 9.079, 0.22],
@@ -189,7 +189,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
             # y10 = 2592, y20 = 1728 # unused
             p_rce=0.6,
             kdash=0.0034,
-            R_leak_Ohm=174e6 / capacity_mAh,
+            R_leak_Ohm=174e6 / q_mAh,
             # ⤷ from datasheet - 3-20 % discharge/month for 1.2 Ah, here 5%
             # content-fields below
             name="_".join(name_lmnts),
@@ -315,8 +315,8 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         )
 
     @property
-    def charge_in_uF(self) -> float:
-        return 1e6 * self.q_As / self.calc_V_OC(1.0)
+    def capacity_in_uF(self) -> float:
+        return 1e6 * self.q_As / self.calc_V_OC(SoC=1.0)
 
     @property
     def charge_in_mAh(self) -> float:
@@ -324,7 +324,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
     @property
     def V_init(self) -> float:
-        return self.calc_V_OC(1.0)
+        return self.calc_V_OC(SoC=self.SoC_init)
 
     def calc_R_series(self, SoC: float) -> float:
         return (
