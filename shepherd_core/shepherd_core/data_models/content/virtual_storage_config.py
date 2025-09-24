@@ -242,10 +242,9 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        if False:  # TODO: create fixture first
-            values, chain = tb_client.try_completing_model(cls.__name__, values)
-            values = tb_client.fill_in_user_data(values)
-            log.debug("vStorage-Inheritances: %s", chain)
+        values, chain = tb_client.try_completing_model(cls.__name__, values)
+        values = tb_client.fill_in_user_data(values)
+        log.debug("vStorage-Inheritances: %s", chain)
         return values
 
     @model_validator(mode="after")
