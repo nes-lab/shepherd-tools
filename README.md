@@ -93,7 +93,7 @@ coverage report
 - rebase dev-branch
 
 ```shell
-bump2version --allow-dirty --new-version 2025.08.1 patch
+bump2version --allow-dirty --new-version 2025.09.1 patch
 # ⤷ format: year.month.patch_release
 
 pre-commit run --all-files

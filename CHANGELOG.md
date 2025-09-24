@@ -1,5 +1,9 @@
 # History of Changes
 
+## v2025.09.1
+
+- tbd
+
 ## v2025.08.1
 
 - allow configuring battery in vsource
