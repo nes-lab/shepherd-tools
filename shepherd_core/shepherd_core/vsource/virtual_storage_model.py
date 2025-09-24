@@ -160,5 +160,5 @@ class VirtualStorageModel(VirtualStorageModelPRU, ModelStorage):
         # code below just for simulation
         V_OC = (1e-6 / 2**8) * self.V_OC_uV_n8
         V_cell = 1e-6 * V_cell_uV
-        SoC = (1 / 2**62) * self.SoC_1_n62
+        SoC = (1.0 / 2**62) * self.SoC_1_n62
         return V_OC, V_cell, SoC, SoC
