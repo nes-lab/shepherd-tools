@@ -185,7 +185,9 @@ class VirtualConverterModel:
 
     def update_cap_storage(self) -> int:
         if self.enable_storage:
-            self.V_mid_uV = self.storage.step(self.P_inp_fW - self.P_out_fW)
+            I_delta_nA = abs((self.P_inp_fW - self.P_out_fW) / self.V_mid_uV)
+            is_charging: bool = self.P_inp_fW >= self.P_out_fW
+            self.V_mid_uV = self.storage.step(2**4 * I_delta_nA, is_charging=is_charging)
         self.V_mid_uV = min(self.V_mid_uV, self._cfg.V_mid_max_uV)
         self.V_mid_uV = max(self.V_mid_uV, 1)
         return round(self.V_mid_uV)  # Python-specific, added for easier testing

@@ -255,7 +255,7 @@ def test_content_model_src_force_warning() -> None:
     src = VirtualSourceConfig(
         name="BQ25570",
         C_output_uF=200,
-        storage=VirtualStorageConfig.capacitor(C_uf=100, V_rated=6.3),
+        storage=VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3),
     )
     ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)
     # -> triggers warning currently

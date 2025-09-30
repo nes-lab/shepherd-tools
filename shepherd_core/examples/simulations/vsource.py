@@ -17,7 +17,7 @@ E_out = 14.962 mWs -> BQ25504s
 E_out = 14.397 mWs -> BQ25570
 E_out = 14.232 mWs -> BQ25570s
 
-New Storage
+New Storage, TODO: seems like a bug?
 E_out = 220.001 mWs -> direct
 
 E_out = 11.352 mWs -> diode+capacitor

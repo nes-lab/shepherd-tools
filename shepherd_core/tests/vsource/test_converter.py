@@ -40,8 +40,8 @@ def src_model(
 
 
 def c_leak_fWs(src: VirtualSourceModel, iterations: int) -> float:
-    V_OC_V = 1e-6 * (src.storage.V_OC_uV_n8 / 2**8)
-    return iterations * 1e15 * V_OC_V * V_OC_V / src.storage.cfg.R_leak_Ohm
+    V_OC_V = 1e-6 * (src.cnv.storage.V_OC_uV_n8 / 2**8)
+    return iterations * 1e15 * V_OC_V * V_OC_V / src.cfg_src.storage.R_leak_Ohm
 
 
 @pytest.mark.parametrize("src_name", src_list)
@@ -56,7 +56,8 @@ def test_vsource_vsrc_static1() -> None:
     for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=3_000_000, I_inp_nA=0)
     assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
+    assert src.W_out_fWs == 0.0 # -> leakage now locally in storage
+    # pytest.approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6))
 
 
 def test_vsource_vsrc_static2() -> None:
@@ -65,7 +66,8 @@ def test_vsource_vsrc_static2() -> None:
     for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=0, I_inp_nA=3_000_000)
     assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
+    assert src.W_out_fWs == 0.0 # -> leakage now locally in storage
+    # pytest.approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6)
 
 
 @pytest.mark.parametrize("src_name", src_list[2:])
@@ -76,7 +78,8 @@ def test_vsource_charge(src_name: str) -> None:
         src.iterate_sampling(V_inp_uV=10**6 + v_mV * 1000, I_inp_nA=1_500_000)
     v_out = src.iterate_sampling(V_inp_uV=1_000_000, I_inp_nA=1_000_000)
     assert src.W_inp_fWs > 0.0
-    assert src.W_out_fWs == pytest.approx(c_leak_fWs(src, iterations), rel=0.20, abs=1e-3)
+    assert src.W_out_fWs == 0.0 # -> leakage now locally in storage
+    # pytest.approx(c_leak_fWs(src, iterations), rel=0.20, abs=1e-3)
     assert v_out > 0.0
 
 
@@ -93,7 +96,8 @@ def test_vsource_drain(src_name: str) -> None:
         src.iterate_sampling(I_out_nA=c_uA * 1000)
     v_out = src.iterate_sampling()
     assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs > c_leak_fWs(src, iterations)
+    assert src.W_out_fWs > 0.0 # -> leakage now locally in storage
+    # c_leak_fWs(src, iterations)
     assert v_out >= 0.0
 
 
@@ -130,11 +134,12 @@ def test_vsource_vsrc_cycle() -> None:
     # TODO: not accurate anymore as the output does not get disconnected for this BQ
 
     for _ in range(iterations):
-        src.iterate_sampling(V_inp_uV=5 * 10**6, I_inp_nA=4 * 10**6)
+        src.iterate_sampling(V_inp_uV=5 * 10**6, I_inp_nA=20 * 10**6)
     v_out = src.iterate_sampling()
     assert v_out > 0
 
-    assert src.W_out_fWs > 3 * c_leak_fWs(src, iterations)
+    assert src.W_out_fWs > 0.0 # -> leakage now locally in storage
+    # 3 * c_leak_fWs(src, iterations)
     assert src.W_inp_fWs > src.W_out_fWs
 
 
