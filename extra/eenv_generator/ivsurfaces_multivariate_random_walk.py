@@ -6,7 +6,6 @@ import sys
 from multiprocessing import Pool
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Self
 
 import numpy as np
 from commons import EEnvGenerator
@@ -15,6 +14,7 @@ from scipy.optimize import newton
 from scipy.special import lambertw
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
+from typing_extensions import Self
 
 
 class SDMNoRP:

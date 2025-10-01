@@ -3,12 +3,12 @@
 import math
 import sys
 from collections.abc import Callable
-from typing import Self
 
 from pydantic import BaseModel
 from pydantic import PositiveFloat
 from pydantic import PositiveInt
 from pydantic import validate_call
+from typing_extensions import Self
 
 from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE
 from shepherd_core.data_models.content.virtual_storage_config import TIMESTEP_s_DEFAULT
