@@ -10,23 +10,12 @@ The output file can be analyzed and plotted with shepherds tool suite.
 
 Output:
 E_out = 220.001 mWs -> direct (no current-limit)
-E_out = 13.142 mWs -> diode+capacitor
-E_out = 13.066 mWs -> diode+resistor+capacitor
-E_out = 15.045 mWs -> BQ25504
-E_out = 14.962 mWs -> BQ25504s
-E_out = 14.397 mWs -> BQ25570
-E_out = 14.232 mWs -> BQ25570s
-
-New Storage, TODO: seems like a bug?
-E_out = 220.001 mWs -> direct
-
-E_out = 11.352 mWs -> diode+capacitor
-E_out = 14.629 mWs -> diode+resistor+capacitor
-
-E_out = 14.259 mWs -> BQ25504
-E_out = 14.263 mWs -> BQ25504s
-E_out = 13.358 mWs -> BQ25570
-E_out = 13.450 mWs -> BQ25570s
+E_out = 14.670 mWs -> diode+capacitor
+E_out = 14.563 mWs -> diode+resistor+capacitor
+E_out = 16.734 mWs -> BQ25504
+E_out = 16.808 mWs -> BQ25504s
+E_out = 16.385 mWs -> BQ25570
+E_out = 16.396 mWs -> BQ25570s
 
 """
 

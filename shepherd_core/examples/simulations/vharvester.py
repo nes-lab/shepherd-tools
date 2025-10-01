@@ -6,25 +6,13 @@
 
 Output:
 E_out = 0.000 mWs -> cv20
-E_out = 17.165 mWs -> cv10
-E_out = 17.427 mWs -> mppt_voc
-E_out = 17.242 mWs -> mppt_bq_solar
-E_out = 13.998 mWs -> mppt_bq_thermoelectric
-E_out = 15.202 mWs -> mppt_po
+E_out = 17.143 mWs -> cv10
+E_out = 17.596 mWs -> mppt_voc
+E_out = 17.268 mWs -> mppt_bq_solar
+E_out = 13.976 mWs -> mppt_bq_thermoelectric
+E_out = 15.001 mWs -> mppt_po
 E_out = 17.811 mWs -> mppt_opt
 
-Currently: TODO: shouldn't have changed
-E_out = 0.000 mWs -> cv20
-E_out = 13.715 mWs -> cv10
-E_out = 13.496 mWs -> mppt_voc
-E_out = 13.201 mWs -> mppt_bq_solar
-E_out = 11.805 mWs -> mppt_bq_thermoelectric
-E_out = 0.000 mWs -> mppt_po
-E_out = 17.811 mWs -> mppt_opt
-Input-file:
-        E_in = 3.354 mWs (not representative)
-        I_in_max = 0.740 mA
-        window_size = 1000 n
 """
 
 from pathlib import Path
@@ -56,7 +44,7 @@ hrv_list = [
     "mppt_opt",
 ]
 
-save_files: bool = False
+save_files: bool = True
 
 # convert IVonne to IVCurve
 if not file_ivcurve.exists():
