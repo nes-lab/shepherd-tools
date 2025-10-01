@@ -12,10 +12,10 @@ Output:
 E_out = 220.001 mWs -> direct (no current-limit)
 E_out = 14.670 mWs -> diode+capacitor
 E_out = 14.563 mWs -> diode+resistor+capacitor
-E_out = 16.734 mWs -> BQ25504
-E_out = 16.808 mWs -> BQ25504s
-E_out = 16.385 mWs -> BQ25570
-E_out = 16.396 mWs -> BQ25570s
+E_out = 16.718 mWs -> BQ25504
+E_out = 16.805 mWs -> BQ25504s
+E_out = 16.369 mWs -> BQ25570
+E_out = 16.387 mWs -> BQ25570s
 
 """
 

@@ -64,33 +64,34 @@ class VirtualHarvesterModel:
         self.voltage_step_x4_uV: int = 4 * self._cfg.voltage_step_uV
         self.age_max: int = 2 * self._cfg.window_size
 
-        # INIT static vars: CV
-        self.voltage_last: int = 0
-        self.current_last: int = 0
-        self.compare_last: int = 0
-        self.lin_extrapolation: bool = bool(self._cfg.hrv_mode & (2**2))
-        self.current_delta: int = 0
-        self.voltage_delta: int = 0
-
-        # INIT static vars: VOC
-        self.age_now: int = 0
         self.voc_now: int = self._cfg.voltage_max_uV
-        self.age_nxt: int = 0
         self.voc_nxt: int = self._cfg.voltage_max_uV
         self.voc_min: int = max(1000, self._cfg.voltage_min_uV)
 
+        self.lin_extrapolation: bool = bool(self._cfg.hrv_mode & (2**2))
+
+        # INIT static vars: CV
+        self.voltage_last: int = 0
+        self.current_last: int = 0
+        self.voltage_delta: int = 0
+        self.current_delta: int = 0
+        self.compare_last: int = 0
+
+        # INIT static vars: VOC
+        self.age_now: int = 0
+        self.age_nxt: int = 0
+
         # INIT static vars: PO
-        # already done: interval step
         self.power_last: int = 0
 
         # INIT static vars: OPT
-        # already done: age_now, age_nxt
-        self.power_now: int = 0
+        # already done in VOC: age_now, age_nxt
         self.voltage_now: int = 0
         self.current_now: int = 0
-        self.power_nxt: int = 0
         self.voltage_nxt: int = 0
         self.current_nxt: int = 0
+        self.power_now: int = 0
+        self.power_nxt: int = 0
 
     def ivcurve_sample(self, _voltage_uV: int, _current_nA: int) -> tuple[int, int]:
         if self._cfg.window_size <= 1:
@@ -116,20 +117,20 @@ class VirtualHarvesterModel:
             if distance_now < distance_last and distance_now < self.voltage_step_x4_uV:
                 self.voltage_hold = _voltage_uV
                 self.current_hold = _current_nA
-                self.current_delta = _current_nA - self.current_last
                 self.voltage_delta = _voltage_uV - self.voltage_last
-                # TODO: voltage_delta is static
+                self.current_delta = _current_nA - self.current_last
             elif distance_last < distance_now and distance_last < self.voltage_step_x4_uV:
                 self.voltage_hold = self.voltage_last
                 self.current_hold = self.current_last
-                self.current_delta = _current_nA - self.current_last
                 self.voltage_delta = _voltage_uV - self.voltage_last
+                self.current_delta = _current_nA - self.current_last
         elif self.lin_extrapolation:
             # apply the proper delta if needed
             if (self.voltage_hold < self.voltage_set_uV) == (self.voltage_delta > 0):
                 self.voltage_hold += self.voltage_delta
                 self.current_hold += self.current_delta
             else:
+                # TODO: C-Code differs here slightly, but only to handle unsigned int
                 if self.voltage_hold > self.voltage_delta:
                     self.voltage_hold -= self.voltage_delta
                 else:
@@ -168,10 +169,11 @@ class VirtualHarvesterModel:
 
         _voltage_uV, _current_nA = self.ivcurve_2_cv(_voltage_uV, _current_nA)
         if self.interval_step < self._cfg.duration_n:
-            self.voltage_set_uV = self.voc_now
+            self.voltage_set_uV = self._cfg.voltage_max_uV
+            _current_nA = 0
         elif self.interval_step == self._cfg.duration_n:
             self.voltage_set_uV = int(self.voc_now * self._cfg.setpoint_n8 / 256)
-
+            _current_nA = 0
         return _voltage_uV, _current_nA
 
     def ivcurve_2_mppt_po(self, _voltage_uV: int, _current_nA: int) -> tuple[int, int]:
@@ -211,7 +213,7 @@ class VirtualHarvesterModel:
                 self.voltage_set_uV = self._cfg.voltage_min_uV
                 self.is_rising = True
                 self.volt_step_uV = self._cfg.voltage_step_uV
-            if self.voltage_set_uV <= self._cfg.voltage_step_uV:
+            if self.voltage_set_uV < self._cfg.voltage_step_uV:
                 self.voltage_set_uV = self._cfg.voltage_step_uV
                 self.is_rising = True
                 self.volt_step_uV = self._cfg.voltage_step_uV

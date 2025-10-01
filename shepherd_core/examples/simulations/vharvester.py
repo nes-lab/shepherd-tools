@@ -7,9 +7,9 @@
 Output:
 E_out = 0.000 mWs -> cv20
 E_out = 17.143 mWs -> cv10
-E_out = 17.596 mWs -> mppt_voc
-E_out = 17.268 mWs -> mppt_bq_solar
-E_out = 13.976 mWs -> mppt_bq_thermoelectric
+E_out = 17.384 mWs -> mppt_voc
+E_out = 17.249 mWs -> mppt_bq_solar
+E_out = 13.954 mWs -> mppt_bq_thermoelectric
 E_out = 15.001 mWs -> mppt_po
 E_out = 17.811 mWs -> mppt_opt
 
