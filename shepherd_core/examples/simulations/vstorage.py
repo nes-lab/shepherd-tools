@@ -216,8 +216,8 @@ if __name__ == "__main__":
 
         configs = [
             VirtualStorageConfig.capacitor(C_uF=10e6, V_rated=4.2),  # match charge with batteries
-            VirtualStorageConfig.lipo(capacity_mAh=10),
-            VirtualStorageConfig.lead_acid(capacity_mAh=10),
+            VirtualStorageConfig.lipo(q_mAh=10),
+            VirtualStorageConfig.lead_acid(q_mAh=10),
         ]
 
         for cfg in configs:
