@@ -5,31 +5,40 @@ from pathlib import Path
 
 import pytest
 
+path_example = Path(__file__).resolve().parent.parent / "examples"
+path_simulation = Path(__file__).resolve().parent.parent / "examples/simulations"
 
-@pytest.fixture
-def example_path() -> Path:
-    path = Path(__file__).resolve().parent.parent / "examples"
-    os.chdir(path)
-    return path
+simulations: list[str] = [
+    "vharvester.py",
+    "vsource.py",
+    "vstorage.py",
+]
 
 
-examples = [
+@pytest.mark.parametrize("file", simulations)
+def test_simulation_scripts(file: str) -> None:
+    path_file = path_simulation / file
+    os.chdir(path_file.parent)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
+
+
+examples: list[str] = [
     "experiment_generic_var1.py",
     "experiment_models.py",
     "inventory.py",
     "uart_decode_waveform.py",
-    "simulate_vharvester.py",
-    "simulate_vsource.py",
     "vsource_debug_sim.py",
 ]
 
 
 @pytest.mark.parametrize("file", examples)
-def test_example_scripts(example_path: Path, file: str) -> None:
-    subprocess.run([sys.executable, (example_path / file).as_posix()], shell=True, check=True)
+def test_example_scripts(file: str) -> None:
+    path_file = path_example / file
+    os.chdir(path_file.parent)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
 
 
-examples_fw = [
+examples_fw: list[str] = [
     "firmware_model.py",
     "firmware_modification.py",
 ]
@@ -38,5 +47,7 @@ examples_fw = [
 @pytest.mark.converter
 @pytest.mark.elf
 @pytest.mark.parametrize("file", examples_fw)
-def test_example_scripts_fw(example_path: Path, file: str) -> None:
-    subprocess.run([sys.executable, (example_path / file).as_posix()], shell=True, check=True)
+def test_example_scripts_fw(file: str) -> None:
+    path_file = path_example / file
+    os.chdir(path_file.parent)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)

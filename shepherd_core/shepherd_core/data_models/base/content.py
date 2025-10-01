@@ -36,10 +36,12 @@ class ContentModel(ShpModel):
         default_factory=id_default,
     )
     name: NameStr
+    """ ⤷ name of virtual content, models can be queried by this slug."""
     description: Annotated[SafeStr | None, Field(description="Required when public")] = None
     comment: SafeStr | None = None
     created: datetime = Field(default_factory=datetime.now)
     updated_last: datetime = Field(default_factory=datetime.now)
+    # TODO: add dedicated 'inherit_from' field?
 
     # Ownership & Access
     # TODO: remove owner & group, only needed for DB

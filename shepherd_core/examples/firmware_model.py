@@ -6,10 +6,11 @@ or shepherd-core[elf].
 
 from pathlib import Path
 
-from shepherd_core import WebClient
-from shepherd_core import fw_tools
 from shepherd_core.data_models import Firmware
 from shepherd_core.data_models import FirmwareDType
+
+from shepherd_core import WebClient
+from shepherd_core import fw_tools
 
 path_elf = Path(__file__).parent.parent / "tests/fw_tools/build_msp.elf"
 

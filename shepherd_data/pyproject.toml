@@ -36,7 +36,7 @@ dependencies = [
     "pandas>=2.0.0",  # full-version, v2 is OK
     "pyYAML",
     "scipy",   # full-version
-    "shepherd-core[inventory]>=2025.08.1",  # libs are strongly coupled
+    "shepherd-core[inventory]>=2025.09.1",  # libs are strongly coupled
     "tqdm",    # full-version
 ]
 

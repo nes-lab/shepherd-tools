@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
 from shepherd_core.data_models import Experiment
 from shepherd_core.data_models import FirmwareDType
 from shepherd_core.data_models import GpioActuation

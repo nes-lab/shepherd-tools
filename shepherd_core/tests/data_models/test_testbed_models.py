@@ -1,6 +1,5 @@
 import pytest
 from pydantic import ValidationError
-
 from shepherd_core.data_models.testbed import GPIO
 from shepherd_core.data_models.testbed import MCU
 from shepherd_core.data_models.testbed import Cape

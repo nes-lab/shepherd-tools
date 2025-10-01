@@ -8,15 +8,15 @@ from contextlib import ExitStack
 from pathlib import Path
 
 import numpy as np
-from tqdm import trange
-
-from shepherd_core import Writer as ShepherdWriter
 from shepherd_core.config import config
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.task import Compression
 from shepherd_core.logger import log
+from tqdm import trange
+
+from shepherd_core import Writer as ShepherdWriter
 
 
 class EEnvGenerator(ABC):

@@ -31,7 +31,6 @@ from pathlib import Path
 
 import h5py
 import numpy as np
-
 from shepherd_core.logger import log
 
 duration_s = 60

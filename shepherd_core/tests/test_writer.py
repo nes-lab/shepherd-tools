@@ -2,15 +2,15 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-
-from shepherd_core import CalibrationPair
-from shepherd_core import Reader
-from shepherd_core import Writer
 from shepherd_core.data_models import CalibrationEmulator as CalEmu
 from shepherd_core.data_models import CalibrationHarvester as CalHrv
 from shepherd_core.data_models import CalibrationSeries as CalSeries
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.task import Compression
+
+from shepherd_core import CalibrationPair
+from shepherd_core import Reader
+from shepherd_core import Writer
 
 
 def generate_shp_file(

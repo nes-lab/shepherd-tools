@@ -7,10 +7,10 @@ from datetime import datetime
 from pathlib import Path
 
 import click
+from shepherd_core.logger import set_log_verbose_level
 
 from shepherd_core import get_verbose_level
 from shepherd_core import local_tz
-from shepherd_core.logger import set_log_verbose_level
 
 from .reader import Reader
 
@@ -108,7 +108,7 @@ def validate(in_data: Path, *, recurse: bool = False) -> None:
     "-e",
     default=None,
     type=click.FLOAT,
-    help="End-point in seconds, will be max if omitted",
+    help="End-point in seconds, will be maximum if omitted",
 )
 @click.option(
     "--ds-factor",
@@ -345,7 +345,7 @@ def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> Non
     "-e",
     default=None,
     type=click.FLOAT,
-    help="End-point in seconds, will be max if omitted",
+    help="End-point in seconds, will be maximum if omitted",
 )
 @click.option(
     "--recurse",
@@ -397,7 +397,7 @@ def downsample(
     "-e",
     default=None,
     type=click.FLOAT,
-    help="End-point in seconds, will be max if omitted",
+    help="End-point in seconds, will be maximum if omitted",
 )
 @click.option(
     "--width",

@@ -11,8 +11,9 @@ This script will:
 
 from pathlib import Path
 
-import shepherd_data as shp
 from shepherd_core.data_models import EnergyDType
+
+import shepherd_data as shp
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent

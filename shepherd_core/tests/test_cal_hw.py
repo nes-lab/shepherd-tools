@@ -1,7 +1,6 @@
 from collections.abc import Callable
 
 import pytest
-
 from shepherd_core.calibration_hw_def import adc_current_to_raw
 from shepherd_core.calibration_hw_def import adc_raw_to_current
 from shepherd_core.calibration_hw_def import adc_raw_to_voltage

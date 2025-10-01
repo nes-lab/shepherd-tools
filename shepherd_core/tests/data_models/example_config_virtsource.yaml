@@ -18,9 +18,10 @@ VirtualSource:
   I_input_max_mA: 100
   V_input_drop_mV: 0  # simulate input-diode
 
-  C_intermediate_uF: 100  # primary storage-Cap
-  V_intermediate_init_mV: 3000 # allow a proper / fast startup
-  I_intermediate_leak_nA: 9
+  storage:
+    name: Capacitor_100uF_10.0V
+    SoC_init: 1.0 # allow a proper / fast startup
+    R_leak_Ohm: 700.0e6 # ~ 9 nA leakage at 6.3 V
 
   V_pwr_good_enable_threshold_mV: 2900 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
   V_pwr_good_disable_threshold_mV: 2400
@@ -29,10 +30,10 @@ VirtualSource:
   C_output_uF: 1.0   # final (always last) stage to compensate undetectable current spikes when enabling power for target
 
   # Extra
-  V_output_log_gpio_threshold_mV: 1400  # min voltage needed to enable recording changes in gpio-bank
+  V_output_log_gpio_threshold_mV: 1400  # minimum voltage needed to enable recording changes in gpio-bank
 
   # Boost Converter, ie. BQ25504
-  V_input_boost_threshold_mV: 130 # min input-voltage for the boost converter to work
+  V_input_boost_threshold_mV: 130 # minimum input-voltage for the boost converter to work
   V_intermediate_max_mV: 3600 # -> boost converter shuts off
 
   LUT_input_efficiency: [
@@ -54,10 +55,10 @@ VirtualSource:
 
   # Buck-Converter , ie. BQ25570
   V_output_mV: 2000
-  V_buck_drop_mV: 0  # simulate LDO min voltage differential or output-diode
+  V_buck_drop_mV: 0  # simulate LDO minimum voltage differential or output-diode
 
-  V_intermediate_enable_threshold_mV: 2600 # -> target gets connected (hysteresis-combo with next value)
-  V_intermediate_disable_threshold_mV: 2300 # -> target gets disconnected
+  V_intermediate_enable_output_threshold_mV: 2600 # -> target gets connected (hysteresis-combo with next value)
+  V_intermediate_disable_output_threshold_mV: 2300 # -> target gets disconnected
   interval_check_thresholds_ms: 64.0  # some BQs check every 64 ms if output should be disconnected
 
   # TODO: add dropdown-voltage and option to keep output enabled

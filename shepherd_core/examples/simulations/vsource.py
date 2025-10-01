@@ -10,20 +10,22 @@ The output file can be analyzed and plotted with shepherds tool suite.
 
 Output:
 E_out = 220.001 mWs -> direct (no current-limit)
-E_out = 13.142 mWs -> diode+capacitor
-E_out = 13.066 mWs -> diode+resistor+capacitor
-E_out = 15.045 mWs -> BQ25504
-E_out = 14.962 mWs -> BQ25504s
-E_out = 14.397 mWs -> BQ25570
-E_out = 14.232 mWs -> BQ25570s
+E_out = 14.670 mWs -> diode+capacitor
+E_out = 14.563 mWs -> diode+resistor+capacitor
+E_out = 16.718 mWs -> BQ25504
+E_out = 16.805 mWs -> BQ25504s
+E_out = 16.369 mWs -> BQ25570
+E_out = 16.387 mWs -> BQ25570s
 
 """
 
 from pathlib import Path
 
 from shepherd_core.data_models import VirtualSourceConfig
+from shepherd_core.data_models import VirtualStorageConfig
 from shepherd_core.vsource import ResistiveTarget
 from shepherd_core.vsource import simulate_source
+
 from shepherd_data import Reader
 
 # config simulation
@@ -41,6 +43,11 @@ src_list = [
 tgt = ResistiveTarget(R_Ohm=1_000, controlled=True)
 save_files = True
 
+if not file_input.exists():
+    raise FileNotFoundError(
+        "Input-File not found - please run harvester-simulation first to create it."
+    )
+
 for src_name in src_list:
     file_output = file_input.with_stem(file_input.stem + "_emu_" + src_name) if save_files else None
 
@@ -48,10 +55,12 @@ for src_name in src_list:
         config=VirtualSourceConfig(
             name=src_name,
             C_output_uF=0,
-            V_intermediate_enable_threshold_mV=1,
-            V_intermediate_disable_threshold_mV=0,
-            # jogging-dataset has max VOC of ~1.6 V -> lower set-point for non-boost
-            C_intermediate_uF=100 if "direct" not in src_name else 0,
+            V_intermediate_enable_output_threshold_mV=1,
+            V_intermediate_disable_output_threshold_mV=0,
+            # jogging-dataset has maximum VOC of ~1.6 V -> lower set-point for non-boost
+            storage=VirtualStorageConfig.capacitor(C_uF=100, V_rated=10.0)
+            if "direct" not in src_name
+            else None,
             V_pwr_good_enable_threshold_mV=1300 if "dio" in src_name else 2800,
             V_pwr_good_disable_threshold_mV=1000 if "dio" in src_name else 2400,
             V_input_drop_mV=150 if "dio" in src_name else 0,

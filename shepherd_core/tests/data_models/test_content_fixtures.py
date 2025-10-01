@@ -1,10 +1,10 @@
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
-from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
-from shepherd_core.data_models.content.virtual_harvester import VirtualHarvesterConfig
-from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
-from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_harvester_config import HarvesterPRUConfig
+from shepherd_core.data_models.content.virtual_harvester_config import VirtualHarvesterConfig
+from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.testbed_client.fixtures import Fixtures
 
 

@@ -156,7 +156,7 @@ class Uart:
         """Analyze bit-state during long pauses (unchanged states).
 
         - pause should be HIGH for non-inverted mode (default)
-        - assumes max frame size of 64 bit + x for safety
+        - assumes maximum frame size of 64 bit + x for safety
         """
         events = self.events_sig[:1000, :]  # speedup for large datasets
         pauses = events[:, 2] > 80

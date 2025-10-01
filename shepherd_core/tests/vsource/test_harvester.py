@@ -1,12 +1,12 @@
 from pathlib import Path
 
 import pytest
-
-from shepherd_core import Reader
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models import VirtualHarvesterConfig
-from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
+from shepherd_core.data_models.content.virtual_harvester_config import HarvesterPRUConfig
 from shepherd_core.vsource import VirtualHarvesterModel
+
+from shepherd_core import Reader
 
 hrv_list = [
     "ivcurve",

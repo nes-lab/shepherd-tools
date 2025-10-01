@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import tqdm
 
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
-from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.logger import log
 from shepherd_core.reader import Reader
 from shepherd_core.writer import Writer
@@ -35,81 +35,79 @@ def simulate_source(
 
     FN returns the consumed energy of the target.
     """
-    stack = ExitStack()
-    file_inp = Reader(path_input, verbose=False)
-    stack.enter_context(file_inp)
-    cal_emu = CalibrationEmulator()
-    cal_inp = file_inp.get_calibration_data()
+    with ExitStack() as stack:
+        file_inp = Reader(path_input, verbose=False)
+        stack.enter_context(file_inp)
+        cal_emu = CalibrationEmulator()
+        cal_inp = file_inp.get_calibration_data()
 
-    if path_output:
-        file_out = Writer(
-            path_output, cal_data=cal_emu, mode="emulator", verbose=False, force_overwrite=True
-        )
-        stack.enter_context(file_out)
-        file_out.store_hostname("emu_sim_" + config.name)
-        file_out.store_config(config.model_dump())
-        cal_out = file_out.get_calibration_data()
-
-    src = VirtualSourceModel(
-        config,
-        cal_emu,
-        dtype_in=file_inp.get_datatype(),
-        log_intermediate=False,
-        window_size=file_inp.get_window_samples(),
-        voltage_step_V=file_inp.get_voltage_step(),
-    )
-    i_out_nA = 0
-    e_out_Ws = 0.0
-    if monitor_internals and path_output:
-        stats_sample = 0
-        stats_internal = np.empty((round(file_inp.runtime_s * file_inp.samplerate_sps), 11))
-        try:
-            # keep dependencies low
-            from matplotlib import pyplot as plt  # noqa: PLC0415
-        except ImportError:
-            log.warning("Matplotlib not installed, plotting of internals disabled")
-            stats_internal = None
-    else:
-        stats_internal = None
-
-    for _t, v_inp, i_inp in tqdm(
-        file_inp.read(is_raw=True), total=file_inp.chunks_n, desc="Chunk", leave=False
-    ):
-        v_uV = 1e6 * cal_inp.voltage.raw_to_si(v_inp)
-        i_nA = 1e9 * cal_inp.current.raw_to_si(i_inp)
-
-        for _n in range(len(_t)):
-            v_uV[_n] = src.iterate_sampling(
-                V_inp_uV=int(v_uV[_n]),
-                I_inp_nA=int(i_nA[_n]),
-                I_out_nA=i_out_nA,
-            )
-            i_out_nA = target.step(int(v_uV[_n]), pwr_good=src.cnv.get_power_good())
-            i_nA[_n] = i_out_nA
-
-            if stats_internal is not None:
-                stats_internal[stats_sample] = [
-                    _t[_n] * 1e-9,  # s
-                    src.hrv.voltage_hold * 1e-6,
-                    src.cnv.V_input_request_uV * 1e-6,  # V
-                    src.hrv.voltage_set_uV * 1e-6,
-                    src.cnv.V_mid_uV * 1e-6,
-                    src.hrv.current_hold * 1e-6,  # mA
-                    src.hrv.current_delta * 1e-6,
-                    i_out_nA * 1e-6,
-                    src.cnv.P_inp_fW * 1e-12,  # mW
-                    src.cnv.P_out_fW * 1e-12,
-                    src.cnv.get_power_good(),
-                ]
-                stats_sample += 1
-
-        e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
         if path_output:
-            v_out = cal_out.voltage.si_to_raw(1e-6 * v_uV)
-            i_out = cal_out.current.si_to_raw(1e-9 * i_nA)
-            file_out.append_iv_data_raw(_t, v_out, i_out)
+            file_out = Writer(
+                path_output, cal_data=cal_emu, mode="emulator", verbose=False, force_overwrite=True
+            )
+            stack.enter_context(file_out)
+            file_out.store_hostname("emu_sim_" + config.name)
+            file_out.store_config(config.model_dump())
+            cal_out = file_out.get_calibration_data()
 
-    stack.close()
+        src = VirtualSourceModel(
+            config,
+            cal_emu,
+            dtype_in=file_inp.get_datatype(),
+            log_intermediate=False,
+            window_size=file_inp.get_window_samples(),
+            voltage_step_V=file_inp.get_voltage_step(),
+        )
+        i_out_nA = 0
+        e_out_Ws = 0.0
+        if monitor_internals and path_output:
+            stats_sample = 0
+            stats_internal = np.empty((round(file_inp.runtime_s * file_inp.samplerate_sps), 11))
+            try:
+                # keep dependencies low
+                from matplotlib import pyplot as plt  # noqa: PLC0415
+            except ImportError:
+                log.warning("Matplotlib not installed, plotting of internals disabled")
+                stats_internal = None
+        else:
+            stats_internal = None
+
+        for _t, v_inp, i_inp in tqdm(
+            file_inp.read(is_raw=True), total=file_inp.chunks_n, desc="Chunk", leave=False
+        ):
+            v_uV = 1e6 * cal_inp.voltage.raw_to_si(v_inp)
+            i_nA = 1e9 * cal_inp.current.raw_to_si(i_inp)
+
+            for _n in range(len(_t)):
+                v_uV[_n] = src.iterate_sampling(
+                    V_inp_uV=int(v_uV[_n]),
+                    I_inp_nA=int(i_nA[_n]),
+                    I_out_nA=i_out_nA,
+                )
+                i_out_nA = target.step(int(v_uV[_n]), pwr_good=src.cnv.get_power_good())
+                i_nA[_n] = i_out_nA
+
+                if stats_internal is not None:
+                    stats_internal[stats_sample] = [
+                        _t[_n] * 1e-9,  # s
+                        src.hrv.voltage_hold * 1e-6,
+                        src.cnv.V_input_request_uV * 1e-6,  # V
+                        src.hrv.voltage_set_uV * 1e-6,
+                        src.cnv.V_mid_uV * 1e-6,
+                        src.hrv.current_hold * 1e-6,  # mA
+                        src.hrv.current_delta * 1e-6,
+                        i_out_nA * 1e-6,
+                        src.cnv.P_inp_fW * 1e-12,  # mW
+                        src.cnv.P_out_fW * 1e-12,
+                        src.cnv.get_power_good(),
+                    ]
+                    stats_sample += 1
+
+            e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
+            if path_output:
+                v_out = cal_out.voltage.si_to_raw(1e-6 * v_uV)
+                i_out = cal_out.current.si_to_raw(1e-9 * i_nA)
+                file_out.append_iv_data_raw(_t, v_out, i_out)
 
     if stats_internal is not None:
         stats_internal = stats_internal[:stats_sample, :]

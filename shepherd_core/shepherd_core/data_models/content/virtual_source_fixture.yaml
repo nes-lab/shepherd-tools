@@ -23,13 +23,11 @@
     V_input_drop_mV: 0.0  # simulate input-diode
     R_input_mOhm: 0.0  # resistance only active with disabled boost, range [1 mOhm; 1MOhm]
 
-    C_intermediate_uF: 0.0  # primary storage-Cap
-    V_intermediate_init_mV: 3000 # allow a proper / fast startup
-    I_intermediate_leak_nA: 0.0
+    storage: null # so storage is disabled (null is None in YAML)
 
     # Output-Switch with comparator and hysteresis
-    V_intermediate_enable_threshold_mV: 1 # -> target gets connected (hysteresis-combo with next value)
-    V_intermediate_disable_threshold_mV: 0 # -> target gets disconnected
+    V_intermediate_enable_output_threshold_mV: 1 # -> target gets connected (hysteresis-combo with next value)
+    V_intermediate_disable_output_threshold_mV: 0 # -> target gets disconnected
     interval_check_thresholds_ms: 0.0  # some BQs check every 64 ms if output should be disconnected
 
     # Power-Good signal from comparator and hysteresis
@@ -40,11 +38,11 @@
     C_output_uF: 1.0   # final (always last) stage to compensate transient current spikes when enabling power for target
 
     # Extra
-    V_output_log_gpio_threshold_mV: 1400  # min voltage needed to enable recording changes in gpio-bank
+    V_output_log_gpio_threshold_mV: 1400  # minimum voltage needed to enable recording changes in gpio-bank
     # TODO: actually disable gpio below that
 
     # Boost Converter
-    V_input_boost_threshold_mV: 0.0 # min input-voltage for the boost converter to work
+    V_input_boost_threshold_mV: 0.0 # minimum input-voltage for the boost converter to work
     V_intermediate_max_mV: 10000 # -> boost converter shuts off
 
     LUT_input_efficiency: [
@@ -68,7 +66,7 @@
 
     # Buck-converter
     V_output_mV: 2400
-    V_buck_drop_mV: 0.0  # simulate LDO min voltage differential or output-diode
+    V_buck_drop_mV: 0.0  # simulate LDO minimum voltage differential or output-diode
 
     LUT_output_efficiency: [ 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 ] # array[12] depending on output_current
     LUT_output_I_min_log2_nA: 1  # 2^8 = 256 nA -> array[0] is for inputs < 256 nA, see notes on LUT_input for explanation
@@ -96,12 +94,13 @@
     description: Simple Converter based on diode and storage capacitor
     inherit_from: neutral
     V_input_drop_mV: 300  # simulate input-diode
-    C_intermediate_uF: 47  # primary storage-Cap
+    storage:
+      name: Capacitor_47uF_6.3V
     harvester:
       name: cv20
     enable_feedback_to_hrv: true  # src can control a cv-harvester for ivcurve
-    V_intermediate_enable_threshold_mV: 2000
-    V_intermediate_disable_threshold_mV: 1800  # nRF draw ~0.5 mA below that point
+    V_intermediate_enable_output_threshold_mV: 2000
+    V_intermediate_disable_output_threshold_mV: 1800  # nRF draw ~0.5 mA below that point
     # TODO: put switch-output into special nRF Version
 
 - datatype: VirtualSourceConfig
@@ -138,12 +137,13 @@
     V_input_max_mV: 3000
     I_input_max_mA: 100
 
-    C_intermediate_uF: 100.0  # primary storage-Cap
-    V_intermediate_init_mV: 3000 # allow a proper / fast startup
-    I_intermediate_leak_nA: 330
+    storage:
+      name: Capacitor_100uF_6.3V
+      SoC_init: 0.66 # allow a proper / fast startup
+      R_leak_Ohm: 19.0e6 # ~ 330 nA leakage at 6.3 V
 
-    V_intermediate_enable_threshold_mV: 1000 # -> target gets connected (hysteresis-combo with next value)
-    V_intermediate_disable_threshold_mV: 0 # -> target gets disconnected
+    V_intermediate_enable_output_threshold_mV: 1000 # -> target gets connected (hysteresis-combo with next value)
+    V_intermediate_disable_output_threshold_mV: 0 # -> target gets disconnected
     interval_check_thresholds_ms: 64.0  # some BQs check every 64 ms if output should be disconnected
 
     V_pwr_good_enable_threshold_mV: 2800 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
@@ -151,7 +151,7 @@
     immediate_pwr_good_signal: false  # 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 
     # Boost Converter
-    V_input_boost_threshold_mV: 130 # min input-voltage for the boost converter to work
+    V_input_boost_threshold_mV: 130 # minimum input-voltage for the boost converter to work
     V_intermediate_max_mV: 3600 # -> boost converter shuts off
 
     LUT_input_efficiency: [
@@ -198,12 +198,12 @@
     V_input_max_mV: 5100
     I_input_max_mA: 100
 
-    C_intermediate_uF: 33.0  # primary storage-Cap
-    V_intermediate_init_mV: 3400 # allow a proper / fast startup
-    I_intermediate_leak_nA: 0.0
+    storage:
+      name: Capacitor_100uF_6.3V
+      SoC_init: 0.66 # allow a proper / fast startup
 
-    V_intermediate_enable_threshold_mV: 3000 # -> target gets connected (hysteresis-combo with next value)
-    V_intermediate_disable_threshold_mV: 2400 # -> target gets disconnected
+    V_intermediate_enable_output_threshold_mV: 3000 # -> target gets connected (hysteresis-combo with next value)
+    V_intermediate_disable_output_threshold_mV: 2400 # -> target gets disconnected
     interval_check_thresholds_ms: 64.0  # some BQs check every 64 ms if output should be disconnected
 
     V_pwr_good_enable_threshold_mV: 3000 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
@@ -213,12 +213,12 @@
     C_output_uF: 1.0   # final (always last) stage to compensate undetectable current spikes when enabling power for target
 
     # Boost Converter
-    V_input_boost_threshold_mV: 100.0 # min input-voltage for the boost converter to work
+    V_input_boost_threshold_mV: 100.0 # minimum input-voltage for the boost converter to work
     V_intermediate_max_mV: 5500 # -> boost converter shuts off
 
     # Buck Converter
     V_output_mV: 2200
-    V_buck_drop_mV: 200.0  # simulate LDO min voltage differential or output-diode
+    V_buck_drop_mV: 200.0  # simulate LDO minimum voltage differential or output-diode
 
     #                        <1u   1u    2u    4u    8u    16u   32u   64u   128u  256u  512u  >1m
     LUT_output_efficiency: [ 0.40, 0.50, 0.60, 0.73, 0.82, 0.86, 0.88, 0.90, 0.91, 0.92, 0.93, 0.92] # array[12] depending on output_current

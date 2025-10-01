@@ -21,7 +21,7 @@ except ImportError:
     psutil = None
 
 from pydantic import ConfigDict
-from pydantic.types import PositiveInt
+from pydantic import PositiveInt
 
 from shepherd_core.data_models import ShpModel
 

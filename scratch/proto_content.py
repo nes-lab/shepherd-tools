@@ -20,7 +20,6 @@ from typing import Any
 from pydantic import BaseModel
 from pydantic import Field
 from pydantic import model_validator
-
 from shepherd_core.data_models import ShpModel
 from shepherd_core.logger import log
 
