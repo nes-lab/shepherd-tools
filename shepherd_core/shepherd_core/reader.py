@@ -322,6 +322,7 @@ class Reader:
             diffs_ls = [_e for _e in list(np.array(diffs_np)) if _e > 0]
             # static voltages have 0 steps, so
             if len(diffs_ls) == 0:
+                self._logger.warning("Voltage-Step could not be determined from source-material")
                 return None  # or is 0 better? that may provoke div0
             voltage_step = min(diffs_ls)
         return voltage_step
