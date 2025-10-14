@@ -4,9 +4,10 @@ from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
-from matplotlib import pyplot as plt
 from pydantic import PositiveFloat
 from pydantic import validate_call
+
+from shepherd_core import log
 
 from .virtual_storage_model import ModelStorage
 
@@ -59,6 +60,13 @@ class StorageSimulator:
 
     @validate_call
     def plot(self, path: Path, title: str, *, plot_delta_v: bool = False) -> None:
+        try:
+            # keep dependencies low
+            from matplotlib import pyplot as plt  # noqa: PLC0415
+        except ImportError:
+            log.warning("Matplotlib not installed, plotting of results disabled")
+            return
+
         offset = 1 if plot_delta_v else 0
         fig, axs = plt.subplots(4 + offset, 1, sharex="all", figsize=(10, 2 * 6), layout="tight")
         axs[0].set_title(title)
