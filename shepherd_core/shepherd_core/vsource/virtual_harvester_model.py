@@ -126,11 +126,17 @@ class VirtualHarvesterModel:
                 self.current_delta = _current_nA - self.current_last
         elif self.lin_extrapolation:
             # apply the proper delta if needed
+            # TODO: C-Code differs here slightly, but only to handle unsigned int
             if (self.voltage_hold < self.voltage_set_uV) == (self.voltage_delta > 0):
-                self.voltage_hold += self.voltage_delta
-                self.current_hold += self.current_delta
+                if self.voltage_hold > -self.voltage_delta:
+                    self.voltage_hold += self.voltage_delta
+                else:
+                    self.voltage_hold = 0
+                if self.current_hold > -self.current_delta:
+                    self.current_hold += self.current_delta
+                else:
+                    self.current_hold = 0
             else:
-                # TODO: C-Code differs here slightly, but only to handle unsigned int
                 if self.voltage_hold > self.voltage_delta:
                     self.voltage_hold -= self.voltage_delta
                 else:
