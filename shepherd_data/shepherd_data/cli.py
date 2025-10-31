@@ -58,12 +58,9 @@ def version() -> None:
     from importlib import metadata  # noqa: PLC0415
 
     logger.debug("Python v%s", sys.version)
-    logger.info("Shepherd-Data v%s", metadata.version("shepherd_data"))
-    logger.debug("Shepherd-Core v%s", metadata.version("shepherd_core"))
-    logger.debug("h5py v%s", metadata.version("h5py"))
-    logger.debug("numpy v%s", metadata.version("numpy"))
-    logger.debug("Click v%s", metadata.version("click"))
-    logger.debug("Pydantic v%s", metadata.version("pydantic"))
+    logger.info("shepherd-data v%s", metadata.version("shepherd_data"))
+    for package in ["shepherd_core", "h5py", "numpy", "click", "pydantic"]:
+        logger.debug("%s v%s", package, metadata.version(package))
 
 
 @cli.command(short_help="Validates a file or directory containing shepherd-recordings")

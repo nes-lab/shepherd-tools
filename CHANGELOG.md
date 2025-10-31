@@ -1,5 +1,10 @@
 # History of Changes
 
+## v2025.11.1
+
+- add support for py314
+- pin core-version for shepherd-data
+
 ## v2025.10.1 - new Battery-Model
 
 - adds config, simulation model and simulator for a battery model
