@@ -15,6 +15,7 @@ E_out = 17.811 mWs -> mppt_opt
 
 """
 
+import os
 from pathlib import Path
 
 from shepherd_core.data_models import VirtualHarvesterConfig
@@ -24,7 +25,8 @@ from shepherd_core import Reader
 from shepherd_data import ivonne
 
 # config simulation
-sim_duration = 32
+sim_duration = 2 if "PYTEST_CURRENT_TEST" in os.environ else 32
+# ⤷ limits runtime for pytest
 file_ivonne = Path(__file__).parents[3] / "shepherd_data/examples/jogging_10m.iv"
 file_ivcurve = Path(__file__).parent / "jogging_ivcurve.h5"
 
