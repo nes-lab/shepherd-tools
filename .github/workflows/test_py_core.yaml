@@ -49,6 +49,9 @@ jobs:
         run: uv pip install .[elf]
         working-directory: "./shepherd_core"
         if: ${{ matrix.os != 'windows-latest' }}
+      - name: Install data-package 🧱
+        run: uv pip install .[test]
+        working-directory: "./shepherd_data"
 
       - name: Test core-package with pytest 🧫
         run: pytest
