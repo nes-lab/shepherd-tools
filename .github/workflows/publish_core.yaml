@@ -35,6 +35,9 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+          activate-environment: true
+      - name: Create and enter Venv 🔧
+        run: uv venv
       - name: Install dependencies 🔧
         run: uv pip install build
 
@@ -46,3 +49,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: shepherd_core/dist/
+
+      - name: Minimize uv cache 🔧
+        run: uv cache prune --ci

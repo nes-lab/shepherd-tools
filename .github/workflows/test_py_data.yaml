@@ -29,7 +29,9 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-
+          activate-environment: true
+      - name: Create and enter Venv 🔧
+        run: uv venv
       - name: Install dependencies 🔧
         run: uv pip install build # TODO: replace by UV
       - name: Install apt-dependencies 🔧
@@ -54,3 +56,6 @@ jobs:
       - name: Test data-package with pytest 🧫
         run: pytest
         working-directory: "./shepherd_data"
+
+      - name: Minimize uv cache 🔧
+        run: uv cache prune --ci
