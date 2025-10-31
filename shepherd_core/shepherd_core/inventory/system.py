@@ -63,7 +63,7 @@ class SystemInventory(ShpModel):
             uptime = 0
             log.warning(
                 "Inventory-Parameters will be missing. "
-                "Please install functionality with "
+                "Please install functionality with i.e."
                 "'pip install shepherd_core[inventory] -U' first"
             )
         else:

@@ -41,10 +41,10 @@ jobs:
         working-directory: "./shepherd_core"
 
       - name: Install core-package 🧱
-        run: pip install .[test,inventory]
+        run: uv pip install .[test,inventory]
         working-directory: "./shepherd_core"
       - name: Install ELF-support 🧱
-        run: pip install .[elf]
+        run: uv pip install .[elf]
         working-directory: "./shepherd_core"
         if: ${{ matrix.os != 'windows-latest' }}
 
