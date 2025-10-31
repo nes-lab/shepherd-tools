@@ -1,0 +1,53 @@
+name: Core - Build, install & pytest
+
+on:
+  workflow_call:
+
+jobs:
+  utest:
+
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        python-version: [ "3.14", "3.12", "3.10" ] # min 4 versions / years
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}
+      cancel-in-progress: true
+
+    steps:
+
+      - name: Checkout 🛎️
+        uses: actions/checkout@v5
+      - name: Set up Python ${{ matrix.python-version }} 🐍
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv 🔧
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install dependencies 🔧
+        run: uv pip install build  # TODO: replace by UV
+      - name: Install apt-dependencies 🔧
+        run: sudo apt install build-essential
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+
+      - name: Test-Build core-package 🧱
+        run: python -m build
+        working-directory: "./shepherd_core"
+
+      - name: Install core-package 🧱
+        run: pip install .[test,inventory]
+        working-directory: "./shepherd_core"
+      - name: Install ELF-support 🧱
+        run: pip install .[elf]
+        working-directory: "./shepherd_core"
+        if: ${{ matrix.os != 'windows-latest' }}
+
+      - name: Test core-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_core"
