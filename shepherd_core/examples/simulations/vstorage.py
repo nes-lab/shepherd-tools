@@ -9,6 +9,8 @@ Some general Notes:
 """
 
 import multiprocessing
+import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -27,6 +29,9 @@ from shepherd_core.vsource.virtual_storage_simulator import StorageSimulator
 from shepherd_core import log
 
 path_here = Path(__file__).parent
+
+duration_max = 20 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
+# ⤷ limits runtime for pytest
 
 
 @validate_call
@@ -93,7 +98,7 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
     """Charge virtual storage with a positive current ramp (increasing power)."""
     dt_s = 0.1
     SoC_start = 0.5
-    duration_s = 200
+    duration_s = min(200, duration_max)
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
@@ -102,7 +107,7 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
     def current_trace(t_s: float, _s: float, _v: float) -> float:
         return 0.1 + 0.15 * t_s / duration_s  # pru-model can handle +- 268 mA
 
-    sim.run(fn=current_trace, duration_s=250)
+    sim.run(fn=current_trace, duration_s=duration_s)
     sim.plot(path_here, f"XP {config.name}, current charge ramp (positive)")
 
 
@@ -110,7 +115,7 @@ def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
     """Discharge virtual storage with a negative current ramp (increasing power)."""
     dt_s = 0.1
     SoC_start = 0.5
-    duration_s = 200
+    duration_s = min(200, duration_max)
     sim = StorageSimulator(
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
@@ -135,7 +140,7 @@ def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, duration_s=1_000)
+    sim.run(fn=i_pulse.step, duration_s=min(1_000, duration_max))
     sim.plot(path_here, f"XP {config.name}, pulsed discharge .1A, 1000 s (figure_9a)")
 
 
@@ -151,7 +156,7 @@ def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, duration_s=1_000)
+    sim.run(fn=i_pulse.step, duration_s=min(1_000, duration_max))
     sim.plot(path_here, f"XP {config.name}, pulsed charge .1A, 1000 s (figure_9b)")
 
 
@@ -164,7 +169,7 @@ def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_pulse.step, duration_s=3_000)
+    sim.run(fn=i_pulse.step, duration_s=min(3_000, duration_max))
     sim.plot(path_here, f"XP {config.name}, pulsed resistive charge 20 Ohm to 4.2 V, 3000 s")
 
 
@@ -180,7 +185,7 @@ def experiment_resistive_load(config: VirtualStorageConfig) -> None:
         models=get_models(SoC_start, config, dt_s),
         dt_s=dt_s,
     )
-    sim.run(fn=i_charge, duration_s=1_000)
+    sim.run(fn=i_charge, duration_s=min(1_000, duration_max))
     sim.plot(path_here, f"XP {config.name}, resistive load 20 Ohm from 4.2 V, 1000 s")
 
 
@@ -202,7 +207,7 @@ def experiment_self_discharge() -> None:
     def step(_t: float, _s: float, _v: float) -> float:
         return 0
 
-    sim.run(fn=step, duration_s=duration.total_seconds())
+    sim.run(fn=step, duration_s=min(duration.total_seconds(), duration_max))
     sim.plot(
         path_here,
         f"XP {config.name}, self-discharge, "
