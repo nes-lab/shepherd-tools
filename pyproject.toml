@@ -3,7 +3,7 @@
 # uv pip install .
 [project]
 name = "shepherd-tools"
-version = "2025.09.1"
+version = "2025.10.1"
 description = "Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed"
 readme = "README.md"
 
