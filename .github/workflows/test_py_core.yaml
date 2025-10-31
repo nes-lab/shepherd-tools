@@ -1,4 +1,4 @@
-name: Core - Build, install & pytest
+name: ShpCore - Build, install & pytest
 
 on:
   workflow_call:
@@ -14,7 +14,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}-core
       cancel-in-progress: true
 
     steps:
