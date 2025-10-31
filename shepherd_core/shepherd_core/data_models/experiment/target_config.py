@@ -10,7 +10,7 @@ from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
-from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import Target
 

@@ -7,7 +7,6 @@ from pathlib import Path
 import numpy as np
 from commons import STEP_WIDTH
 from commons import EEnvGenerator
-
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
 

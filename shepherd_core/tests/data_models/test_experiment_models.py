@@ -2,8 +2,6 @@ from datetime import timedelta
 
 import pytest
 from pydantic import ValidationError
-
-from shepherd_core import local_now
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models.content import EnergyEnvironment
@@ -18,6 +16,8 @@ from shepherd_core.data_models.experiment import SystemLogging
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.testbed import GPIO
 from shepherd_core.data_models.testbed import Target
+
+from shepherd_core import local_now
 
 from .conftest import load_yaml
 

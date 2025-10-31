@@ -4,14 +4,14 @@ import sys
 from pathlib import Path
 
 import yaml
-
-from shepherd_core import local_now
 from shepherd_core.data_models import FirmwareDType
 from shepherd_core.data_models import ShpModel
 from shepherd_core.data_models import Wrapper
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.logger import log
+
+from shepherd_core import local_now
 
 
 def load_model(_model: type(ShpModel), path: Path) -> ShpModel | None:

@@ -1,0 +1,637 @@
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400086+02:00
+  parameters:
+    id: 1029502305869010729
+    name: Capacitor_10uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.395946
+    updated_last: 2025-09-11 19:47:04.395948
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 9.999999999999999e-05
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400147+02:00
+  parameters:
+    id: 25589600704119394
+    name: Capacitor_15uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396037
+    updated_last: 2025-09-11 19:47:04.396038
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.00015
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400184+02:00
+  parameters:
+    id: 253595663675733949
+    name: Capacitor_22uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396080
+    updated_last: 2025-09-11 19:47:04.396081
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.00021999999999999998
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400216+02:00
+  parameters:
+    id: 189040367842362511
+    name: Capacitor_33uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396122
+    updated_last: 2025-09-11 19:47:04.396122
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.00032999999999999994
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400247+02:00
+  parameters:
+    id: 302239365636052824
+    name: Capacitor_47uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396160
+    updated_last: 2025-09-11 19:47:04.396160
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.00047
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400318+02:00
+  parameters:
+    id: 230202050111043484
+    name: Capacitor_68uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396201
+    updated_last: 2025-09-11 19:47:04.396201
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.00068
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400352+02:00
+  parameters:
+    id: 829635971110749696
+    name: Capacitor_100uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396253
+    updated_last: 2025-09-11 19:47:04.396254
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.001
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400383+02:00
+  parameters:
+    id: 1024672072527747344
+    name: Capacitor_150uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396294
+    updated_last: 2025-09-11 19:47:04.396294
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.0014999999999999998
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400414+02:00
+  parameters:
+    id: 307411305978095768
+    name: Capacitor_220uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396331
+    updated_last: 2025-09-11 19:47:04.396331
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.0021999999999999997
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400444+02:00
+  parameters:
+    id: 772435549807324847
+    name: Capacitor_330uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396368
+    updated_last: 2025-09-11 19:47:04.396368
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.0033
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400476+02:00
+  parameters:
+    id: 450291826275054605
+    name: Capacitor_470uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396406
+    updated_last: 2025-09-11 19:47:04.396407
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.0047
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400505+02:00
+  parameters:
+    id: 903899883972253069
+    name: Capacitor_680uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396445
+    updated_last: 2025-09-11 19:47:04.396446
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.0068
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308
+- datatype: VirtualStorageConfig
+  comment: created by script 'virtual_storage_fixture_creator.py'
+  created: 2025-09-11 19:47:04.400535+02:00
+  parameters:
+    id: 213541821398924680
+    name: Capacitor_1000uF_10.0V
+    description: Model of an ideal Capacitor (true to spec, no losses)
+    comment: null
+    created: 2025-09-11 19:47:04.396482
+    updated_last: 2025-09-11 19:47:04.396482
+    owner: NES Lab
+    group: NES Lab
+    visible2group: true
+    visible2all: true
+    SoC_init: 0.8
+    q_As: 0.01
+    p_VOC:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 10.0
+    - 0.0
+    - 0.0
+    p_Rs:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtS:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_RtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_CtL:
+    - 0.0
+    - 0.0
+    - 0.0
+    p_rce: 1.0
+    kdash: 2.2250738585072014e-308
+    R_leak_Ohm: 1.7976931348623157e+308

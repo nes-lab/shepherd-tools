@@ -1,5 +1,41 @@
 # History of Changes
 
+## v2025.10.1 - new Battery-Model
+
+- adds config, simulation model and simulator for a battery model
+  - The battery model was extended to support simulating various capacitors and replaces the previous capacitor-model
+- available simulation models are
+  - the original KiBaM model
+  - the extended KiBaMPlus
+  - the simplified KiBaMSimple
+  - the actual fixed-point VirtualStorageModel for the PRU (based on KiBaMSimple)
+- fixtures are generated via `virtual_storage_fixture_creator.py`, try to mimic actual parts and cover
+  - some LiPos & Lead Acid batteries
+  - ideal capacitors
+  - tantals
+  - MLCC (with planned DC-Bias-Effect)
+  - super-caps
+- `core/examples/simulations` contains several virtual experiments comparing these models
+- fixed regressions in Shp.Reader() to restore performance of virtual harvester
+- adapt py-port of virtual harvester to latest c-code
+
+Modifications to KiBam by [@jonkub](https://github.com/jonkub):
+
+- omit transient voltages (step 4 & 5, expensive calculation)
+- omit rate capacity effect (step 1, expensive calculation)
+- replace two expensive Fn by LuT
+  - mapping SoC to open circuit voltage (step 3)
+  - mapping SoC to series resistance (step 4)
+- add self discharge resistance (step 2a)
+- support signaling 0 % SoC by nulling voltage
+
+Compared to the current shepherd capacitor (charge-based), it:
+
+- supports emulation of battery types like lipo and lead acid (non-linear SOC-to-V_OC mapping)
+- has a parallel leakage resistor instead of an oversimplified leakage current
+- a series resistance is added to improve model matching
+- as a drawback the open circuit voltage is quantified and shows steps (LuT with 128 entries)
+
 ## v2025.08.1
 
 - allow configuring battery in vsource

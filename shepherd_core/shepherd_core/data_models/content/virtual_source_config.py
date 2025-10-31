@@ -14,8 +14,9 @@ from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
 from .energy_environment import EnergyDType
-from .virtual_harvester import HarvesterPRUConfig
-from .virtual_harvester import VirtualHarvesterConfig
+from .virtual_harvester_config import HarvesterPRUConfig
+from .virtual_harvester_config import VirtualHarvesterConfig
+from .virtual_storage_config import VirtualStorageConfig
 
 # Custom Types
 LUT_SIZE: int = 12
@@ -48,35 +49,42 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     enable_buck: bool = False
     """ ⤷ if false -> v_output = v_intermediate"""
     enable_feedback_to_hrv: bool = False
-    """ src can control a cv-harvester for ivcurve"""
+    """ Source can control a cv-harvester for ivsurface.
+     Feedback is essential for some harvesters, i.e. diode-circuitry.
+    """
 
     interval_startup_delay_drain_ms: Annotated[float, Field(ge=0, le=10_000)] = 0
+    """ ⤷ Model begins running, but Target is not draining the storage capacitor
+    until this delay is over.
+    """
 
     harvester: VirtualHarvesterConfig = vhrv_mppt_opt
+    """ ⤷ Only active / needed if input is ivsurface. """
 
     V_input_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
+    """ ⤷ Maximum input Voltage [mV] -> will be clipped."""
     I_input_max_mA: Annotated[float, Field(ge=0, le=4.29e3)] = 4_200
+    """ ⤷ Maximum input Current [mA] -> will be clipped."""
     V_input_drop_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 0
-    """ ⤷ simulate input-diode"""
+    """ ⤷ simulate voltage drop for input-diode or LDO."""
     R_input_mOhm: Annotated[float, Field(ge=0, le=4.29e6)] = 0
     """ ⤷ resistance only active with disabled boost, range [1 mOhm; 1MOhm]"""
 
-    # primary storage-Cap
-    C_intermediate_uF: Annotated[float, Field(ge=0, le=100_000)] = 0
-    V_intermediate_init_mV: Annotated[float, Field(ge=0, le=10_000)] = 3_000
-    """ ⤷ allow a proper / fast startup"""
-    I_intermediate_leak_nA: Annotated[float, Field(ge=0, le=4.29e9)] = 0
-
-    V_intermediate_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 1
+    storage: VirtualStorageConfig | None = None
+    """ ⤷ primary intermediate energy storage between boost- and buck-converter stage.
+    Selecting "None" disables the storage and directly connects input to output.
+    """
+    V_intermediate_enable_output_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 1
     """ ⤷ target gets connected (hysteresis-combo with next value)"""
-    V_intermediate_disable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 0
+    V_intermediate_disable_output_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 0
     """ ⤷ target gets disconnected"""
     interval_check_thresholds_ms: Annotated[float, Field(ge=0, le=4.29e3)] = 0
     """ ⤷ some ICs (BQ) check every 64 ms if output should be disconnected"""
     # TODO: add intervals for input-disable, output-disable & power-good-signal
 
-    # pwr-good: target is informed on output-pin (hysteresis) -> for intermediate voltage
     V_pwr_good_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2_800
+    """ pwr-good: target is informed on output-pin (hysteresis)
+     -> reference is the intermediate voltage """
     V_pwr_good_disable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2200
     immediate_pwr_good_signal: bool = True
     """ ⤷ 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds"""
@@ -93,13 +101,13 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     # Extra
     V_output_log_gpio_threshold_mV: Annotated[float, Field(ge=0, le=4.29e6)] = 1_400
-    """ ⤷ min voltage needed to enable recording changes in gpio-bank"""
+    """ ⤷ minimum voltage threshold needed to enable recording changes in gpio-bank"""
 
     # Boost Converter
     V_input_boost_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 0
-    """ ⤷ min input-voltage for the boost converter to work"""
+    """ ⤷ minimum input-voltage for the boost converter to work"""
     V_intermediate_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
-    """ ⤷ boost converter shuts off"""
+    """ ⤷ threshold for shutting off boost converter """
 
     LUT_input_efficiency: LUT2D = 12 * [12 * [1.00]]
     """ ⤷ rows are current -> first row a[V=0][:]
@@ -115,13 +123,18 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     # Buck Converter
     V_output_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_400
+    """ Fixed Voltage of Buck-Converter.
+    (as long as Input is > Output + Drop-Voltage)
+    """
     V_buck_drop_mV: Annotated[float, Field(ge=0, le=5_000)] = 0
-    """ ⤷ simulate LDO / diode min voltage differential or output-diode"""
+    """ ⤷ simulate LDO / diode minimum voltage differential or output-diode"""
 
     LUT_output_efficiency: LUT1D = 12 * [1.00]
-    """ ⤷ array[12] depending on output_current"""
+    """ ⤷ array[12] depending on output_current, In- & Output is linear."""
     LUT_output_I_min_log2_nA: Annotated[int, Field(ge=1, le=20)] = 1
-    """ ⤷ 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA, see notes on LUT_input for explanation"""
+    """ ⤷ i.e. 2^8 = 256 nA -> LUT[0] is for inputs < 256 nA,
+    see notes on LUT_input for explanation
+    """
 
     @model_validator(mode="before")
     @classmethod
@@ -129,12 +142,16 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         values, chain = tb_client.try_completing_model(cls.__name__, values)
         values = tb_client.fill_in_user_data(values)
         log.debug("VSrc-Inheritances: %s", chain)
+        # TODO: most "internal states" should be corrected here
+
         return values
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         # trigger stricter test of harv-parameters
         HarvesterPRUConfig.from_vhrv(self.harvester, for_emu=True)
+        # TODO: enable threshold < mid_max
+        # TODO: mid_max < mid_soc1
         return self
 
     def calc_internal_states(self) -> dict:
@@ -164,11 +181,11 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         Note: dV values will be reversed (negated), because dV is always negative (Voltage drop)
         """
         values = {}
-        if self.C_intermediate_uF > 0 and self.C_output_uF > 0:
+        if (self.storage is not None) and self.C_output_uF > 0:
             # first case: storage cap outside of en/dis-thresholds
-            v_old = self.V_intermediate_enable_threshold_mV
+            v_old = self.V_intermediate_enable_output_threshold_mV
             v_out = self.V_output_mV
-            c_store = self.C_intermediate_uF
+            c_store = self.storage.capacity_in_uF
             c_out = self.C_output_uF
             dV_output_en_thrs_mV = v_old - pow(
                 pow(v_old, 2) - (c_out / c_store) * pow(v_out, 2),
@@ -183,6 +200,16 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             dV_output_en_thrs_mV = 0
             dV_output_imed_low_mV = 0
 
+        if self.enable_boost and self.storage is not None:
+            # TODO: storage could have maximum at a different SoC, is this needed at all?
+            values["V_mid_max_mV"] = min(
+                self.V_intermediate_max_mV,
+                1e3 * self.storage.calc_V_OC(SoC=1.0),
+                10_000,
+            )
+        else:
+            values["V_mid_max_mV"] = self.V_intermediate_max_mV
+
         # protect from complex solutions (non valid input combinations)
         if not (isinstance(dV_output_en_thrs_mV, (int, float)) and (dV_output_en_thrs_mV >= 0)):
             dV_output_en_thrs_mV = 0
@@ -194,25 +221,33 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         if self.enable_buck > 0:
             V_pre_output_mV = self.V_output_mV + self.V_buck_drop_mV
 
-            if self.V_intermediate_enable_threshold_mV > V_pre_output_mV:
-                values["dV_enable_output_mV"] = dV_output_en_thrs_mV
-                values["V_enable_output_threshold_mV"] = self.V_intermediate_enable_threshold_mV
-
-            else:
-                values["dV_enable_output_mV"] = dV_output_imed_low_mV
-                values["V_enable_output_threshold_mV"] = (
-                    V_pre_output_mV + values["dV_enable_output_mV"]
+            if self.V_intermediate_enable_output_threshold_mV > V_pre_output_mV:
+                values["dV_mid_enable_output_mV"] = dV_output_en_thrs_mV
+                values["V_mid_enable_output_threshold_mV"] = (
+                    self.V_intermediate_enable_output_threshold_mV
                 )
 
-            if self.V_intermediate_disable_threshold_mV > V_pre_output_mV:
-                values["V_disable_output_threshold_mV"] = self.V_intermediate_disable_threshold_mV
             else:
-                values["V_disable_output_threshold_mV"] = V_pre_output_mV
+                values["dV_mid_enable_output_mV"] = dV_output_imed_low_mV
+                values["V_mid_enable_output_threshold_mV"] = (
+                    V_pre_output_mV + values["dV_mid_enable_output_mV"]
+                )
+
+            if self.V_intermediate_disable_output_threshold_mV > V_pre_output_mV:
+                values["V_mid_disable_output_threshold_mV"] = (
+                    self.V_intermediate_disable_output_threshold_mV
+                )
+            else:
+                values["V_mid_disable_output_threshold_mV"] = V_pre_output_mV
 
         else:
-            values["dV_enable_output_mV"] = dV_output_en_thrs_mV
-            values["V_enable_output_threshold_mV"] = self.V_intermediate_enable_threshold_mV
-            values["V_disable_output_threshold_mV"] = self.V_intermediate_disable_threshold_mV
+            values["dV_mid_enable_output_mV"] = dV_output_en_thrs_mV
+            values["V_mid_enable_output_threshold_mV"] = (
+                self.V_intermediate_enable_output_threshold_mV
+            )
+            values["V_mid_disable_output_threshold_mV"] = (
+                self.V_intermediate_disable_output_threshold_mV
+            )
         return values
 
     def calc_converter_mode(self, dtype_in: EnergyDType, *, log_intermediate_node: bool) -> int:
@@ -221,7 +256,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         log_intermediate_node: record / log virtual intermediate (cap-)voltage and
         -current (out) instead of output-voltage and -current
         """
-        enable_storage = self.C_intermediate_uF > 0
+        enable_storage = self.storage is not None
         enable_boost = self.enable_boost and enable_storage
         if enable_boost != self.enable_boost:
             log.warning("VSrc - boost was disabled due to missing storage capacitor!")
@@ -243,14 +278,6 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
             + 8 * int(log_intermediate_node)
             + 16 * int(enable_feedback)
         )
-
-    def calc_cap_constant_us_per_nF_n28(self) -> int:
-        """Calc constant to convert capacitor-current to Voltage-delta.
-
-        dV[uV] = constant[us/nF] * current[nA] = constant[us*V/nAs] * current[nA]
-        """
-        C_cap_uF = max(self.C_intermediate_uF, 0.001)
-        return int((10**3 * (2**28)) // (C_cap_uF * config.SAMPLERATE_SPS))
 
 
 u32 = Annotated[int, Field(ge=0, lt=2**32)]
@@ -283,13 +310,9 @@ class ConverterPRUConfig(ShpModel):
     R_input_kOhm_n22: u32
     # ⤷ TODO: possible optimization: n32 (range 1uOhm to 1 kOhm) is easier to calc in pru
 
-    Constant_us_per_nF_n28: u32
-    V_intermediate_init_uV: u32
-    I_intermediate_leak_nA: u32
-
-    V_enable_output_threshold_uV: u32
-    V_disable_output_threshold_uV: u32
-    dV_enable_output_uV: u32
+    V_mid_enable_output_threshold_uV: u32
+    V_mid_disable_output_threshold_uV: u32
+    dV_mid_enable_output_uV: u32
     interval_check_thresholds_n: u32
 
     V_pwr_good_enable_threshold_uV: u32
@@ -299,7 +322,7 @@ class ConverterPRUConfig(ShpModel):
     V_output_log_gpio_threshold_uV: u32
 
     V_input_boost_threshold_uV: u32
-    V_intermediate_max_uV: u32
+    V_mid_max_uV: u32
 
     V_output_uV: u32
     V_buck_drop_uV: u32
@@ -331,12 +354,13 @@ class ConverterPRUConfig(ShpModel):
             I_input_max_nA=round(data.I_input_max_mA * 1e6),
             V_input_drop_uV=round(data.V_input_drop_mV * 1e3),
             R_input_kOhm_n22=round(data.R_input_mOhm * (1e-6 * 2**22)),
-            Constant_us_per_nF_n28=data.calc_cap_constant_us_per_nF_n28(),
-            V_intermediate_init_uV=round(data.V_intermediate_init_mV * 1e3),
-            I_intermediate_leak_nA=round(data.I_intermediate_leak_nA),
-            V_enable_output_threshold_uV=round(states["V_enable_output_threshold_mV"] * 1e3),
-            V_disable_output_threshold_uV=round(states["V_disable_output_threshold_mV"] * 1e3),
-            dV_enable_output_uV=round(states["dV_enable_output_mV"] * 1e3),
+            V_mid_enable_output_threshold_uV=round(
+                states["V_mid_enable_output_threshold_mV"] * 1e3
+            ),
+            V_mid_disable_output_threshold_uV=round(
+                states["V_mid_disable_output_threshold_mV"] * 1e3
+            ),
+            dV_mid_enable_output_uV=round(states["dV_mid_enable_output_mV"] * 1e3),
             interval_check_thresholds_n=round(
                 data.interval_check_thresholds_ms * config.SAMPLERATE_SPS * 1e-3
             ),
@@ -346,7 +370,7 @@ class ConverterPRUConfig(ShpModel):
             V_output_log_gpio_threshold_uV=round(data.V_output_log_gpio_threshold_mV * 1e3),
             # Boost-Converter
             V_input_boost_threshold_uV=round(data.V_input_boost_threshold_mV * 1e3),
-            V_intermediate_max_uV=round(data.V_intermediate_max_mV * 1e3),
+            V_mid_max_uV=round(states["V_mid_max_mV"] * 1e3),
             # Buck-Converter
             V_output_uV=round(data.V_output_mV * 1e3),
             V_buck_drop_uV=round(data.V_buck_drop_mV * 1e3),

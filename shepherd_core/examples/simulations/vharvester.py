@@ -6,25 +6,30 @@
 
 Output:
 E_out = 0.000 mWs -> cv20
-E_out = 17.165 mWs -> cv10
-E_out = 17.427 mWs -> mppt_voc
-E_out = 17.242 mWs -> mppt_bq_solar
-E_out = 13.998 mWs -> mppt_bq_thermoelectric
-E_out = 15.202 mWs -> mppt_po
+E_out = 17.143 mWs -> cv10
+E_out = 17.384 mWs -> mppt_voc
+E_out = 17.249 mWs -> mppt_bq_solar
+E_out = 13.954 mWs -> mppt_bq_thermoelectric
+E_out = 15.001 mWs -> mppt_po
 E_out = 17.811 mWs -> mppt_opt
+
 """
 
 from pathlib import Path
 
-from shepherd_core import Reader
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.vsource import simulate_harvester
+
+from shepherd_core import Reader
 from shepherd_data import ivonne
 
 # config simulation
 sim_duration = 32
-file_ivonne = Path(__file__).parent.parent.parent / "shepherd_data/examples/jogging_10m.iv"
+file_ivonne = Path(__file__).parents[3] / "shepherd_data/examples/jogging_10m.iv"
 file_ivcurve = Path(__file__).parent / "jogging_ivcurve.h5"
+
+if not file_ivonne.exists():
+    raise FileNotFoundError("Input-File not found - check path")
 
 hrv_list = [
     "cv20",
@@ -39,7 +44,7 @@ hrv_list = [
     "mppt_opt",
 ]
 
-save_files: bool = False
+save_files: bool = True
 
 # convert IVonne to IVCurve
 if not file_ivcurve.exists():

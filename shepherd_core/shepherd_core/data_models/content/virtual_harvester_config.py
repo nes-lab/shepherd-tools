@@ -332,11 +332,11 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         if self.voltage_min_mV > self.voltage_max_mV:
-            raise ValueError("Voltage min > max")
+            raise ValueError("Voltage minimum > max")
         if self.voltage_mV < self.voltage_min_mV:
-            raise ValueError("Voltage below min")
+            raise ValueError("Voltage below minimum")
         if self.voltage_mV > self.voltage_max_mV:
-            raise ValueError("Voltage above max")
+            raise ValueError("Voltage above maximum")
 
         return self
 

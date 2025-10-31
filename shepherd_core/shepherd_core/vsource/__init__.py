@@ -9,15 +9,19 @@ from .virtual_harvester_model import VirtualHarvesterModel
 from .virtual_harvester_simulation import simulate_harvester
 from .virtual_source_model import VirtualSourceModel
 from .virtual_source_simulation import simulate_source
+from .virtual_storage_model import VirtualStorageModel
+from .virtual_storage_simulator import StorageSimulator
 
 __all__ = [
     "ConstantCurrentTarget",
     "ConstantPowerTarget",
     "PruCalibration",
     "ResistiveTarget",
+    "StorageSimulator",
     "VirtualConverterModel",
     "VirtualHarvesterModel",
     "VirtualSourceModel",
+    "VirtualStorageModel",
     "simulate_harvester",
     "simulate_source",
 ]

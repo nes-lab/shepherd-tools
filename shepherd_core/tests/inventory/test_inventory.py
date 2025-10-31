@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from shepherd_core.inventory import Inventory
 from shepherd_core.inventory import InventoryList
 from shepherd_core.inventory import PythonInventory

@@ -12,9 +12,10 @@ NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
 from shepherd_core.data_models.content.energy_environment import EnergyDType
-from shepherd_core.data_models.content.virtual_harvester import HarvesterPRUConfig
-from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
-from shepherd_core.data_models.content.virtual_source import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_harvester_config import HarvesterPRUConfig
+from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
 
 from .virtual_converter_model import PruCalibration
 from .virtual_converter_model import VirtualConverterModel
@@ -36,25 +37,28 @@ class VirtualSourceModel:
     ) -> None:
         self._cal_emu: CalibrationEmulator = cal_emu
         self._cal_pru: PruCalibration = PruCalibration(cal_emu)
-
         self.cfg_src = VirtualSourceConfig() if vsrc is None else vsrc
-        cnv_config = ConverterPRUConfig.from_vsrc(
-            self.cfg_src,
-            dtype_in=dtype_in,
-            log_intermediate_node=log_intermediate,
-        )
-        self.cnv: VirtualConverterModel = VirtualConverterModel(cnv_config, self._cal_pru)
 
-        hrv_config = HarvesterPRUConfig.from_vhrv(
+        # init Harvester
+        cfg_hrv = HarvesterPRUConfig.from_vhrv(
             self.cfg_src.harvester,
             for_emu=True,
             dtype_in=dtype_in,
             window_size=window_size,
             voltage_step_V=voltage_step_V,
         )
+        self.hrv: VirtualHarvesterModel = VirtualHarvesterModel(cfg_hrv)
 
-        self.hrv: VirtualHarvesterModel = VirtualHarvesterModel(hrv_config)
+        # init Converters
+        cfg_cnv = ConverterPRUConfig.from_vsrc(
+            self.cfg_src,
+            dtype_in=dtype_in,
+            log_intermediate_node=log_intermediate,
+        )
+        cfg_storage = StoragePRUConfig.from_vstorage(self.cfg_src.storage, optimize_clamp=True)
+        self.cnv: VirtualConverterModel = VirtualConverterModel(cfg_cnv, self._cal_pru, cfg_storage)
 
+        # state for simulation
         self.W_inp_fWs: float = 0.0
         self.W_out_fWs: float = 0.0
 
@@ -74,8 +78,8 @@ class VirtualSourceModel:
 
         # fake ADC read
         A_out_raw = self._cal_emu.adc_C_A.si_to_raw(I_out_nA * 10**-9)
-
         P_out_fW = self.cnv.calc_out_power(A_out_raw)
+
         V_mid_uV = self.cnv.update_cap_storage()
         V_out_raw = self.cnv.update_states_and_output()
         V_out_uV = int(self._cal_emu.dac_V_A.raw_to_si(V_out_raw) * 10**6)

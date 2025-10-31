@@ -2,10 +2,11 @@
 
 from pathlib import Path
 
-from shepherd_core import WebClient
-from shepherd_core import data_models as sm
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.logger import log
+
+from shepherd_core import WebClient
+from shepherd_core import data_models as sm
 
 if __name__ == "__main__":
     path_here = Path(__file__).parent.absolute()

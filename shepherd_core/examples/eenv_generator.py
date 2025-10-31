@@ -4,11 +4,11 @@ from itertools import product
 from pathlib import Path
 
 import numpy as np
+from shepherd_core.logger import log
 from tqdm import trange
 
 from shepherd_core import Reader as ShpReader
 from shepherd_core import Writer as ShpWriter
-from shepherd_core.logger import log
 
 # Config
 voltages_V = [4.0, 2.0]

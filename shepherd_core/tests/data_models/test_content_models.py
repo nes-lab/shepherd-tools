@@ -2,16 +2,17 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
-from shepherd_core import fw_tools
 from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import FirmwareDType
 from shepherd_core.data_models.content import VirtualHarvesterConfig
 from shepherd_core.data_models.content import VirtualSourceConfig
-from shepherd_core.data_models.content.virtual_source import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.testbed import MCU
+
+from shepherd_core import fw_tools
 
 from .conftest import files_elf
 
@@ -254,7 +255,7 @@ def test_content_model_src_force_warning() -> None:
     src = VirtualSourceConfig(
         name="BQ25570",
         C_output_uF=200,
-        C_intermediate_uF=100,
+        storage=VirtualStorageConfig.capacitor(C_uF=100, V_rated=6.3),
     )
     ConverterPRUConfig.from_vsrc(src, dtype_in=EnergyDType.ivsample)
     # -> triggers warning currently
@@ -263,8 +264,8 @@ def test_content_model_src_force_warning() -> None:
 def test_content_model_src_force_other_hysteresis1() -> None:
     src = VirtualSourceConfig(
         name="BQ25570",
-        V_intermediate_enable_threshold_mV=4000,
-        V_intermediate_disable_threshold_mV=3999,
+        V_intermediate_enable_output_threshold_mV=4000,
+        V_intermediate_disable_output_threshold_mV=3999,
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )
@@ -274,8 +275,8 @@ def test_content_model_src_force_other_hysteresis1() -> None:
 def test_content_model_src_force_other_hysteresis2() -> None:
     src = VirtualSourceConfig(
         name="BQ25570",
-        V_intermediate_enable_threshold_mV=1000,
-        V_intermediate_disable_threshold_mV=999,
+        V_intermediate_enable_output_threshold_mV=1000,
+        V_intermediate_disable_output_threshold_mV=999,
         V_output_mV=2000,
         V_buck_drop_mV=100,
     )

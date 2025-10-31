@@ -7,8 +7,9 @@ from .energy_environment import EnergyDType
 from .energy_environment import EnergyEnvironment
 from .firmware import Firmware
 from .firmware_datatype import FirmwareDType
-from .virtual_harvester import VirtualHarvesterConfig
-from .virtual_source import VirtualSourceConfig
+from .virtual_harvester_config import VirtualHarvesterConfig
+from .virtual_source_config import VirtualSourceConfig
+from .virtual_storage_config import VirtualStorageConfig
 
 __all__ = [
     "EnergyDType",
@@ -17,4 +18,5 @@ __all__ = [
     "FirmwareDType",
     "VirtualHarvesterConfig",
     "VirtualSourceConfig",
+    "VirtualStorageConfig",
 ]
