@@ -30,19 +30,19 @@ jobs:
 
       - name: Checkout 🛎️
         uses: actions/checkout@v5
+
       - name: Install uv 🔧 & set up Python 🐍
         uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
           activate-environment: true
+
       - name: Create and enter Venv 🔧
         run: uv venv
-      - name: Install dependencies 🔧
-        run: uv pip install build
 
       - name: Build data-package 🧱
-        run: python -m build
+        run: uv build --clear
         working-directory: "./shepherd_data"
 
       - name: Publish package 🥳
