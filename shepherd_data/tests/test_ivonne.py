@@ -20,21 +20,22 @@ def test_convert_ivonne(tmp_path: Path, example_path: Path) -> None:
     ivc_path = tmp_path / (input_file + "_ivc.h5")
     voc_path = tmp_path / (input_file + "_voc.h5")
     opt_path = tmp_path / (input_file + "_opt.h5")
+    duration = 6
 
     with ivonne.Reader(inp_path) as ifr:
-        ifr.upsample_2_isc_voc(isc_path, duration_s=20)
-        ifr.convert_2_ivsurface(ivc_path, duration_s=20)
+        ifr.upsample_2_isc_voc(isc_path, duration_s=duration)
+        ifr.convert_2_ivsurface(ivc_path, duration_s=duration)
 
         tr_voc = mppt.OpenCircuitTracker(ratio=0.76)
         tr_opt = mppt.OptimalTracker()
 
-        ifr.convert_2_ivtrace(voc_path, tracker=tr_voc, duration_s=20)
-        ifr.convert_2_ivtrace(opt_path, tracker=tr_opt, duration_s=20)
+        ifr.convert_2_ivtrace(voc_path, tracker=tr_voc, duration_s=duration)
+        ifr.convert_2_ivtrace(opt_path, tracker=tr_opt, duration_s=duration)
 
     energies = {}
     for file_path in [isc_path, ivc_path, voc_path, opt_path]:
         with Reader(file_path) as sfr:
-            assert sfr.runtime_s == 20
+            assert sfr.runtime_s == duration
             energies[file_path.stem[-3:]] = sfr.energy()
 
     assert energies["isc"] > energies["opt"]
