@@ -54,7 +54,9 @@ jobs:
       - name: Test data-package with pytest 🧫
         uses: nick-fields/retry@v3
         with:
-          command: ./shepherd_data/pytest
+          command: |
+            cd ./shepherd_data
+            pytest
           max_attempts: 3
           timeout_minutes: 99
         #working-directory: "./shepherd_data"
