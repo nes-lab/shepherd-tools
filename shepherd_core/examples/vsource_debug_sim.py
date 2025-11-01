@@ -41,9 +41,7 @@ I_mcu_active_A = 1e-3
 
 # limit runtime for pytest
 if "PYTEST_CURRENT_TEST" in os.environ:
-    sample_dur_list = [
-        10_000,
-    ]
+    sample_dur_list = [10_000]
 
 # For online-queries the lib can be connected to the testbed-server.
 # NOTE: there are 3 states:

@@ -4,7 +4,7 @@
 
 - add support for py314 for packages
 - pin core-version for shepherd-data
-- shorten simulations for unittests to shorten workflows
+- limit simulations for unittests to speedup workflows (>15min to <3)
 - update deprecated metadata in pyproject.toml
 - workflows use py314 as default
 - workflows use uv fully
