@@ -3,6 +3,8 @@
 It will also save file-metadata to yaml & read file and query some data.
 """
 
+import os
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -10,12 +12,15 @@ from tqdm import trange
 
 import shepherd_data as shp
 
+DURATION_MAX = 1 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
+# ⤷ limits runtime for pytest
+
 if __name__ == "__main__":
     file_path = Path("./hrv_sawtooth_10min.h5")
 
     with shp.Writer(file_path) as file:
         file.store_hostname("artificial")
-        duration_s = 60
+        duration_s = min(60, DURATION_MAX)
         repetitions = 10
         timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
 

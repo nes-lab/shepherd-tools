@@ -10,13 +10,18 @@ Three different file-formats are produced:
 - isc_voc -> not directly usable (for now)
 """
 
+import os
+import sys
 from pathlib import Path
 
 from shepherd_data import ivonne
 from shepherd_data import mppt
 
+DURATION_MAX = 1 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
+# ⤷ limits runtime for pytest
+
 # config
-duration = 30
+duration = min(30, DURATION_MAX)
 
 if __name__ == "__main__":
     inp_file_path = Path("./jogging_10m.iv")

@@ -1,5 +1,14 @@
 # History of Changes
 
+## v2025.11.1
+
+- add support for py314 for packages
+- pin core-version for shepherd-data
+- limit simulations for unittests to speedup workflows (>15min to <3)
+- update deprecated metadata in pyproject.toml
+- workflows use py314 as default
+- workflows use uv fully
+
 ## v2025.10.1 - new Battery-Model
 
 - adds config, simulation model and simulator for a battery model

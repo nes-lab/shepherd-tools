@@ -10,13 +10,17 @@ concurrency:
 jobs:
   static-analysis:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.14"]
+
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v5
       - name: Set up Python 🐍
         uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - name: Run Pre-Commit Tests 🧪
         uses: pre-commit/action@v3.0.1
