@@ -29,9 +29,6 @@ jobs:
           enable-cache: true
           activate-environment: true
 
-     # - name: Create and enter Venv 🔧
-     #   run: uv venv
-
       - name: Install apt-dependencies 🔧
         run: sudo apt install build-essential
         if: ${{ matrix.os == 'ubuntu-latest' }}

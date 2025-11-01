@@ -38,9 +38,6 @@ jobs:
           enable-cache: true
           activate-environment: true
 
-      - name: Create and enter Venv 🔧
-        run: uv venv
-
       - name: Build core-package 🧱
         run: uv build --clear
         working-directory: "./shepherd_core"
