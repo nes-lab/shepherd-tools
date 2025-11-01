@@ -2,8 +2,12 @@
 
 ## v2025.11.1
 
-- add support for py314
+- add support for py314 for packages
 - pin core-version for shepherd-data
+- shorten simulations for unittests to shorten workflows
+- update deprecated metadata in pyproject.toml
+- workflows use py314 as default
+- workflows use uv fully
 
 ## v2025.10.1 - new Battery-Model
 
