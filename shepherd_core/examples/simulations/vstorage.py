@@ -30,7 +30,7 @@ from shepherd_core import log
 
 path_here = Path(__file__).parent
 
-DURATION_MAX = 2 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
+DURATION_MAX = 1 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
 # ⤷ limits runtime for pytest
 
 

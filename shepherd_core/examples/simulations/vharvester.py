@@ -25,7 +25,7 @@ from shepherd_core.vsource import simulate_harvester
 from shepherd_core import Reader
 from shepherd_data import ivonne
 
-DURATION_MAX = 2 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
+DURATION_MAX = 1 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
 # ⤷ limits runtime for pytest
 
 # config simulation

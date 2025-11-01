@@ -17,7 +17,7 @@ from pathlib import Path
 from shepherd_data import ivonne
 from shepherd_data import mppt
 
-DURATION_MAX = 2 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
+DURATION_MAX = 1 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
 # ⤷ limits runtime for pytest
 
 # config

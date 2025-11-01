@@ -12,7 +12,7 @@ from tqdm import trange
 
 import shepherd_data as shp
 
-DURATION_MAX = 2 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
+DURATION_MAX = 1 if "PYTEST_CURRENT_TEST" in os.environ else sys.float_info.max
 # ⤷ limits runtime for pytest
 
 if __name__ == "__main__":
