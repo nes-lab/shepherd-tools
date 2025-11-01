@@ -54,7 +54,7 @@ jobs:
           command: |
             cd ./shepherd_data
             pytest
-          max_attempts: 3
+          max_attempts: 6
           timeout_minutes: 99 # mandatory / stupid
         # ⤷ workaround for flakey TCL-bug triggered by combination of
         #   windows, matplotlib, some python-versions
