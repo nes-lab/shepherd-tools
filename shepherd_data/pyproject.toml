@@ -10,7 +10,8 @@ maintainers = [
     {name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},
 ]
 
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICENSE"] # can't be in parent dir
 dynamic = ["version"]
 
 classifiers = [
@@ -23,7 +24,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Natural Language :: English",
 ]
