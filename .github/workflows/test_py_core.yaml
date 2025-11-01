@@ -54,6 +54,3 @@ jobs:
       - name: Test core-package with pytest 🧫
         run: pytest
         working-directory: "./shepherd_core"
-
-      - name: Minimize uv cache 🔧
-        run: uv cache prune --ci

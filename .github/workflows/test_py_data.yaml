@@ -58,12 +58,6 @@ jobs:
             cd ./shepherd_data
             pytest
           max_attempts: 3
-          timeout_minutes: 99
-        #working-directory: "./shepherd_data"
+          timeout_minutes: 99 # mandatory / stupid
         # ⤷ workaround for flakey TCL-bug triggered by combination of
         #   windows, matplotlib, some python-versions
-        #   ()
-
-
-      - name: Minimize uv cache 🔧
-        run: uv cache prune --ci
