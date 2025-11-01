@@ -1,58 +1,66 @@
-name: Build, install & pytest
+name: ShpData - Build, install & pytest
 
 on:
   workflow_call:
 
 jobs:
-  utest:
+  utdata:
 
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: [ "3.14", "3.12", "3.10" ] # 4 versions / years
+        python-version: [ "3.14", "3.12", "3.10" ] # min 4 versions / years
 
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}-data
       cancel-in-progress: true
 
     steps:
 
       - name: Checkout 🛎️
         uses: actions/checkout@v5
-      - name: Set up Python ${{ matrix.python-version }} 🐍
+
+      - name: Set up Python 🐍
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+        # ⤷ workaround for flakey TCL-bug triggered by combination of
+        #   windows, matplotlib, some python-versions
+        #   ()
 
-      - name: Install pip-dependencies 🔧
-        run: pip install build
+      - name: Install uv 🔧
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          activate-environment: true
+
+      - name: Create and enter Venv 🔧
+        run: uv venv
+
       - name: Install apt-dependencies 🔧
         run: sudo apt install build-essential
         if: ${{ matrix.os == 'ubuntu-latest' }}
 
-      - name: Test-Build core-package 🧱
-        run: python -m build
-        working-directory: "./shepherd_core"
       - name: Test-Build data-package 🧱
-        run: python -m build
+        run: uv build --clear
         working-directory: "./shepherd_data"
 
       - name: Install core-package 🧱
-        run: pip install .[test,inventory]
+        run: uv pip install .[test,inventory]
         working-directory: "./shepherd_core"
       - name: Install ELF-support 🧱
-        run: pip install .[elf]
+        run: uv pip install .[elf]
         working-directory: "./shepherd_core"
         if: ${{ matrix.os != 'windows-latest' }}
       - name: Install data-package 🧱
-        run: pip install .[test]
+        run: uv pip install .[test]
         working-directory: "./shepherd_data"
 
-      - name: Test core-package with pytest 🧫
-        run: pytest
-        working-directory: "./shepherd_core"
       - name: Test data-package with pytest 🧫
         run: pytest
         working-directory: "./shepherd_data"
+
+      - name: Minimize uv cache 🔧
+        run: uv cache prune --ci

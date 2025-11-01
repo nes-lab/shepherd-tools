@@ -1,0 +1,59 @@
+name: ShpCore - Build, install & pytest
+
+on:
+  workflow_call:
+
+jobs:
+  utcore:
+
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        python-version: [ "3.14", "3.12", "3.10" ] # min 4 versions / years
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}-core
+      cancel-in-progress: true
+
+    steps:
+
+      - name: Checkout 🛎️
+        uses: actions/checkout@v5
+
+      - name: Install uv 🔧 & set up Python 🐍
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          activate-environment: true
+
+      - name: Create and enter Venv 🔧
+        run: uv venv
+
+      - name: Install apt-dependencies 🔧
+        run: sudo apt install build-essential
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+
+      - name: Test-Build core-package 🧱
+        run: uv build --clear
+        working-directory: "./shepherd_core"
+
+      - name: Install core-package 🧱
+        run: uv pip install .[test,inventory]
+        working-directory: "./shepherd_core"
+      - name: Install ELF-support 🧱
+        run: uv pip install .[elf]
+        working-directory: "./shepherd_core"
+        if: ${{ matrix.os != 'windows-latest' }}
+      - name: Install data-package 🧱
+        run: uv pip install .[test]
+        working-directory: "./shepherd_data" # needed for core-pytest
+
+      - name: Test core-package with pytest 🧫
+        run: pytest
+        working-directory: "./shepherd_core"
+
+      - name: Minimize uv cache 🔧
+        run: uv cache prune --ci

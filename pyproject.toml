@@ -11,7 +11,6 @@ dependencies = [
     "shepherd-core[all]",
     "shepherd-data[all]",
     # dev
-    "twine",  # TODO: could be done with uv
     "pre-commit",
     "pre-commit-uv", # check with `pre-commit --version`
     "bump2version",
