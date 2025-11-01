@@ -22,17 +22,10 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v5
 
-      - name: Set up Python 🐍
-        uses: actions/setup-python@v6
+      - name: Install uv 🔧
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-        # ⤷ workaround for flakey TCL-bug triggered by combination of
-        #   windows, matplotlib, some python-versions
-        #   ()
-
-      - name: Install uv 🔧
-        uses: astral-sh/setup-uv@v6
-        with:
           enable-cache: true
           activate-environment: true
 
@@ -59,8 +52,15 @@ jobs:
         working-directory: "./shepherd_data"
 
       - name: Test data-package with pytest 🧫
-        run: pytest
-        working-directory: "./shepherd_data"
+        uses: nick-fields/retry@v3
+        with:
+          command: ./shepherd_data/pytest
+          max_attempts: 3
+        #working-directory: "./shepherd_data"
+        # ⤷ workaround for flakey TCL-bug triggered by combination of
+        #   windows, matplotlib, some python-versions
+        #   ()
+
 
       - name: Minimize uv cache 🔧
         run: uv cache prune --ci
