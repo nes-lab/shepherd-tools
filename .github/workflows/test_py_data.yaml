@@ -22,10 +22,17 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v5
 
-      - name: Install uv 🔧 & set up Python 🐍
-        uses: astral-sh/setup-uv@v6
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+        # ⤷ workaround for flakey TCL-bug triggered by combination of
+        #   windows, matplotlib, some python-versions
+        #   ()
+
+      - name: Install uv 🔧
+        uses: astral-sh/setup-uv@v6
+        with:
           enable-cache: true
           activate-environment: true
 
