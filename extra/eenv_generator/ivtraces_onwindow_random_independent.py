@@ -21,7 +21,7 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
     def __init__(
         self,
         node_count: int,
-        seed: None | int | list[int],
+        seed: int | list[int] | None,
         period: float,
         duty_cycle: float,
         on_voltage: float,

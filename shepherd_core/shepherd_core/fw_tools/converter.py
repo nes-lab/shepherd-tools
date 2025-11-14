@@ -98,7 +98,7 @@ def extract_firmware(data: str | Path, data_type: FirmwareDType, file_path: Path
         elif data_type == FirmwareDType.path_hex:
             file = file_path.with_suffix(".hex")
         else:
-            msg = "FW-Extraction failed due to unknown datatype '{data_type}'"
+            msg = f"FW-Extraction failed due to unknown datatype '{data_type}'"
             raise ValueError(msg)
         if not file.parent.exists():
             file.parent.mkdir(parents=True)

@@ -369,12 +369,12 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
         interval_ms = min(max(self.interval_ms, time_min_ms), 1_000_000)
         duration_ms = min(max(self.duration_ms, time_min_ms), interval_ms)
-        _ratio = (duration_ms / interval_ms) / (self.duration_ms / self.interval_ms)
-        if (_ratio - 1) > 0.1:
+        ratio = (duration_ms / interval_ms) / (self.duration_ms / self.interval_ms)
+        if (ratio - 1) > 0.1:
             log.debug(
                 "Ratio between interval & duration has changed "
                 "more than 10%% due to constraints (%.4f)",
-                _ratio,
+                ratio,
             )
         return interval_ms, duration_ms
 

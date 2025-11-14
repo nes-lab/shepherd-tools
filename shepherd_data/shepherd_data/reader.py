@@ -133,45 +133,45 @@ class Reader(CoreReader):
         show: bool = True,
     ) -> int:
         """Print warning messages from log in data-group."""
-        _count = self.count_errors_in_log(group_name, min_level)
-        if (_count < 1) or ("level" not in self.h5file[group_name]):
+        count = self.count_errors_in_log(group_name, min_level)
+        if (count < 1) or ("level" not in self.h5file[group_name]):
             return 0
         if not show:
-            return _count
+            return count
         self._logger.warning(
             "%s caught %d messages with level>=%d -> first %d are:",
             self.get_hostname(),
-            _count,
+            count,
             min_level,
             limit,
         )
         for idx, time_ns in enumerate(self.h5file[group_name]["time"][:]):
-            _level = self.h5file[group_name]["level"][idx]
-            if _level < min_level:
+            level_ = self.h5file[group_name]["level"][idx]
+            if level_ < min_level:
                 continue
-            _msg = self.h5file[group_name]["message"][idx]
-            _timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
-            if _level < 30:
-                self._logger.info("    %s: %s", _timestamp, _msg)
-            elif _level < 40:
-                self._logger.warning("    %s: %s", _timestamp, _msg)
+            msg_ = self.h5file[group_name]["message"][idx]
+            timestamp_ = datetime.fromtimestamp(time_ns / 1e9, local_tz())
+            if level_ < 30:
+                self._logger.info("    %s: %s", timestamp_, msg_)
+            elif level_ < 40:
+                self._logger.warning("    %s: %s", timestamp_, msg_)
             else:
-                self._logger.error("    %s: %s", _timestamp, _msg)
+                self._logger.error("    %s: %s", timestamp_, msg_)
             limit -= 1
             if limit < 1:
                 break
-        return _count
+        return count
 
     def downsample(
         self,
         data_src: h5py.Dataset | np.ndarray,
-        data_dst: None | h5py.Dataset | np.ndarray,
+        data_dst: h5py.Dataset | np.ndarray | None,
         start_n: int = 0,
         end_n: int | None = None,
         ds_factor: float = 5,
         *,
         is_time: bool = False,
-    ) -> None | h5py.Dataset | np.ndarray:
+    ) -> h5py.Dataset | np.ndarray | None:
         """Sample down iv-data.
 
         Warning: only valid for IV-Stream, not IV-Curves,
@@ -363,13 +363,13 @@ class Reader(CoreReader):
     def resample(
         self,
         data_src: h5py.Dataset | np.ndarray,
-        data_dst: None | h5py.Dataset | np.ndarray,
+        data_dst: h5py.Dataset | np.ndarray | None,
         start_n: int = 0,
         end_n: int | None = None,
         samplerate_dst: float = 1000,
         *,
         is_time: bool = False,
-    ) -> None | h5py.Dataset | np.ndarray:
+    ) -> h5py.Dataset | np.ndarray | None:
         """Up- or down-sample the original trace-data.
 
         :param data_src: original iv-data
@@ -518,7 +518,7 @@ class Reader(CoreReader):
             "end_s": end_s,
         }
         if relative_timestamp:
-            data["time"] = data["time"] - self._cal.time.raw_to_si(self.ds_time[0])
+            data["time"] -= self._cal.time.raw_to_si(self.ds_time[0])
         return data
 
     @staticmethod

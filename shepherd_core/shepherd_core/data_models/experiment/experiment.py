@@ -69,9 +69,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
                     Target(id=_id)
                     # ⤷ this can raise exception for non-existing targets
             if _config.custom_IDs is not None:
-                custom_ids = custom_ids + _config.custom_IDs[: len(_config.target_IDs)]
+                custom_ids += _config.custom_IDs[: len(_config.target_IDs)]
             else:
-                custom_ids = custom_ids + _config.target_IDs
+                custom_ids += _config.target_IDs
         if len(target_ids) > len(set(target_ids)):
             raise ValueError("Target-ID used more than once in Experiment!")
         if len(target_ids) > len(set(custom_ids)):

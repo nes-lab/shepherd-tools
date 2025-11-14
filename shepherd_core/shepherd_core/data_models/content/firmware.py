@@ -67,18 +67,18 @@ class Firmware(ContentModel, title="Firmware of Target"):
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         # crosscheck type with actual data
-        _type = values.get("data_type")
-        if _type in {
+        dtype = values.get("data_type")
+        if dtype in {
             FirmwareDType.base64_hex,
             FirmwareDType.base64_elf,
         }:
             try:
-                _hash = fw_tools.base64_to_hash(values.get("data"))
+                dhash = fw_tools.base64_to_hash(values.get("data"))
             except ValueError:
                 raise ValueError("Embedded Firmware seems to be faulty") from None
-            if values.get("data_hash") is not None and _hash != values.get("data_hash"):
+            if values.get("data_hash") is not None and dhash != values.get("data_hash"):
                 raise ValueError("Embedded Firmware and Hash do not match!")
-        elif _type in {
+        elif dtype in {
             FirmwareDType.path_hex,
             FirmwareDType.path_elf,
         }:
@@ -169,7 +169,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
         - if provided path is a directory, the firmware-name is used
         """
         if file.is_dir():
-            file = file / self.name
+            file /= self.name
         file_new = fw_tools.extract_firmware(self.data, self.data_type, file)
         self.compare_hash(file_new)
         return file_new

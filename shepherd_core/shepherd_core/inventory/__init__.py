@@ -65,7 +65,7 @@ class InventoryList(ShpModel):
         np.concatenate(content).reshape((len(content), len(content[0]))).
         """
         if path.is_dir():
-            path = path / "inventory.yaml"
+            path /= "inventory.yaml"
         with path.resolve().open("w") as fd:
             fd.write(", ".join(self.elements[0].model_dump().keys()) + "\r\n")
             for item in self.elements:
@@ -75,7 +75,7 @@ class InventoryList(ShpModel):
 
     def warn(self) -> dict:
         warnings = {}
-        ts_earl = min([_e.created.timestamp() for _e in self.elements])
+        ts_earl = min(_e.created.timestamp() for _e in self.elements)
         for _e in self.elements:
             if _e.uptime > timedelta(hours=30).total_seconds():
                 warnings["uptime"] = f"[{self.hostname}] restart is recommended"
@@ -84,12 +84,12 @@ class InventoryList(ShpModel):
 
         # turn  dict[hostname][type] = val
         # to    dict[type][val] = list[hostnames]
-        _inp = {
+        inp_ = {
             _e.hostname: _e.model_dump(exclude_unset=True, exclude_defaults=True)
             for _e in self.elements
         }
         result = {}
-        for _host, _types in _inp.items():
+        for _host, _types in inp_.items():
             for _type, _val in _types.items():
                 if _type not in result:
                     result[_type] = {}

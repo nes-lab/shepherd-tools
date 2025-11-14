@@ -166,7 +166,7 @@ def scan(input_files: list[Path], output_file: Path, base_path: Path) -> None:
                 for (i, j) in continuous_ranges_indices
             ]
             o_start = int(reader.ds_time[0])
-            o_end = int(reader.ds_time[max([i for (_, i) in continuous_ranges_indices])])
+            o_end = int(reader.ds_time[max(i for (_, i) in continuous_ranges_indices)])
             o_dur = (o_end - o_start + SHP_V1_STEP_WIDTH) / 1e9
 
             profile = ScanReportProfile(

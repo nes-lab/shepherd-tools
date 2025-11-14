@@ -44,7 +44,7 @@ class PruCalibration:
                 I_nA -= self.negative_residue_nA
                 self.negative_residue_nA = 0
             else:
-                self.negative_residue_nA = self.negative_residue_nA - I_nA
+                self.negative_residue_nA -= I_nA
                 self.negative_residue_nA = min(self.negative_residue_nA, self.RESIDUE_MAX_nA)
                 I_nA = 0
         return I_nA

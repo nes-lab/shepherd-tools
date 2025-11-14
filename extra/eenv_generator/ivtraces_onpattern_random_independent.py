@@ -20,7 +20,7 @@ class RndIndepPatternGenerator(EEnvGenerator):
     def __init__(
         self,
         node_count: int,
-        seed: None | int | list[int],
+        seed: int | list[int] | None,
         avg_duty_cycle: float,
         avg_on_duration: float,
         on_voltage: float,

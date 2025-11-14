@@ -154,22 +154,22 @@ class Writer(Reader):
         if "mode" not in self.h5file.attrs:
             self.h5file.attrs["mode"] = self.MODE_DEFAULT
 
-        _dtypes = self.MODE_TO_DTYPE[self.get_mode()]
+        dtypes_ = self.MODE_TO_DTYPE[self.get_mode()]
 
         # Handle Datatype
         if isinstance(datatype, str):
             datatype = EnergyDType[datatype]
-        if isinstance(datatype, EnergyDType) and datatype not in _dtypes:
-            msg = f"Can't handle value '{datatype}' of datatype (choose one of {_dtypes})"
+        if isinstance(datatype, EnergyDType) and datatype not in dtypes_:
+            msg = f"Can't handle value '{datatype}' of datatype (choose one of {dtypes_})"
             raise ValueError(msg)
 
         if isinstance(datatype, EnergyDType):
             self.h5file["data"].attrs["datatype"] = datatype.name
         if "datatype" not in self.h5file["data"].attrs:
             self.h5file["data"].attrs["datatype"] = self.DATATYPE_DEFAULT.name
-        if self.get_datatype() not in _dtypes:
+        if self.get_datatype() not in dtypes_:
             msg = (
-                f"Can't handle value '{self.get_datatype()}' of datatype (choose one of {_dtypes})"
+                f"Can't handle value '{self.get_datatype()}' of datatype (choose one of {dtypes_})"
             )
             raise ValueError(msg)
 
@@ -296,7 +296,7 @@ class Writer(Reader):
             timestamp = int(timestamp)
         if isinstance(timestamp, int):
             time_series_ns = self.sample_interval_ns * np.arange(len_new).astype("u8")
-            timestamp = timestamp + time_series_ns
+            timestamp += time_series_ns
         if isinstance(timestamp, np.ndarray):
             len_new = min(len_new, timestamp.size)
         else:
