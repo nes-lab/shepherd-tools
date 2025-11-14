@@ -1,7 +1,6 @@
 """Log handler of shepherd."""
 
 import logging
-import logging.handlers
 
 import chromalog
 
