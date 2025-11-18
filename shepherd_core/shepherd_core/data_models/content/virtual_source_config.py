@@ -387,22 +387,17 @@ class ConverterPRUConfig(ShpModel):
             ],
         )
 
-    @property
-    def get_enable_storage(self) -> bool:
+    def storage_is_enabled(self) -> bool:
         return bool(self.converter_mode & 1)
 
-    @property
-    def get_enable_boost(self) -> bool:
+    def boost_is_enabled(self) -> bool:
         return bool(self.converter_mode & 2)
 
-    @property
-    def get_enable_buck(self) -> bool:
+    def buck_is_enabled(self) -> bool:
         return bool(self.converter_mode & 4)
 
-    @property
-    def get_log_intermediate_node(self) -> bool:
+    def logging_intermediate_node_is_enabled(self) -> bool:
         return bool(self.converter_mode & 8)
 
-    @property
-    def get_enable_feedback(self) -> bool:
+    def feedback_is_enabled(self) -> bool:
         return bool(self.converter_mode & 16)
