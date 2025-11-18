@@ -386,3 +386,23 @@ class ConverterPRUConfig(ShpModel):
                 for value in data.LUT_output_efficiency
             ],
         )
+
+    @property
+    def get_enable_storage(self) -> bool:
+        return bool(self.converter_mode & 1)
+
+    @property
+    def get_enable_boost(self) -> bool:
+        return bool(self.converter_mode & 2)
+
+    @property
+    def get_enable_buck(self) -> bool:
+        return bool(self.converter_mode & 4)
+
+    @property
+    def get_log_intermediate_node(self) -> bool:
+        return bool(self.converter_mode & 8)
+
+    @property
+    def get_enable_feedback(self) -> bool:
+        return bool(self.converter_mode & 16)
