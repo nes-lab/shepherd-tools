@@ -48,12 +48,10 @@ def prepare_task(config: ShpModel | Path | str, observer: str | None = None) -> 
         with config.resolve().open("rb") as shp_file:
             try:
                 shp_dict = pickle.load(shp_file)  # noqa: S301
-            except ModuleNotFoundError as e:
+            except ModuleNotFoundError:
                 # NOTE: workaround for interop-problem
                 # "No module named 'pathlib._local'; 'pathlib' is not a package"
-                log.warning(
-                    "Had trouble loading pickled task -> activate pathlib-workaround", exc_info=e
-                )
+                log.warning("Had trouble loading pickled task -> activate pathlib-workaround")
                 sys.modules["pathlib._local"] = pathlib
                 shp_dict = pickle.load(shp_file)  # noqa: S301
         shp_wrap = Wrapper(**shp_dict)
