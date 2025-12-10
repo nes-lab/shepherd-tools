@@ -2,6 +2,7 @@
 
 These models import externally from all other model-modules!
 """
+
 import pathlib
 import pickle
 import sys
@@ -45,14 +46,16 @@ def prepare_task(config: ShpModel | Path | str, observer: str | None = None) -> 
         config = Path(config)
 
     if isinstance(config, Path) and config.exists() and config.suffix.lower() == ".pickle":
-        with config.resolve().open("rb") as shp_file:
-            try:
+        try:
+            with config.resolve().open("rb") as shp_file:
                 shp_dict = pickle.load(shp_file)  # noqa: S301
-            except ModuleNotFoundError:
-                # NOTE: workaround for interop-problem
-                # "No module named 'pathlib._local'; 'pathlib' is not a package"
-                log.warning("Had trouble loading pickled task -> activate pathlib-workaround")
-                sys.modules["pathlib._local"] = pathlib
+        except ModuleNotFoundError as e:
+            # NOTE: workaround for interop-problem
+            # "No module named 'pathlib._local'; 'pathlib' is not a package"
+            log.warning("Had trouble loading pickled task -> activate pathlib-workaround")
+            log.warning(" -> Caught Exception: %s", e.msg)
+            sys.modules["pathlib._local"] = pathlib
+            with config.resolve().open("rb") as shp_file:
                 shp_dict = pickle.load(shp_file)  # noqa: S301
         shp_wrap = Wrapper(**shp_dict)
     elif isinstance(config, Path) and config.exists() and config.suffix.lower() == ".yaml":
