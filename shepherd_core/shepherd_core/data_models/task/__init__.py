@@ -51,7 +51,7 @@ def prepare_task(config: ShpModel | Path | str, observer: str | None = None) -> 
             except ModuleNotFoundError as e:
                 # NOTE: workaround for interop-problem
                 # "No module named 'pathlib._local'; 'pathlib' is not a package"
-                log.exception(
+                log.warning(
                     "Had trouble loading pickled task -> activate pathlib-workaround", exc_info=e
                 )
                 sys.modules["pathlib._local"] = pathlib
