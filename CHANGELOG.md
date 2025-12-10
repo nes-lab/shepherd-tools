@@ -9,7 +9,9 @@
 - workflows use py314 as default
 - workflows use uv fully
 
-## v2025.10.1 - new Battery-Model
+## v2025.10.1
+ 
+New Battery-Model
 
 - adds config, simulation model and simulator for a battery model
   - The battery model was extended to support simulating various capacitors and replaces the previous capacitor-model

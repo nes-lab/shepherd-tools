@@ -1,5 +1,5 @@
 [project]
-name = "shepherd_data"
+name = "shepherd-data"
 description = "Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed"
 keywords = ["testbed", "beaglebone", "pru", "batteryless", "energyharvesting", "solar"]
 
