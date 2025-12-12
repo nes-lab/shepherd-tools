@@ -3,7 +3,7 @@
 # https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Target_pre-deployment-tests.xlsx
 - datatype: target
   parameters:
-    id: 2  # Outer ID - selected by user for XP - can be rearranged
+    id: 2  # Outer ID - selected by user for experiment - can be rearranged
     name: nRF52_FRAM_1392_377  # inner ID - used to link all parts together
     version: v1.3
     description: nRF52 as MCU + Radio, MSP430FR as SPI-FRAM or additional MCU

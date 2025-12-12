@@ -28,7 +28,7 @@ do_connect = False
 if do_connect:
     WebClient()
 
-xp = sm.Experiment(
+exp = sm.Experiment(
     name="meaningful_TestName",
     # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
     duration=30,
@@ -45,10 +45,10 @@ xp = sm.Experiment(
         ),
     ],
 )
-xp.to_file("experiment_generic_var2.yaml")
+exp.to_file("experiment_generic_var2.yaml")
 
 # Create a tasks-list for the testbed
-tb_tasks = TestbedTasks.from_xp(xp)
+tb_tasks = TestbedTasks.from_xp(exp)
 tb_tasks.to_file("experiment_generic_var2_tbt.yaml")
 
 # next steps:
