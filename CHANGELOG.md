@@ -1,7 +1,10 @@
 # History of Changes
 
-## v2025.11.1
+## v2025.12.1
 
+- vsource: add getters that decode converter_mode-state
+- add pathlib-workaround for pickle.load() while restoring a task
+- repair generator scripts
 - add support for py314 for packages
 - pin core-version for shepherd-data
 - limit simulations for unittests to speedup workflows (>15min to <3)
