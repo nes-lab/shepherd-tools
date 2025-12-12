@@ -31,6 +31,7 @@ exclude = ["extra/link-visualizer/create_link_svg.py"]  # must be adapted to pro
     "INP001", # no namespace
     "T201",   # allow print
 ]
+"scratch/**" = ["ERA001", "D101", "T201", "T203", "S", ]
 
 [lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
