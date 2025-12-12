@@ -1,12 +1,4 @@
-"""Prototype for an improved EEnv-Dataclass.
-
-Goals:
-- add structured metadata (dict)
-- relative paths - with real inputs (full Path() to rel)
-   - files get created locally (then copied) or right away in content-directory on server
-- allow list of paths, or even dict, but still allow slice[:] operation
-- avoid funky behavior & hidden mechanics
-"""
+"""First prototype for an improved EEnv-Dataclass."""
 
 from __future__ import annotations
 
@@ -16,15 +8,13 @@ from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
 from typing import Any
+from typing import overload
 
 from pydantic import BaseModel
 from pydantic import Field
 from pydantic import model_validator
 from shepherd_core.data_models import ShpModel
 from shepherd_core.logger import log
-
-# TODO: should dtype, duration, energy_Ws be kept with the path?
-#       So we would have to create a scalar energy profile
 
 
 class EEnv2(BaseModel):
@@ -42,12 +32,17 @@ class EEnv2(BaseModel):
     """
     is_atomic: bool = False
     """⤷ atoms can't be sliced further - will be True if sliced once."""
+    # TODO: should be property
 
-    def __getitem__(self, value: int | slice) -> EEnv2 | list[EEnv2]:
-        content = self.model_dump(exclude_defaults=True)
-        content["is_atomic"] = True
+    @overload
+    def __getitem__(self, value: int) -> EEnv2: ...
+    @overload
+    def __getitem__(self, value: slice) -> list[EEnv2]: ...
+    def __getitem__(self, value):
         if self.is_atomic:
             raise IndexError("was already indexed / sliced")
+        content = self.model_dump(exclude_defaults=True)
+        content["is_atomic"] = True  # because of current impl
         if isinstance(value, slice):
             nums = range(len(self.data_paths))[value]
             elements = []
@@ -60,6 +55,7 @@ class EEnv2(BaseModel):
         if isinstance(value, int):
             content["name"] = content["name"] + "_" + str(value)
             content["data_paths"] = [content["data_paths"][value]]
+
             return EEnv2(**content)
         raise IndexError("please use int or slice to choose")
 
@@ -70,7 +66,7 @@ class EEnv2(BaseModel):
     @classmethod
     def cast_paths(cls, values: dict[str, Any]) -> dict[str, Any]:
         if "data_paths" in values and isinstance(values["data_paths"], Iterable):
-            # convert every path into PurePosix
+            """Convert every path into absolute PurePosix."""
             values["data_paths"] = [PurePosixPath(p_) for p_ in values["data_paths"]]
             # try deriving relative paths from absolute ones
             paths_rel = []
@@ -111,11 +107,14 @@ class TargetConfig2(ShpModel):
 
         return values
 
+    # TODO: there is no check if EEnvs suffice or are used twice
+
 
 if __name__ == "__main__":
+    log.info("Example 1:")
     eenv1 = EEnv2(
         name="complex-env",
-        data_paths=[Path(".nagut"), Path("/pagut"), PurePosixPath("spaghetti")],
+        data_paths=[Path(".nagut"), Path("./pagut"), PurePosixPath("spaghetti")],
         repetitions_ok=False,
     )
 
@@ -128,7 +127,9 @@ if __name__ == "__main__":
         target_IDs=range(5),
         eenvs=eenv1,  # will be transformed to list
     )
+    log.info(target_config1.model_dump(exclude_defaults=True, exclude_unset=True))
 
+    log.info("Example 2:")
     eenv2 = EEnv2(
         name="static-env",
         data_paths=40 * [Path(".samesame")],
@@ -138,10 +139,11 @@ if __name__ == "__main__":
         target_IDs=range(5),
         eenvs=[eenv1, eenv2],
         # TODO: find pretty way to join sliced and unsliced eEnvs
-        #       Problem1: [eenv1, eenv2[:]] -> invalid (could be made valid)
+        #       Problem1: [eenv1, eenv2[:]] -> invalid syntax (could be made valid)
         #       OK 1:     [eenv1, *eenv2[:]]
-        #       Problem2: eenv1 + eenv2[:] -> invalid (could be made valid)
+        #       Problem2: eenv1 + eenv2[:] -> invalid syntax (could be made valid)
         #       OK 2:     eemv1[:] + eenv2[:]
     )
+    log.info(target_config2.model_dump(exclude_defaults=True, exclude_unset=True))
 
     log.info("done")
