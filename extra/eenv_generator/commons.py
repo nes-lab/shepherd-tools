@@ -32,7 +32,7 @@ class EEnvGenerator(ABC):
         self,
         datatype: EnergyDType,
         node_count: int,
-        seed: None | int | list[int],
+        seed: int | list[int] | None,
         window_size: int = 0,
     ) -> None:
         self.datatype = datatype

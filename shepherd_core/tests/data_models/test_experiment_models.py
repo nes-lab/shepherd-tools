@@ -224,8 +224,8 @@ def test_experiment_model_tgt_cfg_min1() -> None:
         energy_env=EnergyEnvironment(name="SolarSunny"),
         firmware1=Firmware(name="nrf52_demo_rf"),
     )
-    for _id in cfg.target_IDs:
-        Target(id=_id)
+    for id_ in cfg.target_IDs:
+        Target(id=id_)
     assert cfg.get_custom_id(1) is None
 
 
@@ -236,8 +236,8 @@ def test_experiment_model_tgt_cfg_min2() -> None:
         energy_env=EnergyEnvironment(name="SolarSunny"),
         firmware1=Firmware(name="nrf52_demo_rf"),
     )
-    for _id in cfg.target_IDs:
-        Target(id=_id)
+    for id_ in cfg.target_IDs:
+        Target(id=id_)
     assert cfg.get_custom_id(1) == 7
     assert cfg.get_custom_id(2) == 9
     assert cfg.get_custom_id(3) is None

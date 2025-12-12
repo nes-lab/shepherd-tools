@@ -156,7 +156,7 @@ def scan(input_files: list[Path], output_file: Path, base_path: Path) -> None:
 
     # Find individual valid ranges (start and end inclusive)
     # include indices since de-synched parts might cause duplicate timestamps
-    for i, file in enumerate(input_files):
+    for file in input_files:
         with ShepherdReader(file_path=file) as reader:
             count = reader.samples_n
 
@@ -166,7 +166,7 @@ def scan(input_files: list[Path], output_file: Path, base_path: Path) -> None:
                 for (i, j) in continuous_ranges_indices
             ]
             o_start = int(reader.ds_time[0])
-            o_end = int(reader.ds_time[max([i for (_, i) in continuous_ranges_indices])])
+            o_end = int(reader.ds_time[max(j for (_, j) in continuous_ranges_indices)])
             o_dur = (o_end - o_start + SHP_V1_STEP_WIDTH) / 1e9
 
             profile = ScanReportProfile(

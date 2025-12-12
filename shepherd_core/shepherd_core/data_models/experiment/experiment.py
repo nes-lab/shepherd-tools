@@ -62,16 +62,16 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     def _validate_targets(configs: Iterable[TargetConfig]) -> None:
         target_ids: list[int] = []
         custom_ids: list[int] = []
-        for _config in configs:
-            for _id in _config.target_IDs:
-                target_ids.append(_id)
+        for config_ in configs:
+            for id_ in config_.target_IDs:
+                target_ids.append(id_)
                 if config.VALIDATE_INFRA:
-                    Target(id=_id)
+                    Target(id=id_)
                     # ⤷ this can raise exception for non-existing targets
-            if _config.custom_IDs is not None:
-                custom_ids = custom_ids + _config.custom_IDs[: len(_config.target_IDs)]
+            if config_.custom_IDs is not None:
+                custom_ids += config_.custom_IDs[: len(config_.target_IDs)]
             else:
-                custom_ids = custom_ids + _config.target_IDs
+                custom_ids += config_.target_IDs
         if len(target_ids) > len(set(target_ids)):
             raise ValueError("Target-ID used more than once in Experiment!")
         if len(target_ids) > len(set(custom_ids)):
@@ -82,20 +82,20 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         if not config.VALIDATE_INFRA:
             return
         testbed = Testbed()
-        target_ids = [_id for _config in configs for _id in _config.target_IDs]
-        obs_ids = [testbed.get_observer(_id).id for _id in target_ids]
+        target_ids = [id_ for config_ in configs for id_ in config_.target_IDs]
+        obs_ids = [testbed.get_observer(id_).id for id_ in target_ids]
         if len(target_ids) > len(set(obs_ids)):
             raise ValueError(
                 "Observer is used more than once in Experiment -> only 1 target per observer!"
             )
 
     def get_target_ids(self) -> list:
-        return [_id for _config in self.target_configs for _id in _config.target_IDs]
+        return [id_ for config_ in self.target_configs for id_ in config_.target_IDs]
 
     def get_target_config(self, target_id: int) -> TargetConfig:
-        for _config in self.target_configs:
-            if target_id in _config.target_IDs:
-                return _config
+        for config_ in self.target_configs:
+            if target_id in config_.target_IDs:
+                return config_
         # gets already caught in target_config - but keep:
         msg = f"Target-ID {target_id} was not found in Experiment '{self.name}'"
         raise ValueError(msg)

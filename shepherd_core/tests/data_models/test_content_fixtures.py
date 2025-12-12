@@ -16,8 +16,8 @@ def test_testbed_fixture_energy_environment() -> None:
 
 def test_testbed_fixture_firmware() -> None:
     for fix in Fixtures()["Firmware"]:
-        _id = fix["id"]
-        if _id in {1001, 1002}:
+        id_ = fix["id"]
+        if id_ in {1001, 1002}:
             continue
         Firmware(name=fix["name"])
         Firmware(id=fix["id"])

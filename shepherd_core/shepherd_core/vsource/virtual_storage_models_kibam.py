@@ -161,7 +161,7 @@ class ModelKiBaM(ModelStorage):
 
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
         # ⤷ MODIFIED: clamp both SoC to 0..1
-        self.SoC = self.SoC - 1 / self.cfg.q_As * (I_cell * self.dt_s)
+        self.SoC -= 1 / self.cfg.q_As * (I_cell * self.dt_s)
         self.SoC = min(max(self.SoC, 0.0), 1.0)
         SoC_eff = self.SoC - 1 / self.cfg.q_As * self.C_unavailable
         SoC_eff = max(SoC_eff, 0.0)
@@ -278,7 +278,7 @@ class ModelKiBaMPlus(ModelStorage):
 
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
         # ⤷ MODIFIED: clamp both SoC to 0..1
-        self.SoC = self.SoC - (I_cell + I_leak) * self.dt_s / self.cfg.q_As
+        self.SoC -= (I_cell + I_leak) * self.dt_s / self.cfg.q_As
         self.SoC = min(max(self.SoC, 0.0), 1.0)
         SoC_eff = self.SoC - 1 / self.cfg.q_As * self.C_unavailable
         SoC_eff = min(max(SoC_eff, 0.0), 1.0)
@@ -380,7 +380,7 @@ class ModelKiBaMSimple(ModelStorage):
 
         # Step 2: Calculate SoC after dt (equation 6; modified for discrete operation)
         #       = SoC - 1 / C * (i_cell * dt)
-        self.SoC = self.SoC - (I_cell + I_leak) * self.Constant_s_per_As
+        self.SoC -= (I_cell + I_leak) * self.Constant_s_per_As
         SoC_eff = self.SoC = min(max(self.SoC, 0.0), 1.0)
         # ⤷ MODIFIED: removed term due to omission of rate capacity effect
         # ⤷ MODIFIED: clamp SoC to 0..1

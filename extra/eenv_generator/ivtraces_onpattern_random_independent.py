@@ -4,7 +4,6 @@ from itertools import product
 from pathlib import Path
 
 import numpy as np
-from commons import STEP_WIDTH
 from commons import EEnvGenerator
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
@@ -20,7 +19,7 @@ class RndIndepPatternGenerator(EEnvGenerator):
     def __init__(
         self,
         node_count: int,
-        seed: None | int | list[int],
+        seed: int | list[int] | None,
         avg_duty_cycle: float,
         avg_on_duration: float,
         on_voltage: float,
@@ -28,7 +27,7 @@ class RndIndepPatternGenerator(EEnvGenerator):
     ) -> None:
         super().__init__(datatype=EnergyDType.ivtrace, node_count=node_count, seed=seed)
 
-        avg_on_steps = avg_on_duration / STEP_WIDTH
+        avg_on_steps = avg_on_duration / self.STEP_WIDTH
         p2 = 1.0 - (1.0 / avg_on_steps)
         p1 = avg_duty_cycle * (1 - p2) / (1 - avg_duty_cycle)
         self.transition_probs = np.array([p1, p2])

@@ -145,7 +145,7 @@ class EmulationTask(ShpModel):
             raise ValueError("GPIO Actuation not yet implemented!")
 
         io_requested = any(
-            _io is not None for _io in (self.gpio_actuation, self.gpio_tracing, self.uart_logging)
+            io_ is not None for io_ in (self.gpio_actuation, self.gpio_tracing, self.uart_logging)
         )
         if self.enable_io and not io_requested:
             log.warning("Target IO enabled, but no feature requested IO")
@@ -159,8 +159,8 @@ class EmulationTask(ShpModel):
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
         io_requested = any(
-            _io is not None
-            for _io in (tgt_cfg.gpio_actuation, tgt_cfg.gpio_tracing, tgt_cfg.uart_logging)
+            io_ is not None
+            for io_ in (tgt_cfg.gpio_actuation, tgt_cfg.gpio_tracing, tgt_cfg.uart_logging)
         )
 
         return cls(

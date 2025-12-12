@@ -231,6 +231,7 @@ class CalibrationCape(ShpModel):
         ----
             data: Byte string containing calibration data.
             cape: data can be supplied
+
         Returns:
             CalibrationCape object with extracted calibration data.
 
@@ -240,9 +241,9 @@ class CalibrationCape(ShpModel):
         lw2 = [elem for elem in lw1 if isinstance(elem[-1], float)]
         values = struct.unpack(">" + len(lw2) * "d", data)
         # ⤷ X => double float, big endian
-        for _i, walk in enumerate(lw2):
+        for i_, walk in enumerate(lw2):
             # hardcoded fixed depth ... bad but easy
-            dv[walk[0]][walk[1]][walk[2]] = float(values[_i])
+            dv[walk[0]][walk[1]][walk[2]] = float(values[i_])
         dv["cape"] = cape
         return cls(**dv)
 

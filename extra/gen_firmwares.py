@@ -28,6 +28,8 @@ if __name__ == "__main__":
     path_meta = path_fw / "metadata_fw.yaml"
 
     log.info("Downloading latest release")
+    if not link.startswith(("http:", "https:")):
+        raise ValueError("URL must start with 'http:' or 'https:'")
     data = urlopen(link).read()  # noqa: S310
     log.info("Unpacking Archive")
     with ZipFile(BytesIO(data), "r") as zip_ref:

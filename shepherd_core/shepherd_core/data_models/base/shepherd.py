@@ -188,7 +188,7 @@ class ShpModel(BaseModel):
             with Path(path).open("rb") as shp_file:
                 shp_dict = pickle.load(shp_file)  # noqa: S301
         else:
-            with Path(path).open() as shp_file:
+            with Path(path).open(encoding="utf-8-sig") as shp_file:
                 shp_dict = yaml.safe_load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:

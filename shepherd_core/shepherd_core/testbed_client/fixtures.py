@@ -48,10 +48,10 @@ class Fixture:
         if "name" not in data.parameters:
             return
         name = str(data.parameters["name"]).lower()
-        _id = data.parameters["id"]
+        id_ = data.parameters["id"]
         data_model = data.parameters
         self.elements_by_name[name] = data_model
-        self.elements_by_id[_id] = data_model
+        self.elements_by_id[id_] = data_model
         # update iterator
         self._iter_list: list[dict[str, Any]] = list(self.elements_by_name.values())
 
@@ -84,7 +84,7 @@ class Fixture:
         return self.elements_by_name.keys()
 
     def refs(self) -> dict:
-        return {_i["id"]: _i["name"] for _i in self.elements_by_id.values()}
+        return {i_["id"]: i_["name"] for i_ in self.elements_by_id.values()}
 
     def inheritance(
         self, values: dict[str, Any], chain: list[str] | None = None
@@ -123,8 +123,8 @@ class Fixture:
             post_process = True
 
         elif values.get("id") in self.elements_by_id:
-            _id = values["id"]
-            fixture_base = copy.copy(self.elements_by_id[_id])
+            id_ = values["id"]
+            fixture_base = copy.copy(self.elements_by_id[id_])
             post_process = True
 
         if post_process:
@@ -218,7 +218,7 @@ class Fixtures:
 
     @validate_call
     def insert_file(self, file: Path) -> None:
-        with file.open() as fd:
+        with file.open(encoding="utf-8-sig") as fd:
             fixtures = yaml.safe_load(fd)
             for fixture in fixtures:
                 if not isinstance(fixture, dict):

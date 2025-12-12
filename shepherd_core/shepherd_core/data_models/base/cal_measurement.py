@@ -39,8 +39,8 @@ def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
     gain: float = float(model[0])
 
     # r-squared, Pearson correlation coefficient
-    _p = np.poly1d(model)
-    yhat = _p(x)
+    pcoef = np.poly1d(model)
+    yhat = pcoef(x)
     ybar: float = np.sum(y) / len(y)
     ssreg: float = np.sum((yhat - ybar) ** 2)
     sstot: float = np.sum((y - ybar) ** 2)

@@ -71,7 +71,7 @@ class EEnv2(BaseModel):
     def cast_paths(cls, values: dict[str, Any]) -> dict[str, Any]:
         if "data_paths" in values and isinstance(values["data_paths"], Iterable):
             # convert every path into PurePosix
-            values["data_paths"] = [PurePosixPath(_p) for _p in values["data_paths"]]
+            values["data_paths"] = [PurePosixPath(p_) for p_ in values["data_paths"]]
             # try deriving relative paths from absolute ones
             paths_rel = []
             path_cwd = Path().cwd()

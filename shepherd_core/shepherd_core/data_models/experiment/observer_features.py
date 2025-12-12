@@ -242,7 +242,7 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
         raise ValueError(msg)
 
     def get_gpios(self) -> set:
-        return {_ev.gpio for _ev in self.events}
+        return {ev_.gpio for ev_ in self.events}
 
 
 class SystemLogging(ShpModel, title="Config for System-Logging"):

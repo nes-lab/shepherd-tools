@@ -35,7 +35,7 @@ class PruCalibration:
     negative_residue_nA = 0
 
     def __init__(self, cal_emu: CalibrationEmulator | None = None) -> None:
-        self.cal = cal_emu if cal_emu else CalibrationEmulator()
+        self.cal = cal_emu or CalibrationEmulator()
 
     def conv_adc_raw_to_nA(self, current_raw: int) -> float:
         I_nA = self.cal.adc_C_A.raw_to_si(current_raw) * (10**9)
@@ -44,7 +44,7 @@ class PruCalibration:
                 I_nA -= self.negative_residue_nA
                 self.negative_residue_nA = 0
             else:
-                self.negative_residue_nA = self.negative_residue_nA - I_nA
+                self.negative_residue_nA -= I_nA
                 self.negative_residue_nA = min(self.negative_residue_nA, self.RESIDUE_MAX_nA)
                 I_nA = 0
         return I_nA

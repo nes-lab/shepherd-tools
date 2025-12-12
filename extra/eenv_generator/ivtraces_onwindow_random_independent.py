@@ -5,7 +5,6 @@ from itertools import product
 from pathlib import Path
 
 import numpy as np
-from commons import STEP_WIDTH
 from commons import EEnvGenerator
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
@@ -21,7 +20,7 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
     def __init__(
         self,
         node_count: int,
-        seed: None | int | list[int],
+        seed: int | list[int] | None,
         period: float,
         duty_cycle: float,
         on_voltage: float,
@@ -29,10 +28,10 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
     ) -> None:
         super().__init__(datatype=EnergyDType.ivtrace, node_count=node_count, seed=seed)
 
-        self.period = round(period / STEP_WIDTH)
-        if not math.isclose(self.period, period / STEP_WIDTH):
+        self.period = round(period / self.STEP_WIDTH)
+        if not math.isclose(self.period, period / self.STEP_WIDTH):
             raise ValueError("Period * STEP_WIDTH is not an integer")
-        self.on_duration = round(duty_cycle * period / STEP_WIDTH)
+        self.on_duration = round(duty_cycle * period / self.STEP_WIDTH)
 
         # Start at off
         self.states = np.zeros(node_count)

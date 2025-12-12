@@ -129,7 +129,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         if description is None:
             description = "Model of a LiPo battery (3 to 4.2 V) with adjustable capacity"
         return cls(
-            SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
+            SoC_init=SoC_init or cls.model_fields["SoC_init"].default,
             q_As=q_mAh * 3600 / 1000,
             p_VOC=[-0.852, 63.867, 3.6297, 0.559, 0.51, 0.508],
             p_Rs=[0.1463, 30.27, 0.1037, 0.0584, 0.1747, 0.1288],
@@ -176,7 +176,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         if description is None:
             description = "Model of a 12V lead acid battery with adjustable capacity"
         return cls(
-            SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
+            SoC_init=SoC_init or cls.model_fields["SoC_init"].default,
             q_As=q_mAh * 3600 / 1000,
             p_VOC=[5.429, 117.5, 11.32, 2.706, 2.04, 1.026],
             p_Rs=[1.578, 8.527, 0.7808, -1.887, -2.404, -0.649],
@@ -222,14 +222,14 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         if R_series_Ohm is not None:
             description += f", R_serial = {R_series_Ohm:.0f} Ohm"
         return cls(
-            SoC_init=SoC_init if SoC_init else cls.model_fields["SoC_init"].default,
+            SoC_init=SoC_init or cls.model_fields["SoC_init"].default,
             q_As=1e-6 * C_uF * V_rated,
             p_VOC=[0, 0, 0, V_rated, 0, 0],  # 100% SoC is @V_rated,
             # no transients per default
             p_Rs=[0, 0, R_series_Ohm, 0, 0, 0]
             if R_series_Ohm
             else cls.model_fields["p_Rs"].default,  # const series resistance
-            R_leak_Ohm=R_leak_Ohm if R_leak_Ohm else cls.model_fields["R_leak_Ohm"].default,
+            R_leak_Ohm=R_leak_Ohm or cls.model_fields["R_leak_Ohm"].default,
             # content-fields below
             name="_".join(name_lmnts),
             description=description,

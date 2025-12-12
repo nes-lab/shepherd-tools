@@ -152,7 +152,7 @@ class VirtualHarvesterModel:
         return self.voltage_hold, self.current_hold
 
     def ivcurve_2_mppt_voc(self, _voltage_uV: int, _current_nA: int) -> tuple[int, int]:
-        self.interval_step = self.interval_step + 1
+        self.interval_step += 1
         if self.interval_step >= self._cfg.interval_n:
             self.interval_step = 0
         self.age_nxt += 1
@@ -183,7 +183,7 @@ class VirtualHarvesterModel:
         return _voltage_uV, _current_nA
 
     def ivcurve_2_mppt_po(self, _voltage_uV: int, _current_nA: int) -> tuple[int, int]:
-        self.interval_step = self.interval_step + 1
+        self.interval_step += 1
         if self.interval_step >= self._cfg.interval_n:
             self.interval_step = 0
 

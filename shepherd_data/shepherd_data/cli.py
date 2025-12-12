@@ -373,8 +373,8 @@ def downsample(
                 else:
                     ds_list = [5, 25, 100, 500, 2_500, 10_000, 50_000, 250_000, 1_000_000]
 
-                for _factor in ds_list:
-                    path_file = shpr.cut_and_downsample_to_file(start, end, _factor)
+                for factor_ in ds_list:
+                    path_file = shpr.cut_and_downsample_to_file(start, end, factor_)
                     logger.info("Created %s", path_file.name)
         except (TypeError, ValueError):  # noqa: PERF203
             logger.exception("ERROR: Will skip file. It caused an exception.")

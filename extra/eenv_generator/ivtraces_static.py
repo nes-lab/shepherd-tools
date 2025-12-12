@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 from commons import EEnvGenerator
-from commons import generate_h5_files
+from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
 
 
@@ -18,7 +18,7 @@ class StaticGenerator(EEnvGenerator):
     """
 
     def __init__(self, voltage: float, current: float) -> None:
-        super().__init__(node_count=1, seed=None)
+        super().__init__(datatype=EnergyDType.ivsample, node_count=1, seed=None)
         self.voltage = voltage
         self.current = current
 
@@ -37,19 +37,17 @@ if __name__ == "__main__":
 
     voltages: set[float] = {3.0, 2.0}
     currents: set[float] = {50e-3, 10e-3, 5e-3, 1e-3}
-    duration: int = 10 * 60 * 60
+    duration: int = 4 * 60 * 60
+    path_eenv.mkdir(parents=True, exist_ok=True)
 
     for voltage, current in product(voltages, currents):
         generator = StaticGenerator(voltage=voltage, current=current)
 
         # Create output folder (or skip)
-        name = f"artificial_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
-        folder_path = path_eenv / name
-        if folder_path.exists():
-            log.info("Folder %s exists. Skipping combination.", folder_path)
+        name = f"artificial_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA.h5"
+        file_path = path_eenv / name
+        if file_path.exists():
+            log.info("File %s exists. Skipping combination.", file_path)
             continue
-        folder_path.mkdir(parents=True, exist_ok=False)
 
-        generate_h5_files(
-            folder_path, duration=duration, chunk_size=10_000_000, generator=generator
-        )
+        generator.generate_h5_files([file_path], duration=duration, chunk_size=10_000_000)

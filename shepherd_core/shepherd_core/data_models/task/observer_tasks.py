@@ -60,7 +60,7 @@ class ObserverTasks(ShpModel):
         if xp_folder is None:
             xp_folder = xp.folder_name()  # moved a layer up for consistent naming
         root_path = tb.data_on_observer / "experiments" / xp_folder
-        fw_paths = [root_path / f"fw{_i}_{obs.name}.hex" for _i in [1, 2]]
+        fw_paths = [root_path / f"fw{i_}_{obs.name}.hex" for i_ in [1, 2]]
 
         return cls(
             observer=obs.name,

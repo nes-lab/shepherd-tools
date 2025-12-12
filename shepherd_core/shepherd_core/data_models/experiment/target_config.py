@@ -60,8 +60,8 @@ class TargetConfig(ShpModel, title="Target Config"):
         if not self.energy_env.valid:
             msg = f"EnergyEnv '{self.energy_env.name}' for target must be valid"
             raise ValueError(msg)
-        for _id in self.target_IDs:
-            target = Target(id=_id)
+        for id_ in self.target_IDs:
+            target = Target(id=id_)
             for mcu_num in [1, 2]:
                 val_fw = getattr(self, f"firmware{mcu_num}")
                 has_fw = val_fw is not None
