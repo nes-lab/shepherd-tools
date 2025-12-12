@@ -60,10 +60,10 @@ def test_vsource_hrv_sim(hrv_name: str, file_ivcurve: Path) -> None:
             voltage_step_V=file.get_voltage_step(),
         )
         hrv = VirtualHarvesterModel(hrv_pru)
-        for _t, _v, _i in file.read():
-            length = max(_v.size, _i.size)
-            for _n in range(length):
-                hrv.ivcurve_sample(_voltage_uV=_v[_n] * 10**6, _current_nA=_i[_n] * 10**9)
+        for _, v_, i_ in file.read():
+            length = max(v_.size, i_.size)
+            for n_ in range(length):
+                hrv.ivcurve_sample(_voltage_uV=v_[n_] * 10**6, _current_nA=i_[n_] * 10**9)
 
 
 @pytest.mark.parametrize("hrv_name", hrv_list[3:])

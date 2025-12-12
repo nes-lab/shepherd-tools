@@ -61,17 +61,17 @@ class Testbed(ShpModel):
         capes = []
         targets = []
         eth_ports = []
-        for _obs in self.observers:
-            observers.append(_obs.id)
-            ips.append(_obs.ip)
-            macs.append(_obs.mac)
-            if _obs.cape is not None:
-                capes.append(_obs.cape)
-            if _obs.target_a is not None:
-                targets.append(_obs.target_a)
-            if _obs.target_b is not None:
-                targets.append(_obs.target_b)
-            eth_ports.append(_obs.eth_port)
+        for obs in self.observers:
+            observers.append(obs.id)
+            ips.append(obs.ip)
+            macs.append(obs.mac)
+            if obs.cape is not None:
+                capes.append(obs.cape)
+            if obs.target_a is not None:
+                targets.append(obs.target_a)
+            if obs.target_b is not None:
+                targets.append(obs.target_b)
+            eth_ports.append(obs.eth_port)
         if len(observers) > len(set(observers)):
             raise ValueError("Observers used more than once in Testbed")
         if len(ips) > len(set(ips)):
@@ -91,11 +91,11 @@ class Testbed(ShpModel):
         return self
 
     def get_observer(self, target_id: int) -> Observer:
-        for _observer in self.observers:
-            if not _observer.active or not _observer.cape.active:
+        for obs in self.observers:
+            if not obs.active or not obs.cape.active:
                 # skip decommissioned setups
                 continue
-            if _observer.has_target(target_id):
-                return _observer
+            if obs.has_target(target_id):
+                return obs
         msg = f"Target-ID {target_id} was not found in Testbed '{self.name}'"
         raise ValueError(msg)

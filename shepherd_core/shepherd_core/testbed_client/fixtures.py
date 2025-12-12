@@ -84,7 +84,7 @@ class Fixture:
         return self.elements_by_name.keys()
 
     def refs(self) -> dict:
-        return {_i["id"]: _i["name"] for _i in self.elements_by_id.values()}
+        return {i_["id"]: i_["name"] for i_ in self.elements_by_id.values()}
 
     def inheritance(
         self, values: dict[str, Any], chain: list[str] | None = None

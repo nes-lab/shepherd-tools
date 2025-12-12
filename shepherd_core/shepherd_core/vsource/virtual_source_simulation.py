@@ -72,24 +72,24 @@ def simulate_source(
         else:
             stats_internal = None
 
-        for _t, v_inp, i_inp in tqdm(
+        for t_, v_inp, i_inp in tqdm(
             file_inp.read(is_raw=True), total=file_inp.chunks_n, desc="Chunk", leave=False
         ):
             v_uV = 1e6 * cal_inp.voltage.raw_to_si(v_inp)
             i_nA = 1e9 * cal_inp.current.raw_to_si(i_inp)
 
-            for _n in range(len(_t)):
-                v_uV[_n] = src.iterate_sampling(
-                    V_inp_uV=int(v_uV[_n]),
-                    I_inp_nA=int(i_nA[_n]),
+            for n_ in range(len(t_)):
+                v_uV[n_] = src.iterate_sampling(
+                    V_inp_uV=int(v_uV[n_]),
+                    I_inp_nA=int(i_nA[n_]),
                     I_out_nA=i_out_nA,
                 )
-                i_out_nA = target.step(int(v_uV[_n]), pwr_good=src.cnv.get_power_good())
-                i_nA[_n] = i_out_nA
+                i_out_nA = target.step(int(v_uV[n_]), pwr_good=src.cnv.get_power_good())
+                i_nA[n_] = i_out_nA
 
                 if stats_internal is not None:
                     stats_internal[stats_sample] = [
-                        _t[_n] * 1e-9,  # s
+                        t_[n_] * 1e-9,  # s
                         src.hrv.voltage_hold * 1e-6,
                         src.cnv.V_input_request_uV * 1e-6,  # V
                         src.hrv.voltage_set_uV * 1e-6,
@@ -107,7 +107,7 @@ def simulate_source(
             if path_output:
                 v_out = cal_out.voltage.si_to_raw(1e-6 * v_uV)
                 i_out = cal_out.current.si_to_raw(1e-9 * i_nA)
-                file_out.append_iv_data_raw(_t, v_out, i_out)
+                file_out.append_iv_data_raw(t_, v_out, i_out)
 
     if stats_internal is not None:
         stats_internal = stats_internal[:stats_sample, :]

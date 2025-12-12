@@ -5,8 +5,8 @@ import yaml
 
 def load_yaml(file: str) -> dict:
     yaml_path = Path(__file__).resolve().with_name(file)
-    with yaml_path.open() as _data:
-        return yaml.safe_load(_data)
+    with yaml_path.open() as data:
+        return yaml.safe_load(data)
 
 
 path_fwt = Path(__file__).parent.parent.resolve() / "fw_tools"

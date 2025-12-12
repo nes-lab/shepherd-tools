@@ -149,10 +149,10 @@ def test_vsource_vsrc_sim_curve(src_name: str, file_ivcurve: Path) -> None:
             window_size=file.get_window_samples(),
             voltage_step_V=file.get_voltage_step(),
         )
-        for _t, _v, _i in file.read():
-            length = max(_v.size, _i.size)
-            for _n in range(length):
-                src.iterate_sampling(V_inp_uV=_v[_n] * 10**6, I_inp_nA=_i[_n] * 10**9)
+        for _, v_, i_ in file.read():
+            length = max(v_.size, i_.size)
+            for n_ in range(length):
+                src.iterate_sampling(V_inp_uV=v_[n_] * 10**6, I_inp_nA=i_[n_] * 10**9)
 
 
 @pytest.mark.parametrize("src_name", src_list)
@@ -164,7 +164,7 @@ def test_vsource_vsrc_sim_sample(src_name: str, file_ivsample: Path) -> None:
             window_size=file.get_window_samples(),
             voltage_step_V=file.get_voltage_step(),
         )
-        for _t, _v, _i in file.read():
-            length = max(_v.size, _i.size)
-            for _n in range(length):
-                src.iterate_sampling(V_inp_uV=_v[_n] * 10**6, I_inp_nA=_i[_n] * 10**9)
+        for _, v_, i_ in file.read():
+            length = max(v_.size, i_.size)
+            for n_ in range(length):
+                src.iterate_sampling(V_inp_uV=v_[n_] * 10**6, I_inp_nA=i_[n_] * 10**9)

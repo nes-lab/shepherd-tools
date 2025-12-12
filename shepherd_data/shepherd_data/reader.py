@@ -233,7 +233,7 @@ class Reader(CoreReader):
             slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
 
         output_pos = 0
-        for _iter in trange(
+        for iter_ in trange(
             0,
             iterations,
             desc=f"downsampling {data_src.name if isinstance(data_src, h5py.Dataset) else ''}",
@@ -241,12 +241,12 @@ class Reader(CoreReader):
             disable=iterations < 8,
         ):
             slice_ds = data_src[
-                start_n + _iter * chunk_size_inp : start_n + (_iter + 1) * chunk_size_inp
+                start_n + iter_ * chunk_size_inp : start_n + (iter_ + 1) * chunk_size_inp
             ]
             if not is_time and ds_factor > 1:
                 slice_ds, f_state = signal.sosfilt(filter_, slice_ds, zi=f_state)
             slice_ds = slice_ds[::ds_factor]
-            slice_len = min(dest_len - _iter * chunk_size_out, chunk_size_out, len(slice_ds))
+            slice_len = min(dest_len - iter_ * chunk_size_out, chunk_size_out, len(slice_ds))
             data_dst[output_pos : output_pos + slice_len] = slice_ds[:slice_len]
             # workaround to allow processing last slice (often smaller than expected),
             # wanted: [_iter * chunk_size_out : (_iter + 1) * chunk_size_out]

@@ -15,9 +15,12 @@ from shepherd_core import Calc_t
 def iv_model(voltages: Calc_t, coeffs: pd.Series) -> Calc_t:
     """Calculate simple diode based model (equivalent circuit diagram) of a solar panel IV curve.
 
-    :param voltages: Load voltage of the solar panel
-    :param coeffs: three generic coefficients
-    :return: Solar current at given load voltage
+    Args:
+        voltages: Load voltage of the solar panel
+        coeffs: three generic coefficients
+
+    Returns:
+        Solar current at given load voltage
     """
     currents = float(coeffs["a"]) - float(coeffs["b"]) * (
         np.exp(float(coeffs["c"]) * voltages) - 1.0
@@ -75,8 +78,11 @@ class OpenCircuitTracker(MPPTracker):
     def process(self, coeffs: pd.DataFrame) -> pd.DataFrame:
         """Apply harvesting model to input data.
 
-        :param coeffs: ivonne coefficients
-        :return: ivtrace-data
+        Args:
+            coeffs: ivonne coefficients
+
+        Returns:
+             ivtrace-data
         """
         coeffs["icurve"] = coeffs.apply(lambda x: iv_model(self.v_proto, x), axis=1)
         if "voc" not in coeffs.columns:

@@ -101,9 +101,9 @@ class Reader:
             try:
                 self.h5file = h5py.File(self.file_path, "r")  # = readonly
                 self._reader_opened = True
-            except OSError as _xcp:
+            except OSError as xcp:
                 msg = f"Unable to open HDF5-File '{self.file_path.name}'"
-                raise TypeError(msg) from _xcp
+                raise TypeError(msg) from xcp
 
             if self.is_valid():
                 self._logger.debug("File is available now")
@@ -209,13 +209,14 @@ class Reader:
         Generator - can be configured on first call
 
         Args:
-        ----
-            :param start_n: (int) Index of first chunk to be read
-            :param end_n: (int) Index of last chunk to be read
-            :param n_samples_per_chunk: (int) allows changing
-            :param is_raw: (bool) output original data, not transformed to SI-Units
-            :param omit_timestamps: (bool) optimize reading if timestamp is never used
-        Yields: chunks between start and end (tuple with time, voltage, current)
+            start_n: (int) Index of first chunk to be read
+            end_n: (int) Index of last chunk to be read
+            n_samples_per_chunk: (int) allows changing
+            is_raw: (bool) output original data, not transformed to SI-Units
+            omit_timestamps: (bool) optimize reading if timestamp is never used
+
+        Yields:
+            chunks between start and end (tuple with time, voltage, current)
 
         """
         if n_samples_per_chunk is None:
@@ -319,7 +320,7 @@ class Reader:
         if voltage_step is None:
             dsv = self._cal.voltage.raw_to_si(self.ds_voltage[0:2000])
             diffs_np = np.unique(dsv[1:] - dsv[0:-1], return_counts=False)
-            diffs_ls = [_e for _e in list(np.array(diffs_np)) if _e > 0]
+            diffs_ls = [e_ for e_ in list(np.array(diffs_np)) if e_ > 0]
             # static voltages have 0 steps, so
             if len(diffs_ls) == 0:
                 self._logger.warning("Voltage-Step could not be determined from source-material")
@@ -606,7 +607,7 @@ class Reader:
         lvl_ = self.h5file[group_name]["level"]
         if lvl_.shape[0] < 1:
             return 0
-        items_ = [1 for _x in lvl_[:] if _x >= min_level]
+        items_ = [1 for x_ in lvl_[:] if x_ >= min_level]
         return len(items_)
 
     def get_metadata(

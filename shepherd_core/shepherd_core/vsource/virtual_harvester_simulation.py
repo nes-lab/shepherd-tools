@@ -52,20 +52,20 @@ def simulate_harvester(
         hrv = VirtualHarvesterModel(hrv_pru)
         e_out_Ws = 0.0
 
-        for _t, v_inp, i_inp in tqdm(
+        for t_, v_inp, i_inp in tqdm(
             file_inp.read(is_raw=True), total=file_inp.chunks_n, desc="Chunk", leave=False
         ):
             v_uV = cal_inp.voltage.raw_to_si(v_inp) * 1e6
             i_nA = cal_inp.current.raw_to_si(i_inp) * 1e9
             length = min(v_uV.size, i_nA.size)
-            for _n in range(length):
-                v_uV[_n], i_nA[_n] = hrv.ivcurve_sample(
-                    _voltage_uV=int(v_uV[_n]), _current_nA=int(i_nA[_n])
+            for n_ in range(length):
+                v_uV[n_], i_nA[n_] = hrv.ivcurve_sample(
+                    _voltage_uV=int(v_uV[n_]), _current_nA=int(i_nA[n_])
                 )
             e_out_Ws += (v_uV * i_nA).sum() * 1e-15 * file_inp.sample_interval_s
             if path_output:
                 v_out = cal_out.voltage.si_to_raw(v_uV / 1e6)
                 i_out = cal_out.current.si_to_raw(i_nA / 1e9)
-                file_out.append_iv_data_raw(_t, v_out, i_out)
+                file_out.append_iv_data_raw(t_, v_out, i_out)
 
     return e_out_Ws

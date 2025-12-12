@@ -75,28 +75,28 @@ class InventoryList(ShpModel):
 
     def warn(self) -> dict:
         warnings = {}
-        ts_earl = min(_e.created.timestamp() for _e in self.elements)
-        for _e in self.elements:
-            if _e.uptime > timedelta(hours=30).total_seconds():
+        ts_earl = min(e_.created.timestamp() for e_ in self.elements)
+        for e_ in self.elements:
+            if e_.uptime > timedelta(hours=30).total_seconds():
                 warnings["uptime"] = f"[{self.hostname}] restart is recommended"
-            if (_e.created.timestamp() - ts_earl) > 10:
+            if (e_.created.timestamp() - ts_earl) > 10:
                 warnings["time_delta"] = f"[{self.hostname}] time-sync has failed"
 
         # turn  dict[hostname][type] = val
         # to    dict[type][val] = list[hostnames]
         inp_ = {
-            _e.hostname: _e.model_dump(exclude_unset=True, exclude_defaults=True)
-            for _e in self.elements
+            e_.hostname: e_.model_dump(exclude_unset=True, exclude_defaults=True)
+            for e_ in self.elements
         }
         result = {}
-        for _host, _types in inp_.items():
-            for _type, _val in _types.items():
-                if _type not in result:
-                    result[_type] = {}
-                if _val not in result[_type]:
-                    result[_type][_val] = []
-                result[_type][_val].append(_host)
-        rescnt = {_key: len(_val) for _key, _val in result.items()}
+        for host_, types_ in inp_.items():
+            for type_, val_ in types_.items():
+                if type_ not in result:
+                    result[type_] = {}
+                if val_ not in result[type_]:
+                    result[type_][val_] = []
+                result[type_][val_].append(host_)
+        rescnt = {key_: len(val_) for key_, val_ in result.items()}
         t_unique = [
             "h5py",
             "numpy",
@@ -107,9 +107,9 @@ class InventoryList(ShpModel):
             "yaml",
             "zstandard",
         ]
-        for _key in t_unique:
-            if rescnt[_key] > 1:
-                warnings[_key] = f"[{_key}] VersionMismatch - {result[_key]}"
+        for key_ in t_unique:
+            if rescnt[key_] > 1:
+                warnings[key_] = f"[{key_}] VersionMismatch - {result[key_]}"
 
         # TODO: finish with more potential warnings
         return warnings

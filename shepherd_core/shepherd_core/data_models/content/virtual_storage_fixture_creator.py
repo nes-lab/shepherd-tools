@@ -19,7 +19,7 @@ dsc_super = "SuperCapacitor with typically 1000 hours / 500 k cycles (not modele
 # typical voltage-ratings: 2.5, 4.0, 6.3, 10, 16, 20 V
 E6: list[int] = [10, 15, 22, 33, 47, 68, 100, 150, 220, 330, 470, 680, 1000]
 fixture_ideal: list[VirtualStorageConfig] = [
-    VirtualStorageConfig.capacitor(C_uF=_v, V_rated=10.0, description=dsc_ideal) for _v in E6
+    VirtualStorageConfig.capacitor(C_uF=v_, V_rated=10.0, description=dsc_ideal) for v_ in E6
 ]
 
 # Tantal Capacitors, E6 row
