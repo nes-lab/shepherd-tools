@@ -1,26 +1,11 @@
 """Fourth prototype for an improved EEnv-Dataclass.
 
-Mix of Prototype 1 & 2 with additional refinements.
-"""
+TODO:
+ - add unittests
+ - check eenv Paths in experiment
+ - add & change metadata of converters
+ - add metadata to generators
 
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
-from shepherd_core.data_models.content import EnergyDType
-from shepherd_core.data_models.content import EnergyEnvironment
-from shepherd_core.data_models.content import EnergyProfile
-from shepherd_core.data_models.content import Firmware
-from shepherd_core.data_models.experiment import TargetConfig
-
-from shepherd_core import log
-
-# TODO:
-#   - add unittests
-#   - check eenv Paths in experiment
-#   - add & change metadata of converters
-#   - add metadata to generators
-
-"""
 RenamedInProfile
     data_local: bool = True -> data_2_copy
 Moved2Profile
@@ -37,6 +22,17 @@ Removed:
     indoor: bool | None = None
     location: str | None = None
 """
+
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from shepherd_core.data_models.content import EnergyDType
+from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
+from shepherd_core.data_models.content import Firmware
+from shepherd_core.data_models.experiment import TargetConfig
+
+from shepherd_core import log
 
 if __name__ == "__main__":
     with TemporaryDirectory(ignore_cleanup_errors=True) as tmp:

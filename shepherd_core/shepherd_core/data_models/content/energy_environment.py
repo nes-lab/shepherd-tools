@@ -20,10 +20,11 @@ from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.base.content import id_default
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_now
-from .enum_datatypes import EnergyDType
 from shepherd_core.logger import log
 from shepherd_core.reader import Reader
 from shepherd_core.testbed_client import tb_client
+
+from .enum_datatypes import EnergyDType
 
 
 @final
