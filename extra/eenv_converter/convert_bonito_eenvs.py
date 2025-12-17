@@ -5,7 +5,7 @@ from pathlib import Path
 from convert_v1_eenv import convert as convert_eenv
 from shepherd_core.logger import log
 
-DATASETS = {
+DATASETS: dict[dict[str, str | int]] = {
     "bonito_jogging_mixed": {
         "old_name": "jogging_mixed",
         # Omit sheep3 since its recording is broken
