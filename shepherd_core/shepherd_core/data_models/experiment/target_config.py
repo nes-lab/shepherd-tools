@@ -1,5 +1,6 @@
 """Configuration related to Target Nodes (DuT)."""
 
+from pathlib import Path
 from typing import Annotated
 from typing import final
 
@@ -26,7 +27,7 @@ vsrc_neutral = VirtualSourceConfig(name="neutral")
 
 
 @final
-class TargetConfig(ShpModel, title="Target Config"):
+class TargetConfig(ShpModel):
     """Configuration related to Target Nodes (DuT)."""
 
     target_IDs: Annotated[list[IdInt], Field(min_length=1, max_length=128)]
@@ -57,6 +58,27 @@ class TargetConfig(ShpModel, title="Target Config"):
     gpio_tracing: GpioTracing | None = None
     gpio_actuation: GpioActuation | None = None
     uart_logging: UartLogging | None = None
+
+    @model_validator(mode="after")
+    def validate_eenv_mapping(self) -> Self:
+        """Validate that a mapping between targets and EEnvs exists."""
+        if self.energy_env.repetitions_ok:
+            return self
+        n_env = len(self.energy_env)
+        n_tgt = len(self.target_IDs)
+        if n_env == n_tgt:
+            return self
+        if n_env > n_tgt:
+            log.debug(
+                f"TargetConfig for {self.target_IDs} has remaining "
+                f"{n_env - n_tgt} EEnv-profiles -> will not be used there"
+            )
+            return self
+        msg = (
+            f"Energy-Environment of TargetConfig for tgt{self.target_IDs} was too small "
+            f"({n_tgt - n_env} missing). Please use a larger environment."
+        )
+        raise ValueError(msg)
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
@@ -104,3 +126,16 @@ class TargetConfig(ShpModel, title="Target Config"):
         if self.custom_IDs is not None and target_id in self.target_IDs:
             return self.custom_IDs[self.target_IDs.index(target_id)]
         return None
+
+    def get_critical_paths(self) -> set[Path]:
+        """Return all paths of non-repeatable energy profiles to warn about re-usage."""
+        paths: list[Path] = [
+            profile.data_path for profile in self.energy_env.profiles if not profile.repetitions_ok
+        ]
+        path_set = set(paths)
+        if len(paths) != len(path_set):
+            log.warning(
+                f"Detected re-usage of non-repeatable EnergyProfiles "
+                f"in EnergyEnv {self.energy_env.name}"
+            )
+        return path_set

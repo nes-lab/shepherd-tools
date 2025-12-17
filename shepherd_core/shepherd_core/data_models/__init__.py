@@ -18,10 +18,11 @@ from .base.calibration import CapeData
 from .base.content import ContentModel
 from .base.shepherd import ShpModel
 from .base.wrapper import Wrapper
-from .content.energy_environment import EnergyDType
 from .content.energy_environment import EnergyEnvironment
+from .content.energy_environment import EnergyProfile
+from .content.enum_datatypes import EnergyDType
+from .content.enum_datatypes import FirmwareDType
 from .content.firmware import Firmware
-from .content.firmware import FirmwareDType
 from .content.virtual_harvester_config import VirtualHarvesterConfig
 from .content.virtual_source_config import VirtualSourceConfig
 from .content.virtual_storage_config import VirtualStorageConfig
@@ -45,6 +46,7 @@ __all__ = [
     "ContentModel",
     "EnergyDType",
     "EnergyEnvironment",
+    "EnergyProfile",
     "Experiment",
     "Firmware",
     "FirmwareDType",
