@@ -4,11 +4,11 @@ from pathlib import Path
 from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Self
-from typing_extensions import final
 
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.shepherd import ShpModel

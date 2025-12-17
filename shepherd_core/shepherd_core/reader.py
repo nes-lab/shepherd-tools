@@ -13,6 +13,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import final
 
 import h5py
 import numpy as np
@@ -21,7 +22,6 @@ from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
 from typing_extensions import deprecated
-from typing_extensions import final
 
 from .config import config
 from .data_models.base.calibration import CalibrationPair
