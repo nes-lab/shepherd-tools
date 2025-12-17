@@ -3,320 +3,40 @@
 Mix of Prototype 1 & 2 with additional refinements.
 """
 
-import shutil
-from collections.abc import Mapping
-from collections.abc import Sequence
-from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Annotated
-from typing import Any
-from typing import Self
-from typing import final
-from typing import overload
 
-import yaml
-from pydantic import Field
-from pydantic import NonNegativeFloat
-from pydantic import PositiveFloat
-from pydantic import model_validator
-from pydantic import validate_call
-from shepherd_core.data_models import ContentModel
-from shepherd_core.data_models import ShpModel
-from shepherd_core.data_models.base.content import id_default
 from shepherd_core.data_models.content import EnergyDType
-from shepherd_core.testbed_client import tb_client
+from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
+from shepherd_core.data_models.content import Firmware
+from shepherd_core.data_models.experiment import TargetConfig
 
-from shepherd_core import Reader
-from shepherd_core import local_now
 from shepherd_core import log
 
+# TODO:
+#   - add unittests
+#   - check eenv Paths in experiment
+#   - add & change metadata of converters
+#   - add metadata to generators
 
-@final
-class EnergyProfile(ShpModel):
-    """Metadata representation of scalar energy-recording."""
-
+"""
+RenamedInProfile
+    data_local: bool = True -> data_2_copy
+Moved2Profile
     data_path: Path
     data_type: EnergyDType
-    data_2_copy: bool = True
-    """ ⤷ signals that file has to be copied to testbed"""
-
     duration: PositiveFloat
-    energy_Ws: NonNegativeFloat
-    """ ⤷ max usable energy """
+    energy_Ws: PositiveFloat
     valid: bool = False
-    repetitions_ok: bool = False
-    """⤷ emit no warning if single profile-path is used more than once.
-    this protects against unwanted correlation effects.
-    """
-
-    def export(self, output_path: Path) -> Self:
-        """Copy this EnergyProfile to a new destination."""
-        if not self.data_path.exists():
-            raise TypeError("EnergyProfile is not locally available.")
-        if output_path.exists():
-            if output_path.is_dir():
-                file_path = output_path / self.data_path.name
-            else:
-                raise FileExistsError("Provided export-path exists, but is not a directory")
-        else:
-            # output_path.mkdir(exist_ok=False)
-            file_path = output_path
-        # TODO: offer both, move and copy?
-        shutil.copy(self.data_path, file_path)
-        return self.model_copy(deep=True, update={"data_path": file_path})
-
-    def check(self) -> bool:
-        """Check validity of Energy-Profile.
-
-        Path must exist, be a file, be shepherd-hdf5-format.
-        """
-        if not self.data_path.exists():
-            log.error(f"EnergyProfile does not exist in '{self.data_path}'.")
-            return False
-        if not self.data_path.is_file():
-            log.error(f"EnergyProfile is not a file ({self.data_path}).")
-            return False
-        with Reader(self.data_path) as reader:
-            if self.duration != reader.runtime_s:
-                log.error(
-                    f"EnergyProfile duration does not match runtime of file ({self.data_path})."
-                )
-                return False
-            if self.valid != reader.is_valid():
-                log.error(f"EnergyProfile validity-state does not match file ({self.data_path}).")
-                return False
-            if self.energy_Ws != reader.energy():
-                log.error(f"EnergyProfile max energy does not match file ({self.data_path}).")
-                return False
-        return True
-
-    @classmethod
-    def derive_from_file(
-        cls,
-        hdf: Path,
-        data_type: EnergyDType | None = None,
-        *,
-        repetition_ok: bool = False,
-    ) -> Self:
-        """Use recording to fill in most fields."""
-        with Reader(hdf) as reader:
-            dtype = data_type or reader.get_datatype()
-            if dtype is None:
-                raise ValueError(
-                    "EnergyDType could not be determined from file, please provide it."
-                )
-            return cls(
-                data_path=hdf,
-                data_type=dtype,
-                data_2_copy=True,
-                duration=reader.runtime_s,
-                energy_Ws=reader.energy(),
-                valid=reader.is_valid(),
-                repetitions_ok=repetition_ok,
-            )
-
-
-@final
-class EnergyEnvironment(ContentModel):
-    """Metadata representation of spatio-temporal energy-recording."""
-
-    profiles: list[EnergyProfile]
-    """ ⤷  list of individual profiles that make up the environment"""
-
-    metadata: Mapping[str, str] = {}
-    """ ⤷ additional descriptive information
-
-    Example for solar: (main) light source, weather conditions, indoor, location
-    """
-
-    modifications: Sequence[str] = []
-
-    def __len__(self) -> int:
-        return len(self.profiles)
-
-    @property
-    def duration(self) -> PositiveFloat:
-        """Duration of the recorded environment (minimum of all profiles) in seconds."""
-        return min(profile.duration for profile in self.profiles)
-
-    @property
-    def repetitions_ok(self) -> bool:
-        """Emit no warning if single profile-path is used more than once."""
-        return all(profile.repetitions_ok for profile in self.profiles)
-
-    @property
-    def valid(self) -> bool:
-        return all(profile.valid for profile in self.profiles)
-
-    @validate_call(validate_return=False)
-    def __add__(self, rvalue: ShpModel) -> Self:
-        """Extend this EnergyEnvironment.
-
-        Possible concatenations:
-        - a single EProfile,
-        - a list of EnergyProfiles,
-        - a second EnergyEnvironment
-        """
-        id_new = id_default()
-        data: dict[str, Any] = {
-            "id": id_new,
-            "created": local_now(),
-            "updated_last": local_now(),
-        }
-        if isinstance(rvalue, EnergyProfile):
-            data["modifications"] = deepcopy(
-                [
-                    *self.modifications,
-                    f"{self.name} - added EnergyProfile {rvalue.data_path.stem}, "
-                    f"ID [{self.id}->{id_new}]",
-                ]
-            )
-            data["profiles"] = deepcopy([*self.profiles, rvalue])
-            return self.model_copy(deep=True, update=data)
-        if isinstance(rvalue, list):
-            if len(rvalue) == 0:
-                return self.model_copy(deep=True)
-            if isinstance(rvalue[0], EnergyProfile):
-                data["modifications"] = deepcopy(
-                    [
-                        *self.modifications,
-                        f"{self.name} - added list of {len(rvalue)} EnergyProfiles, "
-                        f"ID[{self.id}->{id_new}]",
-                    ]
-                )
-                data["profiles"] = deepcopy(self.profiles + rvalue)
-                return self.model_copy(deep=True, update=data)
-            raise ValueError("Addition could not be performed, as types did not match.")
-        if isinstance(rvalue, EnergyEnvironment):
-            data["modifications"] = deepcopy(
-                [
-                    *self.modifications,
-                    *rvalue.modifications,
-                    f"{self.name} - added EEnv {rvalue.name} with {len(rvalue)} entries, "
-                    f"ID[{self.id}->{id_new}]",
-                ]
-            )
-            data["metadata"] = deepcopy({**rvalue.metadata, **self.metadata})
-            # ⤷ right side of dict-merge is kept in case of key-collision
-            data["profiles"] = deepcopy(self.profiles + rvalue.profiles)
-            return self.model_copy(deep=True, update=data)
-        raise TypeError("rvalue must be same type")
-
-    @overload
-    def __getitem__(self, value: int) -> EnergyProfile: ...
-    @overload
-    def __getitem__(self, value: slice) -> Self: ...
-    def __getitem__(self, value):
-        """Select elements from this EEnv similar to list-Ops (slicing, int)."""
-        if isinstance(value, int):
-            return deepcopy(self.profiles[value])
-        if isinstance(value, slice):
-            if value.stop and value.stop > 1000:
-                msg = f"Value {value} is far out of range."
-                raise ValueError(msg)
-            if self.repetitions_ok and value.stop < len(self):
-                # scale profile-list up
-                scale = (value.stop // len(self)) + 1
-                profiles = scale * self.profiles
-            else:
-                profiles = self.profiles
-            id_new = id_default()
-            data: dict[str, Any] = {
-                "id": id_new,
-                "created": local_now(),
-                "updated_last": local_now(),
-                "modifications": deepcopy(
-                    [
-                        *self.modifications,
-                        f"{self.name} was sliced with {value}, ID[{self.id}->{id_new}]",
-                    ]
-                ),
-                "profiles": deepcopy(profiles[value]),
-            }
-            return self.model_copy(deep=True, update=data)
-        raise IndexError("Use int or slice when selecting from EEnv")
-
-    @model_validator(mode="before")
-    @classmethod
-    def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        """Add missing entries of class by querying database."""
-        values, _ = tb_client.try_completing_model(cls.__name__, values)
-        return tb_client.fill_in_user_data(values)
-
-    def export(self, output_path: Path) -> None:
-        """Copy local data to new directory and add meta-data-file."""
-        if output_path.exists():
-            msg = f"Warning: path {output_path} already exists"
-            raise FileExistsError(msg)
-        output_path.mkdir(parents=True)
-
-        # Copy data files & update meta-data
-        content = self.model_dump(exclude_unset=True, exclude_defaults=True)
-        for i_, profile in enumerate(self.profiles):
-            # Numbered to avoid collisions. Preserve extensions
-            file_name = f"node{i_:03d}{profile.data_path.suffix}"
-            profile_new = profile.export(output_path / file_name)
-            content["profiles"][i_] = profile_new.model_dump(
-                exclude_unset=True, exclude_defaults=True
-            )
-
-        # Create metadata file
-        with (output_path / "eenv.yaml").open("w") as file:
-            yaml.safe_dump(content, file, default_flow_style=False, sort_keys=False)
-
-    def check(self) -> bool:
-        """Check validity of embedded Energy-Profile."""
-        return all(profile.check() for profile in self.profiles)
-
-
-@final
-class TargetConfig(ShpModel):
-    """Configuration related to Target Nodes (DuT)."""
-
-    target_IDs: Annotated[Sequence[int], Field(min_length=1, max_length=128)]
-    energy_env: EnergyEnvironment
-    """ input for the virtual source """
-
-    @model_validator(mode="after")
-    def check_eenv_mapping(self) -> Self:
-        """Validate that a mapping between targets and EEnvs exists."""
-        if self.energy_env.repetitions_ok:
-            return self
-        n_env = len(self.energy_env)
-        n_tgt = len(self.target_IDs)
-        if n_env == n_tgt:
-            return self
-        if n_env > n_tgt:
-            log.debug(
-                f"TargetConfig for {self.target_IDs} has remaining "
-                f"{n_env - n_tgt} EEnv-profiles -> will not be used there"
-            )
-            return self
-        msg = (
-            f"Energy-Environment of TargetConfig for tgt{self.target_IDs} was too small "
-            f"({n_tgt - n_env} missing). Please use a larger environment."
-        )
-        raise ValueError(msg)
-
-    def get_critical_paths(self) -> set[Path]:
-        """Return all paths of non-repeatable energy profiles to warn about re-usage."""
-        paths: list[Path] = [
-            profile.data_path for profile in self.energy_env.profiles if not profile.repetitions_ok
-        ]
-        path_set = set(paths)
-        if len(paths) != len(path_set):
-            log.warning(
-                f"Detected re-usage of non-repeatable EnergyProfiles "
-                f"in EnergyEnv {self.energy_env.name}"
-            )
-        return path_set
-
-
-# TODO:
-#   - add & change metadata
-#   - add unittests
-
+NewInProfile:
+    repetitions_OK
+Removed:
+    light_source: str | None = None
+    weather_conditions: str | None = None
+    indoor: bool | None = None
+    location: str | None = None
+"""
 
 if __name__ == "__main__":
     with TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
@@ -336,7 +56,9 @@ if __name__ == "__main__":
             energy_Ws=3.0,
             duration=20,
         )
-        eenv1 = EnergyEnvironment(name="t1", profiles=[profile1, profile2])
+        eenv1 = EnergyEnvironment(
+            name="t1", profiles=[profile1, profile2], metadata={"location": "tunesia"}
+        )
         print(f"Duration: {eenv1.duration}")
         print(f"Repetitions: {eenv1.repetitions_ok}")
 
@@ -363,12 +85,22 @@ if __name__ == "__main__":
         eenvR.to_file(Path(__file__).parent / "eenvR.yaml", minimal=True)
 
         log.info("Config 1 - 2:2")
-        TargetConfig(target_IDs=range(2), energy_env=eenv1)
+        TargetConfig(
+            target_IDs=range(2), energy_env=eenv1, firmware1=Firmware(name="nrf52_deep_sleep")
+        )
         log.info("Config 2 - 1:2")
-        TargetConfig(target_IDs=range(1), energy_env=eenv2)
+        TargetConfig(
+            target_IDs=range(1), energy_env=eenv2, firmware1=Firmware(name="nrf52_deep_sleep")
+        )
         log.info("Config 3 - 3:1R")
-        tc3 = TargetConfig(target_IDs=range(3), energy_env=eenvR)
+        tc3 = TargetConfig(
+            target_IDs=range(3), energy_env=eenvR, firmware1=Firmware(name="nrf52_deep_sleep")
+        )
         log.info("Config 4 - 4:4")
-        TargetConfig(target_IDs=range(4), energy_env=eenv3)
+        TargetConfig(
+            target_IDs=range(4), energy_env=eenv3, firmware1=Firmware(name="nrf52_deep_sleep")
+        )
         log.info("Config 5 - 4:2 -> raises")
-        TargetConfig(target_IDs=range(4), energy_env=eenv1)
+        TargetConfig(
+            target_IDs=range(4), energy_env=eenv1, firmware1=Firmware(name="nrf52_deep_sleep")
+        )
