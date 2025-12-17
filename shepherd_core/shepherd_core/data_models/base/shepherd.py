@@ -110,6 +110,16 @@ class ShpModel(BaseModel):
         )
         return str(content)
 
+    def __getitem__(self, key: str | Any) -> Any:
+        """Allow dict access like model["key"].
+
+        in addition to model.key.
+        """
+        if isinstance(key, str):
+            return self.__getattribute__(key)
+        msg = f"Unknown key '{key}' used when selecting from Model."
+        raise IndexError(msg)
+
     def __contains__(self, item: str) -> bool:
         """Allow checks like 'x in YClass'."""
         return item in self.model_dump().keys()  # noqa: SIM118
