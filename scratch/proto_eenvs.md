@@ -2,31 +2,36 @@
 
 ## Main Goals
 
-- environments hold >= 1 recordings
++ environments hold >= 1 recordings
 - targetConfig must be properly provided with recordings
   - x targets should be mapped to >= x recordings
 - solution for mapping 1 Env to > 1 TargetConfig
   - should it just continue?
   - or reuse starting at pos 0?
   - or should a custom mapping be applied?
-- emit warning is single EEnv is used more than once to avoid unwanted correlation effects
-  - exception if EEnv allows for it (repetition_ok)
++ emit warning is single EEnv is used more than once to avoid unwanted correlation effects
+  + exception if EEnv allows for it (repetition_ok)
 - avoid funky behavior & hidden mechanics
 
 
 ## Secondary Goals / general Improvements
 
-- add structured metadata (dict) for information about the environment, typical keys would be
++ add structured metadata (dict) for information about the environment, typical keys would be
   - recording-tool/generation-script,
   - maximum harvestable energy,
   - location (address/GPS),
   - site-description (building/forest),
   - weather,
   - nodes (for each node: transducer, location within experiment, datatype - surface/trace, max-harvestable-energy)
-- dtype, duration, energy_Ws should be kept with EnergyProfile (scalar)
-- duration of EnergyEnvironment (vector) is property/iterator/min(all durations)
-- files get created locally (then copied) or right away in content-directory on server (see prototype 2/3)
-- use overloading (see prototype 2)
++ dtype, duration, energy_Ws should be kept with EnergyProfile (scalar)
++ duration of EnergyEnvironment (vector) is property/iterator/min(all durations)
++ files get created locally (then copied) or right away in content-directory on server (see prototype 2/3)
++ use overloading (see prototype 2)
+
+## Takeaways
+
+- scalar environment-recordings are now called EnergyProfiles (only temporal dimension)
+- EnergyEnvironments now hold >= 1 EnergyProfiles (spatio-temporal)
 
 ## Proto 1
 
