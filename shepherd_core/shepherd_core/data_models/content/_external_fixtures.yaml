@@ -11,15 +11,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_10mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 72.00000003599966
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_10mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 72.00000003599966
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.764595+02:00
@@ -34,15 +33,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_1mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 7.200000003599944
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_1mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.200000003599944
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.772144+02:00
@@ -57,15 +55,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_50mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 360.00000018000185
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_50mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 360.00000018000185
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.779737+02:00
@@ -80,15 +77,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_5mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 36.00000001799983
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_5mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 36.00000001799983
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.787329+02:00
@@ -103,15 +99,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_10mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 107.999999999999
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_10mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 107.999999999999
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.794922+02:00
@@ -126,15 +121,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_1mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 10.799999999999885
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_1mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 10.799999999999885
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.802410+02:00
@@ -149,15 +143,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_50mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 539.9999999999999
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_50mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 539.9999999999999
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.810147+02:00
@@ -172,15 +165,14 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_5mA_3600s.h5
-    data_type: ivsample
-    data_2_copy: false
-    duration: 3600.0
-    energy_Ws: 53.9999999999995
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
+    profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_5mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 53.9999999999995
+      valid: true
+      repetitions_ok: true
     location: Lab-VSrc
 - datatype: Firmware
   created: 2025-05-12 17:28:39.825659+02:00
