@@ -16,8 +16,6 @@ dependencies = [
     "bump2version",
     "ruff",
     "ty",
-    "pyright",
-    "mypy",
 ]
 requires-python = ">=3.10"
 
@@ -31,24 +29,9 @@ shepherd-data = { path = "./shepherd_data", editable = true}
 [tool.setuptools]
 packages = ["shepherd_core", "shepherd_data"]
 
-[tool.pyright]
-root = "./"
-include = [
-    './shepherd_core/',
-    './shepherd_data/',
-]
-pythonVersion = "3.10"
-pythonPlatform = "All"
-reportMissingParameterType = true
-
-[tool.mypy]
-python_version = 3.10
-ignore_missing_imports = true
-disable_error_code = ["call-arg", ]
-exclude = [
-    "build/",
-    ".egg-info/",
-]
+[tool.ty.environment]
+root = ["./shepherd_core", "./shepherd_data"]
+# TODO: renaming dirs could 'repair' autodiscovery
 
 [tool.ty.terminal]
 output-format = "concise"

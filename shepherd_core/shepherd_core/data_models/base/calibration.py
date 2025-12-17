@@ -62,7 +62,7 @@ class CalibrationPair(ShpModel):
         if not allow_negative:
             if isinstance(values_si, np.ndarray):
                 values_si[values_si < 0.0] = 0.0
-                # if pyright still complains, cast with .astype(float)
+                # if type-checker still complains, cast with .astype(float)
             else:
                 values_si = float(max(values_si, 0.0))
         elif not isinstance(values_si, np.ndarray):

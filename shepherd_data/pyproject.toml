@@ -48,7 +48,7 @@ elf = [
 
 dev = [
     "shepherd-core[dev]",
-    "pandas-stubs",  # for pyright with pandas
+    "pandas-stubs",  # for type-checkers
 ]
 
 test = [
@@ -99,12 +99,3 @@ addopts = "-vvv --stepwise" # opts: verbose result for each tests
 
 [tool.coverage.run]
 source = ["shepherd_data"]
-
-[tool.mypy]
-python_version = 3.10
-ignore_missing_imports = true
-disable_error_code = ["call-arg", ]
-exclude = [
-    "build/",
-    ".egg-info/",
-]
