@@ -27,7 +27,7 @@ from .config import config
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.base.timezone import local_tz
-from .data_models.content.energy_environment import EnergyDType
+from .data_models.content.enum_datatypes import EnergyDType
 from .decoder_waveform import Uart
 
 if TYPE_CHECKING:

@@ -11,7 +11,7 @@ NOTE: DO NOT OPTIMIZE -> stay close to original code-base
 """
 
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
-from shepherd_core.data_models.content.energy_environment import EnergyDType
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.data_models.content.virtual_harvester_config import HarvesterPRUConfig
 from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig

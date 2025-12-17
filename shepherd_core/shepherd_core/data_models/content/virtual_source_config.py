@@ -14,7 +14,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
-from .energy_environment import EnergyDType
+from .enum_datatypes import EnergyDType
 from .virtual_harvester_config import HarvesterPRUConfig
 from .virtual_harvester_config import VirtualHarvesterConfig
 from .virtual_storage_config import VirtualStorageConfig
@@ -44,7 +44,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     # TODO: I,V,R should be in regular unit (V, A, Ohm)
 
-    # General Metadata & Ownership -> ContentModel
+    # General Metadata & Ownership -> see ContentModel
 
     enable_boost: bool = False
     """ ⤷ if false -> v_intermediate = v_input, output-switch-hysteresis is still usable"""

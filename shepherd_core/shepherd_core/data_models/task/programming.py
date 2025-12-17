@@ -14,8 +14,8 @@ from typing_extensions import Self
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 from shepherd_core.data_models.content.firmware import suffix_to_DType
-from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
 from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.data_models.testbed.mcu import ProgrammerProtocol
