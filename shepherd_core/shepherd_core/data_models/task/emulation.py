@@ -8,6 +8,7 @@ from enum import Enum
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -46,6 +47,7 @@ compressions_allowed: list = [None, "lzf", 1]
 c_translate = {"lzf": "lzf", "1": 1, "None": None, None: None}
 
 
+@final
 class EmulationTask(ShpModel):
     """Configuration for the Observer in Emulation-Mode."""
 

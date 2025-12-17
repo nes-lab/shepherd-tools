@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import final
 
 from pydantic import validate_call
 from typing_extensions import Self
@@ -22,6 +23,7 @@ from .helper_paths import path_posix
 from .programming import ProgrammingTask
 
 
+@final
 class ObserverTasks(ShpModel):
     """Collection of tasks for selected observer included in experiment."""
 

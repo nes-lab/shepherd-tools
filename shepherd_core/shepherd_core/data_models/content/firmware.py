@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Annotated
 from typing import Any
 from typing import TypedDict
+from typing import final
 
 from pydantic import StringConstraints
 from pydantic import model_validator
@@ -49,6 +50,7 @@ arch_to_mcu: dict = {
 FirmwareStr = Annotated[str, StringConstraints(min_length=3, max_length=8_000_000)]
 
 
+@final
 class Firmware(ContentModel, title="Firmware of Target"):
     """meta-data representation of a data-component."""
 

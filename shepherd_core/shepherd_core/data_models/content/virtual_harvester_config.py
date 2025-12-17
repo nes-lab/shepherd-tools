@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from enum import Enum
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -105,6 +106,7 @@ class AlgorithmDType(str, Enum):
     """
 
 
+@final
 class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     """The virtual harvester configuration characterizes usage of an energy environment.
 
@@ -436,6 +438,7 @@ ALGO_TO_DTYPE: Mapping[str, EnergyDType] = {
 }
 
 
+@final
 class HarvesterPRUConfig(ShpModel):
     """Map settings-list to internal state-vars struct HarvesterConfig for PRU.
 

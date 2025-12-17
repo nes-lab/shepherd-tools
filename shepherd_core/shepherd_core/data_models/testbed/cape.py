@@ -4,6 +4,7 @@ from datetime import date
 from datetime import datetime
 from enum import Enum
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -22,6 +23,7 @@ class TargetPort(str, Enum):
     B = b = "B"
 
 
+@final
 class Cape(ShpModel, title="Shepherd-Cape"):
     """meta-data representation of a testbed-component (physical object)."""
 

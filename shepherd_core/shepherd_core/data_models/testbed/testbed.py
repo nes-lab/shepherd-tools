@@ -4,6 +4,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import HttpUrl
@@ -22,6 +23,7 @@ from .observer import Observer
 duration_5min = timedelta(minutes=5)
 
 
+@final
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)."""
 

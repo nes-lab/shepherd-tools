@@ -5,6 +5,7 @@ from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
 from typing import TypedDict
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -26,6 +27,7 @@ from shepherd_core.logger import log
 from .helper_paths import path_posix
 
 
+@final
 class FirmwareModTask(ShpModel):
     """Config for Task that adds the custom ID to the firmware & stores it into a file."""
 

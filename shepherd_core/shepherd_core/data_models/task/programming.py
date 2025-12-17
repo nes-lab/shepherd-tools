@@ -4,6 +4,7 @@ from collections.abc import Set as AbstractSet
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -24,6 +25,7 @@ from shepherd_core.data_models.testbed.testbed import Testbed
 from .helper_paths import path_posix
 
 
+@final
 class ProgrammingTask(ShpModel):
     """Config for a Task programming the selected target."""
 

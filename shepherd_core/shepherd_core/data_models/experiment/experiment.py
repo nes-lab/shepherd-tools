@@ -4,6 +4,7 @@ from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -25,6 +26,7 @@ from .target_config import TargetConfig
 sys_log_all = SystemLogging()  # = all active
 
 
+@final
 class Experiment(ShpModel, title="Config of an Experiment"):
     """Config for experiments on the testbed emulating energy environments for target nodes."""
 

@@ -21,6 +21,7 @@ from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
 from typing_extensions import deprecated
+from typing_extensions import final
 
 from .config import config
 from .data_models.base.calibration import CalibrationPair
@@ -46,7 +47,7 @@ class Reader:
 
     """
 
-    CHUNK_SAMPLES_N: int = 10_000
+    CHUNK_SAMPLES_N: final[int] = 10_000
 
     MODE_TO_DTYPE: Mapping[str, Sequence[EnergyDType]] = MappingProxyType(
         {

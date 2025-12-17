@@ -3,6 +3,7 @@
 from datetime import timedelta
 from enum import Enum
 from typing import Annotated
+from typing import final
 
 import numpy as np
 from annotated_types import Interval
@@ -19,6 +20,7 @@ from shepherd_core.logger import log
 zero_duration = timedelta(seconds=0)
 
 
+@final
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """Configuration for recording the Power-Consumption of the Target Nodes."""
 
@@ -107,6 +109,7 @@ STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO = (1, 1.5, 2)
 STOPBITS = (STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO)
 
 
+@final
 class UartLogging(ShpModel, title="Config for UART Logging"):
     """Configuration for recording UART-Output of the Target Nodes.
 
@@ -139,6 +142,7 @@ GpioList = Annotated[list[GpioInt], Field(min_length=1, max_length=18)]
 all_gpio = list(range(18))
 
 
+@final
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """Configuration for recording the GPIO-Output of the Target Nodes.
 
@@ -194,6 +198,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
         return mask
 
 
+@final
 class GpioLevel(str, Enum):
     """Options for setting the gpio-level or state."""
 
@@ -202,6 +207,7 @@ class GpioLevel(str, Enum):
     toggle = "X"  # TODO: not the smartest decision for writing a converter
 
 
+@final
 class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
     """Configuration for a single GPIO-Event (Actuation)."""
 
@@ -228,6 +234,7 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
         return np.arange(self.delay, stop, self.period)
 
 
+@final
 class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
     """Configuration for a GPIO-Actuation-Sequence."""
 
@@ -245,6 +252,7 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
         return {ev_.gpio for ev_ in self.events}
 
 
+@final
 class SystemLogging(ShpModel, title="Config for System-Logging"):
     """Configuration for recording Debug-Output of the Observers System-Services."""
 

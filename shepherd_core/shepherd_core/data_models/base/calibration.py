@@ -6,6 +6,7 @@ from collections.abc import Generator
 from collections.abc import Mapping
 from collections.abc import Sequence
 from typing import TypeVar
+from typing import final
 
 import numpy as np
 from numpy.typing import NDArray
@@ -47,6 +48,7 @@ def dict_generator(
         yield [*pre, in_dict]
 
 
+@final
 class CalibrationPair(ShpModel):
     """SI-value [SI-Unit] = raw-value * gain + offset."""
 
@@ -99,6 +101,7 @@ cal_pair_adc_V = CalibrationPair.from_fn(adc_voltage_to_raw, unit="V")
 cal_pair_adc_C = CalibrationPair.from_fn(adc_current_to_raw, unit="A")
 
 
+@final
 class CalibrationHarvester(ShpModel):
     """Container for all calibration-pairs for that device."""
 
@@ -140,6 +143,7 @@ cal_emu_legacy = {  # legacy translator
 }
 
 
+@final
 class CalibrationEmulator(ShpModel):
     """Container for all calibration-pairs for that device.
 
@@ -177,6 +181,7 @@ class CalibrationEmulator(ShpModel):
         return cal_set
 
 
+@final
 class CapeData(ShpModel):
     """Representation of Beaglebone Cape information.
 
@@ -206,6 +211,7 @@ class CapeData(ShpModel):
         return str(self.model_dump())
 
 
+@final
 class CalibrationCape(ShpModel):
     """Represents calibration data of shepherd cape.
 
@@ -261,6 +267,7 @@ class CalibrationCape(ShpModel):
         return struct.pack(">" + len(values) * "d", *values)
 
 
+@final
 class CalibrationSeries(ShpModel):
     """Cal-Data for a typical recording of a testbed experiment."""
 

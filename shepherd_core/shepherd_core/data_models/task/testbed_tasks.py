@@ -8,6 +8,7 @@ from typing import Annotated
 from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Self
+from typing_extensions import final
 
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -20,6 +21,7 @@ if TYPE_CHECKING:
     from collections.abc import Set as AbstractSet
 
 
+@final
 class TestbedTasks(ShpModel):
     """Collection of tasks for all observers included in experiment."""
 

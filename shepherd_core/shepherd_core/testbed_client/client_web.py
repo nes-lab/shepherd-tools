@@ -3,6 +3,7 @@
 from importlib import import_module
 from pathlib import Path
 from typing import Any
+from typing import final
 
 from pydantic import validate_call
 
@@ -14,6 +15,7 @@ from .client_abc_fix import AbcClient
 from .user_model import User
 
 
+@final
 class WebClient(AbcClient):
     """Client-Class to access a testbed instance over the web.
 

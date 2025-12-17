@@ -2,6 +2,7 @@
 
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -28,6 +29,7 @@ LUT2D = Annotated[list[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 vhrv_mppt_opt = VirtualHarvesterConfig(name="mppt_opt")
 
 
+@final
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     """The vSrc uses the energy environment (file) for supplying the Target Node.
 
@@ -292,6 +294,7 @@ lut_i = Annotated[
 lut_o = Annotated[list[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
+@final
 class ConverterPRUConfig(ShpModel):
     """Map settings-list to internal state-vars struct ConverterConfig.
 

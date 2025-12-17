@@ -3,6 +3,7 @@
 from datetime import datetime
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -20,6 +21,7 @@ IdInt16 = Annotated[int, Field(ge=0, lt=2**16)]
 MCUPort = Annotated[int, Field(ge=1, le=2)]
 
 
+@final
 class Target(ShpModel, title="Target Node (DuT)"):
     """meta-data representation of a testbed-component (physical object)."""
 

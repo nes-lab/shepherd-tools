@@ -3,6 +3,7 @@
 from enum import Enum
 from pathlib import Path
 from typing import Any
+from typing import final
 
 from pydantic import PositiveFloat
 from pydantic import model_validator
@@ -19,6 +20,7 @@ class EnergyDType(str, Enum):
     isc_voc = "isc_voc"
 
 
+@final
 class EnergyEnvironment(ContentModel):
     """Recording of meta-data representation of a testbed-component."""
 
