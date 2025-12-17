@@ -4,11 +4,12 @@ Mix of Prototype 1 & 2 with additional refinements.
 """
 
 import shutil
+from collections.abc import Mapping
 from collections.abc import Sequence
 from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Annotated, Mapping
+from typing import Annotated
 from typing import Any
 from typing import Self
 from typing import final
@@ -25,7 +26,6 @@ from shepherd_core.data_models import ShpModel
 from shepherd_core.data_models.base.content import id_default
 from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.testbed_client import tb_client
-from typing_extensions import deprecated
 
 from shepherd_core import Reader
 from shepherd_core import local_now
@@ -51,9 +51,9 @@ class EnergyProfile(ShpModel):
     """
 
     def export(self, output_path: Path) -> Self:
+        """Copy this EnergyProfile to a new destination."""
         if not self.data_path.exists():
             raise TypeError("EnergyProfile is not locally available.")
-        log.debug(f"{self.data_path.stem}-EProfile export was called -> {output_path}")
         if output_path.exists():
             if output_path.is_dir():
                 file_path = output_path / self.data_path.name
@@ -79,7 +79,9 @@ class EnergyProfile(ShpModel):
             return False
         with Reader(self.data_path) as reader:
             if self.duration != reader.runtime_s:
-                log.error(f"EnergyProfile duration does not match runtime of file ({self.data_path}).")
+                log.error(
+                    f"EnergyProfile duration does not match runtime of file ({self.data_path})."
+                )
                 return False
             if self.valid != reader.is_valid():
                 log.error(f"EnergyProfile validity-state does not match file ({self.data_path}).")
@@ -101,7 +103,9 @@ class EnergyProfile(ShpModel):
         with Reader(hdf) as reader:
             dtype = data_type or reader.get_datatype()
             if dtype is None:
-                raise ValueError("EnergyDType could not be determined from file, please provide it.")
+                raise ValueError(
+                    "EnergyDType could not be determined from file, please provide it."
+                )
             return cls(
                 data_path=hdf,
                 data_type=dtype,
@@ -141,27 +145,58 @@ class EnergyEnvironment(ContentModel):
         """Emit no warning if single profile-path is used more than once."""
         return all(profile.repetitions_ok for profile in self.profiles)
 
+    @property
+    def valid(self) -> bool:
+        return all(profile.valid for profile in self.profiles)
+
     @validate_call(validate_return=False)
     def __add__(self, rvalue: ShpModel) -> Self:
+        """Extend this EnergyEnvironment.
+
+        Possible concatenations:
+        - a single EProfile,
+        - a list of EnergyProfiles,
+        - a second EnergyEnvironment
+        """
+        id_new = id_default()
         data: dict[str, Any] = {
-            "id": id_default(),
+            "id": id_new,
             "created": local_now(),
             "updated_last": local_now(),
         }
         if isinstance(rvalue, EnergyProfile):
-            data["modifications"] = deepcopy([*self.modifications, f"{self.name} - added EnergyProfile {rvalue.data_path.stem}"])
+            data["modifications"] = deepcopy(
+                [
+                    *self.modifications,
+                    f"{self.name} - added EnergyProfile {rvalue.data_path.stem}, "
+                    f"ID [{self.id}->{id_new}]",
+                ]
+            )
             data["profiles"] = deepcopy([*self.profiles, rvalue])
             return self.model_copy(deep=True, update=data)
         if isinstance(rvalue, list):
             if len(rvalue) == 0:
                 return self.model_copy(deep=True)
             if isinstance(rvalue[0], EnergyProfile):
-                data["modifications"] = deepcopy([*self.modifications, f"{self.name} - added list of {len(rvalue)} EnergyProfiles"])
+                data["modifications"] = deepcopy(
+                    [
+                        *self.modifications,
+                        f"{self.name} - added list of {len(rvalue)} EnergyProfiles, "
+                        f"ID[{self.id}->{id_new}]",
+                    ]
+                )
                 data["profiles"] = deepcopy(self.profiles + rvalue)
                 return self.model_copy(deep=True, update=data)
             raise ValueError("Addition could not be performed, as types did not match.")
         if isinstance(rvalue, EnergyEnvironment):
-            data["modifications"] = deepcopy([*self.modifications, *rvalue.modifications, f"{self.name} - added EnergyEnvironment {rvalue.name} with {len(rvalue)} entries"])
+            data["modifications"] = deepcopy(
+                [
+                    *self.modifications,
+                    *rvalue.modifications,
+                    f"{self.name} - added EEnv {rvalue.name} with {len(rvalue)} entries, "
+                    f"ID[{self.id}->{id_new}]",
+                ]
+            )
             data["metadata"] = deepcopy({**rvalue.metadata, **self.metadata})
             # ⤷ right side of dict-merge is kept in case of key-collision
             data["profiles"] = deepcopy(self.profiles + rvalue.profiles)
@@ -173,6 +208,7 @@ class EnergyEnvironment(ContentModel):
     @overload
     def __getitem__(self, value: slice) -> Self: ...
     def __getitem__(self, value):
+        """Select elements from this EEnv similar to list-Ops (slicing, int)."""
         if isinstance(value, int):
             return deepcopy(self.profiles[value])
         if isinstance(value, slice):
@@ -185,11 +221,17 @@ class EnergyEnvironment(ContentModel):
                 profiles = scale * self.profiles
             else:
                 profiles = self.profiles
+            id_new = id_default()
             data: dict[str, Any] = {
-                "id": id_default(),
+                "id": id_new,
                 "created": local_now(),
                 "updated_last": local_now(),
-                "modifications": deepcopy([*self.modifications, f"{self.name} was sliced with {value}"]),
+                "modifications": deepcopy(
+                    [
+                        *self.modifications,
+                        f"{self.name} was sliced with {value}, ID[{self.id}->{id_new}]",
+                    ]
+                ),
                 "profiles": deepcopy(profiles[value]),
             }
             return self.model_copy(deep=True, update=data)
@@ -198,11 +240,12 @@ class EnergyEnvironment(ContentModel):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
+        """Add missing entries of class by querying database."""
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return tb_client.fill_in_user_data(values)
 
     def export(self, output_path: Path) -> None:
-        """Copy local data and add meta-data-file."""
+        """Copy local data to new directory and add meta-data-file."""
         if output_path.exists():
             msg = f"Warning: path {output_path} already exists"
             raise FileExistsError(msg)
@@ -223,6 +266,7 @@ class EnergyEnvironment(ContentModel):
             yaml.safe_dump(content, file, default_flow_style=False, sort_keys=False)
 
     def check(self) -> bool:
+        """Check validity of embedded Energy-Profile."""
         return all(profile.check() for profile in self.profiles)
 
 
@@ -235,7 +279,8 @@ class TargetConfig(ShpModel):
     """ input for the virtual source """
 
     @model_validator(mode="after")
-    def check_eenv_count(self) -> Self:
+    def check_eenv_mapping(self) -> Self:
+        """Validate that a mapping between targets and EEnvs exists."""
         if self.energy_env.repetitions_ok:
             return self
         n_env = len(self.energy_env)
@@ -253,6 +298,19 @@ class TargetConfig(ShpModel):
             f"({n_tgt - n_env} missing). Please use a larger environment."
         )
         raise ValueError(msg)
+
+    def get_critical_paths(self) -> set[Path]:
+        """Return all paths of non-repeatable energy profiles to warn about re-usage."""
+        paths: list[Path] = [
+            profile.data_path for profile in self.energy_env.profiles if not profile.repetitions_ok
+        ]
+        path_set = set(paths)
+        if len(paths) != len(path_set):
+            log.warning(
+                f"Detected re-usage of non-repeatable EnergyProfiles "
+                f"in EnergyEnv {self.energy_env.name}"
+            )
+        return path_set
 
 
 # TODO:
@@ -288,10 +346,11 @@ if __name__ == "__main__":
         log.info(f"EEnv2a\t{eenv2a.model_dump(exclude_unset=True, exclude_defaults=True)}")
         log.info(f"EEnv2b\t{eenv2b.model_dump(exclude_unset=True, exclude_defaults=True)}")
         log.info(f"EEnv2\t{eenv2.model_dump(exclude_unset=True, exclude_defaults=True)}")
+        eenv2.to_file(Path(__file__).parent / "eenv2.yaml", minimal=True)
 
         eenv3 = eenv1 + eenv1
         log.info(f"EEnv3\t{eenv1.model_dump(exclude_unset=True, exclude_defaults=True)}")
-        eenv3.to_file(Path(__file__).parent / "eenv.yaml", minimal=True)
+        eenv3.to_file(Path(__file__).parent / "eenv3.yaml", minimal=True)
 
         profileR = EnergyProfile(
             data_path=Path(tmp) / "shp5.h5",
