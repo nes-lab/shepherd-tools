@@ -21,7 +21,7 @@ from shepherd_core.data_models.testbed.mcu import MCU
 from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
-from .firmware_datatype import FirmwareDType
+from .enum_datatypes import FirmwareDType
 
 suffix_to_DType: dict = {
     # derived from wikipedia
@@ -54,14 +54,14 @@ FirmwareStr = Annotated[str, StringConstraints(min_length=3, max_length=8_000_00
 class Firmware(ContentModel, title="Firmware of Target"):
     """meta-data representation of a data-component."""
 
-    # General Metadata & Ownership -> ContentModel
+    # General Metadata & Ownership -> see ContentModel
 
     mcu: MCU
 
     data: FirmwareStr | Path
     data_type: FirmwareDType
     data_hash: str | None = None
-    data_local: bool = True
+    data_2_copy: bool = True
     """ ⤷ signals that file has to be copied to testbed"""
 
     @model_validator(mode="before")
@@ -107,10 +107,10 @@ class Firmware(ContentModel, title="Firmware of Target"):
         kwargs["data_hash"] = fw_tools.file_to_hash(file)
         if embed:
             kwargs["data"] = fw_tools.file_to_base64(file)
-            kwargs["data_local"] = False
+            kwargs["data_2_copy"] = False
         else:
             kwargs["data"] = Path(file).as_posix()
-            kwargs["data_local"] = True
+            kwargs["data_2_copy"] = True
 
         if "data_type" not in kwargs:
             kwargs["data_type"] = suffix_to_DType[file.suffix.lower()]

@@ -43,7 +43,7 @@ exp = sm.Experiment(
                 name="FW_TestXYZ",
                 data=Path("/var/shepherd/content/fw/nes_lab/nrf52_demo_rf/build.elf"),
                 data_type=sm.FirmwareDType.path_elf,
-                data_local=False,
+                data_2_copy=False,
                 mcu=MCU(name="nRF52"),
             ),
             power_tracing=None,
