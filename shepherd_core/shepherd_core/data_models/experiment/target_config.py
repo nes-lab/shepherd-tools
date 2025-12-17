@@ -1,6 +1,7 @@
 """Configuration related to Target Nodes (DuT)."""
 
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -13,6 +14,7 @@ from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import Target
+from shepherd_core.logger import log
 
 from .observer_features import GpioActuation
 from .observer_features import GpioTracing
@@ -23,6 +25,7 @@ from .observer_features import UartLogging
 vsrc_neutral = VirtualSourceConfig(name="neutral")
 
 
+@final
 class TargetConfig(ShpModel, title="Target Config"):
     """Configuration related to Target Nodes (DuT)."""
 
@@ -91,8 +94,10 @@ class TargetConfig(ShpModel, title="Target Config"):
             msg = f"Provided custom IDs {c_ids} not enough to cover target range {t_ids}"
             raise ValueError(msg)
         # TODO: if custom ids present, firmware must be ELF
+        if self.target_delays is not None:
+            log.warning("Feature TargetDelays is reserved for future use (not implemented).")
         if self.gpio_actuation is not None:
-            raise NotImplementedError("Feature GpioActuation reserved for future use.")
+            log.warning("Feature GpioActuation is reserved for future use (not implemented).")
         return self
 
     def get_custom_id(self, target_id: int) -> int | None:
