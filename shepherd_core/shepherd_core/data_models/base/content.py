@@ -9,6 +9,8 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Self
 
+from shepherd_core.version import version as core_ver
+
 from .shepherd import ShpModel
 
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
@@ -50,7 +52,8 @@ class ContentModel(ShpModel):
     visible2group: bool = False
     visible2all: bool = False
 
-    # TODO: we probably need to remember the lib-version for content &| experiment
+    sw_ver: str = core_ver
+    """ ⤷ store core-version with content for compatibility management."""
 
     def __str__(self) -> str:
         return self.name
