@@ -207,7 +207,7 @@ class EnergyEnvironment(ContentModel):
                 ]
             )
             data["metadata"] = deepcopy({**rvalue.metadata, **self.metadata})
-            # ⤷ right side of dict-merge is kept in case of key-collision
+            # ⤷ values of right side are kept in case of key-collision
             data["profiles"] = deepcopy(self.profiles + rvalue.profiles)
             return self.model_copy(deep=True, update=data)
         raise TypeError("rvalue must be same type")

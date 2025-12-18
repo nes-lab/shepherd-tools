@@ -22,11 +22,15 @@ zero_duration = timedelta(seconds=0)
 
 @final
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):
-    """Configuration for recording the Power-Consumption of the Target Nodes."""
+    """Configuration for recording the Power-Consumption of the Target Nodes.
+
+    With the default configuration voltage and current are sampled with 100 kHz.
+    """
 
     intermediate_voltage: bool = False
     """
-    ⤷ for EMU: record storage capacitor instead of output (good for V_out = const)
+    ⤷ for EMU: record output-path of intermediate energy storage (capacitor, battery)
+               instead of direct target voltage-output (good for V_out = const)
                this also includes current!
     """
     # time
@@ -40,7 +44,8 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     # further processing of IV-Samples
     only_power: bool = False
     """ ⤷ reduce file-size by calculating power and automatically discard I&V
-        Caution: increases cpu-utilization on observer - power @ 100 kHz is not recommended
+        Caution: increases cpu-utilization on observer
+                 sampling power @ 100 kHz is not recommended
     """
     samplerate: Annotated[int, Field(ge=10, le=100_000)] = 100_000
     """ ⤷ reduce file-size by re-sampling (mean over x samples)
