@@ -82,7 +82,7 @@ coverage report
 
 - if models were changed run all scripts in `/extra` to update pseudo-database
 - increase version number by executing ``bump2version`` (see cmds below)
-- install and run ``pre-commit`` for QA-Checks, see steps below
+- install and run ``prek`` for QA-Checks (pre-commit plugin-replacement), see steps below
 - run unittests from both packages locally
   - additionally every commit gets automatically tested by GitHub workflows
 - update changelog in ``CHANGELOG.md``
@@ -96,7 +96,7 @@ coverage report
 bump2version --allow-dirty --new-version 2025.10.1 patch
 # ⤷ format: year.month.patch_release
 
-pre-commit run --all-files
+prek run --all-files
 
 # additional QA-Tests (currently with open issues)
 ty check

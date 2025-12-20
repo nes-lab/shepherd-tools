@@ -11,8 +11,7 @@ dependencies = [
     "shepherd-core[all]",
     "shepherd-data[all]",
     # dev
-    "pre-commit",
-    "pre-commit-uv", # check with `pre-commit --version`
+    "prek",  # pre-commit plugin-replacement
     "bump2version",
     "ruff",
     "ty",
@@ -30,7 +29,7 @@ shepherd-data = { path = "./shepherd_data", editable = true}
 packages = ["shepherd_core", "shepherd_data"]
 
 [tool.ty.environment]
-root = ["./shepherd_core", "./shepherd_data"]
+root = ["./shepherd_core", "./shepherd_data", "./extra", "./scratch"]
 # TODO: renaming dirs could 'repair' autodiscovery
 
 [tool.ty.terminal]
@@ -38,3 +37,7 @@ output-format = "concise"
 
 [tool.ty.src]
 exclude = ["*/tests/**"]
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+missing-argument = "ignore"
