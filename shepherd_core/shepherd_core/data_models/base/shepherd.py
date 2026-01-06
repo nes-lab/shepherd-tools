@@ -110,7 +110,7 @@ class ShpModel(BaseModel):
         )
         return str(content)
 
-    def __getitem__(self, key: str | Any) -> Any:
+    def __getitem__(self, key: Any) -> Any:
         """Allow dict access like model["key"].
 
         in addition to model.key.

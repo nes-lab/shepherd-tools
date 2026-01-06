@@ -36,7 +36,10 @@ root = ["./shepherd_core", "./shepherd_data", "./extra", "./scratch"]
 output-format = "concise"
 
 [tool.ty.src]
-exclude = ["*/tests/**"]
+exclude = [
+    "*/tests/**",
+    "*/examples/**",  # temporary until specific rules can be disabled
+]
 
 [tool.ty.rules]
 unresolved-import = "ignore"

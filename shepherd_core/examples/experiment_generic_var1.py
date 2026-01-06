@@ -33,7 +33,7 @@ if do_connect:
 exp = sm.Experiment(
     name="meaningful_TestName",
     # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
-    duration=30,
+    duration=30,  # ty: ignore[invalid-argument-type]
     target_configs=[
         sm.TargetConfig(
             target_IDs=range(7, 12),

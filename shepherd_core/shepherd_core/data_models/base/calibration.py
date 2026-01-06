@@ -5,6 +5,7 @@ from collections.abc import Callable
 from collections.abc import Generator
 from collections.abc import Mapping
 from collections.abc import Sequence
+from typing import Annotated
 from typing import TypeVar
 from typing import final
 
@@ -12,8 +13,8 @@ import numpy as np
 from numpy.typing import NDArray
 from pydantic import Field
 from pydantic import PositiveFloat
+from pydantic import StringConstraints
 from pydantic import conbytes
-from pydantic import constr
 from pydantic import validate_call
 from typing_extensions import Self
 
@@ -58,7 +59,7 @@ class CalibrationPair(ShpModel):
 
     def raw_to_si(self, values_raw: Calc_t, *, allow_negative: bool = True) -> Calc_t:
         """Convert between physical units and raw unsigned integers."""
-        values_si = values_raw * self.gain + self.offset
+        values_si = self.gain * values_raw + self.offset
         if not allow_negative:
             if isinstance(values_si, np.ndarray):
                 values_si[values_si < 0.0] = 0.0
@@ -195,15 +196,17 @@ class CapeData(ShpModel):
     """
 
     header: conbytes(max_length=4) = b"\xaa\x55\x33\xee"
-    eeprom_revision: constr(max_length=2) = "A2"
-    board_name: constr(max_length=32) = "BeagleBone SHEPHERD2 Cape"
-    version: constr(max_length=4) = "24B0"
-    manufacturer: constr(max_length=16) = "NES TU DRESDEN"
-    part_number: constr(max_length=16) = "BB-SHPRD"
+    eeprom_revision: Annotated[str, StringConstraints(max_length=2)] = "A2"
+    board_name: Annotated[str, StringConstraints(max_length=32)] = "BeagleBone SHEPHERD2 Cape"
+    version: Annotated[str, StringConstraints(max_length=4)] = "24B0"
+    manufacturer: Annotated[str, StringConstraints(max_length=16)] = "NES TU DRESDEN"
+    part_number: Annotated[str, StringConstraints(max_length=16)] = "BB-SHPRD"
 
-    serial_number: constr(max_length=12)
+    serial_number: Annotated[str, StringConstraints(max_length=12)]
 
-    cal_date: constr(max_length=12) = Field(default_factory=local_iso_date)
+    cal_date: Annotated[str, StringConstraints(max_length=12)] = Field(
+        default_factory=local_iso_date
+    )
     # ⤷ produces something like '2023-01-01'
 
     def __repr__(self) -> str:  # TODO: override useful?
