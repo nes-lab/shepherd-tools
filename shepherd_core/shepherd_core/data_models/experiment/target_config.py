@@ -61,7 +61,7 @@ class TargetConfig(ShpModel):
 
     @model_validator(mode="after")
     def validate_eenv_mapping(self) -> Self:
-        """Validate that a mapping between targets and EEnvs exists."""
+        """Validate that a mapping between targets and EEnvs can be found."""
         if self.energy_env.repetitions_ok:
             return self
         n_env = len(self.energy_env)
@@ -82,9 +82,12 @@ class TargetConfig(ShpModel):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        if not self.energy_env.valid:
-            msg = f"EnergyEnv '{self.energy_env.name}' for target must be valid"
-            raise ValueError(msg)
+        try:
+            self.energy_env.force_validity()
+        except ValueError as xpt:
+            msg = f"EnergyEnv '{self.energy_env.name}' for TargetConfig must be valid.\n{xpt}"
+            # note: added xpt in text because pydantic refuses to show "from xpt" part below
+            raise ValueError(msg) from xpt
         for id_ in self.target_IDs:
             target = Target(id=id_)
             for mcu_num in [1, 2]:
@@ -130,7 +133,9 @@ class TargetConfig(ShpModel):
     def get_critical_paths(self) -> set[Path]:
         """Return all paths of non-repeatable energy profiles to warn about re-usage."""
         paths: list[Path] = [
-            profile.data_path for profile in self.energy_env.profiles if not profile.repetitions_ok
+            profile.data_path
+            for profile in self.energy_env.energy_profiles
+            if not profile.repetitions_ok
         ]
         path_set = set(paths)
         if len(paths) != len(path_set):

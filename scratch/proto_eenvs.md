@@ -9,7 +9,7 @@
   - should it just continue?
   - or reuse starting at pos 0?
   - or should a custom mapping be applied?
-+ emit warning is single EEnv is used more than once to avoid unwanted correlation effects
++ emit warning if single EEnv is used more than once to avoid unwanted correlation effects
   + exception if EEnv allows for it (repetition_ok)
 - avoid funky behavior & hidden mechanics
 

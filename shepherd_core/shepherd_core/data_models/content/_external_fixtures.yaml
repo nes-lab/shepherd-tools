@@ -11,7 +11,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_10mA_3600s.h5
       data_type: ivsample
       data_2_copy: false
@@ -34,7 +34,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_1mA_3600s.h5
       data_type: ivsample
       data_2_copy: false
@@ -57,7 +57,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_50mA_3600s.h5
       data_type: ivsample
       data_2_copy: false
@@ -80,7 +80,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_5mA_3600s.h5
       data_type: ivsample
       data_2_copy: false
@@ -103,7 +103,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_10mA_3600s.h5
       data_type: ivsample
       data_2_copy: false
@@ -126,7 +126,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_1mA_3600s.h5
       data_type: ivsample
       data_2_copy: false
@@ -149,7 +149,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_50mA_3600s.h5
       data_type: ivsample
       data_2_copy: false
@@ -172,7 +172,7 @@
     group: NES_Lab
     visible2group: true
     visible2all: true
-    profiles:
+    energy_profiles:
     - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_5mA_3600s.h5
       data_type: ivsample
       data_2_copy: false

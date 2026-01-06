@@ -43,17 +43,19 @@ if __name__ == "__main__":
         profile1 = EnergyProfile(
             data_path=path1,
             data_type=EnergyDType.ivtrace,
+            valid=True,
             energy_Ws=1.0,
             duration=23,
         )
         profile2 = EnergyProfile(
             data_path=path2,
             data_type=EnergyDType.ivtrace,
+            valid=True,
             energy_Ws=3.0,
             duration=20,
         )
         eenv1 = EnergyEnvironment(
-            name="t1", profiles=[profile1, profile2], metadata={"location": "tunesia"}
+            name="t1", energy_profiles=[profile1, profile2], metadata={"location": "tunesia"}
         )
         print(f"Duration: {eenv1.duration}")
         print(f"Repetitions: {eenv1.repetitions_ok}")
@@ -73,30 +75,31 @@ if __name__ == "__main__":
         profileR = EnergyProfile(
             data_path=Path(tmp) / "shp5.h5",
             data_type=EnergyDType.ivtrace,
+            valid=True,
             energy_Ws=3.0,
             duration=20,
             repetitions_ok=True,
         )
-        eenvR = EnergyEnvironment(name="t1", profiles=[profileR])
+        eenvR = EnergyEnvironment(name="t1", energy_profiles=[profileR])
         eenvR.to_file(Path(__file__).parent / "eenvR.yaml", minimal=True)
 
         log.info("Config 1 - 2:2")
         TargetConfig(
-            target_IDs=range(2), energy_env=eenv1, firmware1=Firmware(name="nrf52_deep_sleep")
+            target_IDs=range(1, 3), energy_env=eenv1, firmware1=Firmware(name="nrf52_deep_sleep")
         )
         log.info("Config 2 - 1:2")
         TargetConfig(
-            target_IDs=range(1), energy_env=eenv2, firmware1=Firmware(name="nrf52_deep_sleep")
+            target_IDs=range(1, 2), energy_env=eenv2, firmware1=Firmware(name="nrf52_deep_sleep")
         )
         log.info("Config 3 - 3:1R")
         tc3 = TargetConfig(
-            target_IDs=range(3), energy_env=eenvR, firmware1=Firmware(name="nrf52_deep_sleep")
+            target_IDs=range(1, 4), energy_env=eenvR, firmware1=Firmware(name="nrf52_deep_sleep")
         )
         log.info("Config 4 - 4:4")
         TargetConfig(
-            target_IDs=range(4), energy_env=eenv3, firmware1=Firmware(name="nrf52_deep_sleep")
+            target_IDs=range(1, 5), energy_env=eenv3, firmware1=Firmware(name="nrf52_deep_sleep")
         )
         log.info("Config 5 - 4:2 -> raises")
         TargetConfig(
-            target_IDs=range(4), energy_env=eenv1, firmware1=Firmware(name="nrf52_deep_sleep")
+            target_IDs=range(1, 5), energy_env=eenv1, firmware1=Firmware(name="nrf52_deep_sleep")
         )

@@ -1,4 +1,27 @@
-"""Data-model for recorded eEnvs."""
+"""Data-model for recorded Energy-Environments (EEnvs).
+
+Scalar environment-recordings are called EnergyProfiles (only temporal dimension).
+EnergyEnvironments are metadata representations of spatio-temporal energy-recordings.
+
+Features:
+- environments hold >= 1 profile / recording
+- allows mapping profiles to individual targets (in target config)
+- emit warning if single EEnv is used more than once to avoid unwanted correlation effects
+  - exception to that rule if EEnv allows for it (repetition_ok)
+- avoid funky behavior & hidden mechanics
+- environments can be composed (add single profiles, list of profiles or a 2nd environment)
+- offer structured metadata (dict) for information about the environment
+
+Typical metadata keys
+  - recording-tool/generation-script,
+  - [maximum harvestable energy] -> already hardcoded
+  - location (address/GPS),
+  - site-description (building/forest),
+  - weather,
+  - node specific data, like
+    - transducer used
+    - location within experiment
+"""
 
 import shutil
 from collections.abc import Mapping
@@ -40,6 +63,10 @@ class EnergyProfile(ShpModel):
     energy_Ws: NonNegativeFloat
     """ ⤷ max usable energy """
     valid: bool = False
+    """ ⤷ profile is marked invalid by default to:
+            - motivate using .from_file(), or
+            - easier find manual validity-overrides
+    """
     repetitions_ok: bool = False
     """⤷ emit no warning if single profile-path is used more than once.
     this protects against unwanted correlation effects.
@@ -118,7 +145,7 @@ class EnergyEnvironment(ContentModel):
 
     # General Metadata & Ownership -> see ContentModel
 
-    profiles: list[EnergyProfile]
+    energy_profiles: list[EnergyProfile]
     """ ⤷  list of individual profiles that make up the environment"""
 
     metadata: Mapping[str, str] = {}
@@ -142,21 +169,31 @@ class EnergyEnvironment(ContentModel):
         return tb_client.fill_in_user_data(values)
 
     def __len__(self) -> int:
-        return len(self.profiles)
+        return len(self.energy_profiles)
 
     @property
     def duration(self) -> PositiveFloat:
         """Duration of the recorded environment (minimum of all profiles) in seconds."""
-        return min(profile.duration for profile in self.profiles)
+        return min(profile.duration for profile in self.energy_profiles)
 
     @property
     def repetitions_ok(self) -> bool:
         """Emit no warning if single profile-path is used more than once."""
-        return all(profile.repetitions_ok for profile in self.profiles)
+        return all(profile.repetitions_ok for profile in self.energy_profiles)
 
     @property
     def valid(self) -> bool:
-        return all(profile.valid for profile in self.profiles)
+        return all(profile.valid for profile in self.energy_profiles)
+
+    def force_validity(self) -> None:
+        """Offer soft validation that can be used by upper classes."""
+        msg = f"All EnergyProfiles in EnergyEnvironment {self.name} must be marked valid."
+        msg += " False for:"
+        for profile in self.energy_profiles:
+            if not profile.valid:
+                msg += f"\n\t- {profile.data_path}"
+        if not self.valid:
+            raise ValueError(msg + "\n")
 
     @validate_call(validate_return=False)
     def __add__(self, rvalue: ShpModel) -> Self:
@@ -181,7 +218,7 @@ class EnergyEnvironment(ContentModel):
                     f"ID [{self.id}->{id_new}]",
                 ]
             )
-            data["profiles"] = deepcopy([*self.profiles, rvalue])
+            data["energy_profiles"] = deepcopy([*self.energy_profiles, rvalue])
             return self.model_copy(deep=True, update=data)
         if isinstance(rvalue, list):
             if len(rvalue) == 0:
@@ -194,7 +231,7 @@ class EnergyEnvironment(ContentModel):
                         f"ID[{self.id}->{id_new}]",
                     ]
                 )
-                data["profiles"] = deepcopy(self.profiles + rvalue)
+                data["energy_profiles"] = deepcopy(self.energy_profiles + rvalue)
                 return self.model_copy(deep=True, update=data)
             raise ValueError("Addition could not be performed, as types did not match.")
         if isinstance(rvalue, EnergyEnvironment):
@@ -208,9 +245,12 @@ class EnergyEnvironment(ContentModel):
             )
             data["metadata"] = deepcopy({**rvalue.metadata, **self.metadata})
             # ⤷ values of right side are kept in case of key-collision
-            data["profiles"] = deepcopy(self.profiles + rvalue.profiles)
+            data["energy_profiles"] = deepcopy(self.energy_profiles + rvalue.energy_profiles)
             return self.model_copy(deep=True, update=data)
-        raise TypeError("rvalue must be same type")
+        raise TypeError(
+            "Right value of addition must be of type: "
+            "EnergyProfile, list[EnergyProfile], EnergyEnvironment."
+        )
 
     @overload
     def __getitem__(self, value: int) -> EnergyProfile: ...
@@ -219,7 +259,7 @@ class EnergyEnvironment(ContentModel):
     def __getitem__(self, value):
         """Select elements from this EEnv similar to list-Ops (slicing, int)."""
         if isinstance(value, int):
-            return deepcopy(self.profiles[value])
+            return deepcopy(self.energy_profiles[value])
         if isinstance(value, slice):
             if value.stop and value.stop > 1000:
                 msg = f"Value {value} is far out of range."
@@ -227,9 +267,9 @@ class EnergyEnvironment(ContentModel):
             if self.repetitions_ok and value.stop < len(self):
                 # scale profile-list up
                 scale = (value.stop // len(self)) + 1
-                profiles = scale * self.profiles
+                profiles = scale * self.energy_profiles
             else:
-                profiles = self.profiles
+                profiles = self.energy_profiles
             id_new = id_default()
             data: dict[str, Any] = {
                 "id": id_new,
@@ -241,7 +281,7 @@ class EnergyEnvironment(ContentModel):
                         f"{self.name} was sliced with {value}, ID[{self.id}->{id_new}]",
                     ]
                 ),
-                "profiles": deepcopy(profiles[value]),
+                "energy_profiles": deepcopy(profiles[value]),
             }
             return self.model_copy(deep=True, update=data)
         raise IndexError("Use int or slice when selecting from EEnv")
@@ -255,11 +295,11 @@ class EnergyEnvironment(ContentModel):
 
         # Copy data files & update meta-data
         content = self.model_dump(exclude_unset=True, exclude_defaults=True)
-        for i_, profile in enumerate(self.profiles):
+        for i_, profile in enumerate(self.energy_profiles):
             # Numbered to avoid collisions. Preserve extensions
             file_name = f"node{i_:03d}{profile.data_path.suffix}"
             profile_new = profile.export(output_path / file_name)
-            content["profiles"][i_] = profile_new.model_dump(
+            content["energy_profiles"][i_] = profile_new.model_dump(
                 exclude_unset=True, exclude_defaults=True
             )
 
@@ -269,4 +309,4 @@ class EnergyEnvironment(ContentModel):
 
     def check(self) -> bool:
         """Check validity of embedded Energy-Profile."""
-        return all(profile.check() for profile in self.profiles)
+        return all(profile.check() for profile in self.energy_profiles)
