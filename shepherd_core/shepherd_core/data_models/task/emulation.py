@@ -160,13 +160,14 @@ class EmulationTask(ShpModel):
     def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
+        tgt_idx = tgt_cfg.target_IDs.index(tgt_id)
         io_requested = any(
             io_ is not None
             for io_ in (tgt_cfg.gpio_actuation, tgt_cfg.gpio_tracing, tgt_cfg.uart_logging)
         )
 
         return cls(
-            input_path=path_posix(tgt_cfg.energy_env.data_path),
+            input_path=path_posix(tgt_cfg.energy_env[tgt_idx].data_path),
             output_path=path_posix(root_path / f"emu_{obs.name}.h5"),
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,

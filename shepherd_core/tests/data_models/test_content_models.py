@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
+from shepherd_core.data_models import EnergyProfile
 from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
@@ -17,27 +18,71 @@ from shepherd_core import fw_tools
 from .conftest import files_elf
 
 
-def test_content_model_ee_min1() -> None:
+@pytest.fixture
+def energy_profiles(tmp_path: Path) -> list[EnergyProfile]:
+    path1 = Path(tmp_path) / "shp1.h5"
+    path2 = Path(tmp_path) / "shp3.h5"
+    path1.touch()
+    path2.touch()
+    profile1 = EnergyProfile(
+        data_path=path1,
+        data_type=EnergyDType.ivtrace,
+        valid=True,
+        energy_Ws=1.0,
+        duration=23,
+    )
+    profile2 = EnergyProfile(
+        data_path=path2,
+        data_type=EnergyDType.ivtrace,
+        valid=True,
+        energy_Ws=3.0,
+        duration=20,
+    )
+    return [profile1, profile2]
+
+
+def test_content_model_energy_profile_min1() -> None:
+    EnergyProfile(
+        data_path=Path("./file"),
+        data_type=EnergyDType.isc_voc,
+        duration=1,
+        energy_Ws=0.1,
+    )
+
+
+def test_content_model_energy_profile_min2() -> None:
+    EnergyProfile(
+        data_path=Path("./file"),
+        data_type=EnergyDType.ivcurve,
+        duration=999,
+        energy_Ws=3.1,
+    )
+
+
+def test_content_model_energy_profile_autocast() -> None:
+    EnergyProfile(
+        data_path="./file",
+        data_type="ivcurve",
+        duration=999,
+        energy_Ws=3.1,
+    )
+
+
+def test_content_model_energy_environment_min1(energy_profiles: list[EnergyProfile]) -> None:
     EnergyEnvironment(
         id=9999,
         name="some",
-        data_path="./file",
-        data_type="isc_voc",
-        duration=1,
-        energy_Ws=0.1,
+        energy_profiles=energy_profiles,
         owner="jane",
         group="wayne",
     )
 
 
-def test_content_model_ee_min2() -> None:
+def test_content_model_energy_environment_min2(energy_profiles: list[EnergyProfile]) -> None:
     EnergyEnvironment(
         id="98765",
         name="some",
-        data_path="./file",
-        data_type=EnergyDType.ivcurve,
-        duration=999,
-        energy_Ws=3.1,
+        energy_profiles=energy_profiles,
         owner="jane",
         group="wayne",
     )

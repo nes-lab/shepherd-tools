@@ -9,7 +9,7 @@
       duration: 14400
       energy_Ws: 0.5
       valid: true
-
+      repetitions_ok: true  # just for tests - not OK for real recordings
     owner: Ingmar
     group: NES Lab
     visible2group: true
@@ -28,7 +28,7 @@
       duration: 3600
       energy_Ws: 0.1
       valid: true
-
+      repetitions_ok: true  # just for tests - not OK for real recordings
     owner: Ingmar
     group: NES Lab
     visible2group: true
@@ -41,12 +41,13 @@
     id: 666
     name: nuclear
     description: MOCKUP! Energy harvested
-    data_path: eenv/group/user/thermoelectric_1h_wash.h5
-    data_type: ivcurve
-    duration: 3600
-    energy_Ws: 0.1
-    valid: false
-
+    energy_profiles:
+    - data_path: eenv/group/user/thermoelectric_1h_wash.h5
+      data_type: ivcurve
+      duration: 3600
+      energy_Ws: 0.1
+      valid: false
+      repetitions_ok: true  # just for tests - not OK for real recordings
     owner: Ingmar
     group: NES Lab
     visible2group: true

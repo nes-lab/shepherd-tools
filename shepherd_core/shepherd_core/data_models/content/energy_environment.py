@@ -34,6 +34,7 @@ from typing import final
 from typing import overload
 
 import yaml
+from pydantic import Field
 from pydantic import NonNegativeFloat
 from pydantic import PositiveFloat
 from pydantic import model_validator
@@ -161,6 +162,10 @@ class EnergyEnvironment(ContentModel):
     # TODO: scale up/down voltage/current
     # TODO: mean power as energy/duration
 
+    PROFILES_MAX: int = Field(default=128, exclude=True)
+    """ ⤷ arbitrary maximum, internal state which controls behavior for repetitions_ok-cases
+    """
+
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
@@ -169,6 +174,8 @@ class EnergyEnvironment(ContentModel):
         return tb_client.fill_in_user_data(values)
 
     def __len__(self) -> int:
+        if self.repetitions_ok:
+            return self.PROFILES_MAX
         return len(self.energy_profiles)
 
     @property
@@ -259,14 +266,25 @@ class EnergyEnvironment(ContentModel):
     def __getitem__(self, value):
         """Select elements from this EEnv similar to list-Ops (slicing, int)."""
         if isinstance(value, int):
+            if self.repetitions_ok:
+                value = value % len(self.energy_profiles)
             return deepcopy(self.energy_profiles[value])
         if isinstance(value, slice):
-            if value.stop and value.stop > 1000:
-                msg = f"Value {value} is far out of range."
-                raise ValueError(msg)
-            if self.repetitions_ok and value.stop < len(self):
+            len_prof = self.PROFILES_MAX if self.repetitions_ok else len(self.energy_profiles)
+            # bring values into range (out of bounds like -1, 300, ..)
+            val_start = value.start % len_prof if value.start else value.start
+            val_stop: int = len_prof
+            if value.stop:
+                if value.stop < 0:  # noqa: SIM108
+                    val_stop = value.stop % len_prof
+                else:
+                    val_stop = min(value.stop, len_prof)
+
+            if val_start and val_start > val_stop:
+                val_start = val_stop
+            if self.repetitions_ok and val_stop > len(self.energy_profiles):
                 # scale profile-list up
-                scale = (value.stop // len(self)) + 1
+                scale = (val_stop // len(self.energy_profiles)) + 1
                 profiles = scale * self.energy_profiles
             else:
                 profiles = self.energy_profiles
