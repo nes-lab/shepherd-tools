@@ -83,7 +83,7 @@ class TargetConfig(ShpModel):
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         try:
-            self.energy_env.force_validity()
+            self.energy_env.enforce_validity()
         except ValueError as xpt:
             msg = f"EnergyEnv '{self.energy_env.name}' for TargetConfig must be valid.\n{xpt}"
             # note: added xpt in text because pydantic refuses to show "from xpt" part below
@@ -141,6 +141,6 @@ class TargetConfig(ShpModel):
         if len(paths) != len(path_set):
             log.warning(
                 f"Detected re-usage of non-repeatable EnergyProfiles "
-                f"in EnergyEnv {self.energy_env.name}"
+                f"in EnergyEnv '{self.energy_env.name}' (TargetConfig-Level)"
             )
         return path_set

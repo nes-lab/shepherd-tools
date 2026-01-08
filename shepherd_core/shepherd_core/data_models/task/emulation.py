@@ -188,7 +188,8 @@ class EmulationTask(ShpModel):
         TODO: could be added to validator (with a switch)
         """
         all_ok = any(self.input_path.is_relative_to(path) for path in paths)
-        all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
+        if self.output_path is not None:
+            all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
         return all_ok
 
 

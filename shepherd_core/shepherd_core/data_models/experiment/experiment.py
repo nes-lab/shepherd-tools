@@ -3,6 +3,7 @@
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta
+from typing import TYPE_CHECKING
 from typing import Annotated
 from typing import final
 
@@ -17,10 +18,14 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.testbed.target import Target
 from shepherd_core.data_models.testbed.testbed import Testbed
+from shepherd_core.logger import log
 from shepherd_core.version import version
 
 from .observer_features import SystemLogging
 from .target_config import TargetConfig
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # defaults (pre-init complex types)
 sys_log_all = SystemLogging()  # = all active
@@ -56,6 +61,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     def post_validation(self) -> Self:
         self._validate_observers(self.target_configs)
         self._validate_targets(self.target_configs)
+        self._validate_eenvs(self.target_configs)
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration of experiment can't be negative.")
         return self
@@ -89,6 +95,18 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         if len(target_ids) > len(set(obs_ids)):
             raise ValueError(
                 "Observer is used more than once in Experiment -> only 1 target per observer!"
+            )
+
+    @staticmethod
+    def _validate_eenvs(configs: Iterable[TargetConfig]) -> None:
+        """Make sure eenvs are usable."""
+        # TODO: these individual validations should go to class itself (decoupling)
+        # TODO: data_2_copy means the data itself must be locally available
+        paths_all: list[Path] = [path for cfg in configs for path in cfg.get_critical_paths()]
+        if len(paths_all) != len(set(paths_all)):
+            log.warning(
+                "Detected re-usage of non-repeatable EnergyProfiles "
+                "in Experiment across TargetConfigs"
             )
 
     def get_target_ids(self) -> list:

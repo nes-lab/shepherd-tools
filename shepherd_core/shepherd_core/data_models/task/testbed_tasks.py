@@ -62,7 +62,11 @@ class TestbedTasks(ShpModel):
         return values
 
     def is_contained(self) -> bool:
-        """Limit paths to allowed directories."""
+        """Limit paths to allowed directories.
+
+        This is the central checking point for the webserver.
+        """
+        # TODO: load paths from config
         paths_allowed: AbstractSet[PurePosixPath] = {
             PurePosixPath("/var/shepherd/"),
             PurePosixPath("/tmp/"),  # noqa: S108

@@ -8,6 +8,7 @@ Features:
 - allows mapping profiles to individual targets (in target config)
 - emit warning if single EEnv is used more than once to avoid unwanted correlation effects
   - exception to that rule if EEnv allows for it (repetition_ok)
+  - checked on local TargetConfig-level and more global on experiment-level
 - avoid funky behavior & hidden mechanics
 - environments can be composed (add single profiles, list of profiles or a 2nd environment)
 - offer structured metadata (dict) for information about the environment
@@ -28,6 +29,7 @@ from collections.abc import Mapping
 from collections.abc import Sequence
 from copy import deepcopy
 from pathlib import Path
+from typing import Annotated
 from typing import Any
 from typing import Self
 from typing import final
@@ -76,7 +78,7 @@ class EnergyProfile(ShpModel):
     def export(self, output_path: Path) -> Self:
         """Copy this EnergyProfile to a new destination."""
         if not self.data_path.exists():
-            raise TypeError("EnergyProfile is not locally available.")
+            raise FileNotFoundError("EnergyProfile is not locally available.")
         if output_path.exists():
             if output_path.is_dir():
                 file_path = output_path / self.data_path.name
@@ -100,18 +102,24 @@ class EnergyProfile(ShpModel):
         if not self.data_path.is_file():
             log.error(f"EnergyProfile is not a file ({self.data_path}).")
             return False
-        with Reader(self.data_path) as reader:
-            if self.duration != reader.runtime_s:
-                log.error(
-                    f"EnergyProfile duration does not match runtime of file ({self.data_path})."
-                )
-                return False
-            if self.valid != reader.is_valid():
-                log.error(f"EnergyProfile validity-state does not match file ({self.data_path}).")
-                return False
-            if self.energy_Ws != reader.energy():
-                log.error(f"EnergyProfile max energy does not match file ({self.data_path}).")
-                return False
+        try:
+            with Reader(self.data_path) as reader:
+                if self.duration != reader.runtime_s:
+                    log.error(
+                        f"EnergyProfile duration does not match runtime of file ({self.data_path})."
+                    )
+                    return False
+                if self.valid != reader.is_valid():
+                    log.error(
+                        f"EnergyProfile validity-state does not match file ({self.data_path})."
+                    )
+                    return False
+                if self.energy_Ws != reader.energy():
+                    log.error(f"EnergyProfile max energy does not match file ({self.data_path}).")
+                    return False
+        except TypeError:
+            log.error(f"EnergyProfile - hdf5-file could not be read ({self.data_path})")
+            return False
         return True
 
     @classmethod
@@ -146,7 +154,7 @@ class EnergyEnvironment(ContentModel):
 
     # General Metadata & Ownership -> see ContentModel
 
-    energy_profiles: list[EnergyProfile]
+    energy_profiles: Annotated[list[EnergyProfile], Field(min_length=1)]
     """ ⤷  list of individual profiles that make up the environment"""
 
     metadata: Mapping[str, str] = {}
@@ -164,6 +172,10 @@ class EnergyEnvironment(ContentModel):
 
     PROFILES_MAX: int = Field(default=128, exclude=True)
     """ ⤷ arbitrary maximum, internal state which controls behavior for repetitions_ok-cases
+
+    - single item list access is possible as modulo
+    - sliced list access repeats profile-list up to max length
+        ee[10:] gets (max - 10) items
     """
 
     @model_validator(mode="before")
@@ -192,7 +204,7 @@ class EnergyEnvironment(ContentModel):
     def valid(self) -> bool:
         return all(profile.valid for profile in self.energy_profiles)
 
-    def force_validity(self) -> None:
+    def enforce_validity(self) -> None:
         """Offer soft validation that can be used by upper classes."""
         msg = f"All EnergyProfiles in EnergyEnvironment {self.name} must be marked valid."
         msg += " False for:"
@@ -203,7 +215,7 @@ class EnergyEnvironment(ContentModel):
             raise ValueError(msg + "\n")
 
     @validate_call(validate_return=False)
-    def __add__(self, rvalue: ShpModel) -> Self:
+    def __add__(self, rvalue: ShpModel | list[ShpModel]) -> Self:
         """Extend this EnergyEnvironment.
 
         Possible concatenations:
@@ -221,7 +233,7 @@ class EnergyEnvironment(ContentModel):
             data["modifications"] = deepcopy(
                 [
                     *self.modifications,
-                    f"{self.name} - added EnergyProfile {rvalue.data_path.stem}, "
+                    f"EEnv '{self.name}' - added EnergyProfile {rvalue.data_path.stem}, "
                     f"ID [{self.id}->{id_new}]",
                 ]
             )
@@ -234,7 +246,7 @@ class EnergyEnvironment(ContentModel):
                 data["modifications"] = deepcopy(
                     [
                         *self.modifications,
-                        f"{self.name} - added list of {len(rvalue)} EnergyProfiles, "
+                        f"EEnv '{self.name}' - added list of {len(rvalue)} EnergyProfiles, "
                         f"ID[{self.id}->{id_new}]",
                     ]
                 )
@@ -246,7 +258,7 @@ class EnergyEnvironment(ContentModel):
                 [
                     *self.modifications,
                     *rvalue.modifications,
-                    f"{self.name} - added EEnv {rvalue.name} with {len(rvalue)} entries, "
+                    f"EEnv '{self.name}' - added EEnv {rvalue.name} with {len(rvalue)} entries, "
                     f"ID[{self.id}->{id_new}]",
                 ]
             )
@@ -270,18 +282,25 @@ class EnergyEnvironment(ContentModel):
                 value = value % len(self.energy_profiles)
             return deepcopy(self.energy_profiles[value])
         if isinstance(value, slice):
-            len_prof = self.PROFILES_MAX if self.repetitions_ok else len(self.energy_profiles)
-            # bring values into range (out of bounds like -1, 300, ..)
-            val_start = value.start % len_prof if value.start else value.start
-            val_stop: int = len_prof
-            if value.stop:
-                if value.stop < 0:  # noqa: SIM108
-                    val_stop = value.stop % len_prof
-                else:
-                    val_stop = min(value.stop, len_prof)
+            if self.repetitions_ok:
+                # bring values into range (out of bounds like -1, 300, ..)
+                log.warning("EEnv-Slice-Access with .repetition_ok==True is beta (funky behavior)")
+                # TODO: find a proper solution (consider slice-length)
+                #       or get rid of
+                val_start = value.start % self.PROFILES_MAX if value.start else value.start
+                val_stop: int = self.PROFILES_MAX
+                if value.stop:
+                    if value.stop < 0:
+                        val_stop = value.stop % self.PROFILES_MAX
+                    else:
+                        val_stop = min(value.stop, self.PROFILES_MAX)
 
-            if val_start and val_start > val_stop:
-                val_start = val_stop
+                if val_start and val_start > val_stop:
+                    val_start = val_stop
+            else:
+                val_start = value.start
+                val_stop = value.stop
+
             if self.repetitions_ok and val_stop > len(self.energy_profiles):
                 # scale profile-list up
                 scale = (val_stop // len(self.energy_profiles)) + 1
@@ -289,6 +308,7 @@ class EnergyEnvironment(ContentModel):
             else:
                 profiles = self.energy_profiles
             id_new = id_default()
+            slice_new = slice(val_start, val_stop, value.step)
             data: dict[str, Any] = {
                 "id": id_new,
                 "created": local_now(),
@@ -296,10 +316,10 @@ class EnergyEnvironment(ContentModel):
                 "modifications": deepcopy(
                     [
                         *self.modifications,
-                        f"{self.name} was sliced with {value}, ID[{self.id}->{id_new}]",
+                        f"EEnv '{self.name}' was sliced with {slice_new}, ID[{self.id}->{id_new}]",
                     ]
                 ),
-                "energy_profiles": deepcopy(profiles[value]),
+                "energy_profiles": deepcopy(profiles[slice_new]),
             }
             return self.model_copy(deep=True, update=data)
         raise IndexError("Use int or slice when selecting from EEnv")
@@ -307,6 +327,7 @@ class EnergyEnvironment(ContentModel):
     def export(self, output_path: Path) -> None:
         """Copy local data to new directory and add meta-data-file."""
         if output_path.exists():
+            # TODO: elegant but unpractical, must be: empty dir or non-existing dir
             msg = f"Warning: path {output_path} already exists"
             raise FileExistsError(msg)
         output_path.mkdir(parents=True)
@@ -328,3 +349,7 @@ class EnergyEnvironment(ContentModel):
     def check(self) -> bool:
         """Check validity of embedded Energy-Profile."""
         return all(profile.check() for profile in self.energy_profiles)
+
+
+# TODO:
+#   - separate: target config
