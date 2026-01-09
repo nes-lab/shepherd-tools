@@ -12,8 +12,16 @@ Features:
 - avoid funky behavior & hidden mechanics
 - environments can be composed (add single profiles, list of profiles or a 2nd environment)
 - offer structured metadata (dict) for information about the environment
+- access elements similar to list[]-syntax for single items and slices
 
-Typical metadata keys
+Profiles embed generalized metadata:
+- duration of the recording,
+- maximum harvestable energy,
+- flag to signal a valid recording file,
+- flag to signal that repetitions are okay -> typically used by
+  static / artificial traces that don't cause unwanted correlation effects
+
+Typical additional metadata keys for Energy Environments:
   - recording-tool/generation-script,
   - [maximum harvestable energy] -> already hardcoded
   - location (address/GPS),
@@ -22,6 +30,11 @@ Typical metadata keys
   - node specific data, like
     - transducer used
     - location within experiment
+
+TODO: add TargetConfig-Builder that makes it easier to construct complex scenarios
+      see proto_target_config_builder.py
+TODO: find a proper solution for slicing repetitions (consider slice-length)
+      or get rid of funky behavior (warning is emitted ATM)
 """
 
 import shutil
@@ -64,7 +77,7 @@ class EnergyProfile(ShpModel):
 
     duration: PositiveFloat
     energy_Ws: NonNegativeFloat
-    """ ⤷ max usable energy """
+    """ ⤷ maximum usable energy """
     valid: bool = False
     """ ⤷ profile is marked invalid by default to:
             - motivate using .from_file(), or
@@ -285,8 +298,6 @@ class EnergyEnvironment(ContentModel):
             if self.repetitions_ok:
                 # bring values into range (out of bounds like -1, 300, ..)
                 log.warning("EEnv-Slice-Access with .repetition_ok==True is beta (funky behavior)")
-                # TODO: find a proper solution (consider slice-length)
-                #       or get rid of
                 val_start = value.start % self.PROFILES_MAX if value.start else value.start
                 val_stop: int = self.PROFILES_MAX
                 if value.stop:
@@ -349,7 +360,3 @@ class EnergyEnvironment(ContentModel):
     def check(self) -> bool:
         """Check validity of embedded Energy-Profile."""
         return all(profile.check() for profile in self.energy_profiles)
-
-
-# TODO:
-#   - separate: target config

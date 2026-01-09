@@ -82,12 +82,15 @@ class TargetConfig(ShpModel):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
+        # trigger a reuse warning if needed
+        self.get_critical_paths(warn_reuse=True)
         try:
             self.energy_env.enforce_validity()
         except ValueError as xpt:
             msg = f"EnergyEnv '{self.energy_env.name}' for TargetConfig must be valid.\n{xpt}"
             # note: added xpt in text because pydantic refuses to show "from xpt" part below
             raise ValueError(msg) from xpt
+        # check IDs
         for id_ in self.target_IDs:
             target = Target(id=id_)
             for mcu_num in [1, 2]:
@@ -130,7 +133,7 @@ class TargetConfig(ShpModel):
             return self.custom_IDs[self.target_IDs.index(target_id)]
         return None
 
-    def get_critical_paths(self) -> set[Path]:
+    def get_critical_paths(self, *, warn_reuse: bool = True) -> set[Path]:
         """Return all paths of non-repeatable energy profiles to warn about re-usage."""
         paths: list[Path] = [
             profile.data_path
@@ -138,7 +141,7 @@ class TargetConfig(ShpModel):
             if not profile.repetitions_ok
         ]
         path_set = set(paths)
-        if len(paths) != len(path_set):
+        if warn_reuse and len(paths) != len(path_set):
             log.warning(
                 f"Detected re-usage of non-repeatable EnergyProfiles "
                 f"in EnergyEnv '{self.energy_env.name}' (TargetConfig-Level)"

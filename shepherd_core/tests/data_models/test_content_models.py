@@ -17,30 +17,6 @@ from shepherd_core import fw_tools
 
 from .conftest import files_elf
 
-
-@pytest.fixture
-def energy_profiles(tmp_path: Path) -> list[EnergyProfile]:
-    path1 = Path(tmp_path) / "shp1.h5"
-    path2 = Path(tmp_path) / "shp3.h5"
-    path1.touch()
-    path2.touch()
-    profile1 = EnergyProfile(
-        data_path=path1,
-        data_type=EnergyDType.ivtrace,
-        valid=True,
-        energy_Ws=1.0,
-        duration=23,
-    )
-    profile2 = EnergyProfile(
-        data_path=path2,
-        data_type=EnergyDType.ivtrace,
-        valid=True,
-        energy_Ws=3.0,
-        duration=20,
-    )
-    return [profile1, profile2]
-
-
 # ############################ Energy Profiles
 
 

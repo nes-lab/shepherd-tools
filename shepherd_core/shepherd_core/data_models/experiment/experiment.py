@@ -102,7 +102,12 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         """Make sure eenvs are usable."""
         # TODO: these individual validations should go to class itself (decoupling)
         # TODO: data_2_copy means the data itself must be locally available
-        paths_all: list[Path] = [path for cfg in configs for path in cfg.get_critical_paths()]
+        paths_all: list[Path] = [
+            path
+            for cfg in configs
+            for path in cfg.get_critical_paths(warn_reuse=False)
+            # direct warning inside cfg is disabled here as it is done during cfg.__init__()
+        ]
         if len(paths_all) != len(set(paths_all)):
             log.warning(
                 "Detected re-usage of non-repeatable EnergyProfiles "

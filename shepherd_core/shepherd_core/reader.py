@@ -486,6 +486,8 @@ class Reader:
         # multiprocessing: https://stackoverflow.com/a/71898911
         # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool.
 
+        TODO: add optional duration argument to allow calculating mean energy of a spatial EEnv
+
         :return: sampled energy in Ws (watt-seconds)
         """
         iterations = math.ceil(self.samples_n / self.max_elements)
