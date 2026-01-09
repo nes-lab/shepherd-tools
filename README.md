@@ -40,6 +40,9 @@ git clone https://github.com/nes-lab/shepherd-tools
 cd .\shepherd-tools
 
 uv venv
+# activate shell (`uv` will tell you how)
+uv lock -U
+uv sync -U
 uv pip install .
 ```
 
