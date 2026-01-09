@@ -1,9 +1,17 @@
 """Script to convert Bonito recordings to Shepherd Nova EEnvs."""
 
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
-from convert_v1_eenv import convert as convert_eenv
+from commons import process_mp
+from commons import root_storage_default
+from convert_v1_eenv import convert_file
 from shepherd_core.logger import log
+
+# config
+
+bonito_input_path = Path().cwd() / "neslab-eh-data"
 
 DATASETS: dict[dict[str, str | int]] = {
     "bonito_jogging_mixed": {
@@ -18,25 +26,25 @@ DATASETS: dict[dict[str, str | int]] = {
     "bonito_stairs_solar": {
         "old_name": "data_step",
         "node_glob": "sheep*/rec_sheep*.h5",
-        "start": 1579171761700000000,
+        "start": 1_579_171_761_700_000_000,
         "duration": int(3608.1 * 1e9),
     },
     "bonito_office_solar": {
         "old_name": "office_new",
         "node_glob": "sheep*/office_sd.h5",
-        "start": 1625124518000000000,
+        "start": 1_625_124_518_000_000_000,
         "duration": int(10798.0 * 1e9),
     },
     "bonito_cars_piezo": {
         "old_name": "cars_convoi",
         "node_glob": "sheep*/cars_convoi.h5",
-        "start": 1620739600000000000,
+        "start": 1_620_739_600_000_000_000,
         "duration": int(4687.3 * 1e9),
     },
     "bonito_washer_piezo": {
         "old_name": "washing_machine",
         "node_glob": "sheep*/washing_machine.h5",
-        "start": 1620727713000000000,
+        "start": 1_620_727_713_000_000_000,
         "duration": int(3880.2 * 1e9),
     },
     # Add a second version of the washer set as the beginning is rather
@@ -44,44 +52,51 @@ DATASETS: dict[dict[str, str | int]] = {
     "bonito_washer_piezo_tumble_only": {
         "old_name": "washing_machine",
         "node_glob": "sheep*/washing_machine.h5",
-        "start": 1620729193200000000,
+        "start": 1_620_729_193_200_000_000,
         "duration": int(2400.0 * 1e9),
     },
 }
 
 
-def convert_bonito_eenvs() -> None:
-    """Convert bonito environments according to the DATASETS dict."""
-    eenv_dir = Path("./neslab-eh-data").resolve()
+def get_config_for_workers(
+    path_dir: Path = root_storage_default,
+) -> list[tuple[Callable, dict[str, Any]]]:
+    """Generate worker-configurations for the conversion of bonito recordings.
 
-    path_here = Path(__file__).parent.absolute()
-    if Path("/var/shepherd/").exists():
-        output_dir = Path("/var/shepherd/content/eenv/nes_lab/")
-    else:
-        output_dir = path_here / "content/eenv/nes_lab/"
-    output_dir.mkdir(exist_ok=True, parents=True)
+    The config is a list of tuples. Each containing a
+    callable function and a dict with its arguments.
 
+    Convert bonito environments according to the DATASETS dict.
+    """
+    cfgs: list[tuple[Callable, dict[str, Any]]] = []
     for new_name, params in DATASETS.items():
-        basedir = eenv_dir / params["old_name"]
-        if not basedir.exists():
-            msg = f"directory {basedir!s} does not exist"
-            raise RuntimeError(msg)
-
-        files = list(basedir.glob(params["node_glob"]))
-
-        outpath = output_dir / new_name
-        if outpath.exists():
-            log.warning(f"Output path exists: {outpath}. Skipping environment {new_name}")
+        input_dir = bonito_input_path / params["old_name"]
+        if not input_dir.exists():
+            log.error(f"Input-Directory '{input_dir!s}' does not exist -> skipping")
             continue
-        outpath.mkdir(exist_ok=True)
 
-        convert_eenv(
-            input_files=files,
-            output_dir=outpath,
-            start_ns=params["start"],
-            duration_ns=params["duration"],
-        )
+        files = input_dir.glob(params["node_glob"])
+
+        output_dir = path_dir / "bonito" / new_name
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        for i, input_file in enumerate(files):
+            output_file = output_dir / f"node{i}.h5"
+            if output_file.exists():
+                log.warning(
+                    f"Output file '{output_file.name}' exists -> "
+                    f"Skipping corresponding input file '{input_file}'"
+                )
+                continue
+            args: dict[str, Any] = {
+                "in_file": input_file,
+                "out_file": output_file,
+                "tstart_ns": params["start"],
+                "duration_ns": params["duration"],
+            }
+            cfgs.append((convert_file, args))
+    return cfgs
 
 
 if __name__ == "__main__":
-    convert_bonito_eenvs()
+    process_mp(get_config_for_workers)

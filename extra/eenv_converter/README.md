@@ -10,7 +10,7 @@ Zenodo Data: <https://zenodo.org/records/6383042>
 
 ---
 
-Multiple datasets recorded with shepherd v1 where presented in the bonito-paper and published via zenodo.
+Multiple datasets recorded with shepherd v1 were presented in the bonito-paper and published via zenodo.
 As the zenodo-data is processed to only include power-traces, we use the original raw data.
 
 To convert, simply copy the scripts into your source directory, with the raw-files located in `neslab-eh-data`. Run `python3 convert_bonito_eenvs.py` and the content directory will be filled.
