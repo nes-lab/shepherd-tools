@@ -44,7 +44,6 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Annotated
 from typing import Any
-from typing import Self
 from typing import final
 from typing import overload
 
@@ -54,6 +53,7 @@ from pydantic import NonNegativeFloat
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
+from typing_extensions import Self
 
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.base.content import id_default

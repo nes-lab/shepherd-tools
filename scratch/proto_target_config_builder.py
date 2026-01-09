@@ -16,7 +16,6 @@ from collections.abc import Mapping
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Annotated
-from typing import Self
 
 from pydantic import Field
 from pydantic import validate_call
@@ -29,6 +28,7 @@ from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import UartLogging
+from typing_extensions import Self
 
 from shepherd_core import log
 
