@@ -1,12 +1,15 @@
 """Generator for static Energy-Environments."""
 
+from collections.abc import Callable
 from itertools import product
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from commons import EEnvGenerator
+from commons import process_mp
+from commons import root_storage_default
 from shepherd_core.data_models import EnergyDType
-from shepherd_core.logger import log
 
 
 class StaticGenerator(EEnvGenerator):
@@ -28,26 +31,31 @@ class StaticGenerator(EEnvGenerator):
         return self.node_count * [(voltages, currents)]
 
 
-if __name__ == "__main__":
-    path_here = Path(__file__).parent.absolute()
-    if Path("/var/shepherd/").exists():
-        path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
-    else:
-        path_eenv = path_here / "content/eenv/nes_lab/"
+def get_config_for_workers(
+    path_dir: Path = root_storage_default,
+) -> list[tuple[Callable, dict[str, Any]]]:
+    """Generate worker-configurations for static ivtraces.
 
+    The config is a list of tuples. Each containing a
+    callable function and a dict with its arguments.
+    """
     voltages: set[float] = {3.0, 2.0}
     currents: set[float] = {50e-3, 10e-3, 5e-3, 1e-3}
     duration: int = 4 * 60 * 60
-    path_eenv.mkdir(parents=True, exist_ok=True)
-
+    folder_path = path_dir / "artificial_static"
+    folder_path.mkdir(parents=True, exist_ok=True)
+    cfgs: list[tuple[Callable, dict[str, Any]]] = []
     for voltage, current in product(voltages, currents):
         generator = StaticGenerator(voltage=voltage, current=current)
+        name = f"{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA.h5"
+        args: dict[str, Any] = {
+            "file_paths": [folder_path / name],
+            "duration": duration,
+            "chunk_size": 10_000_000,
+        }
+        cfgs.append((generator.generate_h5_files, args))
+    return cfgs
 
-        # Create output folder (or skip)
-        name = f"artificial_static_{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA.h5"
-        file_path = path_eenv / name
-        if file_path.exists():
-            log.info("File %s exists. Skipping combination.", file_path)
-            continue
 
-        generator.generate_h5_files([file_path], duration=duration, chunk_size=10_000_000)
+if __name__ == "__main__":
+    process_mp(get_config_for_workers)

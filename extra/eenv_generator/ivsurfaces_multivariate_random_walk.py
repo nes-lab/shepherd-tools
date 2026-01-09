@@ -1,14 +1,16 @@
 """I-V Surface generation script for a multivariate random walk of sample PV panels."""
 
 import math
-import shutil
-import sys
+from collections.abc import Callable
 from multiprocessing import Pool
 from multiprocessing import cpu_count
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from commons import EEnvGenerator
+from commons import process_mp
+from commons import root_storage_default
 from scipy import constants as const
 from scipy.optimize import newton
 from scipy.special import lambertw
@@ -268,16 +270,18 @@ class MultivarRndWalk(EEnvGenerator):
         )
 
 
-if __name__ == "__main__":
-    path_here = Path(__file__).parent.absolute()
-    if Path("/var/shepherd/").exists():
-        path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
-    else:
-        path_eenv = path_here / "content/eenv/nes_lab/"
+def get_config_for_workers(
+    path_dir: Path = root_storage_default,
+) -> list[tuple[Callable, dict[str, Any]]]:
+    """Generate worker-configurations for multivariate random walks.
 
+    The config is a list of tuples. Each containing a
+    callable function and a dict with its arguments.
+    """
     node_count: int = 20
     seed: int = 32220789340897324098232347119065234157809
     duration: int = 4 * 60 * 60
+    cfgs: list[tuple[Callable, dict[str, Any]]] = []
 
     pv = SDMNoRP.KXOB201K04F()
     generator = MultivarRndWalk(
@@ -294,25 +298,27 @@ if __name__ == "__main__":
     )
 
     # Create output folder (or skip)
-    name = f"artificial_solar_multivariate_random_{pv.name}"
-    folder_path = path_eenv / name
+    folder_path = path_dir / "artificial_multivariate_random_walk" / f"solar_{pv.name}"
     # Check whether the output folder exists
     # Due to the multivariate generation method, nodes can not be generated
     # independently. Therefore, expanding an existing EEnv is not possible.
     if folder_path.exists():
-        log.info(
+        log.warning(
             "Folder %s exists. Skipping generation. "
             "(Generating nodes independently is not supported)",
             folder_path,
         )
-        sys.exit(1)
+        return cfgs
 
-    try:
-        folder_path.mkdir(parents=True, exist_ok=False)
-        node_paths = [folder_path / f"node{node_idx:03d}.h5" for node_idx in range(node_count)]
+    node_paths = [folder_path / f"node{node_idx:03d}.h5" for node_idx in range(node_count)]
+    args: dict[str, Any] = {
+        "file_paths": node_paths,
+        "duration": duration,
+        "chunk_size": 1_000_000,
+    }
+    cfgs.append((generator.generate_h5_files, args))
+    return cfgs
 
-        generator.generate_h5_files(node_paths, duration=duration, chunk_size=1_000_000)
-    except:
-        log.error("Exception encountered. Removing incomplete dataset: %s", folder_path)
-        shutil.rmtree(folder_path)
-        raise
+
+if __name__ == "__main__":
+    process_mp(get_config_for_workers)

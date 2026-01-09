@@ -1,11 +1,15 @@
 """Generator for random on-off-pattern with fixed periodic window-length and duty cycle."""
 
 import math
+from collections.abc import Callable
 from itertools import product
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from commons import EEnvGenerator
+from commons import process_mp
+from commons import root_storage_default
 from shepherd_core.data_models import EnergyDType
 from shepherd_core.logger import log
 
@@ -66,13 +70,14 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
         ]
 
 
-if __name__ == "__main__":
-    path_here = Path(__file__).parent.absolute()
-    if Path("/var/shepherd/").exists():
-        path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
-    else:
-        path_eenv = path_here / "content/eenv/nes_lab/"
+def get_config_for_workers(
+    path_dir: Path = root_storage_default,
+) -> list[tuple[Callable, dict[str, Any]]]:
+    """Generate worker-configurations for independent onoff-windows.
 
+    The config is a list of tuples. Each containing a
+    callable function and a dict with its arguments.
+    """
     periods: set[float] = {10e-3, 100e-3, 1, 10}
     duty_cycles: set[float] = {0.01, 0.02, 0.05, 0.1, 0.2}
     duration: int = 4 * 60 * 60
@@ -80,29 +85,25 @@ if __name__ == "__main__":
     node_count: int = 20
     seed: int = 32220789340897324098232347119065234157809
     chunk_size: int = 10_000_000
+    cfgs: list[tuple[Callable, dict[str, Any]]] = []
 
     for period, duty_cycle in product(periods, duty_cycles):
         # Ensure output folder exists
-        name = (
-            f"artificial_on_off_random_windows_"
-            f"{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
+        folder_path = (
+            path_dir
+            / "artificial_on_off_windows_random"
+            / f"{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%"
         )
-        folder_path = path_eenv / name
 
         if folder_path.exists():
-            log.warning("Folder %s exists. New node files will be added.", folder_path)
+            log.warning("Folder '%s' exists. New node files will be added.", folder_path)
         folder_path.mkdir(parents=True, exist_ok=True)
-
         # Generate EEnv for this combination
         # Note: Nodes are generated independently to allow adding
         #       nodes without re-generating existing ones
-        log.info(f"Generating EEnv: {name}")
+
         for node_idx in range(node_count):
             node_path = folder_path / f"node{node_idx:03d}.h5"
-            if node_path.exists():
-                log.info("File %s exists. Skipping node %i.", node_path, node_idx)
-                continue
-
             generator = RndPeriodicWindowGenerator(
                 node_count=1,
                 seed=[seed, node_idx],
@@ -111,14 +112,14 @@ if __name__ == "__main__":
                 on_voltage=2.0,
                 on_current=10e-3,
             )
+            args: dict[str, Any] = {
+                "file_paths": [node_path],
+                "duration": duration,
+                "chunk_size": chunk_size,
+            }
+            cfgs.append((generator.generate_h5_files, args))
+    return cfgs
 
-            try:
-                generator.generate_h5_files(
-                    file_paths=[node_path], duration=duration, chunk_size=chunk_size
-                )
-            except:
-                # Ensure no unfinished node files remain on exception/interrupt
-                # These would be skipped when re-executing, resulting in a broken EEnv
-                log.error("Exception encountered. Removing incomplete node file: %s", node_path)
-                node_path.unlink()
-                raise
+
+if __name__ == "__main__":
+    process_mp(get_config_for_workers)
