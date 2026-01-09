@@ -93,6 +93,7 @@ def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int
                     gain=currents.attrs["gain"], offset=currents.attrs["offset"]
                 ),
             ),
+            verbose=False,
         ) as writer:
             writer.store_hostname(out_file.stem)
 
@@ -124,6 +125,10 @@ def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int
 
                 # Write chunk data
                 writer.append_iv_data_raw(ts, vs, cs)
+    log.info(
+        "\t-> finished with size-reduction to "
+        f"{100 * out_file.stat().st_size / in_file.stat().st_size:.2f} %"
+    )
 
 
 def convert(input_files: list[Path], output_dir: Path, start_ns: int, duration_ns: int) -> None:

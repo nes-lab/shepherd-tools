@@ -54,11 +54,11 @@ def worker(cfg: tuple[Callable, dict[str, Any]]) -> Any:
                 path.unlink()
 
 
-def process_mp(getter_worker_cfg: Callable) -> None:
+def process_mp(worker_cfgs: list[tuple[Callable, dict[str, Any]]]) -> None:
     """Multiprocess each worker."""
     start_time = time.time()
     with Pool() as pool:
-        log.info(f"Multiprocessing with {pool._processes} workers")  # noqa: SLF001
+        log.info(f"Multiprocessing {len(worker_cfgs)} jobs with {pool._processes} workers")  # noqa: SLF001
 
         def exit_pool(_signum: int, _frame: FrameType | None) -> None:
             """Provide custom exit handler that closes the pool."""
@@ -68,17 +68,18 @@ def process_mp(getter_worker_cfg: Callable) -> None:
 
         # TODO: at least windows is not exiting correctly
         activate_exit_handler(exit_pool)
-        pool.map(worker, getter_worker_cfg())
+        pool.map(worker, worker_cfgs)
 
     end_time = time.time()
     log.info("Done! Generation took %.2f s", end_time - start_time)
 
 
-def process_sp(getter_worker_cfg: Callable) -> None:
+def process_sp(worker_cfgs: list[tuple[Callable, dict[str, Any]]]) -> None:
     """Single process each worker."""
     increase_verbose_level(3)
     activate_exit_handler()
-    for cfg in getter_worker_cfg():
+    log.info(f"Single processing {len(worker_cfgs)} jobs with debug-logging")
+    for cfg in worker_cfgs:
         worker(cfg)
 
 

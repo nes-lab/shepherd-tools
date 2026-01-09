@@ -13,7 +13,7 @@ from shepherd_core.logger import log
 
 bonito_input_path = Path().cwd() / "neslab-eh-data"
 
-DATASETS: dict[dict[str, str | int]] = {
+DATASETS: dict[str, dict[str, str | int]] = {
     "bonito_jogging_mixed": {
         "old_name": "jogging_mixed",
         # Omit sheep3 since its recording is broken
@@ -58,7 +58,7 @@ DATASETS: dict[dict[str, str | int]] = {
 }
 
 
-def get_config_for_workers(
+def get_worker_configs(
     path_dir: Path = root_storage_default,
 ) -> list[tuple[Callable, dict[str, Any]]]:
     """Generate worker-configurations for the conversion of bonito recordings.
@@ -70,12 +70,12 @@ def get_config_for_workers(
     """
     cfgs: list[tuple[Callable, dict[str, Any]]] = []
     for new_name, params in DATASETS.items():
-        input_dir = bonito_input_path / params["old_name"]
+        input_dir = bonito_input_path / str(params["old_name"])
         if not input_dir.exists():
             log.error(f"Input-Directory '{input_dir!s}' does not exist -> skipping")
             continue
 
-        files = input_dir.glob(params["node_glob"])
+        files = input_dir.glob(str(params["node_glob"]))
 
         output_dir = path_dir / "bonito" / new_name
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -99,4 +99,4 @@ def get_config_for_workers(
 
 
 if __name__ == "__main__":
-    process_mp(get_config_for_workers)
+    process_mp(get_worker_configs())

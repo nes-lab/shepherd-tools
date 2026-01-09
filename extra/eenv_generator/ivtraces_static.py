@@ -31,7 +31,7 @@ class StaticGenerator(EEnvGenerator):
         return self.node_count * [(voltages, currents)]
 
 
-def get_config_for_workers(
+def get_worker_configs(
     path_dir: Path = root_storage_default,
 ) -> list[tuple[Callable, dict[str, Any]]]:
     """Generate worker-configurations for static ivtraces.
@@ -58,4 +58,4 @@ def get_config_for_workers(
 
 
 if __name__ == "__main__":
-    process_mp(get_config_for_workers)
+    process_mp(get_worker_configs())
