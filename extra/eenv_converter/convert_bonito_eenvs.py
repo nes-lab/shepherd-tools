@@ -13,39 +13,131 @@ from shepherd_core.logger import log
 
 bonito_input_path = Path().cwd() / "neslab-eh-data"
 
-DATASETS: dict[str, dict[str, str | int]] = {
+DATASETS: dict[str, dict[str, str | int | dict]] = {
     "bonito_jogging_mixed": {
         "old_name": "jogging_mixed",
         # Omit sheep3 since its recording is broken
         # Its plot looks irregular compared to the other piezo harvesters.
         # A possible cause could be a bad contact.
         "node_glob": "sheep[01245]/jogging.h5",
-        "start": 1_621_081_752_600_000_000,
+        "start": 1_621_081_752_600_000_000,  # TODO: iso-timestamp from this
         "duration": int(3505.9 * 1e9),
+        "description": (
+            "Jogging tour of two people in a public park with solar and vibration harvesting. "
+            "Includes short walking and standing breaks. "
+            "This was recording in spring time on an early afternoon in Berlin. "
+            "The nodes were powered with a powerbank and synchronized via GPS."
+        ),
+        "metadata": {
+            "location": "Europe, Germany, Berlin, H942+CX",
+            "coordinates": "N 52.556585, E 13.3554427",
+            "timestamp": "2021-05-15T14:30+02",
+            "route": "https://maps.app.goo.gl/qjWAJeZZfLec4cCE8 (there and back)",
+            "solar transducer": "IXYS KXOB25-05X3F",
+            "piezo transducer": "Mide S128-J1FR-1808YB",
+            "energy source": "natural direct & indirect sun light, human body movement",
+            "node0": "person 1, piezo, left ankle",
+            "node1": "person 1, solar, left wrist",
+            "node2": "person 1, piezo, right ankle",
+            # sheep 3 scrapped
+            "node3": "person 2, solar, left wrist",
+            "node4": "person 2, piezo, right ankle",
+        },
     },
     "bonito_stairs_solar": {
         "old_name": "data_step",
         "node_glob": "sheep*/rec_sheep*.h5",
         "start": 1_579_171_761_700_000_000,
         "duration": int(3608.1 * 1e9),
+        "description": (
+            "Seven PV are embedded into an outdoor stair in front of a lecture hall. "
+            "Frequent foot traffic causes intermittent shadowing. "
+            "People are walking normally, no lingering, low to medium traffic. "
+            "Sun is low & long shadows of trees move slowly from right to left. "
+            "The nodes were powered by a POE Switch and synchronized via a GPS ref-clock."
+        ),
+        "metadata": {
+            "location": "Europe, Germany, Dresden, Helmholtzstraße 18, Barkhausen-Bau",
+            "coordinates": "N 51.026467, E 13.723217",
+            "timestamp": "2020-01-16T10:57:30+02",
+            "solar transducer": "KXOB25-05X3F-TR (no 100% guarantee)",
+            "energy source": "natural direct & indirect sun light",
+            "weather": "Sunny, 6°C",
+            "weather-source": "https://meteostat.net/de/place/de/dresden?s=10488&t=2020-01-16/2020-01-16",
+        },
     },
     "bonito_office_solar": {
         "old_name": "office_new",
         "node_glob": "sheep*/office_sd.h5",
         "start": 1_625_124_518_000_000_000,
         "duration": int(10798.0 * 1e9),
+        "description": (
+            "Five PV are mounted on doorframes and walls of an office and adjacent hallway. "
+            "People enter, leave and operate the lights during the recording. "
+            "Lighting is mostly artificial and comes from fluorescent tubes. "
+            "The offices have large windows, but the hallway gets almost no natural light. "
+            "The nodes were powered by a POE Switch and synchronized via a GPS ref-clock."
+        ),
+        "metadata": {
+            "location": "Europe, Germany, Dresden, Helmholtzstraße 18, Barkhausen-Bau",
+            "coordinates": "N 51.026579, E 13.723024",
+            "solar transducer": "IXYS KX0B25-05X3F",
+            "energy source": "artificial fluorescent light, natural indirect sun light",
+            "node0": "room",
+            "node1": "room",
+            "node2": "room",
+            "node3": "hallway",
+            "node4": "hallway",
+        },
     },
     "bonito_cars_piezo": {
         "old_name": "cars_convoi",
         "node_glob": "sheep*/cars_convoi.h5",
         "start": 1_620_739_600_000_000_000,
         "duration": int(4687.3 * 1e9),
+        "description": (
+            "Two cars driving convoi over various roads from Windischleuba to Dresden. "
+            "Both cars have each 3 pieco transducers in different locations. "
+            "One of the cars is an Opel Corsa - probably the following one. "
+            "Synchronization and powering of nodes is unknown."
+        ),
+        "metadata": {
+            "location": "Europe, Germany, between Windischleuba & Dresden",
+            "coordinates": "N 50.9914555, E 13.0990877",
+            "piezo transducer": "Mide S128-J1FR-1808YB",
+            "energy source": "cars",
+            "node0": "following car, trunk",
+            "node1": "leading car",
+            "node2": "leading car",
+            "node3": "following car, dashboard",
+            "node4": "leading car",
+            "node5": "following car, windshield",
+        },
     },
     "bonito_washer_piezo": {
         "old_name": "washing_machine",
         "node_glob": "sheep*/washing_machine.h5",
         "start": 1_620_727_713_000_000_000,
         "duration": int(3880.2 * 1e9),
+        "description": (
+            "Five piezo harvesters are mounted on an industrial washing machine. "
+            "The model is called WPB4700H and it runs a 60°C washing program with maximum load. "
+            "All described locations are from POV of looking at the front of the machine. "
+            "Trancducers move orthogonal to the surface they are put on. "
+            "The nodes were powered by a POE Switch and synchronized via a GPS ref-clock."
+        ),
+        "metadata": {
+            "location": "Europe, Germany, Rositz, 295M+PC",
+            "coordinates": "N 51.0152002, E 12.3472641",
+            "piezo transducer": "Mide S128-J1FR-1808YB",
+            "energy source": "industrial washing machine, WPB4700H",
+            "node0": "top side - in the middle, slightly moved to front",
+            "node1": "back side - top left corner (frontal POV)",
+            "node2": "front side - top left corner",
+            "node3": "right side - middle of top edge",
+            "node4": "front side - in the middle on door",
+            "node5": "back side - top right corner (frontal POV)",
+        },
     },
     # Add a second version of the washer set as the beginning is rather
     # undynamic. The final 40 minutes which include tumbling are used here.
@@ -54,6 +146,25 @@ DATASETS: dict[str, dict[str, str | int]] = {
         "node_glob": "sheep*/washing_machine.h5",
         "start": 1_620_729_193_200_000_000,
         "duration": int(2400.0 * 1e9),
+        "description": (
+            "Five piezo harvesters are mounted on an industrial washing machine. "
+            "The model is called WPB4700H and it runs a 60°C washing program with maximum load. "
+            "All described locations are from POV of looking at the front of the machine. "
+            "Trancducers move orthogonal to the surface they are put on. "
+            "The nodes were powered by a POE Switch and synchronized via a GPS ref-clock."
+        ),
+        "metadata": {
+            "location": "Europe, Germany, Rositz, 295M+PC",
+            "coordinates": "N 51.0152002, E 12.3472641",
+            "piezo transducer": "Mide S128-J1FR-1808YB",
+            "energy source": "industrial washing machine, WPB4700H",
+            "node0": "top side - in the middle, slightly moved to front",
+            "node1": "back side - top left corner (frontal POV)",
+            "node2": "front side - top left corner",
+            "node3": "right side - middle of top edge",
+            "node4": "front side - in the middle on door",
+            "node5": "back side - top right corner (frontal POV)",
+        },
     },
 }
 
