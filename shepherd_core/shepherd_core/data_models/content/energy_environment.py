@@ -144,7 +144,7 @@ class EnergyProfile(ShpModel):
         repetition_ok: bool = False,
     ) -> Self:
         """Use recording to fill in most fields."""
-        with Reader(hdf) as reader:
+        with Reader(hdf, verbose=False) as reader:
             dtype = data_type or reader.get_datatype()
             if dtype is None:
                 raise ValueError(

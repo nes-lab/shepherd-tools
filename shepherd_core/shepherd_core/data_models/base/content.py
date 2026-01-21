@@ -52,7 +52,7 @@ class ContentModel(ShpModel):
     visible2group: bool = False
     visible2all: bool = False
 
-    sw_ver: str = core_ver
+    sw_ver: Annotated[str, Field(default=core_ver)]
     """ ⤷ store core-version with content for compatibility management."""
 
     def __str__(self) -> str:
