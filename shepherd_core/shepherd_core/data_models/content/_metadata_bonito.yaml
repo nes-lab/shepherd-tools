@@ -1,4 +1,4 @@
-﻿- datatype: EnergyEnvironment
+- datatype: EnergyEnvironment
   parameters:
     id: 844221377274169279
     name: bonito_jogging_mixed

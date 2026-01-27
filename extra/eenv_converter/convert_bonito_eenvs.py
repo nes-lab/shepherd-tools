@@ -111,7 +111,7 @@ DATASETS: dict[str, dict[str, Any]] = {
         "duration": int(4687.3 * 1e9),
         "description": (
             "Two cars driving convoi over various roads from Windischleuba to Dresden. "
-            "Both cars have each 3 pieco transducers in different locations. "
+            "Both cars have each 3 piezo transducers in different locations. "
             "One of the cars is an Opel Corsa - probably the following one. "
             "Synchronization and powering of nodes is unknown."
         ),
@@ -254,10 +254,8 @@ def create_meta_data(path_dir: Path = root_storage_default) -> None:
         if isinstance(params["metadata"], dict):
             timestamp = datetime.fromtimestamp(params["start"] / 1e9, tz=params["timezone"])
             duration = timedelta(seconds=params["duration"] / 1e9)
-            params["metadata"]["timestamp"] = timestamp.isoformat(timespec="milliseconds").rstrip(
-                "0:."
-            )
-            params["metadata"]["duration"] = str(duration).rstrip("0:.")
+            params["metadata"]["timestamp"] = timestamp.isoformat(timespec="milliseconds")
+            params["metadata"]["duration"] = str(duration)
             log.info(f"{new_name.ljust(30)}\t{timestamp}")
 
         eenv = EnergyEnvironment(

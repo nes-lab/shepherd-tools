@@ -26,6 +26,9 @@ from tqdm.auto import trange
 
 from shepherd_core import Writer as ShepherdWriter
 
+# a static seed allows scaling up node count & duration of recordings without altering the dataset
+common_seed: int = 32220789340897324098232347119065234157809
+
 
 def get_path_default() -> Path:
     """Provide the storage directory."""
@@ -88,6 +91,14 @@ class EEnvGenerator(ABC):
 
     It handles reproducible randomness.
     The main method produces data for a specific time-frame for all nodes.
+
+    TODO: some possible improvements if this gets used more often
+        - decouple generation from storage to control what is multi-processed
+        - MP storage is only useful on SSD
+        - MP calc is only useful if outer loop is not already MP
+        - a more finegrained pool queue system would be nice
+        - all generators could share a global RAM-Buffer (with backpressure)
+        - decoupling should help getting a global progress-bar
     """
 
     STEP_WIDTH: float = 1.0 / config.SAMPLERATE_SPS  # 10 us
