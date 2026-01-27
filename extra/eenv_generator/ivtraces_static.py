@@ -102,7 +102,7 @@ def create_meta_data(params: Params = params_default) -> None:
             group="NES_Lab",
             visible2group=True,
             visible2all=True,
-             ={"voltage_V": voltage, "current_A": current},
+            metadata={"voltage_V": voltage, "current_A": current},
         )
         eenv_wrap = Wrapper(
             datatype=EnergyEnvironment.__name__,
