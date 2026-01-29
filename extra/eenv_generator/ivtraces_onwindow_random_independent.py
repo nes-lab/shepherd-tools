@@ -25,7 +25,7 @@ class Params(BaseModel):
 
     root_path: Path = root_storage_default
     dir_name: str = "artificial_on_off_windows_random"
-    duration: int = 1 * 10 * 60
+    duration: int = 1 * 60 * 60
     chunk_size: int = 10_000_000
     # custom config below
     voltages: set[float] = {2.0}
@@ -149,14 +149,14 @@ def create_meta_data(params: Params = params_default) -> None:
     folder_path = params.root_path / params.dir_name
     combinations = product(params.voltages, params.currents, params.periods, params.duty_cycles)
     for voltage, current, period, duty_cycle in combinations:
-        name = (
+        name_ds = (
             f"{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%_"
             f"{round(voltage, 1)}V_{round(current * 1000.0)}mA"
         )
 
         eprofiles: list[EnergyProfile] = []
         for node_idx in range(params.node_count):
-            file_path = folder_path / name / f"node{node_idx:03d}.h5"
+            file_path = folder_path / name_ds / f"node{node_idx:03d}.h5"
             epro = EnergyProfile.derive_from_file(file_path)
             data_update = {
                 # pretend data is available on server already (will be copied)
@@ -172,7 +172,7 @@ def create_meta_data(params: Params = params_default) -> None:
         params.metadata["period_s"] = period
 
         eenv = EnergyEnvironment(
-            name=f"{params.dir_name}_{name}",
+            name=f"{params.dir_name}_{name_ds}",
             description=(
                 "Periodic on-off pattern with fixed on-voltage/-current "
                 f"({voltage:.3f} V, {current:.3f} A). "

@@ -30,8 +30,8 @@ class Params(BaseModel):
 
     root_path: Path = root_storage_default
     dir_name: str = "artificial_multivariate_random_walk"
-    duration: int = 1 * 10 * 60
-    chunk_size: int = 1_000_000
+    duration: int = 1 * 60 * 60
+    chunk_size: int = 2_000_000
     # custom config below
     node_count: int = 20
     # 1 combinations, 20 nodes, 1h
@@ -354,11 +354,11 @@ def create_meta_data(params: Params = params_default) -> None:
     Combines data from hdf5-files itself and manually added descriptive data.
     """
     folder_path = params.root_path / params.dir_name
-    name = f"solar_{SDMNoRP.KXOB201K04F().name}"
+    name_ds = f"solar_{SDMNoRP.KXOB201K04F().name}"
 
     eprofiles: list[EnergyProfile] = []
     for node_idx in range(params.node_count):
-        file_path = folder_path / name / f"node{node_idx:03d}.h5"
+        file_path = folder_path / name_ds / f"node{node_idx:03d}.h5"
         epro = EnergyProfile.derive_from_file(file_path)
         data_update = {
             # pretend data is available on server already (will be copied)
@@ -369,7 +369,7 @@ def create_meta_data(params: Params = params_default) -> None:
         eprofiles.append(epro.model_copy(deep=True, update=data_update))
 
     eenv = EnergyEnvironment(
-        name=f"{params.dir_name}_{name}",
+        name=f"{params.dir_name}_{name_ds}",
         description=params.description,
         comment=f"created with {Path(__file__).name}",
         energy_profiles=eprofiles,

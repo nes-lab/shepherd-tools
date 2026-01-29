@@ -25,8 +25,8 @@ class Params(BaseModel):
     duration: int = 1 * 60 * 60
     chunk_size: int = 10_000_000
     # custom config below
-    voltages: set[float] = {3.0, 2.0}
-    currents: set[float] = {50e-3, 10e-3, 5e-3, 1e-3}
+    voltages: set[float] = {3.0, 2.0, 1.0}
+    currents: set[float] = {50e-3, 20e-3, 10e-3, 5e-3, 2e-3, 1e-3}
 
 
 params_default = Params()
@@ -82,8 +82,8 @@ def create_meta_data(params: Params = params_default) -> None:
     folder_path = params.root_path / params.dir_name
     wraps = []
     for voltage, current in product(params.voltages, params.currents):
-        name = f"{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
-        file_path = folder_path / f"{name}.h5"
+        name_ds = f"{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
+        file_path = folder_path / f"{name_ds}.h5"
         epro = EnergyProfile.derive_from_file(file_path, repetition_ok=True)
         data_update = {
             # pretend data is available on server already (will be copied)
@@ -94,7 +94,7 @@ def create_meta_data(params: Params = params_default) -> None:
         epro = epro.model_copy(deep=True, update=data_update)
 
         eenv = EnergyEnvironment(
-            name="artificial_static_" + name,
+            name=f"{params.dir_name}_{name_ds}",
             description=f"Virtual Bench Power Supply, {voltage:.3f} V, {current:.3f} A",
             comment=f"created with {Path(__file__).name}",
             energy_profiles=[epro],

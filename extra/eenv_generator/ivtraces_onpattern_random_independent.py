@@ -24,7 +24,7 @@ class Params(BaseModel):
 
     root_path: Path = root_storage_default
     dir_name: str = "artificial_on_off_pattern_markov"
-    duration: int = 1 * 10 * 60
+    duration: int = 1 * 60 * 60
     chunk_size: int = 10_000_000
     # custom config below
     voltages: set[float] = {2.0}
@@ -113,11 +113,11 @@ def get_worker_configs(
     )
     for voltage, current, duty_cycle, on_duration in combinations:
         # Ensure output folder exists
-        name = (
+        name_ds = (
             f"avg_{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us_"
             f"{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
         )
-        folder_path = params.root_path / params.dir_name / name
+        folder_path = params.root_path / params.dir_name / name_ds
 
         if folder_path.exists():
             log.warning("Folder '%s' exists. New node files will be added.", folder_path)
@@ -155,13 +155,13 @@ def create_meta_data(params: Params = params_default) -> None:
         params.voltages, params.currents, params.duty_cycles, params.on_durations
     )
     for voltage, current, duty_cycle, on_duration in combinations:
-        name = (
+        name_ds = (
             f"avg_{round(duty_cycle * 100.0)}%_{round(on_duration * 1e6)}us_"
             f"{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
         )
         eprofiles: list[EnergyProfile] = []
         for node_idx in range(params.node_count):
-            file_path = folder_path / name / f"node{node_idx:03d}.h5"
+            file_path = folder_path / name_ds / f"node{node_idx:03d}.h5"
             epro = EnergyProfile.derive_from_file(file_path)
             data_update = {
                 # pretend data is available on server already (will be copied)
@@ -177,7 +177,7 @@ def create_meta_data(params: Params = params_default) -> None:
         params.metadata["on_duration_s"] = on_duration
 
         eenv = EnergyEnvironment(
-            name=f"{params.dir_name}_{name}",
+            name=f"{params.dir_name}_{name_ds}",
             description=(
                 "Random on-off pattern with fixed on-voltage & -current "
                 f"({voltage:.3f} V, {current:.3f} A). "
