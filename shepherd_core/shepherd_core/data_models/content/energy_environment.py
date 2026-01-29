@@ -170,7 +170,7 @@ class EnergyEnvironment(ContentModel):
     energy_profiles: Annotated[list[EnergyProfile], Field(min_length=1)]
     """ ⤷  list of individual profiles that make up the environment"""
 
-    metadata: Mapping[str, str] = {}
+    metadata: Mapping[str, str | int | float] = {}
     """ ⤷ additional descriptive information
 
     Example for solar: (main) light source, weather conditions, indoor
