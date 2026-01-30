@@ -184,6 +184,12 @@ class Writer(Reader):
             raise ValueError("Window Size argument needed for ivcurve-Datatype")
 
         # Handle Cal
+        if isinstance(cal_data, CalEmu):
+            msg = (
+                "Writer got a CalibrationEmulator()-object without information "
+                "about the TargetPort. Possibly wrong cal-data stored in hdf5!"
+            )
+            self._logger.warning(msg)
         if isinstance(cal_data, (CalEmu, CalHrv)):
             cal_data = CalSeries.from_cal(cal_data)
 
