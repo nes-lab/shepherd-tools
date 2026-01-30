@@ -135,6 +135,10 @@ class EnergyProfile(ShpModel):
             return False
         return True
 
+    def exists(self) -> bool:
+        """Check if embedded file exists."""
+        return self.data_path.exists()
+
     @classmethod
     def derive_from_file(
         cls,
@@ -356,6 +360,10 @@ class EnergyEnvironment(ContentModel):
         # Create metadata file
         with (output_path / "eenv.yaml").open("w") as file:
             yaml.safe_dump(content, file, default_flow_style=False, sort_keys=False)
+
+    def exists(self) -> bool:
+        """Check if embedded files exists."""
+        return all(profile.exists() for profile in self.energy_profiles)
 
     def check(self) -> bool:
         """Check validity of embedded Energy-Profile."""

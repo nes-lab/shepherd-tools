@@ -147,16 +147,22 @@ class Firmware(ContentModel, title="Firmware of Target"):
             kwargs["name"] = file.name
         return cls(**kwargs)
 
-    def compare_hash(self, path: Path | None = None) -> bool:
+    def compare_hash(self, data: Path | str | None = None) -> bool:
         if self.data_hash is None:
             return True
 
-        if path is not None and path.is_file():
-            hash_new = fw_tools.file_to_hash(path)
+        if data is None:
+            # use included data if nothing is provided
+            data = self.data
+
+        if isinstance(data, Path) and data.is_file():
+            hash_new = fw_tools.file_to_hash(data)
+            match = self.data_hash == hash_new
+        elif isinstance(data, str):
+            hash_new = fw_tools.base64_to_hash(data)
             match = self.data_hash == hash_new
         else:
-            hash_new = fw_tools.base64_to_hash(self.data)
-            match = self.data_hash == hash_new
+            match = False
 
         if not match:
             log.warning("FW-Hash does not match with stored value!")
@@ -175,3 +181,23 @@ class Firmware(ContentModel, title="Firmware of Target"):
         file_new = fw_tools.extract_firmware(self.data, self.data_type, file)
         self.compare_hash(file_new)
         return file_new
+
+    def exists(self) -> bool:
+        """Check if embedded file exists."""
+        if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
+            if not isinstance(self.data, Path):
+                raise ValueError("Firmware.data is not a Path (but type-property claims so)")
+            return self.data.exists()
+        return True
+
+    def check(self) -> bool:
+        """Check if embedded file is still valid or unchanged."""
+        valid = True
+        if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
+            valid &= isinstance(self.data, Path)
+        if self.data_type in [FirmwareDType.base64_elf, FirmwareDType.base64_hex]:
+            valid &= isinstance(self.data, str)
+            # TODO: could also begin unpacking base64
+            # TODO: could also verify hex, elf
+
+        return valid & self.compare_hash()

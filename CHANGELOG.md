@@ -49,6 +49,7 @@ EnergyEnvironments are metadata representations of spatio-temporal energy-record
 - add metadata for EEnv-Generator & -converters
 - vsource: add getters that decode converter_mode-state
 - add pathlib-workaround for pickle.load() while restoring a task
+- add helper-fns to file-based content-models (firmware, eenv) to verify data (file exists and is still unchanged)
 - repair generator scripts
 - add support for py314 for packages
 - pin core-version for shepherd-data
