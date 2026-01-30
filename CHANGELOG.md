@@ -1,7 +1,52 @@
 # History of Changes
 
-## v2025.12.1
+## v2026.2.1
 
+Improved implementation of EnergyEnvironments.
+
+Scalar environment-recordings are called EnergyProfiles (only temporal dimension).
+EnergyEnvironments are metadata representations of spatio-temporal energy-recordings.
+
+### Features
+
+- environments hold >= 1 profile / recording
+- allows mapping profiles to individual targets (in target config)
+- emit warning if single EEnv is used more than once to avoid unwanted correlation effects
+  - exception to that rule if EEnv allows for it (repetition_ok)
+  - checked on local TargetConfig-level and more global on experiment-level
+- avoid funky behavior & hidden mechanics
+- environments can be composed (add single profiles, list of profiles or a 2nd environment)
+- offer structured metadata (dict) for information about the environment
+- access elements similar to list[]-syntax for single items and slices
+
+### Profiles embed generalized metadata
+
+- duration of the recording,
+- maximum harvestable energy,
+- flag to signal a valid recording file,
+- flag to signal that repetitions are okay -> typically used by
+  static / artificial traces that don't cause unwanted correlation effects
+
+### Typical additional metadata keys for Energy Environments
+
+- recording-tool/generation-script,
+- maximum harvestable energy -> already hardcoded
+- location (address/GPS),
+- site-description (building/forest),
+- weather,
+- node specific data, like
+  - transducer used
+  - location within experiment
+
+### Additional Changes
+
+- be less strict when using unavailable features (only warn now)
+- catch some potential bugs
+- store core-version within content-models (for improved debugging after rollout)
+- add multiprocessed pooling for EEnv converters and generators
+- add, update and improve metadata for EEnvs
+- add unittests for new EEnv-Models
+- add metadata for EEnv-Generator & -converters
 - vsource: add getters that decode converter_mode-state
 - add pathlib-workaround for pickle.load() while restoring a task
 - repair generator scripts
@@ -9,8 +54,16 @@
 - pin core-version for shepherd-data
 - limit simulations for unittests to speedup workflows (>15min to <3)
 - update deprecated metadata in pyproject.toml
+
+### Internal Changes
+
 - workflows use py314 as default
 - workflows use uv fully
+- mark classes and methods as final if they should not be overloaded
+- switch to prek instead of pre-commit
+- switch to ty instead of mypy and pyright
+- update tooling
+- add prototype for hdf5 without time-dataset (can save 50x storage on artificial data)
 
 ## v2025.10.1
 
