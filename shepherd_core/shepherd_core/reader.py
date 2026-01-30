@@ -13,6 +13,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import final
 
 import h5py
 import numpy as np
@@ -26,7 +27,7 @@ from .config import config
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.base.timezone import local_tz
-from .data_models.content.energy_environment import EnergyDType
+from .data_models.content.enum_datatypes import EnergyDType
 from .decoder_waveform import Uart
 
 if TYPE_CHECKING:
@@ -46,7 +47,7 @@ class Reader:
 
     """
 
-    CHUNK_SAMPLES_N: int = 10_000
+    CHUNK_SAMPLES_N: final[int] = 10_000
 
     MODE_TO_DTYPE: Mapping[str, Sequence[EnergyDType]] = MappingProxyType(
         {
@@ -484,6 +485,8 @@ class Reader:
 
         # multiprocessing: https://stackoverflow.com/a/71898911
         # -> failed with multiprocessing.pool and pathos.multiprocessing.ProcessPool.
+
+        TODO: add optional duration argument to allow calculating mean energy of a spatial EEnv
 
         :return: sampled energy in Ws (watt-seconds)
         """

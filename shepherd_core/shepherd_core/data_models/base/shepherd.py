@@ -8,6 +8,7 @@ from datetime import timedelta
 from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Any
+from typing import final
 from uuid import UUID
 
 import yaml
@@ -38,6 +39,7 @@ def generic2str(dumper: SafeDumper, data: Any) -> Node:
     return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
 
 
+# TODO: put in helper-file (similar to models/task/helper_paths.py) and make it callable
 yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
 yaml.add_representer(pathlib.Path, path2str, SafeDumper)
@@ -108,12 +110,15 @@ class ShpModel(BaseModel):
         )
         return str(content)
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: Any) -> Any:
         """Allow dict access like model["key"].
 
         in addition to model.key.
         """
-        return self.__getattribute__(key)
+        if isinstance(key, str):
+            return self.__getattribute__(key)
+        msg = f"Unknown key '{key}' used when selecting from Model."
+        raise IndexError(msg)
 
     def __contains__(self, item: str) -> bool:
         """Allow checks like 'x in YClass'."""
@@ -127,8 +132,9 @@ class ShpModel(BaseModel):
     def items(self) -> Generator[tuple, None, None]:
         """Fn of dict."""
         for key in self.keys():
-            yield key, self[key]
+            yield key, self.__getattribute__(key)
 
+    @final
     @classmethod
     def schema_to_file(cls, path: str | Path) -> None:
         """Store schema to yaml (for frontend-generators)."""
@@ -137,6 +143,7 @@ class ShpModel(BaseModel):
         with Path(path).resolve().with_suffix(".yaml").open("w") as f:
             f.write(model_yaml)
 
+    @final
     def to_file(
         self,
         path: str | Path,
@@ -178,6 +185,7 @@ class ShpModel(BaseModel):
             f.write(model_serial)
         return model_path
 
+    @final
     @classmethod
     def from_file(cls, path: str | Path) -> Self:
         """Load from YAML or pickle file."""
@@ -195,5 +203,6 @@ class ShpModel(BaseModel):
             raise ValueError("Model in file does not match the actual Class")
         return cls(**shp_wrap.parameters)
 
+    @final
     def get_hash(self) -> str:
         return hashlib.sha3_224(str(self.model_dump()).encode("utf-8")).hexdigest()

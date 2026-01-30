@@ -10,6 +10,7 @@ from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from typing_extensions import Self
@@ -29,6 +30,7 @@ __all__ = [
 ]
 
 
+@final
 class Inventory(PythonInventory, SystemInventory, TargetInventory):
     """Complete inventory for one device.
 
@@ -78,9 +80,9 @@ class InventoryList(ShpModel):
         ts_earl = min(e_.created.timestamp() for e_ in self.elements)
         for e_ in self.elements:
             if e_.uptime > timedelta(hours=30).total_seconds():
-                warnings["uptime"] = f"[{self.hostname}] restart is recommended"
+                warnings["uptime"] = f"[{e_.hostname}] restart is recommended"
             if (e_.created.timestamp() - ts_earl) > 10:
-                warnings["time_delta"] = f"[{self.hostname}] time-sync has failed"
+                warnings["time_delta"] = f"[{e_.hostname}] time-sync has failed"
 
         # turn  dict[hostname][type] = val
         # to    dict[type][val] = list[hostnames]

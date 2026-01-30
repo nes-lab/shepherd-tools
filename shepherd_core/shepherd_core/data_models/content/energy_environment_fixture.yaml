@@ -3,12 +3,13 @@
     id: 1001
     name: SolarSunny
     description: MOCKUP! Sunny Day with 4 sq-cm Solar Cell
-    data_path: eenv/group/user/solar_4h_new.h5
-    data_type: ivsample
-    duration: 14400
-    energy_Ws: 0.5
-    valid: true
-
+    energy_profiles:
+    - data_path: eenv/group/user/solar_4h_new.h5
+      data_type: ivsample
+      duration: 14400
+      energy_Ws: 0.5
+      valid: true
+      repetitions_ok: true  # just for tests - not OK for real recordings
     owner: Ingmar
     group: NES Lab
     visible2group: true
@@ -21,12 +22,13 @@
     id: 1002
     name: ThermoelectricWashingMachine
     description: MOCKUP! Energy harvested from side of machine during washing  & tumbling
-    data_path: eenv/group/user/thermoelectric_1h_wash.h5
-    data_type: ivcurve
-    duration: 3600
-    energy_Ws: 0.1
-    valid: true
-
+    energy_profiles:
+    - data_path: eenv/group/user/thermoelectric_1h_wash.h5
+      data_type: ivcurve
+      duration: 3600
+      energy_Ws: 0.1
+      valid: true
+      repetitions_ok: true  # just for tests - not OK for real recordings
     owner: Ingmar
     group: NES Lab
     visible2group: true
@@ -39,12 +41,13 @@
     id: 666
     name: nuclear
     description: MOCKUP! Energy harvested
-    data_path: eenv/group/user/thermoelectric_1h_wash.h5
-    data_type: ivcurve
-    duration: 3600
-    energy_Ws: 0.1
-    valid: false
-
+    energy_profiles:
+    - data_path: eenv/group/user/thermoelectric_1h_wash.h5
+      data_type: ivcurve
+      duration: 3600
+      energy_Ws: 0.1
+      valid: false  # deliberate for testing
+      repetitions_ok: true  # just for tests - not OK for real recordings
     owner: Ingmar
     group: NES Lab
     visible2group: true

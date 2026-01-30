@@ -28,7 +28,7 @@ if __name__ == "__main__":
         path_task.mkdir(parents=True)
 
     # RF-Survey
-    xp1 = sm.Experiment(
+    exp = sm.Experiment(
         name="rf_survey",
         comment="generate link-matrix",
         duration=8 * 60,
@@ -50,5 +50,5 @@ if __name__ == "__main__":
             )
         ],
     )
-    path_ret = TestbedTasks.from_xp(xp1).to_file(path_task / "tasks_rf_survey")
+    path_ret = TestbedTasks.from_xp(exp).to_file(path_task / "tasks_rf_survey")
     log.info("Wrote: %s", path_ret.as_posix())

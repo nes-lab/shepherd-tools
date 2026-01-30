@@ -31,7 +31,7 @@ if __name__ == "__main__":
     ]
 
     for fw_nrf, fw_msp, name in tests:
-        xp = sm.Experiment(
+        exp = sm.Experiment(
             name=name,
             comment="T1: shared-gpio, T2: rf-demo, T3: deep-sleep",
             duration=30,
@@ -47,5 +47,5 @@ if __name__ == "__main__":
                 )
             ],
         )
-        path_ret = TestbedTasks.from_xp(xp).to_file(path_task / name)
+        path_ret = TestbedTasks.from_xp(exp).to_file(path_task / name)
         log.info("Wrote: %s", path_ret.as_posix())

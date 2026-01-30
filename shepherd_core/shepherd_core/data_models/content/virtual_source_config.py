@@ -2,6 +2,7 @@
 
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -13,7 +14,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
-from .energy_environment import EnergyDType
+from .enum_datatypes import EnergyDType
 from .virtual_harvester_config import HarvesterPRUConfig
 from .virtual_harvester_config import VirtualHarvesterConfig
 from .virtual_storage_config import VirtualStorageConfig
@@ -28,6 +29,7 @@ LUT2D = Annotated[list[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 vhrv_mppt_opt = VirtualHarvesterConfig(name="mppt_opt")
 
 
+@final
 class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     """The vSrc uses the energy environment (file) for supplying the Target Node.
 
@@ -42,7 +44,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     # TODO: I,V,R should be in regular unit (V, A, Ohm)
 
-    # General Metadata & Ownership -> ContentModel
+    # General Metadata & Ownership -> see ContentModel
 
     enable_boost: bool = False
     """ ⤷ if false -> v_intermediate = v_input, output-switch-hysteresis is still usable"""
@@ -292,6 +294,7 @@ lut_i = Annotated[
 lut_o = Annotated[list[u32], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 
+@final
 class ConverterPRUConfig(ShpModel):
     """Map settings-list to internal state-vars struct ConverterConfig.
 

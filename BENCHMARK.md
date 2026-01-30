@@ -2,7 +2,7 @@
 
 The main culprit that slowdowns start of sheep is pydantic v2
 
-```bash
+```Shell
 sudo python3 -X importtime -c 'from shepherd_core.data_models.task import EmulationTask' 2> importtime.log
 ```
 

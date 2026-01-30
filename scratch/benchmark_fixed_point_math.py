@@ -5,13 +5,13 @@ import timeit
 from collections.abc import Callable
 
 random.seed(42)
-DATA: list[int] = [random.randint(0, 10000) for _ in range(400)]  # noqa: S311
+DATA: list[int] = [random.randint(0, 10000) for _ in range(400)]
 
 
 def measure(func: Callable, name: str) -> None:
     """Benchmark that runs function and times it."""
     time = timeit.timeit(lambda: [func(val) for val in DATA], number=500_000)
-    print(f"It took {time}s for {name}")  # noqa: T201
+    print(f"It took {time}s for {name}")
 
 
 measure(lambda x: x / 2, "division by 2")

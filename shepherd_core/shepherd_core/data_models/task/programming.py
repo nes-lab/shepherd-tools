@@ -4,6 +4,7 @@ from collections.abc import Set as AbstractSet
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -13,8 +14,8 @@ from typing_extensions import Self
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 from shepherd_core.data_models.content.firmware import suffix_to_DType
-from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
 from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.data_models.testbed.mcu import ProgrammerProtocol
@@ -24,6 +25,7 @@ from shepherd_core.data_models.testbed.testbed import Testbed
 from .helper_paths import path_posix
 
 
+@final
 class ProgrammingTask(ShpModel):
     """Config for a Task programming the selected target."""
 
@@ -31,7 +33,7 @@ class ProgrammingTask(ShpModel):
     target_port: TargetPort = TargetPort.A
     mcu_port: MCUPort = 1
     mcu_type: SafeStr
-    """ ⤷ must be either "nrf52" or "msp430" ATM, TODO: clean xp to tasks"""
+    """ ⤷ must be either "nrf52" or "msp430" ATM, TODO: clean Experiment to tasks"""
     voltage: Annotated[float, Field(ge=1, lt=5)] = 3
     datarate: Annotated[int, Field(gt=0, le=1_000_000)] = 200_000
     protocol: ProgrammerProtocol

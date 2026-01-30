@@ -3,6 +3,7 @@
 from enum import Enum
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -23,6 +24,7 @@ class ProgrammerProtocol(str, Enum):
     UART = uart = "UART"
 
 
+@final
 class MCU(ShpModel, title="Microcontroller of the Target Node"):
     """meta-data representation of a testbed-component (physical object)."""
 

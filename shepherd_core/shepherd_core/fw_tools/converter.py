@@ -8,7 +8,7 @@ from pathlib import Path
 import zstandard as zstd
 from pydantic import validate_call
 
-from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 
 from .converter_elf import elf_to_hex
 from .validation import is_elf

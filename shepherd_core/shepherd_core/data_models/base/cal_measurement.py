@@ -1,6 +1,7 @@
 """Models for the process of calibration a device by measurements."""
 
 from typing import Annotated
+from typing import final
 
 import numpy as np
 from pydantic import Field
@@ -15,6 +16,7 @@ from .calibration import CapeData
 from .shepherd import ShpModel
 
 
+@final
 class CalMeasurementPair(ShpModel):
     """Value-container for a calibration-measurement."""
 
@@ -55,6 +57,7 @@ def meas_to_cal(data: CalMeasPairs, component: str) -> CalibrationPair:
     return CalibrationPair(offset=offset, gain=gain)
 
 
+@final
 class CalMeasurementHarvester(ShpModel):
     """Container for the values of the calibration-measurement."""
 
@@ -71,6 +74,7 @@ class CalMeasurementHarvester(ShpModel):
         return CalibrationHarvester(**dcal)
 
 
+@final
 class CalMeasurementEmulator(ShpModel):
     """Container for the values of the calibration-measurement."""
 
@@ -87,6 +91,7 @@ class CalMeasurementEmulator(ShpModel):
         return CalibrationEmulator(**dcal)
 
 
+@final
 class CalMeasurementCape(ShpModel):
     """Container for the values of the calibration-measurement."""
 

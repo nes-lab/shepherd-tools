@@ -30,10 +30,10 @@ do_connect = False
 if do_connect:
     WebClient()
 
-xp = sm.Experiment(
+exp = sm.Experiment(
     name="meaningful_TestName",
     # time_start could be "2033-03-13 14:15:16" or "datetime.now() + timedelta(minutes=30)"
-    duration=30,
+    duration=30,  # ty: ignore[invalid-argument-type]
     target_configs=[
         sm.TargetConfig(
             target_IDs=range(7, 12),
@@ -43,7 +43,7 @@ xp = sm.Experiment(
                 name="FW_TestXYZ",
                 data=Path("/var/shepherd/content/fw/nes_lab/nrf52_demo_rf/build.elf"),
                 data_type=sm.FirmwareDType.path_elf,
-                data_local=False,
+                data_2_copy=False,
                 mcu=MCU(name="nRF52"),
             ),
             power_tracing=None,
@@ -52,10 +52,10 @@ xp = sm.Experiment(
         ),
     ],
 )
-xp.to_file("experiment_generic_var1.yaml")
+exp.to_file("experiment_generic_var1.yaml")
 
 # Create a tasks-list for the testbed
-tb_tasks = TestbedTasks.from_xp(xp)
+tb_tasks = TestbedTasks.from_xp(exp)
 tb_tasks.to_file("experiment_generic_var1_tbt.yaml")
 
 # next steps:

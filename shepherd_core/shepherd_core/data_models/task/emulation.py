@@ -8,6 +8,7 @@ from enum import Enum
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -46,6 +47,7 @@ compressions_allowed: list = [None, "lzf", 1]
 c_translate = {"lzf": "lzf", "1": 1, "None": None, None: None}
 
 
+@final
 class EmulationTask(ShpModel):
     """Configuration for the Observer in Emulation-Mode."""
 
@@ -158,13 +160,14 @@ class EmulationTask(ShpModel):
     def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
+        tgt_idx = tgt_cfg.target_IDs.index(tgt_id)
         io_requested = any(
             io_ is not None
             for io_ in (tgt_cfg.gpio_actuation, tgt_cfg.gpio_tracing, tgt_cfg.uart_logging)
         )
 
         return cls(
-            input_path=path_posix(tgt_cfg.energy_env.data_path),
+            input_path=path_posix(tgt_cfg.energy_env[tgt_idx].data_path),
             output_path=path_posix(root_path / f"emu_{obs.name}.h5"),
             time_start=copy.copy(xp.time_start),
             duration=xp.duration,
@@ -185,7 +188,8 @@ class EmulationTask(ShpModel):
         TODO: could be added to validator (with a switch)
         """
         all_ok = any(self.input_path.is_relative_to(path) for path in paths)
-        all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
+        if self.output_path is not None:
+            all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
         return all_ok
 
 

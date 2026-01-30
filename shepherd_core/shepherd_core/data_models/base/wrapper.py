@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from typing import Annotated
+from typing import final
 
 from pydantic import BaseModel
 from pydantic import StringConstraints
@@ -12,6 +13,7 @@ SafeStrClone = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ copy avoids circular import
 
 
+@final
 class Wrapper(BaseModel):
     """Generalized web- & file-interface for all models with dynamic typecasting."""
 

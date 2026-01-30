@@ -3,7 +3,7 @@
 # uv pip install .
 [project]
 name = "shepherd-tools"
-version = "2025.10.1"
+version = "2026.02.1"
 description = "Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed"
 readme = "README.md"
 
@@ -11,13 +11,10 @@ dependencies = [
     "shepherd-core[all]",
     "shepherd-data[all]",
     # dev
-    "pre-commit",
-    "pre-commit-uv", # check with `pre-commit --version`
+    "prek",  # pre-commit plugin-replacement
     "bump2version",
     "ruff",
     "ty",
-    "pyright",
-    "mypy",
 ]
 requires-python = ">=3.10"
 
@@ -31,27 +28,19 @@ shepherd-data = { path = "./shepherd_data", editable = true}
 [tool.setuptools]
 packages = ["shepherd_core", "shepherd_data"]
 
-[tool.pyright]
-root = "./"
-include = [
-    './shepherd_core/',
-    './shepherd_data/',
-]
-pythonVersion = "3.10"
-pythonPlatform = "All"
-reportMissingParameterType = true
-
-[tool.mypy]
-python_version = 3.10
-ignore_missing_imports = true
-disable_error_code = ["call-arg", ]
-exclude = [
-    "build/",
-    ".egg-info/",
-]
+[tool.ty.environment]
+root = ["./shepherd_core", "./shepherd_data", "./extra", "./scratch"]
+# TODO: renaming dirs could 'repair' autodiscovery
 
 [tool.ty.terminal]
 output-format = "concise"
 
 [tool.ty.src]
-exclude = ["*/tests/**"]
+exclude = [
+    "*/tests/**",
+    "*/examples/**",  # temporary until specific rules can be disabled
+]
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+missing-argument = "ignore"

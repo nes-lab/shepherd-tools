@@ -22,7 +22,7 @@ from .config import config
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
-from .data_models.content.energy_environment import EnergyDType
+from .data_models.content.enum_datatypes import EnergyDType
 from .data_models.task import Compression
 from .data_models.task.emulation import c_translate
 from .reader import Reader
@@ -116,11 +116,12 @@ class Writer(Reader):
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Writer")
+            self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
         # -> logger gets configured in reader()
 
         if self._modify or force_overwrite or not file_path.exists():
             file_path = file_path.resolve()
-            self._logger.info("Storing data to   '%s'", file_path)
+            self._logger.debug("Storing data to   '%s'", file_path)
         elif file_path.exists() and not file_path.is_file():
             msg = f"Path is not a file ({file_path})"
             raise TypeError(msg)
@@ -183,6 +184,12 @@ class Writer(Reader):
             raise ValueError("Window Size argument needed for ivcurve-Datatype")
 
         # Handle Cal
+        if isinstance(cal_data, CalEmu):
+            msg = (
+                "Writer got a CalibrationEmulator()-object without information "
+                "about the TargetPort. Possibly wrong cal-data stored in hdf5!"
+            )
+            self._logger.warning(msg)
         if isinstance(cal_data, (CalEmu, CalHrv)):
             cal_data = CalSeries.from_cal(cal_data)
 
@@ -215,7 +222,7 @@ class Writer(Reader):
     ) -> None:
         self._align()
         self._refresh_file_stats()
-        self._logger.info(
+        self._logger.debug(
             "closing hdf5 file, %.1f s iv-data, size = %.3f MiB, rate = %.0f KiB/s",
             self.runtime_s,
             self.file_size / 2**20,

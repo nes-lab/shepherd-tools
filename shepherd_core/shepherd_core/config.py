@@ -27,7 +27,7 @@ class ConfigDefault(BaseModel):
     UID_SIZE: int = 2
     """Variable size in Byte"""
 
-    TESTBED_SERVER: HttpUrl = "https://shepherd.cfaed.tu-dresden.de:8000/"
+    TESTBED_SERVER: HttpUrl = HttpUrl("https://shepherd.cfaed.tu-dresden.de:8000/")
     """Server that holds up to date testbed fixtures"""
 
 

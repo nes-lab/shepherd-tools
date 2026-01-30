@@ -14,8 +14,8 @@ from shepherd_core import local_now
 
 def test_task_generation_file(tmp_path: Path) -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
-    xp1 = Experiment.from_file(path)
-    tb_tasks = TasteBadTasks.from_xp(xp1)
+    exp = Experiment.from_file(path)
+    tb_tasks = TasteBadTasks.from_xp(exp)
     tb_tasks.to_file(tmp_path / "tbt1.yaml")
 
 
@@ -42,11 +42,11 @@ def test_task_generation_script(tmp_path: Path) -> None:
         ),
     ]
 
-    xperi = Experiment(
+    exp = Experiment(
         name="meaningful Test-Name",
         time_start=local_now() + timedelta(minutes=30),
         target_configs=target_cfgs,
     )
 
-    tb_tasks = TasteBadTasks.from_xp(xperi)
+    tb_tasks = TasteBadTasks.from_xp(exp)
     tb_tasks.to_file(tmp_path / "tbt2.yaml")
