@@ -193,7 +193,9 @@ def test_base_model_shepherd_fault_short_str() -> None:
 def test_base_model_shepherd_fault_long_str() -> None:
     with pytest.raises(ValidationError):
         _ = ContentModel(
-            name="very_long_123456789_123456789_1234567890_1234567890_1234567890", owner="peter", group="work"
+            name="very_long_123456789_123456789_1234567890_1234567890_1234567890",
+            owner="peter",
+            group="work",
         )
 
 
