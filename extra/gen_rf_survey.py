@@ -37,7 +37,7 @@ if __name__ == "__main__":
                 target_IDs=list(range(1, 12)),
                 custom_IDs=list(range(1, 32)),
                 # ⤷ note: traffic bench expects node 1 as root-node
-                energy_env=sm.EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
+                energy_env=sm.EnergyEnvironment(name="synthetic_static_3000mV_50mA"),
                 firmware1=sm.Firmware.from_firmware(
                     file=path_fw / "nrf52_rf_survey/build.elf",
                     embed=False,

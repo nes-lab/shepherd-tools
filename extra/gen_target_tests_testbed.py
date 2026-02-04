@@ -38,7 +38,7 @@ if __name__ == "__main__":
             target_configs=[
                 sm.TargetConfig(
                     target_IDs=list(range(1, 12)),
-                    energy_env=sm.EnergyEnvironment(name="eenv_static_3000mV_50mA_3600s"),
+                    energy_env=sm.EnergyEnvironment(name="synthetic_static_3000mV_50mA"),
                     firmware1=sm.Firmware(name=fw_nrf),
                     firmware2=sm.Firmware(name=fw_msp),
                     power_tracing=sm.PowerTracing(),
