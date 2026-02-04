@@ -1,0 +1,450 @@
+- datatype: EnergyEnvironment
+  parameters:
+    id: 453951115104139114
+    name: synthetic_static_1000mV_50mA
+    description: Virtual Bench Power Supply, 1.000 V, 0.050 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:31.816771
+    updated_last: 2026-02-02 18:22:31.816774
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/1000mV_50mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 179.99999950000003
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 1.0
+      current_A: 0.05
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 662662847279505212
+    name: synthetic_static_1000mV_10mA
+    description: Virtual Bench Power Supply, 1.000 V, 0.010 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:32.606448
+    updated_last: 2026-02-02 18:22:32.606451
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/1000mV_10mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 35.999999899999935
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 1.0
+      current_A: 0.01
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 752475678547212735
+    name: synthetic_static_1000mV_5mA
+    description: Virtual Bench Power Supply, 1.000 V, 0.005 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:33.399919
+    updated_last: 2026-02-02 18:22:33.399923
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/1000mV_5mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 17.999999949999967
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 1.0
+      current_A: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 132189537411372955
+    name: synthetic_static_1000mV_20mA
+    description: Virtual Bench Power Supply, 1.000 V, 0.020 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:34.195149
+    updated_last: 2026-02-02 18:22:34.195152
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/1000mV_20mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 71.99999979999987
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 1.0
+      current_A: 0.02
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 909610357487958783
+    name: synthetic_static_1000mV_2mA
+    description: Virtual Bench Power Supply, 1.000 V, 0.002 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:34.980397
+    updated_last: 2026-02-02 18:22:34.980400
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/1000mV_2mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 1.0
+      current_A: 0.002
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 16580819109882743
+    name: synthetic_static_1000mV_1mA
+    description: Virtual Bench Power Supply, 1.000 V, 0.001 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:35.775949
+    updated_last: 2026-02-02 18:22:35.775952
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/1000mV_1mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 1.0
+      current_A: 0.001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 696706034880760802
+    name: synthetic_static_2000mV_50mA
+    description: Virtual Bench Power Supply, 2.000 V, 0.050 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:36.541933
+    updated_last: 2026-02-02 18:22:36.541937
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/2000mV_50mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 359.99999900000006
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 2.0
+      current_A: 0.05
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 418869592818177555
+    name: synthetic_static_2000mV_10mA
+    description: Virtual Bench Power Supply, 2.000 V, 0.010 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:37.349095
+    updated_last: 2026-02-02 18:22:37.349097
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/2000mV_10mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 71.99999979999987
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 2.0
+      current_A: 0.01
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1032614473543483842
+    name: synthetic_static_2000mV_5mA
+    description: Virtual Bench Power Supply, 2.000 V, 0.005 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:38.143462
+    updated_last: 2026-02-02 18:22:38.143466
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/2000mV_5mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 35.999999899999935
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 2.0
+      current_A: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 887669461949570798
+    name: synthetic_static_2000mV_20mA
+    description: Virtual Bench Power Supply, 2.000 V, 0.020 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:38.925097
+    updated_last: 2026-02-02 18:22:38.925100
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/2000mV_20mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 143.99999959999974
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 2.0
+      current_A: 0.02
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 64155784418227672
+    name: synthetic_static_2000mV_2mA
+    description: Virtual Bench Power Supply, 2.000 V, 0.002 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:39.707740
+    updated_last: 2026-02-02 18:22:39.707745
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/2000mV_2mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 2.0
+      current_A: 0.002
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 417127525493728167
+    name: synthetic_static_2000mV_1mA
+    description: Virtual Bench Power Supply, 2.000 V, 0.001 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:40.488394
+    updated_last: 2026-02-02 18:22:40.488397
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/2000mV_1mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 2.0
+      current_A: 0.001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 199970338570417361
+    name: synthetic_static_3000mV_50mA
+    description: Virtual Bench Power Supply, 3.000 V, 0.050 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:41.289728
+    updated_last: 2026-02-02 18:22:41.289731
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/3000mV_50mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 539.9999985000002
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 3.0
+      current_A: 0.05
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 532543904595745579
+    name: synthetic_static_3000mV_10mA
+    description: Virtual Bench Power Supply, 3.000 V, 0.010 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:42.088457
+    updated_last: 2026-02-02 18:22:42.088460
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/3000mV_10mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 107.9999996999999
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 3.0
+      current_A: 0.01
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1103387339485784311
+    name: synthetic_static_3000mV_5mA
+    description: Virtual Bench Power Supply, 3.000 V, 0.005 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:42.874173
+    updated_last: 2026-02-02 18:22:42.874177
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/3000mV_5mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 53.99999984999995
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 3.0
+      current_A: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 487918710528680814
+    name: synthetic_static_3000mV_20mA
+    description: Virtual Bench Power Supply, 3.000 V, 0.020 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:43.670107
+    updated_last: 2026-02-02 18:22:43.670109
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/3000mV_20mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 215.9999993999998
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 3.0
+      current_A: 0.02
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 607655954734678130
+    name: synthetic_static_3000mV_2mA
+    description: Virtual Bench Power Supply, 3.000 V, 0.002 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:44.446962
+    updated_last: 2026-02-02 18:22:44.446965
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/3000mV_2mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 21.59999993999997
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 3.0
+      current_A: 0.002
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 927372628079938476
+    name: synthetic_static_3000mV_1mA
+    description: Virtual Bench Power Supply, 3.000 V, 0.001 A
+    comment: created with extra\eenv_generator\ivtraces_static.py
+    created: 2026-02-02 18:22:45.244984
+    updated_last: 2026-02-02 18:22:45.244988
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_static/3000mV_1mA.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 10.799999969999986
+      valid: true
+      repetitions_ok: true
+    metadata:
+      voltage_V: 3.0
+      current_A: 0.001
+    modifications: []

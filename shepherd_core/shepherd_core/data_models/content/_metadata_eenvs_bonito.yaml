@@ -6,7 +6,7 @@
       harvesting. Includes short walking and standing breaks. This was recording in
       spring time on an early afternoon in Berlin. The nodes were powered with a powerbank
       and synchronized via GPS.
-    comment: created with convert_bonito_eenvs.py
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
     created: 2026-01-21 18:42:05.231874
     updated_last: 2026-01-21 18:42:05.231876
     owner: Ingmar
@@ -62,8 +62,8 @@
       node2: person 1, piezo, right ankle
       node3: person 2, solar, left wrist
       node4: person 2, piezo, right ankle
-      timestamp: '2021-05-15T14:29:12.600+02'
-      duration: '0:58:25.9'
+      timestamp: '2021-05-15T14:29:12.600+02:00'
+      duration: '0:58:25.900000'
     modifications: []
 - datatype: EnergyEnvironment
   parameters:
@@ -74,7 +74,7 @@
       normally, no lingering, low to medium traffic. Sun is low & long shadows of
       trees move slowly from right to left. The nodes were powered by a POE Switch
       and synchronized via a GPS ref-clock.
-    comment: created with convert_bonito_eenvs.py
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
     created: 2026-01-21 18:43:26.464475
     updated_last: 2026-01-21 18:43:26.464477
     owner: Ingmar
@@ -140,8 +140,8 @@
       transducer: KXOB25-05X3F-TR (PV, no 100% guarantee)
       weather: Sunny, around 6 degC
       weather-source: https://meteostat.net/de/place/de/dresden?s=10488&t=2020-01-16/2020-01-16
-      timestamp: '2020-01-16T11:49:21.700+01'
-      duration: '1:00:08.1'
+      timestamp: '2020-01-16T11:49:21.700+01:00'
+      duration: '1:00:08.100000'
     modifications: []
 - datatype: EnergyEnvironment
   parameters:
@@ -152,7 +152,7 @@
       is mostly artificial and comes from fluorescent tubes. The offices have large
       windows, but the hallway gets almost no natural light. The nodes were powered
       by a POE Switch and synchronized via a GPS ref-clock.
-    comment: created with convert_bonito_eenvs.py
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
     created: 2026-01-21 18:46:01.737149
     updated_last: 2026-01-21 18:46:01.737151
     owner: Ingmar
@@ -207,7 +207,7 @@
       node2: room
       node3: hallway
       node4: hallway
-      timestamp: '2021-07-01T09:28:38.000+02'
+      timestamp: '2021-07-01T09:28:38.000+02:00'
       duration: '2:59:58'
     modifications: []
 - datatype: EnergyEnvironment
@@ -215,10 +215,10 @@
     id: 626123318517329904
     name: bonito_cars_piezo
     description: Two cars driving convoi over various roads from Windischleuba to
-      Dresden. Both cars have each 3 pieco transducers in different locations. One
+      Dresden. Both cars have each 3 piezo transducers in different locations. One
       of the cars is an Opel Corsa - probably the following one. Synchronization and
       powering of nodes is unknown.
-    comment: created with convert_bonito_eenvs.py
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
     created: 2026-01-21 18:47:17.443783
     updated_last: 2026-01-21 18:47:17.443785
     owner: Ingmar
@@ -281,8 +281,8 @@
       node3: following car, dashboard
       node4: leading car
       node5: following car, windshield
-      timestamp: '2021-05-11T15:26:40.000+02'
-      duration: '1:18:07.3'
+      timestamp: '2021-05-11T15:26:40.000+02:00'
+      duration: '1:18:07.300000'
     modifications: []
 - datatype: EnergyEnvironment
   parameters:
@@ -293,7 +293,7 @@
       load. All described locations are from POV of looking at the front of the machine.
       Transducers move orthogonal to the surface they are put on. The nodes were powered
       by a POE Switch and synchronized via a GPS ref-clock.
-    comment: created with convert_bonito_eenvs.py
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
     created: 2026-01-21 18:48:17.435285
     updated_last: 2026-01-21 18:48:17.435287
     owner: Ingmar
@@ -356,8 +356,8 @@
       node3: right side - middle of top edge
       node4: front side - in the middle on door
       node5: back side - top right corner (frontal POV)
-      timestamp: '2021-05-11T12:08:33.000+02'
-      duration: '1:04:40.2'
+      timestamp: '2021-05-11T12:08:33.000+02:00'
+      duration: '1:04:40.200000'
     modifications: []
 - datatype: EnergyEnvironment
   parameters:
@@ -368,7 +368,7 @@
       load. All described locations are from POV of looking at the front of the machine.
       Transducers move orthogonal to the surface they are put on. The nodes were powered
       by a POE Switch and synchronized via a GPS ref-clock.
-    comment: created with convert_bonito_eenvs.py
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
     created: 2026-01-21 18:49:00.264780
     updated_last: 2026-01-21 18:49:00.264782
     owner: Ingmar
@@ -431,6 +431,6 @@
       node3: right side - middle of top edge
       node4: front side - in the middle on door
       node5: back side - top right corner (frontal POV)
-      timestamp: '2021-05-11T12:33:13.200+02'
-      duration: 0:4
+      timestamp: '2021-05-11T12:33:13.200+02:00'
+      duration: 0:40:00
     modifications: []
