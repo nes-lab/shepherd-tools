@@ -1,5 +1,13 @@
 # History of Changes
 
+## v2026.2.3
+
+Bugfix-Release
+
+- mark mockup content-fixtures as deprecated (to discourage using them)
+- firmware-content avoids raising an exception in .exists()
+- improve implementation of firmware.exists() & .check()
+
 ## v2026.2.1
 
 Improved implementation of EnergyEnvironments.
