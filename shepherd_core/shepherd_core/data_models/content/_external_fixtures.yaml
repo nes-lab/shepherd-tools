@@ -3,8 +3,9 @@
   parameters:
     id: 263956097252422
     name: eenv_static_2000mV_10mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 10mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 10mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:27:02.177941
     updated_last: 2024-02-25 11:32:34.140144
     owner: Ingmar
@@ -26,8 +27,9 @@
   parameters:
     id: 98233941059
     name: eenv_static_2000mV_1mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 1mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 1mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:28:37.291941
     updated_last: 2024-02-25 11:33:54.292910
     owner: Ingmar
@@ -49,8 +51,9 @@
   parameters:
     id: 39006156751
     name: eenv_static_2000mV_50mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 50mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 50mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:26:18.621440
     updated_last: 2024-02-25 11:31:53.183281
     owner: Ingmar
@@ -72,8 +75,9 @@
   parameters:
     id: 1479667372943113
     name: eenv_static_2000mV_5mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 5mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 5mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:27:48.976440
     updated_last: 2024-02-25 11:33:15.250555
     owner: Ingmar
@@ -95,8 +99,9 @@
   parameters:
     id: 664848260660744
     name: eenv_static_3000mV_10mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 10mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 10mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:24:02.885439
     updated_last: 2024-02-25 11:29:52.671833
     owner: Ingmar
@@ -118,8 +123,9 @@
   parameters:
     id: 1356600095104317
     name: eenv_static_3000mV_1mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 1mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 1mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:25:32.729442
     updated_last: 2024-02-25 11:31:12.003732
     owner: Ingmar
@@ -141,8 +147,9 @@
   parameters:
     id: 797777832715661
     name: eenv_static_3000mV_50mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 50mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 50mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:23:18.980940
     updated_last: 2024-02-25 11:29:12.185905
     owner: Ingmar
@@ -164,8 +171,9 @@
   parameters:
     id: 490016297899923
     name: eenv_static_3000mV_5mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 5mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 5mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:24:47.092941
     updated_last: 2024-02-25 11:30:33.170119
     owner: Ingmar
