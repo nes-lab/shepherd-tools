@@ -25,7 +25,7 @@ EnergyEnvironments are metadata representations of spatio-temporal energy-record
 - maximum harvestable energy,
 - flag to signal a valid recording file,
 - flag to signal that repetitions are okay -> typically used by
-  static / artificial traces that don't cause unwanted correlation effects
+  static / synthetic traces that don't cause unwanted correlation effects
 
 ### Typical additional metadata keys for Energy Environments
 
@@ -55,6 +55,10 @@ EnergyEnvironments are metadata representations of spatio-temporal energy-record
 - pin core-version for shepherd-data
 - limit simulations for unittests to speedup workflows (>15min to <3)
 - update deprecated metadata in pyproject.toml
+- file-based content-models (eenvs & firmware) now have helper functions for verification (.check() and .exists())
+- wording: artificial eenvs are now called synthetic eenvs
+- content - increase name-length from 32 to 50 and add deprecation-comment & warning-system
+- deprecate old "eenv_static_..." energy-environments
 
 ### Internal Changes
 
@@ -64,7 +68,7 @@ EnergyEnvironments are metadata representations of spatio-temporal energy-record
 - switch to prek instead of pre-commit
 - switch to ty instead of mypy and pyright
 - update tooling
-- add prototype for hdf5 without time-dataset (can save 50x storage on artificial data)
+- add prototype for hdf5 without time-dataset (can save 50x storage on synthetic data)
 
 ## v2025.10.1
 
@@ -232,7 +236,7 @@ Compared to the current shepherd capacitor (charge-based), it:
 ## v2025.02.1
 
 - Core.Reader
-  - bugfix to properly detect `None` voltage steps in artificial static energy-environments (mainly relevant for emulation on sheep)
+  - bugfix to properly detect `None` voltage steps in synthetic static energy-environments (mainly relevant for emulation on sheep)
   - added typecasting to prevent overflow in u64-format while calculating file-duration in ._refresh_file_stats() (relevant for non-valid test-data)
 - update deps
 
