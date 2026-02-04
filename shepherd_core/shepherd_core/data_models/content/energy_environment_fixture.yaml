@@ -3,6 +3,7 @@
     id: 1001
     name: SolarSunny
     description: MOCKUP! Sunny Day with 4 sq-cm Solar Cell
+    deprecated: Only exists as MOCKUP for unittests
     energy_profiles:
     - data_path: eenv/group/user/solar_4h_new.h5
       data_type: ivsample
@@ -22,6 +23,7 @@
     id: 1002
     name: ThermoelectricWashingMachine
     description: MOCKUP! Energy harvested from side of machine during washing  & tumbling
+    deprecated: Only exists as MOCKUP for unittests
     energy_profiles:
     - data_path: eenv/group/user/thermoelectric_1h_wash.h5
       data_type: ivcurve
@@ -41,6 +43,7 @@
     id: 666
     name: nuclear
     description: MOCKUP! Energy harvested
+    deprecated: Only exists as MOCKUP for unittests
     energy_profiles:
     - data_path: eenv/group/user/thermoelectric_1h_wash.h5
       data_type: ivcurve
