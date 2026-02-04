@@ -167,6 +167,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
         - the converter always turns on with "V_storage_enable_threshold_uV".
 
         TODO: currently neglecting delay after disabling converter, boost
+        TODO: warn and explain when altering config due to boundaries (transparency)
         only has simpler formula, second enabling when V_Cap >= V_out
 
         Math behind this calculation:
