@@ -194,7 +194,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
         """Check if embedded file is still valid or unchanged."""
         valid = True
         if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
-            valid &= isinstance(self.data, Path)
+            valid &= isinstance(self.data, Path) and self.data.exists()
         if self.data_type in [FirmwareDType.base64_elf, FirmwareDType.base64_hex]:
             valid &= isinstance(self.data, str)
             # TODO: could also begin unpacking base64

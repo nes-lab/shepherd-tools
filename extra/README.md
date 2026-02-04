@@ -2,7 +2,7 @@
 
 These scripts are used to fill the database of the testbed-server. Currently, they can:
 
-- `/eenv_generator` generates artificial energy environments and their data-models
+- `/eenv_generator` generates synthetic energy environments and their data-models
 - `/eenv_converter` prepares existing environments for usage with shepherd
 - generate embedded firmware-models from the [targets-repo](https://github.com/nes-lab/shepherd-targets)
 - use data-models as fixtures for core-lib
