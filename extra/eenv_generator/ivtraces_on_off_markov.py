@@ -23,7 +23,7 @@ class Params(BaseModel):
     """Config model with default parameters."""
 
     root_path: Path = root_storage_default
-    dir_name: str = "artificial_on_off_pattern_markov"
+    dir_name: str = "synthetic_on_off_markov"
     duration: int = 1 * 60 * 60
     chunk_size: int = 10_000_000
     # custom config below
@@ -39,6 +39,7 @@ class Params(BaseModel):
 
 
 params_default = Params()
+path_file: Path = Path(__file__)
 
 
 class RndIndepPatternGenerator(EEnvGenerator):
@@ -181,11 +182,11 @@ def create_meta_data(params: Params = params_default) -> None:
             description=(
                 "Random on-off pattern with fixed on-voltage & -current "
                 f"({voltage:.3f} V, {current:.3f} A). "
-                "Each node's state is independently generated such that the average"
-                "duty cycle and on duration match the given values using a markov process."
-                f"({duty_cycle * 100:.3f} % duty with {on_duration * 1000:.3f} ms on-duration)."
+                "Each node's state is independently generated using a markov process such that "
+                "the average duty cycle and on-duration matches the given values "
+                f"({duty_cycle * 100:.1f} % duty with {on_duration * 1000:.1f} ms on-duration)."
             ),
-            comment=f"created with {Path(__file__).name}",
+            comment=f"created with {path_file.relative_to(path_file.parents[2])}",
             energy_profiles=eprofiles,
             owner="Ingmar",
             group="NES_Lab",
@@ -200,7 +201,7 @@ def create_meta_data(params: Params = params_default) -> None:
         wraps.append(eenv_wrap.model_dump(exclude_unset=True, exclude_defaults=True))
 
     wraps_yaml = yaml.safe_dump(wraps, default_flow_style=False, sort_keys=False)
-    with (folder_path / "metadata.yaml").open("w") as f:
+    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open("w") as f:
         f.write(wraps_yaml)
 
 

@@ -11,7 +11,7 @@ import numpy as np
 import yaml
 from commons import EEnvGenerator
 from commons import common_seed
-from commons import process_mp
+from commons import process_sp
 from commons import root_storage_default
 from pydantic import BaseModel
 from scipy import constants as const
@@ -29,25 +29,29 @@ class Params(BaseModel):
     """Config model with default parameters."""
 
     root_path: Path = root_storage_default
-    dir_name: str = "artificial_multivariate_random_walk"
+    dir_name: str = "synthetic_multivariate_random_walk"
     duration: int = 1 * 60 * 60
     chunk_size: int = 2_000_000
     # custom config below
     node_count: int = 20
     # 1 combinations, 20 nodes, 1h
-    description: str = """
-I-V Surface of an emulated PV panel setup.
-
-Uses a multivariate random walk to determine open-circuit voltages for the panel.
-Uses the given PV panel model to calculate terminal current at given terminal voltage. Applies
-a voltage ramp to generate surfaces.
-"""
+    description: str = (
+        "I-V Surface of an emulated PV cell setup. "
+        "Uses a multivariate random walk to determine open-circuit voltages for the cells. "
+        "Uses the given PV panel model to calculate terminal current at given terminal voltage. "
+        "Applies a voltage ramp to generate I-V surfaces."
+    )
     metadata: dict[str, Any] = {
         "seed": common_seed,
+        "energy type": "light",
+        "energy source": "multivariate random walk that mimics natural sun light and clouds",
+        "transducer": "ANYSOLAR KXOB201K04F (PV)",
+        "temperature": "25 degC",
     }
 
 
 params_default = Params()
+path_file: Path = Path(__file__)
 
 
 class SDMNoRP:
@@ -185,7 +189,7 @@ class SDMNoRP:
     def KXOB201K04F(cls, T_K: float | None = None) -> Self:
         if T_K is None:
             T_K = cls.T_stc
-        T_suffix = f"_{T_K:.0f}K"
+        T_suffix = f"_T{T_K:.0f}K"
 
         return cls(
             name=f"ANYSOLAR_KXOB201K04F{T_suffix}",
@@ -369,9 +373,10 @@ def create_meta_data(params: Params = params_default) -> None:
         eprofiles.append(epro.model_copy(deep=True, update=data_update))
 
     eenv = EnergyEnvironment(
-        name=f"{params.dir_name}_{name_ds}",
+        name=f"{params.dir_name}_solar",
+        # TODO: deliberately not using {name_ds} to keep it short
         description=params.description,
-        comment=f"created with {Path(__file__).name}",
+        comment=f"created with {path_file.relative_to(path_file.parents[2])}",
         energy_profiles=eprofiles,
         owner="Ingmar",
         group="NES_Lab",
@@ -389,9 +394,10 @@ def create_meta_data(params: Params = params_default) -> None:
         default_flow_style=False,
         sort_keys=False,
     )
-    with (folder_path / "metadata.yaml").open("w") as f:
+    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open("w") as f:
         f.write(wraps_yaml)
 
 
 if __name__ == "__main__":
-    process_mp(get_worker_configs())
+    process_sp(get_worker_configs())
+    create_meta_data()

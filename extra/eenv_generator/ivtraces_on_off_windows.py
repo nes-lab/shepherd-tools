@@ -24,7 +24,7 @@ class Params(BaseModel):
     """Config model with default parameters."""
 
     root_path: Path = root_storage_default
-    dir_name: str = "artificial_on_off_windows_random"
+    dir_name: str = "synthetic_on_off_windows"
     duration: int = 1 * 60 * 60
     chunk_size: int = 10_000_000
     # custom config below
@@ -40,6 +40,7 @@ class Params(BaseModel):
 
 
 params_default = Params()
+path_file: Path = Path(__file__)
 
 
 class RndPeriodicWindowGenerator(EEnvGenerator):
@@ -151,7 +152,7 @@ def create_meta_data(params: Params = params_default) -> None:
     for voltage, current, period, duty_cycle in combinations:
         name_ds = (
             f"{round(period * 1000.0)}ms_{round(duty_cycle * 100.0)}%_"
-            f"{round(voltage, 1)}V_{round(current * 1000.0)}mA"
+            f"{round(voltage * 1000.0)}mV_{round(current * 1000.0)}mA"
         )
 
         eprofiles: list[EnergyProfile] = []
@@ -178,9 +179,9 @@ def create_meta_data(params: Params = params_default) -> None:
                 f"({voltage:.3f} V, {current:.3f} A). "
                 "Each node has fixed-length on-windows placed independently "
                 "such that the duty cycle matches the given value "
-                f"({duty_cycle * 100:.3f} % duty in {period * 1000:.3f} ms period)."
+                f"({duty_cycle * 100:.1f} % duty in each {period * 1000:.1f} ms period)."
             ),
-            comment=f"created with {Path(__file__).name}",
+            comment=f"created with {path_file.relative_to(path_file.parents[2])}",
             energy_profiles=eprofiles,
             owner="Ingmar",
             group="NES_Lab",
@@ -195,7 +196,7 @@ def create_meta_data(params: Params = params_default) -> None:
         wraps.append(eenv_wrap.model_dump(exclude_unset=True, exclude_defaults=True))
 
     wraps_yaml = yaml.safe_dump(wraps, default_flow_style=False, sort_keys=False)
-    with (folder_path / "metadata.yaml").open("w") as f:
+    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open("w") as f:
         f.write(wraps_yaml)
 
 

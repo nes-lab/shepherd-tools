@@ -21,7 +21,7 @@ class Params(BaseModel):
     """Config model with default parameters."""
 
     root_path: Path = root_storage_default
-    dir_name: str = "artificial_static"
+    dir_name: str = "synthetic_static"
     duration: int = 1 * 60 * 60
     chunk_size: int = 10_000_000
     # custom config below
@@ -30,6 +30,7 @@ class Params(BaseModel):
 
 
 params_default = Params()
+path_file: Path = Path(__file__)
 
 
 class StaticGenerator(EEnvGenerator):
@@ -96,13 +97,16 @@ def create_meta_data(params: Params = params_default) -> None:
         eenv = EnergyEnvironment(
             name=f"{params.dir_name}_{name_ds}",
             description=f"Virtual Bench Power Supply, {voltage:.3f} V, {current:.3f} A",
-            comment=f"created with {Path(__file__).name}",
+            comment=f"created with {path_file.relative_to(path_file.parents[2])}",
             energy_profiles=[epro],
             owner="Ingmar",
             group="NES_Lab",
             visible2group=True,
             visible2all=True,
-            metadata={"voltage_V": voltage, "current_A": current},
+            metadata={
+                "voltage_V": voltage,
+                "current_A": current,
+            },
         )
         eenv_wrap = Wrapper(
             datatype=EnergyEnvironment.__name__,
@@ -111,7 +115,7 @@ def create_meta_data(params: Params = params_default) -> None:
         wraps.append(eenv_wrap.model_dump(exclude_unset=True, exclude_defaults=True))
 
     wraps_yaml = yaml.safe_dump(wraps, default_flow_style=False, sort_keys=False)
-    with (folder_path / "metadata.yaml").open("w") as f:
+    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open("w") as f:
         f.write(wraps_yaml)
 
 

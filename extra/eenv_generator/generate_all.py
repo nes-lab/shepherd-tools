@@ -1,4 +1,4 @@
-"""Generator for all artificial Energy-Environments."""
+"""Generator for all synthetic Energy-Environments."""
 
 from collections.abc import Callable
 from typing import Any
@@ -7,10 +7,10 @@ from commons import process_mp
 from commons import process_sp
 from ivsurfaces_multivariate_random_walk import create_meta_data as meta_random_walk
 from ivsurfaces_multivariate_random_walk import get_worker_configs as get_configs_random_walk
-from ivtraces_onpattern_random_independent import create_meta_data as meta_onpattern
-from ivtraces_onpattern_random_independent import get_worker_configs as get_configs_onpattern
-from ivtraces_onwindow_random_independent import create_meta_data as meta_onwindow
-from ivtraces_onwindow_random_independent import get_worker_configs as get_configs_onwindow
+from ivtraces_on_off_markov import create_meta_data as meta_onpattern
+from ivtraces_on_off_markov import get_worker_configs as get_configs_onpattern
+from ivtraces_on_off_windows import create_meta_data as meta_onwindow
+from ivtraces_on_off_windows import get_worker_configs as get_configs_onwindow
 from ivtraces_static import create_meta_data as meta_static
 from ivtraces_static import get_worker_configs as get_configs_static
 
@@ -23,9 +23,9 @@ def get_config_for_workers() -> list[tuple[Callable, dict[str, Any]]]:
     """
     cfgs: list[tuple[Callable, dict[str, Any]]] = [
         # get_cfgs_random_walk, # see below
-        *get_configs_onpattern(),
-        *get_configs_onwindow(),
         *get_configs_static(),
+        *get_configs_onwindow(),
+        *get_configs_onpattern(),
     ]
     return cfgs
 
@@ -37,10 +37,10 @@ def create_meta_data() -> None:
     """
     process_mp(
         worker_cfgs=[
-            (meta_random_walk, {}),
-            (meta_onpattern, {}),
-            (meta_onwindow, {}),
             (meta_static, {}),
+            (meta_onwindow, {}),
+            (meta_onpattern, {}),
+            (meta_random_walk, {}),
         ]
     )
 

@@ -18,7 +18,8 @@ from shepherd_core.logger import log
 
 # config
 
-bonito_input_path = Path().cwd() / "neslab-eh-data"
+path_bonito_input: Path = Path().cwd() / "neslab-eh-data"
+path_file: Path = Path(__file__)
 
 DATASETS: dict[str, dict[str, Any]] = {
     "bonito_jogging_mixed": {
@@ -203,7 +204,7 @@ def get_worker_configs(
     """
     cfgs: list[tuple[Callable, dict[str, Any]]] = []
     for new_name, params in DATASETS.items():
-        input_dir = bonito_input_path / str(params["old_name"])
+        input_dir = path_bonito_input / str(params["old_name"])
         if not input_dir.exists():
             log.error(f"Input-Directory '{input_dir!s}' does not exist -> skipping")
             continue
@@ -261,9 +262,9 @@ def create_meta_data(path_dir: Path = root_storage_default) -> None:
         eenv = EnergyEnvironment(
             name=new_name,
             description=str(params["description"]),
+            comment=f"created with {path_file.relative_to(path_file.parents[2])}",
             metadata=params["metadata"],
             # NOTE: intentionally fails if fields are missing
-            comment=f"created with {Path(__file__).name}",
             energy_profiles=eprofiles,
             owner="Ingmar",
             group="NES_Lab",
@@ -282,7 +283,7 @@ def create_meta_data(path_dir: Path = root_storage_default) -> None:
         default_flow_style=False,
         sort_keys=False,
     )
-    with (path_dir / "bonito/_metadata_bonito.yaml").open("w", encoding="utf-8-sig") as f:
+    with (path_dir / "bonito/_metadata_eenvs_bonito.yaml").open("w", encoding="utf-8-sig") as f:
         f.write(wraps_yaml)
 
 
