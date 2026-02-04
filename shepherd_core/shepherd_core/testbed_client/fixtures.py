@@ -237,7 +237,7 @@ class Fixtures:
         if key in self.components:
             return self.components[key]
         msg = f"Component '{key}' not found!"
-        raise ValueError(msg)
+        raise KeyError(msg)
 
     def keys(self) -> Iterable[str]:
         return self.components.keys()

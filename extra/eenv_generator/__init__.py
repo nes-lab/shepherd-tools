@@ -9,6 +9,6 @@ The scripts offer
 - static traces
 - random on-off-pattern with fixed periodic window-length and duty cycle
 - on-off-pattern with random on-duration and duty cycle
-- artificial solar IV-surface - based on multivariat random walk
+- synthetic solar IV-surface - based on multivariat random walk
 
 """

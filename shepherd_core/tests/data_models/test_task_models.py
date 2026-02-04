@@ -110,8 +110,8 @@ def test_task_model_observer_min1() -> None:
 
 def test_task_model_observer_min2() -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
-    xp = Experiment.from_file(path)
-    ObserverTasks.from_xp(xp=xp, xp_folder=None, tb=TasteBad(name="shepherd_tud_nes"), tgt_id=1)
+    exp = Experiment.from_file(path)
+    ObserverTasks.from_xp(xp=exp, xp_folder=None, tb=TasteBad(name="shepherd_tud_nes"), tgt_id=1)
 
 
 def test_task_model_prog_min() -> None:

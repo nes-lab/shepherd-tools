@@ -1,0 +1,3260 @@
+- datatype: EnergyEnvironment
+  parameters:
+    id: 366063269134990998
+    name: synthetic_on_off_windows_100ms_10%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (10.0 % duty in each 100.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:40:38.103802
+    updated_last: 2026-02-04 01:40:38.103806
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_10%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      period_s: 0.1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 249379845320413762
+    name: synthetic_on_off_windows_100ms_20%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (20.0 % duty in each 100.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:42:13.035330
+    updated_last: 2026-02-04 01:42:13.035334
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_20%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      period_s: 0.1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 651804697995819065
+    name: synthetic_on_off_windows_100ms_5%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (5.0 % duty in each 100.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:43:46.497365
+    updated_last: 2026-02-04 01:43:46.497366
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_5%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      period_s: 0.1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1112048581592041874
+    name: synthetic_on_off_windows_100ms_1%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (1.0 % duty in each 100.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:45:20.419729
+    updated_last: 2026-02-04 01:45:20.419733
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_1%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      period_s: 0.1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1083763985107690789
+    name: synthetic_on_off_windows_100ms_2%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (2.0 % duty in each 100.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:46:53.414868
+    updated_last: 2026-02-04 01:46:53.414872
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/100ms_2%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      period_s: 0.1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 191592607464292899
+    name: synthetic_on_off_windows_1000ms_10%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (10.0 % duty in each 1000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:48:26.899481
+    updated_last: 2026-02-04 01:48:26.899484
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_10%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      period_s: 1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1048882192476626121
+    name: synthetic_on_off_windows_1000ms_20%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (20.0 % duty in each 1000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:50:00.036665
+    updated_last: 2026-02-04 01:50:00.036669
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_20%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      period_s: 1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1145235399080588272
+    name: synthetic_on_off_windows_1000ms_5%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (5.0 % duty in each 1000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:51:33.031921
+    updated_last: 2026-02-04 01:51:33.031923
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_5%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      period_s: 1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 266211564632415137
+    name: synthetic_on_off_windows_1000ms_1%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (1.0 % duty in each 1000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:53:06.231200
+    updated_last: 2026-02-04 01:53:06.231204
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_1%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      period_s: 1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 147810069497343523
+    name: synthetic_on_off_windows_1000ms_2%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (2.0 % duty in each 1000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:54:38.712032
+    updated_last: 2026-02-04 01:54:38.712035
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/1000ms_2%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      period_s: 1
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 238228540318786061
+    name: synthetic_on_off_windows_10000ms_10%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (10.0 % duty in each 10000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:56:11.741326
+    updated_last: 2026-02-04 01:56:11.741330
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_10%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      period_s: 10
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 364897288964504841
+    name: synthetic_on_off_windows_10000ms_20%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (20.0 % duty in each 10000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:57:45.088077
+    updated_last: 2026-02-04 01:57:45.088081
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_20%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      period_s: 10
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1055329000296746925
+    name: synthetic_on_off_windows_10000ms_5%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (5.0 % duty in each 10000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 01:59:16.773852
+    updated_last: 2026-02-04 01:59:16.773855
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_5%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      period_s: 10
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 818167127881494080
+    name: synthetic_on_off_windows_10000ms_1%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (1.0 % duty in each 10000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 02:00:49.337561
+    updated_last: 2026-02-04 02:00:49.337563
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_1%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      period_s: 10
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 320093194927386479
+    name: synthetic_on_off_windows_10000ms_2%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (2.0 % duty in each 10000.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 02:02:22.414004
+    updated_last: 2026-02-04 02:02:22.414007
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10000ms_2%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      period_s: 10
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 731920924837605283
+    name: synthetic_on_off_windows_10ms_10%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (10.0 % duty in each 10.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 02:03:59.361101
+    updated_last: 2026-02-04 02:03:59.361103
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_10%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      period_s: 0.01
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 732013470829794320
+    name: synthetic_on_off_windows_10ms_20%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (20.0 % duty in each 10.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 02:05:36.985814
+    updated_last: 2026-02-04 02:05:36.985816
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_20%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.399999960000008
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      period_s: 0.01
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 300721326011584455
+    name: synthetic_on_off_windows_10ms_5%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (5.0 % duty in each 10.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 02:07:14.937124
+    updated_last: 2026-02-04 02:07:14.937128
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_5%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599999990000002
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      period_s: 0.01
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 80063545464525364
+    name: synthetic_on_off_windows_10ms_1%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (1.0 % duty in each 10.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 02:08:51.305327
+    updated_last: 2026-02-04 02:08:51.305329
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_1%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199999980000004
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      period_s: 0.01
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 545772361567350849
+    name: synthetic_on_off_windows_10ms_2%_2000mV_10mA
+    description: Periodic on-off pattern with fixed on-voltage/-current (2.000 V,
+      0.010 A). Each node has fixed-length on-windows placed independently such that
+      the duty cycle matches the given value (2.0 % duty in each 10.0 ms period).
+    comment: created with extra\eenv_generator\ivtraces_on_off_windows.py
+    created: 2026-02-04 02:10:28.156362
+    updated_last: 2026-02-04 02:10:28.156367
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_windows/10ms_2%_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399999960000007
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      period_s: 0.01
+    modifications: []

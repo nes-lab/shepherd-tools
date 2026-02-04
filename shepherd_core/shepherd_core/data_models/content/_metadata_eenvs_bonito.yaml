@@ -1,0 +1,436 @@
+- datatype: EnergyEnvironment
+  parameters:
+    id: 844221377274169279
+    name: bonito_jogging_mixed
+    description: Jogging tour of two people in a public park with solar and vibration
+      harvesting. Includes short walking and standing breaks. This was recording in
+      spring time on an early afternoon in Berlin. The nodes were powered with a powerbank
+      and synchronized via GPS.
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
+    created: 2026-01-21 18:42:05.231874
+    updated_last: 2026-01-21 18:42:05.231876
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.01.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_jogging_mixed/node0.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3505.9
+      energy_Ws: 0.12314653441201007
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_jogging_mixed/node1.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3505.9
+      energy_Ws: 11.296377274071403
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_jogging_mixed/node2.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3505.9
+      energy_Ws: 0.14334367351325808
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_jogging_mixed/node3.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3505.9
+      energy_Ws: 11.855213656347466
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_jogging_mixed/node4.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3505.9
+      energy_Ws: 0.21291516097076163
+      valid: true
+      repetitions_ok: false
+    metadata:
+      location: Europe, Germany, Berlin, H942+CX
+      coordinates: N 52.556585, E 13.3554427
+      route: https://maps.app.goo.gl/qjWAJeZZfLec4cCE8 (there and back)
+      energy type: light & kinetic
+      energy source: natural direct & indirect sun light, human body movement
+      transducer: IXYS KXOB25-05X3F (PV), Mide S128-J1FR-1808YB (piezo)
+      node0: person 1, piezo, left ankle
+      node1: person 1, solar, left wrist
+      node2: person 1, piezo, right ankle
+      node3: person 2, solar, left wrist
+      node4: person 2, piezo, right ankle
+      timestamp: '2021-05-15T14:29:12.600+02:00'
+      duration: '0:58:25.900000'
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 277223354423428953
+    name: bonito_stairs_solar
+    description: Seven PV are embedded into an outdoor stair in front of a lecture
+      hall. Frequent foot traffic causes intermittent shadowing. People are walking
+      normally, no lingering, low to medium traffic. Sun is low & long shadows of
+      trees move slowly from right to left. The nodes were powered by a POE Switch
+      and synchronized via a GPS ref-clock.
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
+    created: 2026-01-21 18:43:26.464475
+    updated_last: 2026-01-21 18:43:26.464477
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.01.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_stairs_solar/node0.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3608.1
+      energy_Ws: 5.6566576172144085
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_stairs_solar/node1.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3608.1
+      energy_Ws: 6.2077136496378476
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_stairs_solar/node2.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3608.1
+      energy_Ws: 6.603229972528401
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_stairs_solar/node3.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3608.1
+      energy_Ws: 4.543840045051754
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_stairs_solar/node4.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3608.1
+      energy_Ws: 6.7863264401603525
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_stairs_solar/node5.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3608.1
+      energy_Ws: 8.181260212152964
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_stairs_solar/node6.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3608.1
+      energy_Ws: 2.6587201900789807
+      valid: true
+      repetitions_ok: false
+    metadata:
+      location: "Europe, Germany, Dresden, Helmholtzstra\xDFe 18, Barkhausen-Bau"
+      coordinates: N 51.026467, E 13.723217
+      energy type: light
+      energy source: natural direct & indirect sun light
+      transducer: KXOB25-05X3F-TR (PV, no 100% guarantee)
+      weather: Sunny, around 6 degC
+      weather-source: https://meteostat.net/de/place/de/dresden?s=10488&t=2020-01-16/2020-01-16
+      timestamp: '2020-01-16T11:49:21.700+01:00'
+      duration: '1:00:08.100000'
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1017065980674922016
+    name: bonito_office_solar
+    description: Five PV are mounted on doorframes and walls of an office and adjacent
+      hallway. People enter, leave and operate the lights during the recording. Lighting
+      is mostly artificial and comes from fluorescent tubes. The offices have large
+      windows, but the hallway gets almost no natural light. The nodes were powered
+      by a POE Switch and synchronized via a GPS ref-clock.
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
+    created: 2026-01-21 18:46:01.737149
+    updated_last: 2026-01-21 18:46:01.737151
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.01.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_office_solar/node0.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 10798.0
+      energy_Ws: 2.6068224951064622
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_office_solar/node1.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 10798.0
+      energy_Ws: 2.5833475376590114
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_office_solar/node2.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 10798.0
+      energy_Ws: 1.9031594863654513
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_office_solar/node3.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 10798.0
+      energy_Ws: 1.1853006956547987
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_office_solar/node4.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 10798.0
+      energy_Ws: 1.6142063814249146
+      valid: true
+      repetitions_ok: false
+    metadata:
+      location: "Europe, Germany, Dresden, Helmholtzstra\xDFe 18, Barkhausen-Bau"
+      coordinates: N 51.026579, E 13.723024
+      energy type: light
+      energy source: artificial fluorescent light, natural indirect sun light
+      transducer: IXYS KX0B25-05X3F (PV)
+      node0: room
+      node1: room
+      node2: room
+      node3: hallway
+      node4: hallway
+      timestamp: '2021-07-01T09:28:38.000+02:00'
+      duration: '2:59:58'
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 626123318517329904
+    name: bonito_cars_piezo
+    description: Two cars driving convoi over various roads from Windischleuba to
+      Dresden. Both cars have each 3 piezo transducers in different locations. One
+      of the cars is an Opel Corsa - probably the following one. Synchronization and
+      powering of nodes is unknown.
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
+    created: 2026-01-21 18:47:17.443783
+    updated_last: 2026-01-21 18:47:17.443785
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.01.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_cars_piezo/node0.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 4687.3
+      energy_Ws: 0.05485783944278476
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_cars_piezo/node1.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 4687.3
+      energy_Ws: 0.03921682491596552
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_cars_piezo/node2.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 4687.3
+      energy_Ws: 0.03265685335810709
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_cars_piezo/node3.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 4687.3
+      energy_Ws: 0.036666114662291444
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_cars_piezo/node4.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 4687.3
+      energy_Ws: 0.03168108302867538
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_cars_piezo/node5.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 4687.3
+      energy_Ws: 0.02469128285599746
+      valid: true
+      repetitions_ok: false
+    metadata:
+      location: Europe, Germany, between Windischleuba & Dresden
+      coordinates: N 50.9914555, E 13.0990877
+      energy type: kinetic
+      energy source: car,motor,road
+      transducer: Mide S128-J1FR-1808YB (piezo)
+      node0: following car, trunk
+      node1: leading car
+      node2: leading car
+      node3: following car, dashboard
+      node4: leading car
+      node5: following car, windshield
+      timestamp: '2021-05-11T15:26:40.000+02:00'
+      duration: '1:18:07.300000'
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 983915285706351543
+    name: bonito_washer_piezo
+    description: Five piezo harvesters are mounted on an industrial washing machine.
+      The model is called WPB4700H and it runs a 60 degC washing program with maximum
+      load. All described locations are from POV of looking at the front of the machine.
+      Transducers move orthogonal to the surface they are put on. The nodes were powered
+      by a POE Switch and synchronized via a GPS ref-clock.
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
+    created: 2026-01-21 18:48:17.435285
+    updated_last: 2026-01-21 18:48:17.435287
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.01.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo/node0.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3880.2
+      energy_Ws: 0.004556345600627146
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo/node1.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3880.2
+      energy_Ws: 0.11190667068638331
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo/node2.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3880.2
+      energy_Ws: 0.08173890088048834
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo/node3.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3880.2
+      energy_Ws: 0.021293177990324163
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo/node4.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3880.2
+      energy_Ws: 0.1469314517041782
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo/node5.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3880.2
+      energy_Ws: 0.11316661373453998
+      valid: true
+      repetitions_ok: false
+    metadata:
+      location: Europe, Germany, Rositz, 295M+PC
+      coordinates: N 51.0152002, E 12.3472641
+      energy type: kinetic
+      energy source: industrial washing machine, WPB4700H
+      transducer: Mide S128-J1FR-1808YB (piezo)
+      node0: top side - in the middle, slightly moved to front
+      node1: back side - top left corner (frontal POV)
+      node2: front side - top left corner
+      node3: right side - middle of top edge
+      node4: front side - in the middle on door
+      node5: back side - top right corner (frontal POV)
+      timestamp: '2021-05-11T12:08:33.000+02:00'
+      duration: '1:04:40.200000'
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1329307748684056
+    name: bonito_washer_piezo_tumble_only
+    description: Five piezo harvesters are mounted on an industrial washing machine.
+      The model is called WPB4700H and it runs a 60 degC washing program with maximum
+      load. All described locations are from POV of looking at the front of the machine.
+      Transducers move orthogonal to the surface they are put on. The nodes were powered
+      by a POE Switch and synchronized via a GPS ref-clock.
+    comment: created with extra\eenv_converter\convert_bonito_eenvs.py
+    created: 2026-01-21 18:49:00.264780
+    updated_last: 2026-01-21 18:49:00.264782
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.01.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo_tumble_only/node0.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 2400.0
+      energy_Ws: 0.0031046223760642353
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo_tumble_only/node1.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 2400.0
+      energy_Ws: 0.1089834490419615
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo_tumble_only/node2.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 2400.0
+      energy_Ws: 0.07833955365857408
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo_tumble_only/node3.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 2400.0
+      energy_Ws: 0.01929702622713178
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo_tumble_only/node4.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 2400.0
+      energy_Ws: 0.1435408645616372
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/bonito/bonito_washer_piezo_tumble_only/node5.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 2400.0
+      energy_Ws: 0.11250889348284673
+      valid: true
+      repetitions_ok: false
+    metadata:
+      location: Europe, Germany, Rositz, 295M+PC
+      coordinates: N 51.0152002, E 12.3472641
+      energy type: kinetic
+      energy source: industrial washing machine, WPB4700H
+      transducer: Mide S128-J1FR-1808YB (piezo)
+      node0: top side - in the middle, slightly moved to front
+      node1: back side - top left corner (frontal POV)
+      node2: front side - top left corner
+      node3: right side - middle of top edge
+      node4: front side - in the middle on door
+      node5: back side - top right corner (frontal POV)
+      timestamp: '2021-05-11T12:33:13.200+02:00'
+      duration: 0:40:00
+    modifications: []

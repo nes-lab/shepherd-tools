@@ -1,3 +1,5 @@
+import logging
+from collections.abc import Generator
 from datetime import timedelta
 
 import pytest
@@ -5,6 +7,7 @@ from pydantic import ValidationError
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import GpioActuation
@@ -152,6 +155,39 @@ def test_experiment_model_exp_missing_target() -> None:
         # experiment (like above) removed
 
 
+def test_experiment_model_exp_eenv_warning_reuse(
+    caplog: Generator, energy_profiles: list[EnergyProfile]
+) -> None:
+    assert len(energy_profiles) >= 2
+    ee = EnergyEnvironment(
+        id=98765,
+        name="some",
+        energy_profiles=energy_profiles[:2],  # force reuse
+        owner="jane",
+        group="wayne",
+    )
+    assert ee.valid
+    assert not ee.repetitions_ok
+    target_cfgs = [
+        TargetConfig(
+            target_IDs=[1, 2],
+            energy_env=ee,
+            firmware1=Firmware(name="nrf52_demo_rf"),
+        ),
+        TargetConfig(
+            target_IDs=[3, 4],
+            energy_env=ee,  # deliberate reuse
+            firmware1=Firmware(name="nrf52_demo_rf"),
+        ),
+    ]
+    with caplog.at_level(logging.WARNING):
+        _ = Experiment(
+            name="meaningful Test-Name",
+            time_start=local_now() + timedelta(minutes=30),
+            target_configs=target_cfgs,
+        )
+
+
 def test_experiment_model_pwrtracing_min() -> None:
     PowerTracing()
 
@@ -247,7 +283,7 @@ def test_experiment_model_tgt_cfg_fault_valid_ee() -> None:
     with pytest.raises(ValidationError):
         _ = TargetConfig(
             target_IDs=[1],
-            energy_env=EnergyEnvironment(name="nuclear"),
+            energy_env=EnergyEnvironment(name="nuclear"),  # not marked valid
             firmware1=Firmware(name="nrf52_demo_rf"),
         )
 
@@ -271,11 +307,55 @@ def test_experiment_model_tgt_cfg_fault_firmware2() -> None:
         )
 
 
-def test_experiment_model_tgt_cfg_fault_custom_ids() -> None:
+def test_experiment_model_tgt_cfg_eenv_rep_ok() -> None:
+    ee = EnergyEnvironment(name="SolarSunny")
+    assert ee.valid
+    assert ee.repetitions_ok
+    assert len(ee.energy_profiles) == 1
     with pytest.raises(ValidationError):
         _ = TargetConfig(
             target_IDs=[1, 2, 3],
             custom_IDs=[0, 1],  # not enough
             energy_env=EnergyEnvironment(name="SolarSunny"),
+            firmware1=Firmware(name="nrf52_demo_rf"),
+        )
+
+
+def test_experiment_model_tgt_cfg_eenv_fault_no_rep(energy_profiles: list[EnergyProfile]) -> None:
+    assert len(energy_profiles) >= 2
+    ee = EnergyEnvironment(
+        id=98765,
+        name="some",
+        energy_profiles=energy_profiles[:2],
+        owner="jane",
+        group="wayne",
+    )
+    assert ee.valid
+    assert not ee.repetitions_ok
+    with pytest.raises(ValidationError):
+        _ = TargetConfig(
+            target_IDs=[1, 2, 3],  # more than EProfiles
+            energy_env=ee,
+            firmware1=Firmware(name="nrf52_demo_rf"),
+        )
+
+
+def test_experiment_model_tgt_cfg_eenv_warning_reuse(
+    caplog: Generator, energy_profiles: list[EnergyProfile]
+) -> None:
+    assert len(energy_profiles) >= 2
+    ee = EnergyEnvironment(
+        id=98765,
+        name="some",
+        energy_profiles=2 * energy_profiles[:2],  # deliberate reuse
+        owner="jane",
+        group="wayne",
+    )
+    assert ee.valid
+    assert not ee.repetitions_ok
+    with caplog.at_level(logging.WARNING):
+        _ = TargetConfig(
+            target_IDs=[1, 2, 3],
+            energy_env=ee,
             firmware1=Firmware(name="nrf52_demo_rf"),
         )

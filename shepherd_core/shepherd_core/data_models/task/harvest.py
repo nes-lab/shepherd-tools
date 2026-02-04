@@ -6,6 +6,7 @@ from datetime import timedelta
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
@@ -20,6 +21,7 @@ from shepherd_core.data_models.experiment.observer_features import SystemLogging
 from .emulation import Compression
 
 
+@final
 class HarvestTask(ShpModel):
     """Config for the Observer in Harvest-Mode to record IV data from a harvesting-source."""
 

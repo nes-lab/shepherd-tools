@@ -18,9 +18,11 @@ TODO: Comfort functions missing
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
+from typing import final
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.logger import log
 
 from .fixtures import Fixtures
 
@@ -58,6 +60,7 @@ class AbcClient(ABC):
         # TODO: maybe internal? yes
         pass
 
+    @final
     def try_completing_model(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
@@ -71,14 +74,18 @@ class AbcClient(ABC):
             except ValueError as err:
                 msg = f"Query {model_type} by name / ID failed - {values} is unknown!"
                 raise ValueError(msg) from err
+            except KeyError:
+                log.error(f"Query failed - model-type {model_type} is unknown")
+                return values, []
         return self.try_inheritance(model_type, values)
 
     @abstractmethod
     def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
-        # TODO: is it really helpful and needed?
+        # TODO: is it really needed and helpful?
         pass
 
 
+@final
 class FixturesClient(AbcClient):
     """Client-Class to access the file based fixtures."""
 
@@ -110,12 +117,16 @@ class FixturesClient(AbcClient):
     def try_inheritance(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
-        return self._fixtures[model_type].inheritance(values)
+        try:
+            return self._fixtures[model_type].inheritance(values)
+        except KeyError:
+            log.error(f"Query failed - model-type {model_type} is unknown")
+            return values, []
 
     def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
         """Add fake user-data when offline-client is used.
 
-        Hotfix until WebClient is working.
+        Workaround until WebClient is working.
         """
         if values.get("owner") is None:
             values["owner"] = "unknown"

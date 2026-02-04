@@ -58,14 +58,14 @@ if __name__ == "__main__":
             data["data"] = path_new
             data["data_type"] = FirmwareDType.path_elf
             data["data_hash"] = None
-            data["data_local"] = False
+            data["data_2_copy"] = False
             model = Firmware(**data)
         if model_ee is not None:
             data = model_ee.model_dump()
             path_pos = data["data_path"].as_posix().find("/content/")
             path_new = path_server.as_posix() + data["data_path"].as_posix()[path_pos:]
             data["data_path"] = path_new
-            data["data_local"] = False
+            data["data_2_copy"] = False
             model = EnergyEnvironment(**data)
 
         if model is not None:

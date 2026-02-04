@@ -3,6 +3,7 @@
 from datetime import timedelta
 from enum import Enum
 from typing import Annotated
+from typing import final
 
 import numpy as np
 from annotated_types import Interval
@@ -19,12 +20,17 @@ from shepherd_core.logger import log
 zero_duration = timedelta(seconds=0)
 
 
+@final
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):
-    """Configuration for recording the Power-Consumption of the Target Nodes."""
+    """Configuration for recording the Power-Consumption of the Target Nodes.
+
+    With the default configuration voltage and current are sampled with 100 kHz.
+    """
 
     intermediate_voltage: bool = False
     """
-    ⤷ for EMU: record storage capacitor instead of output (good for V_out = const)
+    ⤷ for EMU: record output-path of intermediate energy storage (capacitor, battery)
+               instead of direct target voltage-output (good for V_out = const)
                this also includes current!
     """
     # time
@@ -38,7 +44,8 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     # further processing of IV-Samples
     only_power: bool = False
     """ ⤷ reduce file-size by calculating power and automatically discard I&V
-        Caution: increases cpu-utilization on observer - power @ 100 kHz is not recommended
+        Caution: increases cpu-utilization on observer
+                 sampling power @ 100 kHz is not recommended
     """
     samplerate: Annotated[int, Field(ge=10, le=100_000)] = 100_000
     """ ⤷ reduce file-size by re-sampling (mean over x samples)
@@ -107,6 +114,7 @@ STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO = (1, 1.5, 2)
 STOPBITS = (STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO)
 
 
+@final
 class UartLogging(ShpModel, title="Config for UART Logging"):
     """Configuration for recording UART-Output of the Target Nodes.
 
@@ -139,6 +147,7 @@ GpioList = Annotated[list[GpioInt], Field(min_length=1, max_length=18)]
 all_gpio = list(range(18))
 
 
+@final
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """Configuration for recording the GPIO-Output of the Target Nodes.
 
@@ -194,6 +203,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
         return mask
 
 
+@final
 class GpioLevel(str, Enum):
     """Options for setting the gpio-level or state."""
 
@@ -202,6 +212,7 @@ class GpioLevel(str, Enum):
     toggle = "X"  # TODO: not the smartest decision for writing a converter
 
 
+@final
 class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
     """Configuration for a single GPIO-Event (Actuation)."""
 
@@ -228,6 +239,7 @@ class GpioEvent(ShpModel, title="Config for a GPIO-Event"):
         return np.arange(self.delay, stop, self.period)
 
 
+@final
 class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
     """Configuration for a GPIO-Actuation-Sequence."""
 
@@ -245,6 +257,7 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
         return {ev_.gpio for ev_ in self.events}
 
 
+@final
 class SystemLogging(ShpModel, title="Config for System-Logging"):
     """Configuration for recording Debug-Output of the Observers System-Services."""
 

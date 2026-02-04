@@ -46,7 +46,7 @@ def experiment_self_discharge_lead_acid() -> None:
 
     sim.run(fn=step, duration_s=duration.total_seconds())
     sim.plot(
-        f"XP {cfg1.name}, self-discharge, "
+        f"Experiment {cfg1.name}, self-discharge, "
         f"SoC {SoC_init:.3f} to {SoC_final:.3f} in {duration.total_seconds()} s"
     )
 
@@ -83,7 +83,7 @@ def experiment_self_discharge_lipo() -> None:
 
     sim.run(fn=step, duration_s=duration.total_seconds())
     sim.plot(
-        f"XP {cfg1.name}, self-discharge, "
+        f"Experiment {cfg1.name}, self-discharge, "
         f"SoC {SoC_init:.3f} to {SoC_final:.3f} in {duration.total_seconds()} s"
     )
 
@@ -112,7 +112,7 @@ def experiment_self_discharge_tantal_avx() -> None:
         return 0
 
     sim.run(fn=step, duration_s=duration.total_seconds())
-    sim.plot(f"XP Tantal AVX, self-discharge {duration.total_seconds()} s")
+    sim.plot(f"Experiment Tantal AVX, self-discharge {duration.total_seconds()} s")
 
 
 def experiment_self_discharge_mlcc_tayo() -> None:
@@ -141,7 +141,7 @@ def experiment_self_discharge_mlcc_tayo() -> None:
         return 0
 
     sim.run(fn=step, duration_s=duration.total_seconds())
-    sim.plot(f"XP MLCC Tayo, self-discharge {duration.total_seconds()} s")
+    sim.plot(f"Experiment MLCC Tayo, self-discharge {duration.total_seconds()} s")
 
 
 if __name__ == "__main__":

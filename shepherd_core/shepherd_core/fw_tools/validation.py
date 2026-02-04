@@ -13,7 +13,7 @@ from intelhex import IntelHex
 from intelhex import IntelHexError
 from pydantic import validate_call
 
-from shepherd_core.data_models.content.firmware_datatype import FirmwareDType
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 from shepherd_core.logger import log
 
 from .converter_elf import elf_to_hex

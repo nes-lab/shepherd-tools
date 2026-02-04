@@ -1,0 +1,164 @@
+datatype: EnergyEnvironment
+parameters:
+  id: 175951647425341919
+  name: synthetic_multivariate_random_walk_solar
+  description: I-V Surface of an emulated PV cell setup. Uses a multivariate random
+    walk to determine open-circuit voltages for the cells. Uses the given PV panel
+    model to calculate terminal current at given terminal voltage. Applies a voltage
+    ramp to generate I-V surfaces.
+  comment: created with extra\eenv_generator\ivsurfaces_multivariate_random_walk.py
+  created: 2026-02-04 01:41:10.458220
+  updated_last: 2026-02-04 01:41:10.458223
+  owner: Ingmar
+  group: NES_Lab
+  visible2group: true
+  visible2all: true
+  sw_ver: 2026.02.1
+  energy_profiles:
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node000.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.012670993022019364
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node001.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.018150813646026862
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node002.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.03456454374414245
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node003.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.011808918940583318
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node004.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.011777509655762535
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node005.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.007043031316072379
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node006.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.027921367255342597
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node007.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.009883351119412478
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node008.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.010574490655850824
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node009.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.01681716745010846
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node010.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.04923246052215327
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node011.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.013762961640616482
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node012.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.03332515012601685
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node013.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.023600358921435388
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node014.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.010216483587503277
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node015.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.009871690218167861
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node016.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.013943792853158814
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node017.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.007658294112056571
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node018.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.019655537117916712
+    valid: true
+    repetitions_ok: false
+  - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_multivariate_random_walk/solar_ANYSOLAR_KXOB201K04F_T298K/node019.h5
+    data_type: ivcurve
+    data_2_copy: false
+    duration: 3600.0
+    energy_Ws: 0.010217004731956402
+    valid: true
+    repetitions_ok: false
+  metadata:
+    seed: 32220789340897324098232347119065234157809
+    energy type: light
+    energy source: multivariate random walk that mimics natural sun light and clouds
+    transducer: ANYSOLAR KXOB201K04F (PV)
+    temperature: 25 degC
+  modifications: []

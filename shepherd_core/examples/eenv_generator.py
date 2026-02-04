@@ -1,4 +1,4 @@
-"""Create a set of static artificial energy environments."""
+"""Create a set of static synthetic energy environments."""
 
 from itertools import product
 from pathlib import Path
@@ -29,7 +29,7 @@ for _v, _c in product(voltages_V, currents_A):
         log.info("File exists, will skip: %s", file_path.name)
     else:
         with ShpWriter(file_path) as file:
-            file.store_hostname("artificial")
+            file.store_hostname("synthetic")
             # values in SI units
             timestamp_vector = np.arange(0.0, duration_s, file.sample_interval_ns / 1e9)
             voltage_vector = np.linspace(_v, _v, int(file.samplerate_sps * duration_s))

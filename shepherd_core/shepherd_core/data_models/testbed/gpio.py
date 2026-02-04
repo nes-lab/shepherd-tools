@@ -3,6 +3,7 @@
 from enum import Enum
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import StringConstraints
@@ -24,6 +25,7 @@ class Direction(str, Enum):
     Bidirectional = IO = "IO"
 
 
+@final
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component."""
 

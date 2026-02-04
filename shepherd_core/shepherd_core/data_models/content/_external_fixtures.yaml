@@ -3,185 +3,193 @@
   parameters:
     id: 263956097252422
     name: eenv_static_2000mV_10mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 10mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 10mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:27:02.177941
     updated_last: 2024-02-25 11:32:34.140144
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_10mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 72.00000003599966
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_10mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 72.00000003599966
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.764595+02:00
   parameters:
     id: 98233941059
     name: eenv_static_2000mV_1mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 1mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 1mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:28:37.291941
     updated_last: 2024-02-25 11:33:54.292910
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_1mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 7.200000003599944
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_1mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.200000003599944
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.772144+02:00
   parameters:
     id: 39006156751
     name: eenv_static_2000mV_50mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 50mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 50mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:26:18.621440
     updated_last: 2024-02-25 11:31:53.183281
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_50mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 360.00000018000185
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_50mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 360.00000018000185
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.779737+02:00
   parameters:
     id: 1479667372943113
     name: eenv_static_2000mV_5mA_3600s
-    description: Artificial static Energy Environment, 2000mV, 5mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 2000mV, 5mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:27:48.976440
     updated_last: 2024-02-25 11:33:15.250555
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_5mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 36.00000001799983
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_2000mV_5mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 36.00000001799983
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.787329+02:00
   parameters:
     id: 664848260660744
     name: eenv_static_3000mV_10mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 10mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 10mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:24:02.885439
     updated_last: 2024-02-25 11:29:52.671833
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_10mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 107.999999999999
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_10mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 107.999999999999
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.794922+02:00
   parameters:
     id: 1356600095104317
     name: eenv_static_3000mV_1mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 1mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 1mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:25:32.729442
     updated_last: 2024-02-25 11:31:12.003732
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_1mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 10.799999999999885
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_1mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 10.799999999999885
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.802410+02:00
   parameters:
     id: 797777832715661
     name: eenv_static_3000mV_50mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 50mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 50mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:23:18.980940
     updated_last: 2024-02-25 11:29:12.185905
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_50mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 539.9999999999999
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_50mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 539.9999999999999
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: EnergyEnvironment
   created: 2025-05-12 17:28:39.810147+02:00
   parameters:
     id: 490016297899923
     name: eenv_static_3000mV_5mA_3600s
-    description: Artificial static Energy Environment, 3000mV, 5mA, 3600s
+    description: DEPRECATED! Artificial static Energy Environment, 3000mV, 5mA, 3600s
     comment: null
+    deprecated: use newer 'synthetic_static_...'
     created: 2023-09-27 19:24:47.092941
     updated_last: 2024-02-25 11:30:33.170119
     owner: Ingmar
     group: NES_Lab
     visible2group: true
     visible2all: true
-    data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_5mA_3600s.h5
-    data_type: ivsample
-    data_local: false
-    duration: 3600.0
-    energy_Ws: 53.9999999999995
-    valid: true
-    light_source: null
-    weather_conditions: null
-    indoor: true
-    location: Lab-VSrc
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/eenv_static_3000mV_5mA_3600s.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 53.9999999999995
+      valid: true
+      repetitions_ok: true
+    metadata:
+      source: virtual PowerSupply
 - datatype: Firmware
   created: 2025-05-12 17:28:39.825659+02:00
   parameters:
@@ -209,7 +217,7 @@
     data: /var/shepherd/content/fw/nes_lab/msp430_deep_sleep/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false
 - datatype: Firmware
   created: 2025-05-12 17:28:39.834276+02:00
   parameters:
@@ -237,7 +245,7 @@
     data: /var/shepherd/content/fw/nes_lab/msp430_spi_fram/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false
 - datatype: Firmware
   created: 2025-05-12 17:28:39.842993+02:00
   parameters:
@@ -265,7 +273,7 @@
     data: /var/shepherd/content/fw/nes_lab/msp430_testable/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false
 - datatype: Firmware
   created: 2025-05-12 17:28:39.851412+02:00
   parameters:
@@ -293,7 +301,7 @@
     data: /var/shepherd/content/fw/nes_lab/nrf52_deep_sleep/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false
 - datatype: Firmware
   created: 2025-05-12 17:28:39.859962+02:00
   parameters:
@@ -321,7 +329,7 @@
     data: /var/shepherd/content/fw/nes_lab/nrf52_demo_rf/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false
 - datatype: Firmware
   created: 2025-05-12 17:28:39.868340+02:00
   parameters:
@@ -350,7 +358,7 @@
     data: /var/shepherd/content/fw/nes_lab/nrf52_rf_survey/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false
 - datatype: Firmware
   created: 2025-05-12 17:28:39.876819+02:00
   parameters:
@@ -378,7 +386,7 @@
     data: /var/shepherd/content/fw/nes_lab/nrf52_rf_test/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false
 - datatype: Firmware
   created: 2025-05-12 17:28:39.885271+02:00
   parameters:
@@ -407,4 +415,4 @@
     data: /var/shepherd/content/fw/nes_lab/nrf52_testable/build.elf
     data_type: path_elf
     data_hash: null
-    data_local: false
+    data_2_copy: false

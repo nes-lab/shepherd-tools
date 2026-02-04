@@ -108,7 +108,7 @@ def experiment_current_ramp_pos(config: VirtualStorageConfig) -> None:
         return 0.1 + 0.15 * t_s / duration_s  # pru-model can handle +- 268 mA
 
     sim.run(fn=current_trace, duration_s=duration_s)
-    sim.plot(path_here, f"XP {config.name}, current charge ramp (positive)")
+    sim.plot(path_here, f"Experiment {config.name}, current charge ramp (positive)")
 
 
 def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
@@ -125,7 +125,7 @@ def experiment_current_ramp_neg(config: VirtualStorageConfig) -> None:
         return -(0.1 + 0.14 * t_s / duration_s)  # pru-model can handle +- 268 mA
 
     sim.run(fn=current_trace, duration_s=duration_s)
-    sim.plot(path_here, f"XP {config.name}, current discharge ramp (negative)")
+    sim.plot(path_here, f"Experiment {config.name}, current discharge ramp (negative)")
 
 
 def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
@@ -141,7 +141,7 @@ def experiment_pulsed_discharge(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_pulse.step, duration_s=min(1_000, DURATION_MAX))
-    sim.plot(path_here, f"XP {config.name}, pulsed discharge .1A, 1000 s (figure_9a)")
+    sim.plot(path_here, f"Experiment {config.name}, pulsed discharge .1A, 1000 s (figure_9a)")
 
 
 def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
@@ -157,7 +157,7 @@ def experiment_pulsed_charge(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_pulse.step, duration_s=min(1_000, DURATION_MAX))
-    sim.plot(path_here, f"XP {config.name}, pulsed charge .1A, 1000 s (figure_9b)")
+    sim.plot(path_here, f"Experiment {config.name}, pulsed charge .1A, 1000 s (figure_9b)")
 
 
 def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
@@ -170,7 +170,9 @@ def experiment_pulsed_resistive_charge(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_pulse.step, duration_s=min(3_000, DURATION_MAX))
-    sim.plot(path_here, f"XP {config.name}, pulsed resistive charge 20 Ohm to 4.2 V, 3000 s")
+    sim.plot(
+        path_here, f"Experiment {config.name}, pulsed resistive charge 20 Ohm to 4.2 V, 3000 s"
+    )
 
 
 def experiment_resistive_load(config: VirtualStorageConfig) -> None:
@@ -186,7 +188,7 @@ def experiment_resistive_load(config: VirtualStorageConfig) -> None:
         dt_s=dt_s,
     )
     sim.run(fn=i_charge, duration_s=min(1_000, DURATION_MAX))
-    sim.plot(path_here, f"XP {config.name}, resistive load 20 Ohm from 4.2 V, 1000 s")
+    sim.plot(path_here, f"Experiment {config.name}, resistive load 20 Ohm from 4.2 V, 1000 s")
 
 
 def experiment_self_discharge() -> None:
@@ -210,7 +212,7 @@ def experiment_self_discharge() -> None:
     sim.run(fn=step, duration_s=min(duration.total_seconds(), DURATION_MAX))
     sim.plot(
         path_here,
-        f"XP {config.name}, self-discharge, "
+        f"Experiment {config.name}, self-discharge, "
         f"SoC {SoC_start} to {SoC_target} in {duration.total_seconds()} s",
     )
 

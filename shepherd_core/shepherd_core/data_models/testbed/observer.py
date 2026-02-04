@@ -3,6 +3,7 @@
 from datetime import datetime
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from pydantic import Field
 from pydantic import IPvAnyAddress
@@ -26,6 +27,7 @@ MACStr = Annotated[
 ]
 
 
+@final
 class Observer(ShpModel, title="Shepherd-Sheep"):
     """meta-data representation of a testbed-component (physical object)."""
 

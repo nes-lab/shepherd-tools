@@ -16,6 +16,7 @@ from collections.abc import Sequence
 from datetime import timedelta
 from typing import Annotated
 from typing import Any
+from typing import final
 
 from annotated_types import Ge
 from annotated_types import Gt
@@ -38,6 +39,7 @@ soc_t = Annotated[float, Ge(0.0), Le(1.0)]
 # TODO: do we need to set initial voltage, or is SoC ok? add V_OC_to_SoC()
 
 
+@final
 class VirtualStorageConfig(ContentModel, title="Config for the virtual energy storage"):
     """KiBaM Battery model based on two papers.
 
@@ -378,6 +380,7 @@ u32 = Annotated[int, Field(ge=0, lt=2**32)]
 lut_storage = Annotated[list[u32], Field(min_length=LuT_SIZE, max_length=LuT_SIZE)]
 
 
+@final
 class StoragePRUConfig(ShpModel):
     """Map settings-list to internal state-vars struct StorageConfig.
 

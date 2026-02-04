@@ -1,20 +1,57 @@
 """I-V Surface generation script for a multivariate random walk of sample PV panels."""
 
 import math
-import shutil
-import sys
+from collections.abc import Callable
 from multiprocessing import Pool
 from multiprocessing import cpu_count
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+import yaml
 from commons import EEnvGenerator
+from commons import common_seed
+from commons import process_sp
+from commons import root_storage_default
+from pydantic import BaseModel
 from scipy import constants as const
 from scipy.optimize import newton
 from scipy.special import lambertw
 from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models import EnergyEnvironment
+from shepherd_core.data_models import EnergyProfile
+from shepherd_core.data_models import Wrapper
 from shepherd_core.logger import log
 from typing_extensions import Self
+
+
+class Params(BaseModel):
+    """Config model with default parameters."""
+
+    root_path: Path = root_storage_default
+    dir_name: str = "synthetic_multivariate_random_walk"
+    duration: int = 1 * 60 * 60
+    chunk_size: int = 2_000_000
+    # custom config below
+    node_count: int = 20
+    # 1 combinations, 20 nodes, 1h
+    description: str = (
+        "I-V Surface of an emulated PV cell setup. "
+        "Uses a multivariate random walk to determine open-circuit voltages for the cells. "
+        "Uses the given PV panel model to calculate terminal current at given terminal voltage. "
+        "Applies a voltage ramp to generate I-V surfaces."
+    )
+    metadata: dict[str, Any] = {
+        "seed": common_seed,
+        "energy type": "light",
+        "energy source": "multivariate random walk that mimics natural sun light and clouds",
+        "transducer": "ANYSOLAR KXOB201K04F (PV)",
+        "temperature": "25 degC",
+    }
+
+
+params_default = Params()
+path_file: Path = Path(__file__)
 
 
 class SDMNoRP:
@@ -152,7 +189,7 @@ class SDMNoRP:
     def KXOB201K04F(cls, T_K: float | None = None) -> Self:
         if T_K is None:
             T_K = cls.T_stc
-        T_suffix = f"_{T_K:.0f}K"
+        T_suffix = f"_T{T_K:.0f}K"
 
         return cls(
             name=f"ANYSOLAR_KXOB201K04F{T_suffix}",
@@ -172,7 +209,7 @@ class MultivarRndWalk(EEnvGenerator):
     I-V Surface generator that emulates a PV panel setup.
 
     Uses a multivariate random walk to determine open-circuit voltages for the different panels.
-    Uses the given PV panel model to calculate terminal current given terminal voltage. Applies
+    Uses the given PV panel model to calculate terminal current at given terminal voltage. Applies
     a voltage ramp to generate surfaces.
     """
 
@@ -268,21 +305,20 @@ class MultivarRndWalk(EEnvGenerator):
         )
 
 
-if __name__ == "__main__":
-    path_here = Path(__file__).parent.absolute()
-    if Path("/var/shepherd/").exists():
-        path_eenv = Path("/var/shepherd/content/eenv/nes_lab/")
-    else:
-        path_eenv = path_here / "content/eenv/nes_lab/"
+def get_worker_configs(
+    params: Params = params_default,
+) -> list[tuple[Callable, dict[str, Any]]]:
+    """Generate worker-configurations for multivariate random walks.
 
-    node_count: int = 20
-    seed: int = 32220789340897324098232347119065234157809
-    duration: int = 4 * 60 * 60
+    The config is a list of tuples. Each containing a
+    callable function and a dict with its arguments.
+    """
+    cfgs: list[tuple[Callable, dict[str, Any]]] = []
 
     pv = SDMNoRP.KXOB201K04F()
     generator = MultivarRndWalk(
-        node_count=node_count,
-        seed=seed,
+        node_count=params.node_count,
+        seed=common_seed,
         correlation=0.9,
         variance=100e-12,
         V_OC_min=0.0,
@@ -294,25 +330,74 @@ if __name__ == "__main__":
     )
 
     # Create output folder (or skip)
-    name = f"artificial_solar_multivariate_random_{pv.name}"
-    folder_path = path_eenv / name
+    folder_path = params.root_path / params.dir_name / f"solar_{pv.name}"
     # Check whether the output folder exists
     # Due to the multivariate generation method, nodes can not be generated
     # independently. Therefore, expanding an existing EEnv is not possible.
     if folder_path.exists():
-        log.info(
+        log.warning(
             "Folder %s exists. Skipping generation. "
             "(Generating nodes independently is not supported)",
             folder_path,
         )
-        sys.exit(1)
+        return cfgs
 
-    try:
-        folder_path.mkdir(parents=True, exist_ok=False)
-        node_paths = [folder_path / f"node{node_idx:03d}.h5" for node_idx in range(node_count)]
+    node_paths = [folder_path / f"node{node_idx:03d}.h5" for node_idx in range(params.node_count)]
+    args: dict[str, Any] = {
+        "file_paths": node_paths,
+        "duration": params.duration,
+        "chunk_size": params.chunk_size,
+    }
+    cfgs.append((generator.generate_h5_files, args))
+    return cfgs
 
-        generator.generate_h5_files(node_paths, duration=duration, chunk_size=1_000_000)
-    except:
-        log.error("Exception encountered. Removing incomplete dataset: %s", folder_path)
-        shutil.rmtree(folder_path)
-        raise
+
+def create_meta_data(params: Params = params_default) -> None:
+    """Generate a YAML containing the metadata for the dataset.
+
+    Combines data from hdf5-files itself and manually added descriptive data.
+    """
+    folder_path = params.root_path / params.dir_name
+    name_ds = f"solar_{SDMNoRP.KXOB201K04F().name}"
+
+    eprofiles: list[EnergyProfile] = []
+    for node_idx in range(params.node_count):
+        file_path = folder_path / name_ds / f"node{node_idx:03d}.h5"
+        epro = EnergyProfile.derive_from_file(file_path)
+        data_update = {
+            # pretend data is available on server already (will be copied)
+            "data_path": Path("/var/shepherd/content/eenv/nes_lab/")
+            / file_path.relative_to(params.root_path),
+            "data_2_copy": False,
+        }
+        eprofiles.append(epro.model_copy(deep=True, update=data_update))
+
+    eenv = EnergyEnvironment(
+        name=f"{params.dir_name}_solar",
+        # TODO: deliberately not using {name_ds} to keep it short
+        description=params.description,
+        comment=f"created with {path_file.relative_to(path_file.parents[2])}",
+        energy_profiles=eprofiles,
+        owner="Ingmar",
+        group="NES_Lab",
+        visible2group=True,
+        visible2all=True,
+        metadata=params.metadata,
+    )
+
+    eenv_wrap = Wrapper(
+        datatype=EnergyEnvironment.__name__,
+        parameters=eenv.model_dump(exclude_none=True),
+    )
+    wraps_yaml = yaml.safe_dump(
+        eenv_wrap.model_dump(exclude_unset=True, exclude_defaults=True),
+        default_flow_style=False,
+        sort_keys=False,
+    )
+    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open("w") as f:
+        f.write(wraps_yaml)
+
+
+if __name__ == "__main__":
+    process_sp(get_worker_configs())
+    create_meta_data()

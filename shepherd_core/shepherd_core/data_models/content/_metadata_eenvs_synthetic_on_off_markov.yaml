@@ -1,0 +1,3280 @@
+- datatype: EnergyEnvironment
+  parameters:
+    id: 779043100862769069
+    name: synthetic_on_off_markov_avg_10%_100us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (10.0
+      % duty with 0.1 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:40:53.647168
+    updated_last: 2026-02-04 01:40:53.647171
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.197119780008003
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.201624979995485
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.200318779999114
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.205073579985909
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.20163897999545
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.209632979973242
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199999180000004
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.200819979997724
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2001807799995
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.198676380003677
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.19958018000117
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.195545780012373
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.198339180004617
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.193042580019328
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.205077579985895
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.20297777999173
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.1950873800136455
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.213921379961329
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.206269379982587
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_100us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.210971379969523
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      on_duration_s: 0.0001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 606659251292967090
+    name: synthetic_on_off_markov_avg_10%_5000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (10.0
+      % duty with 5.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:42:30.027737
+    updated_last: 2026-02-04 01:42:30.027740
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.223882979933658
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.185137380041279
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.189451980029297
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.1780499800609725
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.219599579945557
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.274882579791992
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.140533180165185
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2248261799310365
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.218680379948108
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.188599980031665
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.287862779755937
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.250547979859587
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2212933799408505
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.194506180015261
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2065661799817615
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.207824579978266
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.203284579990877
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.173184380074488
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.167760780089552
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_5000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.214327179960201
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      on_duration_s: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 22980322566356557
+    name: synthetic_on_off_markov_avg_10%_1000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (10.0
+      % duty with 1.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:44:09.265901
+    updated_last: 2026-02-04 01:44:09.265905
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.213311179963023
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.19761218000663
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.198246980004867
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.203959979989
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.19043478002657
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.224733979931297
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.210589579970582
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.188362580032325
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.20630217998249
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.189369780029531
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.204365779987873
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.212109179966367
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.185607780039983
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.172737180075731
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.192483780020878
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.222230379938246
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.191464180023711
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2011623799967674
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.188266980032592
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_1000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.198253580004849
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      on_duration_s: 0.001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 608136287423485978
+    name: synthetic_on_off_markov_avg_10%_500us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (10.0
+      % duty with 0.5 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:45:48.154050
+    updated_last: 2026-02-04 01:45:48.154054
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.208945979975152
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.201875979994791
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.194590980015024
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2052127799855175
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.20213137999408
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.202369179993418
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.192578580020614
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.193390780018359
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.199716180000789
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.189433180029352
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.209558779973448
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.184168780043976
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.19470438001471
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.186099380038611
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.201667179995368
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2021747799939595
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2009001799975
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.2063561799823415
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.186008580038867
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_10%_500us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 7.221131379941302
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.1
+      on_duration_s: 0.0005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 726097887459105530
+    name: synthetic_on_off_markov_avg_20%_100us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (20.0
+      % duty with 0.1 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:47:44.991233
+    updated_last: 2026-02-04 01:47:44.991236
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.398083760005324
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.403468759990362
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.395596160012238
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.39790216000583
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.401056559997064
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.412930959964081
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.391961560022333
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.404188359988364
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.39616996001064
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.407196759980012
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.39870796000359
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.395405160012759
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.401915559994686
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.391978560022286
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.395651160012086
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.40302115999161
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.400501959998605
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.409768159972874
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.402413759993294
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_100us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.413027959963813
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      on_duration_s: 0.0001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 801697096886730511
+    name: synthetic_on_off_markov_avg_20%_5000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (20.0
+      % duty with 5.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:49:22.953005
+    updated_last: 2026-02-04 01:49:22.953013
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.455723159845213
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.407609359978867
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.4227535599368
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.40737235997952
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.345189960152258
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.499493759723624
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.364294360099183
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.390367360026753
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.389653960028737
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.377034160063797
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.458325359837984
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.461353559829574
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.45193155985575
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.349367160140652
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.397083760008107
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.41457735995951
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.385792360039469
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.356268360121478
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.388345360032375
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_5000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.463151359824582
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      on_duration_s: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 704631360784048447
+    name: synthetic_on_off_markov_avg_20%_1000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (20.0
+      % duty with 1.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:51:01.683824
+    updated_last: 2026-02-04 01:51:01.683827
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.425269559929804
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.410172559971748
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.395383560012831
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.424772359931184
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.384844160042102
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.391754160022908
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.41280215996444
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.372531960076296
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.385546760040153
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.385595560040013
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.410278159971446
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.383654560045406
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.376165760066202
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.385195760041125
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.411494559968066
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.403721759989656
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.376043760066546
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.433939359905727
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.389746360028486
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_1000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.436992759897244
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      on_duration_s: 0.001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1148921925896531810
+    name: synthetic_on_off_markov_avg_20%_500us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (20.0
+      % duty with 0.5 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:52:44.789987
+    updated_last: 2026-02-04 01:52:44.789989
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.41595535995568
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.407817559978282
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.391880760022554
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.395094960013626
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.402609759992753
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.40216635999398
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.386608360037203
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.39903676000268
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.400780559997838
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.395476560012565
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.404858959986505
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.398625760003817
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.3771031600636
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.385104360041373
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.406324159982432
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.405017759986064
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.376610560064975
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.42055115994291
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.391755160022903
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_20%_500us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 14.423455759934843
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.2
+      on_duration_s: 0.0005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 233257728037422960
+    name: synthetic_on_off_markov_avg_5%_100us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (5.0
+      % duty with 0.1 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:54:29.364402
+    updated_last: 2026-02-04 01:54:29.364405
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.600490389998637
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599615390001068
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.601516589995789
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.600278989999226
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.605866189983705
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6086905899758603
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6002373899993416
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6012861899964284
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6027899899922504
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5973131900074633
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599009790002752
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.598060390005389
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.596973990008406
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5960697900109166
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6016877899953132
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.601296189996401
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.596042790010992
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.612028989966586
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6023087899935877
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_100us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6063085899824756
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      on_duration_s: 0.0001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 109308648482402549
+    name: synthetic_on_off_markov_avg_5%_5000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (5.0
+      % duty with 5.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:56:03.681322
+    updated_last: 2026-02-04 01:56:03.681326
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.603962389988994
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6041995899883355
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.570389390082252
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5944569900153986
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.616964789952875
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6217431899396018
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.548821990142161
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6035497899901388
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.611029989969362
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5808661900531495
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6338653899059308
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.611571789967857
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.561853590105962
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5652337900965705
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6091801899745
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6365523898984646
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5942293900160296
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.60333358999074
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5687077900869237
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_5000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6062327899826867
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      on_duration_s: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 422153806650614635
+    name: synthetic_on_off_markov_avg_5%_1000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (5.0
+      % duty with 1.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:57:41.088533
+    updated_last: 2026-02-04 01:57:41.088535
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6164263899543716
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.604784589986708
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.593444790018209
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6178241899504884
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5884995900319447
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6288413899198835
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6001105899996935
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6021919899939108
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6050219899860503
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5915783900233937
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.600191589999469
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6171001899524984
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.589719790028556
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.586124390038544
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.599876590000342
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.610829589969917
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5903511900268037
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5981565900051193
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.598602790003882
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_1000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5988527900031877
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      on_duration_s: 0.001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 552708966250968350
+    name: synthetic_on_off_markov_avg_5%_500us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (5.0
+      % duty with 0.5 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 01:59:18.918621
+    updated_last: 2026-02-04 01:59:18.918624
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6102105899716372
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5893283900296415
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.602461589993163
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.610775589970068
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.588546990031813
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.60947538997368
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5974927900069655
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6020803899942204
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6009745899972923
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.596459990009833
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.598186590005038
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6043183899880056
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.603414589990516
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5892467900298715
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5982627900048256
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.6061631899828805
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.602849989992084
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.5962057900105395
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.596118190010783
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_5%_500us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 3.596454590009848
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.05
+      on_duration_s: 0.0005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1133985902568135718
+    name: synthetic_on_off_markov_avg_1%_100us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (1.0
+      % duty with 0.1 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:00:57.730648
+    updated_last: 2026-02-04 02:00:57.730652
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7218929979947419
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7204501979987493
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7209489979973639
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7218585979948374
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7192523980020766
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7234757979903451
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7212757979964562
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7189783980028384
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7203751979989579
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7199005980002761
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7200841979997666
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7219721979945221
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7207681979978661
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.716577198009508
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7202691979992524
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7204773979986738
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7205799979983892
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.722159997994
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7200323979999101
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_100us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7183217980046616
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      on_duration_s: 0.0001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1135211384503131065
+    name: synthetic_on_off_markov_avg_1%_5000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (1.0
+      % duty with 5.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:02:31.240700
+    updated_last: 2026-02-04 02:02:31.240703
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7224687979931422
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7213161979963437
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7139851980167079
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7223891979933635
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7238293979893624
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7203101979991382
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7205203979985546
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7149589980140029
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7048231980421577
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7176571980065076
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7265741979817383
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7219925979944649
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.6982919980603
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7206095979983066
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7376477979509779
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7290217979749393
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7142259980160389
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7210173979971738
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.718791398003357
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_5000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7313357979685121
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      on_duration_s: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 337083168157768289
+    name: synthetic_on_off_markov_avg_1%_1000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (1.0
+      % duty with 1.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:04:05.502997
+    updated_last: 2026-02-04 02:04:05.503001
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7245555979873456
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7215061979958163
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7103079980269221
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7179321980057441
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7194315980015792
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7345677979595336
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7159391980112801
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7247313979868572
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7230455979915401
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7106383980260046
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7262419979826614
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7259197979835559
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7151609980134416
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7186963980036212
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7126835980203228
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7326257979649282
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7180051980055413
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7203785979989485
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7156367980121202
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_1000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7197275980007566
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      on_duration_s: 0.001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 211273138182085368
+    name: synthetic_on_off_markov_avg_1%_500us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (1.0
+      % duty with 0.5 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:05:42.086283
+    updated_last: 2026-02-04 02:05:42.086287
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7219339979946281
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7191599980023333
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7171525980079094
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7181745980050704
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7173539980073503
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7282511979770802
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7130003980194431
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7197763980006211
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7237409979896086
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7151789980133917
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7230429979915471
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.72650179798194
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7200857979997616
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7221113979941348
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7128367980198979
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7214051979960967
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7156767980120091
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.714687798014756
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7173213980074405
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_1%_500us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 0.7145813980150515
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.01
+      on_duration_s: 0.0005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 202713196916508033
+    name: synthetic_on_off_markov_avg_2%_100us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (2.0
+      % duty with 0.1 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:07:21.533062
+    updated_last: 2026-02-04 02:07:21.533064
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4406659959981496
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4420185959943923
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4414061959960942
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4415107959958031
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4413513959962463
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4463847959822644
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4412691959964752
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4369959960083447
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4408547959976254
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4386405960037763
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4401261959996494
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4400661959998158
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4395215960013288
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4376597960065005
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4405293959985295
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4391113960024675
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4410775959970066
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4461473959829234
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4384315960043568
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_100us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4432307959910256
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      on_duration_s: 0.0001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 1033610459987147913
+    name: synthetic_on_off_markov_avg_2%_5000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (2.0
+      % duty with 5.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:08:55.196927
+    updated_last: 2026-02-04 02:08:55.196929
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4369681960084215
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4501395959718346
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4196055960566514
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.445812395983855
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4427263959924264
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.456447395954313
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4286063960316486
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4333179960185611
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4126723960759102
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4192601960576108
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4568189959532802
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.442704395992488
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4026585961037268
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4142981960713938
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4572025959522152
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.45640859595442
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4394117960016337
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4320187960221702
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.451592395967799
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_5000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4700293959165847
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      on_duration_s: 0.005
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 725876780344911191
+    name: synthetic_on_off_markov_avg_2%_1000us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (2.0
+      % duty with 1.0 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:10:29.987473
+    updated_last: 2026-02-04 02:10:29.987477
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4463381959823942
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4388769960031191
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.433016996019397
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.444094995988625
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4360905960108596
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4575051959513747
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4353855960128172
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4485673959762009
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.446149595982918
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4324999960208329
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4523675959656466
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4517403959673874
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.436675196009236
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4427183959924483
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4289655960306509
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4470715959803568
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4361233960107684
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4365619960095504
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4314043960238767
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_1000us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4374389960071134
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      on_duration_s: 0.001
+    modifications: []
+- datatype: EnergyEnvironment
+  parameters:
+    id: 216987742951907748
+    name: synthetic_on_off_markov_avg_2%_500us_2000mV_10mA
+    description: Random on-off pattern with fixed on-voltage & -current (2.000 V,
+      0.010 A). Each node's state is independently generated using a markov process
+      such that the average duty cycle and on-duration matches the given values (2.0
+      % duty with 0.5 ms on-duration).
+    comment: created with extra\eenv_generator\ivtraces_on_off_markov.py
+    created: 2026-02-04 02:11:58.759770
+    updated_last: 2026-02-04 02:11:58.759772
+    owner: Ingmar
+    group: NES_Lab
+    visible2group: true
+    visible2all: true
+    sw_ver: 2026.02.1
+    energy_profiles:
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node000.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.445094995985847
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node001.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4381703960050818
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node002.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.441611995995523
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node003.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.440024395999932
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node004.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4353205960129984
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node005.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4501035959719346
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node006.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4317013960230518
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node007.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.442508395993032
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node008.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4399581960001162
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node009.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.434554396015127
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node010.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.440262595999271
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node011.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4453475959851458
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node012.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4429575959917842
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node013.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4327963960200105
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node014.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4364033960099907
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node015.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.443119595991335
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node016.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4376367960065646
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node017.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4342239960160441
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node018.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4434769959903413
+      valid: true
+      repetitions_ok: false
+    - data_path: /var/shepherd/content/eenv/nes_lab/synthetic_on_off_markov/avg_2%_500us_2000mV_10mA/node019.h5
+      data_type: ivsample
+      data_2_copy: false
+      duration: 3600.0
+      energy_Ws: 1.4356021960122167
+      valid: true
+      repetitions_ok: false
+    metadata:
+      seed: 32220789340897324098232347119065234157809
+      on_voltage_V: 2.0
+      on_current_A: 0.01
+      duty_cycle: 0.02
+      on_duration_s: 0.0005
+    modifications: []

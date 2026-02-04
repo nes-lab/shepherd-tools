@@ -3,6 +3,7 @@
 from importlib import import_module
 from pathlib import Path
 from typing import Any
+from typing import final
 
 from pydantic import validate_call
 
@@ -14,6 +15,7 @@ from .client_abc_fix import AbcClient
 from .user_model import User
 
 
+@final
 class WebClient(AbcClient):
     """Client-Class to access a testbed instance over the web.
 
@@ -125,26 +127,26 @@ class WebClient(AbcClient):
         return False
 
     def submit_experiment(self, xp: ShpModel) -> str:
-        """Transmit XP to server to validate its feasibility.
+        """Transmit experiment to server to validate its feasibility.
 
         - Experiment will be added to DB (if not present)
-            - if the same experiment is resubmitted it will just return the ID of that XP
+            - if the same experiment is resubmitted it will just return the ID of that experiment
         - Experiment will be validated by converting it into a task-set (additional validation)
         - optional: the scheduler should validate there are no time-collisions
 
         Will return an ID if valid, otherwise an empty string.
         TODO: maybe its better to throw specific errors if validation fails
-        TODO: is it better to include these experiment-related FNs in Xp-Class?
+        TODO: is it better to include these experiment-related FNs in experiment-Class?
         TODO: Experiment-typehint for argument triggers circular import
         """
         raise NotImplementedError("TODO")
 
     def schedule_experiment(self, id_xp: str) -> bool:
-        """Enqueue XP on testbed."""
+        """Enqueue experiment on testbed."""
         raise NotImplementedError("TODO")
 
     def get_experiment_status(self, id_xp: str) -> str:
-        """Ask server about current state of XP.
+        """Ask server about current state of experiment.
 
         - after valid submission: disabled / deactivated
         - after scheduling: scheduled
