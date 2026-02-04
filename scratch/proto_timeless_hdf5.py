@@ -22,7 +22,7 @@ from shepherd_core import Compression
 from shepherd_core import Reader
 from shepherd_core import Writer
 
-path_demo = Path(r".\artificial_static_4h")
+path_demo = Path(r".\synthetic_static")
 
 file_paths = list(path_demo.rglob("*.h5"))
 

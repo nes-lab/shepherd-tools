@@ -19,7 +19,7 @@ Profiles embed generalized metadata:
 - maximum harvestable energy,
 - flag to signal a valid recording file,
 - flag to signal that repetitions are okay -> typically used by
-  static / artificial traces that don't cause unwanted correlation effects
+  static / synthetic traces that don't cause unwanted correlation effects
 
 Typical additional metadata keys for Energy Environments:
   - recording-tool/generation-script,
