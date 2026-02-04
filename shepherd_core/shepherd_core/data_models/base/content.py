@@ -9,6 +9,7 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Self
 
+from shepherd_core.logger import log
 from shepherd_core.version import version as core_ver
 
 from .shepherd import ShpModel
@@ -16,7 +17,7 @@ from .shepherd import ShpModel
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
 IdInt = Annotated[int, Field(ge=0, lt=2**128)]
-NameStr = Annotated[str, StringConstraints(max_length=32, pattern=r"^[^<>:;,?\"\*|\/\\]+$")]
+NameStr = Annotated[str, StringConstraints(max_length=50, pattern=r"^[^<>:;,?\"\*|\/\\]+$")]
 # ⤷ Regex = FileSystem-Compatible ASCII
 SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
 # ⤷ Regex = All Printable ASCII-Characters with Space
@@ -43,6 +44,8 @@ class ContentModel(ShpModel):
     comment: SafeStr | None = None
     created: datetime = Field(default_factory=datetime.now)
     updated_last: datetime = Field(default_factory=datetime.now)
+    deprecated: str | None = None
+    """ ⤷ deprecation-comments provoke a warning during validation of model."""
     # TODO: add dedicated 'inherit_from' field?
 
     # Ownership & Access
@@ -65,4 +68,6 @@ class ContentModel(ShpModel):
             raise ValueError(
                 "Public instances require a description (check visible2*- and description-field)"
             )
+        if isinstance(self.deprecated, str) and len(self.deprecated) > 0:
+            log.warning(f"Content {self.name} is deprecated: {self.deprecated}")
         return self
