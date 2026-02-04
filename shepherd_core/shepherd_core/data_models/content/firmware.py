@@ -58,7 +58,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     mcu: MCU
 
-    data: FirmwareStr | Path
+    data: Path | FirmwareStr
     data_type: FirmwareDType
     data_hash: str | None = None
     data_2_copy: bool = True
@@ -85,7 +85,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
             FirmwareDType.path_elf,
         }:
             try:
-                _ = Path(values.get("data"))
+                pdata = Path(values.get("data"))
+                values["data"] = pdata
             except (SyntaxError, NameError):
                 raise ValueError("Firmware-Path is invalid") from None
         return tb_client.fill_in_user_data(values)
@@ -186,15 +187,18 @@ class Firmware(ContentModel, title="Firmware of Target"):
         """Check if embedded file exists."""
         if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
             if not isinstance(self.data, Path):
-                raise ValueError("Firmware.data is not a Path (but type-property claims so)")
-            return self.data.exists()
+                log.warning(
+                    f"Firmware.data is not a Path (but type-property claims so) -> {self.name}"
+                )
+                return False
+            return Path(self.data).exists()
         return True
 
     def check(self) -> bool:
         """Check if embedded file is still valid or unchanged."""
         valid = True
         if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
-            valid &= isinstance(self.data, Path) and self.data.exists()
+            valid &= isinstance(self.data, Path) and Path(self.data).exists()
         if self.data_type in [FirmwareDType.base64_elf, FirmwareDType.base64_hex]:
             valid &= isinstance(self.data, str)
             # TODO: could also begin unpacking base64
