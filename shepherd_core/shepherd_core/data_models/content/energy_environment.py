@@ -130,7 +130,8 @@ class EnergyProfile(ShpModel):
                     )
                     return False
                 file_energy = reader.energy()
-                if self.energy_Ws != file_energy:
+                if abs(self.energy_Ws / file_energy - 1) >= 1e-9:
+                    # ⤷ needed error-margin because result may vary ~ 1e-16
                     log.error(
                         "EnergyProfiles max energy does not match file "
                         f"({self.energy_Ws} vs {file_energy} in {self.data_path})."
