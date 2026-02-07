@@ -1,6 +1,6 @@
 """Config for a Task programming the selected target."""
 
-from collections.abc import Set as AbstractSet
+from collections.abc import Iterable
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
@@ -79,6 +79,8 @@ class ProgrammingTask(ShpModel):
             protocol=fw.mcu.prog_protocol,
         )
 
-    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+    def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories."""
-        return any(self.firmware_file.is_relative_to(path) for path in paths)
+        firmware_pure = PurePosixPath(self.firmware_file.as_posix())
+        # ⤷ python<=3.10 needs .as_posix(), otherwise it adds '//'
+        return any(firmware_pure.is_relative_to(path) for path in paths)

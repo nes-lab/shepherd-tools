@@ -3,6 +3,9 @@
 This can be adapted by the user by importing 'config' and changing its variables.
 """
 
+from collections.abc import Set as AbstractSet
+from pathlib import PurePosixPath
+
 from pydantic import BaseModel
 from pydantic import HttpUrl
 
@@ -29,6 +32,11 @@ class ConfigDefault(BaseModel):
 
     TESTBED_SERVER: HttpUrl = HttpUrl("https://shepherd.cfaed.tu-dresden.de:8000/")
     """Server that holds up to date testbed fixtures"""
+
+    PATHS_ALLOWED: AbstractSet[PurePosixPath] = {
+        PurePosixPath("/var/shepherd/"),
+        PurePosixPath("/tmp/"),  # noqa: S108
+    }
 
 
 config = ConfigDefault()

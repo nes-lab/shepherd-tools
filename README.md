@@ -91,12 +91,12 @@ coverage report
 - update changelog in ``CHANGELOG.md``
 - move code from dev-branch to main by PR
 - add tag to commit - reflecting current version number - i.e. ``v2023.9.0``
-  - GitHub automatically creates a release & pushes the release to pypi
+  - GitHub automatically creates a release & pushes the release to PyPI
 - update release-text with latest Changelog (from `CHANGELOG.md`)
 - rebase dev-branch
 
 ```shell
-bump2version --allow-dirty --new-version 2026.02.3 patch
+bump2version --allow-dirty --new-version 2026.02.4 patch
 # ⤷ format: year.month.patch_release
 
 prek run --all-files

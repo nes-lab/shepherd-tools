@@ -1,7 +1,7 @@
 """Configuration for the Observer in Emulation-Mode."""
 
 import copy
-from collections.abc import Set as AbstractSet
+from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta
 from enum import Enum
@@ -182,14 +182,17 @@ class EmulationTask(ShpModel):
             sys_logging=xp.sys_logging,
         )
 
-    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+    def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories.
 
         TODO: could be added to validator (with a switch)
         """
-        all_ok = any(self.input_path.is_relative_to(path) for path in paths)
+        input_pure = PurePosixPath(self.input_path.as_posix())
+        # ⤷ python<=3.10 needs .as_posix(), otherwise it adds '//'
+        all_ok = any(input_pure.is_relative_to(path) for path in paths)
         if self.output_path is not None:
-            all_ok &= any(self.output_path.is_relative_to(path) for path in paths)
+            output_pure = PurePosixPath(self.output_path.as_posix())
+            all_ok &= any(output_pure.is_relative_to(path) for path in paths)
         return all_ok
 
 

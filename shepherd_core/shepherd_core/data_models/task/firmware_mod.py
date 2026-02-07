@@ -1,6 +1,6 @@
 """Config for Task that adds the custom ID to the firmware & stores it into a file."""
 
-from collections.abc import Set as AbstractSet
+from collections.abc import Iterable
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
@@ -94,9 +94,12 @@ class FirmwareModTask(ShpModel):
             kwargs["firmware_file"] = path_new.with_suffix(".hex")
         return cls(**kwargs)
 
-    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+    def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories."""
-        all_ok = any(self.firmware_file.is_relative_to(path) for path in paths)
+        firmware_pure = PurePosixPath(self.firmware_file.as_posix())
+        # ⤷ python<=3.10 needs .as_posix(), otherwise it adds '//'
+        all_ok = any(firmware_pure.is_relative_to(path) for path in paths)
         if isinstance(self.data, Path):
-            all_ok = any(self.data.is_relative_to(path) for path in paths)
+            data_pure = PurePosixPath(self.data.as_posix())
+            all_ok = any(data_pure.is_relative_to(path) for path in paths)
         return all_ok

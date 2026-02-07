@@ -116,19 +116,25 @@ class EnergyProfile(ShpModel):
             log.error(f"EnergyProfile is not a file ({self.data_path}).")
             return False
         try:
-            with Reader(self.data_path) as reader:
+            with Reader(self.data_path, verbose=False) as reader:
                 if self.duration != reader.runtime_s:
                     log.error(
-                        f"EnergyProfile duration does not match runtime of file ({self.data_path})."
+                        "EnergyProfile duration does not match runtime of file "
+                        f"({self.duration} vs {reader.runtime_s} in {self.data_path})."
                     )
                     return False
                 if self.valid != reader.is_valid():
                     log.error(
-                        f"EnergyProfile validity-state does not match file ({self.data_path})."
+                        "EnergyProfiles validity-state does not match file "
+                        f"({reader.is_valid()} in {self.data_path})."
                     )
                     return False
-                if self.energy_Ws != reader.energy():
-                    log.error(f"EnergyProfile max energy does not match file ({self.data_path}).")
+                file_energy = reader.energy()
+                if self.energy_Ws != file_energy:
+                    log.error(
+                        "EnergyProfiles max energy does not match file "
+                        f"({self.energy_Ws} vs {file_energy} in {self.data_path})."
+                    )
                     return False
         except TypeError:
             log.error(f"EnergyProfile - hdf5-file could not be read ({self.data_path})")
