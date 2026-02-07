@@ -1,5 +1,9 @@
 # History of Changes
 
+## v2026.2.4
+
+- fix and test implementations of .is_contained()
+
 ## v2026.2.3
 
 Bugfix-Release

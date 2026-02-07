@@ -1,8 +1,8 @@
 """Collection of tasks for all observers included in experiment."""
 
+from collections.abc import Iterable
 from pathlib import Path
 from pathlib import PurePosixPath
-from typing import TYPE_CHECKING
 from typing import Annotated
 from typing import final
 
@@ -10,15 +10,13 @@ from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Self
 
+from shepherd_core.config import config
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.testbed.testbed import Testbed
 
 from .observer_tasks import ObserverTasks
-
-if TYPE_CHECKING:
-    from collections.abc import Set as AbstractSet
 
 
 @final
@@ -61,14 +59,9 @@ class TestbedTasks(ShpModel):
             values = {**values, **obt.get_output_paths()}
         return values
 
-    def is_contained(self) -> bool:
+    def is_contained(self, paths: Iterable[PurePosixPath] = config.PATHS_ALLOWED) -> bool:
         """Limit paths to allowed directories.
 
         This is the central checking point for the webserver.
         """
-        # TODO: load paths from config
-        paths_allowed: AbstractSet[PurePosixPath] = {
-            PurePosixPath("/var/shepherd/"),
-            PurePosixPath("/tmp/"),  # noqa: S108
-        }
-        return all(obt.is_contained(paths_allowed) for obt in self.observer_tasks)
+        return all(obt.is_contained(paths) for obt in self.observer_tasks)

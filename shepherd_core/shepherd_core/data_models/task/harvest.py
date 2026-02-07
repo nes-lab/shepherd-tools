@@ -1,6 +1,6 @@
 """Config for the Observer in Harvest-Mode to record IV data from a harvesting-source."""
 
-from collections.abc import Set as AbstractSet
+from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
@@ -85,6 +85,6 @@ class HarvestTask(ShpModel):
             raise ValueError("Task-Duration can't be negative.")
         return self
 
-    def is_contained(self, paths: AbstractSet[PurePosixPath]) -> bool:
+    def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories."""
-        return any(self.output_path.is_relative_to(path) for path in paths)
+        return any(PurePosixPath(self.output_path).is_relative_to(path) for path in paths)
