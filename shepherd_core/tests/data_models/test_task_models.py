@@ -139,7 +139,7 @@ def test_task_model_prog_fault_elf() -> None:
 
 def test_tasks_are_contained() -> None:
     config.TESTBED = "unit_testing_testbed"
-    firmware_path = Path(__file__).parent.parent / "firmware_nrf.elf"
+    firmware_path = Path(__file__).parent.parent / "fw_tools/build_nrf.elf"
     tgt_cfg = sdm.TargetConfig(
         target_IDs=[42],
         energy_env=sdm.EnergyEnvironment(name="synthetic_static_3000mV_50mA"),
