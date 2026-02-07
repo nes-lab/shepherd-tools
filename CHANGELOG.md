@@ -2,7 +2,8 @@
 
 ## v2026.2.4
 
-- fix and test implementations of .is_contained()
+- fix and test implementations of .is_contained() -> for webserver
+- improve check()-chatter for energy-envs
 
 ## v2026.2.3
 
