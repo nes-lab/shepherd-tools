@@ -81,4 +81,6 @@ class ProgrammingTask(ShpModel):
 
     def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories."""
-        return any(PurePosixPath(self.firmware_file).is_relative_to(path) for path in paths)
+        firmware_pure = PurePosixPath(self.firmware_file.as_posix())
+        # ⤷ python<=3.10 needs .as_posix(), otherwise it adds '//'
+        return any(firmware_pure.is_relative_to(path) for path in paths)

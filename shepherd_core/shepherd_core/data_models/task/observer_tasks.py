@@ -98,7 +98,9 @@ class ObserverTasks(ShpModel):
 
     def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories."""
-        all_ok = any(PurePosixPath(self.root_path).is_relative_to(path) for path in paths)
+        root_pure = PurePosixPath(self.root_path.as_posix())
+        # ⤷ python<=3.10 needs .as_posix(), otherwise it adds '//'
+        all_ok = any(root_pure.is_relative_to(path) for path in paths)
         all_ok &= self.fw1_mod is None or self.fw1_mod.is_contained(paths)
         all_ok &= self.fw2_mod is None or self.fw2_mod.is_contained(paths)
         all_ok &= self.fw1_prog is None or self.fw1_prog.is_contained(paths)

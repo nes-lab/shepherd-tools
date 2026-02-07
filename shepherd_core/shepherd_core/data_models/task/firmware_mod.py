@@ -96,7 +96,10 @@ class FirmwareModTask(ShpModel):
 
     def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories."""
-        all_ok = any(PurePosixPath(self.firmware_file).is_relative_to(path) for path in paths)
+        firmware_pure = PurePosixPath(self.firmware_file.as_posix())
+        # ⤷ python<=3.10 needs .as_posix(), otherwise it adds '//'
+        all_ok = any(firmware_pure.is_relative_to(path) for path in paths)
         if isinstance(self.data, Path):
-            all_ok = any(PurePosixPath(self.data).is_relative_to(path) for path in paths)
+            data_pure = PurePosixPath(self.data.as_posix())
+            all_ok = any(data_pure.is_relative_to(path) for path in paths)
         return all_ok

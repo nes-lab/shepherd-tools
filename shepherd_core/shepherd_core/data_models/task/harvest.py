@@ -87,4 +87,6 @@ class HarvestTask(ShpModel):
 
     def is_contained(self, paths: Iterable[PurePosixPath]) -> bool:
         """Limit paths to allowed directories."""
-        return any(PurePosixPath(self.output_path).is_relative_to(path) for path in paths)
+        output_pure = PurePosixPath(self.output_path.as_posix())
+        # ⤷ python<=3.10 needs .as_posix(), otherwise it adds '//'
+        return any(output_pure.is_relative_to(path) for path in paths)
