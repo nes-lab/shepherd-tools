@@ -429,6 +429,7 @@ def downsample(
     help="Also consider files in sub-folders",
 )
 # TODO: allow SVG-output
+# TODO: allow opt-harvest iv-samples
 def plot(
     in_data: Path,
     start: float | None,
