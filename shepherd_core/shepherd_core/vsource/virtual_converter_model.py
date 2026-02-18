@@ -93,7 +93,11 @@ class VirtualConverterModel:
 
         self.V_out_dac_uV: float = self._cfg.V_output_uV
         self.V_out_dac_raw: int = self._cal.conv_uV_to_dac_raw(self._cfg.V_output_uV)
-        self.power_good: bool = True
+        self.power_good_high: bool = False
+        self.power_good_low: bool = False
+        # ⤷ internal state not used in PRU anymore
+        #   its kept here to mirror SHARED_MEM.vsource_power_good_pins_state
+        self.power_good_hyst_state: bool = False
 
         # prepare hysteresis-thresholds
         self.dV_mid_enable_output_uV: float = self._cfg.dV_mid_enable_output_uV
@@ -209,12 +213,13 @@ class VirtualConverterModel:
 
         if check_thresholds or self._cfg.immediate_pwr_good_signal:
             # generate power-good-signal
-            if self.power_good:
-                if V_mid_uV_now <= self._cfg.V_pwr_good_disable_threshold_uV:
-                    self.power_good = False
-            elif V_mid_uV_now >= self._cfg.V_pwr_good_enable_threshold_uV:
-                self.power_good = self.is_outputting
-            # set batok pin to state ... TODO?
+            self.power_good_high = self.is_outputting and (
+                V_mid_uV_now >= self._cfg.V_pwr_good_enable_threshold_uV
+            )
+            self.power_good_low = (
+                self.is_outputting and V_mid_uV_now > self._cfg.V_pwr_good_disable_threshold_uV
+            )
+            # set power_good pins to state ... TODO?
 
         if self.is_outputting or self.interval_startup_disabled_drain_n > 0:
             if (not self.enable_buck) or (
@@ -275,8 +280,15 @@ class VirtualConverterModel:
     def get_V_intermediate_raw(self) -> int:
         return round(self._cal.conv_uV_to_dac_raw(self.V_mid_uV))
 
-    def get_power_good(self) -> bool:
-        return self.power_good
+    def get_power_good_hysteresis(self) -> bool:
+        if self.power_good_hyst_state and self.get_power_good() < 1:
+            self.power_good_hyst_state = False
+        elif not self.power_good_hyst_state and self.get_power_good() >= 3:
+            self.power_good_hyst_state = True
+        return self.power_good_hyst_state
+
+    def get_power_good(self) -> int:
+        return int(self.power_good_low) | (int(self.power_good_high) << 1)
 
     def get_I_mid_out_nA(self) -> float:
         return self.P_out_fW / self.V_mid_uV
