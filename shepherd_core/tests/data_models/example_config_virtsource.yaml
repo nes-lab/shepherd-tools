@@ -23,7 +23,7 @@ VirtualSource:
     SoC_init: 1.0 # allow a proper / fast startup
     R_leak_Ohm: 700.0e6 # ~ 9 nA leakage at 6.3 V
 
-  V_pwr_good_enable_threshold_mV: 2900 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
+  V_pwr_good_enable_threshold_mV: 2900 # target is informed on dedicated pins (reference is intermediate voltage)
   V_pwr_good_disable_threshold_mV: 2400
   immediate_pwr_good_signal: false  # 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 

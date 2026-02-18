@@ -85,9 +85,14 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     # TODO: add intervals for input-disable, output-disable & power-good-signal
 
     V_pwr_good_enable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2_800
-    """ pwr-good: target is informed on output-pin (hysteresis)
-     -> reference is the intermediate voltage """
     V_pwr_good_disable_threshold_mV: Annotated[float, Field(ge=0, le=10_000)] = 2200
+    """ pwr-good: target is informed on dedicated pins.
+                  Reference for the threshold is the intermediate voltage.
+        - cape-hw v2.4 has only one pin and uses a hysteresis
+        - cape-hw v2.5 has two pins (low & high) and uses both thresholds independently on them
+        TODO: rename LOW/HIGH instead of enable/disable, maybe use pydantic to keep legacy handles
+      """
+
     immediate_pwr_good_signal: bool = True
     """ ⤷ 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds"""
 
