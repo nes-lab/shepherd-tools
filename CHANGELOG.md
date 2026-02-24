@@ -1,5 +1,19 @@
 # History of Changes
 
+## v2026.2.5
+
+- shepherd-data CLI
+  - add `--text-only` switch to `extract-uart` and `decode-uart` commands
+  - extract waveforms more efficiently (less RAM usage, might have exploded on large files)
+  - `decode-uart` now probes every pin
+- vsrc-model - add two-state power-good behavior of PRU
+- improved comparison of Eenvs (needed error margin)
+- doc
+  - extend harvester-metadata for bonito
+  - improve doc for power-good thresholds
+  - add pin-mapping for cape v2.5
+
+
 ## v2026.2.4
 
 - fix and test implementations of .is_contained() -> for webserver

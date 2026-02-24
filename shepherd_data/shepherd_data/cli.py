@@ -2,15 +2,12 @@
 
 import logging
 import sys
-from contextlib import suppress
-from datetime import datetime
 from pathlib import Path
 
 import click
 from shepherd_core.logger import set_log_verbose_level
 
 from shepherd_core import get_verbose_level
-from shepherd_core import local_tz
 
 from .reader import Reader
 
@@ -226,7 +223,13 @@ def extract_meta(
     is_flag=True,
     help="Also consider files in sub-folders",
 )
-def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
+@click.option(
+    "--text-only",
+    "-t",
+    is_flag=True,
+    help="Only output text and no timestamps",
+)
+def extract_uart(in_data: Path, *, recurse: bool = False, text_only: bool = False) -> None:
     """Log from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
@@ -236,7 +239,7 @@ def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 shpr.save_metadata()
                 if "uart" in shpr.h5file:
-                    shpr.save_log(shpr["uart"])
+                    shpr.save_log(shpr["uart"], add_timestamp=not text_only)
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
@@ -251,7 +254,13 @@ def extract_uart(in_data: Path, *, recurse: bool = False) -> None:
     is_flag=True,
     help="Also consider files in sub-folders",
 )
-def decode_uart(in_data: Path, *, recurse: bool = False) -> None:
+@click.option(
+    "--text-only",
+    "-t",
+    is_flag=True,
+    help="Only output text and no timestamps",
+)
+def decode_uart(in_data: Path, *, recurse: bool = False, text_only: bool = False) -> None:
     """Decode UART from GPIO-trace in file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
@@ -259,25 +268,15 @@ def decode_uart(in_data: Path, *, recurse: bool = False) -> None:
         logger.info("Extracting uart from gpio-trace from from '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                # TODO: move into separate fn OR add to h5-file and use .save_log(), ALSO TEST
-                lines = shpr.gpio_to_uart()
-                if lines is None:
+                gpio_names = shpr.get_gpio_pin_names()
+                if not isinstance(gpio_names, list):
                     continue
+                for gpio_name in gpio_names:
+                    gpio_wfs = shpr.get_gpio_waveforms(gpio_name)
+                    for gpio_name2, gpio_wf in gpio_wfs.items():
+                        shpr.waveform_to_uart_log(gpio_name2, gpio_wf, pure_text=text_only)
                 # TODO: could also add parameter to get symbols instead of lines
-                log_path = Path(file).with_suffix(".uart_from_wf.log")
-                if log_path.exists():
-                    logger.info("File already exists, will skip '%s'", log_path.name)
-                    continue
 
-                with log_path.open("w") as log_file:
-                    for line in lines:
-                        with suppress(TypeError):
-                            timestamp = datetime.fromtimestamp(float(line[0]), tz=local_tz())
-                            log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
-                            # TODO: allow to skip Timestamp and export raw text
-                            log_file.write(f"\t{str.encode(line[1])}")
-                            # TODO: does this produce "\tb'abc'"?
-                            log_file.write("\n")
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
@@ -305,7 +304,11 @@ def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> Non
         logger.info("Extracting gpio-trace from from '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                wfs = shpr.gpio_to_waveforms()
+                gpio_names = shpr.get_gpio_pin_names()
+                if not isinstance(gpio_names, list):
+                    continue
+                for gpio_name in gpio_names:
+                    wfs = shpr.get_gpio_waveforms(gpio_name)
                 for name, wf in wfs.items():
                     shpr.waveform_to_csv(name, wf, separator)
         except TypeError:

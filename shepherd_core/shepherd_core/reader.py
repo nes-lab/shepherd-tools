@@ -7,6 +7,7 @@ import errno
 import logging
 import math
 import os
+from contextlib import suppress
 from datetime import datetime
 from itertools import product
 from pathlib import Path
@@ -688,6 +689,14 @@ class Reader:
             metadata = {}
         return metadata
 
+    def get_gpio_pin_names(self) -> list[str] | None:
+        if "gpio" not in self.h5file:
+            return None
+        descriptions: dict[int, dict[str, str]] = yaml.safe_load(
+            self.h5file["gpio"]["value"].attrs["description"]
+        )
+        return [desc["name"] for desc in descriptions.values()]
+
     def get_gpio_pin_num(self, name: str) -> int | None:
         # reverse lookup in a 2D-dict: key1 are pin_num, key2 are descriptor-names
         if "gpio" not in self.h5file:
@@ -709,7 +718,11 @@ class Reader:
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 
+    @deprecated("use get_gpio_waveforms() instead")
     def gpio_to_waveforms(self, name: str | None = None) -> dict:
+        return self.get_gpio_waveforms(name)
+
+    def get_gpio_waveforms(self, name: str | None = None) -> dict:
         waveforms: dict[str, np.ndarray] = {}
         if "gpio" not in self.h5file:
             return waveforms
@@ -719,11 +732,13 @@ class Reader:
 
         if name is None:
             descriptions = yaml.safe_load(self.h5file["gpio"]["value"].attrs["description"])
-            pin_dict = {value["name"]: key for key, value in descriptions.items()}
+            pin_dict: dict[str, int] = {value["name"]: key for key, value in descriptions.items()}
         else:
-            pin_dict = {name: self.get_gpio_pin_num(name)}
+            pin_dict: dict[str, int | None] = {name: self.get_gpio_pin_num(name)}
 
         for pin_name, pin_num in pin_dict.items():
+            if not isinstance(pin_num, int):
+                continue
             gpio_ps = (gpio_vs[:] & (0b1 << pin_num)) > 0
             gpio_f = self.get_filter_for_redundant_states(gpio_ps)
             waveforms[pin_name] = np.column_stack((gpio_ts[gpio_f], gpio_ps[gpio_f]))
@@ -744,8 +759,34 @@ class Reader:
             for row in pin_wf:
                 csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")
 
+    def waveform_to_uart_log(
+        self, gpio_name: str, gpio_wf: np.ndarray, *, pure_text: bool = False
+    ) -> None:
+        gpio_wf = gpio_wf.astype(float)
+        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
+        content = None
+        with suppress(TypeError) and suppress(ValueError):
+            content = Uart(gpio_wf).get_lines()
+        if content is None:
+            return
+
+        path_log = self.file_path.with_suffix(f".uart.{gpio_name}.log")
+        if path_log.exists():
+            self._logger.info("File already exists, will skip '%s'", path_log.name)
+            return
+
+        with path_log.open("w") as log_file:
+            for line in content:
+                with suppress(TypeError):
+                    if not pure_text:
+                        timestamp = datetime.fromtimestamp(float(line[0]), tz=local_tz())
+                        log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":\t")
+                    log_file.write(str(str.encode(line[1])))
+                    # TODO: does this produce "\tb'abc'"?
+                    log_file.write("\n")
+
     def gpio_to_uart(self) -> np.ndarray | None:
-        wfs = self.gpio_to_waveforms("uart")
+        wfs = self.get_gpio_waveforms("uart")
         if len(wfs) < 1:
             return None
         pin_name, pin_wf = wfs.popitem()
