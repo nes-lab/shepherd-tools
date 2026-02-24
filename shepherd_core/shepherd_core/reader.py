@@ -760,12 +760,12 @@ class Reader:
                 csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")
 
     def waveform_to_uart_log(
-        self, gpio_name: str, gpio_wf: np.ndarray, *, pure_text: bool = False
+        self, gpio_name: str, gpio_wf: np.ndarray, *, add_timestamps: bool = True
     ) -> None:
         gpio_wf = gpio_wf.astype(float)
         gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
         content = None
-        with suppress(TypeError) and suppress(ValueError):
+        with suppress(TypeError), suppress(ValueError):
             content = Uart(gpio_wf).get_lines()
         if content is None:
             return
@@ -775,16 +775,23 @@ class Reader:
             self._logger.info("File already exists, will skip '%s'", path_log.name)
             return
 
-        with path_log.open("w") as log_file:
-            for line in content:
-                with suppress(TypeError):
-                    if not pure_text:
-                        timestamp = datetime.fromtimestamp(float(line[0]), tz=local_tz())
-                        log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":\t")
-                    log_file.write(str(str.encode(line[1])))
-                    # TODO: does this produce "\tb'abc'"?
-                    log_file.write("\n")
+        if add_timestamps:
+            with path_log.open("w", encoding="utf-8-sig") as log_file:
+                for line in content:
+                    with suppress(TypeError):
+                        if add_timestamps:
+                            timestamp = datetime.fromtimestamp(float(line[0]), tz=local_tz())
+                            log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":\t")
+                        log_file.write(str(str.encode(line[1])))
+                        # TODO: does this produce "\tb'abc'"?
+                        log_file.write("\n")
+        else:
+            with path_log.open("wb") as log_file:
+                for line in content:
+                    with suppress(TypeError):
+                        log_file.write(str.encode(line[1]))
 
+    @deprecated("use waveform_to_uart_log() instead")
     def gpio_to_uart(self) -> np.ndarray | None:
         wfs = self.get_gpio_waveforms("uart")
         if len(wfs) < 1:

@@ -272,9 +272,10 @@ def decode_uart(in_data: Path, *, recurse: bool = False, text_only: bool = False
                 if not isinstance(gpio_names, list):
                     continue
                 for gpio_name in gpio_names:
+                    logger.debug("\t .. processing '%s'", gpio_name)
                     gpio_wfs = shpr.get_gpio_waveforms(gpio_name)
                     for gpio_name2, gpio_wf in gpio_wfs.items():
-                        shpr.waveform_to_uart_log(gpio_name2, gpio_wf, pure_text=text_only)
+                        shpr.waveform_to_uart_log(gpio_name2, gpio_wf, add_timestamps=not text_only)
                 # TODO: could also add parameter to get symbols instead of lines
 
         except TypeError:
@@ -308,9 +309,10 @@ def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> Non
                 if not isinstance(gpio_names, list):
                     continue
                 for gpio_name in gpio_names:
+                    logger.debug("\t .. processing '%s'", gpio_name)
                     wfs = shpr.get_gpio_waveforms(gpio_name)
-                for name, wf in wfs.items():
-                    shpr.waveform_to_csv(name, wf, separator)
+                    for name, wf in wfs.items():
+                        shpr.waveform_to_csv(name, wf, separator)
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
 

@@ -76,7 +76,7 @@ class Uart:
         # verify table
         if self.events_sig.shape[1] != 2:
             raise TypeError("Input file should have 2 rows -> (comma-separated) timestamp & value")
-        if self.events_sig.shape[0] < 8:
+        if self.events_sig.shape[0] < 16:
             raise TypeError("Input file is too short (< state-changes)")
         # verify timestamps
         time_steps = self.events_sig[1:, 0] - self.events_sig[:-1, 0]
@@ -86,6 +86,8 @@ class Uart:
         # prepare samples & process params (order is important)
         self._convert_analog2digital()
         self._filter_redundant_states()
+        if self.events_sig.shape[0] < 16:
+            raise TypeError("Too few valid signal transitions")
 
         self.baud_rate: int = baud_rate if baud_rate is not None else self.detect_baud_rate()
         self.dur_tick: float = 1.0 / self.baud_rate
