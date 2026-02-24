@@ -2,7 +2,7 @@
 # cape v2.4
 - datatype: gpio
   parameters:
-    id: 1000
+    id: 251000
     name: GPIO0
     # description:
     # comment:
@@ -14,7 +14,7 @@
     pin_sys: P8_14
 - datatype: gpio
   parameters:
-    id: 1001
+    id: 251001
     name: GPIO1
     direction: IO
     dir_switch: DIR1
@@ -24,7 +24,7 @@
     pin_sys: P8_17
 - datatype: gpio
   parameters:
-    id: 1002
+    id: 251002
     name: GPIO2
     direction: IO
     dir_switch: DIR1
@@ -34,7 +34,7 @@
     pin_sys: P8_16
 - datatype: gpio
   parameters:
-    id: 1003
+    id: 251003
     name: GPIO3
     direction: IO
     dir_switch: DIR1
@@ -44,7 +44,7 @@
     pin_sys: P8_15
 - datatype: gpio
   parameters:
-    id: 1004
+    id: 251004
     name: GPIO4
     direction: IN
     reg_pru: r31_04
@@ -53,7 +53,7 @@
     pin_sys: P8_26
 - datatype: gpio
   parameters:
-    id: 1005
+    id: 251005
     name: GPIO5
     direction: IN
     reg_pru: r31_05
@@ -62,7 +62,7 @@
     pin_sys: P8_36
 - datatype: gpio
   parameters:
-    id: 1006
+    id: 251006
     name: GPIO6
     direction: IN
     reg_pru: r31_06
@@ -71,7 +71,7 @@
     pin_sys: P8_34
 - datatype: gpio
   parameters:
-    id: 1007
+    id: 251007
     name: GPIO7
     description: alias UART_RX
     direction: IN
@@ -81,7 +81,7 @@
     pin_sys: P9_26
 - datatype: gpio
   parameters:
-    id: 1008
+    id: 251008
     name: GPIO8
     description: alias UART_TX
     direction: IO
@@ -92,7 +92,7 @@
     pin_sys: P9_24
 - datatype: gpio
   parameters:
-    id: 1009
+    id: 251009
     name: BAT_OK
     description: signal from vSource (PRU) to target
     direction: OUT
@@ -100,7 +100,7 @@
     pin_pru: P8_29
 - datatype: gpio
   parameters:
-    id: 2000
+    id: 252000
     name: PRG1_CLK
     description: alias JTAG_TCK
     direction: OUT
@@ -108,7 +108,7 @@
     pin_sys: P9_17
 - datatype: gpio
   parameters:
-    id: 2001
+    id: 252001
     name: PRG1_IO
     description: alias JTAG_TDI
     direction: IO
@@ -117,7 +117,7 @@
     pin_sys: P9_18
 - datatype: gpio
   parameters:
-    id: 2010
+    id: 252010
     name: PRG2_CLK
     description: alias JTAG_TDO
     direction: OUT
@@ -125,7 +125,7 @@
     pin_sys: P8_35
 - datatype: gpio
   parameters:
-    id: 2011
+    id: 252011
     name: PRG2_IO
     description: alias JTAG_TMS
     direction: IO
@@ -134,7 +134,7 @@
     pin_sys: P8_33
 - datatype: gpio
   parameters:
-    id: 3000
+    id: 253000
     name: DIR1
     description: changes direction of GPIO[0:3]
     direction: OUT
@@ -142,7 +142,7 @@
     pin_sys: P8_37
 - datatype: gpio
   parameters:
-    id: 3001
+    id: 253001
     name: DIR2
     description: changes direction of GPIO8
     direction: OUT
@@ -150,7 +150,7 @@
     pin_sys: P8_38
 - datatype: gpio
   parameters:
-    id: 3002
+    id: 253002
     name: PDIR1
     description: changes direction PRG1_IO
     direction: OUT
@@ -158,7 +158,7 @@
     pin_sys: P8_31
 - datatype: gpio
   parameters:
-    id: 3003
+    id: 253003
     name: PDIR2
     description: changes direction PRG2_IO
     direction: OUT
