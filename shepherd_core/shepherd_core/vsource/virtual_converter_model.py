@@ -21,6 +21,9 @@ from shepherd_core.data_models.content.virtual_source_config import LUT_SIZE
 from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
 from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
 
+from .math64_safe import add32
+from .math64_safe import mul32
+from .math64_safe import sub32
 from .virtual_storage_model import VirtualStorageModelPRU
 
 
@@ -56,7 +59,7 @@ class PruCalibration:
 
     def conv_uV_to_dac_raw(self, voltage_uV: float) -> int:
         dac_raw = self.cal.dac_V_A.si_to_raw(float(voltage_uV) / (10**6))
-        return min(dac_raw, (2**16) - 1)
+        return min(int(dac_raw), (2**16) - 1)
 
 
 class VirtualConverterModel:
@@ -71,7 +74,7 @@ class VirtualConverterModel:
         self.storage = VirtualStorageModelPRU(storage_cfg)
 
         # simplifications for python
-        self.R_input_kOhm = float(self._cfg.R_input_kOhm_n22) / 2**22
+        self.R_input_kOhm: float = float(self._cfg.R_input_kOhm_n22) / 2**22
 
         # boost internal state
         self.V_input_uV: float = 0.0
@@ -113,16 +116,13 @@ class VirtualConverterModel:
         self.is_outputting: bool = False
         self.vsource_skip_gpio_logging: bool = False
 
-    def calc_inp_power(self, input_voltage_uV: float, input_current_nA: float) -> int:
+    def calc_inp_power(self, input_voltage_uV: float, input_current_nA: float) -> float:
         # Next 2 lines are Python-specific (model unsigned int)
         input_voltage_uV = max(0.0, input_voltage_uV)
         input_current_nA = max(0.0, input_current_nA)
 
         # Input diode
-        if input_voltage_uV > self._cfg.V_input_drop_uV:
-            input_voltage_uV -= self._cfg.V_input_drop_uV
-        else:
-            input_voltage_uV = 0.0
+        input_voltage_uV = sub32(input_voltage_uV, self._cfg.V_input_drop_uV)
 
         input_voltage_uV = min(input_voltage_uV, self._cfg.V_input_max_uV)
 
@@ -136,18 +136,18 @@ class VirtualConverterModel:
             # TODO: vdrop in case of v_input > v_storage (non-boost)
         elif self.enable_storage:
             # no boost, but cap, for i.e. diode+cap (+resistor)
-            V_diff_uV = (
-                (input_voltage_uV - self.V_mid_uV) if (input_voltage_uV >= self.V_mid_uV) else 0
-            )
-            V_res_drop_uV = input_current_nA * self.R_input_kOhm
+            V_diff_uV = sub32(input_voltage_uV, self.V_mid_uV)
+            V_res_drop_uV = mul32(input_current_nA, self.R_input_kOhm)
             if V_res_drop_uV > V_diff_uV:
                 input_voltage_uV = self.V_mid_uV
             else:
-                input_voltage_uV -= V_res_drop_uV
+                input_voltage_uV = sub32(input_voltage_uV, V_res_drop_uV)
 
             # IF input==ivcurve request new CV
             if self.feedback_to_hrv:
-                self.V_input_request_uV = self.V_mid_uV + V_res_drop_uV + self._cfg.V_input_drop_uV
+                self.V_input_request_uV = add32(
+                    self.V_mid_uV, add32(V_res_drop_uV, self._cfg.V_input_drop_uV)
+                )
             elif input_voltage_uV < self.V_mid_uV:
                 # without feedback there is no usable energy here
                 input_voltage_uV = 0
@@ -165,9 +165,9 @@ class VirtualConverterModel:
             eta_inp = 1.0
 
         self.P_inp_fW = eta_inp * input_voltage_uV * input_current_nA
-        return round(self.P_inp_fW)  # Python-specific, added for easier testing
+        return self.P_inp_fW  # Python-specific, added for easier testing
 
-    def calc_out_power(self, current_adc_raw: int) -> int:
+    def calc_out_power(self, current_adc_raw: int) -> float:
         # Next 2 lines are Python-specific (model unsigned int)
         current_adc_raw = max(0, current_adc_raw)
         current_adc_raw = min((2**18) - 1, current_adc_raw)
@@ -185,7 +185,7 @@ class VirtualConverterModel:
             self.interval_startup_disabled_drain_n -= 1
             self.P_out_fW = 0.0
 
-        return round(self.P_out_fW)  # Python-specific, added for easier testing
+        return self.P_out_fW  # Python-specific, added for easier testing
 
     def update_cap_storage(self) -> int:
         if self.enable_storage:
@@ -209,7 +209,7 @@ class VirtualConverterModel:
                     self.is_outputting = False
             elif V_mid_uV_now >= self.V_mid_enable_output_threshold_uV:
                 self.is_outputting = True
-                self.V_mid_uV -= self.dV_mid_enable_output_uV
+                self.V_mid_uV = sub32(self.V_mid_uV, self.dV_mid_enable_output_uV)
 
         if check_thresholds or self._cfg.immediate_pwr_good_signal:
             # generate power-good-signal
@@ -225,10 +225,8 @@ class VirtualConverterModel:
             if (not self.enable_buck) or (
                 self.V_mid_uV <= self._cfg.V_output_uV + self._cfg.V_buck_drop_uV
             ):
-                if self.V_mid_uV > self._cfg.V_buck_drop_uV:
-                    self.V_out_dac_uV = self.V_mid_uV - self._cfg.V_buck_drop_uV
-                else:
-                    self.V_out_dac_uV = 0.0
+                self.V_out_dac_uV = sub32(self.V_mid_uV - self._cfg.V_buck_drop_uV)
+
             else:
                 self.V_out_dac_uV = self._cfg.V_output_uV
             self.V_out_dac_raw = self._cal.conv_uV_to_dac_raw(self.V_out_dac_uV)
