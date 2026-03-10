@@ -225,7 +225,7 @@ class VirtualConverterModel:
             if (not self.enable_buck) or (
                 self.V_mid_uV <= self._cfg.V_output_uV + self._cfg.V_buck_drop_uV
             ):
-                self.V_out_dac_uV = sub32(self.V_mid_uV - self._cfg.V_buck_drop_uV)
+                self.V_out_dac_uV = sub32(self.V_mid_uV,self._cfg.V_buck_drop_uV)
 
             else:
                 self.V_out_dac_uV = self._cfg.V_output_uV
