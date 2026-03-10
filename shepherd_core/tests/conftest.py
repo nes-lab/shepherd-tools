@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -52,6 +53,10 @@ def pytest_collection_modifyitems(
         subprocess.run(["objcopy", "--version"], check=True)
         OBJCOPY = True
     except FileNotFoundError:
+        OBJCOPY = None
+    if sys.platform.startswith("win"):
+        # TODO: temporary fix GH workflows,
+        #       their win-latest comes with a not-compatible objcopy
         OBJCOPY = None
     skip_converter = pytest.mark.skip(
         reason="Objcopy not found -> are binutils or build-essential installed?"

@@ -31,7 +31,7 @@
     interval_check_thresholds_ms: 0.0  # some BQs check every 64 ms if output should be disconnected
 
     # Power-Good signal from comparator and hysteresis
-    V_pwr_good_enable_threshold_mV: 2800 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
+    V_pwr_good_enable_threshold_mV: 2800 # target is informed on dedicated pins (reference is intermediate voltage)
     V_pwr_good_disable_threshold_mV: 2200
     immediate_pwr_good_signal: true  # 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 
@@ -146,7 +146,7 @@
     V_intermediate_disable_output_threshold_mV: 0 # -> target gets disconnected
     interval_check_thresholds_ms: 64.0  # some BQs check every 64 ms if output should be disconnected
 
-    V_pwr_good_enable_threshold_mV: 2800 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
+    V_pwr_good_enable_threshold_mV: 2800 # target is informed on dedicated pins (reference is intermediate voltage)
     V_pwr_good_disable_threshold_mV: 2340
     immediate_pwr_good_signal: false  # 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 
@@ -206,7 +206,7 @@
     V_intermediate_disable_output_threshold_mV: 2400 # -> target gets disconnected
     interval_check_thresholds_ms: 64.0  # some BQs check every 64 ms if output should be disconnected
 
-    V_pwr_good_enable_threshold_mV: 3000 # target is informed by pwr-good on output-pin (hysteresis) -> for intermediate voltage
+    V_pwr_good_enable_threshold_mV: 3000 # target is informed on dedicated pins (reference is intermediate voltage)
     V_pwr_good_disable_threshold_mV: 2500
     immediate_pwr_good_signal: false  # 1: activate instant schmitt-trigger, 0: stay in interval for checking thresholds
 

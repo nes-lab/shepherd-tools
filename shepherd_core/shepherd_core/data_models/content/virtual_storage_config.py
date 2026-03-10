@@ -27,6 +27,7 @@ from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.config import config
 from shepherd_core.data_models.base.content import ContentModel
@@ -277,9 +278,9 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
         """
         return kdash * c * (1 - c)
 
-    @property
-    def kdash_(self) -> float:
-        return self.k / (self.p_rce * (self.p_rce - 1))
+    @deprecated("not needed anymore, as kdash stays in model")
+    def kdash_(self, k: float) -> float:
+        return k / (self.p_rce * (self.p_rce - 1))
 
     @validate_call
     def calc_R_leak_capacitor(
