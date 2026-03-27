@@ -1,6 +1,6 @@
 # History of Changes
 
-## v2026.2.5
+## v2026.3.1
 
 - shepherd-data CLI
   - add `--text-only`-switch to `extract-uart` and `decode-uart` commands (removed timestamps and prints text like on console)
