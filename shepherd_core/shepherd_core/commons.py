@@ -1,6 +1,11 @@
 """Container for commonly shared constants."""
 
+from typing import Annotated
+
+from typing_extensions import deprecated
+
 from .config import config
 
-# TODO: deprecated - replace with config in subprojects and then remove here
-SAMPLERATE_SPS_DEFAULT: int = config.SAMPLERATE_SPS
+SAMPLERATE_SPS_DEFAULT: Annotated[int, deprecated("use core.config.SAMPLERATE_SPS")] = (
+    config.SAMPLERATE_SPS
+)

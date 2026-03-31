@@ -101,7 +101,7 @@ class Fixture:
             fixture_name = values.pop("inherit_from")
             # ⤷ will also remove entry from dict
             if "name" in values and len(chain) < 1:
-                base_name = values.get("name")
+                base_name = str(values.get("name"))
                 if base_name in chain:
                     msg = f"Inheritance-Circle detected ({base_name} already in {chain})"
                     raise ValueError(msg)
