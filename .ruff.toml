@@ -25,7 +25,7 @@ ignore = [
 exclude = ["extra/link-visualizer/create_link_svg.py"]  # must be adapted to project first
 
 [lint.per-file-ignores]
-"*/tests/**" = ["ARG", "S", "D", "T201"]
+"*/tests/**" = ["ARG", "S", "D", "T201", "ERA001",]
 "*/examples/**" = [
     "INP001", # no namespace
     "T201",   # allow print
