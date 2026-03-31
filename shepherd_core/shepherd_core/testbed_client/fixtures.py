@@ -12,6 +12,7 @@ from typing import Any
 import yaml
 from pydantic import validate_call
 from typing_extensions import Self
+from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.base.timezone import local_tz
@@ -46,12 +47,13 @@ class Fixture:
         if data.datatype.lower() != self.model_type.lower():
             return
         if "name" not in data.parameters:
-            return
+            return  # name is mandatory
         name = str(data.parameters["name"]).lower()
-        id_ = data.parameters["id"]
         data_model = data.parameters
         self.elements_by_name[name] = data_model
-        self.elements_by_id[id_] = data_model
+        if "id" in data.parameters:  # ID is optional
+            id_ = data.parameters["id"]
+            self.elements_by_id[id_] = data_model
         # update iterator
         self._iter_list: list[dict[str, Any]] = list(self.elements_by_name.values())
 
@@ -83,6 +85,7 @@ class Fixture:
     def keys(self) -> Iterable[str]:
         return self.elements_by_name.keys()
 
+    @deprecated("ID is currently optional, so this list is NOT complete.")
     def refs(self) -> dict:
         return {i_["id"]: i_["name"] for i_ in self.elements_by_id.values()}
 
@@ -117,8 +120,8 @@ class Fixture:
             values = base_dict
 
         # TODO: cleanup and simplify - use fill_mode() and line up with web-interface
-        elif "name" in values and values.get("name").lower() in self.elements_by_name:
-            fixture_name = values.get("name").lower()
+        elif "name" in values and str(values.get("name")).lower() in self.elements_by_name:
+            fixture_name = str(values.get("name")).lower()
             fixture_base = copy.copy(self.elements_by_name[fixture_name])
             post_process = True
 
