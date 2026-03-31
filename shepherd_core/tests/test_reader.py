@@ -83,9 +83,9 @@ def test_reader_non_valid(tmp_path: Path) -> None:
     data_h5 = tmp_path / "data.h5"
     with h5py.File(data_h5, "w") as h5f:
         grp_data = h5f.create_group("data")
-        grp_data.create_dataset("time", (0,))
-        grp_data.create_dataset("current", (0,))
-        grp_data.create_dataset("voltage", (0,))
+        grp_data.create_dataset("time", (0,), dtype="u8")
+        grp_data.create_dataset("current", (0,), dtype="u4")
+        grp_data.create_dataset("voltage", (0,), dtype="u4")
         grp_data["time"].attrs["gain"] = 1
         grp_data["current"].attrs["gain"] = 1
         grp_data["voltage"].attrs["gain"] = 1
