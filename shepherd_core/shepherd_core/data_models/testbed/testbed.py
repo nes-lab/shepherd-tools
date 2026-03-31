@@ -12,7 +12,6 @@ from pydantic import model_validator
 from typing_extensions import Self
 
 from shepherd_core.config import config
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -28,7 +27,6 @@ duration_5min = timedelta(minutes=5)
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)."""
 
-    id: IdInt
     name: NameStr
     description: SafeStr
     comment: SafeStr | None = None

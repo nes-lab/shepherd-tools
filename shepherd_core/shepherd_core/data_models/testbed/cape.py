@@ -9,7 +9,6 @@ from typing import final
 from pydantic import Field
 from pydantic import model_validator
 
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -27,7 +26,6 @@ class TargetPort(str, Enum):
 class Cape(ShpModel, title="Shepherd-Cape"):
     """meta-data representation of a testbed-component (physical object)."""
 
-    id: IdInt
     name: NameStr
     version: NameStr
     description: SafeStr

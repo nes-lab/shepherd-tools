@@ -6,162 +6,134 @@
 
 - datatype: cape  # PROTOTYPE
   parameters:
-    id: 2025000
-    name: C2025_EMU_000
+    name: cape2025_EMU_000
     version: v2.5e
-    description: EMU only - for Testbed
+    description: EMU only - for Testbed; produced by NES Lab
     created: 2026-03-31
     calibrated: 2026-03-20
 
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025003
-    name: C2025_EMU_003
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_003
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025004
-    name: C2025_EMU_004
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_004
     active: false
     comment: U47/PI5 shifted -> Fixed, TP-A GPIO5 defective -> TODO
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025005
-    name: C2025_EMU_005
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_005
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025007
-    name: C2025_EMU_007
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_007
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025008
-    name: C2025_EMU_008
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_008
     comment: TP-A bent pin -3 (GND)
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025009
-    name: C2025_EMU_009
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_009
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025010
-    name: C2025_EMU_010
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_010
     comment: TP-A bent pins -10L (GPIO10), -4R (Prog2 CLK)
 
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025011
-    name: C2025_EMU_011
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_011
     comment: TP-A bent pins -7R (NC), -1R (L3V3), -3R (prog2 IO)
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025012
-    name: C2025_EMU_012
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_012
     comment: U48/Pi5/GPIO11 -> fixed
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025013
-    name: C2025_EMU_013
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_013
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025014
-    name: C2025_EMU_014
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_014
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025015
-    name: C2025_EMU_015
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_015
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025016
-    name: C2025_EMU_016
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_016
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025017
-    name: C2025_EMU_017
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_017
     active: false
     comment: TP-B MSP fails to program, Check U29, U40, U43, U29 & U24, TODO
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025018
-    name: C2025_EMU_018
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_018
     comment: TPorts added manually, PRU0-1 LED on side
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025019
-    name: C2025_EMU_019
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_019
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025020
-    name: C2025_EMU_020
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_020
 
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025021
-    name: C2025_EMU_021
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_021
     comment: C @ U5 shifted -> fixed
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025022
-    name: C2025_EMU_022
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_022
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025023
-    name: C2025_EMU_023
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_023
     comment: L5V is only 4.96 V (observe)
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025024
-    name: C2025_EMU_024
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_024
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025025
-    name: C2025_EMU_025
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_025
     active: false
     comment: TP-B MSP fails to program, Check U29, U40, U43, U29 & U24, TODO
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025026
-    name: C2025_EMU_026
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_026
     comment: U43 looks shifted, but is not
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025027
-    name: C2025_EMU_027
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_027
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025028
-    name: C2025_EMU_028
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_028
     comment: R@U5 & U49 -> fixed
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025029
-    name: C2025_EMU_029
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_029
 - datatype: cape
   parameters:
-    inherit_from: C2025_EMU_000
-    id: 2025030
-    name: C2025_EMU_030
+    inherit_from: cape2025_EMU_000
+    name: cape2025_EMU_030

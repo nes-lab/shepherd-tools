@@ -11,7 +11,6 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -31,7 +30,6 @@ MACStr = Annotated[
 class Observer(ShpModel, title="Shepherd-Sheep"):
     """meta-data representation of a testbed-component (physical object)."""
 
-    id: IdInt
     name: NameStr
     description: SafeStr
     comment: SafeStr | None = None

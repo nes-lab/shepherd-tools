@@ -5,97 +5,81 @@
 
 - datatype: cape # prototype
   parameters:
-    id: 1270000
-    name: cape00
+    name: cape1270_000
     version: v2.4b
-    description: full version with Hrv & Emu, modded gpio,emu,hrv
+    description: full version with Hrv & Emu, modded gpio,emu,hrv; produced by Egas
     created: 2022-10-07
     calibrated: 2023-09-21
 
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270051
-    name: cape51
+    inherit_from: cape1270_000
+    name: cape1270_051
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270052
-    name: cape52
+    inherit_from: cape1270_000
+    name: cape1270_052
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270053
-    name: cape53
+    inherit_from: cape1270_000
+    name: cape1270_053
     description: full version with Hrv & Emu, partially modded
     comment: 1st Lab Prototype, burned VReg -> currently defective
     active: false
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270054
-    name: cape54
+    inherit_from: cape1270_000
+    name: cape1270_054
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270055
-    name: cape55
+    inherit_from: cape1270_000
+    name: cape1270_055
     comment: Target-Port B, C-Meas failed on first Cal
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270056
-    name: cape56
+    inherit_from: cape1270_000
+    name: cape1270_056
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270057
-    name: cape57
+    inherit_from: cape1270_000
+    name: cape1270_057
     comment: 2nd Lab Prototype, has stackable headers
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270058
-    name: cape58
+    inherit_from: cape1270_000
+    name: cape1270_058
     comment: has shields on emu & hrv-circuits -> no effect on RF-Performance
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270059
-    name: cape59
+    inherit_from: cape1270_000
+    name: cape1270_059
     comment: only 220u/440uF on 5V
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270060
-    name: cape60
+    inherit_from: cape1270_000
+    name: cape1270_060
     comment: 3rd Lab Prototype
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270061
-    name: cape61
+    inherit_from: cape1270_000
+    name: cape1270_061
     comment: only 220u/440uF on 5V
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270062
-    name: cape62
+    inherit_from: cape1270_000
+    name: cape1270_062
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270063
-    name: cape63
+    inherit_from: cape1270_000
+    name: cape1270_063
     comment: only 220u/440uF on 5V
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270064
-    name: cape64
+    inherit_from: cape1270_000
+    name: cape1270_064
     comment: only 220u/440uF on 5V, had 6x74LVC2T45GT flipped (U11,12,23,24,27,28) - hot air repair
 - datatype: cape
   parameters:
-    inherit_from: cape00
-    id: 1270065
-    name: cape65
+    inherit_from: cape1270_000
+    name: cape1270_065
     comment: only 220u/440uF on 5V
