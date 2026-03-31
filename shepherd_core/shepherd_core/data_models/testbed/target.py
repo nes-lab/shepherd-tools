@@ -36,7 +36,7 @@ class Target(ShpModel, title="Target Node (DuT)"):
     created: datetime = Field(default_factory=datetime.now)
 
     testbed_id: IdInt16 | None = None
-    """ ⤷ is derived from ID (targets are still selected by id!)"""
+    """ ⤷ Selector-ID for Target-Config (while defining an experiment)."""
     mcu1: MCU | NameStr
     mcu2: MCU | NameStr | None = None
 
@@ -57,7 +57,5 @@ class Target(ShpModel, title="Target Node (DuT)"):
                 # ⤷ this will raise if default is faulty
             elif isinstance(values.get(mcu), dict):
                 values[mcu] = MCU(**values[mcu])
-        if values.get("testbed_id") is None:
-            values["testbed_id"] = values.get("id") % 2**16
 
         return values

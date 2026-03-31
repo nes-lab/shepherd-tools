@@ -62,6 +62,7 @@ class ProgrammingTask(ShpModel):
         mcu_port: MCUPort,
         fw_path: Path,
     ) -> Self | None:
+        tgt_id = tb.get_target_id(testbed_id=tgt_id, soft=True)
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
 

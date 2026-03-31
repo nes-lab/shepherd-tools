@@ -7,6 +7,7 @@
     version: v2.1r0
     description: single target PCB, v2.1r0
     comment: ONLY VIRTUAL - NOT REAL - for unittests
+    testbed_id: 1001
     mcu1:
       name: nRF52
     mcu2: null
@@ -19,6 +20,7 @@
     version: v0
     description: for unit testing
     comment: no comment
+    testbed_id: 42
     created: 2025-04-29
     mcu1:
       name: nRF52

@@ -15,6 +15,7 @@ from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import Target
+from shepherd_core.data_models.testbed.testbed import Testbed
 from shepherd_core.logger import log
 
 from .observer_features import GpioActuation
@@ -31,6 +32,8 @@ class TargetConfig(ShpModel):
     """Configuration related to Target Nodes (DuT)."""
 
     target_IDs: Annotated[list[IdInt], Field(min_length=1, max_length=128)]
+    """ ⤷ enter testbed_id(s) of targets here
+    """
     custom_IDs: Annotated[list[IdInt16], Field(min_length=1, max_length=128)] | None = None
     """ ⤷ custom ID will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware.
 
@@ -91,8 +94,10 @@ class TargetConfig(ShpModel):
             # note: added xpt in text because pydantic refuses to show "from xpt" part below
             raise ValueError(msg) from xpt
         # check IDs
-        for id_ in self.target_IDs:
-            target = Target(id=id_)
+        tb = Testbed()  # TODO: should be taken from client
+        for tgt_tb_id in self.target_IDs:
+            target_id = tb.get_target_id(testbed_id=tgt_tb_id)
+            target = Target(id=target_id)
             for mcu_num in [1, 2]:
                 val_fw = getattr(self, f"firmware{mcu_num}")
                 has_fw = val_fw is not None

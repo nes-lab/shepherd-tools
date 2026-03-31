@@ -57,7 +57,7 @@ class ObserverTasks(ShpModel):
     def from_xp(cls, xp: Experiment, xp_folder: str | None, tb: Testbed, tgt_id: IdInt) -> Self:
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
-
+        tgt_id = tb.get_target_id(testbed_id=tgt_id, soft=True)
         obs = tb.get_observer(tgt_id)
         if xp_folder is None:
             xp_folder = xp.folder_name()  # moved a layer up for consistent naming

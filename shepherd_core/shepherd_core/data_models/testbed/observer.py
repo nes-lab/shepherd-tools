@@ -65,8 +65,8 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        has_cape = self.cape is not None
-        has_target = (self.target_a is not None) or (self.target_b is not None)
+        has_cape = isinstance(self.cape, Cape)
+        has_target = isinstance(self.target_a, Target) or isinstance(self.target_b, Target)
         if not has_cape and has_target:
             msg = f"Observer '{self.name}' is faulty -> has targets but no cape"
             raise ValueError(msg)
@@ -98,3 +98,20 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
                 return self.target_b
         msg = f"Target-ID {target_id} was not found in Observer '{self.name}'"
         raise KeyError(msg)
+
+    def get_target_id(self, testbed_id: int) -> int | None:
+        if (
+            self.target_a is not None
+            and self.target_a.active
+            and self.target_a.testbed_id is not None
+            and testbed_id == self.target_a.testbed_id
+        ):
+            return self.target_a.id
+        if (
+            self.target_b is not None
+            and self.target_b.active
+            and self.target_b.testbed_id is not None
+            and testbed_id == self.target_b.testbed_id
+        ):
+            return self.target_b.id
+        return None

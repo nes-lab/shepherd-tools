@@ -18,6 +18,7 @@ from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.testbed_client import tb_client
 
+from .cape import Cape
 from .observer import Observer
 
 duration_5min = timedelta(minutes=5)
@@ -94,10 +95,23 @@ class Testbed(ShpModel):
 
     def get_observer(self, target_id: int) -> Observer:
         for obs in self.observers:
-            if not obs.active or not obs.cape.active:
+            if not obs.active or not isinstance(obs.cape, Cape) or not obs.cape.active:
                 # skip decommissioned setups
                 continue
             if obs.has_target(target_id):
                 return obs
         msg = f"Target-ID {target_id} was not found in Testbed '{self.name}'"
+        raise ValueError(msg)
+
+    def get_target_id(self, testbed_id: int, *, soft: bool = False) -> int:
+        for obs in self.observers:
+            if not obs.active or not isinstance(obs.cape, Cape) or not obs.cape.active:
+                # skip decommissioned setups
+                continue
+            tgt_id = obs.get_target_id(testbed_id)
+            if tgt_id is not None:
+                return tgt_id
+        if soft:  # avoid exception and just return original input
+            return testbed_id
+        msg = f"Target-Testbed-ID {testbed_id} was not found in Testbed '{self.name}'"
         raise ValueError(msg)

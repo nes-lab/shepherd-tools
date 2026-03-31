@@ -58,6 +58,7 @@ class FirmwareModTask(ShpModel):
         mcu_port: MCUPort,
         fw_path: Path,
     ) -> Self:
+        tgt_id = tb.get_target_id(testbed_id=tgt_id, soft=True)
         tgt_cfg = xp.get_target_config(tgt_id)
 
         fw = tgt_cfg.firmware1 if mcu_port == 1 else tgt_cfg.firmware2
