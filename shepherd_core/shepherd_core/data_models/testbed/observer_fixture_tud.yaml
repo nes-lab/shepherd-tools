@@ -1,0 +1,423 @@
+---
+# observer-cape-target-relation: https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
+# network data: https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/ethernet_MAC_addresses_bbones.ods
+
+- datatype: observer
+  parameters:
+    name: sheep01
+    ip: 192.168.165.201
+    mac: 18:62:E4:E4:41:8D
+    room: II69
+    eth_port: B14
+    description: lower mid on east-side
+    cape:
+      name: cape1270_051
+    target_a:
+      name: nRF52_FRAM_1392_386
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep02
+    ip: 192.168.165.202
+    mac: 18:62:E4:D0:DE:3F
+    room: II66
+    eth_port: A18
+    description: south-west corner
+    cape:
+      name: cape1270_052
+    target_a:
+      name: nRF52_FRAM_1392_378
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep03
+    ip: 192.168.165.203
+    mac: 18:62:E4:D0:9E:6A
+    room: II69
+    eth_port: B10
+    description: north-east-corner
+    cape:
+      name: cape1270_063
+#    target_a:
+#      name:
+    created: 2023-09-22 12:12:12
+    active: false
+- datatype: observer
+  parameters:
+    name: sheep04
+    ip: 192.168.165.204
+    mac: 18:62:E4:D0:61:4D
+    room: II72
+    eth_port: C6
+    description: mid on east-side
+    cape:
+      name: cape1270_054
+    target_a:
+      name: nRF52_FRAM_1392_395
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep05
+    ip: 192.168.165.205
+    mac: 18:62:E4:E3:6E:13
+    room: II75
+    eth_port: D10
+    description: south-west corner
+    cape:
+      name: cape1270_055
+    target_a:
+      name: nRF52_FRAM_1392_393
+    target_b:
+      name: target_nRF52_01  # ONLY VIRTUAL - for unittests
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep06
+    ip: 192.168.165.206
+    mac: 18:62:E4:D0:AF:0B
+    room: II64
+    eth_port: L14
+    description: mid on north-side
+    cape:
+      name: cape1270_056
+    target_a:
+      name: nRF52_FRAM_1392_396
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep07
+    ip: 192.168.165.207
+    mac: 18:62:E4:E4:39:D7
+    room: II66
+    eth_port: A20
+    description: north-west-corner
+    cape:
+      name: cape1270_057
+    target_a:
+      name: nRF52_FRAM_1392_387
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep08
+    ip: 192.168.165.208
+    mac: 18:62:E4:D0:E5:FB
+    room: II69
+    eth_port: TBD
+    description: north-east-corner
+    cape:
+      name: cape1270_058
+#    target_a:
+#      name:
+    created: 2023-09-22 12:12:12
+    active: false  # TODO: cape is broken for now
+- datatype: observer
+  parameters:
+    name: sheep09
+    ip: 192.168.165.209
+    mac: 18:62:E4:D0:D4:A9
+    room: II71
+    eth_port: C4
+    description: south-east-corner
+    cape:
+      name: cape1270_065
+    target_a:
+      name: nRF52_FRAM_1392_385
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep10
+    ip: 192.168.165.210
+    mac: 18:62:E4:E4:24:C5
+    room: II74
+    eth_port: C20
+    description: upper mid on east-side
+    cape:
+      name: cape1270_059
+    target_a:
+      name: nRF52_FRAM_1392_377
+    created: 2023-09-22 12:12:12
+
+- datatype: observer
+  parameters:
+    name: sheep11
+    ip: 192.168.165.211
+    mac: 18:62:E4:E4:0E:5D
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    cape:
+      name: cape1270_061
+#    target_a:
+#      name:
+    created: 2023-09-22 12:12:12
+    active: false
+- datatype: observer
+  parameters:
+    name: sheep12
+    ip: 192.168.165.212
+    mac: 18:62:E4:D0:AA:F7
+    room: II71
+    eth_port: B24
+    description: north-east-corner
+    cape:
+      name: cape1270_062
+    target_a:
+      name: nRF52_FRAM_1392_384
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep13
+    ip: 192.168.165.213
+    mac: 18:62:E4:D0:D7:70
+    room: II64C
+    eth_port: A4
+    description: north-west-corner
+    comment:
+    cape:
+      name: cape1270_060
+    target_a:
+      name: nRF52_FRAM_1392_379
+    created: 2023-09-22 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep14
+    ip: 192.168.165.214
+    mac: 18:62:E4:E3:89:43
+    room: II64B
+    eth_port: L24
+    description: north-east-corner in cupboard, elevated
+    comment:
+    cape:
+      name: cape1270_064
+    target_a:
+      name: nRF52_FRAM_1392_390
+    created: 2023-09-22 12:12:12
+
+# 2026-Extension
+- datatype: observer
+  parameters:
+    name: sheep15
+    ip: 192.168.165.215
+    mac: 18:62:E4:D0:BC:79
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep16
+    ip: 192.168.165.216
+    mac: 18:62:E4:D0:59:40
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep17
+    ip: 192.168.165.217
+    mac: 18:62:E4:E3:F8:00
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep18
+    ip: 192.168.165.218
+    mac: 18:62:E4:D0:DA:04
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep19
+    ip: 192.168.165.219
+    mac: 18:62:E4:D0:CB:D3
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep20
+    ip: 192.168.165.220
+    mac: 18:62:E4:D0:CB:B8
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+
+- datatype: observer
+  parameters:
+    name: sheep21
+    ip: 192.168.165.221
+    mac: 18:62:E4:D0:CE:79
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep22
+    ip: 192.168.165.222
+    mac: 18:62:E4:D1:16:76
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep23
+    ip: 192.168.165.223
+    mac: 18:62:E4:E3:B0:9D
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep24
+    ip: 192.168.165.224
+    mac: 18:62:E4:E4:2C:5D
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep25
+    ip: 192.168.165.225
+    mac: 18:62:E4:D0:C3:F6
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep26
+    ip: 192.168.165.226
+    mac: 18:62:E4:D0:B6:C1
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+    cape:
+      name: cape2025_EMU_
+    target_a:
+      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+
+# NOT used ATM
+- datatype: observer
+  parameters:
+    name: sheep27
+    ip: 192.168.165.227
+    mac: 18:62:E4:D0:C3:DB
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+#    cape:
+#      name: cape2025_EMU_
+#    target_a:
+#      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep28
+    ip: 192.168.165.228
+    mac: 18:62:E4:D0:C5:5E
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+#    cape:
+#      name: cape2025_EMU_
+#    target_a:
+#      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep29
+    ip: 192.168.165.229
+    mac: 18:62:E4:D0:E5:BF
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+#    cape:
+#      name: cape2025_EMU_
+#    target_a:
+#      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
+- datatype: observer
+  parameters:
+    name: sheep30
+    ip: 192.168.165.230
+    mac: 18:62:E4:D1:27:47
+    room: tbd
+    eth_port: tbd
+    description: tbd
+    comment:
+#    cape:
+#      name: cape2025_EMU_
+#    target_a:
+#      name: nRF52_FRAM_1392_
+    created: 2026-03-01 12:12:12
