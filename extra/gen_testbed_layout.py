@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from shepherd_core.data_models.testbed import Cape
 from shepherd_core.data_models.testbed import Target
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.logger import log
@@ -19,13 +20,10 @@ if __name__ == "__main__":
 
     with path_csv.open("w") as csv:
         elements = [
-            "tb_id",
             "tb_name",
             "target_id",
             "target_name",
-            "cape_id",
             "cape_name",
-            "observer_id",
             "observer_name",
             "room",
             "observer_description",
@@ -37,10 +35,12 @@ if __name__ == "__main__":
         csv.write(string + "\n")
 
         for fix_tb in Fixtures()["Testbed"]:
-            tb = Testbed(id=fix_tb["id"])
+            tb = Testbed(name=fix_tb["name"])
 
             for fix_tgt in Fixtures()["Target"]:
-                target = Target(id=fix_tgt["id"])
+                target = Target(name=fix_tgt["name"])
+                if target.id is None:
+                    continue
 
                 try:
                     observer = tb.get_observer(target.id)
@@ -50,13 +50,10 @@ if __name__ == "__main__":
                 cape = observer.cape
 
                 elements = [
-                    str(tb.id),
                     tb.name,
                     str(target.id),
                     target.name,
-                    str(cape.id),
-                    cape.name,
-                    str(observer.id),
+                    cape.name if isinstance(cape, Cape) else "-",
                     observer.name,
                     observer.room,
                     str(observer.description),

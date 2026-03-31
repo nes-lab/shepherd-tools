@@ -63,7 +63,7 @@ class Testbed(ShpModel):
         targets = []
         eth_ports = []
         for obs in self.observers:
-            observers.append(obs.id)
+            observers.append(obs.name)
             ips.append(obs.ip)
             macs.append(obs.mac)
             if obs.cape is not None:
