@@ -2,22 +2,29 @@
 
 # more human-readable test-protocol @
 # https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
-- datatype: cape
+
+- datatype: cape # prototype
   parameters:
-    id: 1270051
-    name: cape51
+    id: 1270000
+    name: cape00
     version: v2.4b
     description: full version with Hrv & Emu, modded gpio,emu,hrv
     created: 2022-10-07
     calibrated: 2023-09-21
+
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
+    id: 1270051
+    name: cape51
+- datatype: cape
+  parameters:
+    inherit_from: cape00
     id: 1270052
     name: cape52
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270053
     name: cape53
     description: full version with Hrv & Emu, partially modded
@@ -25,78 +32,70 @@
     active: false
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270054
     name: cape54
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270055
     name: cape55
     comment: Target-Port B, C-Meas failed on first Cal
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270056
     name: cape56
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270057
     name: cape57
     comment: 2nd Lab Prototype, has stackable headers
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270058
     name: cape58
     comment: has shields on emu & hrv-circuits -> no effect on RF-Performance
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270059
     name: cape59
     comment: only 220u/440uF on 5V
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270060
     name: cape60
     comment: 3rd Lab Prototype
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270061
     name: cape61
     comment: only 220u/440uF on 5V
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270062
     name: cape62
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270063
     name: cape63
     comment: only 220u/440uF on 5V
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270064
     name: cape64
-    comment: only 220u/440uF on 5V, had 6x74LVC2T45GT flippend (U11,12,23,24,27,28) - hot air repair
+    comment: only 220u/440uF on 5V, had 6x74LVC2T45GT flipped (U11,12,23,24,27,28) - hot air repair
 - datatype: cape
   parameters:
-    inherit_from: cape51
+    inherit_from: cape00
     id: 1270065
     name: cape65
     comment: only 220u/440uF on 5V
-- datatype: cape
-  parameters:
-    id: 42000
-    name: unit_testing_cape
-    version: none
-    description: for unit testing
-    created: 2025-04-29
-    calibrated: 2025-04-29

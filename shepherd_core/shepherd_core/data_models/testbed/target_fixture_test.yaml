@@ -1,0 +1,26 @@
+---
+
+- datatype: target
+  parameters:
+    id: 1001
+    name: target_nRF52_01
+    version: v2.1r0
+    description: single target PCB, v2.1r0
+    comment: ONLY VIRTUAL - NOT REAL - for unittests
+    mcu1:
+      name: nRF52
+    mcu2: null
+    created: 2022-12-12 12:12:12
+
+- datatype: target
+  parameters:
+    id: 42
+    name: unit_testing_target
+    version: v0
+    description: for unit testing
+    comment: no comment
+    created: 2025-04-29
+    mcu1:
+      name: nRF52
+    mcu2:
+      name: MSP430FR
