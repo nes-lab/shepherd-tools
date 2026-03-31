@@ -72,44 +72,31 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
 
     def has_target(self, target_id: int) -> bool:
         case_a = (
-            self.target_a is not None and target_id == self.target_a.id and self.target_a.active
+            isinstance(self.target_a, Target)
+            and target_id == self.target_a.id
+            and self.target_a.active
         )
         case_b = (
-            self.target_b is not None and target_id == self.target_b.id and self.target_b.active
+            isinstance(self.target_b, Target)
+            and target_id == self.target_b.id
+            and self.target_b.active
         )
         return case_a or case_b
 
     def get_target_port(self, target_id: int) -> TargetPort:
         if self.has_target(target_id):
-            if self.target_a is not None and target_id == self.target_a.id:
+            if isinstance(self.target_a, Target) and target_id == self.target_a.id:
                 return TargetPort.A
-            if self.target_b is not None and target_id == self.target_b.id:
+            if isinstance(self.target_b, Target) and target_id == self.target_b.id:
                 return TargetPort.B
         msg = f"Target-ID {target_id} was not found in Observer '{self.name}'"
         raise KeyError(msg)
 
     def get_target(self, target_id: int) -> Target:
         if self.has_target(target_id):
-            if self.target_a is not None and target_id == self.target_a.id:
+            if isinstance(self.target_a, Target) and target_id == self.target_a.id:
                 return self.target_a
-            if self.target_b is not None and target_id == self.target_b.id:
+            if isinstance(self.target_b, Target) and target_id == self.target_b.id:
                 return self.target_b
         msg = f"Target-ID {target_id} was not found in Observer '{self.name}'"
         raise KeyError(msg)
-
-    def get_target_id(self, testbed_id: int) -> int | None:
-        if (
-            self.target_a is not None
-            and self.target_a.active
-            and self.target_a.testbed_id is not None
-            and testbed_id == self.target_a.testbed_id
-        ):
-            return self.target_a.id
-        if (
-            self.target_b is not None
-            and self.target_b.active
-            and self.target_b.testbed_id is not None
-            and testbed_id == self.target_b.testbed_id
-        ):
-            return self.target_b.id
-        return None

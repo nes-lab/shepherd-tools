@@ -68,34 +68,31 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     @staticmethod
     def _validate_targets(configs: Iterable[TargetConfig]) -> None:
-        tgt_tb_ids: list[int] = []
+        target_ids: list[int] = []
         custom_ids: list[int] = []
-        tb = Testbed()  # TODO: should be taken from client
         for config_ in configs:
-            for tgt_tb_id in config_.target_IDs:
-                tgt_tb_ids.append(tgt_tb_id)
-                target_id = tb.get_target_id(testbed_id=tgt_tb_id)
+            for id_ in config_.target_IDs:
+                target_ids.append(id_)
                 if config.VALIDATE_INFRA:
-                    Target(id=target_id)
+                    Target(id=id_)
                     # ⤷ this can raise exception for non-existing targets
             if config_.custom_IDs is not None:
                 custom_ids += config_.custom_IDs[: len(config_.target_IDs)]
             else:
                 custom_ids += config_.target_IDs
-        if len(tgt_tb_ids) > len(set(tgt_tb_ids)):
+        if len(target_ids) > len(set(target_ids)):
             raise ValueError("Target-ID used more than once in Experiment!")
-        if len(tgt_tb_ids) > len(set(custom_ids)):
+        if len(target_ids) > len(set(custom_ids)):
             raise ValueError("Custom Target-ID are faulty (some form of id-collisions)!")
 
     @staticmethod
     def _validate_observers(configs: Iterable[TargetConfig]) -> None:
         if not config.VALIDATE_INFRA:
             return
-        testbed = Testbed()
-        target_testbed_ids = [id_ for config_ in configs for id_ in config_.target_IDs]
-        target_ids = [testbed.get_target_id(testbed_id=id_) for id_ in target_testbed_ids]
-        obs_ids = [testbed.get_observer(id_).id for id_ in target_ids]
-        if len(target_ids) > len(set(obs_ids)):
+        testbed = Testbed()  # TODO: should be taken from client
+        target_ids = [id_ for config_ in configs for id_ in config_.target_IDs]
+        obs_names = [testbed.get_observer(id_).name for id_ in target_ids]
+        if len(target_ids) > len(set(obs_names)):
             raise ValueError(
                 "Observer is used more than once in Experiment -> only 1 target per observer!"
             )

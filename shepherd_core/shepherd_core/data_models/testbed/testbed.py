@@ -100,16 +100,3 @@ class Testbed(ShpModel):
                 return obs
         msg = f"Target-ID {target_id} was not found in Testbed '{self.name}'"
         raise ValueError(msg)
-
-    def get_target_id(self, testbed_id: int, *, soft: bool = False) -> int:
-        for obs in self.observers:
-            if not obs.active or not isinstance(obs.cape, Cape) or not obs.cape.active:
-                # skip decommissioned setups
-                continue
-            tgt_id = obs.get_target_id(testbed_id)
-            if tgt_id is not None:
-                return tgt_id
-        if soft:  # avoid exception and just return original input
-            return testbed_id
-        msg = f"Target-Testbed-ID {testbed_id} was not found in Testbed '{self.name}'"
-        raise ValueError(msg)

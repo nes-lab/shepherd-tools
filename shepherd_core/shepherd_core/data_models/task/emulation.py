@@ -158,7 +158,6 @@ class EmulationTask(ShpModel):
     @classmethod
     @validate_call
     def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path) -> Self:
-        tgt_id = tb.get_target_id(testbed_id=tgt_id, soft=True)
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
         tgt_idx = tgt_cfg.target_IDs.index(tgt_id)

@@ -19,7 +19,6 @@ from shepherd_core.data_models.experiment import SystemLogging
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.testbed import GPIO
 from shepherd_core.data_models.testbed import Target
-from shepherd_core.data_models.testbed import Testbed
 
 from shepherd_core import local_now
 
@@ -261,10 +260,8 @@ def test_experiment_model_tgt_cfg_min1() -> None:
         energy_env=EnergyEnvironment(name="SolarSunny"),
         firmware1=Firmware(name="nrf52_demo_rf"),
     )
-    tb = Testbed()
-    for tgt_tb_id in cfg.target_IDs:
-        target_id = tb.get_target_id(testbed_id=tgt_tb_id)
-        Target(id=target_id)
+    for id_ in cfg.target_IDs:
+        Target(id=id_)
     assert cfg.get_custom_id(1) is None
 
 
@@ -275,10 +272,8 @@ def test_experiment_model_tgt_cfg_min2() -> None:
         energy_env=EnergyEnvironment(name="SolarSunny"),
         firmware1=Firmware(name="nrf52_demo_rf"),
     )
-    tb = Testbed()
-    for tgt_tb_id in cfg.target_IDs:
-        target_id = tb.get_target_id(testbed_id=tgt_tb_id)
-        Target(id=target_id)
+    for id_ in cfg.target_IDs:
+        Target(id=id_)
     assert cfg.get_custom_id(1) == 7
     assert cfg.get_custom_id(2) == 9
     assert cfg.get_custom_id(3) is None
