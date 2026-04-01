@@ -13,7 +13,7 @@ from shepherd_core.testbed_client.fixtures import Fixtures
 def test_testbed_fixture_cape() -> None:
     for fix in Fixtures()["Cape"]:
         Cape(name=fix["name"])
-        Cape(id=fix["id"])
+        # Cape(id=fix["id"])
 
 
 def test_testbed_fixture_gpio() -> None:
@@ -24,25 +24,25 @@ def test_testbed_fixture_gpio() -> None:
 
 def test_testbed_fixture_mcu() -> None:
     for fix in Fixtures()["MCU"]:
-        MCU(name=fix["name"])
-        mcu = MCU(id=fix["id"])
+        mcu = MCU(name=fix["name"])
+        # mcu = MCU(id=fix["id"])
         Firmware(name=mcu.fw_name_default)
 
 
 def test_testbed_fixture_observer() -> None:
     for fix in Fixtures()["Observer"]:
-        print(f"selecting {fix['name']} - {fix['id']}")
+        print(f"selecting {fix.get('name')} - {fix.get('id')}")
         Observer(name=fix["name"])
-        Observer(id=fix["id"])
+        # Observer(id=fix["id"])
 
 
 def test_testbed_fixture_target() -> None:
     for fix in Fixtures()["Target"]:
         Target(name=fix["name"])
-        Target(id=fix["id"])
+        # Target(id=fix["id"])
 
 
 def test_testbed_fixture_tb() -> None:
     for fix in Fixtures()["Testbed"]:
         TasteBad(name=fix["name"])
-        TasteBad(id=fix["id"])
+        # TasteBad(id=fix["id"])

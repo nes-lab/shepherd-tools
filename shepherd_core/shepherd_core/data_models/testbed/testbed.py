@@ -12,12 +12,12 @@ from pydantic import model_validator
 from typing_extensions import Self
 
 from shepherd_core.config import config
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.testbed_client import tb_client
 
+from .cape import Cape
 from .observer import Observer
 
 duration_5min = timedelta(minutes=5)
@@ -27,7 +27,6 @@ duration_5min = timedelta(minutes=5)
 class Testbed(ShpModel):
     """meta-data representation of a testbed-component (physical object)."""
 
-    id: IdInt
     name: NameStr
     description: SafeStr
     comment: SafeStr | None = None
@@ -64,7 +63,7 @@ class Testbed(ShpModel):
         targets = []
         eth_ports = []
         for obs in self.observers:
-            observers.append(obs.id)
+            observers.append(obs.name)
             ips.append(obs.ip)
             macs.append(obs.mac)
             if obs.cape is not None:
@@ -94,7 +93,7 @@ class Testbed(ShpModel):
 
     def get_observer(self, target_id: int) -> Observer:
         for obs in self.observers:
-            if not obs.active or not obs.cape.active:
+            if not obs.active or not isinstance(obs.cape, Cape) or not obs.cape.active:
                 # skip decommissioned setups
                 continue
             if obs.has_target(target_id):

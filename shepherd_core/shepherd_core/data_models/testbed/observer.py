@@ -11,7 +11,6 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -31,7 +30,6 @@ MACStr = Annotated[
 class Observer(ShpModel, title="Shepherd-Sheep"):
     """meta-data representation of a testbed-component (physical object)."""
 
-    id: IdInt
     name: NameStr
     description: SafeStr
     comment: SafeStr | None = None
@@ -65,8 +63,8 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        has_cape = self.cape is not None
-        has_target = (self.target_a is not None) or (self.target_b is not None)
+        has_cape = isinstance(self.cape, Cape)
+        has_target = isinstance(self.target_a, Target) or isinstance(self.target_b, Target)
         if not has_cape and has_target:
             msg = f"Observer '{self.name}' is faulty -> has targets but no cape"
             raise ValueError(msg)
@@ -74,27 +72,31 @@ class Observer(ShpModel, title="Shepherd-Sheep"):
 
     def has_target(self, target_id: int) -> bool:
         case_a = (
-            self.target_a is not None and target_id == self.target_a.id and self.target_a.active
+            isinstance(self.target_a, Target)
+            and target_id == self.target_a.id
+            and self.target_a.active
         )
         case_b = (
-            self.target_b is not None and target_id == self.target_b.id and self.target_b.active
+            isinstance(self.target_b, Target)
+            and target_id == self.target_b.id
+            and self.target_b.active
         )
         return case_a or case_b
 
     def get_target_port(self, target_id: int) -> TargetPort:
         if self.has_target(target_id):
-            if self.target_a is not None and target_id == self.target_a.id:
+            if isinstance(self.target_a, Target) and target_id == self.target_a.id:
                 return TargetPort.A
-            if self.target_b is not None and target_id == self.target_b.id:
+            if isinstance(self.target_b, Target) and target_id == self.target_b.id:
                 return TargetPort.B
         msg = f"Target-ID {target_id} was not found in Observer '{self.name}'"
         raise KeyError(msg)
 
     def get_target(self, target_id: int) -> Target:
         if self.has_target(target_id):
-            if self.target_a is not None and target_id == self.target_a.id:
+            if isinstance(self.target_a, Target) and target_id == self.target_a.id:
                 return self.target_a
-            if self.target_b is not None and target_id == self.target_b.id:
+            if isinstance(self.target_b, Target) and target_id == self.target_b.id:
                 return self.target_b
         msg = f"Target-ID {target_id} was not found in Observer '{self.name}'"
         raise KeyError(msg)

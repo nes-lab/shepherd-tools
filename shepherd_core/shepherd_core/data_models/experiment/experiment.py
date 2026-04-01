@@ -89,10 +89,10 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     def _validate_observers(configs: Iterable[TargetConfig]) -> None:
         if not config.VALIDATE_INFRA:
             return
-        testbed = Testbed()
+        testbed = Testbed()  # TODO: should be taken from client
         target_ids = [id_ for config_ in configs for id_ in config_.target_IDs]
-        obs_ids = [testbed.get_observer(id_).id for id_ in target_ids]
-        if len(target_ids) > len(set(obs_ids)):
+        obs_names = [testbed.get_observer(id_).name for id_ in target_ids]
+        if len(target_ids) > len(set(obs_names)):
             raise ValueError(
                 "Observer is used more than once in Experiment -> only 1 target per observer!"
             )

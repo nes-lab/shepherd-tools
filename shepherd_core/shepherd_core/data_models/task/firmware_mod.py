@@ -68,7 +68,8 @@ class FirmwareModTask(ShpModel):
         fw_id = tgt_cfg.get_custom_id(tgt_id)
         if fw_id is None:
             obs = tb.get_observer(tgt_id)
-            fw_id = obs.get_target(tgt_id).testbed_id
+            fw_id = obs.get_target(tgt_id).id
+            # TODO: can tgt_id be used directly? this had a purpose
 
         return cls(
             data=path_posix(fw.data) if isinstance(fw.data, Path) else fw.data,

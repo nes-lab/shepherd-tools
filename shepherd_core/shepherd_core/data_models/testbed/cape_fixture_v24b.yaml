@@ -1,0 +1,85 @@
+---
+
+# more human-readable test-protocol @
+# https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
+
+- datatype: cape # prototype
+  parameters:
+    name: cape1270_000
+    version: v2.4b
+    description: full version with Hrv & Emu, modded gpio,emu,hrv; produced by Egas
+    created: 2022-10-07
+    calibrated: 2023-09-21
+
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_051
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_052
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_053
+    description: full version with Hrv & Emu, partially modded
+    comment: 1st Lab Prototype, burned VReg -> currently defective
+    active: false
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_054
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_055
+    comment: Target-Port B, C-Meas failed on first Cal
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_056
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_057
+    comment: 2nd Lab Prototype, has stackable headers
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_058
+    comment: has shields on emu & hrv-circuits -> no effect on RF-Performance
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_059
+    comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_060
+    comment: 3rd Lab Prototype
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_061
+    comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_062
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_063
+    comment: only 220u/440uF on 5V
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_064
+    comment: only 220u/440uF on 5V, had 6x74LVC2T45GT flipped (U11,12,23,24,27,28) - hot air repair
+- datatype: cape
+  parameters:
+    inherit_from: cape1270_000
+    name: cape1270_065
+    comment: only 220u/440uF on 5V

@@ -101,14 +101,14 @@ class TargetConfig(ShpModel):
                 if not has_fw and has_mcu:
                     fw_def = Firmware(name=tgt_mcu.fw_name_default)
                     # ⤷ this will raise if default is faulty
-                    if tgt_mcu.id != fw_def.mcu.id:
+                    if tgt_mcu.name != fw_def.mcu.name:
                         msg = (
                             f"Default-Firmware for MCU{mcu_num} of Target-ID '{target.id}' "
                             f"(={fw_def.mcu.name}) "
                             f"is incompatible (={tgt_mcu.name})"
                         )
                         raise ValueError(msg)
-                if has_fw and has_mcu and val_fw.mcu.id != tgt_mcu.id:
+                if has_fw and has_mcu and val_fw.mcu.name != tgt_mcu.name:
                     msg = (
                         f"Firmware{mcu_num} for MCU of Target-ID '{target.id}' "
                         f"(={val_fw.mcu.name}) "

@@ -1,7 +1,6 @@
 --- # add with >>> python manage.py loaddata <fixturename>
 - datatype: mcu
   parameters:
-    id: 1001
     name: nRF52
     description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
     platform: nRF52
@@ -10,7 +9,6 @@
     fw_name_default: nrf52_deep_sleep
 - datatype: mcu
   parameters:
-    id: 1002
     name: MSP430FR
     description: 16MHz Ultra-Low-Pwr MCU with 256 KB FRAM
     platform: MSP430

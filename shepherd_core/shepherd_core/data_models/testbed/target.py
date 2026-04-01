@@ -8,7 +8,6 @@ from typing import final
 from pydantic import Field
 from pydantic import model_validator
 
-from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -25,7 +24,7 @@ MCUPort = Annotated[int, Field(ge=1, le=2)]
 class Target(ShpModel, title="Target Node (DuT)"):
     """meta-data representation of a testbed-component (physical object)."""
 
-    id: IdInt
+    id: IdInt16 | None = None
     name: NameStr
     version: NameStr
     description: SafeStr
@@ -35,8 +34,6 @@ class Target(ShpModel, title="Target Node (DuT)"):
     active: bool = True
     created: datetime = Field(default_factory=datetime.now)
 
-    testbed_id: IdInt16 | None = None
-    """ ⤷ is derived from ID (targets are still selected by id!)"""
     mcu1: MCU | NameStr
     mcu2: MCU | NameStr | None = None
 
@@ -57,7 +54,5 @@ class Target(ShpModel, title="Target Node (DuT)"):
                 # ⤷ this will raise if default is faulty
             elif isinstance(values.get(mcu), dict):
                 values[mcu] = MCU(**values[mcu])
-        if values.get("testbed_id") is None:
-            values["testbed_id"] = values.get("id") % 2**16
 
         return values

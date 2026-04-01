@@ -84,7 +84,7 @@ def simulate_source(
                     I_inp_nA=int(i_nA[n_]),
                     I_out_nA=i_out_nA,
                 )
-                i_out_nA = target.step(int(v_uV[n_]), pwr_good=src.cnv.get_power_good())
+                i_out_nA = target.step(int(v_uV[n_]), pwr_good=src.cnv.get_power_good_hysteresis())
                 i_nA[n_] = i_out_nA
 
                 if stats_internal is not None:
@@ -99,7 +99,7 @@ def simulate_source(
                         i_out_nA * 1e-6,
                         src.cnv.P_inp_fW * 1e-12,  # mW
                         src.cnv.P_out_fW * 1e-12,
-                        src.cnv.get_power_good(),
+                        src.cnv.get_power_good_hysteresis(),
                     ]
                     stats_sample += 1
 

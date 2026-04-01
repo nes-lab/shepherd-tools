@@ -204,7 +204,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1002
       name: MSP430FR
       description: 16MHz Ultra-Low-Pwr MCU with 256 KB FRAM
       comment: null
@@ -232,7 +231,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1002
       name: MSP430FR
       description: 16MHz Ultra-Low-Pwr MCU with 256 KB FRAM
       comment: null
@@ -260,7 +258,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1002
       name: MSP430FR
       description: 16MHz Ultra-Low-Pwr MCU with 256 KB FRAM
       comment: null
@@ -288,7 +285,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1001
       name: nRF52
       description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
@@ -316,7 +312,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1001
       name: nRF52
       description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
@@ -345,7 +340,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1001
       name: nRF52
       description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
@@ -373,7 +367,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1001
       name: nRF52
       description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null
@@ -402,7 +395,6 @@
     visible2group: true
     visible2all: true
     mcu:
-      id: 1001
       name: nRF52
       description: MCU with RF, 802.15.4, Bluetooth v5.0, 2.4GHz
       comment: null

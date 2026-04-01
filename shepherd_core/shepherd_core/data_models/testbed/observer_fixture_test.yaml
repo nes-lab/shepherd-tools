@@ -1,0 +1,37 @@
+---
+# observer-cape-target-relation: https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Cape_pre-deployment-tests.xlsx
+# network data: https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/ethernet_MAC_addresses_bbones.ods
+
+- datatype: observer
+  parameters:
+    name: sheep0
+    ip: 10.0.0.20
+    mac: 18:00:C0:FF:EE:77
+    room: at-home
+    eth_port: unimatrix_zero_one
+    description: lab / dev
+    longitude: 0
+    latitude: 0
+    cape:
+      name: cape1270_053
+    target_a:
+      name: nRF52_FRAM_1392_399
+    created: 2022-12-12 12:12:12
+    active: false
+
+- datatype: observer
+  parameters:
+    name: unit_testing_sheep
+    ip: 0.0.0.0
+    mac: 00:00:00:00:00:00
+    room: none
+    eth_port: none
+    description: unit testing
+    longitude: 0
+    latitude: 0
+    cape:
+      name: unit_testing_cape
+    target_a:
+      name: unit_testing_target
+    created: 2025-04-29 13:07:00
+    active: true

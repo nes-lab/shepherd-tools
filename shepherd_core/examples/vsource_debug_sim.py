@@ -75,7 +75,7 @@ for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_li
             V_out_uV = src.iterate_sampling(I_out_nA=I_out_nA)
 
         # listen to power-good signal
-        if src.cnv.get_power_good():
+        if src.cnv.get_power_good_hysteresis():
             I_out_nA = int(I_mcu_active_A * 10**9)
             N_good += 1
         else:
@@ -85,7 +85,7 @@ for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_li
         vcaps[i] = [
             src.cnv.get_V_intermediate_uV() * 1e-6,
             V_out_uV * 1e-6,
-            src.cnv.get_power_good(),
+            src.cnv.get_power_good_hysteresis(),
         ]
 
     # visualize results

@@ -4,12 +4,10 @@ from collections.abc import Iterable
 from datetime import datetime
 from pathlib import Path
 from pathlib import PurePosixPath
-from typing import Annotated
 from typing import final
 
 from pydantic import validate_call
 from typing_extensions import Self
-from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.content import NameStr
@@ -42,10 +40,6 @@ class ObserverTasks(ShpModel):
     # MAIN PROCESS
     emulation: EmulationTask | None = None
 
-    # deprecations, TODO: remove before public release
-    owner_id: Annotated[IdInt | None, deprecated("not needed anymore")] = None
-    abort_on_error: Annotated[bool, deprecated("has no effect")] = False
-
     # post_copy / cleanup, Todo: could also just intake emuTask
     #  - delete firmwares
     #  - decode uart
@@ -57,7 +51,6 @@ class ObserverTasks(ShpModel):
     def from_xp(cls, xp: Experiment, xp_folder: str | None, tb: Testbed, tgt_id: IdInt) -> Self:
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
-
         obs = tb.get_observer(tgt_id)
         if xp_folder is None:
             xp_folder = xp.folder_name()  # moved a layer up for consistent naming

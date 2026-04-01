@@ -1,6 +1,5 @@
 - datatype: testbed
   parameters:
-    id: 1337
     name: shepherd_tud_nes
     description: "Shepherd Testbed of the NES Lab Group at TU Dresden, Germany"
     shared_storage: true
@@ -19,14 +18,25 @@
 #      - name: sheep08
       - name: sheep09
       - name: sheep10
-#      - name: sheep11
+      - name: sheep11
       - name: sheep12
       - name: sheep13
       - name: sheep14
+      - name: sheep15
+      - name: sheep16
+      - name: sheep17
+      - name: sheep18
+      - name: sheep19
+      - name: sheep20
+      - name: sheep21
+      - name: sheep22
+      - name: sheep23
+      - name: sheep24
+      - name: sheep25
+      - name: sheep26
 
 - datatype: testbed
   parameters:
-    id: 42
     name: unit_testing_testbed
     description: "Artificial Testbed used in unit testing"
     shared_storage: true

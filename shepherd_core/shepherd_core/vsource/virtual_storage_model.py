@@ -21,7 +21,6 @@ Expected deviations:
 from pydantic import PositiveFloat
 from pydantic import validate_call
 
-from shepherd_core import log
 from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE
 from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE_LOG
 from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
@@ -29,29 +28,18 @@ from shepherd_core.data_models.content.virtual_storage_config import TIMESTEP_s_
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.content.virtual_storage_config import soc_t
 
+from .math64_safe import add32
+from .math64_safe import mul32e
+from .math64_safe import sub32
+from .math64_safe import sub64
+from .math64_safe import u32s
+from .math64_safe import u64s
+
 
 class ModelStorage:
     """Abstract base class for storage models."""
 
     def step(self, I_charge_A: float) -> tuple[float, float, float, float]: ...
-
-
-def u32s(i: float) -> int:
-    """Guard to supervise calculated model-states."""
-    if i >= 2**32:
-        log.warning("u32-overflow")
-    if i < 0:
-        log.warning("u32-underflow")
-    return int(min(max(i, 0), 2**32 - 1))
-
-
-def u64s(i: float) -> int:
-    """Guard to supervise calculated model-states."""
-    if i >= 2**64:
-        log.warning("u64-overflow")
-    if i < 0:
-        log.warning("u64-underflow")
-    return int(min(max(i, 0), 2**64 - 1))
 
 
 class VirtualStorageModelPRU:
@@ -90,33 +78,26 @@ class VirtualStorageModelPRU:
 
         Note: 3x u64 multiplications
         """
-        dSoC_leak_1_n62 = u64s((self.V_OC_uV_n8 // 2**6) * self.cfg_pru.Constant_1_per_uV_n60)
-        if self.SoC_1_n62 >= dSoC_leak_1_n62:
-            self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_leak_1_n62)
-        else:
-            self.SoC_1_n62 = 0
+        dSoC_leak_1_n62 = mul32e(self.V_OC_uV_n8 // 2**6, self.cfg_pru.Constant_1_per_uV_n60)
+        self.SoC_1_n62 = sub64(self.SoC_1_n62, dSoC_leak_1_n62)
 
-        dSoC_1_n62 = u64s(I_delta_nA_n4 * self.cfg_pru.Constant_1_per_nA_n60 // (2**2))
+        dSoC_1_n62 = mul32e(I_delta_nA_n4, self.cfg_pru.Constant_1_per_nA_n60) // (2**2)
         if is_charging:
             self.SoC_1_n62 = u64s(self.SoC_1_n62 + dSoC_1_n62)
             self.SoC_1_n62 = min(self.SoC_MAX_1_n62, self.SoC_1_n62)
-        elif self.SoC_1_n62 > dSoC_1_n62:
-            self.SoC_1_n62 = u64s(self.SoC_1_n62 - dSoC_1_n62)
         else:
-            self.SoC_1_n62 = 0
+            self.SoC_1_n62 = sub64(self.SoC_1_n62, dSoC_1_n62)
 
         pos_LuT = self.pos_LuT(self.SoC_1_n62)
         self.V_OC_uV_n8 = self.cfg_pru.LuT_VOC_uV_n8[pos_LuT]
         # TODO: is interpolation possible?
         R_series_kOhm_n32 = self.cfg_pru.LuT_RSeries_kOhm_n32[pos_LuT]
-        V_delta_uV_n8 = u32s(u64s(I_delta_nA_n4 * R_series_kOhm_n32) // 2**28)
+        V_delta_uV_n8 = u32s(mul32e(I_delta_nA_n4, R_series_kOhm_n32) // 2**28)
 
         if is_charging:
-            V_cell_uV_n8 = u32s(self.V_OC_uV_n8 + V_delta_uV_n8)
-        elif self.V_OC_uV_n8 > V_delta_uV_n8:
-            V_cell_uV_n8 = u32s(self.V_OC_uV_n8 - V_delta_uV_n8)
+            V_cell_uV_n8 = add32(self.V_OC_uV_n8, V_delta_uV_n8)
         else:
-            V_cell_uV_n8 = 0
+            V_cell_uV_n8 = sub32(self.V_OC_uV_n8, V_delta_uV_n8)
 
         if self.SoC_1_n62 == 0:
             return 0  # cell voltage breaks down

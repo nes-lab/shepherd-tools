@@ -78,7 +78,7 @@ class VirtualSourceModel:
 
         # fake ADC read
         A_out_raw = self._cal_emu.adc_C_A.si_to_raw(I_out_nA * 10**-9)
-        P_out_fW = self.cnv.calc_out_power(A_out_raw)
+        P_out_fW = self.cnv.calc_out_power(int(A_out_raw))
 
         V_mid_uV = self.cnv.update_cap_storage()
         V_out_raw = self.cnv.update_states_and_output()

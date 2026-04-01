@@ -1,0 +1,172 @@
+---
+# more human-readable test-protocol @
+# https://github.com/orgua/shepherd-v2-planning/blob/main/doc_testbed/Target_v13e_pre-deployment-tests.xlsx
+
+- datatype: target # PROTOTYPE
+  parameters:
+    name: nRF52_FRAM_2025_000  # used to link all parts together
+    version: v1.3e
+    description: nRF52 as MCU + Radio, MSP430FR as SPI-FRAM or additional MCU; produced by NES Lab
+    comment:
+    created: 2025-03-27
+    mcu1:
+      name: nRF52
+    mcu2:
+      name: MSP430FR
+
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_001
+    id: 16
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_002
+    id: 15
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_003
+    active: false
+    comment: MSP-programming only possible with Riotee
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_004
+    active: false
+    comment: in Darmstadt; Pin Led2, GPIO18 faulty
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_005
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_006
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_007
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_008
+    active: false
+    comment: MSP-programming flakey
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_009
+    active: false
+    comment: in Darmstadt; AB1805 missing; special faults added
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_010
+
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_011
+    id: 23
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_012
+    active: false
+    comment: MSP-programming only possible with Riotee
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_013
+    id: 17
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_014
+    active: false
+    comment: L2?
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_015
+    active: false
+    comment: C17?
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_016
+    active: false
+    comment: C16,L1?
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_017
+    active: false
+    comment: T1?
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_018
+    active: false
+    comment: in Darmstadt; C28 faulty
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_019
+    active: false
+    comment: L2?
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_020
+
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_021
+    active: false
+    comment: in Darmstadt; C12, C8, C28, L2 faulty
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_022
+    id: 22
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_023
+    id: 24
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_024
+    id: 18
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_025
+    id: 9
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_026
+    id: 7
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_027
+    id: 6
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_028
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_029
+- datatype: target
+  parameters:
+    inherit_from: nRF52_FRAM_2025_000
+    name: nRF52_FRAM_2025_030

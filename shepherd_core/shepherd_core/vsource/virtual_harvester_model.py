@@ -18,6 +18,12 @@ Compromises:
 
 from shepherd_core.data_models.content.virtual_harvester_config import HarvesterPRUConfig
 from shepherd_core.logger import log
+from shepherd_core.vsource.math64_safe import add32
+from shepherd_core.vsource.math64_safe import add32s
+from shepherd_core.vsource.math64_safe import mul32
+from shepherd_core.vsource.math64_safe import mul32e
+from shepherd_core.vsource.math64_safe import sub32
+from shepherd_core.vsource.math64_safe import sub32s
 
 
 class VirtualHarvesterModel:
@@ -126,25 +132,12 @@ class VirtualHarvesterModel:
                 self.current_delta = _current_nA - self.current_last
         elif self.lin_extrapolation:
             # apply the proper delta if needed
-            # TODO: C-Code differs here slightly, but only to handle unsigned int
             if (self.voltage_hold < self.voltage_set_uV) == (self.voltage_delta > 0):
-                if self.voltage_hold > -self.voltage_delta:
-                    self.voltage_hold += self.voltage_delta
-                else:
-                    self.voltage_hold = 0
-                if self.current_hold > -self.current_delta:
-                    self.current_hold += self.current_delta
-                else:
-                    self.current_hold = 0
+                self.voltage_hold = add32s(self.voltage_hold, self.voltage_delta)
+                self.current_hold = add32s(self.current_hold, self.current_delta)
             else:
-                if self.voltage_hold > self.voltage_delta:
-                    self.voltage_hold -= self.voltage_delta
-                else:
-                    self.voltage_hold = 0
-                if self.current_hold > self.current_delta:
-                    self.current_hold -= self.current_delta
-                else:
-                    self.current_hold = 0
+                self.voltage_hold = sub32s(self.voltage_hold, self.voltage_delta)
+                self.current_hold = sub32s(self.current_hold, self.current_delta)
 
         self.voltage_last = _voltage_uV
         self.current_last = _current_nA
@@ -178,7 +171,7 @@ class VirtualHarvesterModel:
             self.voltage_set_uV = self._cfg.voltage_max_uV
             _current_nA = 0
         elif self.interval_step == self._cfg.duration_n:
-            self.voltage_set_uV = int(self.voc_now * self._cfg.setpoint_n8 / 256)
+            self.voltage_set_uV = mul32(self.voc_now, self._cfg.setpoint_n8) // 256
             _current_nA = 0
         return _voltage_uV, _current_nA
 
@@ -190,24 +183,24 @@ class VirtualHarvesterModel:
         _voltage_uV, _current_nA = self.ivcurve_2_cv(_voltage_uV, _current_nA)
 
         if self.interval_step == 0:
-            power_now = _voltage_uV * _current_nA
+            power_now = mul32e(_voltage_uV, _current_nA)
             if power_now > self.power_last:
                 if self.is_rising:
-                    self.voltage_set_uV += self.volt_step_uV
+                    self.voltage_set_uV = add32(self.voltage_set_uV, self.volt_step_uV)
                 else:
-                    self.voltage_set_uV -= self.volt_step_uV
-                self.volt_step_uV *= 2
+                    self.voltage_set_uV = sub32(self.voltage_set_uV, self.volt_step_uV)
+                self.volt_step_uV = mul32(self.volt_step_uV, 2)
             elif (power_now <= 0) and (self.voltage_set_uV > 0):
                 self.is_rising = True
                 self.volt_step_uV = self._cfg.voltage_step_uV
-                self.voltage_set_uV -= self.voltage_step_x4_uV
+                self.voltage_set_uV = sub32(self.voltage_set_uV, self.voltage_step_x4_uV)
             else:
                 self.is_rising = not self.is_rising
                 self.volt_step_uV = self._cfg.voltage_step_uV
                 if self.is_rising:
-                    self.voltage_set_uV += self.volt_step_uV
+                    self.voltage_set_uV = add32(self.voltage_set_uV, self.volt_step_uV)
                 else:
-                    self.voltage_set_uV -= self.volt_step_uV
+                    self.voltage_set_uV = sub32(self.voltage_set_uV, self.volt_step_uV)
 
             self.power_last = power_now
 
@@ -230,7 +223,7 @@ class VirtualHarvesterModel:
         self.age_now += 1
         self.age_nxt += 1
 
-        power_fW = _voltage_uV * _current_nA
+        power_fW = mul32e(_voltage_uV, _current_nA)
         if (
             (power_fW >= self.power_nxt)
             and (_voltage_uV >= self._cfg.voltage_min_uV)

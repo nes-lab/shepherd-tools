@@ -5,12 +5,15 @@ with the resulting behavior of the model.
 """
 
 from datetime import timedelta
+from pathlib import Path
 
 from virtual_storage_config import VirtualStorageConfig
 
 from shepherd_core import log
 from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaMPlus
 from shepherd_core.vsource.virtual_storage_simulator import StorageSimulator
+
+path_here = Path(__file__).parent
 
 
 def experiment_self_discharge_lead_acid() -> None:
@@ -46,8 +49,9 @@ def experiment_self_discharge_lead_acid() -> None:
 
     sim.run(fn=step, duration_s=duration.total_seconds())
     sim.plot(
+        path_here,
         f"Experiment {cfg1.name}, self-discharge, "
-        f"SoC {SoC_init:.3f} to {SoC_final:.3f} in {duration.total_seconds()} s"
+        f"SoC {SoC_init:.3f} to {SoC_final:.3f} in {duration.total_seconds()} s",
     )
 
 
@@ -83,8 +87,9 @@ def experiment_self_discharge_lipo() -> None:
 
     sim.run(fn=step, duration_s=duration.total_seconds())
     sim.plot(
+        path_here,
         f"Experiment {cfg1.name}, self-discharge, "
-        f"SoC {SoC_init:.3f} to {SoC_final:.3f} in {duration.total_seconds()} s"
+        f"SoC {SoC_init:.3f} to {SoC_final:.3f} in {duration.total_seconds()} s",
     )
 
 
@@ -112,7 +117,7 @@ def experiment_self_discharge_tantal_avx() -> None:
         return 0
 
     sim.run(fn=step, duration_s=duration.total_seconds())
-    sim.plot(f"Experiment Tantal AVX, self-discharge {duration.total_seconds()} s")
+    sim.plot(path_here, f"Experiment Tantal AVX, self-discharge {duration.total_seconds()} s")
 
 
 def experiment_self_discharge_mlcc_tayo() -> None:
@@ -141,7 +146,7 @@ def experiment_self_discharge_mlcc_tayo() -> None:
         return 0
 
     sim.run(fn=step, duration_s=duration.total_seconds())
-    sim.plot(f"Experiment MLCC Tayo, self-discharge {duration.total_seconds()} s")
+    sim.plot(path_here, f"Experiment MLCC Tayo, self-discharge {duration.total_seconds()} s")
 
 
 if __name__ == "__main__":

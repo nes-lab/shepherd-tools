@@ -108,20 +108,29 @@ class Reader(CoreReader):
             return 0
         datasets = [key if isinstance(h5_group[key], h5py.Dataset) else [] for key in h5_group]
         datasets.remove("time")
-        with log_path.open("w", encoding="utf-8-sig") as log_file:
-            self._logger.info("Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name)
-            for idx, time_ns in enumerate(h5_group["time"][:]):
-                if add_timestamp:
+        self._logger.info("Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name)
+        if add_timestamp:
+            with log_path.open("w", encoding="utf-8-sig") as log_file:
+                for idx, time_ns in enumerate(h5_group["time"][:]):
                     timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
                     # ⤷ TODO: these .fromtimestamp would benefit from included TZ
                     log_file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S.%f") + ":")
-                for key in datasets:
-                    try:
-                        message = str(h5_group[key][idx])
-                    except OSError:
-                        message = "[[[ extractor - faulty element ]]]"
-                    log_file.write(f"\t{message}")
-                log_file.write("\n")
+                    for key in datasets:
+                        try:
+                            message = str(h5_group[key][idx])
+                        except OSError:
+                            message = "[[[ Extractor | faulty element ]]]"
+                        log_file.write(f"\t{message}")
+                    log_file.write("\n")
+        else:
+            with log_path.open("wb") as log_file:
+                for idx, _ in enumerate(h5_group["time"][:]):
+                    for key in datasets:
+                        try:
+                            message = h5_group[key][idx]
+                        except OSError:
+                            message = b"[[[ Extractor | faulty element ]]]"
+                        log_file.write(message)
         return h5_group["time"].shape[0]
 
     def warn_logs(
