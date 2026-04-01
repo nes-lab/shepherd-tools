@@ -49,7 +49,7 @@ jobs:
         working-directory: "./shepherd_data"
 
       - name: Test data-package with pytest 🧫
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           command: |
             cd ./shepherd_data
