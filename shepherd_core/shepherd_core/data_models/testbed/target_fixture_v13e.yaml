@@ -18,10 +18,12 @@
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_001
+    id: 16
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_002
+    id: 15
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
@@ -67,6 +69,7 @@
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_011
+    id: 23
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
@@ -77,6 +80,7 @@
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_013
+    id: 17
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
@@ -128,26 +132,32 @@
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_022
+    id: 22
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_023
+    id: 24
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_024
+    id: 18
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_025
+    id: 9
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_026
+    id: 7
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
     name: nRF52_FRAM_2025_027
+    id: 6
 - datatype: target
   parameters:
     inherit_from: nRF52_FRAM_2025_000
