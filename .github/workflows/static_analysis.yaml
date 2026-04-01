@@ -14,4 +14,4 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v6
       - name: Run Pre-Commit Tests 🧪
-        uses: j178/prek-action@v1
+        uses: j178/prek-action@v2
