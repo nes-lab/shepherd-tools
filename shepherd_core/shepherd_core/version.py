@@ -1,3 +1,3 @@
 """Separated string avoids circular imports."""
 
-version: str = "2026.03.1"
+version: str = "2026.04.1"
