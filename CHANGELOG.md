@@ -1,6 +1,8 @@
 # History of Changes
 
-## v2026.3.1
+## v2026.4.2 unreleased
+
+## v2026.4.1
 
 - shepherd-data CLI
   - add `--text-only`-switch to `extract-uart` and `decode-uart` commands (removed timestamps and prints text like on console)
@@ -9,12 +11,19 @@
 - vsrc-model
   - add two-state power-good behavior of PRU
   - mirror the use of safe math FNs of PRU code in python
-- fixtures - add pin-mapping of cape v2.5
+- data-models
+  - remove .id from testbed-modes (Cape, Observer, ...) when not needed (use name to reference data)
+  - Target.id becomes optional and reflects usage in Testbed
+  - FixtureClients respects optional .id
+- fixtures
+  - add pin-mapping of cape v2.5
+  - add fixtures for 30 new capes v2.5
+  - add fixtures for 30 new targets v1.3e
+  - reorder testbed nodes to reflect current installation
 - improved comparison of Eenvs (needed error margin)
 - doc
   - extend harvester-metadata for bonito
   - improve doc for power-good thresholds
-
 
 ## v2026.2.4
 
