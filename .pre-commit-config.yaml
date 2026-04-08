@@ -76,3 +76,9 @@ repos:
     rev: v0.25
     hooks:
       - id: validate-pyproject
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.23.1
+    hooks:
+      - id: zizmor
+        args: ["--min-severity", "high", "--no-progress", "--fix", "."]
