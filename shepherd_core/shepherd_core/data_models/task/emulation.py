@@ -95,15 +95,15 @@ class EmulationTask(ShpModel):
     - "main" will mirror main target voltage
     """
     # sub-elements, could be partly moved to emulation
-    virtual_source: VirtualSourceConfig  # = vsrc_neutral
+    virtual_source: VirtualSourceConfig  # = vsrc_neutral TODO
     """ ⤷ Use the desired setting for the virtual source,
 
     provide parameters or name like BQ25570
     """
 
-    power_tracing: PowerTracing | None #= PowerTracing()
-    gpio_tracing: GpioTracing | None #= GpioTracing()
-    uart_logging: UartLogging | None #= UartLogging()
+    power_tracing: PowerTracing | None  # = PowerTracing() TODO
+    gpio_tracing: GpioTracing | None  # = GpioTracing() TODO
+    uart_logging: UartLogging | None  # = UartLogging() TODO
     gpio_actuation: GpioActuation | None = None
     sys_logging: SystemLogging | None = SystemLogging()
 

@@ -47,11 +47,11 @@ class HarvestTask(ShpModel):
     use_cal_default: bool = False
     """ ⤷ Use default calibration values, skip loading from EEPROM"""
 
-    virtual_harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
+    virtual_harvester: VirtualHarvesterConfig  # = VirtualHarvesterConfig(name="mppt_opt") TODO
     """ ⤷ Choose one of the predefined virtual harvesters or configure a new one
     """
-    power_tracing: PowerTracing = PowerTracing()
-    sys_logging: SystemLogging | None = SystemLogging()
+    power_tracing: PowerTracing  # = PowerTracing() TODO
+    sys_logging: SystemLogging | None  # = SystemLogging() TODO
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
     """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug"""

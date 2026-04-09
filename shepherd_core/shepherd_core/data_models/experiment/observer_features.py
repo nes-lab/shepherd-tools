@@ -147,7 +147,8 @@ GpioList = Annotated[list[GpioInt], Field(min_length=1, max_length=18)]
 all_gpio = list(range(18))
 
 # defaults (pre-init complex types)
-# gpio_uart = GPIO(name="GPIO8")
+# gpio_uart = GPIO(name="GPIO8") TODO
+
 
 @final
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
@@ -180,7 +181,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     # post-processing,
     uart_decode: bool = False
     """Automatic decoding from gpio-trace not implemented ATM."""
-    uart_pin: GPIO #= GPIO(name="GPIO8")
+    uart_pin: GPIO  # = GPIO(name="GPIO8") TODO
     uart_baudrate: Annotated[int, Field(ge=2_400, le=1_152_000)] = 115_200
 
     @model_validator(mode="after")
