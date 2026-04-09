@@ -18,8 +18,8 @@ import math
 
 from shepherd_core.data_models import CalibrationEmulator
 from shepherd_core.data_models.content.virtual_source_config import LUT_SIZE
-from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
-from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
+from shepherd_core.data_models.content.virtual_source_config_pru import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_storage_config_pru import StoragePRUConfig
 
 from .math64_safe import add32
 from .math64_safe import mul32
