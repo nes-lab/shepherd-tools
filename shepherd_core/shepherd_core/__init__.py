@@ -5,11 +5,6 @@ HDF5 files.
 
 """
 
-from .data_models.base.calibration import CalibrationCape
-from .data_models.base.calibration import CalibrationEmulator
-from .data_models.base.calibration import CalibrationHarvester
-from .data_models.base.calibration import CalibrationPair
-from .data_models.base.calibration import CalibrationSeries
 from .data_models.base.timezone import local_now
 from .data_models.base.timezone import local_tz
 from .data_models.task.emulation import Compression
@@ -24,11 +19,6 @@ from .writer import Writer
 __version__ = version
 
 __all__ = [
-    "CalibrationCape",
-    "CalibrationEmulator",
-    "CalibrationHarvester",
-    "CalibrationPair",
-    "CalibrationSeries",
     "Compression",
     "Inventory",
     "Reader",

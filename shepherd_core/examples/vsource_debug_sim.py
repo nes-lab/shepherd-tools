@@ -16,10 +16,9 @@ from itertools import product
 import matplotlib.pyplot as plt
 import numpy as np
 from shepherd_core.data_models import VirtualSourceConfig
+from shepherd_core.data_models.base.calibration import CalibrationEmulator
 from shepherd_core.testbed_client.client_web import WebClient
 from shepherd_core.vsource import VirtualSourceModel
-
-from shepherd_core import CalibrationEmulator
 
 # config simulation
 sample_dur_list = [50_000, 500_000]

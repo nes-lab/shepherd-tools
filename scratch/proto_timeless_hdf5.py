@@ -15,9 +15,9 @@ Example Calculation:
 from pathlib import Path
 
 from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models.base.calibration import CalibrationPair
+from shepherd_core.data_models.base.calibration import CalibrationSeries
 
-from shepherd_core import CalibrationPair
-from shepherd_core import CalibrationSeries
 from shepherd_core import Compression
 from shepherd_core import Reader
 from shepherd_core import Writer
