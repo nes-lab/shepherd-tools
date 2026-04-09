@@ -26,7 +26,7 @@ LUT1D = Annotated[list[NormedNum], Field(min_length=LUT_SIZE, max_length=LUT_SIZ
 LUT2D = Annotated[list[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 # defaults (pre-init complex types for improved perf) TODO: is documentation still fine?
-# vhrv_mppt_opt = VirtualHarvesterConfig(name="mppt_opt")
+vhrv_mppt_opt = None  # VirtualHarvesterConfig(name="mppt_opt")
 
 
 @final

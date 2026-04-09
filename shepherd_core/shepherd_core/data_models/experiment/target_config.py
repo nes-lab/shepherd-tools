@@ -23,7 +23,7 @@ from .observer_features import PowerTracing
 from .observer_features import UartLogging
 
 # defaults (pre-init complex types)
-# vsrc_neutral = VirtualSourceConfig(name="neutral")
+vsrc_neutral = None  # VirtualSourceConfig(name="neutral")
 
 
 @final
