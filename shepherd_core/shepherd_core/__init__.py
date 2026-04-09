@@ -5,7 +5,6 @@ HDF5 files.
 
 """
 
-from .data_models.base.calibration import Calc_t
 from .data_models.base.calibration import CalibrationCape
 from .data_models.base.calibration import CalibrationEmulator
 from .data_models.base.calibration import CalibrationHarvester
@@ -25,7 +24,6 @@ from .writer import Writer
 __version__ = version
 
 __all__ = [
-    "Calc_t",
     "CalibrationCape",
     "CalibrationEmulator",
     "CalibrationHarvester",
