@@ -37,6 +37,10 @@ dependencies = [
     "pyelftools",
     "zstandard",
     "typing-extensions",
+    # TODO: test
+    "ryaml",
+    "rtoml",
+    "rapidyaml",
 ]
 
 [project.optional-dependencies]

@@ -9,7 +9,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
-import yaml
+import ryaml
 from pydantic import validate_call
 from typing_extensions import Self
 from typing_extensions import deprecated
@@ -227,7 +227,7 @@ class Fixtures:
 
     def _insert_file(self, file: Path) -> None:
         with file.open(encoding="utf-8-sig") as fd:
-            fixtures = yaml.safe_load(fd)
+            fixtures = ryaml.load(fd)
             for fixture in fixtures:
                 if not isinstance(fixture, dict):
                     continue
