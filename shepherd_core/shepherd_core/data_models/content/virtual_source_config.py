@@ -26,7 +26,7 @@ LUT1D = Annotated[list[NormedNum], Field(min_length=LUT_SIZE, max_length=LUT_SIZ
 LUT2D = Annotated[list[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 
 # defaults (pre-init complex types for improved perf) TODO: is documentation still fine?
-vhrv_mppt_opt = VirtualHarvesterConfig(name="mppt_opt")
+# vhrv_mppt_opt = VirtualHarvesterConfig(name="mppt_opt")
 
 
 @final
@@ -60,7 +60,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     until this delay is over.
     """
 
-    harvester: VirtualHarvesterConfig = vhrv_mppt_opt
+    harvester: VirtualHarvesterConfig  # = vhrv_mppt_opt
     """ ⤷ Only active / needed if input is ivsurface. """
 
     V_input_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000

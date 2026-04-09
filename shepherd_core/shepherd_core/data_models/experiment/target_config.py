@@ -23,7 +23,7 @@ from .observer_features import PowerTracing
 from .observer_features import UartLogging
 
 # defaults (pre-init complex types)
-vsrc_neutral = VirtualSourceConfig(name="neutral")
+# vsrc_neutral = VirtualSourceConfig(name="neutral")
 
 
 @final
@@ -39,7 +39,7 @@ class TargetConfig(ShpModel):
 
     energy_env: EnergyEnvironment
     """ input for the virtual source """
-    virtual_source: VirtualSourceConfig = vsrc_neutral
+    virtual_source: VirtualSourceConfig  # = vsrc_neutral
     target_delays: (
         Annotated[list[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)] | None
     ) = None
