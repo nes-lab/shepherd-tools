@@ -185,7 +185,8 @@ class Fixtures:
             self.file_path = file_path
         self.reset = reset
         self.components: dict[str, Fixture] = {}
-        self.not_operational: bool = True  # defer instant loading of datasets
+        self.not_operational: bool = False  # defer instant loading of datasets
+        self._load_data()
 
     def _load_data(self) -> None:
         cache_file = cache_user_path / "fixtures.pickle"
