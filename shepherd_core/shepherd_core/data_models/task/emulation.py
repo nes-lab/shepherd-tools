@@ -101,9 +101,9 @@ class EmulationTask(ShpModel):
     provide parameters or name like BQ25570
     """
 
-    power_tracing: PowerTracing | None = PowerTracing()
-    gpio_tracing: GpioTracing | None = GpioTracing()
-    uart_logging: UartLogging | None = UartLogging()
+    power_tracing: PowerTracing | None #= PowerTracing()
+    gpio_tracing: GpioTracing | None #= GpioTracing()
+    uart_logging: UartLogging | None #= UartLogging()
     gpio_actuation: GpioActuation | None = None
     sys_logging: SystemLogging | None = SystemLogging()
 
