@@ -29,3 +29,10 @@ These traces could be:
 
 - upsampled
 - reviewed and cut down to include scenarios like: night, sun set, sun rise, morning, ...
+
+## SKEH-HAR
+
+Paper: <https://eprints.qut.edu.au/264289/>
+Data: <https://data.csiro.au/collection/csiro:65940>
+
+Solar and Kinetic Energy Harvesting Dataset for Human Activity Recognition (SKEH-HAR).
