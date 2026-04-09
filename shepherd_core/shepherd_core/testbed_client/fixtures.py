@@ -183,15 +183,20 @@ class Fixtures:
             self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
         else:
             self.file_path = file_path
+        self.reset = reset
         self.components: dict[str, Fixture] = {}
+        self.not_operational: bool = True  # defer instant loading of datasets
+
+    def _load_data(self) -> None:
         cache_file = cache_user_path / "fixtures.pickle"
         sheep_detect = Path("/lib/firmware/am335x-pru0-fw").exists()
+        self.not_operational = False
 
         if (
             not sheep_detect
             and cache_file.exists()
             and not file_older_than(cache_file, timedelta(hours=24))
-            and not reset
+            and not self.reset
         ):
             # speedup by loading from cache
             # TODO: also add version as criterion
@@ -210,7 +215,7 @@ class Fixtures:
                 raise ValueError("Path must either be file or directory (or empty)")
 
             for file in files:
-                self.insert_file(file)
+                self._insert_file(file)
 
             if len(self.components) < 1:
                 log.error(f"No fixture-components found at {self.file_path.as_posix()}")
@@ -219,8 +224,7 @@ class Fixtures:
                 with cache_file.open("wb", buffering=-1) as fd:
                     pickle.dump(self.components, fd)
 
-    @validate_call
-    def insert_file(self, file: Path) -> None:
+    def _insert_file(self, file: Path) -> None:
         with file.open(encoding="utf-8-sig") as fd:
             fixtures = yaml.safe_load(fd)
             for fixture in fixtures:
@@ -230,12 +234,16 @@ class Fixtures:
                 self.insert_model(fix_wrap)
 
     def insert_model(self, data: Wrapper) -> None:
+        if self.not_operational:
+            self._load_data()
         fix_type = data.datatype.lower()
         if self.components.get(fix_type) is None:
             self.components[fix_type] = Fixture(model_type=fix_type)
         self.components[fix_type].insert(data)
 
     def __getitem__(self, key: str) -> Fixture:
+        if self.not_operational:
+            self._load_data()
         key = key.lower()
         if key in self.components:
             return self.components[key]
@@ -243,9 +251,12 @@ class Fixtures:
         raise KeyError(msg)
 
     def keys(self) -> Iterable[str]:
+        if self.not_operational:
+            self._load_data()
         return self.components.keys()
 
-    @staticmethod
-    def to_file(file: Path) -> None:
+    def to_file(self, file: Path) -> None:
+        if self.not_operational:
+            self._load_data()
         msg = f"TODO (val={file})"
         raise NotImplementedError(msg)
