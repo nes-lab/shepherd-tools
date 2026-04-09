@@ -4,8 +4,8 @@ from pathlib import Path
 
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.logger import log
+from shepherd_core.testbed_client.client_web import WebClient
 
-from shepherd_core import WebClient
 from shepherd_core import data_models as sm
 
 if __name__ == "__main__":
