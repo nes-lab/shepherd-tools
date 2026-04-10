@@ -13,6 +13,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
+from shepherd_core.data_models.content.virtual_source_defaults import vsrc_neutral
 from shepherd_core.data_models.testbed.target import IdInt16
 from shepherd_core.data_models.testbed.target import Target
 from shepherd_core.logger import log
@@ -23,7 +24,6 @@ from .observer_features import PowerTracing
 from .observer_features import UartLogging
 
 # defaults (pre-init complex types)
-vsrc_neutral = None  # VirtualSourceConfig(name="neutral") TODO
 
 
 @final
@@ -39,7 +39,7 @@ class TargetConfig(ShpModel):
 
     energy_env: EnergyEnvironment
     """ input for the virtual source """
-    virtual_source: VirtualSourceConfig  # = vsrc_neutral TODO
+    virtual_source: VirtualSourceConfig = vsrc_neutral
     target_delays: (
         Annotated[list[Annotated[int, Field(ge=0)]], Field(min_length=1, max_length=128)] | None
     ) = None

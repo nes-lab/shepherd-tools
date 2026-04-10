@@ -19,12 +19,14 @@ from shepherd_core.data_models.base.content import IdInt
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
+from shepherd_core.data_models.experiment import observer_features_defaults
 from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
 from shepherd_core.data_models.experiment.observer_features import UartLogging
+from shepherd_core.data_models.experiment.target_config import vsrc_neutral
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.logger import log
@@ -95,17 +97,17 @@ class EmulationTask(ShpModel):
     - "main" will mirror main target voltage
     """
     # sub-elements, could be partly moved to emulation
-    virtual_source: VirtualSourceConfig  # = vsrc_neutral TODO
+    virtual_source: VirtualSourceConfig = vsrc_neutral
     """ ⤷ Use the desired setting for the virtual source,
 
     provide parameters or name like BQ25570
     """
 
-    power_tracing: PowerTracing | None  # = PowerTracing() TODO
-    gpio_tracing: GpioTracing | None  # = GpioTracing() TODO
-    uart_logging: UartLogging | None  # = UartLogging() TODO
+    power_tracing: PowerTracing | None = observer_features_defaults.power_tracer_default
+    gpio_tracing: GpioTracing | None = observer_features_defaults.gpio_tracing_default
+    uart_logging: UartLogging | None = observer_features_defaults.uart_logging_default
     gpio_actuation: GpioActuation | None = None
-    sys_logging: SystemLogging | None = SystemLogging()
+    sys_logging: SystemLogging | None = observer_features_defaults.sys_logging_all
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
     """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug,

@@ -14,6 +14,7 @@ from shepherd_core.testbed_client import tb_client
 
 from .enum_datatypes import EnergyDType
 from .virtual_harvester_config import VirtualHarvesterConfig
+from .virtual_harvester_defaults import vhrv_mppt_opt
 from .virtual_storage_config import VirtualStorageConfig
 
 # Custom Types
@@ -21,9 +22,6 @@ LUT_SIZE: int = 12
 NormedNum = Annotated[float, Field(ge=0.0, le=1.0)]
 LUT1D = Annotated[list[NormedNum], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
 LUT2D = Annotated[list[LUT1D], Field(min_length=LUT_SIZE, max_length=LUT_SIZE)]
-
-# defaults (pre-init complex types for improved perf) TODO: is documentation still fine?
-vhrv_mppt_opt = None  # VirtualHarvesterConfig(name="mppt_opt") TODO
 
 
 @final
@@ -57,7 +55,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     until this delay is over.
     """
 
-    harvester: VirtualHarvesterConfig  # = vhrv_mppt_opt TODO
+    harvester: VirtualHarvesterConfig = vhrv_mppt_opt
     """ ⤷ Only active / needed if input is ivsurface. """
 
     V_input_max_mV: Annotated[float, Field(ge=0, le=10_000)] = 10_000
