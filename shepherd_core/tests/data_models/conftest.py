@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-import yaml
+import ryaml
 from shepherd_core.data_models import EnergyProfile
 from shepherd_core.data_models.content import EnergyDType
 
@@ -9,7 +9,7 @@ from shepherd_core.data_models.content import EnergyDType
 def load_yaml(file: str) -> dict:
     yaml_path = Path(__file__).resolve().with_name(file)
     with yaml_path.open() as data:
-        return yaml.safe_load(data)
+        return ryaml.load(data)
 
 
 path_fwt = Path(__file__).parent.parent.resolve() / "fw_tools"

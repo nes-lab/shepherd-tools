@@ -228,11 +228,11 @@ class Fixtures:
     def _insert_file(self, file: Path) -> None:
         with file.open(encoding="utf-8-sig") as fd:
             fixtures = ryaml.load(fd)
-            for fixture in fixtures:
-                if not isinstance(fixture, dict):
-                    continue
-                fix_wrap = Wrapper(**fixture)
-                self.insert_model(fix_wrap)
+        for fixture in fixtures:
+            if not isinstance(fixture, dict):
+                continue
+            fix_wrap = Wrapper(**fixture)
+            self.insert_model(fix_wrap)
 
     def insert_model(self, data: Wrapper) -> None:
         if self.not_operational:

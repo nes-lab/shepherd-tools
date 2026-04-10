@@ -3,7 +3,7 @@ from pathlib import Path
 
 import h5py
 import pytest
-import yaml
+import ryaml
 from pydantic import ValidationError
 
 from shepherd_core import Reader
@@ -19,7 +19,7 @@ def test_reader_metadata(data_h5: Path) -> None:
         meta_path = data_h5.resolve().with_suffix(".yaml")
         assert meta_path.exists()
         with meta_path.open() as meta_file:
-            meta_data_b = yaml.safe_load(meta_file)
+            meta_data_b = ryaml.load(meta_file)
             assert len(meta_data_b) == len(meta_data_a)
             assert sys.getsizeof(meta_data_b) == sys.getsizeof(meta_data_a)
 

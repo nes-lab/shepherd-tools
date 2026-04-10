@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-import yaml
+import ryaml
 from shepherd_core.data_models import FirmwareDType
 from shepherd_core.data_models import ShpModel
 from shepherd_core.data_models import Wrapper
@@ -69,14 +69,12 @@ if __name__ == "__main__":
             model = EnergyEnvironment(**data)
 
         if model is not None:
-            model_dict = model.model_dump()
             model_wrap = Wrapper(
                 datatype=type(model).__name__,
                 created=local_now(),
-                parameters=model_dict,
-            )
-            fixtures.append(model_wrap.model_dump(exclude_unset=True, exclude_defaults=True))
+                parameters=model.model_dump(),
+            ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
+            fixtures.append(model_wrap)
 
-    model_yaml = yaml.safe_dump(fixtures, default_flow_style=False, sort_keys=False)
-    with (path_db / "_external_fixtures.yaml").open("w") as f:
-        f.write(model_yaml)
+    with (path_db / "_external_fixtures.yaml").open("w") as fp:
+        ryaml.dump(fp, fixtures)

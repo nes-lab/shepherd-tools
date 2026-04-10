@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-import yaml
+import ryaml
 from virtual_storage_config import VirtualStorageConfig
 
 from shepherd_core import local_now
@@ -251,17 +251,15 @@ if __name__ == "__main__":
             log.warning("File %s already exists! -> will skip", file_path.name)
         models_wrap = []
         for model in fixture:
-            model_dict = (
-                model.model_dump()
-            )  # exclude_unset=True, exclude_defaults=True, include={"id",})
+            model_dict = model.model_dump()
+            # exclude_unset=True, exclude_defaults=True, include={"id",})
             model_wrap = Wrapper(
                 datatype=type(model).__name__,
                 created=local_now(),
                 comment=f"created by script '{Path(__file__).name}'",
                 parameters=model_dict,
-            )
-            models_wrap.append(model_wrap.model_dump(exclude_unset=True, exclude_defaults=True))
+            ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
+            models_wrap.append(model_wrap)
 
-        models_yaml = yaml.safe_dump(models_wrap, default_flow_style=False, sort_keys=False)
-        with file_path.open("w") as f:
-            f.write(models_yaml)
+        with file_path.open("w") as fp:
+            ryaml.dump(fp, models_wrap)

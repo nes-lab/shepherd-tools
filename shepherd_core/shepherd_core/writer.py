@@ -2,9 +2,7 @@
 
 import logging
 import math
-import pathlib
 from collections.abc import Mapping
-from datetime import timedelta
 from itertools import product
 from pathlib import Path
 from types import TracebackType
@@ -12,11 +10,9 @@ from typing import Any
 
 import h5py
 import numpy as np
-import yaml
+import ryaml
 from pydantic import validate_call
 from typing_extensions import Self
-from yaml import Node
-from yaml import SafeDumper
 
 from .config import config
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
@@ -26,25 +22,6 @@ from .data_models.content.enum_datatypes import EnergyDType
 from .data_models.task import Compression
 from .data_models.task.emulation import c_translate
 from .reader import Reader
-
-
-# copy of core/models/base/shepherd - needed also here
-def path2str(
-    dumper: SafeDumper, data: pathlib.Path | pathlib.WindowsPath | pathlib.PosixPath
-) -> Node:
-    """Add a yaml-representation for a specific datatype."""
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
-
-
-def time2int(dumper: SafeDumper, data: timedelta) -> Node:
-    """Add a yaml-representation for a specific datatype."""
-    return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
-
-
-yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
-yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
-yaml.add_representer(pathlib.Path, path2str, SafeDumper)
-yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 def unique_path(base_path: str | Path, suffix: str) -> Path:
@@ -374,9 +351,7 @@ class Writer(Reader):
         TODO: use data-model?
         :param data: from virtual harvester or converter / source.
         """
-        self.h5file.attrs["config"] = yaml.safe_dump(
-            data, default_flow_style=False, sort_keys=False
-        )
+        self.h5file.attrs["config"] = ryaml.dumps(data)
 
     def store_hostname(self, name: str) -> None:
         """Option to distinguish the host, target or data-source -> perfect for plotting later.

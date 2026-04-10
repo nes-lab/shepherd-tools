@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.request import urlopen
 from zipfile import ZipFile
 
-import yaml
+import ryaml
 from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.logger import log
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         log.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
     else:
         with path_meta.open() as file_meta:
-            metadata = yaml.safe_load(file_meta)["metadata"]
+            metadata = ryaml.load(file_meta)["metadata"]
 
         for _fw, _descr in metadata.items():
             path_sub = path_fw / _fw

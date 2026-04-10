@@ -28,7 +28,6 @@ requires-python = ">=3.10"
 dependencies = [
     "h5py",
     "numpy",
-    "pyYAML",
     "chromalog",
     "pydantic[email]>2.0.0",  # not compatible with prior versions
     "tqdm",
@@ -37,10 +36,7 @@ dependencies = [
     "pyelftools",
     "zstandard",
     "typing-extensions",
-    # TODO: test
-    "ryaml",
-    "rtoml",
-    "rapidyaml",
+    "ryaml", # alternative: rtoml
 ]
 
 [project.optional-dependencies]
@@ -56,9 +52,7 @@ inventory = [
     "psutil",
 ]
 
-dev = [
-    "types-PyYAML",
-]
+dev = []
 
 test = [
     "pytest",
