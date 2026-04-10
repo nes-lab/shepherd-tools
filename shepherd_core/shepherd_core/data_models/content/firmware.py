@@ -15,7 +15,6 @@ from pydantic import validate_call
 from typing_extensions import Self
 from typing_extensions import Unpack
 
-from shepherd_core import fw_tools
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.testbed.mcu import MCU
 from shepherd_core.logger import log
@@ -75,6 +74,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
             FirmwareDType.base64_elf,
         }:
             try:
+                from shepherd_core import fw_tools  # noqa: PLC0415
+
                 dhash = fw_tools.base64_to_hash(values.get("data"))
             except ValueError:
                 raise ValueError("Embedded Firmware seems to be faulty") from None
@@ -104,6 +105,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually.
         """
+        from shepherd_core import fw_tools  # noqa: PLC0415
+
         # TODO: use new determine_type() & determine_arch() and also allow to not embed
         kwargs["data_hash"] = fw_tools.file_to_hash(file)
         if embed:
@@ -152,6 +155,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
         if self.data_hash is None:
             return True
 
+        from shepherd_core import fw_tools  # noqa: PLC0415
+
         if data is None:
             # use included data if nothing is provided
             data = self.data
@@ -177,6 +182,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """
+        from shepherd_core import fw_tools  # noqa: PLC0415
+
         if file.is_dir():
             file /= self.name
         file_new = fw_tools.extract_firmware(self.data, self.data_type, file)
