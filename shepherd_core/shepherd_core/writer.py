@@ -1,4 +1,5 @@
 """Writer that inherits from Reader-Baseclass."""
+from shepherd_core.data_models import ShpModel
 
 import logging
 import math
@@ -345,12 +346,14 @@ class Writer(Reader):
         """Conveniently store relevant key-value data (attribute) in H5-structure."""
         self.h5file.attrs.__setitem__(key, item)
 
-    def store_config(self, data: Mapping) -> None:
+    def store_config(self, data: Mapping | ShpModel) -> None:
         """Get a better self-describing Output-File.
 
         TODO: use data-model?
         :param data: from virtual harvester or converter / source.
         """
+        if isinstance(data, ShpModel):
+            data = data.model_dump(mode="json")
         self.h5file.attrs["config"] = ryaml.dumps(data)
 
     def store_hostname(self, name: str) -> None:

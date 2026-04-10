@@ -47,7 +47,7 @@ def simulate_source(
             )
             stack.enter_context(file_out)
             file_out.store_hostname("emu_sim_" + config.name)
-            file_out.store_config(config.model_dump())
+            file_out.store_config(config)
             cal_out = file_out.get_calibration_data()
 
         src = VirtualSourceModel(
