@@ -16,7 +16,7 @@ from .shepherd import ShpModel
 
 # constr -> to_lower=True, max_length=16, regex=r"^[\w]+$"
 # ⤷ Regex = AlphaNum
-IdInt = Annotated[int, Field(ge=0, lt=2**128)]
+IdInt64 = Annotated[int, Field(ge=0, le=2**64 - 1)]
 NameStr = Annotated[str, StringConstraints(max_length=50, pattern=r"^[^<>:;,?\"\*|\/\\]+$")]
 # ⤷ Regex = FileSystem-Compatible ASCII
 SafeStr = Annotated[str, StringConstraints(pattern=r"^[ -~]+$")]
@@ -28,7 +28,7 @@ def id_default() -> int:
 
     Note: IdInt in mongoDB can currently handle 8 bytes (16 hex-values)
     """
-    return int(uuid4().hex[-15:], 16)
+    return int(uuid4().hex[-7:], 16)
 
 
 class ContentModel(ShpModel):

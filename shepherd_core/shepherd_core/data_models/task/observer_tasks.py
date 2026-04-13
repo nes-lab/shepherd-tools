@@ -9,7 +9,7 @@ from typing import final
 from pydantic import validate_call
 from typing_extensions import Self
 
-from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.experiment.experiment import Experiment
@@ -48,7 +48,7 @@ class ObserverTasks(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, xp_folder: str | None, tb: Testbed, tgt_id: IdInt) -> Self:
+    def from_xp(cls, xp: Experiment, xp_folder: str | None, tb: Testbed, tgt_id: IdInt64) -> Self:
         if not tb.shared_storage:
             raise ValueError("Implementation currently relies on shared storage!")
         obs = tb.get_observer(tgt_id)

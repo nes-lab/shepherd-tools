@@ -8,7 +8,7 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
 from shepherd_core.data_models.content.firmware import Firmware
@@ -30,7 +30,7 @@ from .observer_features import UartLogging
 class TargetConfig(ShpModel):
     """Configuration related to Target Nodes (DuT)."""
 
-    target_IDs: Annotated[list[IdInt], Field(min_length=1, max_length=128)]
+    target_IDs: Annotated[list[IdInt64], Field(min_length=1, max_length=128)]
     custom_IDs: Annotated[list[IdInt16], Field(min_length=1, max_length=128)] | None = None
     """ ⤷ custom ID will replace 'const uint16_t SHEPHERD_NODE_ID' in firmware.
 

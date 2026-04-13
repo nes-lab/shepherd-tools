@@ -1,5 +1,5 @@
-from pathlib import Path
 import math
+from pathlib import Path
 
 import pytest
 from shepherd_core.data_models import EnergyDType

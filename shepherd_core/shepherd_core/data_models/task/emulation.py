@@ -15,7 +15,7 @@ from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Self
 
-from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
@@ -158,7 +158,7 @@ class EmulationTask(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path) -> Self:
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt64, root_path: Path) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
         tgt_idx = tgt_cfg.target_IDs.index(tgt_id)
