@@ -10,7 +10,7 @@ from pydantic import model_validator
 from typing_extensions import Self
 
 from shepherd_core.logger import log
-from shepherd_core.version import version as core_ver
+from shepherd_core.version import core_version
 
 from .shepherd import ShpModel
 
@@ -55,7 +55,7 @@ class ContentModel(ShpModel):
     visible2group: bool = False
     visible2all: bool = False
 
-    sw_ver: Annotated[str, Field(default=core_ver)]
+    sw_ver: Annotated[str, Field(default=core_version)]
     """ ⤷ store core-version with content for compatibility management."""
 
     def __str__(self) -> str:

@@ -12,10 +12,7 @@ from .logger import get_verbose_level
 from .logger import increase_verbose_level
 from .logger import log
 from .reader import Reader
-from .version import version
 from .writer import Writer
-
-__version__ = version
 
 __all__ = [
     "Compression",

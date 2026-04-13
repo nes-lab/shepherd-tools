@@ -1,3 +1,4 @@
 """Separated string avoids circular imports."""
+from importlib import metadata
 
-version: str = "2026.04.2"
+core_version: str = metadata.version("shepherd-core")
