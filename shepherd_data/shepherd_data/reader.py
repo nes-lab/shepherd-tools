@@ -308,7 +308,7 @@ class Reader(CoreReader):
             )
             raise ValueError(msg)
         # assemble file-name of output
-        if start_s != 0.0 or end_s != self.runtime_s:
+        if not math.isclose(start_s, 0.0) or not math.isclose(end_s, self.runtime_s):
             start_str = f"{start_s:.3f}".replace(".", "s")
             end_str = f"{end_s:.3f}".replace(".", "s")
             cut_str = f".cut_{start_str}_to_{end_str}"

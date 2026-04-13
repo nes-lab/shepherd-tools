@@ -1,5 +1,4 @@
 """Writer that inherits from Reader-Baseclass."""
-from shepherd_core.data_models import ShpModel
 
 import logging
 import math
@@ -19,6 +18,7 @@ from .config import config
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
+from .data_models.base.shepherd import ShpModel
 from .data_models.content.enum_datatypes import EnergyDType
 from .data_models.task import Compression
 from .data_models.task.emulation import c_translate

@@ -92,7 +92,7 @@ class ShpModel(BaseModel):
 
     def keys(self):  # noqa: ANN201
         """Fn of dict."""
-        return self.model_dump().keys()
+        return self.model_dump().keys()  # TODO: there is an easier way
 
     def items(self) -> Generator[tuple, None, None]:
         """Fn of dict."""

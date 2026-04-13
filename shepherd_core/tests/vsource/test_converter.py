@@ -1,4 +1,5 @@
 from pathlib import Path
+import math
 
 import pytest
 from shepherd_core.data_models import EnergyDType
@@ -50,8 +51,8 @@ def test_vsource_vsrc_static1() -> None:
     src = src_model("BQ25504")
     for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=3_000_000, I_inp_nA=0)
-    assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs == 0.0  # -> leakage now locally in storage
+    assert math.isclose(src.W_inp_fWs, 0.0)
+    assert math.isclose(src.W_out_fWs, 0.0)  # -> leakage now locally in storage
     # pytest.approx(c_leak_fWs(src, iterations), rel=1e-4, abs=1e-6))
 
 
@@ -60,8 +61,8 @@ def test_vsource_vsrc_static2() -> None:
     src = src_model("BQ25504")
     for _ in range(iterations):
         src.iterate_sampling(V_inp_uV=0, I_inp_nA=3_000_000)
-    assert src.W_inp_fWs == 0.0
-    assert src.W_out_fWs == 0.0  # -> leakage now locally in storage
+    assert math.isclose(src.W_inp_fWs, 0.0)
+    assert math.isclose(src.W_out_fWs, 0.0)  # -> leakage now locally in storage
 
 
 @pytest.mark.parametrize("src_name", src_list[2:])
@@ -72,7 +73,7 @@ def test_vsource_charge(src_name: str) -> None:
         src.iterate_sampling(V_inp_uV=10**6 + v_mV * 1000, I_inp_nA=1_500_000)
     v_out = src.iterate_sampling(V_inp_uV=1_000_000, I_inp_nA=1_000_000)
     assert src.W_inp_fWs > 0.0
-    assert src.W_out_fWs == 0.0  # -> leakage now locally in storage
+    assert math.isclose(src.W_out_fWs, 0.0)  # -> leakage now locally in storage
     assert v_out > 0.0
 
 
@@ -80,7 +81,7 @@ def test_vsource_charge(src_name: str) -> None:
 def test_vsource_drain(src_name: str) -> None:
     iterations = 4_000
     src = src_model(src_name)
-    assert src.W_inp_fWs == 0.0
+    assert math.isclose(src.W_inp_fWs, 0.0)
     # pre-charge and then drain
     for v_mV in range(iterations):
         src.iterate_sampling(V_inp_uV=v_mV * 1000, I_inp_nA=2_000_000)
@@ -88,7 +89,7 @@ def test_vsource_drain(src_name: str) -> None:
     for c_uA in range(iterations):
         src.iterate_sampling(I_out_nA=c_uA * 1000)
     v_out = src.iterate_sampling()
-    assert src.W_inp_fWs == 0.0
+    assert math.isclose(src.W_inp_fWs, 0.0)
     assert src.W_out_fWs > 0.0  # -> leakage now locally in storage
     assert v_out >= 0.0
 

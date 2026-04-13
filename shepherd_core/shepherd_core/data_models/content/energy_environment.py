@@ -303,7 +303,7 @@ class EnergyEnvironment(ContentModel):
         """Select elements from this EEnv similar to list-Ops (slicing, int)."""
         if isinstance(value, int):
             if self.repetitions_ok:
-                value = value % len(self.energy_profiles)
+                value %= len(self.energy_profiles)
             return deepcopy(self.energy_profiles[value])
         if isinstance(value, slice):
             if self.repetitions_ok:

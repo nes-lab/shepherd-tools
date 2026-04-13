@@ -192,7 +192,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     def exists(self) -> bool:
         """Check if embedded file exists."""
-        if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
+        if self.data_type in {FirmwareDType.path_hex, FirmwareDType.path_elf}:
             if not isinstance(self.data, Path):
                 log.warning(
                     f"Firmware.data is not a Path (but type-property claims so) -> {self.name}"
@@ -204,9 +204,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
     def check(self) -> bool:
         """Check if embedded file is still valid or unchanged."""
         valid = True
-        if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
+        if self.data_type in {FirmwareDType.path_hex, FirmwareDType.path_elf}:
             valid &= isinstance(self.data, Path) and Path(self.data).exists()
-        if self.data_type in [FirmwareDType.base64_elf, FirmwareDType.base64_hex]:
+        if self.data_type in {FirmwareDType.base64_elf, FirmwareDType.base64_hex}:
             valid &= isinstance(self.data, str)
             # TODO: could also begin unpacking base64
             # TODO: could also verify hex, elf
