@@ -4,7 +4,6 @@ from collections.abc import Iterable
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
-from typing import TypedDict
 from typing import final
 
 from pydantic import Field
@@ -82,7 +81,7 @@ class FirmwareModTask(ShpModel):
     def from_firmware(
         cls,
         fw: Firmware,
-        **kwargs: Unpack[TypedDict],
+        **kwargs: Unpack[dict],
     ) -> Self:
         if not isinstance(fw, Firmware):
             raise TypeError("fw-argument must be of type Firmware")

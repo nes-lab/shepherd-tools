@@ -32,8 +32,8 @@ class PythonInventory(ShpModel):
             "h5py",
             "numpy",
             "pydantic",
-            "shepherd-core",
-            "shepherd-sheep",
+            "shepherd_core",  # must stay lowercase
+            "shepherd_sheep",
             "yaml",
             "zstandard",
         ]

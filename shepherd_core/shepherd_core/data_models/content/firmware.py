@@ -6,7 +6,6 @@ TODO: should be more generalized - currently only supports msp & nRF
 from pathlib import Path
 from typing import Annotated
 from typing import Any
-from typing import TypedDict
 from typing import final
 
 from pydantic import StringConstraints
@@ -98,7 +97,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
         file: Path,
         *,
         embed: bool = True,
-        **kwargs: Unpack[TypedDict],
+        **kwargs: Unpack[dict],
     ) -> Self:
         """Embeds firmware and tries to fill parameters.
 
