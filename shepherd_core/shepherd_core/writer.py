@@ -7,6 +7,7 @@ from itertools import product
 from pathlib import Path
 from types import TracebackType
 from typing import Any
+from typing import ClassVar
 
 import h5py
 import numpy as np
@@ -67,6 +68,7 @@ class Writer(Reader):
 
     """
 
+    SUFFIX_VALID: ClassVar[set[str]] = {".h5", ".hdf5"}
     MODE_DEFAULT: str = "harvester"
     DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
 
@@ -97,6 +99,12 @@ class Writer(Reader):
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
         # -> logger gets configured in reader()
 
+        if file_path.suffix.lower() not in Writer.SUFFIX_VALID:
+            msg = (
+                f"Filename for recording ({file_path.name}) "
+                f"must have a valid suffix ({Writer.SUFFIX_VALID})"
+            )
+            raise ValueError(msg)
         if self._modify or force_overwrite or not file_path.exists():
             file_path = file_path.resolve()
             self._logger.debug("Storing data to   '%s'", file_path)

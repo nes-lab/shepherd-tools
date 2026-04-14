@@ -86,9 +86,16 @@ def test_writer_faulty_datatype(h5_path: Path) -> None:
         generate_shp_file(h5_path, mode="emulator", datatype="ivcurve")
 
 
-def test_writer_faulty_path(tmp_path: Path) -> None:
+def test_writer_faulty_path_without_suffix(tmp_path: Path) -> None:
+    with pytest.raises(ValueError):  # noqa: PT011
+        generate_shp_file(tmp_path / "hello")
+
+
+def test_writer_faulty_path_dir(tmp_path: Path) -> None:
+    file_path = tmp_path / "strange_dir.h5"
+    file_path.mkdir()
     with pytest.raises(TypeError):
-        generate_shp_file(tmp_path)
+        generate_shp_file(file_path)
 
 
 def test_writer_init_cal_emu(h5_path: Path) -> None:
