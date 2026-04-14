@@ -18,7 +18,7 @@ from typing import final
 
 import h5py
 import numpy as np
-import yaml
+import ryaml
 from pydantic import validate_call
 from tqdm import trange
 from typing_extensions import Self
@@ -167,9 +167,7 @@ class Reader:
             self.h5file.close()
 
     def __repr__(self) -> str:
-        return yaml.safe_dump(
-            self.get_metadata(minimal=True), default_flow_style=False, sort_keys=False
-        )
+        return ryaml.dumps(self.get_metadata(minimal=True))
 
     def _refresh_file_stats(self) -> None:
         """Update internal states, helpful after resampling or other changes in data-group."""
@@ -287,7 +285,7 @@ class Reader:
 
     def get_config(self) -> dict:
         if "config" in self.h5file["data"].attrs:
-            return yaml.safe_load(self.h5file["data"].attrs["config"])
+            return ryaml.load(self.h5file["data"].attrs["config"])
         return {}
 
     def get_hostname(self) -> str:
@@ -649,8 +647,8 @@ class Reader:
         for attr in node.attrs:
             attr_value = node.attrs[attr]
             if isinstance(attr_value, str):
-                with contextlib.suppress(yaml.YAMLError):
-                    attr_value = yaml.safe_load(attr_value)
+                with contextlib.suppress(ryaml.InvalidYamlError):
+                    attr_value = ryaml.loads(attr_value)
             elif "int" in str(type(attr_value)):
                 # TODO: why not isinstance? can it be list[int] other complex type?
                 attr_value = int(attr_value)
@@ -684,7 +682,7 @@ class Reader:
                 return {}
             metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
             with yaml_path.open("w", encoding="utf-8-sig") as yfd:
-                yaml.safe_dump(metadata, yfd, default_flow_style=False, sort_keys=False)
+                ryaml.dump(yfd, metadata)
         else:
             metadata = {}
         return metadata
@@ -692,7 +690,7 @@ class Reader:
     def get_gpio_pin_names(self) -> list[str] | None:
         if "gpio" not in self.h5file:
             return None
-        descriptions: dict[int, dict[str, str]] = yaml.safe_load(
+        descriptions: dict[int, dict[str, str]] = ryaml.loads(
             self.h5file["gpio"]["value"].attrs["description"]
         )
         return [desc["name"] for desc in descriptions.values()]
@@ -701,7 +699,7 @@ class Reader:
         # reverse lookup in a 2D-dict: key1 are pin_num, key2 are descriptor-names
         if "gpio" not in self.h5file:
             return None
-        descriptions = yaml.safe_load(self.h5file["gpio"]["value"].attrs["description"])
+        descriptions = ryaml.loads(self.h5file["gpio"]["value"].attrs["description"])
         for desc_name, desc in descriptions.items():
             if name in desc["name"]:
                 return int(desc_name)
@@ -731,7 +729,7 @@ class Reader:
         gpio_vs = self.h5file["gpio"]["value"]
 
         if name is None:
-            descriptions = yaml.safe_load(self.h5file["gpio"]["value"].attrs["description"])
+            descriptions = ryaml.loads(self.h5file["gpio"]["value"].attrs["description"])
             pin_dict: dict[str, int] = {value["name"]: key for key, value in descriptions.items()}
         else:
             pin_dict: dict[str, int | None] = {name: self.get_gpio_pin_num(name)}

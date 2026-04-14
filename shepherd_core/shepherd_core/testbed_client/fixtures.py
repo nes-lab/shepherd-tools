@@ -9,7 +9,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
-import yaml
+import ryaml
 from pydantic import validate_call
 from typing_extensions import Self
 from typing_extensions import deprecated
@@ -36,11 +36,9 @@ class Fixture:
         self.model_type: str = model_type.lower()
         self.elements_by_name: dict[str, dict[str, Any]] = {}
         self.elements_by_id: dict[int, dict[str, Any]] = {}
-        # Iterator reset
-        self._iter_index: int = 0
-        self._iter_list: list[dict[str, Any]] = list(self.elements_by_name.values())
+        self.update_iterator(reset=True)
 
-    def insert(self, data: Wrapper) -> None:
+    def insert_verified(self, data: Wrapper) -> None:
         # ⤷ TODO: could get easier
         #    - when not model_name but class used
         #    - use doubleref name->id->data (saves RAM)
@@ -54,7 +52,17 @@ class Fixture:
         if "id" in data.parameters:  # ID is optional
             id_ = data.parameters["id"]
             self.elements_by_id[id_] = data_model
-        # update iterator
+        self.update_iterator()
+
+    def insert_raw(self, data_model: dict) -> None:
+        """Faster version, with less validation."""
+        self.elements_by_name[str(data_model["name"]).lower()] = data_model
+        if "id" in data_model:  # ID is optional
+            self.elements_by_id[data_model["id"]] = data_model
+
+    def update_iterator(self, *, reset: bool = False) -> None:
+        if reset:
+            self._iter_index: int = 0
         self._iter_list: list[dict[str, Any]] = list(self.elements_by_name.values())
 
     def __getitem__(self, key: str | int) -> dict[str, Any]:
@@ -178,20 +186,20 @@ class Fixtures:
     suffix = ".yaml"
 
     @validate_call
-    def __init__(self, file_path: Path | None = None, *, reset: bool = False) -> None:
-        if file_path is None:
-            self.file_path = Path(__file__).parent.parent.resolve() / "data_models"
-        else:
-            self.file_path = file_path
+    def __init__(
+        self, file_path: Path | None = None, *, reset: bool = False, validate: bool = False
+    ) -> None:
+        self.reset = reset
         self.components: dict[str, Fixture] = {}
+
         cache_file = cache_user_path / "fixtures.pickle"
         sheep_detect = Path("/lib/firmware/am335x-pru0-fw").exists()
 
         if (
-            not sheep_detect
+            sheep_detect
             and cache_file.exists()
             and not file_older_than(cache_file, timedelta(hours=24))
-            and not reset
+            and not self.reset
         ):
             # speedup by loading from cache
             # TODO: also add version as criterion
@@ -199,41 +207,67 @@ class Fixtures:
                 self.components = pickle.load(fd)  # noqa: S301
             log.debug(" -> found & used pickled fixtures")
         else:
-            if self.file_path.is_file():
-                files = [self.file_path]
-            elif self.file_path.is_dir():
+            if not isinstance(file_path, Path):
+                file_path: Path = Path(__file__).parent.parent.resolve() / "data_models"
+            else:
+                validate = True  # expect untested data
+
+            if file_path.is_file():
+                files = [file_path]
+            elif file_path.is_dir():
                 files = list(
-                    self.file_path.glob("**/*" + self.suffix)
+                    file_path.glob("**/*" + self.suffix)
                 )  # for py>=3.12: case_sensitive=False
                 log.debug(" -> got %s %s-files", len(files), self.suffix)
             else:
                 raise ValueError("Path must either be file or directory (or empty)")
 
             for file in files:
-                self.insert_file(file)
+                if validate:
+                    self.validate_file(file)
+                else:
+                    self._insert_file(file)
 
             if len(self.components) < 1:
-                log.error(f"No fixture-components found at {self.file_path.as_posix()}")
+                log.error(f"No fixture-components found at {file_path.as_posix()}")
             elif sheep_detect:
                 cache_file.parent.mkdir(parents=True, exist_ok=True)
                 with cache_file.open("wb", buffering=-1) as fd:
                     pickle.dump(self.components, fd)
+        for ckey in self.components:
+            self.components[ckey].update_iterator(reset=True)
 
-    @validate_call
-    def insert_file(self, file: Path) -> None:
+    def _insert_file(self, file: Path) -> None:
         with file.open(encoding="utf-8-sig") as fd:
-            fixtures = yaml.safe_load(fd)
-            for fixture in fixtures:
-                if not isinstance(fixture, dict):
-                    continue
-                fix_wrap = Wrapper(**fixture)
-                self.insert_model(fix_wrap)
+            fixtures = ryaml.load(fd)
+        for data_wrap in fixtures:
+            # this is a faster version .insert_model()
+            if not isinstance(data_wrap, dict):
+                continue
+            fix_type = str(data_wrap["datatype"]).lower()
+            if self.components.get(fix_type) is None:
+                self.components[fix_type] = Fixture(model_type=fix_type)
+            self.components[fix_type].insert_raw(data_wrap["parameters"])
+
+    def validate_file(self, file: Path) -> None:
+        """Slower version of ._insert_file() with more checks.
+
+        This allows to verify all fixtures in unittests.
+        """
+        with file.open(encoding="utf-8-sig") as fd:
+            fixtures = ryaml.load(fd)
+        for fixture in fixtures:
+            if not isinstance(fixture, dict):
+                continue
+            fix_wrap = Wrapper(**fixture)
+            self.insert_model(fix_wrap)
 
     def insert_model(self, data: Wrapper) -> None:
+        """Delegate model to correct component."""
         fix_type = data.datatype.lower()
         if self.components.get(fix_type) is None:
             self.components[fix_type] = Fixture(model_type=fix_type)
-        self.components[fix_type].insert(data)
+        self.components[fix_type].insert_verified(data)
 
     def __getitem__(self, key: str) -> Fixture:
         key = key.lower()
@@ -245,7 +279,6 @@ class Fixtures:
     def keys(self) -> Iterable[str]:
         return self.components.keys()
 
-    @staticmethod
-    def to_file(file: Path) -> None:
+    def to_file(self, file: Path) -> None:
         msg = f"TODO (val={file})"
         raise NotImplementedError(msg)

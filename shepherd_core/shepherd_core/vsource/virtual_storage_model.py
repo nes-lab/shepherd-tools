@@ -21,12 +21,12 @@ Expected deviations:
 from pydantic import PositiveFloat
 from pydantic import validate_call
 
-from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE
-from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE_LOG
-from shepherd_core.data_models.content.virtual_storage_config import StoragePRUConfig
-from shepherd_core.data_models.content.virtual_storage_config import TIMESTEP_s_DEFAULT
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.content.virtual_storage_config import soc_t
+from shepherd_core.data_models.content.virtual_storage_config_pru import LuT_SIZE
+from shepherd_core.data_models.content.virtual_storage_config_pru import LuT_SIZE_LOG
+from shepherd_core.data_models.content.virtual_storage_config_pru import StoragePRUConfig
+from shepherd_core.data_models.content.virtual_storage_config_pru import TIMESTEP_s_DEFAULT
 
 from .math64_safe import add32
 from .math64_safe import mul32e

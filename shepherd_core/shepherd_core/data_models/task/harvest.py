@@ -15,6 +15,8 @@ from typing_extensions import Self
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
 from shepherd_core.data_models.content.virtual_harvester_config import VirtualHarvesterConfig
+from shepherd_core.data_models.content.virtual_source_config import vhrv_mppt_opt
+from shepherd_core.data_models.experiment import observer_features_defaults
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
 
@@ -47,11 +49,11 @@ class HarvestTask(ShpModel):
     use_cal_default: bool = False
     """ ⤷ Use default calibration values, skip loading from EEPROM"""
 
-    virtual_harvester: VirtualHarvesterConfig = VirtualHarvesterConfig(name="mppt_opt")
+    virtual_harvester: VirtualHarvesterConfig = vhrv_mppt_opt
     """ ⤷ Choose one of the predefined virtual harvesters or configure a new one
     """
-    power_tracing: PowerTracing = PowerTracing()
-    sys_logging: SystemLogging | None = SystemLogging()
+    power_tracing: PowerTracing = observer_features_defaults.power_tracer_default
+    sys_logging: SystemLogging | None = observer_features_defaults.sys_logging_all
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
     """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug"""

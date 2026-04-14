@@ -19,16 +19,14 @@ from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.testbed.target import Target
 from shepherd_core.data_models.testbed.testbed import Testbed
 from shepherd_core.logger import log
-from shepherd_core.version import version
+from shepherd_core.version import core_version
 
 from .observer_features import SystemLogging
+from .observer_features_defaults import sys_logging_all
 from .target_config import TargetConfig
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-# defaults (pre-init complex types)
-sys_log_all = SystemLogging()  # = all active
 
 
 @final
@@ -45,7 +43,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     # feedback
     email_results: bool = True
 
-    sys_logging: SystemLogging = sys_log_all
+    sys_logging: SystemLogging = sys_logging_all
 
     # schedule
     time_start: datetime | None = None  # = ASAP
@@ -55,7 +53,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     target_configs: Annotated[list[TargetConfig], Field(min_length=1, max_length=128)]
 
     # debug
-    lib_ver: str | None = version
+    lib_ver: str | None = core_version
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:

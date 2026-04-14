@@ -47,7 +47,7 @@ from typing import Any
 from typing import final
 from typing import overload
 
-import yaml
+import ryaml
 from pydantic import Field
 from pydantic import NonNegativeFloat
 from pydantic import PositiveFloat
@@ -303,7 +303,7 @@ class EnergyEnvironment(ContentModel):
         """Select elements from this EEnv similar to list-Ops (slicing, int)."""
         if isinstance(value, int):
             if self.repetitions_ok:
-                value = value % len(self.energy_profiles)
+                value %= len(self.energy_profiles)
             return deepcopy(self.energy_profiles[value])
         if isinstance(value, slice):
             if self.repetitions_ok:
@@ -355,18 +355,18 @@ class EnergyEnvironment(ContentModel):
         output_path.mkdir(parents=True)
 
         # Copy data files & update meta-data
-        content = self.model_dump(exclude_unset=True, exclude_defaults=True)
+        content = self.model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
         for i_, profile in enumerate(self.energy_profiles):
             # Numbered to avoid collisions. Preserve extensions
             file_name = f"node{i_:03d}{profile.data_path.suffix}"
             profile_new = profile.export(output_path / file_name)
             content["energy_profiles"][i_] = profile_new.model_dump(
-                exclude_unset=True, exclude_defaults=True
+                mode="json", exclude_unset=True, exclude_defaults=True
             )
 
         # Create metadata file
         with (output_path / "eenv.yaml").open("w") as file:
-            yaml.safe_dump(content, file, default_flow_style=False, sort_keys=False)
+            ryaml.dump(file, content)
 
     def exists(self) -> bool:
         """Check if embedded files exists."""

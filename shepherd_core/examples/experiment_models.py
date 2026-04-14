@@ -20,8 +20,7 @@ How to define an experiment:
 
 import shepherd_core.data_models as sm
 from shepherd_core.data_models.task import TestbedTasks
-
-from shepherd_core import WebClient
+from shepherd_core.testbed_client.client_web import WebClient
 
 # generate description for all parameters -> base for web-forms
 sm.Experiment.schema_to_file("experiment_schema.yaml")

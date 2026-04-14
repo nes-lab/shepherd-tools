@@ -6,9 +6,10 @@ keywords = ["testbed", "beaglebone", "pru", "batteryless", "energyharvesting", "
 authors = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
 maintainers = [{name = "Ingmar Splitt", email = "ingmar.splitt@tu-dresden.de"},]
 
+version = "2026.04.2"
+
 license = "MIT"
 license-files = ["LICENSE"] # can't be in parent dir
-dynamic = ["version"]
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -28,7 +29,6 @@ requires-python = ">=3.10"
 dependencies = [
     "h5py",
     "numpy",
-    "pyYAML",
     "chromalog",
     "pydantic[email]>2.0.0",  # not compatible with prior versions
     "tqdm",
@@ -37,6 +37,7 @@ dependencies = [
     "pyelftools",
     "zstandard",
     "typing-extensions",
+    "ryaml", # alternative: rtoml
 ]
 
 [project.optional-dependencies]
@@ -52,9 +53,7 @@ inventory = [
     "psutil",
 ]
 
-dev = [
-    "types-PyYAML",
-]
+dev = []
 
 test = [
     "pytest",
@@ -88,9 +87,6 @@ shepherd_core = [
     "README.md",
     "*.yaml",
 ]
-
-[tool.setuptools.dynamic]
-version = {attr = "shepherd_core.version.version"}
 
 [tool.pytest.ini_options]
 markers = [

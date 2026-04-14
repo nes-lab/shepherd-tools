@@ -1,14 +1,15 @@
+import math
 from pathlib import Path
 
 import numpy as np
 import pytest
-from shepherd_core.data_models import CalibrationEmulator as CalEmu
-from shepherd_core.data_models import CalibrationHarvester as CalHrv
-from shepherd_core.data_models import CalibrationSeries as CalSeries
 from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models.base.calibration import CalibrationEmulator as CalEmu
+from shepherd_core.data_models.base.calibration import CalibrationHarvester as CalHrv
+from shepherd_core.data_models.base.calibration import CalibrationPair
+from shepherd_core.data_models.base.calibration import CalibrationSeries as CalSeries
 from shepherd_core.data_models.task import Compression
 
-from shepherd_core import CalibrationPair
 from shepherd_core import Reader
 from shepherd_core import Writer
 
@@ -85,9 +86,16 @@ def test_writer_faulty_datatype(h5_path: Path) -> None:
         generate_shp_file(h5_path, mode="emulator", datatype="ivcurve")
 
 
-def test_writer_faulty_path(tmp_path: Path) -> None:
+def test_writer_faulty_path_without_suffix(tmp_path: Path) -> None:
+    with pytest.raises(ValueError):  # noqa: PT011
+        generate_shp_file(tmp_path / "hello")
+
+
+def test_writer_faulty_path_dir(tmp_path: Path) -> None:
+    file_path = tmp_path / "strange_dir.h5"
+    file_path.mkdir()
     with pytest.raises(TypeError):
-        generate_shp_file(tmp_path)
+        generate_shp_file(file_path)
 
 
 def test_writer_init_cal_emu(h5_path: Path) -> None:
@@ -242,22 +250,22 @@ def test_writer_modify_cal_data(h5_path: Path) -> None:
     cal2 = CalSeries.from_cal(CalHrv(adc_V_Sense=CalibrationPair(gain=2.34)))
     generate_shp_file(h5_path, cal_data=cal1)
     with Reader(h5_path) as sfr:
-        assert sfr.get_calibration_data().voltage.gain == 1.23
+        assert math.isclose(sfr.get_calibration_data().voltage.gain, 1.23)
     with Writer(h5_path, modify_existing=True, cal_data=cal2) as sfw:
-        assert sfw.get_calibration_data().voltage.gain == 2.34
+        assert math.isclose(sfw.get_calibration_data().voltage.gain, 2.34)
     with Reader(h5_path) as sfr:
-        assert sfr.get_calibration_data().voltage.gain == 2.34
+        assert math.isclose(sfr.get_calibration_data().voltage.gain, 2.34)
 
 
 def test_writer_not_modify_cal_data(h5_path: Path) -> None:
     cal1 = CalSeries.from_cal(CalHrv(adc_V_Sense=CalibrationPair(gain=1.23)))
     generate_shp_file(h5_path, cal_data=cal1)
     with Reader(h5_path) as sfr:
-        assert sfr.get_calibration_data().voltage.gain == 1.23
+        assert math.isclose(sfr.get_calibration_data().voltage.gain, 1.23)
     with Writer(h5_path, modify_existing=True) as sfw:
-        assert sfw.get_calibration_data().voltage.gain == 1.23
+        assert math.isclose(sfw.get_calibration_data().voltage.gain, 1.23)
     with Reader(h5_path) as sfr:
-        assert sfr.get_calibration_data().voltage.gain == 1.23
+        assert math.isclose(sfr.get_calibration_data().voltage.gain, 1.23)
 
 
 def test_writer_modify_hostname(h5_path: Path) -> None:

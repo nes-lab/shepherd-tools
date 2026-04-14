@@ -6,7 +6,6 @@ TODO: should be more generalized - currently only supports msp & nRF
 from pathlib import Path
 from typing import Annotated
 from typing import Any
-from typing import TypedDict
 from typing import final
 
 from pydantic import StringConstraints
@@ -15,7 +14,6 @@ from pydantic import validate_call
 from typing_extensions import Self
 from typing_extensions import Unpack
 
-from shepherd_core import fw_tools
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.data_models.testbed.mcu import MCU
 from shepherd_core.logger import log
@@ -75,6 +73,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
             FirmwareDType.base64_elf,
         }:
             try:
+                from shepherd_core import fw_tools  # noqa: PLC0415
+
                 dhash = fw_tools.base64_to_hash(values.get("data"))
             except ValueError:
                 raise ValueError("Embedded Firmware seems to be faulty") from None
@@ -97,13 +97,15 @@ class Firmware(ContentModel, title="Firmware of Target"):
         file: Path,
         *,
         embed: bool = True,
-        **kwargs: Unpack[TypedDict],
+        **kwargs: Unpack[dict],
     ) -> Self:
         """Embeds firmware and tries to fill parameters.
 
         ELF -> mcu und data_type are deducted
         HEX -> must supply mcu manually.
         """
+        from shepherd_core import fw_tools  # noqa: PLC0415
+
         # TODO: use new determine_type() & determine_arch() and also allow to not embed
         kwargs["data_hash"] = fw_tools.file_to_hash(file)
         if embed:
@@ -152,6 +154,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
         if self.data_hash is None:
             return True
 
+        from shepherd_core import fw_tools  # noqa: PLC0415
+
         if data is None:
             # use included data if nothing is provided
             data = self.data
@@ -177,6 +181,8 @@ class Firmware(ContentModel, title="Firmware of Target"):
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """
+        from shepherd_core import fw_tools  # noqa: PLC0415
+
         if file.is_dir():
             file /= self.name
         file_new = fw_tools.extract_firmware(self.data, self.data_type, file)
@@ -185,7 +191,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
 
     def exists(self) -> bool:
         """Check if embedded file exists."""
-        if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
+        if self.data_type in {FirmwareDType.path_hex, FirmwareDType.path_elf}:
             if not isinstance(self.data, Path):
                 log.warning(
                     f"Firmware.data is not a Path (but type-property claims so) -> {self.name}"
@@ -197,9 +203,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
     def check(self) -> bool:
         """Check if embedded file is still valid or unchanged."""
         valid = True
-        if self.data_type in [FirmwareDType.path_hex, FirmwareDType.path_elf]:
+        if self.data_type in {FirmwareDType.path_hex, FirmwareDType.path_elf}:
             valid &= isinstance(self.data, Path) and Path(self.data).exists()
-        if self.data_type in [FirmwareDType.base64_elf, FirmwareDType.base64_hex]:
+        if self.data_type in {FirmwareDType.base64_elf, FirmwareDType.base64_hex}:
             valid &= isinstance(self.data, str)
             # TODO: could also begin unpacking base64
             # TODO: could also verify hex, elf
