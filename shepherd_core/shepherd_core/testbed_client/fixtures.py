@@ -258,7 +258,11 @@ class Fixtures:
             fixtures = ryaml.load(fd)
         for fixture in fixtures:
             if not isinstance(fixture, dict):
-                continue
+                msg = (
+                    f"FixtureClient expected Model-dict @ {file.name}:{fixture} "
+                    f"but got '{fixtures[fixture]}'"
+                )
+                raise TypeError(msg)
             fix_wrap = Wrapper(**fixture)
             self.insert_model(fix_wrap)
 
