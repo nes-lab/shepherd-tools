@@ -8,7 +8,7 @@ from shepherd_core.data_models.content import EnergyDType
 
 def load_yaml(file: str) -> dict:
     yaml_path = Path(__file__).resolve().with_name(file)
-    with yaml_path.open() as data:
+    with yaml_path.open(encoding="utf-8") as data:
         return ryaml.load(data)
 
 

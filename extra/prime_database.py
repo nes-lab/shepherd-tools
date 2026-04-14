@@ -76,5 +76,5 @@ if __name__ == "__main__":
             ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
             fixtures.append(model_wrap)
 
-    with (path_db / "_external_fixtures.yaml").open("w") as fp:
+    with (path_db / "_external_fixtures.yaml").open("w", encoding="utf-8") as fp:
         ryaml.dump(fp, fixtures)

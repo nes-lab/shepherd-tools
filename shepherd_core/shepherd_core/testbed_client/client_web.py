@@ -94,7 +94,7 @@ class WebClient(AbcClient):
         if isinstance(token, Path):
             if not token.exists():
                 raise FileNotFoundError("Token-Path does not exist")
-            with token.resolve().open() as file:
+            with token.resolve().open(encoding="utf-8") as file:
                 self._token = file.read()
         elif isinstance(token, str):
             self._token = self._token

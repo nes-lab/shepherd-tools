@@ -238,7 +238,7 @@ class Fixtures:
             self.components[ckey].update_iterator(reset=True)
 
     def _insert_file(self, file: Path) -> None:
-        with file.open(encoding="utf-8-sig") as fd:
+        with file.open(encoding="utf-8") as fd:
             fixtures = ryaml.load(fd)
         for data_wrap in fixtures:
             # this is a faster version .insert_model()
@@ -254,7 +254,7 @@ class Fixtures:
 
         This allows to verify all fixtures in unittests.
         """
-        with file.open(encoding="utf-8-sig") as fd:
+        with file.open(encoding="utf-8") as fd:
             fixtures = ryaml.load(fd)
         for fixture in fixtures:
             if not isinstance(fixture, dict):

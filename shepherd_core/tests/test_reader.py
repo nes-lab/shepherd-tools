@@ -18,7 +18,7 @@ def test_reader_metadata(data_h5: Path) -> None:
         meta_data_a = sfr.save_metadata()
         meta_path = data_h5.resolve().with_suffix(".yaml")
         assert meta_path.exists()
-        with meta_path.open() as meta_file:
+        with meta_path.open(encoding="utf-8") as meta_file:
             meta_data_b = ryaml.load(meta_file)
             assert len(meta_data_b) == len(meta_data_a)
             assert sys.getsizeof(meta_data_b) == sys.getsizeof(meta_data_a)
@@ -42,7 +42,7 @@ def test_reader_open(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         Reader(file_path=tmp_file)
 
-    with tmp_file.open("w") as tf:
+    with tmp_file.open("w", encoding="utf-8") as tf:
         tf.write("abc def ghi")
     with pytest.raises(TypeError):
         Reader(file_path=tmp_file)

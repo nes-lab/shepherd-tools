@@ -104,7 +104,7 @@ class ShpModel(BaseModel):
     def schema_to_file(cls, path: str | Path) -> None:
         """Store schema to yaml (for frontend-generators)."""
         model_dict = cls.model_json_schema()
-        with Path(path).resolve().with_suffix(".yaml").open("w") as fp:
+        with Path(path).resolve().with_suffix(".yaml").open("w", encoding="utf-8") as fp:
             ryaml.dump(fp, model_dict)
 
     @final
@@ -143,7 +143,10 @@ class ShpModel(BaseModel):
 
         if not model_path.parent.exists():  # TODO: can be restructured to allow ryaml.dump()
             model_path.parent.mkdir(parents=True)
-        with model_path.open("wb" if use_pickle else "w") as f:
+        with model_path.open(
+            "wb" if use_pickle else "w",
+            encoding=None if use_pickle else "utf-8",
+        ) as f:
             f.write(model_serial)
         return model_path
 
@@ -158,7 +161,7 @@ class ShpModel(BaseModel):
             with Path(path).open("rb") as shp_file:
                 shp_dict = pickle.load(shp_file)  # noqa: S301
         else:
-            with Path(path).open(encoding="utf-8-sig") as shp_file:
+            with Path(path).open(encoding="utf-8") as shp_file:
                 shp_dict = ryaml.load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:

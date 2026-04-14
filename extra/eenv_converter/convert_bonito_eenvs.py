@@ -284,7 +284,7 @@ def create_meta_data(path_dir: Path = root_storage_default) -> None:
             ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
         )
 
-    with (path_dir / "bonito/_metadata_eenvs_bonito.yaml").open("w", encoding="utf-8-sig") as fp:
+    with (path_dir / "bonito/_metadata_eenvs_bonito.yaml").open("w", encoding="utf-8") as fp:
         ryaml.dump(fp, wraps)
 
 

@@ -261,5 +261,5 @@ if __name__ == "__main__":
             ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
             models_wrap.append(model_wrap)
 
-        with file_path.open("w") as fp:
+        with file_path.open("w", encoding="utf-8") as fp:
             ryaml.dump(fp, models_wrap)

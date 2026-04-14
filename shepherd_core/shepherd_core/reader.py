@@ -285,7 +285,7 @@ class Reader:
 
     def get_config(self) -> dict:
         if "config" in self.h5file["data"].attrs:
-            return ryaml.load(self.h5file["data"].attrs["config"])
+            return ryaml.loads(self.h5file["data"].attrs["config"])
         return {}
 
     def get_hostname(self) -> str:
@@ -681,7 +681,7 @@ class Reader:
                 self._logger.info("File already exists, will skip '%s'", yaml_path.name)
                 return {}
             metadata = self.get_metadata(node)  # {"h5root": self.get_metadata(self.h5file)}
-            with yaml_path.open("w", encoding="utf-8-sig") as yfd:
+            with yaml_path.open("w", encoding="utf-8") as yfd:
                 ryaml.dump(yfd, metadata)
         else:
             metadata = {}
@@ -752,7 +752,7 @@ class Reader:
         if path_csv.exists():
             self._logger.info("File already exists, will skip '%s'", path_csv.name)
             return
-        with path_csv.open("w") as csv:
+        with path_csv.open("w", encoding="utf-8") as csv:
             csv.write(f"timestamp [s],{pin_name}\n")
             for row in pin_wf:
                 csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")
@@ -774,7 +774,7 @@ class Reader:
             return
 
         if add_timestamps:
-            with path_log.open("w", encoding="utf-8-sig") as log_file:
+            with path_log.open("w", encoding="utf-8") as log_file:
                 for line in content:
                     with suppress(TypeError):
                         if add_timestamps:

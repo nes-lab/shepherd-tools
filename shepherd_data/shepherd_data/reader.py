@@ -66,7 +66,7 @@ class Reader(CoreReader):
             str(h5_group[key].attrs["description"]).replace(", ", separator) for key in datasets
         ]
         header: str = separator.join(header_elements)
-        with csv_path.open("w", encoding="utf-8-sig") as csv_file:
+        with csv_path.open("w", encoding="utf-8") as csv_file:
             self._logger.info("CSV-Generator will save '%s' to '%s'", h5_group.name, csv_path.name)
             csv_file.write(header + "\n")
             ts_gain = h5_group["time"].attrs.get("gain", 1e-9)
@@ -110,7 +110,7 @@ class Reader(CoreReader):
         datasets.remove("time")
         self._logger.info("Log-Generator will save '%s' to '%s'", h5_group.name, log_path.name)
         if add_timestamp:
-            with log_path.open("w", encoding="utf-8-sig") as log_file:
+            with log_path.open("w", encoding="utf-8") as log_file:
                 for idx, time_ns in enumerate(h5_group["time"][:]):
                     timestamp = datetime.fromtimestamp(time_ns / 1e9, local_tz())
                     # ⤷ TODO: these .fromtimestamp would benefit from included TZ

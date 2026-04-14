@@ -390,7 +390,9 @@ def create_meta_data(params: Params = params_default) -> None:
         parameters=eenv.model_dump(exclude_none=True),
     ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
 
-    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open("w") as fp:
+    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open(
+        "w", encoding="utf-8"
+    ) as fp:
         ryaml.dump(fp, eenv_wrap)
 
 

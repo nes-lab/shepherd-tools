@@ -40,7 +40,7 @@ if __name__ == "__main__":
     if not path_meta.exists():
         log.error("Metadata-file not found, will stop (%s)", path_meta.as_posix())
     else:
-        with path_meta.open() as file_meta:
+        with path_meta.open(encoding="utf-8") as file_meta:
             metadata = ryaml.load(file_meta)["metadata"]
 
         for _fw, _descr in metadata.items():
@@ -76,7 +76,7 @@ if __name__ == "__main__":
             fw = Firmware.from_firmware(path_elf)
             fw.to_file(file_temp, minimal=True)
             sizeof["yaml"] = file_temp.stat().st_size
-            with file_temp.open("w") as fh:
+            with file_temp.open("w", encoding="utf-8") as fh:
                 fh.write(fw.model_dump_json(exclude_unset=True, exclude_defaults=True))
             sizeof["json"] = file_temp.stat().st_size
             log.info(" -> size-stat: %s", sizeof)

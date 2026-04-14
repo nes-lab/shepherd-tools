@@ -365,7 +365,7 @@ class EnergyEnvironment(ContentModel):
             )
 
         # Create metadata file
-        with (output_path / "eenv.yaml").open("w") as file:
+        with (output_path / "eenv.yaml").open("w", encoding="utf-8") as file:
             ryaml.dump(file, content)
 
     def exists(self) -> bool:

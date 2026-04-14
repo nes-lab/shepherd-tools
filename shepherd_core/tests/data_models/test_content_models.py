@@ -461,7 +461,7 @@ def test_content_model_fw_from_hex(path_elf: Path, tmp_path: Path) -> None:
 
 def test_content_model_fw_from_hex_failing(tmp_path: Path) -> None:
     path_hex = tmp_path / "some.hex"
-    with path_hex.open("w") as fd:
+    with path_hex.open("w", encoding="utf-8") as fd:
         fd.write("something")
     with pytest.raises(ValueError):  # noqa: PT011
         Firmware.from_firmware(
