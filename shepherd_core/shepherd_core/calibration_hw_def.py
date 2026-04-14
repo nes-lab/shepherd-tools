@@ -6,7 +6,7 @@ an input voltage/current or, for emulation, the expected voltage and current
 given the digital code in the DAC.
 
 currently configured for cape v2.4c
-
+TODO: Hw-dependant
 """
 
 # both current channels have a 0.1 % shunt resistance of

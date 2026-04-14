@@ -2,8 +2,8 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from shepherd_core.data_models.content.enum_datatypes import Compression
 
-from shepherd_core import Compression
 from shepherd_data import Writer
 
 

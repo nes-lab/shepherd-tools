@@ -7,9 +7,8 @@ from shepherd_core.data_models import Firmware
 from shepherd_core.data_models import TargetConfig
 from shepherd_core.data_models import VirtualHarvesterConfig
 from shepherd_core.data_models import VirtualSourceConfig
+from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.task import TestbedTasks as TasteBadTasks
-
-from shepherd_core import local_now
 
 
 def test_task_generation_file(tmp_path: Path) -> None:

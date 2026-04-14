@@ -20,9 +20,9 @@ from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
 from .data_models.base.shepherd import ShpModel
+from .data_models.content.enum_datatypes import Compression
 from .data_models.content.enum_datatypes import EnergyDType
-from .data_models.task import Compression
-from .data_models.task.emulation import c_translate
+from .data_models.content.enum_datatypes import compression_dict
 from .reader import Reader
 
 
@@ -90,7 +90,7 @@ class Writer(Reader):
     ) -> None:
         self._modify = modify_existing
         if compression is not None:
-            self._compression = c_translate[compression.value]
+            self._compression = compression_dict[compression.value]
         else:
             self._compression = None
 

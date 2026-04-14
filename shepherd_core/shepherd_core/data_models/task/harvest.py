@@ -14,13 +14,12 @@ from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
+from shepherd_core.data_models.content.enum_datatypes import Compression
 from shepherd_core.data_models.content.virtual_harvester_config import VirtualHarvesterConfig
 from shepherd_core.data_models.content.virtual_source_config import vhrv_mppt_opt
 from shepherd_core.data_models.experiment import observer_features_defaults
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import SystemLogging
-
-from .emulation import Compression
 
 
 @final

@@ -1,7 +1,6 @@
 import pytest
-
-from shepherd_core import get_verbose_level
-from shepherd_core import increase_verbose_level
+from shepherd_core.logger import get_verbose_level
+from shepherd_core.logger import increase_verbose_level
 
 
 @pytest.mark.parametrize("log_level", range(-5, 10))

@@ -7,7 +7,7 @@ HDF5 files, with
 - extracting metadata
 """
 
-from shepherd_core import Writer
+from shepherd_core.writer import Writer
 
 from .reader import Reader
 

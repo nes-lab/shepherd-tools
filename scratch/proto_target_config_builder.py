@@ -28,9 +28,8 @@ from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing
 from shepherd_core.data_models.experiment.observer_features import PowerTracing
 from shepherd_core.data_models.experiment.observer_features import UartLogging
+from shepherd_core.logger import log
 from typing_extensions import Self
-
-from shepherd_core import log
 
 
 class Firmware(ShpModel):

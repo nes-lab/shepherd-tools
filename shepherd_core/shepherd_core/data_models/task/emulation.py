@@ -4,7 +4,6 @@ import copy
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta
-from enum import Enum
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
@@ -18,6 +17,7 @@ from typing_extensions import Self
 from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
+from shepherd_core.data_models.content.enum_datatypes import Compression
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.data_models.experiment import observer_features_defaults
 from shepherd_core.data_models.experiment.experiment import Experiment
@@ -32,20 +32,6 @@ from shepherd_core.data_models.testbed.cape import TargetPort
 from shepherd_core.logger import log
 
 from .helper_paths import path_posix
-
-
-class Compression(str, Enum):
-    """Options for choosing a dataset-compression."""
-
-    lzf = "lzf"  # not native hdf5
-    gzip1 = gzip = default = 1  # higher compr & load
-    null = None
-    # NOTE: lzf & external file-compression (xz or zstd) work better than gzip
-    #       -> even with additional compression
-
-
-compressions_allowed: list = [None, "lzf", 1]
-c_translate = {"lzf": "lzf", "1": 1, "None": None, None: None}
 
 
 @final

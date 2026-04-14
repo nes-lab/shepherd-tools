@@ -5,10 +5,9 @@ from pathlib import Path
 
 import numpy as np
 from shepherd_core.logger import log
+from shepherd_core.reader import Reader as ShpReader
+from shepherd_core.writer import Writer as ShpWriter
 from tqdm import trange
-
-from shepherd_core import Reader as ShpReader
-from shepherd_core import Writer as ShpWriter
 
 # Config
 voltages_V = [4.0, 2.0]

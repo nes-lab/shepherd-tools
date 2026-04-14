@@ -2,8 +2,8 @@
 
 from itertools import product
 
-from shepherd_core import log
 from shepherd_core.data_models.content.virtual_storage_config_pru import LuT_SIZE_LOG
+from shepherd_core.logger import log
 
 
 def u32l(i: float) -> int:

@@ -5,9 +5,8 @@ import sys
 from pathlib import Path
 
 import click
+from shepherd_core.logger import get_verbose_level
 from shepherd_core.logger import set_log_verbose_level
-
-from shepherd_core import get_verbose_level
 
 from .reader import Reader
 

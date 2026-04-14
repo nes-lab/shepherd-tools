@@ -7,7 +7,7 @@ HDF5 files.
 
 from .data_models.base.timezone import local_now
 from .data_models.base.timezone import local_tz
-from .data_models.task.emulation import Compression
+from .data_models.content.enum_datatypes import Compression
 from .logger import get_verbose_level
 from .logger import increase_verbose_level
 from .logger import log

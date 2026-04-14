@@ -7,7 +7,7 @@ import numpy as np
 from pydantic import PositiveFloat
 from pydantic import validate_call
 
-from shepherd_core import log
+from shepherd_core.logger import log
 
 from .virtual_storage_model import ModelStorage
 
