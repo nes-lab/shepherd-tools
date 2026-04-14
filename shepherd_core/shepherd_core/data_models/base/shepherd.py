@@ -1,51 +1,19 @@
 """Shepherds base-model that brings a lot of default functionality."""
 
 import hashlib
-import pathlib
 import pickle
 from collections.abc import Generator
-from datetime import timedelta
-from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Any
 from typing import final
-from uuid import UUID
 
-import yaml
+import ryaml
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from typing_extensions import Self
-from yaml import Node
-from yaml import SafeDumper
 
 from .timezone import local_now
 from .wrapper import Wrapper
-
-
-def path2str(
-    dumper: SafeDumper, data: pathlib.Path | pathlib.WindowsPath | pathlib.PosixPath
-) -> Node:
-    """Add a yaml-representation for a specific datatype."""
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
-
-
-def time2int(dumper: SafeDumper, data: timedelta) -> Node:
-    """Add a yaml-representation for a specific datatype."""
-    return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
-
-
-def generic2str(dumper: SafeDumper, data: Any) -> Node:
-    """Add a yaml-representation for a specific datatype."""
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
-
-
-# TODO: put in helper-file (similar to models/task/helper_paths.py) and make it callable
-yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
-yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
-yaml.add_representer(pathlib.Path, path2str, SafeDumper)
-yaml.add_representer(timedelta, time2int, SafeDumper)
-yaml.add_representer(IPv4Address, generic2str, SafeDumper)
-yaml.add_representer(UUID, generic2str, SafeDumper)
 
 
 def path_to_str(old: dict) -> dict:
@@ -98,17 +66,14 @@ class ShpModel(BaseModel):
     def __repr__(self) -> str:
         """string-representation allows print(model)."""
         name = type(self).__name__
-        content = self.model_dump(exclude_unset=True, exclude_defaults=True)
+        content = self.model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
         return f"{name}({content})"
 
     def __str__(self) -> str:
-        """string-representation allows str(model)."""
-        content = yaml.safe_dump(
-            self.model_dump(exclude_unset=True, exclude_defaults=True),
-            default_flow_style=False,
-            sort_keys=False,
+        """string-representation allows str(model) and will be in YAML-format."""
+        return ryaml.dumps(
+            self.model_dump(mode="json", exclude_unset=True, exclude_defaults=True),
         )
-        return str(content)
 
     def __getitem__(self, key: Any) -> Any:
         """Allow dict access like model["key"].
@@ -127,7 +92,7 @@ class ShpModel(BaseModel):
 
     def keys(self):  # noqa: ANN201
         """Fn of dict."""
-        return self.model_dump().keys()
+        return self.model_dump().keys()  # TODO: there is an easier way
 
     def items(self) -> Generator[tuple, None, None]:
         """Fn of dict."""
@@ -139,9 +104,8 @@ class ShpModel(BaseModel):
     def schema_to_file(cls, path: str | Path) -> None:
         """Store schema to yaml (for frontend-generators)."""
         model_dict = cls.model_json_schema()
-        model_yaml = yaml.safe_dump(model_dict, default_flow_style=False, sort_keys=False)
-        with Path(path).resolve().with_suffix(".yaml").open("w") as f:
-            f.write(model_yaml)
+        with Path(path).resolve().with_suffix(".yaml").open("w", encoding="utf-8") as fp:
+            ryaml.dump(fp, model_dict)
 
     @final
     def to_file(
@@ -164,24 +128,25 @@ class ShpModel(BaseModel):
             created=local_now(),
             parameters=self.model_dump(exclude_unset=minimal),
         )
-        model_dict = model_wrap.model_dump(exclude_unset=minimal, exclude_defaults=minimal)
         if use_pickle:
+            # TODO: pickle can just dump the original model
+            model_dict = model_wrap.model_dump(exclude_unset=minimal, exclude_defaults=minimal)
             model_serial = pickle.dumps(path_to_str(model_dict))
             model_path = Path(path).resolve().with_suffix(".pickle")
         else:
-            # TODO: x64 windows supports CSafeLoader/dumper,
-            #       there are examples that replace load if avail
-            model_serial = yaml.safe_dump(
-                model_dict,
-                default_flow_style=False,
-                sort_keys=False,
+            model_dict = model_wrap.model_dump(
+                mode="json", exclude_unset=minimal, exclude_defaults=minimal
             )
+            model_serial = ryaml.dumps(model_dict)
             model_path = Path(path).resolve().with_suffix(".yaml")
         # TODO: handle directory
 
-        if not model_path.parent.exists():
+        if not model_path.parent.exists():  # TODO: can be restructured to allow ryaml.dump()
             model_path.parent.mkdir(parents=True)
-        with model_path.open("wb" if use_pickle else "w") as f:
+        with model_path.open(
+            "wb" if use_pickle else "w",
+            encoding=None if use_pickle else "utf-8",
+        ) as f:
             f.write(model_serial)
         return model_path
 
@@ -196,8 +161,8 @@ class ShpModel(BaseModel):
             with Path(path).open("rb") as shp_file:
                 shp_dict = pickle.load(shp_file)  # noqa: S301
         else:
-            with Path(path).open(encoding="utf-8-sig") as shp_file:
-                shp_dict = yaml.safe_load(shp_file)
+            with Path(path).open(encoding="utf-8") as shp_file:
+                shp_dict = ryaml.load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
         if shp_wrap.datatype != cls.__name__:
             raise ValueError("Model in file does not match the actual Class")

@@ -54,7 +54,7 @@ repos:
       - id: text-unicode-replacement-char
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.8
+    rev: v0.15.10
     hooks:
       - id: ruff-format
       - id: ruff-check
@@ -76,3 +76,9 @@ repos:
     rev: v0.25
     hooks:
       - id: validate-pyproject
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.24.0
+    hooks:
+      - id: zizmor
+        args: ["--min-severity", "high", "--no-progress", "--fix", "."]

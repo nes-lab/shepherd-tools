@@ -12,12 +12,37 @@ from typing_extensions import Self
 from shepherd_core.config import config
 from shepherd_core.data_models.base.calibration import CalibrationHarvester
 from shepherd_core.data_models.base.content import ContentModel
-from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
 
 from .enum_datatypes import EnergyDType
 from .enum_datatypes import HarvestAlgorithmDType
+
+# Currently implemented harvesters
+# NOTE: numbers have meaning and will be tested ->
+# - harvesting on "neutral" is not possible - direct pass-through
+# - emulation with "ivcurve" or lower is also resulting in Error
+# - "_opt" has its own algo for emulation, but is only a fast mppt_po for harvesting
+ALGO_TO_NUM: Mapping[str, int] = {
+    "neutral": 2**0,
+    "isc_voc": 2**3,
+    "ivcurve": 2**4,
+    "cv": 2**8,
+    # is "ci" desired?
+    "mppt_voc": 2**12,
+    "mppt_po": 2**13,
+    "mppt_opt": 2**14,
+}
+
+ALGO_TO_DTYPE: Mapping[str, EnergyDType] = {
+    "neutral": EnergyDType.ivsample,
+    "isc_voc": EnergyDType.isc_voc,
+    "ivcurve": EnergyDType.ivcurve,
+    "cv": EnergyDType.ivsample,
+    "mppt_voc": EnergyDType.ivsample,
+    "mppt_po": EnergyDType.ivsample,
+    "mppt_opt": EnergyDType.ivsample,
+}
 
 
 @final
@@ -320,120 +345,3 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         if dtype_in == EnergyDType.isc_voc:
             return 2 * (1 + self.wait_cycles)
         raise NotImplementedError
-
-
-u32 = Annotated[int, Field(ge=0, lt=2**32)]
-
-
-# Currently implemented harvesters
-# NOTE: numbers have meaning and will be tested ->
-# - harvesting on "neutral" is not possible - direct pass-through
-# - emulation with "ivcurve" or lower is also resulting in Error
-# - "_opt" has its own algo for emulation, but is only a fast mppt_po for harvesting
-ALGO_TO_NUM: Mapping[str, int] = {
-    "neutral": 2**0,
-    "isc_voc": 2**3,
-    "ivcurve": 2**4,
-    "cv": 2**8,
-    # is "ci" desired?
-    "mppt_voc": 2**12,
-    "mppt_po": 2**13,
-    "mppt_opt": 2**14,
-}
-
-ALGO_TO_DTYPE: Mapping[str, EnergyDType] = {
-    "neutral": EnergyDType.ivsample,
-    "isc_voc": EnergyDType.isc_voc,
-    "ivcurve": EnergyDType.ivcurve,
-    "cv": EnergyDType.ivsample,
-    "mppt_voc": EnergyDType.ivsample,
-    "mppt_po": EnergyDType.ivsample,
-    "mppt_opt": EnergyDType.ivsample,
-}
-
-
-@final
-class HarvesterPRUConfig(ShpModel):
-    """Map settings-list to internal state-vars struct HarvesterConfig for PRU.
-
-    NOTE:
-      - yaml is based on si-units like nA, mV, ms, uF
-      - c-code and py-copy is using nA, uV, ns, nF, fW, raw
-      - ordering is intentional and in sync with shepherd/commons.h.
-    """
-
-    algorithm: u32
-    hrv_mode: u32
-    window_size: u32
-    voltage_uV: u32
-    voltage_min_uV: u32
-    voltage_max_uV: u32
-    voltage_step_uV: u32
-    """ ⤷ for window-based algo like ivcurve"""
-    current_limit_nA: u32
-    """ ⤷ lower bound to detect zero current"""
-    setpoint_n8: u32
-    interval_n: u32
-    """ ⤷ between measurements"""
-    duration_n: u32
-    """ ⤷ of measurement"""
-    wait_cycles_n: u32
-    """ ⤷ for DAC to settle"""
-
-    @classmethod
-    def from_vhrv(
-        cls,
-        data: VirtualHarvesterConfig,
-        dtype_in: EnergyDType | None = EnergyDType.ivsample,
-        window_size: u32 | None = None,
-        voltage_step_V: float | None = None,
-        *,
-        for_emu: bool = False,
-    ) -> Self:
-        if isinstance(dtype_in, str):
-            dtype_in = EnergyDType[dtype_in]
-        if for_emu and dtype_in not in {EnergyDType.ivsample, EnergyDType.ivcurve}:
-            raise NotImplementedError
-
-        if for_emu and dtype_in == EnergyDType.ivcurve and voltage_step_V is None:
-            raise ValueError(
-                "For correct emulation specify voltage_step used by harvester "
-                "e.g. via file_src.get_voltage_step()"
-            )
-
-        if for_emu and dtype_in == EnergyDType.ivcurve and window_size is None:
-            raise ValueError(
-                "For correct emulation specify window_size used by harvester "
-                "e.g. via file_src.get_window_size()"
-            )
-
-        interval_ms, duration_ms = data.calc_timings_ms(for_emu=for_emu)
-        window_size = (
-            window_size
-            if window_size is not None
-            else data.calc_window_size(dtype_in, for_emu=for_emu)
-        )
-        if voltage_step_V is not None:
-            voltage_step_mV = 1e3 * voltage_step_V
-        elif data.voltage_step_mV is not None:
-            voltage_step_mV = data.voltage_step_mV
-        else:
-            raise ValueError(
-                "For correct emulation specify voltage_step used by harvester "
-                "e.g. via file_src.get_voltage_step()"
-            )
-
-        return cls(
-            algorithm=data.calc_algorithm_num(for_emu=for_emu),
-            hrv_mode=data.calc_hrv_mode(for_emu=for_emu),
-            window_size=window_size,
-            voltage_uV=round(data.voltage_mV * 10**3),
-            voltage_min_uV=round(data.voltage_min_mV * 10**3),
-            voltage_max_uV=round(data.voltage_max_mV * 10**3),
-            voltage_step_uV=round(voltage_step_mV * 10**3),
-            current_limit_nA=round(data.current_limit_uA * 10**3),
-            setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
-            interval_n=round(interval_ms * config.SAMPLERATE_SPS * 1e-3),
-            duration_n=round(duration_ms * config.SAMPLERATE_SPS * 1e-3),
-            wait_cycles_n=data.wait_cycles,
-        )

@@ -9,7 +9,7 @@ from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import FirmwareDType
 from shepherd_core.data_models.content import VirtualHarvesterConfig
 from shepherd_core.data_models.content import VirtualSourceConfig
-from shepherd_core.data_models.content.virtual_source_config import ConverterPRUConfig
+from shepherd_core.data_models.content.virtual_source_config_pru import ConverterPRUConfig
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.testbed import MCU
 
@@ -461,7 +461,7 @@ def test_content_model_fw_from_hex(path_elf: Path, tmp_path: Path) -> None:
 
 def test_content_model_fw_from_hex_failing(tmp_path: Path) -> None:
     path_hex = tmp_path / "some.hex"
-    with path_hex.open("w") as fd:
+    with path_hex.open("w", encoding="utf-8") as fd:
         fd.write("something")
     with pytest.raises(ValueError):  # noqa: PT011
         Firmware.from_firmware(

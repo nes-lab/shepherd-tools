@@ -18,7 +18,7 @@ if __name__ == "__main__":
     if not path_csv.parent.exists():
         path_csv.parent.mkdir(parents=True)
 
-    with path_csv.open("w") as csv:
+    with path_csv.open("w", encoding="utf-8") as csv:
         elements = [
             "tb_name",
             "target_id",

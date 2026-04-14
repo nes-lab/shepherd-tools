@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-import yaml
+import ryaml
 from commons import EEnvGenerator
 from commons import process_mp
 from commons import root_storage_default
@@ -111,12 +111,13 @@ def create_meta_data(params: Params = params_default) -> None:
         eenv_wrap = Wrapper(
             datatype=EnergyEnvironment.__name__,
             parameters=eenv.model_dump(exclude_none=True),
-        )
-        wraps.append(eenv_wrap.model_dump(exclude_unset=True, exclude_defaults=True))
+        ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
+        wraps.append(eenv_wrap)
 
-    wraps_yaml = yaml.safe_dump(wraps, default_flow_style=False, sort_keys=False)
-    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open("w") as f:
-        f.write(wraps_yaml)
+    with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open(
+        "w", encoding="utf-8"
+    ) as fp:
+        ryaml.dump(fp, wraps)
 
 
 if __name__ == "__main__":

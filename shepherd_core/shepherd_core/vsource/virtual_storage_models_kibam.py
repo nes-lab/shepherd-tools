@@ -10,10 +10,10 @@ from pydantic import PositiveInt
 from pydantic import validate_call
 from typing_extensions import Self
 
-from shepherd_core.data_models.content.virtual_storage_config import LuT_SIZE
-from shepherd_core.data_models.content.virtual_storage_config import TIMESTEP_s_DEFAULT
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.content.virtual_storage_config import soc_t
+from shepherd_core.data_models.content.virtual_storage_config_pru import LuT_SIZE
+from shepherd_core.data_models.content.virtual_storage_config_pru import TIMESTEP_s_DEFAULT
 
 from .virtual_storage_model import ModelStorage
 

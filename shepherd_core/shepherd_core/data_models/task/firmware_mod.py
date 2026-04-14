@@ -4,7 +4,6 @@ from collections.abc import Iterable
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
-from typing import TypedDict
 from typing import final
 
 from pydantic import Field
@@ -13,7 +12,7 @@ from pydantic import validate_call
 from typing_extensions import Self
 from typing_extensions import Unpack
 
-from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 from shepherd_core.data_models.content.firmware import Firmware
@@ -54,7 +53,7 @@ class FirmwareModTask(ShpModel):
         cls,
         xp: Experiment,
         tb: Testbed,
-        tgt_id: IdInt,
+        tgt_id: IdInt64,
         mcu_port: MCUPort,
         fw_path: Path,
     ) -> Self:
@@ -82,7 +81,7 @@ class FirmwareModTask(ShpModel):
     def from_firmware(
         cls,
         fw: Firmware,
-        **kwargs: Unpack[TypedDict],
+        **kwargs: Unpack[dict],
     ) -> Self:
         if not isinstance(fw, Firmware):
             raise TypeError("fw-argument must be of type Firmware")

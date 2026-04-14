@@ -15,10 +15,11 @@ from pydantic import model_validator
 from pydantic import validate_call
 from typing_extensions import Self
 
-from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
+from shepherd_core.data_models.experiment import observer_features_defaults
 from shepherd_core.data_models.experiment.experiment import Experiment
 from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing
@@ -102,11 +103,11 @@ class EmulationTask(ShpModel):
     provide parameters or name like BQ25570
     """
 
-    power_tracing: PowerTracing | None = PowerTracing()
-    gpio_tracing: GpioTracing | None = GpioTracing()
-    uart_logging: UartLogging | None = UartLogging()
+    power_tracing: PowerTracing | None = observer_features_defaults.power_tracer_default
+    gpio_tracing: GpioTracing | None = observer_features_defaults.gpio_tracing_default
+    uart_logging: UartLogging | None = observer_features_defaults.uart_logging_default
     gpio_actuation: GpioActuation | None = None
-    sys_logging: SystemLogging | None = SystemLogging()
+    sys_logging: SystemLogging | None = observer_features_defaults.sys_logging_all
 
     verbose: Annotated[int, Field(ge=0, le=4)] = 2
     """ ⤷ 0=Errors, 1=Warnings, 2=Info, 3=Debug,
@@ -157,7 +158,7 @@ class EmulationTask(ShpModel):
 
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt, root_path: Path) -> Self:
+    def from_xp(cls, xp: Experiment, tb: Testbed, tgt_id: IdInt64, root_path: Path) -> Self:
         obs = tb.get_observer(tgt_id)
         tgt_cfg = xp.get_target_config(tgt_id)
         tgt_idx = tgt_cfg.target_IDs.index(tgt_id)

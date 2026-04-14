@@ -10,7 +10,7 @@ from pydantic import StringConstraints
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.data_models.base.content import IdInt
+from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -29,7 +29,7 @@ class Direction(str, Enum):
 class GPIO(ShpModel, title="GPIO of Observer Node"):
     """meta-data representation of a testbed-component."""
 
-    id: IdInt
+    id: IdInt64
     name: NameStr
     description: SafeStr | None = None
     comment: SafeStr | None = None

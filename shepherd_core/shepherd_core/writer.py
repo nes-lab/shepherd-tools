@@ -2,49 +2,28 @@
 
 import logging
 import math
-import pathlib
 from collections.abc import Mapping
-from datetime import timedelta
 from itertools import product
 from pathlib import Path
 from types import TracebackType
 from typing import Any
+from typing import ClassVar
 
 import h5py
 import numpy as np
-import yaml
+import ryaml
 from pydantic import validate_call
 from typing_extensions import Self
-from yaml import Node
-from yaml import SafeDumper
 
 from .config import config
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
+from .data_models.base.shepherd import ShpModel
 from .data_models.content.enum_datatypes import EnergyDType
 from .data_models.task import Compression
 from .data_models.task.emulation import c_translate
 from .reader import Reader
-
-
-# copy of core/models/base/shepherd - needed also here
-def path2str(
-    dumper: SafeDumper, data: pathlib.Path | pathlib.WindowsPath | pathlib.PosixPath
-) -> Node:
-    """Add a yaml-representation for a specific datatype."""
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(data.as_posix()))
-
-
-def time2int(dumper: SafeDumper, data: timedelta) -> Node:
-    """Add a yaml-representation for a specific datatype."""
-    return dumper.represent_scalar("tag:yaml.org,2002:int", str(int(data.total_seconds())))
-
-
-yaml.add_representer(pathlib.PosixPath, path2str, SafeDumper)
-yaml.add_representer(pathlib.WindowsPath, path2str, SafeDumper)
-yaml.add_representer(pathlib.Path, path2str, SafeDumper)
-yaml.add_representer(timedelta, time2int, SafeDumper)
 
 
 def unique_path(base_path: str | Path, suffix: str) -> Path:
@@ -89,6 +68,7 @@ class Writer(Reader):
 
     """
 
+    SUFFIX_VALID: ClassVar[set[str]] = {".h5", ".hdf5"}
     MODE_DEFAULT: str = "harvester"
     DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
 
@@ -119,6 +99,12 @@ class Writer(Reader):
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
         # -> logger gets configured in reader()
 
+        if file_path.suffix.lower() not in Writer.SUFFIX_VALID:
+            msg = (
+                f"Filename for recording ({file_path.name}) "
+                f"must have a valid suffix ({Writer.SUFFIX_VALID})"
+            )
+            raise ValueError(msg)
         if self._modify or force_overwrite or not file_path.exists():
             file_path = file_path.resolve()
             self._logger.debug("Storing data to   '%s'", file_path)
@@ -368,15 +354,15 @@ class Writer(Reader):
         """Conveniently store relevant key-value data (attribute) in H5-structure."""
         self.h5file.attrs.__setitem__(key, item)
 
-    def store_config(self, data: Mapping) -> None:
+    def store_config(self, data: Mapping | ShpModel) -> None:
         """Get a better self-describing Output-File.
 
         TODO: use data-model?
         :param data: from virtual harvester or converter / source.
         """
-        self.h5file.attrs["config"] = yaml.safe_dump(
-            data, default_flow_style=False, sort_keys=False
-        )
+        if isinstance(data, ShpModel):
+            data = data.model_dump(mode="json")
+        self.h5file.attrs["config"] = ryaml.dumps(data)
 
     def store_hostname(self, name: str) -> None:
         """Option to distinguish the host, target or data-source -> perfect for plotting later.
