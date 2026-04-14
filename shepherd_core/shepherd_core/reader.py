@@ -29,7 +29,6 @@ from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.base.timezone import local_tz
 from .data_models.content.enum_datatypes import EnergyDType
-from .decoder_waveform import Uart
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -760,6 +759,8 @@ class Reader:
     def waveform_to_uart_log(
         self, gpio_name: str, gpio_wf: np.ndarray, *, add_timestamps: bool = True
     ) -> None:
+        from .decoder_waveform import Uart  # noqa: PLC0415
+
         gpio_wf = gpio_wf.astype(float)
         gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
         content = None
@@ -791,6 +792,8 @@ class Reader:
 
     @deprecated("use waveform_to_uart_log() instead")
     def gpio_to_uart(self) -> np.ndarray | None:
+        from .decoder_waveform import Uart  # noqa: PLC0415
+
         wfs = self.get_gpio_waveforms("uart")
         if len(wfs) < 1:
             return None
