@@ -10,6 +10,7 @@ from pydantic import model_validator
 from typing_extensions import Self
 
 from shepherd_core.config import config
+from shepherd_core.data_models.base.calibration import CalibrationHarvester
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.logger import log
 from shepherd_core.testbed_client import tb_client
@@ -244,8 +245,6 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        from shepherd_core.data_models.base.calibration import CalibrationHarvester  # noqa: PLC0415
-
         values, chain = tb_client.try_completing_model(cls.__name__, values)
         values = tb_client.fill_in_user_data(values)
         if values["name"] == "neutral":
