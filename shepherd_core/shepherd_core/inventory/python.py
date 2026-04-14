@@ -2,7 +2,7 @@
 
 import platform
 from contextlib import suppress
-from importlib import import_module
+from importlib import metadata
 
 from pydantic import ConfigDict
 from typing_extensions import Self
@@ -32,7 +32,7 @@ class PythonInventory(ShpModel):
             "h5py",
             "numpy",
             "pydantic",
-            "shepherd_core",
+            "shepherd_core",  # must stay lowercase
             "shepherd_sheep",
             "yaml",
             "zstandard",
@@ -40,8 +40,7 @@ class PythonInventory(ShpModel):
 
         for module_name in module_names:
             with suppress(ImportError):
-                module = import_module(module_name)
-                model_dict[module_name] = module.__version__
+                model_dict[module_name] = metadata.version(module_name)
                 globals()
 
         return cls(**model_dict)

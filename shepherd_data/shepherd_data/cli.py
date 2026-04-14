@@ -55,8 +55,8 @@ def version() -> None:
     from importlib import metadata  # noqa: PLC0415
 
     logger.debug("Python v%s", sys.version)
-    logger.info("shepherd-data v%s", metadata.version("shepherd_data"))
-    for package in ["shepherd_core", "h5py", "numpy", "click", "pydantic"]:
+    logger.info("shepherd-data v%s", metadata.version("shepherd-data"))
+    for package in ["shepherd-core", "h5py", "numpy", "click", "pydantic"]:
         logger.debug("%s v%s", package, metadata.version(package))
 
 

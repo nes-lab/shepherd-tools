@@ -93,7 +93,7 @@ class SVGLines:
 
 
 def update_svg(group, path_inp: Path, path_out: Path) -> None:
-    with path_inp.open() as file:
+    with path_inp.open(encoding="utf-8") as file:
         lines = file.readlines()
     k: int = 0
     i: int = 0
@@ -105,7 +105,7 @@ def update_svg(group, path_inp: Path, path_out: Path) -> None:
             i += 1
     lines.insert(k, group)
     logging.info("update file %s and save it to %s", path_inp, path_out)
-    with path_out.open("w") as file:
+    with path_out.open("w", encoding="utf-8") as file:
         file.writelines(lines)
 
 
@@ -153,7 +153,7 @@ def add_links(path_inp: Path, path_out: Path, rssi: dict) -> None:
 def extract_rssi_data(file_path: Path) -> dict:
     data: list = []
     reading: bool = False
-    with file_path.open() as file:
+    with file_path.open(encoding="utf-8") as file:
         for line in file.readlines():
             if reading:
                 if line.isspace():

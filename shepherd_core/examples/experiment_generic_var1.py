@@ -18,8 +18,7 @@ from pathlib import Path
 import shepherd_core.data_models as sm
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import MCU
-
-from shepherd_core import WebClient
+from shepherd_core.testbed_client.client_web import WebClient
 
 # For online-queries the lib can be connected to the testbed-server.
 # NOTE: there are 3 states:

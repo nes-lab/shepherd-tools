@@ -7,7 +7,7 @@ from datetime import timezone
 from pathlib import Path
 from typing import Any
 
-import yaml
+import ryaml
 from commons import process_mp
 from commons import root_storage_default
 from convert_v1_eenv import convert_file
@@ -281,16 +281,11 @@ def create_meta_data(path_dir: Path = root_storage_default) -> None:
             Wrapper(
                 datatype=EnergyEnvironment.__name__,
                 parameters=eenv.model_dump(exclude_none=True),
-            ).model_dump(exclude_unset=True, exclude_defaults=True)
+            ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
         )
 
-    wraps_yaml = yaml.safe_dump(
-        wraps,
-        default_flow_style=False,
-        sort_keys=False,
-    )
-    with (path_dir / "bonito/_metadata_eenvs_bonito.yaml").open("w", encoding="utf-8-sig") as f:
-        f.write(wraps_yaml)
+    with (path_dir / "bonito/_metadata_eenvs_bonito.yaml").open("w", encoding="utf-8") as fp:
+        ryaml.dump(fp, wraps)
 
 
 if __name__ == "__main__":

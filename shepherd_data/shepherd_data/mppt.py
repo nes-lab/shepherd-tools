@@ -8,8 +8,7 @@ from abc import abstractmethod
 
 import numpy as np
 import pandas as pd
-
-from shepherd_core import Calc_t
+from shepherd_core.data_models.base.calibration import Calc_t
 
 
 def iv_model(voltages: Calc_t, coeffs: pd.Series) -> Calc_t:

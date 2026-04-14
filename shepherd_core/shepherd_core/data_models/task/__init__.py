@@ -8,7 +8,7 @@ import pickle
 import sys
 from pathlib import Path
 
-import yaml
+import ryaml
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
@@ -59,8 +59,8 @@ def prepare_task(config: ShpModel | Path | str, observer: str | None = None) -> 
                 shp_dict = pickle.load(shp_file)  # noqa: S301
         shp_wrap = Wrapper(**shp_dict)
     elif isinstance(config, Path) and config.exists() and config.suffix.lower() == ".yaml":
-        with config.resolve().open() as shp_file:
-            shp_dict = yaml.safe_load(shp_file)
+        with config.resolve().open(encoding="utf-8") as shp_file:
+            shp_dict = ryaml.load(shp_file)
         shp_wrap = Wrapper(**shp_dict)
     elif isinstance(config, ShpModel):
         shp_wrap = Wrapper(

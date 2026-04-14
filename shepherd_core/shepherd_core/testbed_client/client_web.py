@@ -11,7 +11,7 @@ from shepherd_core.config import config
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
 
-from .client_abc_fix import AbcClient
+from .client_abc import AbcClient
 from .user_model import User
 
 
@@ -38,7 +38,7 @@ class WebClient(AbcClient):
         if not hasattr(self, "_token"):
             # add default values
             self._token: str = "basic_public_access"  # noqa: S105
-            self._server: str = config.TESTBED_SERVER
+            self._server: str = str(config.TESTBED_SERVER)
             self._user: User | None = None
             self._key: str | None = None
             self._connected: bool = False
@@ -94,7 +94,7 @@ class WebClient(AbcClient):
         if isinstance(token, Path):
             if not token.exists():
                 raise FileNotFoundError("Token-Path does not exist")
-            with token.resolve().open() as file:
+            with token.resolve().open(encoding="utf-8") as file:
                 self._token = file.read()
         elif isinstance(token, str):
             self._token = self._token
