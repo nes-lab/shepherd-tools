@@ -4,10 +4,10 @@ import pytest
 import shepherd_core.data_models as sdm
 from pydantic import ValidationError
 from shepherd_core.config import config
-from shepherd_core.data_models import Experiment
-from shepherd_core.data_models import FirmwareDType
-from shepherd_core.data_models import GpioActuation
-from shepherd_core.data_models import GpioEvent
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
+from shepherd_core.data_models.experiment import Experiment
+from shepherd_core.data_models.experiment import GpioActuation
+from shepherd_core.data_models.experiment import GpioEvent
 from shepherd_core.data_models.task import ObserverTasks
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.task.emulation import EmulationTask

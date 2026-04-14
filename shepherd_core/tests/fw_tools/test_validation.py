@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from shepherd_core.data_models import FirmwareDType
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 
 from shepherd_core import fw_tools
 

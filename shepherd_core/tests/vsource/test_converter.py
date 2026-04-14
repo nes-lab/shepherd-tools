@@ -2,9 +2,9 @@ import math
 from pathlib import Path
 
 import pytest
-from shepherd_core.data_models import EnergyDType
-from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
+from shepherd_core.data_models.content import VirtualSourceConfig
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.reader import Reader
 from shepherd_core.vsource import VirtualSourceModel
 

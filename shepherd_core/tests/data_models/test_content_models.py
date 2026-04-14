@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-from shepherd_core.data_models import EnergyProfile
 from shepherd_core.data_models.content import EnergyDType
 from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
 from shepherd_core.data_models.content import Firmware
 from shepherd_core.data_models.content import FirmwareDType
 from shepherd_core.data_models.content import VirtualHarvesterConfig

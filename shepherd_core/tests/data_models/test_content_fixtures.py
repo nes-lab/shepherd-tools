@@ -1,5 +1,5 @@
-from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.content.energy_environment import EnergyEnvironment
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.data_models.content.firmware import Firmware
 from shepherd_core.data_models.content.virtual_harvester_config import VirtualHarvesterConfig
 from shepherd_core.data_models.content.virtual_harvester_config_pru import HarvesterPRUConfig

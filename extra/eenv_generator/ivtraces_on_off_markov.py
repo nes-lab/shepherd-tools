@@ -12,10 +12,10 @@ from commons import common_seed
 from commons import process_mp
 from commons import root_storage_default
 from pydantic import BaseModel
-from shepherd_core.data_models import EnergyDType
-from shepherd_core.data_models import EnergyEnvironment
-from shepherd_core.data_models import EnergyProfile
-from shepherd_core.data_models import Wrapper
+from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.logger import log
 
 

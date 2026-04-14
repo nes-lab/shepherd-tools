@@ -14,10 +14,10 @@ Example Calculation:
 
 from pathlib import Path
 
-from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.content.enum_datatypes import Compression
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.reader import Reader
 from shepherd_core.writer import Writer
 

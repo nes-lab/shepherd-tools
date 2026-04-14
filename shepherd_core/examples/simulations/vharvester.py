@@ -19,7 +19,7 @@ import os
 import sys
 from pathlib import Path
 
-from shepherd_core.data_models import VirtualHarvesterConfig
+from shepherd_core.data_models.content import VirtualHarvesterConfig
 from shepherd_core.reader import Reader
 from shepherd_core.vsource import simulate_harvester
 

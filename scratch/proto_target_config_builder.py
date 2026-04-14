@@ -19,10 +19,10 @@ from typing import Annotated
 
 from pydantic import Field
 from pydantic import validate_call
-from shepherd_core.data_models import EnergyDType
-from shepherd_core.data_models import EnergyEnvironment
-from shepherd_core.data_models import EnergyProfile
-from shepherd_core.data_models import ShpModel
+from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.data_models.content.virtual_source_config import VirtualSourceConfig
 from shepherd_core.data_models.experiment.observer_features import GpioActuation
 from shepherd_core.data_models.experiment.observer_features import GpioTracing

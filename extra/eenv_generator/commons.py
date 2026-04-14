@@ -15,10 +15,10 @@ from typing import Any
 
 import numpy as np
 from shepherd_core.config import config
-from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.content.enum_datatypes import Compression
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.exit_handler import activate_exit_handler
 from shepherd_core.logger import increase_verbose_level
 from shepherd_core.logger import log

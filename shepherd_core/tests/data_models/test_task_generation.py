@@ -1,13 +1,13 @@
 from datetime import timedelta
 from pathlib import Path
 
-from shepherd_core.data_models import EnergyEnvironment
-from shepherd_core.data_models import Experiment
-from shepherd_core.data_models import Firmware
-from shepherd_core.data_models import TargetConfig
-from shepherd_core.data_models import VirtualHarvesterConfig
-from shepherd_core.data_models import VirtualSourceConfig
 from shepherd_core.data_models.base.timezone import local_now
+from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import Firmware
+from shepherd_core.data_models.content import VirtualHarvesterConfig
+from shepherd_core.data_models.content import VirtualSourceConfig
+from shepherd_core.data_models.experiment import Experiment
+from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.task import TestbedTasks as TasteBadTasks
 
 
