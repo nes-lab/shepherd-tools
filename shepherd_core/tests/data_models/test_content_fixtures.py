@@ -40,11 +40,9 @@ def test_experiment_fixture_vsrc() -> None:
 
 def test_experiment_fixture_vhrv() -> None:
     for fix in Fixtures()["VirtualHarvesterConfig"]:
-        if fix["name"] == "neutral":
-            continue
         vhrv = VirtualHarvesterConfig(name=fix["name"])
         VirtualHarvesterConfig(id=fix["id"])
-        if int(fix["id"]) < 3000:
+        if vhrv.suited_for_harvester():
             HarvesterPRUConfig.from_vhrv(vhrv, for_emu=False)
-        if int(fix["id"]) >= 2000:
+        if vhrv.suited_for_emulator():
             HarvesterPRUConfig.from_vhrv(vhrv, for_emu=True)

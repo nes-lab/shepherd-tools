@@ -554,11 +554,6 @@ def test_content_model_hrv_min() -> None:
     assert hrv.get_datatype() == "ivsample"
 
 
-def test_content_model_hrv_neutral() -> None:
-    with pytest.raises(ValidationError):
-        _ = VirtualHarvesterConfig(name="neutral")
-
-
 @pytest.mark.parametrize("name", ["iv110", "cv24", "mppt_voc", "mppt_po"])
 def test_content_model_hrv_by_name(name: str) -> None:
     _ = VirtualHarvesterConfig(name=name)

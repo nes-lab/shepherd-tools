@@ -342,3 +342,11 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         if dtype_in == EnergyDType.isc_voc:
             return 2 * (1 + self.wait_cycles)
         raise NotImplementedError
+
+    def suited_for_emulator(self) -> bool:
+        num: int = ALGO_TO_NUM.get(self.algorithm, ALGO_TO_NUM["neutral"])
+        return num < ALGO_TO_NUM["isc_voc"] or num > ALGO_TO_NUM["ivcurve"]
+
+    def suited_for_harvester(self) -> bool:
+        num: int = ALGO_TO_NUM.get(self.algorithm, ALGO_TO_NUM["neutral"])
+        return num >= ALGO_TO_NUM["isc_voc"]
