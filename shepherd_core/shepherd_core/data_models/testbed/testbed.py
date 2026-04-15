@@ -44,6 +44,8 @@ class Testbed(ShpModel):
     prep_duration: timedelta = duration_5min
     # TODO: one BBone is currently time-keeper
 
+    __test__ = False  # tell pytest this is no unittest
+
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:

@@ -7,9 +7,7 @@ from shepherd_core.data_models.testbed import Direction
 from shepherd_core.data_models.testbed import Observer
 from shepherd_core.data_models.testbed import ProgrammerProtocol
 from shepherd_core.data_models.testbed import Target
-from shepherd_core.data_models.testbed import Testbed as TasteBad
-
-# ⤷ TasteBad avoids pytest-warning
+from shepherd_core.data_models.testbed import Testbed
 
 
 def test_testbed_model_cape_min() -> None:
@@ -145,7 +143,7 @@ def test_testbed_model_target_min2() -> None:
 
 
 def test_testbed_model_tb_min() -> None:
-    tb = TasteBad(
+    tb = Testbed(
         name="shepherd",
         description="lorem",
         observers=[Observer(name="sheep02")],
@@ -157,7 +155,7 @@ def test_testbed_model_tb_min() -> None:
 
 def test_testbed_model_tb_fault_observer() -> None:
     with pytest.raises(ValidationError):
-        TasteBad(
+        Testbed(
             name="shepherd",
             description="lorem",
             observers=[Observer(name="sheep02"), Observer(name="sheep02")],
@@ -168,7 +166,7 @@ def test_testbed_model_tb_fault_observer() -> None:
 
 def test_testbed_model_tb_fault_shared() -> None:
     with pytest.raises(ValidationError):
-        TasteBad(
+        Testbed(
             name="shepherd",
             description="lorem",
             observers=[Observer(name="sheep02")],

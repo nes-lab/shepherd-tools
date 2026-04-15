@@ -4,11 +4,9 @@ from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.task import EmulationTask
 from shepherd_core.data_models.task import HarvestTask
-from shepherd_core.data_models.testbed.testbed import Testbed as TasteBad
+from shepherd_core.data_models.testbed.testbed import Testbed
 
 from .conftest import load_yaml
-
-# ⤷ TasteBad avoids pytest-warning
 
 
 def test_example_emu() -> None:
@@ -40,7 +38,7 @@ def test_example_exp() -> None:
 def test_example_tb() -> None:
     data_dict = load_yaml("example_config_testbed.yaml")
     print(data_dict)
-    TasteBad(**data_dict)
+    Testbed(**data_dict)
 
 
 def test_example_vsrc() -> None:
