@@ -7,7 +7,7 @@ from typing import final
 
 from pydantic import validate_call
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
 
@@ -38,7 +38,7 @@ class WebClient(AbcClient):
         if not hasattr(self, "_token"):
             # add default values
             self._token: str = "basic_public_access"  # noqa: S105
-            self._server: str = str(config.TESTBED_SERVER)
+            self._server: str = str(core_config.TESTBED_SERVER)
             self._user: User | None = None
             self._key: str | None = None
             self._connected: bool = False

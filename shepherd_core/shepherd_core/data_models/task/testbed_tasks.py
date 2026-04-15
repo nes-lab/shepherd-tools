@@ -10,7 +10,7 @@ from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.experiment.experiment import Experiment
@@ -58,7 +58,7 @@ class TestbedTasks(ShpModel):
             values = {**values, **obt.get_output_paths()}
         return values
 
-    def is_contained(self, paths: Iterable[PurePosixPath] = config.PATHS_ALLOWED) -> bool:
+    def is_contained(self, paths: Iterable[PurePosixPath] = core_config.PATHS_ALLOWED) -> bool:
         """Limit paths to allowed directories.
 
         This is the central checking point for the webserver.

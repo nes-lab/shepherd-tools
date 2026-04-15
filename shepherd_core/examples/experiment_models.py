@@ -21,7 +21,7 @@ How to define an experiment:
 """
 
 import shepherd_core.data_models as sm
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.testbed_client.client_web import WebClient
@@ -78,7 +78,7 @@ xperi3 = sm.Experiment.from_file("experiment_from_yaml.yaml")
 print(f"xp3 hash: {xperi3.get_hash()} (won't match)")
 
 # Create a tasks-list for the testbed
-testbed = Testbed(name=config.TESTBED)
+testbed = Testbed(name=core_config.TESTBED)
 tb_tasks2 = TestbedTasks.from_xp(xperi2, testbed)
 tb_tasks2.to_file("experiment_tb_tasks.yaml")
 

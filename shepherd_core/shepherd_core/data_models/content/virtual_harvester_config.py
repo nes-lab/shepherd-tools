@@ -9,7 +9,7 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.calibration import CalibrationHarvester
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.logger import log
@@ -300,9 +300,9 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     def calc_timings_ms(self, *, for_emu: bool) -> tuple[float, float]:
         """factor-in model-internal timing-constraints."""
         window_length = self.samples_n * (1 + self.wait_cycles)
-        time_min_ms = (1 + self.wait_cycles) * 1_000 / config.SAMPLERATE_SPS
+        time_min_ms = (1 + self.wait_cycles) * 1_000 / core_config.SAMPLERATE_SPS
         if for_emu:
-            window_ms = window_length * 1_000 / config.SAMPLERATE_SPS
+            window_ms = window_length * 1_000 / core_config.SAMPLERATE_SPS
             time_min_ms = max(time_min_ms, window_ms)
 
         interval_ms = min(max(self.interval_ms, time_min_ms), 1_000_000)

@@ -24,7 +24,7 @@ from tqdm import trange
 from typing_extensions import Self
 from typing_extensions import deprecated
 
-from .config import config
+from .config import core_config
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.base.timezone import local_tz
@@ -75,7 +75,7 @@ class Reader:
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
         if not hasattr(self, "samplerate_sps"):
-            self.samplerate_sps: int = config.SAMPLERATE_SPS
+            self.samplerate_sps: int = core_config.SAMPLERATE_SPS
         self.sample_interval_ns: int = round(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 

@@ -1,7 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import Firmware
@@ -16,7 +16,7 @@ from shepherd_core.data_models.testbed import Testbed
 def test_task_generation_file(tmp_path: Path) -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
     exp = Experiment.from_file(path)
-    testbed = Testbed(name=config.TESTBED)
+    testbed = Testbed(name=core_config.TESTBED)
     tb_tasks = TestbedTasks.from_xp(exp, testbed)
     tb_tasks.to_file(tmp_path / "tbt1.yaml")
 
@@ -49,6 +49,6 @@ def test_task_generation_script(tmp_path: Path) -> None:
         time_start=local_now() + timedelta(minutes=30),
         target_configs=target_cfgs,
     )
-    testbed = Testbed(name=config.TESTBED)
+    testbed = Testbed(name=core_config.TESTBED)
     tb_tasks = TestbedTasks.from_xp(exp, testbed)
     tb_tasks.to_file(tmp_path / "tbt2.yaml")

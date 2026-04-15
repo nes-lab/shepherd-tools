@@ -11,7 +11,7 @@ from pydantic import HttpUrl
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.content import SafeStr
 from shepherd_core.data_models.base.shepherd import ShpModel
@@ -51,7 +51,7 @@ class Testbed(ShpModel):
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         # allow instantiating an empty Testbed, take default in config
         if len(values) == 0:
-            values = {"name": config.TESTBED}
+            values = {"name": core_config.TESTBED}
 
         values, _ = tb_client.try_completing_model(cls.__name__, values)
         return values

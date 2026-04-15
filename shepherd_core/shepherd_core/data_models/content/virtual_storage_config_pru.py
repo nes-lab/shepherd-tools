@@ -8,13 +8,13 @@ from pydantic import PositiveFloat
 from pydantic import validate_call
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.shepherd import ShpModel
 
 from .virtual_storage_config import VirtualStorageConfig
 
 # constants & custom types
-TIMESTEP_s_DEFAULT: float = 1.0 / config.SAMPLERATE_SPS
+TIMESTEP_s_DEFAULT: float = 1.0 / core_config.SAMPLERATE_SPS
 LuT_SIZE_LOG: int = 7
 LuT_SIZE: int = 2**LuT_SIZE_LOG
 u32 = Annotated[int, Field(ge=0, lt=2**32)]

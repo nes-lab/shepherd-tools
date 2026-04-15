@@ -17,7 +17,7 @@ NOTE: this example is valid, but not recommended when using the public testbed-i
 from pathlib import Path
 
 import shepherd_core.data_models as sm
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.testbed_client.client_web import WebClient
@@ -30,7 +30,7 @@ from shepherd_core.testbed_client.client_web import WebClient
 do_connect = False
 if do_connect:
     WebClient()
-testbed = Testbed(name=config.TESTBED)
+testbed = Testbed(name=core_config.TESTBED)
 
 exp = sm.Experiment(
     name="meaningful_TestName",

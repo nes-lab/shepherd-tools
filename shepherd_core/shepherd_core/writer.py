@@ -15,7 +15,7 @@ import ryaml
 from pydantic import validate_call
 from typing_extensions import Self
 
-from .config import config
+from .config import core_config
 from .data_models.base.calibration import CalibrationEmulator as CalEmu
 from .data_models.base.calibration import CalibrationHarvester as CalHrv
 from .data_models.base.calibration import CalibrationSeries as CalSeries
@@ -339,7 +339,7 @@ class Writer(Reader):
         chunks_n = self.ds_voltage.size / self.CHUNK_SAMPLES_N
         size_new = int(math.floor(chunks_n) * self.CHUNK_SAMPLES_N)
         if size_new < self.ds_voltage.size:
-            if self.samplerate_sps != config.SAMPLERATE_SPS:
+            if self.samplerate_sps != core_config.SAMPLERATE_SPS:
                 self._logger.debug("skipped alignment due to altered samplerate")
                 return
             self._logger.info(

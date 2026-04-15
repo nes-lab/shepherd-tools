@@ -14,7 +14,7 @@ from types import TracebackType
 from typing import Any
 
 import numpy as np
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
 from shepherd_core.data_models.content.enum_datatypes import Compression
@@ -100,7 +100,7 @@ class EEnvGenerator(ABC):
         - decoupling should help getting a global progress-bar
     """
 
-    STEP_WIDTH: float = 1.0 / config.SAMPLERATE_SPS  # 10 us
+    STEP_WIDTH: float = 1.0 / core_config.SAMPLERATE_SPS  # 10 us
 
     def __init__(
         self,

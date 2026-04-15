@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.logger import log
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     if not path_task.exists():
         path_task.mkdir(parents=True)
 
-    testbed = Testbed(name=config.TESTBED)
+    testbed = Testbed(name=core_config.TESTBED)
 
     # Self-test both ICs
     tests = [

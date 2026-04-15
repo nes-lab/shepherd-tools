@@ -6,7 +6,7 @@ from typing import final
 from pydantic import Field
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.shepherd import ShpModel
 
 from .enum_datatypes import EnergyDType
@@ -82,7 +82,7 @@ class ConverterPRUConfig(ShpModel):
                 dtype_in, log_intermediate_node=log_intermediate_node
             ),
             interval_startup_delay_drain_n=round(
-                data.interval_startup_delay_drain_ms * config.SAMPLERATE_SPS * 1e-3
+                data.interval_startup_delay_drain_ms * core_config.SAMPLERATE_SPS * 1e-3
             ),
             V_input_max_uV=round(data.V_input_max_mV * 1e3),
             I_input_max_nA=round(data.I_input_max_mA * 1e6),
@@ -96,7 +96,7 @@ class ConverterPRUConfig(ShpModel):
             ),
             dV_mid_enable_output_uV=round(states["dV_mid_enable_output_mV"] * 1e3),
             interval_check_thresholds_n=round(
-                data.interval_check_thresholds_ms * config.SAMPLERATE_SPS * 1e-3
+                data.interval_check_thresholds_ms * core_config.SAMPLERATE_SPS * 1e-3
             ),
             V_pwr_good_enable_threshold_uV=round(data.V_pwr_good_enable_threshold_mV * 1e3),
             V_pwr_good_disable_threshold_uV=round(data.V_pwr_good_disable_threshold_mV * 1e3),

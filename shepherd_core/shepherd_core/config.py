@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from pydantic import HttpUrl
 
 
-class ConfigDefault(BaseModel):
+class CoreConfigDefault(BaseModel):
     """Container for a common configuration."""
 
     __slots__ = ()
@@ -39,4 +39,4 @@ class ConfigDefault(BaseModel):
     }
 
 
-config = ConfigDefault()
+core_config = CoreConfigDefault()

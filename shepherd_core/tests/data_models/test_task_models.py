@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 import shepherd_core.data_models as sdm
 from pydantic import ValidationError
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import GpioActuation
@@ -117,7 +117,7 @@ def test_task_model_observer_min1() -> None:
 def test_task_model_observer_min2() -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
     exp = Experiment.from_file(path)
-    testbed = Testbed(name=config.TESTBED)
+    testbed = Testbed(name=core_config.TESTBED)
     ObserverTasks.from_xp(xp=exp, xp_folder=None, tb=testbed, tgt_id=1)
 
 
@@ -139,7 +139,7 @@ def test_task_model_prog_fault_elf() -> None:
 
 
 def test_tasks_are_contained() -> None:
-    config.TESTBED = "unit_testing_testbed"
+    core_config.TESTBED = "unit_testing_testbed"
     firmware_path = Path(__file__).parent.parent / "fw_tools/build_nrf.elf"
     tgt_cfg = sdm.TargetConfig(
         target_IDs=[42],
@@ -160,9 +160,9 @@ def test_tasks_are_contained() -> None:
         duration=30,
         target_configs=[tgt_cfg],
     )
-    tb = Testbed(name=config.TESTBED)
+    tb = Testbed(name=core_config.TESTBED)
     tb_tasks = TestbedTasks.from_xp(xp, tb)
-    paths_allowed = config.PATHS_ALLOWED
+    paths_allowed = core_config.PATHS_ALLOWED
     for obs_tasks in tb_tasks.observer_tasks:
         assert obs_tasks.is_contained(paths_allowed)
     assert tb_tasks.is_contained()
