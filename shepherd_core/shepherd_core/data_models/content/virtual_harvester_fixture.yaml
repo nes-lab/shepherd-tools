@@ -9,13 +9,22 @@
   parameters:
     id: 1000
     name: neutral
+    description: Neutral-Model disables harvesting by passing values directly, even for ivcurve-input
     enable_linear_extrapolation: true
+    algorithm: neutral
     owner: Ingmar
     group: NES Lab
     visible2group: true
     visible2all: true
     created: 2022-12-12 12:12:12
     updated_last: 2022-12-12 12:12:12
+
+- datatype: VirtualHarvesterConfig
+  parameters:
+    id: 1001
+    name: direct
+    description: Disables harvesting, even for ivcurve-input
+    inherit_from: neutral
 
 - datatype: VirtualHarvesterConfig
   parameters:
@@ -158,11 +167,3 @@
     algorithm: mppt_opt
     voltage_step_mV: 1
     interval_ms: 0.01
-
-- datatype: VirtualHarvesterConfig
-  parameters:
-    id: 3000
-    name: direct
-    description: Disables harvesting, even for ivcurve-input
-    inherit_from: neutral
-    algorithm: neutral
