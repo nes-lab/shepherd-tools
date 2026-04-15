@@ -6,6 +6,8 @@ Breaking Changes!
 
 - internal imports of sub-modules changed, but API for the user should have stayed the same.
 - infrastructural tests while creating experiments are now disabled by default -> this will be done by the client
+- modernize usage of `version` (only hardcoded in pyproject.toml), `__version__` was removed
+- rename config of shepherd-core to core_config
 
 ### Performance Optimizations
 
@@ -34,7 +36,6 @@ User-facing API should load ~ 5x faster, see https://github.com/nes-lab/shepherd
 - test fixture-data extensively
 - make harvester-settings less dependent on actual IDs
 - avoid implicit instantiation of `Testbed()` i.e. in `.from_xp()`-functions to avoid funky behavior
-- modernize usage of `version` (only hardcoded in pyproject.toml)
 - add zizmor to find vulnerabilities in GH actions
   - explicitly clear permissions of GH-actions and reduce elevation-surface
 - explicit file-encoding for text is now utf-8
