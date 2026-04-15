@@ -36,16 +36,20 @@ class AbcClient(ABC):
         """
 
     @abstractmethod
+    def query_types(self) -> list[str]:
+        """Get list of content types."""
+
+    @abstractmethod
     def query_ids(self, model_type: str) -> list[int]:
-        pass
+        """Get list with all IDs of that content type."""
 
     @abstractmethod
     def query_names(self, model_type: str) -> list[str]:
-        pass
+        """Get list with all names of that content type."""
 
     @abstractmethod
     def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
-        pass
+        """Get model-parameters of that content fitting the type & name or ID."""
 
     @abstractmethod
     def try_inheritance(

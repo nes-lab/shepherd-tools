@@ -286,3 +286,16 @@ class Fixtures:
     def to_file(self, file: Path) -> None:
         msg = f"TODO (val={file})"
         raise NotImplementedError(msg)
+
+    def complete_fixtures(self) -> None:
+        """Fill all content-fields by backtracking the inheritance-chain."""
+        for model_type in self.components:
+            for model_name in self.components[model_type].elements_by_name:
+                model_data = self.components[model_type].elements_by_name[model_name]
+                try:
+                    model_data, _ = self.components[model_type].inheritance(model_data)
+                except KeyError:
+                    continue
+                self.components[model_type].elements_by_name[model_name] = model_data
+                if "id" in model_data:
+                    self.components[model_type].elements_by_id[model_data["id"]] = model_data
