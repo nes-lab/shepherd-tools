@@ -87,7 +87,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
     def _validate_observers(configs: Iterable[TargetConfig]) -> None:
         if not config.VALIDATE_INFRA:
             return
-        testbed = Testbed()  # TODO: should be taken from client
+        testbed = Testbed(name=config.TESTBED)  # TODO: should be taken from client
         target_ids = [id_ for config_ in configs for id_ in config_.target_IDs]
         obs_names = [testbed.get_observer(id_).name for id_ in target_ids]
         if len(target_ids) > len(set(obs_names)):

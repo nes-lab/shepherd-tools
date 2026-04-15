@@ -1,5 +1,7 @@
 """How-to for defining an experiment - variant 1.
 
+NOTE: this example is valid, but not recommended when using the public testbed-instance
+
 What the code does:
 - recommended approach for missing testbed-client
 - variants
@@ -16,8 +18,10 @@ What the code does:
 from pathlib import Path
 
 import shepherd_core.data_models as sm
+from shepherd_core.config import config
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import MCU
+from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.testbed_client.client_web import WebClient
 
 # For online-queries the lib can be connected to the testbed-server.
@@ -28,6 +32,7 @@ from shepherd_core.testbed_client.client_web import WebClient
 do_connect = False
 if do_connect:
     WebClient()
+
 
 exp = sm.Experiment(
     name="meaningful_TestName",
@@ -54,7 +59,8 @@ exp = sm.Experiment(
 exp.to_file("experiment_generic_var1.yaml")
 
 # Create a tasks-list for the testbed
-tb_tasks = TestbedTasks.from_xp(exp)
+testbed = Testbed(name=config.TESTBED)
+tb_tasks = TestbedTasks.from_xp(exp, testbed)
 tb_tasks.to_file("experiment_generic_var1_tbt.yaml")
 
 # next steps:

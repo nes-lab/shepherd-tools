@@ -159,7 +159,7 @@ def test_tasks_are_contained() -> None:
         duration=30,
         target_configs=[tgt_cfg],
     )
-    tb = TasteBad()
+    tb = TasteBad(name=config.TESTBED)
     tb_tasks = TestbedTasks.from_xp(xp, tb)
     paths_allowed = config.PATHS_ALLOWED
     for obs_tasks in tb_tasks.observer_tasks:

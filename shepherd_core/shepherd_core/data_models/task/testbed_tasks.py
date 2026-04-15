@@ -26,13 +26,12 @@ class TestbedTasks(ShpModel):
     name: NameStr
     observer_tasks: Annotated[list[ObserverTasks], Field(min_length=1, max_length=128)]
 
+    __test__ = False  # tell pytest this is no unittest
+
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed | None = None) -> Self:
-        if tb is None:
-            # TODO: is tb-argument really needed? prob. not
-            tb = Testbed()  # this will query the first (and only) entry of client
-
+    def from_xp(cls, xp: Experiment, tb: Testbed) -> Self:
+        # Note: default TB instantiation removed to avoid potential funky behavior
         tgt_ids = xp.get_target_ids()
         xp_folder = xp.folder_name()
         obs_tasks = [ObserverTasks.from_xp(xp, xp_folder, tb, id_) for id_ in tgt_ids]

@@ -53,7 +53,7 @@ class ObserverTasks(ShpModel):
             raise ValueError("Implementation currently relies on shared storage!")
         obs = tb.get_observer(tgt_id)
         if xp_folder is None:
-            xp_folder = xp.folder_name()  # moved a layer up for consistent naming
+            xp_folder: str = xp.folder_name()  # moved a layer up for consistent naming
         root_path = tb.data_on_observer / "experiments" / xp_folder
         fw_paths = [root_path / f"fw{i_}_{obs.name}.hex" for i_ in [1, 2]]
 

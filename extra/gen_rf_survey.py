@@ -2,7 +2,9 @@
 
 from pathlib import Path
 
+from shepherd_core.config import config
 from shepherd_core.data_models.task import TestbedTasks
+from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.logger import log
 from shepherd_core.testbed_client.client_web import WebClient
 
@@ -27,6 +29,8 @@ if __name__ == "__main__":
     if not path_task.exists():
         path_task.mkdir(parents=True)
 
+    testbed = Testbed(name=config.TESTBED)
+
     # RF-Survey
     exp = sm.Experiment(
         name="rf_survey",
@@ -50,5 +54,5 @@ if __name__ == "__main__":
             )
         ],
     )
-    path_ret = TestbedTasks.from_xp(exp).to_file(path_task / "tasks_rf_survey")
+    path_ret = TestbedTasks.from_xp(exp, testbed).to_file(path_task / "tasks_rf_survey")
     log.info("Wrote: %s", path_ret.as_posix())
