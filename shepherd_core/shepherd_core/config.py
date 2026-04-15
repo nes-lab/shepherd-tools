@@ -17,7 +17,7 @@ class ConfigDefault(BaseModel):
 
     TESTBED: str = "shepherd_tud_nes"
     """name of the testbed to validate against - if enabled - see switch below"""
-    VALIDATE_INFRA: bool = True
+    VALIDATE_INFRA: bool = False
     """switch to turn on / off deep validation of data models also considering the current
     layout & infrastructure of the testbed.
     """

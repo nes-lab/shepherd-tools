@@ -117,7 +117,7 @@ def test_task_model_observer_min1() -> None:
 def test_task_model_observer_min2() -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
     exp = Experiment.from_file(path)
-    testbed = Testbed(name="shepherd_tud_nes")
+    testbed = Testbed(name=config.TESTBED)
     ObserverTasks.from_xp(xp=exp, xp_folder=None, tb=testbed, tgt_id=1)
 
 
