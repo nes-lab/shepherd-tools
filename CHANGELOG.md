@@ -2,6 +2,44 @@
 
 ## v2026.4.2 unreleased
 
+Breaking Changes!
+
+- internal imports of sub-modules changed, but API for the user should have stayed the same.
+- infrastructural tests while creating experiments are now disabled by default -> this will be done by the client
+
+### Performance Optimizations
+
+User-facing API should load ~ 5x faster, see https://github.com/nes-lab/shepherd/issues/150 for benchmarks.
+
+- avoided importing several Models in higher level `__init__.py` (kept User-interface)
+  - mostly targeting non-user-facing models previously imported in `core.__init__` and `core.data_models.__init__`
+- refactored PRU-config-models (HarvesterPRUConfig, ConverterPRUConfig, StoragePRUConfig)
+- hide highlevel: CalibrationCape, CalibrationEmulator, CalibrationHarvester, CalibrationPair, CalibrationSeries
+- avoided instantiating expensive models that are defaults for other models more than once
+- moved expensive but rare imports into their respective sub-functions
+- replaced pyYAML with rYAML (speeds up loading fixtures)
+  - reduce IDs of datamodels to 8byte (from 16) to prevent a bug in rYAML
+- hide highlevel: WebClient, Inventory, fw-tools
+- improve fixture-client
+  - loading files with less validation -> is now done during unittesting
+  - fix caching on sheep
+- moved Compression-enum to content/enum_datatypes
+
+### Other
+
+- Writer now fails on filepaths without valid suffix
+- fix missing EEnvs in fixtureClient
+- add support for instantiating neutral (root-model) virtualHarvesterConfig
+- add instantiators for content and testbed-components: `instantiate_content()` and `instantiate_component`
+- test fixture-data extensively
+- make harvester-settings less dependent on actual IDs
+- avoid implicit instantiation of `Testbed()` i.e. in `.from_xp()`-functions to avoid funky behavior
+- modernize usage of `version` (only hardcoded in pyproject.toml)
+- add zizmor to find vulnerabilities in GH actions
+  - explicitly clear permissions of GH-actions and reduce elevation-surface
+- explicit file-encoding for text is now utf-8
+- add "SKEH-HAR" EEnv Dataset to TODO-list
+
 ## v2026.4.1
 
 - shepherd-data CLI
