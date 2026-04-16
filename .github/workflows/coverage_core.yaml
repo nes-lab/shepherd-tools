@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "main"
+
+permissions: {}
+
+jobs:
+  test:
+    name: Run tests & display coverage
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install apt-dependencies 🔧
+        run: sudo apt install build-essential
+
+      - name: Install uv 🔧 & set up Python 🐍
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.14"
+          enable-cache: true
+          activate-environment: true
+
+      - name: Install core-package 🧱
+        run: uv pip install .[all]
+        working-directory: "./shepherd_core"
+
+      - name: Test Coverage
+        run: coverage run -m pytest
+        working-directory: "./shepherd_core"
+
+      - name: Coverage comment
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          COVERAGE_PATH: "./shepherd_core"
