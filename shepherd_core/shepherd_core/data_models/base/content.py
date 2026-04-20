@@ -49,9 +49,9 @@ class ContentModel(ShpModel):
     # TODO: add dedicated 'inherit_from' field?
 
     # Ownership & Access
-    # TODO: remove owner & group, only needed for DB
-    owner: NameStr
-    group: Annotated[NameStr, Field(description="University or Subgroup")]
+    owner: NameStr | None = None
+    group: NameStr | None = None
+    """ ⤷ University or Subgroup """
     visible2group: bool = False
     visible2all: bool = False
 
@@ -67,6 +67,10 @@ class ContentModel(ShpModel):
         if is_visible and self.description is None:
             raise ValueError(
                 "Public instances require a description (check visible2*- and description-field)"
+            )
+        if is_visible and (self.owner is None or self.group is None):
+            raise ValueError(
+                "Public instances require a owner & group (check ownership- & access-fields)"
             )
         if isinstance(self.deprecated, str) and len(self.deprecated) > 0:
             log.warning(f"Content {self.name} is deprecated: {self.deprecated}")
