@@ -39,9 +39,6 @@ max-complexity = 10
 [lint.isort]
 force-single-line = true
 
-[lint.pyupgrade]
-keep-runtime-typing = true
-
 [lint.pydocstyle]
 convention = "pep257"
 
