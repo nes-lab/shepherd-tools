@@ -42,23 +42,25 @@ class FixturesClient(AbcClient):
         self.fixture_cache.insert_model(wrap)
         return True
 
-    def query_types(self) -> list[str]:
+    def query_content_types(self) -> list[str]:
         return list(self.fixture_cache.components)
 
-    def query_ids(self, model_type: str) -> list[int]:
+    def query_content_ids(self, model_type: str) -> list[int]:
         return list(self.fixture_cache[model_type].elements_by_id.keys())
 
-    def query_names(self, model_type: str) -> list[str]:
+    def query_content_names(self, model_type: str) -> list[str]:
         return list(self.fixture_cache[model_type].elements_by_name.keys())
 
-    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
+    def query_content_item(
+        self, model_type: str, uid: int | None = None, name: str | None = None
+    ) -> dict:
         if uid is not None:
             return self.fixture_cache[model_type].query_id(uid)
         if name is not None:
             return self.fixture_cache[model_type].query_name(name)
         raise ValueError("Query needs either uid or name of object")
 
-    def try_inheritance(
+    def _try_inheritance(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
         try:
@@ -66,14 +68,3 @@ class FixturesClient(AbcClient):
         except KeyError:
             log.error(f"Query failed - model-type {model_type} is unknown")
             return values, []
-
-    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
-        """Add fake user-data when offline-client is used.
-
-        Workaround until WebClient is working.
-        """
-        if values.get("owner") is None:
-            values["owner"] = "unknown"
-        if values.get("group") is None:
-            values["group"] = "unknown"
-        return values

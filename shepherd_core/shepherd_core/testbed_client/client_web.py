@@ -3,7 +3,6 @@
 from importlib import import_module
 from pathlib import Path
 from typing import Any
-from typing import final
 
 from pydantic import validate_call
 
@@ -15,15 +14,11 @@ from .client_abc import AbcClient
 from .user_model import User
 
 
-@final
 class WebClient(AbcClient):
     """Client-Class to access a testbed instance over the web.
 
-    For online-queries the lib can be connected to the testbed-server.
-    NOTE: there are 3 states:
-    - unconnected -> demo-fixtures are queried (locally)
-    - connected -> publicly available data is queried online
-    - logged in with valid token -> also private data is queried online
+    For online-queries the lib can be connected to a testbed-server.
+    This will get
     """
 
     testbed_server_default = "https://shepherd.cfaed.tu-dresden.de:8000/testbed"
@@ -60,28 +55,21 @@ class WebClient(AbcClient):
         r.raise_for_status()
         return True
 
-    def query_ids(self, model_type: str) -> list[int]:
+    def query_content_ids(self, model_type: str) -> list[int]:
         raise NotImplementedError("TODO")
 
-    def query_names(self, model_type: str) -> list[str]:
+    def query_content_names(self, model_type: str) -> list[str]:
         raise NotImplementedError("TODO")
 
-    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
+    def query_content_item(
+        self, model_type: str, uid: int | None = None, name: str | None = None
+    ) -> dict:
         raise NotImplementedError("TODO")
 
-    def try_inheritance(
+    def _try_inheritance(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
         raise NotImplementedError("TODO")
-
-    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
-        if self._user is None:
-            return values
-        if values.get("owner") is None:
-            values["owner"] = self._user.name
-        if values.get("group") is None:
-            values["group"] = self._user.group
-        return values
 
     # Below are extra FNs not in ABC
 

@@ -36,26 +36,27 @@ class AbcClient(ABC):
         """
 
     @abstractmethod
-    def query_types(self) -> list[str]:
+    def query_content_types(self) -> list[str]:
         """Get list of content types."""
 
     @abstractmethod
-    def query_ids(self, model_type: str) -> list[int]:
+    def query_content_ids(self, model_type: str) -> list[int]:
         """Get list with all IDs of that content type."""
 
     @abstractmethod
-    def query_names(self, model_type: str) -> list[str]:
+    def query_content_names(self, model_type: str) -> list[str]:
         """Get list with all names of that content type."""
 
     @abstractmethod
-    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
+    def query_content_item(
+        self, model_type: str, uid: int | None = None, name: str | None = None
+    ) -> dict:
         """Get model-parameters of that content fitting the type & name or ID."""
 
     @abstractmethod
-    def try_inheritance(
+    def _try_inheritance(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
-        # TODO: maybe internal? yes
         pass
 
     @final
@@ -68,16 +69,13 @@ class AbcClient(ABC):
         """
         if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             try:
-                values = self.query_item(model_type, name=values.get("name"), uid=values.get("id"))
+                values = self.query_content_item(
+                    model_type, name=values.get("name"), uid=values.get("id")
+                )
             except ValueError as err:
                 msg = f"Query {model_type} by name / ID failed - {values} is unknown!"
                 raise ValueError(msg) from err
             except KeyError:
                 log.error(f"Query failed - model-type {model_type} is unknown")
                 return values, []
-        return self.try_inheritance(model_type, values)
-
-    @abstractmethod
-    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
-        # TODO: is it really needed and helpful?
-        pass
+        return self._try_inheritance(model_type, values)
