@@ -34,7 +34,7 @@ class FixturesClient(AbcClient):
         super().__init__()
         self.fixture_cache: Fixtures = Fixtures()
 
-    def insert(self, data: ShpModel) -> bool:
+    def insert_content(self, data: ShpModel) -> bool:
         wrap = Wrapper(
             datatype=type(data).__name__,
             parameters=data.model_dump(),
@@ -42,16 +42,16 @@ class FixturesClient(AbcClient):
         self.fixture_cache.insert_model(wrap)
         return True
 
-    def query_content_types(self) -> list[str]:
+    def list_content_types(self) -> list[str]:
         return list(self.fixture_cache.components)
 
-    def query_content_ids(self, model_type: str) -> list[int]:
+    def list_content_ids(self, model_type: str) -> list[int]:
         return list(self.fixture_cache[model_type].elements_by_id.keys())
 
-    def query_content_names(self, model_type: str) -> list[str]:
+    def list_content_names(self, model_type: str) -> list[str]:
         return list(self.fixture_cache[model_type].elements_by_name.keys())
 
-    def query_content_item(
+    def get_content_item(
         self, model_type: str, uid: int | None = None, name: str | None = None
     ) -> dict:
         if uid is not None:

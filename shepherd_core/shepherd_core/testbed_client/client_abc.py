@@ -28,27 +28,25 @@ class AbcClient(ABC):
         global tb_client  # noqa: PLW0603
         tb_client = self
 
-    @abstractmethod
-    def insert(self, data: ShpModel) -> bool:
-        """Insert (and probably replace) entry.
-
-        TODO: fixtures get replaced, but is that wanted for web?
-        """
+    def insert_content(self, data: ShpModel) -> bool:  # noqa: ARG002
+        """Insert (and probably replace) entry."""
+        log.warning("Missing account-details or capabilities for that storing content.")
+        return False
 
     @abstractmethod
-    def query_content_types(self) -> list[str]:
+    def list_content_types(self) -> list[str]:
         """Get list of content types."""
 
     @abstractmethod
-    def query_content_ids(self, model_type: str) -> list[int]:
+    def list_content_ids(self, model_type: str) -> list[int]:
         """Get list with all IDs of that content type."""
 
     @abstractmethod
-    def query_content_names(self, model_type: str) -> list[str]:
+    def list_content_names(self, model_type: str) -> list[str]:
         """Get list with all names of that content type."""
 
     @abstractmethod
-    def query_content_item(
+    def get_content_item(
         self, model_type: str, uid: int | None = None, name: str | None = None
     ) -> dict:
         """Get model-parameters of that content fitting the type & name or ID."""
@@ -60,7 +58,7 @@ class AbcClient(ABC):
         pass
 
     @final
-    def try_completing_model(
+    def complete_content_model(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
         """Init by name/id, for none existing instances raise Exception.
@@ -69,7 +67,7 @@ class AbcClient(ABC):
         """
         if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             try:
-                values = self.query_content_item(
+                values = self.get_content_item(
                     model_type, name=values.get("name"), uid=values.get("id")
                 )
             except ValueError as err:

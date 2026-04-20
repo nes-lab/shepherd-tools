@@ -53,7 +53,7 @@ class Testbed(ShpModel):
         if len(values) == 0:
             values = {"name": core_config.TESTBED}
 
-        values, _ = tb_client.try_completing_model(cls.__name__, values)
+        values, _ = tb_client.complete_content_model(cls.__name__, values)
         return values
 
     @model_validator(mode="after")

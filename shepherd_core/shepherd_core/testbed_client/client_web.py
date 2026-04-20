@@ -1,17 +1,10 @@
 """Client-Class to access a testbed instance over the web."""
 
-from importlib import import_module
-from pathlib import Path
 from typing import Any
 
-from pydantic import validate_call
-
 from shepherd_core.config import core_config
-from shepherd_core.data_models.base.shepherd import ShpModel
-from shepherd_core.data_models.base.wrapper import Wrapper
 
 from .client_abc import AbcClient
-from .user_model import User
 
 
 class WebClient(AbcClient):
@@ -21,47 +14,25 @@ class WebClient(AbcClient):
     This will get
     """
 
-    testbed_server_default = "https://shepherd.cfaed.tu-dresden.de:8000/testbed"
-
-    def __init__(self, server: str | None = None, token: str | Path | None = None) -> None:
+    def __init__(self, server: str | None = None) -> None:
         """Connect to Testbed-Server with optional token and server-address.
 
         server: optional address to shepherd-server-endpoint
         token: your account validation. if omitted, only public data is available
         """
         super().__init__()
-        if not hasattr(self, "_token"):
-            # add default values
-            self._token: str = "basic_public_access"  # noqa: S105
-            self._server: str = str(core_config.TESTBED_SERVER)
-            self._user: User | None = None
-            self._key: str | None = None
-            self._connected: bool = False
-            self._req = None
-
-        if not self._connected:
-            self._connect(server, token)
+        # add default values
+        self._server: str = str(core_config.TESTBED_SERVER) if server is None else server
 
     # ABC Functions below
 
-    def insert(self, data: ShpModel) -> bool:
-        if self._req is None:
-            return False
-        wrap = Wrapper(
-            datatype=type(data).__name__,
-            parameters=data.model_dump(),
-        )
-        r = self._req.post(self._server + "/add", data=wrap.model_dump_json(), timeout=2)
-        r.raise_for_status()
-        return True
-
-    def query_content_ids(self, model_type: str) -> list[int]:
+    def list_content_ids(self, model_type: str) -> list[int]:
         raise NotImplementedError("TODO")
 
-    def query_content_names(self, model_type: str) -> list[str]:
+    def list_content_names(self, model_type: str) -> list[str]:
         raise NotImplementedError("TODO")
 
-    def query_content_item(
+    def get_content_item(
         self, model_type: str, uid: int | None = None, name: str | None = None
     ) -> dict:
         raise NotImplementedError("TODO")
@@ -69,82 +40,4 @@ class WebClient(AbcClient):
     def _try_inheritance(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
-        raise NotImplementedError("TODO")
-
-    # Below are extra FNs not in ABC
-
-    @validate_call
-    def _connect(self, server: str | None = None, token: str | Path | None = None) -> bool:
-        """Establish connection to testbed-server.
-
-        TODO: totally not finished
-        """
-        if isinstance(token, Path):
-            if not token.exists():
-                raise FileNotFoundError("Token-Path does not exist")
-            with token.resolve().open(encoding="utf-8") as file:
-                self._token = file.read()
-        elif isinstance(token, str):
-            self._token = self._token
-
-        if isinstance(server, str):
-            self._server = server.lower()
-
-        self._req = import_module("requests")  # here due to slow startup
-
-        # extended connection-test:
-        self._query_session_key()
-        self._connected = True
-        return self._query_user_data()
-
-    def _query_session_key(self) -> bool:
-        if self._server and self._req is not None:
-            r = self._req.get(self._server + "/session_key", timeout=2)
-            r.raise_for_status()
-            self._key = r.json()["value"]  # TODO: not finished
-            return True
-        return False
-
-    def _query_user_data(self) -> bool:
-        if self._server and self._req is not None:
-            r = self._req.get(self._server + "/user?token=" + self._token, timeout=2)
-            # TODO: possibly a security nightmare (send via json or encrypted via public key?)
-            r.raise_for_status()
-            self._user = User(**r.json())
-            return True
-        return False
-
-    def submit_experiment(self, xp: ShpModel) -> str:
-        """Transmit experiment to server to validate its feasibility.
-
-        - Experiment will be added to DB (if not present)
-            - if the same experiment is resubmitted it will just return the ID of that experiment
-        - Experiment will be validated by converting it into a task-set (additional validation)
-        - optional: the scheduler should validate there are no time-collisions
-
-        Will return an ID if valid, otherwise an empty string.
-        TODO: maybe its better to throw specific errors if validation fails
-        TODO: is it better to include these experiment-related FNs in experiment-Class?
-        TODO: Experiment-typehint for argument triggers circular import
-        """
-        raise NotImplementedError("TODO")
-
-    def schedule_experiment(self, id_xp: str) -> bool:
-        """Enqueue experiment on testbed."""
-        raise NotImplementedError("TODO")
-
-    def get_experiment_status(self, id_xp: str) -> str:
-        """Ask server about current state of experiment.
-
-        - after valid submission: disabled / deactivated
-        - after scheduling: scheduled
-        - before start-time: preparing
-        - during run: active
-        - after run: post-processing (collecting & assembling data)
-        - finished: ready to download
-        """
-        raise NotImplementedError("TODO")
-
-    def get_experiment_results(self, id_xp: str, path: Path) -> bool:
-        """Download resulting files."""
         raise NotImplementedError("TODO")

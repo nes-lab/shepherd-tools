@@ -67,7 +67,7 @@ fixtures = Fixture(Path("fix.yaml"), "testbed.target")
 class Target(ShpModel, title="Target Node (DuT)"):
   @root_validator(pre=True)
   def query_database(cls, values: Union[dict, str, int]):
-    values = fixtures.try_completing_model(values)
+    values = fixtures.complete_content_model(values)
     values, chain = fixtures._try_inheritance(values)
     return values
 ```

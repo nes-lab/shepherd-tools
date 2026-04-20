@@ -48,7 +48,7 @@ class GPIO(ShpModel, title="GPIO of Observer Node"):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        values, _ = tb_client.try_completing_model(cls.__name__, values)
+        values, _ = tb_client.complete_content_model(cls.__name__, values)
         return values
 
     @model_validator(mode="after")
