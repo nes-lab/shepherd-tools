@@ -24,7 +24,7 @@ import shepherd_core.data_models as sm
 from shepherd_core.config import core_config
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import Testbed
-from shepherd_core.testbed_client.client_web import WebClient
+from shepherd_core.testbed_client.client_testbed import TestbedClient
 
 # generate description for all parameters -> base for web-forms
 sm.Experiment.schema_to_file("experiment_schema.yaml")
@@ -36,7 +36,7 @@ sm.Experiment.schema_to_file("experiment_schema.yaml")
 # - logged in with valid token -> also private data is queried online
 do_connect = False
 if do_connect:
-    WebClient()
+    TestbedClient()
 
 # Defining an Experiment in Python
 hrv = sm.VirtualHarvesterConfig(name="mppt_bq_thermoelectric")

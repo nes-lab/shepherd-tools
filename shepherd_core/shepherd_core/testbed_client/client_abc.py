@@ -17,11 +17,13 @@ from abc import abstractmethod
 from typing import Any
 from typing import final
 
+from typing_extensions import deprecated
+
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import log
 
 
-class AbcClient(ABC):
+class Client(ABC):
     """AbstractBase-Class to access a testbed instance."""
 
     def __init__(self) -> None:
@@ -77,3 +79,29 @@ class AbcClient(ABC):
                 log.error(f"Query failed - model-type {model_type} is unknown")
                 return values, []
         return self._try_inheritance(model_type, values)
+
+    @deprecated("use .insert_content() instead")
+    def insert(self, data: ShpModel) -> bool:
+        return self.insert_content(data)
+
+    @deprecated("use .list_content_types() instead")
+    def query_types(self) -> list[str]:
+        return self.list_content_types()
+
+    @deprecated("use .list_content_ids() instead")
+    def query_ids(self, model_type: str) -> list[int]:
+        return self.list_content_ids(model_type)
+
+    @deprecated("use .list_content_names() instead")
+    def query_names(self, model_type: str) -> list[str]:
+        return self.list_content_names(model_type)
+
+    @deprecated("use .get_content_item() instead")
+    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
+        return self.get_content_item(model_type, uid=uid, name=name)
+
+    @deprecated("use .complete_content_model() instead")
+    def try_completing_model(
+        self, model_type: str, values: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[str]]:
+        return self.complete_content_model(model_type, values)

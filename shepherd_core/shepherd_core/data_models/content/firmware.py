@@ -89,7 +89,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
                 values["data"] = pdata
             except (SyntaxError, NameError):
                 raise ValueError("Firmware-Path is invalid") from None
-        return values  # tb_client.fill_in_user_data(values)
+        return values
 
     @classmethod
     def from_firmware(

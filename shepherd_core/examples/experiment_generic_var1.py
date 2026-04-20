@@ -22,7 +22,7 @@ from shepherd_core.config import core_config
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.testbed import MCU
 from shepherd_core.data_models.testbed import Testbed
-from shepherd_core.testbed_client.client_web import WebClient
+from shepherd_core.testbed_client.client_testbed import TestbedClient
 
 # For online-queries the lib can be connected to the testbed-server.
 # NOTE: there are 3 states:
@@ -31,7 +31,7 @@ from shepherd_core.testbed_client.client_web import WebClient
 # - logged in with valid token -> also private data is queried online
 do_connect = False
 if do_connect:
-    WebClient()
+    TestbedClient()
 
 
 exp = sm.Experiment(

@@ -207,7 +207,7 @@ class EnergyEnvironment(ContentModel):
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Add missing entries of class by querying database."""
         values, _ = tb_client.complete_content_model(cls.__name__, values)
-        return values  # tb_client.fill_in_user_data(values)
+        return values
 
     def __len__(self) -> int:
         if self.repetitions_ok:

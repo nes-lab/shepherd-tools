@@ -22,12 +22,12 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
 from shepherd_core.logger import log
 
-from .client_abc import AbcClient
+from .client_abc import Client
 from .fixtures import Fixtures
 
 
 @final
-class FixturesClient(AbcClient):
+class FixturesClient(Client):
     """Client-Class to access the file based fixtures."""
 
     def __init__(self) -> None:

@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shepherd_core.data_models.base.calibration import CalibrationEmulator
 from shepherd_core.data_models.content import VirtualSourceConfig
-from shepherd_core.testbed_client.client_web import WebClient
+from shepherd_core.testbed_client.client_testbed import TestbedClient
 from shepherd_core.vsource import VirtualSourceModel
 
 # config simulation
@@ -49,7 +49,7 @@ if "PYTEST_CURRENT_TEST" in os.environ:
 # - logged in with valid token -> also private data is queried online
 do_connect = False
 if do_connect:
-    WebClient()
+    TestbedClient()
 
 for vs_name, v_hrv_mV, samples in product(src_list, v_hrv_mV_list, sample_dur_list):
     # prepare simulation

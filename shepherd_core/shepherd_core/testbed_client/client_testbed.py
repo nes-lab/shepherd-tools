@@ -4,14 +4,13 @@ from typing import Any
 
 from shepherd_core.config import core_config
 
-from .client_abc import AbcClient
+from .client_abc import Client
 
 
-class WebClient(AbcClient):
+class TestbedClient(Client):
     """Client-Class to access a testbed instance over the web.
 
     For online-queries the lib can be connected to a testbed-server.
-    This will get
     """
 
     def __init__(self, server: str | None = None) -> None:
@@ -25,6 +24,9 @@ class WebClient(AbcClient):
         self._server: str = str(core_config.TESTBED_SERVER) if server is None else server
 
     # ABC Functions below
+
+    def list_content_types(self) -> list[str]:
+        raise NotImplementedError("TODO")
 
     def list_content_ids(self, model_type: str) -> list[int]:
         raise NotImplementedError("TODO")
