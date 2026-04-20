@@ -23,7 +23,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import log
 
 
-class Client(ABC):
+class AbcClient(ABC):
     """AbstractBase-Class to access a testbed instance."""
 
     def __init__(self) -> None:

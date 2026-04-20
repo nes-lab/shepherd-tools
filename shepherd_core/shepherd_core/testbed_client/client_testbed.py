@@ -4,10 +4,10 @@ from typing import Any
 
 from shepherd_core.config import core_config
 
-from .client_abc import Client
+from .client_abc import AbcClient
 
 
-class TestbedClient(Client):
+class TestbedClient(AbcClient):
     """Client-Class to access a testbed instance over the web.
 
     For online-queries the lib can be connected to a testbed-server.
