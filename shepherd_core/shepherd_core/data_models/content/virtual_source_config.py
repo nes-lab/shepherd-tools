@@ -141,7 +141,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        values, chain = tb_client.complete_content_model(cls.__name__, values)
+        values, chain = tb_client.complete_resource_model(cls.__name__, values)
         log.debug("VSrc-Inheritances: %s", chain)
         # TODO: most "internal states" should be corrected here
 

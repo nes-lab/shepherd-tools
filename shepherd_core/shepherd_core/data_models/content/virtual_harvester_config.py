@@ -245,7 +245,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        values, chain = tb_client.complete_content_model(cls.__name__, values)
+        values, chain = tb_client.complete_resource_model(cls.__name__, values)
         log.debug("VHrv-Inheritances: %s", chain)
 
         # post corrections -> should be in separate validator

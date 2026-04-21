@@ -57,7 +57,7 @@ What does not work:
 ```Python
 from pathlib import Path
 from typing import Union
-from pydantic import root_validator
+from pydantic import model_validator
 from shepherd_core.data_models import Fixture
 from shepherd_core.data_models import ShpModel
 
@@ -65,11 +65,11 @@ fixtures = Fixture(Path("fix.yaml"), "testbed.target")
 
 
 class Target(ShpModel, title="Target Node (DuT)"):
-  @root_validator(pre=True)
-  def query_database(cls, values: Union[dict, str, int]):
-    values = fixtures.complete_content_model(values)
-    values, chain = fixtures._try_inheritance(values)
-    return values
+    @model_validator(mode="before")
+    @classmethod
+    def query_database(cls, values: Union[dict, str, int]):
+        values, _ = fixtures.complete_resource_model(values)
+        return values
 ```
 
 what might work:

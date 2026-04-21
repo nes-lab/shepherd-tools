@@ -30,28 +30,29 @@ class AbcClient(ABC):
         global tb_client  # noqa: PLW0603
         tb_client = self
 
-    def insert_content(self, data: ShpModel) -> bool:  # noqa: ARG002
+    def insert_resource(self, data: ShpModel) -> bool:  # noqa: ARG002
         """Insert (and probably replace) entry."""
         log.warning("Missing account-details or capabilities for that storing content.")
         return False
 
     @abstractmethod
-    def list_content_types(self) -> list[str]:
+    def list_resource_types(self) -> list[str]:
         """Get list of content types."""
 
     @abstractmethod
-    def list_content_ids(self, model_type: str) -> list[int]:
+    def list_resource_ids(self, model_type: str) -> list[int]:
         """Get list with all IDs of that content type."""
 
     @abstractmethod
-    def list_content_names(self, model_type: str) -> list[str]:
+    def list_resource_names(self, model_type: str) -> list[str]:
         """Get list with all names of that content type."""
 
     @abstractmethod
-    def get_content_item(
+    def get_resource_item(
         self, model_type: str, uid: int | None = None, name: str | None = None
     ) -> dict:
         """Get model-parameters of that content fitting the type & name or ID."""
+        # TODO: divide into by_id and by_name
 
     @abstractmethod
     def _try_inheritance(
@@ -60,7 +61,7 @@ class AbcClient(ABC):
         pass
 
     @final
-    def complete_content_model(
+    def complete_resource_model(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
         """Init by name/id, for none existing instances raise Exception.
@@ -69,7 +70,7 @@ class AbcClient(ABC):
         """
         if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             try:
-                values = self.get_content_item(
+                values = self.get_resource_item(
                     model_type, name=values.get("name"), uid=values.get("id")
                 )
             except ValueError as err:
@@ -80,28 +81,28 @@ class AbcClient(ABC):
                 return values, []
         return self._try_inheritance(model_type, values)
 
-    @deprecated("use .insert_content() instead")
+    @deprecated("use .insert_resource() instead")
     def insert(self, data: ShpModel) -> bool:
-        return self.insert_content(data)
+        return self.insert_resource(data)
 
-    @deprecated("use .list_content_types() instead")
+    @deprecated("use .list_resource_types() instead")
     def query_types(self) -> list[str]:
-        return self.list_content_types()
+        return self.list_resource_types()
 
-    @deprecated("use .list_content_ids() instead")
+    @deprecated("use .list_resource_ids() instead")
     def query_ids(self, model_type: str) -> list[int]:
-        return self.list_content_ids(model_type)
+        return self.list_resource_ids(model_type)
 
-    @deprecated("use .list_content_names() instead")
+    @deprecated("use .list_resource_names() instead")
     def query_names(self, model_type: str) -> list[str]:
-        return self.list_content_names(model_type)
+        return self.list_resource_names(model_type)
 
-    @deprecated("use .get_content_item() instead")
+    @deprecated("use .get_resource_item() instead")
     def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
-        return self.get_content_item(model_type, uid=uid, name=name)
+        return self.get_resource_item(model_type, uid=uid, name=name)
 
-    @deprecated("use .complete_content_model() instead")
+    @deprecated("use .complete_resource_model() instead")
     def try_completing_model(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
-        return self.complete_content_model(model_type, values)
+        return self.complete_resource_model(model_type, values)

@@ -25,16 +25,16 @@ class TestbedClient(AbcClient):
 
     # ABC Functions below
 
-    def list_content_types(self) -> list[str]:
+    def list_resource_types(self) -> list[str]:
         raise NotImplementedError("TODO")
 
-    def list_content_ids(self, model_type: str) -> list[int]:
+    def list_resource_ids(self, model_type: str) -> list[int]:
         raise NotImplementedError("TODO")
 
-    def list_content_names(self, model_type: str) -> list[str]:
+    def list_resource_names(self, model_type: str) -> list[str]:
         raise NotImplementedError("TODO")
 
-    def get_content_item(
+    def get_resource_item(
         self, model_type: str, uid: int | None = None, name: str | None = None
     ) -> dict:
         raise NotImplementedError("TODO")

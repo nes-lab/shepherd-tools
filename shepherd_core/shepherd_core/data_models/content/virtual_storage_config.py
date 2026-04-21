@@ -243,7 +243,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        values, chain = tb_client.complete_content_model(cls.__name__, values)
+        values, chain = tb_client.complete_resource_model(cls.__name__, values)
         log.debug("vStorage-Inheritances: %s", chain)
         return values
 
