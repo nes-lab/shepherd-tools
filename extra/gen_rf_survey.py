@@ -29,7 +29,7 @@ if __name__ == "__main__":
     if not path_task.exists():
         path_task.mkdir(parents=True)
 
-    testbed = Testbed(name=core_config.TESTBED)
+    testbed = Testbed(name=core_config.testbed_name)
 
     # RF-Survey
     exp = sm.Experiment(

@@ -51,7 +51,7 @@ class Testbed(ShpModel):
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
         # allow instantiating an empty Testbed, take default in config
         if len(values) == 0:
-            values = {"name": core_config.TESTBED}
+            values = {"name": core_config.testbed_name}
 
         values, _ = tb_client.complete_resource_model(cls.__name__, values)
         return values

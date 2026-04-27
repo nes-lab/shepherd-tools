@@ -118,7 +118,7 @@ def test_experiment_model_exp_collision_custom_id() -> None:
 
 
 def test_experiment_model_exp_collision_observer() -> None:
-    core_config.VALIDATE_INFRA = True
+    core_config.validate_infrastructure = True
     hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(

@@ -71,7 +71,7 @@ class Experiment(ShpModel, title="Config of an Experiment"):
         for config_ in configs:
             for id_ in config_.target_IDs:
                 target_ids.append(id_)
-                if core_config.VALIDATE_INFRA:
+                if core_config.validate_infrastructure:
                     Target(id=id_)
                     # ⤷ this can raise exception for non-existing targets
             if config_.custom_IDs is not None:
@@ -85,9 +85,9 @@ class Experiment(ShpModel, title="Config of an Experiment"):
 
     @staticmethod
     def _validate_observers(configs: Iterable[TargetConfig]) -> None:
-        if not core_config.VALIDATE_INFRA:
+        if not core_config.validate_infrastructure:
             return
-        testbed = Testbed(name=core_config.TESTBED)  # TODO: should be taken from client
+        testbed = Testbed(name=core_config.testbed_name)  # TODO: should be taken from client
         target_ids = [id_ for config_ in configs for id_ in config_.target_IDs]
         obs_names = [testbed.get_observer(id_).name for id_ in target_ids]
         if len(target_ids) > len(set(obs_names)):

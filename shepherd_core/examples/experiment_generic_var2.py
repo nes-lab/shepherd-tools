@@ -30,7 +30,7 @@ from shepherd_core.testbed_client.client_testbed import TestbedClient
 do_connect = False
 if do_connect:
     TestbedClient()
-testbed = Testbed(name=core_config.TESTBED)
+testbed = Testbed(name=core_config.testbed_name)
 
 exp = sm.Experiment(
     name="meaningful_TestName",

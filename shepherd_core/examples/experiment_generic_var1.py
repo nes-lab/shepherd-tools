@@ -59,7 +59,7 @@ exp = sm.Experiment(
 exp.to_file("experiment_generic_var1.yaml")
 
 # Create a tasks-list for the testbed
-testbed = Testbed(name=core_config.TESTBED)
+testbed = Testbed(name=core_config.testbed_name)
 tb_tasks = TestbedTasks.from_xp(exp, testbed)
 tb_tasks.to_file("experiment_generic_var1_tbt.yaml")
 

@@ -16,7 +16,7 @@ from shepherd_core.data_models.testbed import Testbed
 def test_task_generation_file(tmp_path: Path) -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
     exp = Experiment.from_file(path)
-    testbed = Testbed(name=core_config.TESTBED)
+    testbed = Testbed(name=core_config.testbed_name)
     tb_tasks = TestbedTasks.from_xp(exp, testbed)
     tb_tasks.to_file(tmp_path / "tbt1.yaml")
 
@@ -49,6 +49,6 @@ def test_task_generation_script(tmp_path: Path) -> None:
         time_start=local_now() + timedelta(minutes=30),
         target_configs=target_cfgs,
     )
-    testbed = Testbed(name=core_config.TESTBED)
+    testbed = Testbed(name=core_config.testbed_name)
     tb_tasks = TestbedTasks.from_xp(exp, testbed)
     tb_tasks.to_file(tmp_path / "tbt2.yaml")

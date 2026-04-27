@@ -21,7 +21,7 @@ class TestbedClient(AbcClient):
         """
         super().__init__()
         # add default values
-        self._server: str = str(core_config.TESTBED_SERVER) if server is None else server
+        self._server: str = str(core_config.testbed_url) if server is None else server
 
     # ABC Functions below
 
