@@ -10,7 +10,7 @@ from pydantic import Field
 from pydantic import validate_call
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.content import NameStr
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.experiment.experiment import Experiment
@@ -26,13 +26,12 @@ class TestbedTasks(ShpModel):
     name: NameStr
     observer_tasks: Annotated[list[ObserverTasks], Field(min_length=1, max_length=128)]
 
+    __test__ = False  # tell pytest this is no unittest
+
     @classmethod
     @validate_call
-    def from_xp(cls, xp: Experiment, tb: Testbed | None = None) -> Self:
-        if tb is None:
-            # TODO: is tb-argument really needed? prob. not
-            tb = Testbed()  # this will query the first (and only) entry of client
-
+    def from_xp(cls, xp: Experiment, tb: Testbed) -> Self:
+        # Note: default TB instantiation removed to avoid potential funky behavior
         tgt_ids = xp.get_target_ids()
         xp_folder = xp.folder_name()
         obs_tasks = [ObserverTasks.from_xp(xp, xp_folder, tb, id_) for id_ in tgt_ids]
@@ -59,7 +58,7 @@ class TestbedTasks(ShpModel):
             values = {**values, **obt.get_output_paths()}
         return values
 
-    def is_contained(self, paths: Iterable[PurePosixPath] = config.PATHS_ALLOWED) -> bool:
+    def is_contained(self, paths: Iterable[PurePosixPath] = core_config.PATHS_ALLOWED) -> bool:
         """Limit paths to allowed directories.
 
         This is the central checking point for the webserver.

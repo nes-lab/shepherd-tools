@@ -12,9 +12,9 @@ import ryaml
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.data_models.content.enum_datatypes import Compression
 from shepherd_core.logger import log
 
-from .emulation import Compression
 from .emulation import EmulationTask
 from .firmware_mod import FirmwareModTask
 from .harvest import HarvestTask

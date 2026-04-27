@@ -5,9 +5,8 @@ import h5py
 import pytest
 import ryaml
 from pydantic import ValidationError
-
-from shepherd_core import Reader
-from shepherd_core import Writer
+from shepherd_core.reader import Reader
+from shepherd_core.writer import Writer
 
 
 def test_reader_metadata(data_h5: Path) -> None:

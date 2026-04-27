@@ -10,28 +10,33 @@ from pydantic import BaseModel
 from pydantic import HttpUrl
 
 
-class ConfigDefault(BaseModel):
+class CoreConfig(BaseModel):
     """Container for a common configuration."""
 
     __slots__ = ()
 
-    TESTBED: str = "shepherd_tud_nes"
-    """name of the testbed to validate against - if enabled - see switch below"""
-    VALIDATE_INFRA: bool = True
-    """switch to turn on / off deep validation of data models also considering the current
+    testbed_name: str = "shepherd_tud_nes"
+    """ ⤷ name of the testbed to validate against - if enabled - see switch below.
+          this name will be updated if a client connects to another testbed.
+    """
+    validate_infrastructure: bool = False
+    """ ⤷ switch to turn on / off deep validation of data models also considering the current
     layout & infrastructure of the testbed.
     """
 
+    # CONSTANTS below
+    TESTBED_SERVER: HttpUrl = "https://shepherd.cfaed.tu-dresden.de:8000/"
+    """ ⤷ Server that hosts the desired shepherd-API."""
+    TESTBED_TIMEOUT: int = 3
+    """ ⤷ requests will fail after this many seconds."""
+
     SAMPLERATE_SPS: int = 100_000
-    """Rate of IV-Recording of the testbed."""
+    """ ⤷ Rate of IV-Recording of the testbed."""
 
     UID_NAME: str = "SHEPHERD_NODE_ID"
-    """Variable name to patch in ELF-file"""
+    """ ⤷ Variable name to patch in ELF-file"""
     UID_SIZE: int = 2
-    """Variable size in Byte"""
-
-    TESTBED_SERVER: HttpUrl = HttpUrl("https://shepherd.cfaed.tu-dresden.de:8000/")
-    """Server that holds up to date testbed fixtures"""
+    """ ⤷ Variable size in Byte"""
 
     PATHS_ALLOWED: AbstractSet[PurePosixPath] = {
         PurePosixPath("/var/shepherd/"),
@@ -39,4 +44,4 @@ class ConfigDefault(BaseModel):
     }
 
 
-config = ConfigDefault()
+core_config = CoreConfig()

@@ -6,7 +6,7 @@ from typing import final
 from pydantic import Field
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.shepherd import ShpModel
 
 from .enum_datatypes import EnergyDType
@@ -96,7 +96,7 @@ class HarvesterPRUConfig(ShpModel):
             voltage_step_uV=round(voltage_step_mV * 10**3),
             current_limit_nA=round(data.current_limit_uA * 10**3),
             setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
-            interval_n=round(interval_ms * config.SAMPLERATE_SPS * 1e-3),
-            duration_n=round(duration_ms * config.SAMPLERATE_SPS * 1e-3),
+            interval_n=round(interval_ms * core_config.SAMPLERATE_SPS * 1e-3),
+            duration_n=round(duration_ms * core_config.SAMPLERATE_SPS * 1e-3),
             wait_cycles_n=data.wait_cycles,
         )

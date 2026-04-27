@@ -6,8 +6,8 @@ from pathlib import Path
 import ryaml
 from virtual_storage_config import VirtualStorageConfig
 
-from shepherd_core import local_now
-from shepherd_core.data_models import Wrapper
+from shepherd_core.data_models.base.timezone import local_now
+from shepherd_core.data_models.base.wrapper import Wrapper
 from shepherd_core.logger import log
 
 dsc_ideal = "Model of an ideal Capacitor (true to spec, no losses)"

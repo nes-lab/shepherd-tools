@@ -15,7 +15,7 @@ from typing import final
 from pydantic import Field
 from typing_extensions import Self
 
-from shepherd_core.data_models import ShpModel
+from shepherd_core.data_models.base.shepherd import ShpModel
 
 from .python import PythonInventory
 from .system import SystemInventory

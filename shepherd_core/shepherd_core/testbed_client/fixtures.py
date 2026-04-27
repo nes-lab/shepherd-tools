@@ -190,7 +190,7 @@ class Fixtures:
         self, file_path: Path | None = None, *, reset: bool = False, validate: bool = False
     ) -> None:
         self.reset = reset
-        self.components: dict[str, Fixture] = {}
+        self.resources: dict[str, Fixture] = {}
 
         cache_file = cache_user_path / "fixtures.pickle"
         sheep_detect = Path("/lib/firmware/am335x-pru0-fw").exists()
@@ -204,7 +204,7 @@ class Fixtures:
             # speedup by loading from cache
             # TODO: also add version as criterion
             with cache_file.open("rb", buffering=-1) as fd:
-                self.components = pickle.load(fd)  # noqa: S301
+                self.resources = pickle.load(fd)  # noqa: S301
             log.debug(" -> found & used pickled fixtures")
         else:
             if not isinstance(file_path, Path):
@@ -228,14 +228,14 @@ class Fixtures:
                 else:
                     self._insert_file(file)
 
-            if len(self.components) < 1:
+            if len(self.resources) < 1:
                 log.error(f"No fixture-components found at {file_path.as_posix()}")
             elif sheep_detect:
                 cache_file.parent.mkdir(parents=True, exist_ok=True)
                 with cache_file.open("wb", buffering=-1) as fd:
-                    pickle.dump(self.components, fd)
-        for ckey in self.components:
-            self.components[ckey].update_iterator(reset=True)
+                    pickle.dump(self.resources, fd)
+        for ckey in self.resources:
+            self.resources[ckey].update_iterator(reset=True)
 
     def _insert_file(self, file: Path) -> None:
         with file.open(encoding="utf-8") as fd:
@@ -245,9 +245,9 @@ class Fixtures:
             if not isinstance(data_wrap, dict):
                 continue
             fix_type = str(data_wrap["datatype"]).lower()
-            if self.components.get(fix_type) is None:
-                self.components[fix_type] = Fixture(model_type=fix_type)
-            self.components[fix_type].insert_raw(data_wrap["parameters"])
+            if self.resources.get(fix_type) is None:
+                self.resources[fix_type] = Fixture(model_type=fix_type)
+            self.resources[fix_type].insert_raw(data_wrap["parameters"])
 
     def validate_file(self, file: Path) -> None:
         """Slower version of ._insert_file() with more checks.
@@ -258,27 +258,44 @@ class Fixtures:
             fixtures = ryaml.load(fd)
         for fixture in fixtures:
             if not isinstance(fixture, dict):
-                continue
+                msg = (
+                    f"FixtureClient expected Model-dict @ {file.name}:{fixture} "
+                    f"but got '{fixtures[fixture]}'"
+                )
+                raise TypeError(msg)
             fix_wrap = Wrapper(**fixture)
             self.insert_model(fix_wrap)
 
     def insert_model(self, data: Wrapper) -> None:
         """Delegate model to correct component."""
         fix_type = data.datatype.lower()
-        if self.components.get(fix_type) is None:
-            self.components[fix_type] = Fixture(model_type=fix_type)
-        self.components[fix_type].insert_verified(data)
+        if self.resources.get(fix_type) is None:
+            self.resources[fix_type] = Fixture(model_type=fix_type)
+        self.resources[fix_type].insert_verified(data)
 
     def __getitem__(self, key: str) -> Fixture:
         key = key.lower()
-        if key in self.components:
-            return self.components[key]
+        if key in self.resources:
+            return self.resources[key]
         msg = f"Component '{key}' not found!"
         raise KeyError(msg)
 
     def keys(self) -> Iterable[str]:
-        return self.components.keys()
+        return self.resources.keys()
 
     def to_file(self, file: Path) -> None:
         msg = f"TODO (val={file})"
         raise NotImplementedError(msg)
+
+    def complete_fixtures(self) -> None:
+        """Fill all content-fields by backtracking the inheritance-chain."""
+        for model_type in self.resources:
+            for model_name in self.resources[model_type].elements_by_name:
+                model_data = self.resources[model_type].elements_by_name[model_name]
+                try:
+                    model_data, _ = self.resources[model_type].inheritance(model_data)
+                except KeyError:
+                    continue
+                self.resources[model_type].elements_by_name[model_name] = model_data
+                if "id" in model_data:
+                    self.resources[model_type].elements_by_id[model_data["id"]] = model_data

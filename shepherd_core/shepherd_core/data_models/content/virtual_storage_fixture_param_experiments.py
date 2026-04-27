@@ -9,7 +9,7 @@ from pathlib import Path
 
 from virtual_storage_config import VirtualStorageConfig
 
-from shepherd_core import log
+from shepherd_core.logger import log
 from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaMPlus
 from shepherd_core.vsource.virtual_storage_simulator import StorageSimulator
 

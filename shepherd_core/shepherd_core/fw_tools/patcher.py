@@ -8,7 +8,7 @@ from typing import Annotated
 from pydantic import Field
 from pydantic import validate_call
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.logger import log
 
 from .validation import is_elf
@@ -74,7 +74,7 @@ def read_symbol(file_elf: Path, symbol: str, length: int) -> int | None:
 
 def read_uid(file_elf: Path) -> int | None:
     """Read value of UID-symbol for shepherd testbed."""
-    return read_symbol(file_elf, symbol=config.UID_NAME, length=config.UID_SIZE)
+    return read_symbol(file_elf, symbol=core_config.UID_NAME, length=core_config.UID_SIZE)
 
 
 def read_arch(file_elf: Path) -> str | None:
@@ -97,7 +97,7 @@ def read_arch(file_elf: Path) -> str | None:
 def modify_symbol_value(
     file_elf: Path,
     symbol: str,
-    value: Annotated[int, Field(ge=0, lt=2 ** (8 * config.UID_SIZE))],
+    value: Annotated[int, Field(ge=0, lt=2 ** (8 * core_config.UID_SIZE))],
     *,
     overwrite: bool = False,
 ) -> Path | None:
@@ -120,10 +120,10 @@ def modify_symbol_value(
 
         elf = ELF(path=file_elf)
         addr = elf.symbols[symbol]
-        value_raw = elf.read(address=addr, count=config.UID_SIZE)[-config.UID_SIZE :]
+        value_raw = elf.read(address=addr, count=core_config.UID_SIZE)[-core_config.UID_SIZE :]
         # ⤷ cutting needed -> msp produces 4b instead of 2
         value_old = int.from_bytes(bytes=value_raw, byteorder=elf.endian, signed=False)
-        value_raw = value.to_bytes(length=config.UID_SIZE, byteorder=elf.endian, signed=False)
+        value_raw = value.to_bytes(length=core_config.UID_SIZE, byteorder=elf.endian, signed=False)
 
         try:
             elf.write(address=addr, data=value_raw)
@@ -156,4 +156,4 @@ def modify_symbol_value(
 
 def modify_uid(file_elf: Path, value: int) -> Path | None:
     """Replace value of UID-symbol for shepherd testbed."""
-    return modify_symbol_value(file_elf, symbol=config.UID_NAME, value=value, overwrite=True)
+    return modify_symbol_value(file_elf, symbol=core_config.UID_NAME, value=value, overwrite=True)

@@ -2,9 +2,11 @@
 
 from pathlib import Path
 
+from shepherd_core.config import core_config
 from shepherd_core.data_models.task import TestbedTasks
+from shepherd_core.data_models.testbed import Testbed
 from shepherd_core.logger import log
-from shepherd_core.testbed_client.client_web import WebClient
+from shepherd_core.testbed_client.client_testbed import TestbedClient
 
 from shepherd_core import data_models as sm
 
@@ -20,12 +22,14 @@ if __name__ == "__main__":
     do_connect = False
     if do_connect:
         # connected -> publicly available data is queried online
-        WebClient()
+        TestbedClient()
 
     if not path_fw.exists():
         path_fw.mkdir(parents=True)
     if not path_task.exists():
         path_task.mkdir(parents=True)
+
+    testbed = Testbed(name=core_config.testbed_name)
 
     # RF-Survey
     exp = sm.Experiment(
@@ -50,5 +54,5 @@ if __name__ == "__main__":
             )
         ],
     )
-    path_ret = TestbedTasks.from_xp(exp).to_file(path_task / "tasks_rf_survey")
+    path_ret = TestbedTasks.from_xp(exp, testbed).to_file(path_task / "tasks_rf_survey")
     log.info("Wrote: %s", path_ret.as_posix())

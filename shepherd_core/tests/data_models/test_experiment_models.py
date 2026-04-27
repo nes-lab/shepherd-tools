@@ -4,11 +4,13 @@ from datetime import timedelta
 
 import pytest
 from pydantic import ValidationError
-from shepherd_core.data_models import VirtualHarvesterConfig
-from shepherd_core.data_models import VirtualSourceConfig
+from shepherd_core.config import core_config
+from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import EnergyProfile
 from shepherd_core.data_models.content import Firmware
+from shepherd_core.data_models.content import VirtualHarvesterConfig
+from shepherd_core.data_models.content import VirtualSourceConfig
 from shepherd_core.data_models.experiment import Experiment
 from shepherd_core.data_models.experiment import GpioActuation
 from shepherd_core.data_models.experiment import GpioEvent
@@ -19,8 +21,6 @@ from shepherd_core.data_models.experiment import SystemLogging
 from shepherd_core.data_models.experiment import TargetConfig
 from shepherd_core.data_models.testbed import GPIO
 from shepherd_core.data_models.testbed import Target
-
-from shepherd_core import local_now
 
 from .conftest import load_yaml
 
@@ -118,6 +118,7 @@ def test_experiment_model_exp_collision_custom_id() -> None:
 
 
 def test_experiment_model_exp_collision_observer() -> None:
+    core_config.validate_infrastructure = True
     hrv = VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
     target_cfgs = [
         TargetConfig(

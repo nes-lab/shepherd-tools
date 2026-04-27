@@ -1,5 +1,7 @@
 """Shows different ways to define an experiment.
 
+NOTE: this example is valid, but not recommended when using the public testbed-instance
+
 How to define an experiment:
 
 - within python (shown in this example)
@@ -19,8 +21,10 @@ How to define an experiment:
 """
 
 import shepherd_core.data_models as sm
+from shepherd_core.config import core_config
 from shepherd_core.data_models.task import TestbedTasks
-from shepherd_core.testbed_client.client_web import WebClient
+from shepherd_core.data_models.testbed import Testbed
+from shepherd_core.testbed_client.client_testbed import TestbedClient
 
 # generate description for all parameters -> base for web-forms
 sm.Experiment.schema_to_file("experiment_schema.yaml")
@@ -32,7 +36,7 @@ sm.Experiment.schema_to_file("experiment_schema.yaml")
 # - logged in with valid token -> also private data is queried online
 do_connect = False
 if do_connect:
-    WebClient()
+    TestbedClient()
 
 # Defining an Experiment in Python
 hrv = sm.VirtualHarvesterConfig(name="mppt_bq_thermoelectric")
@@ -74,10 +78,11 @@ xperi3 = sm.Experiment.from_file("experiment_from_yaml.yaml")
 print(f"xp3 hash: {xperi3.get_hash()} (won't match)")
 
 # Create a tasks-list for the testbed
-tb_tasks2 = TestbedTasks.from_xp(xperi2)
+testbed = Testbed(name=core_config.testbed_name)
+tb_tasks2 = TestbedTasks.from_xp(xperi2, testbed)
 tb_tasks2.to_file("experiment_tb_tasks.yaml")
 
 # Comparison between task-Lists succeed (experiment-comparison failed)
-tb_tasks3 = TestbedTasks.from_xp(xperi3)
+tb_tasks3 = TestbedTasks.from_xp(xperi3, testbed)
 print(f"tasks2 hash: {tb_tasks2.get_hash()}")
 print(f"tasks3 hash: {tb_tasks3.get_hash()}")

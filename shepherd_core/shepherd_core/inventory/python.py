@@ -7,7 +7,7 @@ from importlib import metadata
 from pydantic import ConfigDict
 from typing_extensions import Self
 
-from shepherd_core.data_models import ShpModel
+from shepherd_core.data_models.base.shepherd import ShpModel
 
 
 class PythonInventory(ShpModel):

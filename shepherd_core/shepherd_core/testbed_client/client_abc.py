@@ -17,6 +17,8 @@ from abc import abstractmethod
 from typing import Any
 from typing import final
 
+from typing_extensions import deprecated
+
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.logger import log
 
@@ -28,34 +30,38 @@ class AbcClient(ABC):
         global tb_client  # noqa: PLW0603
         tb_client = self
 
-    @abstractmethod
-    def insert(self, data: ShpModel) -> bool:
-        """Insert (and probably replace) entry.
-
-        TODO: fixtures get replaced, but is that wanted for web?
-        """
+    def insert_resource(self, data: ShpModel) -> bool:  # noqa: ARG002
+        """Insert (and probably replace) entry."""
+        log.warning("Missing account-details or capabilities for that storing content.")
+        return False
 
     @abstractmethod
-    def query_ids(self, model_type: str) -> list[int]:
-        pass
+    def list_resource_types(self) -> list[str]:
+        """Get list of content types."""
 
     @abstractmethod
-    def query_names(self, model_type: str) -> list[str]:
-        pass
+    def list_resource_ids(self, model_type: str) -> list[int]:
+        """Get list with all IDs of that content type."""
 
     @abstractmethod
-    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
-        pass
+    def list_resource_names(self, model_type: str) -> list[str]:
+        """Get list with all names of that content type."""
 
     @abstractmethod
-    def try_inheritance(
+    def get_resource_item(
+        self, model_type: str, uid: int | None = None, name: str | None = None
+    ) -> dict:
+        """Get model-parameters of that content fitting the type & name or ID."""
+        # TODO: divide into by_id and by_name
+
+    @abstractmethod
+    def _try_inheritance(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
-        # TODO: maybe internal? yes
         pass
 
     @final
-    def try_completing_model(
+    def complete_resource_model(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
         """Init by name/id, for none existing instances raise Exception.
@@ -64,16 +70,39 @@ class AbcClient(ABC):
         """
         if len(values) == 1 and next(iter(values.keys())) in {"id", "name"}:
             try:
-                values = self.query_item(model_type, name=values.get("name"), uid=values.get("id"))
+                values = self.get_resource_item(
+                    model_type, name=values.get("name"), uid=values.get("id")
+                )
             except ValueError as err:
                 msg = f"Query {model_type} by name / ID failed - {values} is unknown!"
                 raise ValueError(msg) from err
             except KeyError:
                 log.error(f"Query failed - model-type {model_type} is unknown")
                 return values, []
-        return self.try_inheritance(model_type, values)
+        return self._try_inheritance(model_type, values)
 
-    @abstractmethod
-    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
-        # TODO: is it really needed and helpful?
-        pass
+    @deprecated("use .insert_resource() instead")
+    def insert(self, data: ShpModel) -> bool:
+        return self.insert_resource(data)
+
+    @deprecated("use .list_resource_types() instead")
+    def query_types(self) -> list[str]:
+        return self.list_resource_types()
+
+    @deprecated("use .list_resource_ids() instead")
+    def query_ids(self, model_type: str) -> list[int]:
+        return self.list_resource_ids(model_type)
+
+    @deprecated("use .list_resource_names() instead")
+    def query_names(self, model_type: str) -> list[str]:
+        return self.list_resource_names(model_type)
+
+    @deprecated("use .get_resource_item() instead")
+    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
+        return self.get_resource_item(model_type, uid=uid, name=name)
+
+    @deprecated("use .complete_resource_model() instead")
+    def try_completing_model(
+        self, model_type: str, values: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[str]]:
+        return self.complete_resource_model(model_type, values)

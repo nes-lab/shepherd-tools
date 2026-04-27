@@ -28,6 +28,13 @@ shepherd-data = { path = "./shepherd_data", editable = true}
 [tool.setuptools]
 packages = ["shepherd_core", "shepherd_data"]
 
+[tool.pytest.ini_options]
+addopts = "-vvv --stepwise"
+testpaths = [
+    "./shepherd_core/",
+    "./shepherd_data/",
+    ]
+
 [tool.ty.environment]
 root = ["./shepherd_core", "./shepherd_data", "./extra", "./scratch"]
 # TODO: renaming dirs could 'repair' autodiscovery

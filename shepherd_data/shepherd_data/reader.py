@@ -9,14 +9,13 @@ from pathlib import Path
 import h5py
 import numpy as np
 from matplotlib import pyplot as plt
-from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models.base.timezone import local_tz
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.logger import get_verbose_level
 from shepherd_core.logger import log
+from shepherd_core.reader import Reader as CoreReader
+from shepherd_core.writer import Writer as CoreWriter
 from tqdm import trange
-
-from shepherd_core import Reader as CoreReader
-from shepherd_core import Writer as CoreWriter
-from shepherd_core import local_tz
 
 # import samplerate  # noqa: ERA001, TODO: just a test-fn for now
 

@@ -10,6 +10,7 @@ from .observer_features import GpioLevel
 from .observer_features import GpioTracing
 from .observer_features import PowerTracing
 from .observer_features import SystemLogging
+from .observer_features import UartLogging
 from .target_config import TargetConfig
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "PowerTracing",
     "SystemLogging",
     "TargetConfig",
+    "UartLogging",
 ]

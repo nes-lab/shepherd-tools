@@ -8,8 +8,8 @@ Note: make sure to have installed
 import shutil
 from pathlib import Path
 
-from shepherd_core.data_models import Firmware
-from shepherd_core.data_models import FirmwareDType
+from shepherd_core.data_models.content import Firmware
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
 
 from shepherd_core import fw_tools
 

@@ -3,6 +3,8 @@ name: ShpCore - Build, install & pytest
 on:
   workflow_call:
 
+permissions: {}
+
 jobs:
   utcore:
 

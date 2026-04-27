@@ -14,17 +14,16 @@ from types import TracebackType
 from typing import Any
 
 import numpy as np
-from shepherd_core.config import config
-from shepherd_core.data_models import EnergyDType
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries
-from shepherd_core.data_models.task import Compression
+from shepherd_core.data_models.content.enum_datatypes import Compression
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.exit_handler import activate_exit_handler
 from shepherd_core.logger import increase_verbose_level
 from shepherd_core.logger import log
+from shepherd_core.writer import Writer as ShepherdWriter
 from tqdm.auto import trange
-
-from shepherd_core import Writer as ShepherdWriter
 
 # a static seed allows scaling up node count & duration of recordings without altering the dataset
 common_seed: int = 32220789340897324098232347119065234157809
@@ -101,7 +100,7 @@ class EEnvGenerator(ABC):
         - decoupling should help getting a global progress-bar
     """
 
-    STEP_WIDTH: float = 1.0 / config.SAMPLERATE_SPS  # 10 us
+    STEP_WIDTH: float = 1.0 / core_config.SAMPLERATE_SPS  # 10 us
 
     def __init__(
         self,

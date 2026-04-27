@@ -3,15 +3,14 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from shepherd_core.data_models import EnergyDType
 from shepherd_core.data_models.base.calibration import CalibrationEmulator as CalEmu
 from shepherd_core.data_models.base.calibration import CalibrationHarvester as CalHrv
 from shepherd_core.data_models.base.calibration import CalibrationPair
 from shepherd_core.data_models.base.calibration import CalibrationSeries as CalSeries
-from shepherd_core.data_models.task import Compression
-
-from shepherd_core import Reader
-from shepherd_core import Writer
+from shepherd_core.data_models.content.enum_datatypes import Compression
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
+from shepherd_core.reader import Reader
+from shepherd_core.writer import Writer
 
 
 def generate_shp_file(

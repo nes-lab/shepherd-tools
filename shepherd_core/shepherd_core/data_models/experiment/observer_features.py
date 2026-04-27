@@ -179,6 +179,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     uart_decode: bool = False
     """Automatic decoding from gpio-trace not implemented ATM."""
     uart_pin: GPIO | None = None
+    """ ⤷ specify a single pin are keep it None to try to decode all available pins."""
     uart_baudrate: Annotated[int, Field(ge=2_400, le=1_152_000)] = 115_200
 
     @model_validator(mode="after")

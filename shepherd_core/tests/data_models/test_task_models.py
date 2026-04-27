@@ -3,11 +3,11 @@ from pathlib import Path
 import pytest
 import shepherd_core.data_models as sdm
 from pydantic import ValidationError
-from shepherd_core.config import config
-from shepherd_core.data_models import Experiment
-from shepherd_core.data_models import FirmwareDType
-from shepherd_core.data_models import GpioActuation
-from shepherd_core.data_models import GpioEvent
+from shepherd_core.config import core_config
+from shepherd_core.data_models.content.enum_datatypes import FirmwareDType
+from shepherd_core.data_models.experiment import Experiment
+from shepherd_core.data_models.experiment import GpioActuation
+from shepherd_core.data_models.experiment import GpioEvent
 from shepherd_core.data_models.task import ObserverTasks
 from shepherd_core.data_models.task import TestbedTasks
 from shepherd_core.data_models.task.emulation import EmulationTask
@@ -17,7 +17,7 @@ from shepherd_core.data_models.task.programming import ProgrammingTask
 from shepherd_core.data_models.testbed import GPIO
 from shepherd_core.data_models.testbed import MCU
 from shepherd_core.data_models.testbed import ProgrammerProtocol
-from shepherd_core.data_models.testbed import Testbed as TasteBad
+from shepherd_core.data_models.testbed import Testbed
 
 from shepherd_core import fw_tools
 
@@ -117,7 +117,8 @@ def test_task_model_observer_min1() -> None:
 def test_task_model_observer_min2() -> None:
     path = Path(__file__).with_name("example_config_experiment.yaml")
     exp = Experiment.from_file(path)
-    ObserverTasks.from_xp(xp=exp, xp_folder=None, tb=TasteBad(name="shepherd_tud_nes"), tgt_id=1)
+    testbed = Testbed(name=core_config.testbed_name)
+    ObserverTasks.from_xp(xp=exp, xp_folder=None, tb=testbed, tgt_id=1)
 
 
 def test_task_model_prog_min() -> None:
@@ -138,7 +139,7 @@ def test_task_model_prog_fault_elf() -> None:
 
 
 def test_tasks_are_contained() -> None:
-    config.TESTBED = "unit_testing_testbed"
+    core_config.testbed_name = "unit_testing_testbed"
     firmware_path = Path(__file__).parent.parent / "fw_tools/build_nrf.elf"
     tgt_cfg = sdm.TargetConfig(
         target_IDs=[42],
@@ -159,9 +160,9 @@ def test_tasks_are_contained() -> None:
         duration=30,
         target_configs=[tgt_cfg],
     )
-    tb = TasteBad()
+    tb = Testbed(name=core_config.testbed_name)
     tb_tasks = TestbedTasks.from_xp(xp, tb)
-    paths_allowed = config.PATHS_ALLOWED
+    paths_allowed = core_config.PATHS_ALLOWED
     for obs_tasks in tb_tasks.observer_tasks:
         assert obs_tasks.is_contained(paths_allowed)
     assert tb_tasks.is_contained()

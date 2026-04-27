@@ -21,8 +21,8 @@ E_out = 16.387 mWs -> BQ25570s
 
 from pathlib import Path
 
-from shepherd_core.data_models import VirtualSourceConfig
-from shepherd_core.data_models import VirtualStorageConfig
+from shepherd_core.data_models.content import VirtualSourceConfig
+from shepherd_core.data_models.content import VirtualStorageConfig
 from shepherd_core.vsource import ResistiveTarget
 from shepherd_core.vsource import simulate_source
 

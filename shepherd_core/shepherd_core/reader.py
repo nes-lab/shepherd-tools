@@ -24,12 +24,11 @@ from tqdm import trange
 from typing_extensions import Self
 from typing_extensions import deprecated
 
-from .config import config
+from .config import core_config
 from .data_models.base.calibration import CalibrationPair
 from .data_models.base.calibration import CalibrationSeries
 from .data_models.base.timezone import local_tz
 from .data_models.content.enum_datatypes import EnergyDType
-from .decoder_waveform import Uart
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -76,7 +75,7 @@ class Reader:
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
         if not hasattr(self, "samplerate_sps"):
-            self.samplerate_sps: int = config.SAMPLERATE_SPS
+            self.samplerate_sps: int = core_config.SAMPLERATE_SPS
         self.sample_interval_ns: int = round(10**9 // self.samplerate_sps)
         self.sample_interval_s: float = 1 / self.samplerate_sps
 
@@ -760,6 +759,8 @@ class Reader:
     def waveform_to_uart_log(
         self, gpio_name: str, gpio_wf: np.ndarray, *, add_timestamps: bool = True
     ) -> None:
+        from .decoder_waveform import Uart  # noqa: PLC0415
+
         gpio_wf = gpio_wf.astype(float)
         gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
         content = None
@@ -791,6 +792,8 @@ class Reader:
 
     @deprecated("use waveform_to_uart_log() instead")
     def gpio_to_uart(self) -> np.ndarray | None:
+        from .decoder_waveform import Uart  # noqa: PLC0415
+
         wfs = self.get_gpio_waveforms("uart")
         if len(wfs) < 1:
             return None

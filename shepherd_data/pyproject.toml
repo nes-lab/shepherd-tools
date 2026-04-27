@@ -36,7 +36,6 @@ dependencies = [
     "matplotlib",  # full-version
     "numpy",
     "pandas>=2.0.0",  # full-version, v2 is OK
-    "pyYAML",
     "scipy",   # full-version
     "shepherd-core[inventory]==2026.04.2",  # libs are strongly coupled
     "tqdm",    # full-version

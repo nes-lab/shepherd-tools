@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 import ryaml
-from shepherd_core.data_models import EnergyProfile
-from shepherd_core.data_models.content import EnergyDType
+from shepherd_core.data_models.content import EnergyProfile
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 
 
 def load_yaml(file: str) -> dict:

@@ -18,6 +18,7 @@ from pydantic import PositiveFloat
 from pydantic import validate_call
 from shepherd_core.data_models.content.virtual_storage_config import VirtualStorageConfig
 from shepherd_core.data_models.content.virtual_storage_config import soc_t
+from shepherd_core.logger import log
 from shepherd_core.vsource.virtual_storage_model import ModelStorage
 from shepherd_core.vsource.virtual_storage_model import VirtualStorageModel
 from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaM
@@ -25,8 +26,6 @@ from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaMPlus
 from shepherd_core.vsource.virtual_storage_models_kibam import ModelKiBaMSimple
 from shepherd_core.vsource.virtual_storage_models_kibam import ModelShpCap
 from shepherd_core.vsource.virtual_storage_simulator import StorageSimulator
-
-from shepherd_core import log
 
 path_here = Path(__file__).parent
 

@@ -11,9 +11,9 @@ import ryaml
 from commons import process_mp
 from commons import root_storage_default
 from convert_v1_eenv import convert_file
-from shepherd_core.data_models import EnergyEnvironment
-from shepherd_core.data_models import EnergyProfile
-from shepherd_core.data_models import Wrapper
+from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
 from shepherd_core.logger import log
 
 # config

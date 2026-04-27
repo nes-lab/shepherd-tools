@@ -11,7 +11,7 @@ This script will:
 
 from pathlib import Path
 
-from shepherd_core.data_models import EnergyDType
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 
 import shepherd_data as shp
 

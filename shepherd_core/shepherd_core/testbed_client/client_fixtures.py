@@ -32,45 +32,39 @@ class FixturesClient(AbcClient):
 
     def __init__(self) -> None:
         super().__init__()
-        self._fixtures: Fixtures = Fixtures()
+        self.fixture_cache: Fixtures = Fixtures()
 
-    def insert(self, data: ShpModel) -> bool:
+    def insert_resource(self, data: ShpModel) -> bool:
         wrap = Wrapper(
             datatype=type(data).__name__,
             parameters=data.model_dump(),
         )
-        self._fixtures.insert_model(wrap)
+        self.fixture_cache.insert_model(wrap)
         return True
 
-    def query_ids(self, model_type: str) -> list[int]:
-        return list(self._fixtures[model_type].elements_by_id.keys())
+    def list_resource_types(self) -> list[str]:
+        return list(self.fixture_cache.resources)
 
-    def query_names(self, model_type: str) -> list[str]:
-        return list(self._fixtures[model_type].elements_by_name.keys())
+    def list_resource_ids(self, model_type: str) -> list[int]:
+        return list(self.fixture_cache[model_type].elements_by_id.keys())
 
-    def query_item(self, model_type: str, uid: int | None = None, name: str | None = None) -> dict:
+    def list_resource_names(self, model_type: str) -> list[str]:
+        return list(self.fixture_cache[model_type].elements_by_name.keys())
+
+    def get_resource_item(
+        self, model_type: str, uid: int | None = None, name: str | None = None
+    ) -> dict:
         if uid is not None:
-            return self._fixtures[model_type].query_id(uid)
+            return self.fixture_cache[model_type].query_id(uid)
         if name is not None:
-            return self._fixtures[model_type].query_name(name)
+            return self.fixture_cache[model_type].query_name(name)
         raise ValueError("Query needs either uid or name of object")
 
-    def try_inheritance(
+    def _try_inheritance(
         self, model_type: str, values: dict[str, Any]
     ) -> tuple[dict[str, Any], list[str]]:
         try:
-            return self._fixtures[model_type].inheritance(values)
+            return self.fixture_cache[model_type].inheritance(values)
         except KeyError:
             log.error(f"Query failed - model-type {model_type} is unknown")
             return values, []
-
-    def fill_in_user_data(self, values: dict[str, Any]) -> dict[str, Any]:
-        """Add fake user-data when offline-client is used.
-
-        Workaround until WebClient is working.
-        """
-        if values.get("owner") is None:
-            values["owner"] = "unknown"
-        if values.get("group") is None:
-            values["group"] = "unknown"
-        return values

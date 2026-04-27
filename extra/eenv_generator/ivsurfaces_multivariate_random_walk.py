@@ -17,10 +17,10 @@ from pydantic import BaseModel
 from scipy import constants as const
 from scipy.optimize import newton
 from scipy.special import lambertw
-from shepherd_core.data_models import EnergyDType
-from shepherd_core.data_models import EnergyEnvironment
-from shepherd_core.data_models import EnergyProfile
-from shepherd_core.data_models import Wrapper
+from shepherd_core.data_models.base.wrapper import Wrapper
+from shepherd_core.data_models.content import EnergyEnvironment
+from shepherd_core.data_models.content import EnergyProfile
+from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.logger import log
 from typing_extensions import Self
 
@@ -357,6 +357,8 @@ def create_meta_data(params: Params = params_default) -> None:
 
     Combines data from hdf5-files itself and manually added descriptive data.
     """
+    wraps = []
+
     folder_path = params.root_path / params.dir_name
     name_ds = f"solar_{SDMNoRP.KXOB201K04F().name}"
 
@@ -389,11 +391,12 @@ def create_meta_data(params: Params = params_default) -> None:
         datatype=EnergyEnvironment.__name__,
         parameters=eenv.model_dump(exclude_none=True),
     ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
+    wraps.append(eenv_wrap)
 
     with (folder_path / f"_metadata_eenvs_{params.dir_name}.yaml").open(
         "w", encoding="utf-8"
     ) as fp:
-        ryaml.dump(fp, eenv_wrap)
+        ryaml.dump(fp, wraps)
 
 
 if __name__ == "__main__":

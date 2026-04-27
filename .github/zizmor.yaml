@@ -9,3 +9,4 @@ rules:
         pypa/*: ref-pin
         softprops/*: ref-pin
         sphinx-notes/*: ref-pin
+        py-cov-action/*: ref-pin

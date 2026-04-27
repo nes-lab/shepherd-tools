@@ -3,6 +3,8 @@ name: ShpData - Build, install & pytest
 on:
   workflow_call:
 
+permissions: {}
+
 jobs:
   utdata:
 

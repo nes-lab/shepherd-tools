@@ -9,7 +9,7 @@ from pydantic import Field
 from pydantic import model_validator
 from typing_extensions import Self
 
-from shepherd_core.config import config
+from shepherd_core.config import core_config
 from shepherd_core.data_models.base.calibration import CalibrationHarvester
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.logger import log
@@ -245,11 +245,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     @model_validator(mode="before")
     @classmethod
     def query_database(cls, values: dict[str, Any]) -> dict[str, Any]:
-        values, chain = tb_client.try_completing_model(cls.__name__, values)
-        values = tb_client.fill_in_user_data(values)
-        if values["name"] == "neutral":
-            # TODO: same test is later done in calc_algorithm_num() again
-            raise ValueError("Resulting Harvester can't be neutral")
+        values, chain = tb_client.complete_resource_model(cls.__name__, values)
         log.debug("VHrv-Inheritances: %s", chain)
 
         # post corrections -> should be in separate validator
@@ -303,9 +299,9 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     def calc_timings_ms(self, *, for_emu: bool) -> tuple[float, float]:
         """factor-in model-internal timing-constraints."""
         window_length = self.samples_n * (1 + self.wait_cycles)
-        time_min_ms = (1 + self.wait_cycles) * 1_000 / config.SAMPLERATE_SPS
+        time_min_ms = (1 + self.wait_cycles) * 1_000 / core_config.SAMPLERATE_SPS
         if for_emu:
-            window_ms = window_length * 1_000 / config.SAMPLERATE_SPS
+            window_ms = window_length * 1_000 / core_config.SAMPLERATE_SPS
             time_min_ms = max(time_min_ms, window_ms)
 
         interval_ms = min(max(self.interval_ms, time_min_ms), 1_000_000)
@@ -345,3 +341,11 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         if dtype_in == EnergyDType.isc_voc:
             return 2 * (1 + self.wait_cycles)
         raise NotImplementedError
+
+    def suited_for_emulator(self) -> bool:
+        num: int = ALGO_TO_NUM.get(self.algorithm, ALGO_TO_NUM["neutral"])
+        return num < ALGO_TO_NUM["isc_voc"] or num > ALGO_TO_NUM["ivcurve"]
+
+    def suited_for_harvester(self) -> bool:
+        num: int = ALGO_TO_NUM.get(self.algorithm, ALGO_TO_NUM["neutral"])
+        return num >= ALGO_TO_NUM["isc_voc"]

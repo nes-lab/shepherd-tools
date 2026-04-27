@@ -14,9 +14,8 @@ import numpy as np
 from pydantic import NonNegativeFloat
 from pydantic import NonNegativeInt
 from shepherd_core.data_models.base.shepherd import ShpModel
+from shepherd_core.reader import Reader as ShepherdReader
 from tqdm import trange
-
-from shepherd_core import Reader as ShepherdReader
 
 SHP_V1_STEP_WIDTH: int = 10_000  # 10 us
 SHP_V1_CHUNK_STEPS: int = 10_000  # 0.1 s chunks

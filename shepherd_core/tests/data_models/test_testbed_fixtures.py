@@ -4,10 +4,8 @@ from shepherd_core.data_models.testbed.gpio import GPIO
 from shepherd_core.data_models.testbed.mcu import MCU
 from shepherd_core.data_models.testbed.observer import Observer
 from shepherd_core.data_models.testbed.target import Target
-from shepherd_core.data_models.testbed.testbed import Testbed as TasteBad
+from shepherd_core.data_models.testbed.testbed import Testbed
 from shepherd_core.testbed_client.fixtures import Fixtures
-
-# ⤷ TasteBad avoids pytest-warning
 
 
 def test_testbed_fixture_cape() -> None:
@@ -44,5 +42,6 @@ def test_testbed_fixture_target() -> None:
 
 def test_testbed_fixture_tb() -> None:
     for fix in Fixtures()["Testbed"]:
-        TasteBad(name=fix["name"])
-        # TasteBad(id=fix["id"])
+        Testbed(name=fix["name"])
+        # Testbed(id=fix["id"])
+        # IDs partly removed in non-content models

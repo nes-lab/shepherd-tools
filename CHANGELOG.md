@@ -2,6 +2,53 @@
 
 ## v2026.4.2 unreleased
 
+This update brings performance improvements, fewer bugs and removes limitations that are problematic for additional future testbeds.
+
+**Breaking Changes:** The whole shepherd-software-stack will have to be updated.
+
+- major changes to internal imports of sub-modules, but API for the user should have stayed the same.
+- infrastructural validation of datamodels while creating experiments are now disabled by default -> this will be done by the client
+- modernize usage of `version` (now only hardcoded in pyproject.toml), `__version__` in ``__init__.py` was removed
+- rename config-structure of shepherd-core to core_config
+  - non-constant entries are now changed to lowercase (.testbed_name, .testbed_url, .validate_infrastructure)
+- WebClient is now named TestbedClient - it pulls status of testbed and get info about available resources:
+  - content like energy-environments, virtual-source configurations, ...
+  - testbed-components like target-boards, observer including positions, ...
+
+### Performance Optimizations
+
+User-facing API should load ~ 5x faster, see https://github.com/nes-lab/shepherd/issues/150 for benchmarks.
+
+- avoided importing several Models in higher level `__init__.py` (kept User-interface)
+  - mostly targeting non-user-facing models previously imported in `core.__init__` and `core.data_models.__init__`
+- refactored PRU-config-models (HarvesterPRUConfig, ConverterPRUConfig, StoragePRUConfig)
+- hide highlevel: CalibrationCape, CalibrationEmulator, CalibrationHarvester, CalibrationPair, CalibrationSeries
+- avoided instantiating expensive models that are defaults for other models more than once
+- moved expensive but rare imports into their respective sub-functions
+- replaced pyYAML with rYAML (speeds up loading fixtures)
+  - reduce IDs of datamodels to 8byte (from 16) to prevent a bug in rYAML
+- hide highlevel: WebClient, Inventory, fw-tools
+- improve fixture-client
+  - loading files with less validation -> is now done during unittesting
+  - fix caching on sheep
+- moved Compression-enum to content/enum_datatypes
+
+### Other
+
+- Writer now fails on filepaths without valid suffix
+- fix missing EEnvs in fixtureClient
+- content-models don't need ownership details (owner & group) if not also set to publicly visible
+- add support for instantiating neutral (root-model) virtualHarvesterConfig (this avoids edge-case-handling)
+- add instantiators for content and testbed-components: `instantiate_content()` and `instantiate_component`
+- test fixture-data extensively
+- make harvester-settings less dependent on actual IDs
+- avoid implicit instantiation of `Testbed()` i.e. in `.from_xp()`-functions to avoid funky behavior
+- add zizmor to find vulnerabilities in GH actions
+  - explicitly clear permissions of GH-actions and reduce elevation-surface
+- remove dead code
+- explicit file-encoding for text is now utf-8
+- add "SKEH-HAR" EEnv Dataset to TODO-list
+
 ## v2026.4.1
 
 - shepherd-data CLI

@@ -19,17 +19,6 @@
 
 - establish internal variables ``_var``
 - descriptions to parameters (docstring on sub-models)
-- @kai
-  - firmwares
-  - programmer-ports determine IC
-    - memory read - family-code, or write factory
-  - when tracing v_intermediate, also this current, or output?
-- ``objcopy -O ihex input.elf output.hex``
-  - ``-S`` will strip useless sections
-  - ``-I ihex -O elf32-littlearm`` for reversal is also possible
-    - TODO: try to find ``objdump -t [elf_file] | grep SHEPHERD_NODE_ID``
-
-- title in class might be rubbish
 
 - Warn about tricky syntax
   - defining sub-data-models in an experiment in python:
@@ -68,7 +57,7 @@ What does not work:
 ```Python
 from pathlib import Path
 from typing import Union
-from pydantic import root_validator
+from pydantic import model_validator
 from shepherd_core.data_models import Fixture
 from shepherd_core.data_models import ShpModel
 
@@ -76,11 +65,11 @@ fixtures = Fixture(Path("fix.yaml"), "testbed.target")
 
 
 class Target(ShpModel, title="Target Node (DuT)"):
-  @root_validator(pre=True)
-  def query_database(cls, values: Union[dict, str, int]):
-    values = fixtures.try_completing_model(values)
-    values, chain = fixtures.try_inheritance(values)
-    return values
+    @model_validator(mode="before")
+    @classmethod
+    def query_database(cls, values: Union[dict, str, int]):
+        values, _ = fixtures.complete_resource_model(values)
+        return values
 ```
 
 what might work:

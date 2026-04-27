@@ -1,6 +1,6 @@
 """Base-set of bounding math functions."""
 
-from shepherd_core import log
+from shepherd_core.logger import log
 
 U32_MAX: int = 2**32 - 1
 U64_MAX: int = 2**64 - 1
