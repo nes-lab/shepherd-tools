@@ -9,10 +9,8 @@ from pathlib import PurePosixPath
 from pydantic import BaseModel
 from pydantic import HttpUrl
 
-server_default = HttpUrl("https://shepherd.cfaed.tu-dresden.de:8000/")
 
-
-class CoreConfigDefault(BaseModel):
+class CoreConfig(BaseModel):
     """Container for a common configuration."""
 
     __slots__ = ()
@@ -21,16 +19,16 @@ class CoreConfigDefault(BaseModel):
     """ ⤷ name of the testbed to validate against - if enabled - see switch below.
           this name will be updated if a client connects to another testbed.
     """
-    testbed_url: HttpUrl = server_default
-    """ ⤷ Server that hosts the desired shepherd-API."""
-    testbed_timeout: int = 3
-    """ ⤷ requests will fail after this many seconds."""
     validate_infrastructure: bool = False
     """ ⤷ switch to turn on / off deep validation of data models also considering the current
     layout & infrastructure of the testbed.
     """
 
     # CONSTANTS below
+    TESTBED_SERVER: HttpUrl = "https://shepherd.cfaed.tu-dresden.de:8000/"
+    """ ⤷ Server that hosts the desired shepherd-API."""
+    TESTBED_TIMEOUT: int = 3
+    """ ⤷ requests will fail after this many seconds."""
 
     SAMPLERATE_SPS: int = 100_000
     """ ⤷ Rate of IV-Recording of the testbed."""
@@ -46,4 +44,4 @@ class CoreConfigDefault(BaseModel):
     }
 
 
-core_config = CoreConfigDefault()
+core_config = CoreConfig()
