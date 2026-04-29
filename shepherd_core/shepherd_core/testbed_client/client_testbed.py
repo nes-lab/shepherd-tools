@@ -55,7 +55,10 @@ class TestbedClient(AbcClient):
         self._auth: dict | None = None
         self._timeout: int = timeout if timeout is not None else core_config.TESTBED_TIMEOUT
 
-        self.testbed_status()
+        if self.is_connected():
+            self.testbed_status()
+        else:
+            log.warning("Cannot connect to server!")
         super().__init__()  # replaces default fixture-client
         core_config.testbed_name = self.testbed_name()
         core_config.validate_infrastructure = True
@@ -87,11 +90,18 @@ class TestbedClient(AbcClient):
         except JSONDecodeError:
             return f"{rsp.reason}"
 
+    def is_connected(self) -> bool:
+        try:
+            self.testbed_name()
+        except ConnectionError:
+            return False
+        return True
+
     # ####################################################################
     # Testbed-Status
     # ####################################################################
 
-    def testbed_status(self) -> bool:
+    def testbed_status(self, *, allow_dry_run: bool = False) -> bool:
         """Prints status of testbed-server and returns True is state is fine.
 
         Possible restrictions and warnings are explained in log.
@@ -113,7 +123,7 @@ class TestbedClient(AbcClient):
             dry_run = scheduler.get("dry_run")
             if dry_run:
                 log.warning("Scheduler is running in demo-mode (dry-run)!")
-                had_error = True
+                had_error |= not allow_dry_run
             targets_offline = scheduler.get("targets_offline")
             if isinstance(targets_offline, Collection) and len(targets_offline) > 0:
                 log.warning("One or more targets seem to be offline: %s", targets_offline)
