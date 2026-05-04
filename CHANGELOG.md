@@ -2,6 +2,11 @@
 
 ## v2026.5.1 unreleased
 
+- make `.model_dump()` more yaml-friendly with less special types
+- TestbedClient
+  - add `.is_connected()`
+  - allow dry-running to get a positive status (for unittests)
+
 ## v2026.4.2
 
 This update brings performance improvements, fewer bugs and removes limitations that are problematic for additional future testbeds.
