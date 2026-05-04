@@ -1,5 +1,6 @@
 """Generalized energy harvester data models."""
 
+import math
 from typing import Annotated
 from typing import final
 
@@ -93,7 +94,7 @@ class HarvesterPRUConfig(ShpModel):
             voltage_uV=round(data.voltage_mV * 10**3),
             voltage_min_uV=round(data.voltage_min_mV * 10**3),
             voltage_max_uV=round(data.voltage_max_mV * 10**3),
-            voltage_step_uV=round(voltage_step_mV * 10**3),
+            voltage_step_uV=math.ceil(voltage_step_mV * 10**3),
             current_limit_nA=round(data.current_limit_uA * 10**3),
             setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
             interval_n=round(interval_ms * core_config.SAMPLERATE_SPS * 1e-3),
