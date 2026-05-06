@@ -115,8 +115,8 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
     Only applicable to recording, not used in emulation.
 
-    Used together with `voltage_min_mV`, `voltage_max_mV`, `rising`, and
-    `wait_cycles`.
+    Used together with `voltage_min_mV`, `voltage_max_mV`, `rising`,
+    `wait_cycles` and `cutout_cycles`.
     """
 
     voltage_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_500
@@ -201,7 +201,17 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     """Ramp direction for sampling the IV curve.
 
     When set to true, sampling starts at the minimum voltage and ramps up to
-    the maximum.
+    the maximum. Both recorded IVSurfaces from a solar transducer differ from each other
+    in their ends of the voltage ramps.
+    @rising:
+    - after restarting the voltage ramp (jumping down to 0 V) the current is higher than it should
+    - this varies with the cell-type and illumination and hints at some capacitive load on the cell
+    - this can be cut out with
+    @falling:
+    - when the falling voltage ramp crosses V_OC, the current stays lower than expected
+      for the first samples
+    - note that the recorded voltage won't rise higher than VOC
+    Both effects are only relevant when I_SC or V_OC are used to calculate the MPP.
 
     See `samples_n` for further details.
     Not relevant for emulation.
@@ -234,13 +244,35 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     measurement performed by the analog-to-digital converter to allow the
     harvesting transducer to settle at the defined voltage.
 
+    In short:
+    - the first step in a measurement cycle is ADC-Sampling & DAC-Writing (in that order)
+    - further steps: waiting
+
     When recording with `IscVoc`, wait cycles should be added as the analog
     changes are more significant.
 
     Not relevant for emulation.
     """
+    cutout_cycles: Annotated[int, Field(ge=0, le=100)] = 0
+    """
+    The wait duration for the analog frontend after restarting a voltage-ramp
+    when recording an IVSurface.
 
-    # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
+    The analog frontend needs ~2 cycles to handle large transitions like 5 V.
+    Solar cells add extra capacitance to the frontend and make the transition slower.
+    A good default is 5.
+
+    Default cutout-behavior is to hold the previous values before the cutout.
+    An alternative could be to set values to V_max = 0x3FFF (18 bit raw), I_min = 0x0000.
+    But that could interfere with simple V_OC algorithms.
+    This setting is mostly meant to avoid post-processing before using the traces for emulation.
+    To avoid interfering with the window_size-calculations, this cutout happens at the beginning
+    of the IVCurve-window and will influence V_OC or I_SC values (depending on .rising).
+
+    Not relevant for emulation.
+    """
+    # TODO: add triangle-mode for IVSurface recording? default is sawtooth
+    # TODO: cutout could be automatic (additional switch)
 
     @model_validator(mode="before")
     @classmethod

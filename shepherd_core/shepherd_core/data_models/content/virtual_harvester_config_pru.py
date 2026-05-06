@@ -43,6 +43,8 @@ class HarvesterPRUConfig(ShpModel):
     """ ⤷ of measurement"""
     wait_cycles_n: u32
     """ ⤷ for DAC to settle"""
+    cutout_cycles_n: u32
+    """ ⤷ for large voltage-ramp transitions / resets to settle"""
 
     @classmethod
     def from_vhrv(
@@ -86,6 +88,11 @@ class HarvesterPRUConfig(ShpModel):
                 "For correct emulation specify voltage_step used by harvester "
                 "e.g. via file_src.get_voltage_step()"
             )
+        if window_size <= data.cutout_cycles:
+            raise ValueError(
+                "Misconfiguration detected as vHrv.cutout_cycles is "
+                "larger than the actual window_size."
+            )
 
         return cls(
             algorithm=data.calc_algorithm_num(for_emu=for_emu),
@@ -100,4 +107,5 @@ class HarvesterPRUConfig(ShpModel):
             interval_n=round(interval_ms * core_config.SAMPLERATE_SPS * 1e-3),
             duration_n=round(duration_ms * core_config.SAMPLERATE_SPS * 1e-3),
             wait_cycles_n=data.wait_cycles,
+            cutout_cycles_n=data.cutout_cycles,
         )
