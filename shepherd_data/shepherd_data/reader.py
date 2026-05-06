@@ -190,6 +190,8 @@ class Reader(CoreReader):
         :param start_n: start-sample
         :param end_n: ending-sample (not included)
         :param ds_factor: sampling-factor
+            TODO: there is no fast-path to when ds-factor is 1
+            TODO: test if it alters data
         :param is_time: time is not really down-sampled, but decimated
         :return: resampled h5-dataset or numpy-array
         """
@@ -302,10 +304,11 @@ class Reader(CoreReader):
             raise ValueError(msg)
         if ((end_sample - start_sample) / ds_factor) < 1000:
             msg = (
-                f"Cut & downsample for {self.file_path.name} failed because "
+                f"Cut & downsample (factor={ds_factor}) for {self.file_path.name} failed because "
                 f"resulting sample-size is too small",
             )
             raise ValueError(msg)
+        # TODO: small datasets might still be discarded as they are aligned to 0.1 s -> check
         # assemble file-name of output
         if not math.isclose(start_s, 0.0) or not math.isclose(end_s, self.runtime_s):
             start_str = f"{start_s:.3f}".replace(".", "s")
