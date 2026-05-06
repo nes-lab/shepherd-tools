@@ -88,11 +88,12 @@ class HarvesterPRUConfig(ShpModel):
                 "For correct emulation specify voltage_step used by harvester "
                 "e.g. via file_src.get_voltage_step()"
             )
-        if window_size <= data.cutout_cycles:
-            raise ValueError(
+        if (data.cutout_cycles > 0) and (window_size <= data.cutout_cycles):
+            msg = (
                 "Misconfiguration detected as vHrv.cutout_cycles is "
-                "larger than the actual window_size."
+                f"larger than the actual window_size ({data.cutout_cycles} vs {window_size})."
             )
+            raise ValueError(msg)
 
         return cls(
             algorithm=data.calc_algorithm_num(for_emu=for_emu),
