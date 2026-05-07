@@ -6,6 +6,12 @@
 - TestbedClient
   - add `.is_connected()`
   - allow dry-running to get a positive status (for unittests)
+- virtualHarvesterConfig - ivSurface-recording
+  - bugfix - unlock full voltage range
+  - add `cutout_cycles`-parameter
+  - add `enable_automatic_cutout` parameter
+  - improve documentation of some paramaters
+  - documentation for cutout modes can be found here: https://github.com/nes-lab/shepherd/blob/main/docs/user/virtual_harvester.md#ivsurface---transition-cutout
 
 ## v2026.4.2
 

@@ -319,7 +319,12 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return self
 
     def calc_hrv_mode(self, *, for_emu: bool) -> int:
-        return 1 * int(for_emu) + 2 * self.rising + 4 * self.enable_linear_extrapolation
+        return (
+            1 * int(for_emu)
+            + 2 * self.rising
+            + 4 * self.enable_linear_extrapolation
+            + 8 * self.enable_automatic_cutout
+        )
 
     def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num: int = ALGO_TO_NUM.get(self.algorithm, ALGO_TO_NUM["neutral"])
