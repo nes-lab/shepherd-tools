@@ -94,6 +94,10 @@ class HarvesterPRUConfig(ShpModel):
                 f"larger than the actual window_size ({data.cutout_cycles} vs {window_size})."
             )
             raise ValueError(msg)
+        cutout_cycles = (
+            # min length needed for automatic mode (otherwise it won't work at all)
+            max(1, data.cutout_cycles) if data.enable_automatic_cutout else data.cutout_cycles
+        )
 
         return cls(
             algorithm=data.calc_algorithm_num(for_emu=for_emu),
@@ -108,5 +112,5 @@ class HarvesterPRUConfig(ShpModel):
             interval_n=round(interval_ms * core_config.SAMPLERATE_SPS * 1e-3),
             duration_n=round(duration_ms * core_config.SAMPLERATE_SPS * 1e-3),
             wait_cycles_n=data.wait_cycles,
-            cutout_cycles_n=data.cutout_cycles,
+            cutout_cycles_n=cutout_cycles,
         )

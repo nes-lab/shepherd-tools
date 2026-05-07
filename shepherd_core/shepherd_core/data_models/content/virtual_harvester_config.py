@@ -234,7 +234,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     """
 
     # Underlying recorder
-    wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
+    wait_cycles: Annotated[int, Field(ge=0, le=100)] = 0
     """
     The wait duration to let the analog frontend settle before taking a
     measurement.
@@ -271,8 +271,17 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
     Not relevant for emulation.
     """
+    enable_automatic_cutout: bool = False
+    """ Automatic mode works by
+        - gets activated during reset of voltage-ramp
+        - hold the previous adc-samples during that transition
+        - check if transition is complete to disable cutout
+          (i.e. if rising of voltage stops for a falling ramp)
+        - compensation for noise via `cutout_cycles`-parameter acting as buffer
+          (forgiving that number of cycles that can violate condition before ending the cutout)
+    """
+
     # TODO: add triangle-mode for IVSurface recording? default is sawtooth
-    # TODO: cutout could be automatic (additional switch)
 
     @model_validator(mode="before")
     @classmethod
