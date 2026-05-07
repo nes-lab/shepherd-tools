@@ -206,7 +206,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     @rising:
     - after restarting the voltage ramp (jumping down to 0 V) the current is higher than it should
     - this varies with the cell-type and illumination and hints at some capacitive load on the cell
-    - this can be cut out with
+    - this can be avoided with `cutout_cycles` and `enable_automatic_cutout`
     @falling:
     - when the falling voltage ramp crosses V_OC, the current stays lower than expected
       for the first samples
@@ -258,7 +258,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     The wait duration for the analog frontend after restarting a voltage-ramp
     when recording an IVSurface.
 
-    The analog frontend needs ~2 cycles to handle large transitions like 5 V.
+    The analog frontend needs a bit more than a cycle to handle large 5 V transitions.
     Solar cells add extra capacitance to the frontend and make the transition slower.
     A good default is 5.
 
