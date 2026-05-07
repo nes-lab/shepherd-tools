@@ -2,6 +2,10 @@
 
 ## v2026.5.1 unreleased
 
+- additional model parameters are now ignored instead of forbidden
+  - a dedicated root-validator is warning about them though
+  - avoiding exceptions should be more user-friendly as it won't raise exceptions
+  - this should help with
 - make `.model_dump()` more yaml-friendly with less special types
 - TestbedClient
   - add `.is_connected()`

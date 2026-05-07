@@ -214,6 +214,7 @@ def test_experiment_model_gpiotracing_min() -> None:
     GpioTracing()
 
 
+@pytest.mark.xfail  # extra fields are now ignored
 def test_experiment_model_gpiotracing_fault_mask() -> None:
     with pytest.raises(ValidationError):
         GpioTracing(mask=0)
