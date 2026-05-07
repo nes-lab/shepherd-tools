@@ -204,14 +204,27 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     the maximum. Both recorded IVSurfaces from a solar transducer differ from each other
     in their ends of the voltage ramps.
     @rising:
-    - after restarting the voltage ramp (jumping down to 0 V) the current is higher than it should
-    - this varies with the cell-type and illumination and hints at some capacitive load on the cell
+    - after restarting the voltage ramp (jumping down to 0 V), the current is higher than it should.
+    - as a result, the power-trace has an undesired spike.
+    - this behavior varies with the cell-type and illumination and hints
+      at some capacitive load on the cell.
     - this can be avoided with `cutout_cycles` and `enable_automatic_cutout`
+    - note that the 0 V level (I_SC) is lost for this mode, because it is hidden
+      in the transition-period or the cutout
+    - there is another unwanted effect that raises the Voltage slightly higher
+      when the ramp crosses V_OC.
+    - due to the design of the harvesting-circuit the recorded voltage shouldn't rise
+      higher than V_OC.
     @falling:
+    - after restarting the voltage ramp (jumping up to 5 V), the voltage step is rounded off.
+    - in addition, a small spike can be found in the power-trace.
+    - the transition-phase (or cutout) usually falls in the part of the voltage ramp that is
+      above the V_OC, so no information is lost.
     - when the falling voltage ramp crosses V_OC, the current stays lower than expected
       for the first samples
     - note that the recorded voltage won't rise higher than VOC
-    Both effects are only relevant when I_SC or V_OC are used to calculate the MPP.
+    Both effects are mostly relevant when I_SC or V_OC are used to calculate the MPP.
+    Due to less side-effects, the falling ramp is recommended for recordings solar cells.
 
     See `samples_n` for further details.
     Not relevant for emulation.

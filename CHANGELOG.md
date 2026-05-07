@@ -10,7 +10,7 @@
   - bugfix - unlock full voltage range
   - add `cutout_cycles`-parameter
   - add `enable_automatic_cutout` parameter
-  - improve documentation of some paramaters
+  - improve documentation of some parameters
   - documentation for cutout modes can be found here: https://github.com/nes-lab/shepherd/blob/main/docs/user/virtual_harvester.md#ivsurface---transition-cutout
 
 ## v2026.4.2
