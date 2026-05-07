@@ -38,6 +38,8 @@
     voltage_min_mV: 0
     voltage_max_mV: 5000
     wait_cycles: 0
+    enable_automatic_cutout: true
+    cutout_cycles: 3  # works as extra buffer when automatic mode is on
     rising: false # downward sawtooth seems to have advantages for solar cells
     # todo: also add switch for sawtooth- vs triangle-wave?
     # todo: could also include a version with dynamic upper-boundary, varied if voc is reached very early
@@ -62,6 +64,8 @@
     inherit_from: ivcurve
     samples_n: 100
     wait_cycles: 0
+    enable_automatic_cutout: true
+    cutout_cycles: 3 # works as extra buffer when automatic mode is on
 
 - datatype: VirtualHarvesterConfig
   parameters:

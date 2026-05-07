@@ -115,8 +115,8 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
 
     Only applicable to recording, not used in emulation.
 
-    Used together with `voltage_min_mV`, `voltage_max_mV`, `rising`, and
-    `wait_cycles`.
+    Used together with `voltage_min_mV`, `voltage_max_mV`, `rising`,
+    `wait_cycles` and `cutout_cycles`.
     """
 
     voltage_mV: Annotated[float, Field(ge=0, le=5_000)] = 2_500
@@ -201,7 +201,30 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     """Ramp direction for sampling the IV curve.
 
     When set to true, sampling starts at the minimum voltage and ramps up to
-    the maximum.
+    the maximum. Both recorded IVSurfaces from a solar transducer differ from each other
+    in their ends of the voltage ramps.
+    @rising:
+    - after restarting the voltage ramp (jumping down to 0 V), the current is higher than it should.
+    - as a result, the power-trace has an undesired spike.
+    - this behavior varies with the cell-type and illumination and hints
+      at some capacitive load on the cell.
+    - this can be avoided with `cutout_cycles` and `enable_automatic_cutout`
+    - note that the 0 V level (I_SC) is lost for this mode, because it is hidden
+      in the transition-period or the cutout
+    - there is another unwanted effect that raises the Voltage slightly higher
+      when the ramp crosses V_OC.
+    - due to the design of the harvesting-circuit the recorded voltage shouldn't rise
+      higher than V_OC.
+    @falling:
+    - after restarting the voltage ramp (jumping up to 5 V), the voltage step is rounded off.
+    - in addition, a small spike can be found in the power-trace.
+    - the transition-phase (or cutout) usually falls in the part of the voltage ramp that is
+      above the V_OC, so no information is lost.
+    - when the falling voltage ramp crosses V_OC, the current stays lower than expected
+      for the first samples
+    - note that the recorded voltage won't rise higher than VOC
+    Both effects are mostly relevant when I_SC or V_OC are used to calculate the MPP.
+    Due to less side-effects, the falling ramp is recommended for recordings solar cells.
 
     See `samples_n` for further details.
     Not relevant for emulation.
@@ -224,7 +247,7 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     """
 
     # Underlying recorder
-    wait_cycles: Annotated[int, Field(ge=0, le=100)] = 1
+    wait_cycles: Annotated[int, Field(ge=0, le=100)] = 0
     """
     The wait duration to let the analog frontend settle before taking a
     measurement.
@@ -234,13 +257,44 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
     measurement performed by the analog-to-digital converter to allow the
     harvesting transducer to settle at the defined voltage.
 
+    In short:
+    - the first step in a measurement cycle is ADC-Sampling & DAC-Writing (in that order)
+    - further steps: waiting
+
     When recording with `IscVoc`, wait cycles should be added as the analog
     changes are more significant.
 
     Not relevant for emulation.
     """
+    cutout_cycles: Annotated[int, Field(ge=0, le=100)] = 0
+    """
+    The wait duration for the analog frontend after restarting a voltage-ramp
+    when recording an IVSurface.
 
-    # ⤷ first cycle: ADC-Sampling & DAC-Writing, further steps: waiting
+    The analog frontend needs a bit more than a cycle to handle large 5 V transitions.
+    Solar cells add extra capacitance to the frontend and make the transition slower.
+    A good default is 5.
+
+    Default cutout-behavior is to hold the previous values before the cutout.
+    An alternative could be to set values to V_max = 0x3FFF (18 bit raw), I_min = 0x0000.
+    But that could interfere with simple V_OC algorithms.
+    This setting is mostly meant to avoid post-processing before using the traces for emulation.
+    To avoid interfering with the window_size-calculations, this cutout happens at the beginning
+    of the IVCurve-window and will influence V_OC or I_SC values (depending on .rising).
+
+    Not relevant for emulation.
+    """
+    enable_automatic_cutout: bool = False
+    """ Automatic mode works by
+        - gets activated during reset of voltage-ramp
+        - hold the previous adc-samples during that transition
+        - check if transition is complete to disable cutout
+          (i.e. if rising of voltage stops for a falling ramp)
+        - compensation for noise via `cutout_cycles`-parameter acting as buffer
+          (forgiving that number of cycles that can violate condition before ending the cutout)
+    """
+
+    # TODO: add triangle-mode for IVSurface recording? default is sawtooth
 
     @model_validator(mode="before")
     @classmethod
@@ -278,7 +332,12 @@ class VirtualHarvesterConfig(ContentModel, title="Config for the Harvester"):
         return self
 
     def calc_hrv_mode(self, *, for_emu: bool) -> int:
-        return 1 * int(for_emu) + 2 * self.rising + 4 * self.enable_linear_extrapolation
+        return (
+            1 * int(for_emu)
+            + 2 * self.rising
+            + 4 * self.enable_linear_extrapolation
+            + 8 * self.enable_automatic_cutout
+        )
 
     def calc_algorithm_num(self, *, for_emu: bool) -> int:
         num: int = ALGO_TO_NUM.get(self.algorithm, ALGO_TO_NUM["neutral"])

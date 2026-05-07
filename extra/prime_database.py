@@ -71,7 +71,7 @@ if __name__ == "__main__":
             model_wrap = Wrapper(
                 datatype=type(model).__name__,
                 created=local_now(),
-                parameters=model.model_dump(),
+                parameters=model.model_dump(mode="json"),
             ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
             fixtures.append(model_wrap)
 

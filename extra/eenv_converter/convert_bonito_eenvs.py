@@ -280,7 +280,7 @@ def create_meta_data(path_dir: Path = root_storage_default) -> None:
         wraps.append(
             Wrapper(
                 datatype=EnergyEnvironment.__name__,
-                parameters=eenv.model_dump(exclude_none=True),
+                parameters=eenv.model_dump(exclude_none=True, mode="json"),
             ).model_dump(mode="json", exclude_unset=True, exclude_defaults=True)
         )
 

@@ -1,6 +1,19 @@
 # History of Changes
 
-## v2026.4.2 unreleased
+## v2026.5.1 unreleased
+
+- make `.model_dump()` more yaml-friendly with less special types
+- TestbedClient
+  - add `.is_connected()`
+  - allow dry-running to get a positive status (for unittests)
+- virtualHarvesterConfig - ivSurface-recording
+  - bugfix - unlock full voltage range
+  - add `cutout_cycles`-parameter
+  - add `enable_automatic_cutout` parameter
+  - improve documentation of some parameters
+  - documentation for cutout modes can be found here: https://github.com/nes-lab/shepherd/blob/main/docs/user/virtual_harvester.md#ivsurface---transition-cutout
+
+## v2026.4.2
 
 This update brings performance improvements, fewer bugs and removes limitations that are problematic for additional future testbeds.
 

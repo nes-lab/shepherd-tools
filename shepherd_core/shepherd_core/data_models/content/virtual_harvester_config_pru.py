@@ -1,5 +1,6 @@
 """Generalized energy harvester data models."""
 
+import math
 from typing import Annotated
 from typing import final
 
@@ -42,6 +43,8 @@ class HarvesterPRUConfig(ShpModel):
     """ ⤷ of measurement"""
     wait_cycles_n: u32
     """ ⤷ for DAC to settle"""
+    cutout_cycles_n: u32
+    """ ⤷ for large voltage-ramp transitions / resets to settle"""
 
     @classmethod
     def from_vhrv(
@@ -85,6 +88,16 @@ class HarvesterPRUConfig(ShpModel):
                 "For correct emulation specify voltage_step used by harvester "
                 "e.g. via file_src.get_voltage_step()"
             )
+        if (data.cutout_cycles > 0) and (window_size <= data.cutout_cycles):
+            msg = (
+                "Misconfiguration detected as vHrv.cutout_cycles is "
+                f"larger than the actual window_size ({data.cutout_cycles} vs {window_size})."
+            )
+            raise ValueError(msg)
+        cutout_cycles = (
+            # min length needed for automatic mode (otherwise it won't work at all)
+            max(1, data.cutout_cycles) if data.enable_automatic_cutout else data.cutout_cycles
+        )
 
         return cls(
             algorithm=data.calc_algorithm_num(for_emu=for_emu),
@@ -93,10 +106,11 @@ class HarvesterPRUConfig(ShpModel):
             voltage_uV=round(data.voltage_mV * 10**3),
             voltage_min_uV=round(data.voltage_min_mV * 10**3),
             voltage_max_uV=round(data.voltage_max_mV * 10**3),
-            voltage_step_uV=round(voltage_step_mV * 10**3),
+            voltage_step_uV=math.ceil(voltage_step_mV * 10**3),
             current_limit_nA=round(data.current_limit_uA * 10**3),
             setpoint_n8=round(min(255, data.setpoint_n * 2**8)),
             interval_n=round(interval_ms * core_config.SAMPLERATE_SPS * 1e-3),
             duration_n=round(duration_ms * core_config.SAMPLERATE_SPS * 1e-3),
             wait_cycles_n=data.wait_cycles,
+            cutout_cycles_n=cutout_cycles,
         )
