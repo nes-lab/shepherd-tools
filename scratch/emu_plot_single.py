@@ -1,14 +1,4 @@
-"""Test of possible GPIO-Plotting-Options.
-
-# convert float and timestamps to seconds
-prep took 7.859579 seconds
-plot took 0.113836 seconds
-
-# work with native timestamps
-prep took 7.873491 seconds
-plot took 0.082016 seconds
-
-"""
+"""Test of possible GPIO-Plotting-Options."""
 
 from datetime import datetime
 from pathlib import Path
@@ -35,7 +25,7 @@ def extract_gpio_data(self, start_s: float, end_s: float) -> dict[str, np.ndarra
     if not isinstance(start_s, (float, int)):
         start_s = 0
     if not isinstance(end_s, (float, int)):
-        end_s = self.runtime_s  # TODO: this is iv-sample-time, this can be missing
+        end_s = self.runtime_s  # TODO: this is from iv-samples, can be missing
     start_s = max(0, start_s)
     end_s = min(self.runtime_s, end_s)
 
@@ -48,35 +38,30 @@ def extract_gpio_data(self, start_s: float, end_s: float) -> dict[str, np.ndarra
     timestamp_stop_ns = int((timestamp_zero + end_s) * 1e9)
 
     result_data: dict[str, np.ndarray] = {}
-    for gpio_name in gpio_names:
+
+    # TODO: could also plot just a subset of GPIOs
+    # TODO: the slowness is in .get_gpio_waveforms()
+    wfs = shpr.get_gpio_waveforms()
+    for gpio_name, wf in wfs.items():
         logger.info("\t .. processing '%s'", gpio_name)
-        wfs = shpr.get_gpio_waveforms(gpio_name)
-        for gpio_name2, wf in wfs.items():
-            # prepare time-format
-            # gpio_wf = wf.astype(float)
-            # gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9 - timestamp_zero
-            gpio_wf = wf
-            # prevent empty
-            if len(gpio_wf) < 1:
-                logger.warning(" ... was empty")
-                gpio_wf = np.array([[0, 0]])
-            # filter time-slot, also add padding to fix incomplete drawing
-            idx_start = np.searchsorted(gpio_wf[:, 0], timestamp_start_ns, side="left")
-            idx_stop = np.searchsorted(gpio_wf[:, 0], timestamp_stop_ns, side="left")
-            if idx_start < 1:
-                gpio_wf = np.vstack([gpio_wf[0], gpio_wf])
-                idx_start += 1
-                idx_stop += 1
-            if idx_stop >= len(gpio_wf) - 1:
-                gpio_wf = np.vstack([gpio_wf, gpio_wf[-1]])
-            gpio_wf = gpio_wf[idx_start - 1 : idx_stop + 1]
-            # convert time-format
-            # TODO: only if relative is wanted
-            gpio_wf = gpio_wf.astype(float)
-            gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9 - timestamp_zero
-            gpio_wf[0, 0] = start_s
-            gpio_wf[-1, 0] = end_s
-            result_data[gpio_name2] = gpio_wf
+        if len(wf) < 1: # prevent empty
+            logger.warning(" ... was empty")
+            continue
+            # gpio_wf = np.array([[0, 0]])
+        # filter time-slot, also add padding to fix incomplete drawing of sparse waveforms
+        idx_start = np.searchsorted(wf[:, 0], timestamp_start_ns, side="left")
+        idx_stop = idx_start + np.searchsorted(wf[idx_start:, 0], timestamp_stop_ns, side="right")
+        pad_start = wf[0] if idx_start < 1 else wf[idx_start - 1]
+        pad_end = wf[-1] if (idx_stop > len(wf)) else wf[idx_stop - 1]
+        # TODO: can be simplified, when stop-search switches to side=right
+        gpio_wf = np.vstack([pad_start, wf[idx_start:idx_stop], pad_end])
+        # convert time-format
+        # TODO: only if relative is wanted
+        gpio_wf = gpio_wf.astype(float)
+        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9 - timestamp_zero
+        gpio_wf[0, 0] = start_s
+        gpio_wf[-1, 0] = end_s
+        result_data[gpio_name] = gpio_wf
     return result_data
 
 
