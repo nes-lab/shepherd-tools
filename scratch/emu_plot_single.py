@@ -1,9 +1,20 @@
-"""Test of possible GPIO-Plotting-Options."""
+"""Test of possible GPIO-Plotting-Options.
+
+# convert float and timestamps to seconds
+prep took 7.859579 seconds
+plot took 0.113836 seconds
+
+# work with native timestamps
+prep took 7.873491 seconds
+plot took 0.082016 seconds
+
+"""
 
 from datetime import datetime
 from pathlib import Path
 
 import numpy as np
+from dateutil.tz import UTC
 from matplotlib import pyplot as plt
 from shepherd_core.logger import log as logger
 
@@ -15,15 +26,26 @@ files = [
 time_start = 4
 time_stop = 10
 
-def extract_gpio_data(self, time_start, time_stop) -> dict[str, np.ndarray] | None:
+
+def extract_gpio_data(self, start_s: float, end_s: float) -> dict[str, np.ndarray] | None:
     gpio_names = self.get_gpio_pin_names()
     if not isinstance(gpio_names, list):
         return None
+
+    if not isinstance(start_s, (float, int)):
+        start_s = 0
+    if not isinstance(end_s, (float, int)):
+        end_s = self.runtime_s  # TODO: this is iv-sample-time, this can be missing
+    start_s = max(0, start_s)
+    end_s = min(self.runtime_s, end_s)
+
     time_zero = shpr.get_time_start()
     if isinstance(time_zero, datetime):
-        timestamp = time_zero.timestamp()
+        timestamp_zero = time_zero.timestamp()
     else:
-        timestamp = shpr.h5file["gpio"]["time"][0] / 1e9
+        timestamp_zero = float(shpr.h5file["gpio"]["time"][0]) / 1e9
+    timestamp_start_ns = int((timestamp_zero + start_s) * 1e9)
+    timestamp_stop_ns = int((timestamp_zero + end_s) * 1e9)
 
     result_data: dict[str, np.ndarray] = {}
     for gpio_name in gpio_names:
@@ -31,15 +53,16 @@ def extract_gpio_data(self, time_start, time_stop) -> dict[str, np.ndarray] | No
         wfs = shpr.get_gpio_waveforms(gpio_name)
         for gpio_name2, wf in wfs.items():
             # prepare time-format
-            gpio_wf = wf.astype(float)
-            gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9 - timestamp
+            # gpio_wf = wf.astype(float)
+            # gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9 - timestamp_zero
+            gpio_wf = wf
             # prevent empty
             if len(gpio_wf) < 1:
                 logger.warning(" ... was empty")
                 gpio_wf = np.array([[0, 0]])
             # filter time-slot, also add padding to fix incomplete drawing
-            idx_start = np.searchsorted(gpio_wf[:, 0], time_start, side="left")
-            idx_stop = np.searchsorted(gpio_wf[:, 0], time_stop, side="left")
+            idx_start = np.searchsorted(gpio_wf[:, 0], timestamp_start_ns, side="left")
+            idx_stop = np.searchsorted(gpio_wf[:, 0], timestamp_stop_ns, side="left")
             if idx_start < 1:
                 gpio_wf = np.vstack([gpio_wf[0], gpio_wf])
                 idx_start += 1
@@ -47,8 +70,12 @@ def extract_gpio_data(self, time_start, time_stop) -> dict[str, np.ndarray] | No
             if idx_stop >= len(gpio_wf) - 1:
                 gpio_wf = np.vstack([gpio_wf, gpio_wf[-1]])
             gpio_wf = gpio_wf[idx_start - 1 : idx_stop + 1]
-            gpio_wf[0, 0] = time_start
-            gpio_wf[-1, 0] = time_stop
+            # convert time-format
+            # TODO: only if relative is wanted
+            gpio_wf = gpio_wf.astype(float)
+            gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9 - timestamp_zero
+            gpio_wf[0, 0] = start_s
+            gpio_wf[-1, 0] = end_s
             result_data[gpio_name2] = gpio_wf
     return result_data
 
@@ -88,17 +115,13 @@ def plot_gpio_data(data: dict[str, np.ndarray], *, show_gui: bool = False) -> No
 
 for file in files:
     with Reader(file, verbose=False) as shpr:
-        ts_start = datetime.now()
+        ts_start = datetime.now(tz=UTC)
         data = extract_gpio_data(shpr, time_start, time_stop)
-        duration = datetime.now() - ts_start
+        duration = datetime.now(tz=UTC) - ts_start
         logger.info(f"prep took {duration.total_seconds()} seconds")
         if data is None:
             continue
-    ts_start = datetime.now()
+    ts_start = datetime.now(tz=UTC)
     plot_gpio_data(data)
-    duration = datetime.now() - ts_start
+    duration = datetime.now(tz=UTC) - ts_start
     logger.info(f"plot took {duration.total_seconds()} seconds")
-
-
-
-
