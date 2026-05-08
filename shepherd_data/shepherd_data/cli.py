@@ -432,6 +432,12 @@ def downsample(
     is_flag=True,
     help="Also consider files in sub-folders",
 )
+@click.option(
+    "--show-gui",
+    "-g",
+    is_flag=True,
+    help="Open PyPlot-Window, which allows basic zoom & pan (in addition to plotting to file).",
+)
 # TODO: allow SVG-output
 # TODO: allow opt-harvest iv-samples
 def plot(
@@ -444,6 +450,7 @@ def plot(
     multiplot: bool,
     only_power: bool,
     recurse: bool = False,
+    show_gui: bool = False,
 ) -> None:
     """Plot IV-trace from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data, recurse=recurse)
@@ -460,12 +467,16 @@ def plot(
                         continue
                     data.append(date)
                 else:
-                    shpr.plot_to_file(start, end, width, height, only_pwr=only_power)
+                    shpr.plot_to_file(
+                        start, end, width, height, only_pwr=only_power, show_gui=show_gui
+                    )
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
     if multiplot:
         logger.info("Got %d datasets to plot", len(data))
-        mpl_path = Reader.multiplot_to_file(data, in_data, width, height, only_pwr=only_power)
+        mpl_path = Reader.multiplot_to_file(
+            data, in_data, width, height, only_pwr=only_power, show_gui=show_gui
+        )
         if mpl_path:
             logger.info("Plot generated and saved to '%s'", mpl_path.name)
         else:
