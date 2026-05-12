@@ -13,8 +13,8 @@ from shepherd_data import Reader
 files = [
     Path(__file__).parent / "sheep05.h5",
 ]
-time_start = 4
-time_stop = 10
+time_start = 5.431
+time_stop = 5.432
 
 
 def extract_gpio_data(self, start_s: float, end_s: float) -> dict[str, np.ndarray] | None:
@@ -37,24 +37,18 @@ def extract_gpio_data(self, start_s: float, end_s: float) -> dict[str, np.ndarra
     timestamp_start_ns = int((timestamp_zero + start_s) * 1e9)
     timestamp_stop_ns = int((timestamp_zero + end_s) * 1e9)
 
-    result_data: dict[str, np.ndarray] = {}
-
     # TODO: could also plot just a subset of GPIOs
-    # TODO: the slowness is in .get_gpio_waveforms()
-    wfs = shpr.get_gpio_waveforms()
+    wfs = shpr.get_gpio_waveforms(ts_start_ns=timestamp_start_ns, ts_end_ns=timestamp_stop_ns)
+    result_data: dict[str, np.ndarray] = {}
     for gpio_name, wf in wfs.items():
-        logger.info("\t .. processing '%s'", gpio_name)
-        if len(wf) < 1: # prevent empty
-            logger.warning(" ... was empty")
+        if len(wf) < 1:  # prevent empty
+            logger.warning(" ... '%s' is empty -> skip", gpio_name)
             continue
-            # gpio_wf = np.array([[0, 0]])
-        # filter time-slot, also add padding to fix incomplete drawing of sparse waveforms
-        idx_start = np.searchsorted(wf[:, 0], timestamp_start_ns, side="left")
-        idx_stop = idx_start + np.searchsorted(wf[idx_start:, 0], timestamp_stop_ns, side="right")
-        pad_start = wf[0] if idx_start < 1 else wf[idx_start - 1]
-        pad_end = wf[-1] if (idx_stop > len(wf)) else wf[idx_stop - 1]
-        # TODO: can be simplified, when stop-search switches to side=right
-        gpio_wf = np.vstack([pad_start, wf[idx_start:idx_stop], pad_end])
+        # add padding to fix incomplete drawing of waveforms
+        # padding of start -> if timestamp @ idx_start > start_s, set to opposite of value@idx_start
+        #                     OR previous entry -> .get_gpio_waveforms() already added it!
+        # padding of end -> repeat value of idx_stop
+        gpio_wf = np.vstack([wf[:], wf[-1]])
         # convert time-format
         # TODO: only if relative is wanted
         gpio_wf = gpio_wf.astype(float)
@@ -76,7 +70,8 @@ def plot_gpio_data(data: dict[str, np.ndarray], *, show_gui: bool = False) -> No
         # arrange waveforms on single plot
         y_offset = 1.2 * (gpio_count - _i - 1)
         gpio_wf[:, 1] = gpio_wf[:, 1] + y_offset
-        ax.step(gpio_wf[:, 0], gpio_wf[:, 1], label=gpio_name)
+        ax.step(gpio_wf[:, 0], gpio_wf[:, 1], where="post", label=gpio_name)
+        # the "where" is important, as the default is 'pre'?
         x_offset = time_start + 0.02 * (time_stop - time_start)
         plt.text(x_offset, y_offset + 0.4, gpio_name, size="medium", alpha=0.7)
 
