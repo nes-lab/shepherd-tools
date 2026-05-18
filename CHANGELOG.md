@@ -5,7 +5,9 @@
 - additional model parameters are now ignored instead of forbidden
   - a dedicated root-validator is warning about them though
   - avoiding exceptions should be more user-friendly as it won't raise exceptions
-  - this should help with
+  - this should help with longterm compat between versions
+  - old behavior can be activated with `raise_for_extra_fields()`
+- add `--show-gui`/`-g` to data-CLI to show a pyplot-GUI (allows zooming)
 - make `.model_dump()` more yaml-friendly with less special types
 - TestbedClient
   - add `.is_connected()`

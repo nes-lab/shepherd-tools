@@ -3,9 +3,9 @@ from collections.abc import Generator
 from datetime import timedelta
 
 import pytest
-from shepherd_core.data_models.base.shepherd import raise_for_extra_fields
 from pydantic import ValidationError
 from shepherd_core.config import core_config
+from shepherd_core.data_models.base.shepherd import raise_for_extra_fields
 from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import EnergyProfile
