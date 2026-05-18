@@ -598,7 +598,8 @@ class Reader(CoreReader):
         height: int = 10,
         *,
         only_pwr: bool = False,
-    ) -> None:
+        show_gui: bool = False,
+    ) -> Path | None:
         """Create (down-sampled) IV-Plots.
 
         Omitting start- and end-time will use the whole trace (full duration).
@@ -610,23 +611,27 @@ class Reader(CoreReader):
         :param only_pwr: plot power-trace instead of voltage, current & power
         """
         if not isinstance(self.file_path, Path):
-            return
+            return None
 
         data = self.generate_plot_data(start_s, end_s)
         if data is None:
-            return
+            return None
 
         start_str = f"{data['start_s']:.3f}".replace(".", "s")
         end_str = f"{data['end_s']:.3f}".replace(".", "s")
         plot_path = self.file_path.resolve().with_suffix(f".plot_{start_str}_to_{end_str}.png")
         if plot_path.exists():
             self._logger.warning("Plot exists, will skip & not overwrite!")
-            return
+            return None
         self._logger.info("Plot generated, will be saved to '%s'", plot_path.name)
         fig = self.assemble_plot(data, width, height, only_pwr=only_pwr)
         plt.savefig(plot_path)
+        if show_gui:  # opens pyplot-window
+            plt.ion()
+            plt.show(block=True)
         plt.close(fig)
         plt.clf()
+        return plot_path
 
     @staticmethod
     def multiplot_to_file(
@@ -636,6 +641,7 @@ class Reader(CoreReader):
         height: int = 10,
         *,
         only_pwr: bool = False,
+        show_gui: bool = False,
     ) -> Path | None:
         """Create (down-sampled) IV-Multi-Plots (of more than one trace).
 
@@ -656,6 +662,9 @@ class Reader(CoreReader):
             return None
         fig = Reader.assemble_plot(data, width, height, only_pwr=only_pwr)
         plt.savefig(plot_path)
+        if show_gui:  # opens pyplot-window
+            plt.ion()
+            plt.show(block=True)
         plt.close(fig)
         plt.clf()
         return plot_path

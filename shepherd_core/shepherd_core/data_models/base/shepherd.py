@@ -10,10 +10,24 @@ from typing import final
 import ryaml
 from pydantic import BaseModel
 from pydantic import ConfigDict
+from pydantic import model_validator
 from typing_extensions import Self
+
+from shepherd_core.logger import log
 
 from .timezone import local_now
 from .wrapper import Wrapper
+
+only_warn_extra_fields: bool = True
+
+
+def raise_for_extra_fields() -> None:
+    """Instead of warning, raise an exception without mercy.
+
+    This is useful for the web-server
+    """
+    global only_warn_extra_fields  # noqa: PLW0603
+    only_warn_extra_fields = False
 
 
 def path_to_str(old: dict) -> dict:
@@ -49,7 +63,8 @@ class ShpModel(BaseModel):
 
     model_config = ConfigDict(
         frozen=True,  # -> const after creation, hashable! but currently manually with .get_hash()
-        extra="forbid",  # no unnamed attributes allowed
+        extra="ignore",
+        # ⤷ additional parameters get ignored (validator below is warning about them)
         validate_default=True,
         validate_assignment=True,  # not relevant for the frozen model
         str_min_length=1,  # force more meaningful descriptors,
@@ -98,6 +113,22 @@ class ShpModel(BaseModel):
         """Fn of dict."""
         for key in self.keys():
             yield key, self.__getattribute__(key)
+
+    @model_validator(mode="before")
+    @classmethod
+    def __alert_extra_field__(cls, values: dict[str, Any]) -> dict[str, Any]:
+        if isinstance(values, dict) and (
+            extra_fields := values.keys()
+            - cls.model_fields.keys()
+            - {v.alias for v in cls.model_fields.values()}
+        ):
+            if only_warn_extra_fields:
+                log.warning("%s is ignoring extra fields: %s", cls.__name__, extra_fields)
+            else:
+                msg = f"{cls.__name__} contains extra fields: {extra_fields}"
+                raise ValueError(msg)
+
+        return values
 
     @final
     @classmethod
