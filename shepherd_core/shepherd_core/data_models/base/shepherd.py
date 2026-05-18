@@ -18,6 +18,17 @@ from shepherd_core.logger import log
 from .timezone import local_now
 from .wrapper import Wrapper
 
+only_warn_extra_fields: bool = True
+
+
+def raise_for_extra_fields() -> None:
+    """Instead of warning, raise an exception without mercy.
+
+    This is useful for the web-server
+    """
+    global only_warn_extra_fields  # noqa: PLW0603
+    only_warn_extra_fields = False
+
 
 def path_to_str(old: dict) -> dict:
     r"""Allow platform-independent pickling of ShpModel.
@@ -52,7 +63,8 @@ class ShpModel(BaseModel):
 
     model_config = ConfigDict(
         frozen=True,  # -> const after creation, hashable! but currently manually with .get_hash()
-        extra="ignore",  # additional parameters get ignored (validator below is warning about them)
+        extra="ignore",
+        # ⤷ additional parameters get ignored (validator below is warning about them)
         validate_default=True,
         validate_assignment=True,  # not relevant for the frozen model
         str_min_length=1,  # force more meaningful descriptors,
@@ -110,7 +122,11 @@ class ShpModel(BaseModel):
             - cls.model_fields.keys()
             - {v.alias for v in cls.model_fields.values()}
         ):
-            log.warning("%s is ignoring extra fields: %s", cls.__name__, extra_fields)
+            if only_warn_extra_fields:
+                log.warning("%s is ignoring extra fields: %s", cls.__name__, extra_fields)
+            else:
+                msg = f"{cls.__name__} contains extra fields: {extra_fields}"
+                raise ValueError(msg)
 
         return values
 

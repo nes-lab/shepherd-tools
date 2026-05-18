@@ -3,6 +3,7 @@ from collections.abc import Generator
 from datetime import timedelta
 
 import pytest
+from shepherd_core.data_models.base.shepherd import raise_for_extra_fields
 from pydantic import ValidationError
 from shepherd_core.config import core_config
 from shepherd_core.data_models.base.timezone import local_now
@@ -216,6 +217,13 @@ def test_experiment_model_gpiotracing_min() -> None:
 
 @pytest.mark.xfail  # extra fields are now ignored
 def test_experiment_model_gpiotracing_fault_mask() -> None:
+    with pytest.raises(ValidationError):
+        GpioTracing(mask=0)
+
+
+def test_experiment_model_gpiotracing_fault_mask_raise() -> None:
+    # extra fields are now ignored by default - so reactivate raise-mode
+    raise_for_extra_fields()
     with pytest.raises(ValidationError):
         GpioTracing(mask=0)
 
