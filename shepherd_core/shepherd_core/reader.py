@@ -706,7 +706,7 @@ class Reader:
         return None
 
     @staticmethod
-    def get_filter_for_redundant_states(data: np.ndarray) -> np.ndarray:
+    def get_filter_for_redundant_states(data: np.ndarray) -> np.ndarray | None:
         """Input is 1D state-vector, kep only first from identical & sequential states.
 
         Algo: create an offset-by-one vector and compare against original.
@@ -714,7 +714,7 @@ class Reader:
         if len(data.shape) > 1:
             raise ValueError("Array must be 1D")
         if data.shape[0] < 1:
-            return data == data
+            return None
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 
@@ -752,9 +752,11 @@ class Reader:
 
         # filter time-slot - index can be deliberately out of bound!
         # TODO: combine .searchsorted(), as both trigger a binary search (can save 50% time)
-        idx_start = np.searchsorted(gpio_ts, ts_start_ns, side="left") if ts_start_ns else None
+        idx_start = np.searchsorted(gpio_ts, int(ts_start_ns), side="left") if ts_start_ns else None
         idx_stop = (
-            np.searchsorted(gpio_ts[idx_start:], ts_end_ns, side="right") if ts_end_ns else None
+            np.searchsorted(gpio_ts[idx_start:], int(ts_end_ns), side="right")
+            if ts_end_ns
+            else None
         )
 
         if idx_start is not None:
@@ -774,6 +776,8 @@ class Reader:
                 continue
             gpio_ps = (gpio_vs[:] & (0b1 << pin_num)) > 0
             gpio_filter = self.get_filter_for_redundant_states(gpio_ps)
+            if gpio_filter is None:
+                continue
             waveforms[pin_name] = np.column_stack((gpio_ts[gpio_filter], gpio_ps[gpio_filter]))
 
         return waveforms

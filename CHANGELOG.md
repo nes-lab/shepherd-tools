@@ -1,6 +1,10 @@
 # History of Changes
 
-## v2026.5.1 unreleased
+## v2026.5.2 unreleased
+
+- make extraction of GPIO more robust (avoid exception if not available)
+
+## v2026.5.1
 
 - additional model parameters are now ignored instead of forbidden
   - a dedicated root-validator is warning about them though
