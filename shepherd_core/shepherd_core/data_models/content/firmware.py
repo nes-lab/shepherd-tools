@@ -154,7 +154,9 @@ class Firmware(ContentModel, title="Firmware of Target"):
                     if ("nrf52" in arch or "arm" in arch) and not fw_tools.is_elf_nrf52(file):
                         raise ValueError("File is not a ELF for nRF52")
                 except RuntimeError:
-                    log.warning("ObjCopy not found -> Arch of Firmware can't be verified")
+                    log.warning(
+                        "ObjCopy not found -> Arch of Firmware (= %s) can't be verified", arch
+                    )
                 log.debug("ELF-File '%s' has arch: %s", file.name, arch)
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
