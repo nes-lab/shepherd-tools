@@ -101,8 +101,11 @@ class Firmware(ContentModel, title="Firmware of Target"):
     ) -> Self:
         """Embeds firmware and tries to fill parameters.
 
-        ELF -> mcu und data_type are deducted
-        HEX -> must supply mcu manually.
+        ELF -> mcu und data_type are deducted automatically.
+        HEX -> must supply mcu or arch manually.
+
+        To avoid auto-deduction and the need for local tooling (elf-tools, binutils, objutils)
+        the user can set the arch-argument to 'msp430' or 'nrf52'
         """
         from shepherd_core import fw_tools  # noqa: PLC0415
 
@@ -119,7 +122,10 @@ class Firmware(ContentModel, title="Firmware of Target"):
             kwargs["data_type"] = suffix_to_DType[file.suffix.lower()]
 
         if kwargs["data_type"] == FirmwareDType.base64_hex:
-            if fw_tools.is_hex_msp430(file):
+            if "arch" in kwargs:  # avoid auto-deduction of arch
+                arch = kwargs.pop("arch")
+                # ⤷ will also remove entry from dict
+            elif fw_tools.is_hex_msp430(file):
                 arch = "msp430"
             elif fw_tools.is_hex_nrf52(file):
                 arch = "nrf52"
@@ -131,15 +137,27 @@ class Firmware(ContentModel, title="Firmware of Target"):
         # verification of ELF - warn if something is off
         # -> adds ARCH if it is able to derive
         if kwargs["data_type"] == FirmwareDType.base64_elf:
-            arch = fw_tools.read_arch(file)
-            try:
-                if "msp430" in arch and not fw_tools.is_elf_msp430(file):
-                    raise ValueError("File is not a ELF for msp430")
-                if ("nrf52" in arch or "arm" in arch) and not fw_tools.is_elf_nrf52(file):
-                    raise ValueError("File is not a ELF for nRF52")
-            except RuntimeError:
-                log.warning("ObjCopy not found -> Arch of Firmware can't be verified")
-            log.debug("ELF-File '%s' has arch: %s", file.name, arch)
+            if "arch" in kwargs:  # avoid auto-deduction of arch
+                arch = kwargs.pop("arch")
+                # ⤷ will also remove entry from dict
+            else:
+                arch = fw_tools.read_arch(file)
+                if arch is None:
+                    msg = (
+                        "Arch of Firmware couldn't be deducted - "
+                        "please specify arch (msp430 | nrf52) manually."
+                    )
+                    raise TypeError(msg)
+                try:
+                    if "msp430" in arch and not fw_tools.is_elf_msp430(file):
+                        raise ValueError("File is not a ELF for msp430")
+                    if ("nrf52" in arch or "arm" in arch) and not fw_tools.is_elf_nrf52(file):
+                        raise ValueError("File is not a ELF for nRF52")
+                except RuntimeError:
+                    log.warning(
+                        "ObjCopy not found -> Arch of Firmware (= %s) can't be verified", arch
+                    )
+                log.debug("ELF-File '%s' has arch: %s", file.name, arch)
             if "mcu" not in kwargs:
                 kwargs["mcu"] = arch_to_mcu[arch]
 

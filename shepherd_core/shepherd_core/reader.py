@@ -261,6 +261,7 @@ class Reader:
         )
 
     def get_time_start(self) -> datetime | None:
+        """Timestamp of first IV-Sample."""
         if self.samples_n < 1:
             return None
         return datetime.fromtimestamp(self._cal.time.raw_to_si(self.ds_time[0]), tz=local_tz())
@@ -705,13 +706,15 @@ class Reader:
         return None
 
     @staticmethod
-    def get_filter_for_redundant_states(data: np.ndarray) -> np.ndarray:
+    def get_filter_for_redundant_states(data: np.ndarray) -> np.ndarray | None:
         """Input is 1D state-vector, kep only first from identical & sequential states.
 
         Algo: create an offset-by-one vector and compare against original.
         """
         if len(data.shape) > 1:
             raise ValueError("Array must be 1D")
+        if data.shape[0] < 1:
+            return None
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 
@@ -719,7 +722,21 @@ class Reader:
     def gpio_to_waveforms(self, name: str | None = None) -> dict:
         return self.get_gpio_waveforms(name)
 
-    def get_gpio_waveforms(self, name: str | None = None) -> dict:
+    def get_gpio_waveforms(
+        self,
+        name: str | None = None,
+        ts_start_ns: float | None = None,
+        ts_end_ns: float | None = None,
+    ) -> dict:
+        """Preprocess data-stream to separate gpio-waveforms.
+
+        The raw data consists of a single time-series for the whole gpio-array.
+        An entry documents >= 1 bit-flip in the stream and has an attached 8-byte timestamp.
+        The output of this fn is a dict with the gpio-name and a dedicated timeseries.
+        Note that if you use limiting timestamps the series will have a single out-of-bound entry.
+        This is needed to derive the initial state for properly plotting the waveform.
+        """
+        # TODO: extend to take a list of names
         waveforms: dict[str, np.ndarray] = {}
         if "gpio" not in self.h5file:
             return waveforms
@@ -728,22 +745,41 @@ class Reader:
         gpio_vs = self.h5file["gpio"]["value"]
 
         if name is None:
-            descriptions = ryaml.loads(self.h5file["gpio"]["value"].attrs["description"])
+            descriptions = ryaml.loads(gpio_vs.attrs["description"])
             pin_dict: dict[str, int] = {value["name"]: key for key, value in descriptions.items()}
         else:
             pin_dict: dict[str, int | None] = {name: self.get_gpio_pin_num(name)}
+
+        # filter time-slot - index can be deliberately out of bound!
+        # TODO: combine .searchsorted(), as both trigger a binary search (can save 50% time)
+        idx_start = np.searchsorted(gpio_ts, int(ts_start_ns), side="left") if ts_start_ns else None
+        idx_stop = (
+            np.searchsorted(gpio_ts[idx_start:], int(ts_end_ns), side="right")
+            if ts_end_ns
+            else None
+        )
+
+        if idx_start is not None:
+            if idx_stop is not None:
+                # as we start searching @ idx_start, we have to add it
+                idx_stop = idx_stop + idx_start
+            if idx_start > 0:
+                # add a single out-of-bound entry to get the state @ ts_start
+                idx_start = idx_start - 1
+        if idx_start is not None or idx_stop is not None:
+            # cut once instead of every time in loop
+            gpio_ts = gpio_ts[idx_start:idx_stop]
+            gpio_vs = gpio_vs[idx_start:idx_stop]
 
         for pin_name, pin_num in pin_dict.items():
             if not isinstance(pin_num, int):
                 continue
             gpio_ps = (gpio_vs[:] & (0b1 << pin_num)) > 0
-            gpio_f = self.get_filter_for_redundant_states(gpio_ps)
-            waveforms[pin_name] = np.column_stack((gpio_ts[gpio_f], gpio_ps[gpio_f]))
-            self._logger.debug(
-                "GPIO '%s' has %d state-changes (includes initial state)",
-                pin_name,
-                sum(gpio_f),
-            )
+            gpio_filter = self.get_filter_for_redundant_states(gpio_ps)
+            if gpio_filter is None:
+                continue
+            waveforms[pin_name] = np.column_stack((gpio_ts[gpio_filter], gpio_ps[gpio_filter]))
+
         return waveforms
 
     def waveform_to_csv(self, pin_name: str, pin_wf: np.ndarray, separator: str = ",") -> None:

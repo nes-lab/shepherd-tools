@@ -1,6 +1,13 @@
 # History of Changes
 
-## v2026.5.1 unreleased
+## v2026.6.1 unreleased
+
+- make extraction of GPIO more robust (avoid exception if not available)
+- allow to skip auto-deduction when using Firmware.from_firmware() by setting `arch`-argument
+  - example: `Firmware.from_firmware(file_path, arch="nrf52")`
+- inform about deducted firmware arch (if deducted)
+
+## v2026.5.1
 
 - additional model parameters are now ignored instead of forbidden
   - a dedicated root-validator is warning about them though
