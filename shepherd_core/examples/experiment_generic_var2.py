@@ -43,6 +43,7 @@ exp = sm.Experiment(
             energy_env=sm.EnergyEnvironment(name="synthetic_static_3000mV_50mA"),
             firmware1=sm.Firmware.from_firmware(
                 file=Path("./firmware_nrf.elf").absolute(),
+                arch="nrf52",  # this avoids auto-deduction
             ),
             power_tracing=None,
             gpio_tracing=sm.GpioTracing(),
