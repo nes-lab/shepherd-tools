@@ -89,7 +89,7 @@
     ip: 192.168.165.207
     mac: 18:62:E4:E4:39:D7
     room: II54
-    eth_port: K20
+    eth_port: L8
     description: upper mid on east wall
     cape:
       name: cape2025_EMU_018
