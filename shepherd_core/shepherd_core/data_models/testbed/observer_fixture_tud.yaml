@@ -20,9 +20,9 @@
     name: sheep02
     ip: 192.168.165.202
     mac: 18:62:E4:D0:DE:3F
-    room: II66
-    eth_port: A18
-    description: south-west corner of office
+    room: II52
+    eth_port: K20
+    description: lower mid on west wall
     cape:
       name: cape2025_EMU_019
     target_a:
@@ -88,9 +88,9 @@
     name: sheep07
     ip: 192.168.165.207
     mac: 18:62:E4:E4:39:D7
-    room: II66
-    eth_port: A20
-    description: north-west corner of office
+    room: II54
+    eth_port: K20
+    description: upper mid on east wall
     cape:
       name: cape2025_EMU_018
     target_a:
