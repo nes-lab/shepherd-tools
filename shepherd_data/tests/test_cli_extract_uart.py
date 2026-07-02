@@ -21,5 +21,5 @@ def test_cli_extract_uart_file_min(data_h5: Path) -> None:
 
 
 def test_cli_extract_uart_dir_full(data_h5: Path) -> None:
-    res = CliRunner().invoke(cli, ["--verbose", "extract-meta", str(data_h5.parent)])
+    res = CliRunner().invoke(cli, ["--verbose", "extract-uart", str(data_h5.parent)])
     assert res.exit_code != 0
