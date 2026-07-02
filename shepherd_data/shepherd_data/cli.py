@@ -194,8 +194,8 @@ def extract_meta(
                 if "uart" in shpr.h5file:
                     shpr.save_log(shpr["uart"])
 
+                logs_meta = ["sheep", "kernel", "ntp", "ptp_log", "phc2sys_log"]
                 logs_depr = ["shepherd-log", "dmesg", "exceptions"]
-                logs_meta = ["sheep", "kernel", "ntp"]
                 for element in logs_meta + logs_depr:
                     if element in shpr.h5file:
                         if debug:
@@ -205,8 +205,8 @@ def extract_meta(
                         shpr.warn_logs(element, show=True)
                 if not debug:
                     continue
-                csv_depr = ["sysutil", "timesync"]
                 csv_meta = ["ptp", "phc2sys", "sys_util", "pru_util", "power"]
+                csv_depr = ["sysutil", "timesync"]
                 for element in csv_meta + csv_depr:
                     if element in shpr.h5file:
                         shpr.save_csv(shpr[element], separator)
@@ -214,7 +214,7 @@ def extract_meta(
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
-@cli.command()
+@cli.command("Extract only UART-logs from shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
@@ -236,9 +236,10 @@ def extract_uart(in_data: Path, *, recurse: bool = False, text_only: bool = Fals
         logger.info("Extracting UART-log from '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                shpr.save_metadata()
                 if "uart" in shpr.h5file:
                     shpr.save_log(shpr["uart"], add_timestamp=not text_only)
+                else:
+                    logger.warning("No UART found in '%s' -> will skip", file.name)
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
@@ -456,26 +457,24 @@ def plot(
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
     multiplot = multiplot and len(files) > 1
-    data = []
+    data_observers: dict[str, dict] = {}
     for file in files:
         logger.info("Generating plot for '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
                 if multiplot:
-                    date = shpr.generate_plot_data(start, end, relative_timestamp=True)
-                    if date is None:
-                        continue
-                    data.append(date)
+                    data_observers[shpr.get_hostname()] = shpr.generate_plot_data(start, end)
                 else:
+                    # TODO: this also calls generate_plot_data -> simplify
                     shpr.plot_to_file(
                         start, end, width, height, only_pwr=only_power, show_gui=show_gui
                     )
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
     if multiplot:
-        logger.info("Got %d datasets to plot", len(data))
+        logger.info("Got %d datasets to plot", len(data_observers))
         mpl_path = Reader.multiplot_to_file(
-            data, in_data, width, height, only_pwr=only_power, show_gui=show_gui
+            data_observers, in_data, width, height, only_pwr=only_power, show_gui=show_gui
         )
         if mpl_path:
             logger.info("Plot generated and saved to '%s'", mpl_path.name)
