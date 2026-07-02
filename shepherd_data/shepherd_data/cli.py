@@ -194,8 +194,8 @@ def extract_meta(
                 if "uart" in shpr.h5file:
                     shpr.save_log(shpr["uart"])
 
+                logs_meta = ["sheep", "kernel", "ntp", "ptp_log", "phc2sys_log"]
                 logs_depr = ["shepherd-log", "dmesg", "exceptions"]
-                logs_meta = ["sheep", "kernel", "ntp"]
                 for element in logs_meta + logs_depr:
                     if element in shpr.h5file:
                         if debug:
@@ -205,8 +205,8 @@ def extract_meta(
                         shpr.warn_logs(element, show=True)
                 if not debug:
                     continue
-                csv_depr = ["sysutil", "timesync"]
                 csv_meta = ["ptp", "phc2sys", "sys_util", "pru_util", "power"]
+                csv_depr = ["sysutil", "timesync"]
                 for element in csv_meta + csv_depr:
                     if element in shpr.h5file:
                         shpr.save_csv(shpr[element], separator)
