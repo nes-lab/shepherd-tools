@@ -49,8 +49,8 @@ def process_mp(worker_cfgs: list[tuple[Callable, dict[str, Any]]]) -> None:
         def exit_pool(_signum: int, _frame: FrameType | None) -> None:
             """Provide custom exit handler that closes the pool."""
             pool.terminate()
-            log.warning("Exiting!")
-            sys.exit(0)
+            log.warning("Exiting from signal %d!", _signum)
+            sys.exit(128 + _signum)
 
         # TODO: at least windows is not exiting correctly
         activate_exit_handler(exit_pool)
