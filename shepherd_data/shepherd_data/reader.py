@@ -117,7 +117,7 @@ class Reader(CoreReader):
                     for key in datasets:
                         try:
                             message = str(h5_group[key][idx])
-                        except OSError:
+                        except (OSError, IndexError):
                             message = "[[[ Extractor | faulty element ]]]"
                         log_file.write(f"\t{message}")
                     log_file.write("\n")
@@ -127,7 +127,7 @@ class Reader(CoreReader):
                     for key in datasets:
                         try:
                             message = h5_group[key][idx]
-                        except OSError:
+                        except (OSError, IndexError):
                             message = b"[[[ Extractor | faulty element ]]]"
                         log_file.write(message)
         return h5_group["time"].shape[0]
