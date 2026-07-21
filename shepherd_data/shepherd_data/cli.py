@@ -194,8 +194,8 @@ def extract_meta(
                 if "uart" in shpr.h5file:
                     shpr.save_log(shpr["uart"])
 
+                logs_meta = ["sheep", "kernel", "ntp", "ptp_log", "phc2sys_log"]
                 logs_depr = ["shepherd-log", "dmesg", "exceptions"]
-                logs_meta = ["sheep", "kernel", "ntp"]
                 for element in logs_meta + logs_depr:
                     if element in shpr.h5file:
                         if debug:
@@ -205,8 +205,8 @@ def extract_meta(
                         shpr.warn_logs(element, show=True)
                 if not debug:
                     continue
-                csv_depr = ["sysutil", "timesync"]
                 csv_meta = ["ptp", "phc2sys", "sys_util", "pru_util", "power"]
+                csv_depr = ["sysutil", "timesync"]
                 for element in csv_meta + csv_depr:
                     if element in shpr.h5file:
                         shpr.save_csv(shpr[element], separator)
@@ -214,7 +214,7 @@ def extract_meta(
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
-@cli.command()
+@cli.command("Extract only UART-logs from shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",
@@ -236,9 +236,10 @@ def extract_uart(in_data: Path, *, recurse: bool = False, text_only: bool = Fals
         logger.info("Extracting UART-log from '%s' ...", file.name)
         try:
             with Reader(file, verbose=verbose_level > 2) as shpr:
-                shpr.save_metadata()
                 if "uart" in shpr.h5file:
                     shpr.save_log(shpr["uart"], add_timestamp=not text_only)
+                else:
+                    logger.warning("No UART found in '%s' -> will skip", file.name)
         except TypeError:
             logger.exception("ERROR: Will skip file. It caused an exception.")
 

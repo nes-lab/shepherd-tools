@@ -1,6 +1,12 @@
 # History of Changes
 
-## v2026.6.1 unreleased
+## v2026.7.1 unreleased
+
+- all CLI-tools exit non-zero when receiving external signal
+- adapt fixtures to current testbed structure
+- add new logs for ptp and phc to automatic extractor (`extract-meta`)
+
+## v2026.6.1
 
 - make extraction of GPIO more robust (avoid exception if not available)
 - allow to skip auto-deduction when using Firmware.from_firmware() by setting `arch`-argument

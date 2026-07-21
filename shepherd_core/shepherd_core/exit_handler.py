@@ -10,8 +10,8 @@ from .logger import log
 
 def exit_gracefully(_signum: int, _frame: FrameType | None) -> None:
     """Usual exit handler for single-processing applications."""
-    log.warning("Exiting!")
-    sys.exit(0)
+    log.warning("Exiting from signal %d!", _signum)
+    sys.exit(128 + _signum)
 
 
 def activate_exit_handler(custom: Callable = exit_gracefully) -> None:
