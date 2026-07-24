@@ -75,7 +75,7 @@ class Writer(Reader):
     _CHUNK_SHAPE: tuple = (Reader.CHUNK_SAMPLES_N,)
 
     @validate_call
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         file_path: Path,
         mode: str | None = None,

@@ -66,7 +66,7 @@ class SDMNoRP:
     T_stc: float = 25 + const.zero_Celsius  # 25 C in Kelvin
     g_stc: float = 1000  # W/m2
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         name: str,
         I_SC_stc: float,
@@ -213,7 +213,7 @@ class MultivarRndWalk(EEnvGenerator):
     a voltage ramp to generate surfaces.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         node_count: int,
         seed: int | None,

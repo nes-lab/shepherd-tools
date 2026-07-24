@@ -13,7 +13,7 @@ from shepherd_core.reader import Reader
 from shepherd_core.writer import Writer
 
 
-def generate_shp_file(
+def generate_shp_file(  # noqa: PLR0917
     store_path: Path,
     mode: str | None = None,
     datatype: str | None = None,
