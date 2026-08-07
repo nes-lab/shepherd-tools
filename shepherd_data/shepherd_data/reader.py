@@ -305,7 +305,7 @@ class Reader(CoreReader):
         if ((end_sample - start_sample) / ds_factor) < 1000:
             msg = (
                 f"Cut & downsample (factor={ds_factor}) for {self.file_path.name} failed because "
-                f"resulting sample-size is too small",
+                f"resulting sample-size is too small"
             )
             raise ValueError(msg)
         # TODO: small datasets might still be discarded as they are aligned to 0.1 s -> check

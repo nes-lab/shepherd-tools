@@ -1,6 +1,10 @@
 # History of Changes
 
-## v2026.7.1 unreleased
+## v2026.8.1 unreleased
+
+- bugfix for missing CLI command `extract-uart`
+
+## v2026.7.1
 
 - all CLI-tools exit non-zero when receiving external signal
 - adapt fixtures to current testbed structure

@@ -50,7 +50,7 @@ class RndPeriodicWindowGenerator(EEnvGenerator):
     duty cycle matches the given value.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         node_count: int,
         seed: int | list[int] | None,

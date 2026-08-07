@@ -257,8 +257,10 @@ class EnergyEnvironment(ContentModel):
             data["modifications"] = deepcopy(
                 [
                     *self.modifications,
-                    f"EEnv '{self.name}' - added EnergyProfile {rvalue.data_path.stem}, "
-                    f"ID [{self.id}->{id_new}]",
+                    (
+                        f"EEnv '{self.name}' - added EnergyProfile {rvalue.data_path.stem}, "
+                        f"ID [{self.id}->{id_new}]"
+                    ),
                 ]
             )
             data["energy_profiles"] = deepcopy([*self.energy_profiles, rvalue])
@@ -270,8 +272,10 @@ class EnergyEnvironment(ContentModel):
                 data["modifications"] = deepcopy(
                     [
                         *self.modifications,
-                        f"EEnv '{self.name}' - added list of {len(rvalue)} EnergyProfiles, "
-                        f"ID[{self.id}->{id_new}]",
+                        (
+                            f"EEnv '{self.name}' - added list of {len(rvalue)} EnergyProfiles, "
+                            f"ID[{self.id}->{id_new}]"
+                        ),
                     ]
                 )
                 data["energy_profiles"] = deepcopy(self.energy_profiles + rvalue)
@@ -282,8 +286,11 @@ class EnergyEnvironment(ContentModel):
                 [
                     *self.modifications,
                     *rvalue.modifications,
-                    f"EEnv '{self.name}' - added EEnv {rvalue.name} with {len(rvalue)} entries, "
-                    f"ID[{self.id}->{id_new}]",
+                    (
+                        f"EEnv '{self.name}' - "
+                        f"added EEnv {rvalue.name} with {len(rvalue)} entries, "
+                        f"ID[{self.id}->{id_new}]"
+                    ),
                 ]
             )
             data["metadata"] = deepcopy({**rvalue.metadata, **self.metadata})

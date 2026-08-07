@@ -49,7 +49,7 @@ class RndIndepPatternGenerator(EEnvGenerator):
     duty cycle and on duration match the given values using a markov process.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         node_count: int,
         seed: int | list[int] | None,

@@ -214,7 +214,7 @@ def extract_meta(
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 
-@cli.command("Extract only UART-logs from shepherd-recordings")
+@cli.command(short_help="Extract only UART-logs from shepherd-recordings")
 @click.argument("in_data", type=click.Path(exists=True, resolve_path=True))
 @click.option(
     "--recurse",

@@ -203,7 +203,7 @@ class VirtualStorageConfig(ContentModel, title="Config for the virtual energy st
 
     @classmethod
     @validate_call
-    def capacitor(
+    def capacitor(  # noqa: PLR0917
         cls,
         C_uF: PositiveFloat,
         V_rated: PositiveFloat,
