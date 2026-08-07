@@ -287,7 +287,8 @@ class EnergyEnvironment(ContentModel):
                     *self.modifications,
                     *rvalue.modifications,
                     (
-                        f"EEnv '{self.name}' - added EEnv {rvalue.name} with {len(rvalue)} entries, "
+                        f"EEnv '{self.name}' - "
+                        f"added EEnv {rvalue.name} with {len(rvalue)} entries, "
                         f"ID[{self.id}->{id_new}]"
                     ),
                 ]
