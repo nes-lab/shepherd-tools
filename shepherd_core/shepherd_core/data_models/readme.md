@@ -39,10 +39,12 @@ from typing import Dict
 from pydantic import Field
 from shepherd_core.data_models import ShpModel
 
+
 class Experiment(ShpModel, title="Config of an Experiment"):
     def __init__(self):  # test to add doc after creation ⇾ to avoid Field()
         super().__init__()
         self.Config.fields["output_path"].description = "test description"
+
     class Config:
         fields: Dict[str, Field] = {}
         fields["output_path"] = Field(description="test description")
