@@ -56,6 +56,7 @@ class Uart:
         inversion: bool | None = None,
         parity: Parity | None = Parity.no,
         bit_order: BitOrder | None = BitOrder.lsb_first,
+        delimiter: str = ",",
     ) -> None:
         """Provide a file with two columns: TS & Signal.
 
@@ -67,7 +68,9 @@ class Uart:
           (some detectors still missing).
         """
         if isinstance(content, Path):
-            self.events_sig: np.ndarray = np.loadtxt(content.as_posix(), delimiter=",", skiprows=1)
+            self.events_sig: np.ndarray = np.loadtxt(
+                content.as_posix(), delimiter=delimiter, skiprows=1
+            )
             # TODO: if float fails load as str -
             #  cast first col as np.datetime64 with ns-resolution, convert to delta
         else:
@@ -81,7 +84,9 @@ class Uart:
         # verify timestamps
         time_steps = self.events_sig[1:, 0] - self.events_sig[:-1, 0]
         if any(time_steps < 0):
-            raise TypeError("Timestamps are not continuous")
+            steps_negative = np.where(time_steps < 0)
+            msg = f"Timestamps are not continuous (@pos: {steps_negative[:10]})"
+            raise TypeError(msg)
 
         # prepare samples & process params (order is important)
         self._convert_analog2digital()
@@ -236,7 +241,7 @@ class Uart:
                     chunk = min(steps, self.frame_length - pos_df - 1)
                     lshift = min(pos_df, self.frame_length - 1)
                     symbol += (2 ** round(chunk) - 1) << lshift
-                pos_df += round(steps)
+                pos_df = max(0, pos_df + round(steps))
                 off_tick = abs(steps - round(steps)) > 0.1
                 if pos_df >= self.frame_length or (off_tick and value):
                     # end of frame -> reset
