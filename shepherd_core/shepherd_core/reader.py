@@ -788,9 +788,9 @@ class Reader:
             self._logger.info("File already exists, will skip '%s'", path_csv.name)
             return
         with path_csv.open("w", encoding="utf-8") as csv:
-            csv.write(f"timestamp [s],{pin_name}\n")
+            csv.write(f"timestamp [s]{separator} {pin_name}\n")
             for row in pin_wf:
-                csv.write(f"{row[0] / 1e9}{separator}{int(row[1])}\n")
+                csv.write(f"{row[0] / 1e9}{separator} {int(row[1])}\n")
 
     def waveform_to_uart_log(
         self, gpio_name: str, gpio_wf: np.ndarray, *, add_timestamps: bool = True
