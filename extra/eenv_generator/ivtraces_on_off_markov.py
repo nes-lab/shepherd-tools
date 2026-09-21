@@ -31,7 +31,7 @@ class Params(BaseModel):
     currents: set[float] = {10e-3}
     on_durations: set[float] = {100e-6, 500e-6, 1e-3, 5e-3}
     duty_cycles: set[float] = {0.01, 0.02, 0.05, 0.1, 0.2}
-    node_count: int = 20
+    node_count: int = 30
     # 20 combinations, 20 nodes, 1h => 20*20*1 = ~400 GB
     metadata: dict[str, Any] = {
         "seed": common_seed,

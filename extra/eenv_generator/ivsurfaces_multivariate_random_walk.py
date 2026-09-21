@@ -33,7 +33,7 @@ class Params(BaseModel):
     duration: int = 1 * 60 * 60
     chunk_size: int = 2_000_000
     # custom config below
-    node_count: int = 20
+    node_count: int = 30
     # 1 combinations, 20 nodes, 1h
     description: str = (
         "I-V Surface of an emulated PV cell setup. "
