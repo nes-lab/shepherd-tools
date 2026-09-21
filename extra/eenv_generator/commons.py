@@ -163,6 +163,7 @@ class EEnvGenerator(ABC):
                         current=CalibrationPair(gain=1e-9, offset=0),
                     ),
                     verbose=False,
+                    big_chunks=True,
                 )
                 file_handles.append(stack.enter_context(writer))
                 writer.store_hostname(file_path.stem)

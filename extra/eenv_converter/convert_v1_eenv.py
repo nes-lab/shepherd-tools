@@ -92,6 +92,7 @@ def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int
                     gain=currents.attrs["gain"], offset=currents.attrs["offset"]
                 ),
             ),
+            big_chunks=True,
             verbose=False,
         ) as writer:
             writer.store_hostname(out_file.stem)

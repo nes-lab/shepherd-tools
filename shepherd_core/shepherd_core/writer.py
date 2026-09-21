@@ -86,6 +86,7 @@ class Writer(Reader):
         *,
         modify_existing: bool = False,
         force_overwrite: bool = False,
+        big_chunks: bool = False,
         verbose: bool = True,
     ) -> None:
         self._modify = modify_existing
@@ -93,6 +94,10 @@ class Writer(Reader):
             self._compression = compression_dict[compression.value]
         else:
             self._compression = None
+
+        if big_chunks:
+            # 1 s instead of 0.1 s (default for sheep)
+            self._CHUNK_SHAPE = (10*Reader.CHUNK_SAMPLES_N,)
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Writer")
@@ -242,6 +247,7 @@ class Writer(Reader):
             maxshape=(None,),
             chunks=self._CHUNK_SHAPE,
             compression=self._compression,
+            shuffle=True,
         )
         grp_data["time"].attrs["unit"] = "s"
         grp_data["time"].attrs["description"] = "system time [s] = value * gain + (offset)"
@@ -253,6 +259,7 @@ class Writer(Reader):
             maxshape=(None,),
             chunks=self._CHUNK_SHAPE,
             compression=self._compression,
+            shuffle=True,
         )
         grp_data["current"].attrs["unit"] = "A"
         grp_data["current"].attrs["description"] = "current [A] = value * gain + offset"
@@ -264,6 +271,7 @@ class Writer(Reader):
             maxshape=(None,),
             chunks=self._CHUNK_SHAPE,
             compression=self._compression,
+            shuffle=True,
         )
         grp_data["voltage"].attrs["unit"] = "V"
         grp_data["voltage"].attrs["description"] = "voltage [V] = value * gain + offset"
