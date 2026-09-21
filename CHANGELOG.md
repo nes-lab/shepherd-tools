@@ -1,14 +1,20 @@
 # History of Changes
 
-## v2026.8.1 unreleased
+## v2026.9.1 unreleased
 
-- bugfix for missing CLI command `extract-uart`
+- improve conformity of csv-output
+- improve robustness and error-reporting of waveform decoder
 - improve compressibility of datasets
-  - adding `shuffle=True` shrinks the artificial dataset DOWN to 17.2 % (factor 5.8x)
-  - increasing chunk-size from 0.1 s to 1 s shrinks it down to 7.83 % (factor 12.7x)
+  - adding `shuffle=True` shrinks the synthetic dataset DOWN to 17.2 % (factor 5.8x)
+  - increasing chunk-size from 0.1 s to 1 s shrinks synthetic down to 7.83 % (factor 12.7x)
   - 10 s chunks only reduced another 17 % (down to 6.7 %), but it will increase RAM-usage on sheep substantially
   - bonito compresses from 384 GiB to 29.1 GiB (was 81.2 GiB)
-  - synthetic is now (was 758 GiB)
+  - synthetic is now 59.3 GiB (was 758 GiB)
+- increased synthetic dataset from 20 to 30 nodes
+
+## v2026.8.1
+
+- bugfix for missing CLI command `extract-uart`
 
 ## v2026.7.1
 
