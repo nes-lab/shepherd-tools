@@ -97,7 +97,7 @@ class Writer(Reader):
 
         if big_chunks:
             # 1 s instead of 0.1 s (default for sheep)
-            self._CHUNK_SHAPE = (10*Reader.CHUNK_SAMPLES_N,)
+            self._CHUNK_SHAPE = (10 * Reader.CHUNK_SAMPLES_N,)
 
         if not hasattr(self, "_logger"):
             self._logger: logging.Logger = logging.getLogger("SHPCore.Writer")
