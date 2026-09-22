@@ -446,7 +446,7 @@ class Reader:
                     comp,
                     self.file_path.name,
                 )
-            if (comp == "gzip") and (opts is not None) and (int(opts) > 1):
+            if (comp == "gzip") and (opts is not None) and (int(opts) > 7):
                 self._logger.warning(
                     "[FileValidation] gzip compression is too high (%d > 1) for BBone in '%s'",
                     opts,
