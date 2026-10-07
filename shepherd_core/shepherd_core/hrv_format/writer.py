@@ -5,7 +5,6 @@ import math
 from pathlib import Path
 from types import TracebackType
 from typing import Any
-from typing import ClassVar
 
 import h5py
 import numpy as np
@@ -34,7 +33,6 @@ class Writer(Reader):
 
     """
 
-    SUFFIX_VALID: ClassVar[set[str]] = {".hrv5", ".hrv"}
     DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
 
     _CHUNK_SHAPE: tuple = (Reader.CHUNK_SAMPLES_N, 2)

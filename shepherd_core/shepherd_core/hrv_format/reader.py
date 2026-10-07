@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import ClassVar
 
 import h5py
 from pydantic import validate_call
@@ -38,6 +39,8 @@ class Reader:
         verbose: more debug-info during usage, 'None' skips the setter
 
     """
+
+    SUFFIX_VALID: ClassVar[set[str]] = {".hrv5", ".hrv"}
 
     CHUNK_SAMPLES_N: int = 10_000
 
