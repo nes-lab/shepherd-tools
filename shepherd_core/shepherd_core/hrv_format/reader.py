@@ -23,6 +23,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from types import TracebackType
 
+    import numpy as np
+
 
 class Reader:
     """Sequentially Reads harvesting-data from HDF5 file.
@@ -158,7 +160,7 @@ class Reader:
         *,
         is_raw: bool = True,
         omit_timestamps: bool = True,
-    ) -> Generator[tuple, None, None]:
+    ) -> Generator[np.ndarray, None, None]:
         """Read the specified range of chunks from the hdf5 file.
 
         Generator - can be configured on first call

@@ -34,7 +34,7 @@ class Writer(Reader):
 
     """
 
-    SUFFIX_VALID: ClassVar[set[str]] = {".hrv5"}
+    SUFFIX_VALID: ClassVar[set[str]] = {".hrv5", ".hrv"}
     DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
 
     _CHUNK_SHAPE: tuple = (Reader.CHUNK_SAMPLES_N, 2)
@@ -117,6 +117,7 @@ class Writer(Reader):
         super().__init__(file_path=file_path, verbose=verbose)
 
     def __enter__(self) -> Self:
+        self.test_order()
         super().__enter__()
         return self
 
@@ -186,14 +187,22 @@ class Writer(Reader):
 
         # interweave data (voltage | current in parallel)
         vi_data = np.empty((2 * len_new,), dtype=voltage.dtype)
-        vi_data[0::2] = voltage[:len_new]
+        vi_data[0::2] = voltage[:len_new]  # TODO: why not directly the final shape?
         vi_data[1::2] = current[:len_new]
+        vi_data = vi_data.reshape((len_new, 2), order="C")
 
         # resize dataset
         self.ds.resize((len_old + len_new,))
 
         # append new data
         self.ds[len_old : len_old + len_new] = vi_data[:len_new]
+
+    @staticmethod
+    def test_order() -> None:
+        # TODO: test for
+        data = np.arange(4, dtype=np.uint32).reshape((-1, 2), order="C").tobytes()
+        if data != b"\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00":
+            raise ValueError("Data not correct")
 
     def append_iv_data_si(
         self,
