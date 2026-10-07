@@ -190,10 +190,10 @@ class Writer(Reader):
         vi_data = vi_data.reshape((len_new, 2), order="C")
 
         # resize dataset
-        self.ds.resize((len_old + len_new,))
+        self.ds.resize((len_old + len_new, 2))
 
         # append new data
-        self.ds[len_old : len_old + len_new] = vi_data[:len_new]
+        self.ds[len_old : len_old + len_new, :] = vi_data[:len_new, :]
 
     @staticmethod
     def test_order() -> None:
@@ -233,7 +233,7 @@ class Writer(Reader):
                 "aligning with chunk-size, discarding last %d entries",
                 self.ds.size - size_new,
             )
-            self.ds.resize((size_new,))
+            self.ds.resize((size_new, 2))
 
     def __setitem__(self, key: str, item: Any) -> None:
         """Conveniently store relevant key-value data (attribute) in H5-structure."""

@@ -192,7 +192,7 @@ class Reader:
         for i in range(start_n, end_n):
             idx_start = i * n_samples_per_chunk
             idx_end = idx_start + n_samples_per_chunk
-            yield self.ds[idx_start:idx_end]
+            yield self.ds[idx_start:idx_end, :]
 
     def get_calibration_data(self) -> CalibrationSeries:
         """Read calibration-data from hdf5 file.
