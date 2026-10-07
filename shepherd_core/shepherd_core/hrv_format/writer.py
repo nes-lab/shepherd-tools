@@ -52,7 +52,7 @@ class Writer(Reader):
         self._compression = compression_dict[Compression.lzf]
 
         if not hasattr(self, "_logger"):
-            self._logger: logging.Logger = logging.getLogger("SHPCore.Writer")
+            self._logger: logging.Logger = logging.getLogger("SHPCore.HrvWriter")
             self._logger.setLevel(logging.DEBUG if verbose else logging.INFO)
         # -> logger gets configured in reader()
 
@@ -180,7 +180,7 @@ class Writer(Reader):
             current: ndarray as raw unsigned integers
 
         """
-        len_new = min(voltage.size, current.size)
+        len_new = min(voltage.shape[0], current.shape[0])
         len_old = self.ds.shape[0]
 
         # interweave data (voltage | current in parallel)
@@ -226,12 +226,12 @@ class Writer(Reader):
     def _align(self) -> None:
         """Align datasets with chunk-size of shepherd."""
         self._refresh_file_stats()
-        chunks_n = self.ds.size / self.CHUNK_SAMPLES_N
+        chunks_n = self.ds.shape[0] / self.CHUNK_SAMPLES_N
         size_new = int(math.floor(chunks_n) * self.CHUNK_SAMPLES_N)
-        if size_new < self.ds.size:
+        if size_new < self.ds.shape[0]:
             self._logger.info(
                 "aligning with chunk-size, discarding last %d entries",
-                self.ds.size - size_new,
+                self.ds.shape[0] - size_new,
             )
             self.ds.resize((size_new, 2))
 
