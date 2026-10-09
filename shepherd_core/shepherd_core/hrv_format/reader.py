@@ -11,6 +11,7 @@ from typing import Any
 from typing import ClassVar
 
 import h5py
+import numpy as np
 from pydantic import validate_call
 from typing_extensions import Self
 
@@ -23,8 +24,6 @@ if TYPE_CHECKING:
     from collections.abc import Generator
     from collections.abc import Sequence
     from types import TracebackType
-
-    import numpy as np
 
 
 class Reader:
@@ -143,10 +142,22 @@ class Reader:
         if self._reader_opened:
             self.h5file.close()
 
+    def __getitem__(self, key: str) -> Any:
+        """Query attribute or (if none found) a handle for a group or dataset (if found).
+
+        :param key: attribute, group, dataset
+        :return: value of that key, or handle of object
+        """
+        if key in self.h5file.attrs:
+            return self.h5file.attrs.__getitem__(key)
+        if key in self.h5file:
+            return self.h5file.__getitem__(key)
+        raise KeyError
+
     def _refresh_file_stats(self) -> None:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
-        self.samples_n = self.ds.shape[0]
+        self.samples_n = len(self.ds)
         self.runtime_s = round(self.samples_n / core_config.SAMPLERATE_SPS, 1)
         self.chunks_n = int(self.samples_n // self.CHUNK_SAMPLES_N)
         if isinstance(self.file_path, Path):
@@ -192,7 +203,7 @@ class Reader:
         for i in range(start_n, end_n):
             idx_start = i * n_samples_per_chunk
             idx_end = idx_start + n_samples_per_chunk
-            yield self.ds[idx_start:idx_end, :]
+            yield self.ds[idx_start:idx_end]  # implicit ][:]
 
     def get_calibration_data(self) -> CalibrationSeries:
         """Read calibration-data from hdf5 file.
@@ -221,6 +232,29 @@ class Reader:
             return None
         else:
             return None
+
+    def get_voltage_step(self) -> float | None:
+        """Informs about the voltage step (in volts) used during harvesting the ivcurve.
+
+        Options for figuring out the real step:
+        - look into config (if available)
+        - analyze recorded data for most often used delta
+        - calculate with 'steps_n * (1 + wait_cycles)' (done for calculating window_size)
+        """
+        # TODO: could also look at windows_size (instead of hardcoded 2000)
+        # TODO: only needed if ivcurve
+        if "voltage_step_V" in self.h5file.attrs:
+            return self.h5file.attrs["voltage_step_V"]
+        if len(self.ds) > 2000:
+            dsv = self._cal.voltage.raw_to_si(self.ds[0:2000, 0])
+            diffs_np = np.unique(dsv[1:] - dsv[0:-1], return_counts=False)
+            diffs_ls = [e_ for e_ in list(np.array(diffs_np)) if e_ > 0]
+            # static voltages have 0 steps, so
+            if len(diffs_ls) == 0:
+                self._logger.warning("Voltage-Step could not be determined from source-material")
+                return None  # or is 0 better? that may provoke div0
+            return min(diffs_ls)
+        return None
 
     def is_valid(self) -> bool:
         """Check file for plausibility, validity / correctness.
@@ -290,7 +324,7 @@ class Reader:
                 self.file_path.name,
             )
         # same length of datasets:
-        samples_n = self.h5file["harvest"]["iv"].shape[0]
+        samples_n = len(self.h5file["harvest"]["iv"])
 
         # dataset-length should be multiple of chunk-size
         remaining_size = samples_n % self.CHUNK_SAMPLES_N
@@ -316,15 +350,3 @@ class Reader:
                     self.file_path.name,
                 )
         return True
-
-    def __getitem__(self, key: str) -> Any:
-        """Query attribute or (if none found) a handle for a group or dataset (if found).
-
-        :param key: attribute, group, dataset
-        :return: value of that key, or handle of object
-        """
-        if key in self.h5file.attrs:
-            return self.h5file.attrs.__getitem__(key)
-        if key in self.h5file:
-            return self.h5file.__getitem__(key)
-        raise KeyError

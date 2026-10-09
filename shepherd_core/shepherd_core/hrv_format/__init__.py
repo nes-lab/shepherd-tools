@@ -1,4 +1,4 @@
-"""Access-Classe for an optimized format.
+"""Access-Class for an optimized format.
 
 This is only needed internally by the testbed.
 It directly precomputes the memory-layout between userspace & PRU.

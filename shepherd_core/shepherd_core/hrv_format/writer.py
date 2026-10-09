@@ -115,7 +115,7 @@ class Writer(Reader):
         super().__init__(file_path=file_path, verbose=verbose)
 
     def __enter__(self) -> Self:
-        self.test_order()
+        self._test_endianness()
         super().__enter__()
         return self
 
@@ -136,6 +136,10 @@ class Writer(Reader):
         )
         self.is_valid()
         self.h5file.close()
+
+    def __setitem__(self, key: str, item: Any) -> None:
+        """Conveniently store relevant key-value data (attribute) in H5-structure."""
+        self.h5file.attrs.__setitem__(key, item)
 
     def _create_skeleton(self) -> None:
         """Initialize the structure of the HDF5 file.
@@ -167,6 +171,16 @@ class Writer(Reader):
         grp_data["iv"].attrs["unit"] = "V;A"
         grp_data["iv"].attrs["description"] = "value_SI = value_raw * gain + offset"
 
+    @staticmethod
+    def _test_endianness() -> None:
+        # test for endianness, has to be compatible with ARM32v7
+        data = np.arange(4, dtype=np.uint32).reshape((-1, 2), order="C").tobytes()
+        if data != b"\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00":
+            raise ValueError("Data not correct")
+
+    def store_voltage_step(self, value_V: float) -> None:
+        self.h5file.attrs["voltage_step_V"] = value_V
+
     def append_iv_data_raw(
         self,
         voltage: np.ndarray,
@@ -180,27 +194,19 @@ class Writer(Reader):
             current: ndarray as raw unsigned integers
 
         """
-        len_new = min(voltage.shape[0], current.shape[0])
-        len_old = self.ds.shape[0]
+        len_new = min(len(voltage), len(current))
+        len_old = len(self.ds)
 
         # interweave data (voltage | current in parallel)
-        vi_data = np.empty((2 * len_new,), dtype=voltage.dtype)
-        vi_data[0::2] = voltage[:len_new]  # TODO: why not directly the final shape?
-        vi_data[1::2] = current[:len_new]
-        vi_data = vi_data.reshape((len_new, 2), order="C")
+        vi_data = np.empty((len_new, 2), dtype=voltage.dtype)
+        vi_data[:, 0] = voltage[:len_new]
+        vi_data[:, 1] = current[:len_new]
 
-        # resize dataset
+        # extend dataset
         self.ds.resize((len_old + len_new, 2))
 
         # append new data
         self.ds[len_old : len_old + len_new, :] = vi_data[:len_new, :]
-
-    @staticmethod
-    def test_order() -> None:
-        # TODO: test for
-        data = np.arange(4, dtype=np.uint32).reshape((-1, 2), order="C").tobytes()
-        if data != b"\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00":
-            raise ValueError("Data not correct")
 
     def append_iv_data_si(
         self,
@@ -226,15 +232,11 @@ class Writer(Reader):
     def _align(self) -> None:
         """Align datasets with chunk-size of shepherd."""
         self._refresh_file_stats()
-        chunks_n = self.ds.shape[0] / self.CHUNK_SAMPLES_N
+        chunks_n = len(self.ds) / self.CHUNK_SAMPLES_N
         size_new = int(math.floor(chunks_n) * self.CHUNK_SAMPLES_N)
-        if size_new < self.ds.shape[0]:
+        if size_new < len(self.ds):
             self._logger.info(
                 "aligning with chunk-size, discarding last %d entries",
-                self.ds.shape[0] - size_new,
+                len(self.ds) - size_new,
             )
             self.ds.resize((size_new, 2))
-
-    def __setitem__(self, key: str, item: Any) -> None:
-        """Conveniently store relevant key-value data (attribute) in H5-structure."""
-        self.h5file.attrs.__setitem__(key, item)
