@@ -171,9 +171,7 @@ class Reader:
     def _refresh_file_stats(self) -> None:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
-        self.samples_n = min(
-            self.ds_time.shape[0], self.ds_current.shape[0], self.ds_voltage.shape[0]
-        )
+        self.samples_n = min(len(self.ds_time), len(self.ds_current), len(self.ds_voltage))
         duration_raw = (
             (int(self.ds_time[self.samples_n - 1]) - int(self.ds_time[0]))
             if self.samples_n > 0
@@ -416,9 +414,9 @@ class Reader:
                 self.file_path.name,
             )
         # same length of datasets:
-        samples_n = self.h5file["data"]["time"].shape[0]
+        samples_n = len(self.h5file["data"]["time"])
         for dset in ["voltage", "current"]:
-            ds_size = self.h5file["data"][dset].shape[0]
+            ds_size = len(self.h5file["data"][dset])
             if ds_size != samples_n:
                 self._logger.warning(
                     "[FileValidation] dataset '%s' has different size (=%d), "
@@ -524,10 +522,10 @@ class Reader:
             else:
                 cal = CalibrationPair(gain=1)
                 si_converted = False
-        iterations = math.ceil(dset.shape[0] / self.max_elements)
+        iterations = math.ceil(len(dset) / self.max_elements)
         job_iter = trange(
             0,
-            dset.shape[0],
+            len(dset),
             self.max_elements,
             desc=f"{dset.name}-stats",
             leave=False,
@@ -607,7 +605,7 @@ class Reader:
         if "level" not in self.h5file[group_name]:
             return 0
         lvl_ = self.h5file[group_name]["level"]
-        if lvl_.shape[0] < 1:
+        if len(lvl_) < 1:
             return 0
         items_ = [1 for x_ in lvl_[:] if x_ >= min_level]
         return len(items_)
@@ -713,7 +711,7 @@ class Reader:
         """
         if len(data.shape) > 1:
             raise ValueError("Array must be 1D")
-        if data.shape[0] < 1:
+        if len(data) < 1:
             return None
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1

@@ -96,7 +96,7 @@ class Reader:
     def _refresh_file_stats(self) -> None:
         if self._df is None:
             raise RuntimeError("IVonne Context was not entered - file not open!")
-        self.runtime_s = round(self._df.shape[0] / self.samplerate_sps, 3)
+        self.runtime_s = round(len(self._df) / self.samplerate_sps, 3)
         self.file_size = self.file_path.stat().st_size
         self.data_rate = self.file_size / self.runtime_s if self.runtime_s > 0 else 0
 
@@ -120,9 +120,9 @@ class Reader:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %f s", duration_s)
-            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
+            df_elements_n = min(len(self._df), int(duration_s * self.samplerate_sps))
         else:
-            df_elements_n = self._df.shape[0]
+            df_elements_n = len(self._df)
 
         if shp_output.exists():
             self._logger.info("File already exists, will skip '%s'", shp_output.name)
@@ -194,9 +194,9 @@ class Reader:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %f s", duration_s)
-            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
+            df_elements_n = min(len(self._df), int(duration_s * self.samplerate_sps))
         else:
-            df_elements_n = self._df.shape[0]
+            df_elements_n = len(self._df)
 
         if shp_output.exists():
             self._logger.info("File already exists, will skip '%s'", shp_output.name)
@@ -250,9 +250,9 @@ class Reader:
             raise RuntimeError("IVonne Context was not entered - file not open!")
         if isinstance(duration_s, (float, int)) and self.runtime_s > duration_s:
             self._logger.info("  -> gets trimmed to %f s", duration_s)
-            df_elements_n = min(self._df.shape[0], int(duration_s * self.samplerate_sps))
+            df_elements_n = min(len(self._df), int(duration_s * self.samplerate_sps))
         else:
-            df_elements_n = self._df.shape[0]
+            df_elements_n = len(self._df)
 
         if shp_output.exists():
             self._logger.info("File already exists, will skip '%s'", shp_output.name)

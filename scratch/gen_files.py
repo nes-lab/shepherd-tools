@@ -69,7 +69,7 @@ for content_name, content in contents.items():
             )
             grp_data[ds_name].attrs["unit"] = "A"
             grp_data[ds_name].attrs["description"] = "current [A] = value * gain + offset"
-            grp_data[ds_name].resize((content.shape[0],))
+            grp_data[ds_name].resize((len(content),))
             grp_data[ds_name][:] = content[:]
         h5file.close()
 
@@ -90,6 +90,6 @@ for content_name, content in contents.items():
             )
             grp_data[ds_name].attrs["unit"] = "A"
             grp_data[ds_name].attrs["description"] = "current [A] = value * gain + offset"
-            grp_data[ds_name].resize((content.shape[0],))
+            grp_data[ds_name].resize((len(content),))
             grp_data[ds_name][:] = content[:]
             h5file.close()

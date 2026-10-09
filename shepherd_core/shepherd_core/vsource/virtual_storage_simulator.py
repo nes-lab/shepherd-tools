@@ -41,11 +41,11 @@ class StorageSimulator:
     @validate_call
     def run(self, fn: Callable, duration_s: PositiveFloat) -> None:
         self.t_s = np.arange(0, duration_s, self.dt_s)
-        self.I_input = np.zeros((len(self.models), self.t_s.shape[0]))
-        self.V_OC = np.zeros((len(self.models), self.t_s.shape[0]))
-        self.V_cell = np.zeros((len(self.models), self.t_s.shape[0]))
-        self.SoC = np.zeros((len(self.models), self.t_s.shape[0]))
-        self.SoC_eff = np.zeros((len(self.models), self.t_s.shape[0]))
+        self.I_input = np.zeros((len(self.models), len(self.t_s)))
+        self.V_OC = np.zeros((len(self.models), len(self.t_s)))
+        self.V_cell = np.zeros((len(self.models), len(self.t_s)))
+        self.SoC = np.zeros((len(self.models), len(self.t_s)))
+        self.SoC_eff = np.zeros((len(self.models), len(self.t_s)))
         for i, model in enumerate(self.models):
             SoC = 1.0
             V_cell = 0.0

@@ -210,7 +210,7 @@ def test_reader_fault_strange_compression(data_h5: Path) -> None:
             compression="lzf",  # something like szip wanted
         )
         sfw.h5file["data"]["time"].resize(time.shape)
-        sfw.h5file["data"]["time"][0 : time.shape[0]] = time[: time.shape[0]]
+        sfw.h5file["data"]["time"][0 : len(time)] = time[: len(time)]
         sfw.h5file["data"]["time"].attrs["gain"] = 1
         sfw.h5file["data"]["time"].attrs["offset"] = 0
     with Reader(data_h5, verbose=True) as sfr:
@@ -231,7 +231,7 @@ def test_reader_fault_slow_compression(data_h5: Path) -> None:
             compression_opts=9,
         )
         sfw.h5file["data"]["time"].resize(time.shape)
-        sfw.h5file["data"]["time"][0 : time.shape[0]] = time[: time.shape[0]]
+        sfw.h5file["data"]["time"][0 : len(time)] = time[: len(time)]
         sfw.h5file["data"]["time"].attrs["gain"] = 1
         sfw.h5file["data"]["time"].attrs["offset"] = 0
     with Reader(data_h5, verbose=True) as sfr:

@@ -303,7 +303,7 @@ class Writer(Reader):
         else:
             raise TypeError("timestamp-data was not usable")
 
-        len_old = self.ds_voltage.shape[0]
+        len_old = len(self.ds_voltage)
 
         # resize dataset
         self.ds_time.resize((len_old + len_new,))
