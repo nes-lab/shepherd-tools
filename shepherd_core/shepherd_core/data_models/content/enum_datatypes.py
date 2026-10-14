@@ -11,12 +11,13 @@ class Compression(str, Enum):
 
     lzf = "lzf"  # not native hdf5
     gzip1 = gzip = default = 1  # higher compr & load
+    gzip6 = 6  # ONLY for harvesting-traces (smaller timeseries-compression)
     null = None
     # NOTE: lzf & external file-compression (xz or zstd) work better than gzip
     #       -> even with additional compression
 
 
-compression_dict = {"lzf": "lzf", "1": 1, "None": None, None: None}
+compression_dict = {"lzf": "lzf", "1": 1, "6": 6, "None": None, None: None}
 compressions_allowed = set(compression_dict.values())
 
 

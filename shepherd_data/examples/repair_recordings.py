@@ -34,9 +34,9 @@ if __name__ == "__main__":
         # TODO: add missing calibration or retrieve older version
 
         # datasets with unequal size
-        ds_volt_size = fh.h5file["data"]["voltage"].shape[0]
+        ds_volt_size = len(fh.h5file["data"]["voltage"])
         for dset in ["current", "time"]:
-            ds_size = fh.h5file["data"][dset].shape[0]
+            ds_size = len(fh.h5file["data"][dset])
             if ds_volt_size != ds_size:
                 size_new = (min(ds_volt_size, ds_size),)
                 print(" -> will bring datasets to equal size")
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                 fh = shp.Reader(file, verbose=False)  # reopen file
 
         # unaligned datasets
-        remaining_size = fh.h5file["data"]["voltage"].shape[0] % shp.Reader.CHUNK_SAMPLES_N
+        remaining_size = len(fh.h5file["data"]["voltage"]) % shp.Reader.CHUNK_SAMPLES_N
         if remaining_size != 0:
             print(" -> will align datasets")
             fh.__exit__()

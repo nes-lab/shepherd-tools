@@ -1,6 +1,48 @@
 # History of Changes
 
-## v2026.8.1 unreleased
+## v2026.10.1 unreleased
+
+- improve conformity of csv-output
+- improve robustness and error-reporting of waveform decoder
+- improve compressibility of datasets
+  - adding `shuffle=True` shrinks the synthetic dataset DOWN to 17.2 % (factor 5.8x)
+  - increasing chunk-size from 0.1 s to 1 s shrinks synthetic down to 7.83 % (factor 12.7x)
+  - 10 s chunks only reduced another 17 % (down to 6.7 %), but it will increase RAM-usage on sheep substantially
+  - bonito compresses from 384 GiB (zenodo) down to 29.1 GiB (was 81.2 GiB)
+  - synthetic is now 59.3 GiB (was 758 GiB)
+- increased specs of synthetic dataset
+  - all variants from 20 to 30 nodes
+  - static voltage from 1 h to 4 h
+- allow gzip6 for shepherd-files
+- increase gzip-compression of synthetic traces to level 6 (gzip6) for smaller timeseries (roughly 2.5x smaller files)
+  - bonito compresses to 27.7 GiB (not worth the overhead)
+- add reader/writer-prototypes for specialized harvesting-format
+  - it directly precomputes the memory-layout between userspace & PRU
+  - saves space & computational overhead on testbed
+
+| type \ GiB    | baseline 1h/20n | shuffle/chunk | gzip6    | gzip6x   |
+|---------------|-----------------|---------------|----------|----------|
+| bonito        | 81.3            | **29.2**      | 27.7     | (29.2)   |
+| random walk   | 23.2            | 3.9           | 3.0      | 4.5/30n  |
+| on off markov | 361.1           | 33.9          | 15.5     | 23.3/30n |
+| on off window | 357.4           | 25.1          | 10.3     | 15.5/30n |
+| static        | 16.5            | 1.1           | 0.4      | 1.7/4h   |
+| TOTAL         | 840 GiB         | 93.2 GiB      | 56.9 GiB | 74.2 GiB |
+
+Speed-Benchmark on a Beaglebone Green (compiled from [testbench_direct_rw](https://github.com/nes-lab/shepherd/blob/main/software/python-package/tests_manual/testbench_direct_rw_results.md)):
+
+| type \ 60 s trace | static R | static W | random R | random W) |
+|-------------------|----------|----------|----------|-----------|
+| none-base         | 2.970 s  | 11.593 s | 2.988 s  | 10.646 s  |
+| lzf-base          | 4.024 s  | 17.988 s | 3.588 s  | 26.893 s  |
+| gzip1-base        | 5.960 s  | 21.154 s | 6.777 s  | 29.791 s  |
+| none-shuffle      | 3.882 s  | 12.330 s | 3.886 s  | 11.226 s  |
+| lzf-shuffle       | 3.994 s  | 10.913 s | 4.231 s  | 20.715 s  |
+| gzip1-shuffle     | 4.901 s  | 12.583 s | 5.932 s  | 22.650 s  |
+| gzip6-shuffle     | 4.947 s  | 14.875 s | 5.847 s  | 24.561 s  |
+
+
+## v2026.8.1
 
 - bugfix for missing CLI command `extract-uart`
 

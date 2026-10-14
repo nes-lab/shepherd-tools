@@ -46,7 +46,7 @@ class Reader(CoreReader):
         :param raw: don't convert to si-units
         :return: number of processed entries
         """
-        if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
+        if ("time" not in h5_group) or (len(h5_group["time"]) < 1):
             self._logger.warning("%s is empty, no csv generated", h5_group.name)
             return 0
         if not isinstance(self.file_path, Path):
@@ -87,7 +87,7 @@ class Reader(CoreReader):
                         values = separator.join([str(value) for value in values])
                     csv_file.write(f"{separator}{values}")
                 csv_file.write("\n")
-        return h5_group["time"][:].shape[0]
+        return len(h5_group["time"])
 
     def save_log(self, h5_group: h5py.Group, *, add_timestamp: bool = True) -> int:
         """Save dataset from groups as log, optimal for logged kernel- and console-output.
@@ -96,7 +96,7 @@ class Reader(CoreReader):
         :param add_timestamp: can be external
         :return: number of processed entries
         """
-        if ("time" not in h5_group) or (h5_group["time"].shape[0] < 1):
+        if ("time" not in h5_group) or (len(h5_group["time"]) < 1):
             self._logger.warning("%s is empty, no log generated", h5_group.name)
             return 0
         if not isinstance(self.file_path, Path):
@@ -130,7 +130,7 @@ class Reader(CoreReader):
                         except (OSError, IndexError):
                             message = b"[[[ Extractor | faulty element ]]]"
                         log_file.write(message)
-        return h5_group["time"].shape[0]
+        return len(h5_group["time"])
 
     def warn_logs(
         self,
@@ -204,11 +204,11 @@ class Reader(CoreReader):
         if not isinstance(start_n, int):
             raise TypeError("start_n must be an integer")
         if isinstance(end_n, int):
-            end_n = min(data_src.shape[0], end_n)
+            end_n = min(len(data_src), end_n)
         elif isinstance(end_n, float):
             raise TypeError("end_n must be an integer")
         else:
-            end_n = data_src.shape[0]
+            end_n = len(data_src)
 
         start_n = min(end_n, start_n)
         data_len = end_n - start_n  # TODO: one-off to calculation below ?
@@ -235,7 +235,7 @@ class Reader(CoreReader):
             ftype="butter",
         )
         # filter state - needed for sliced calculation
-        f_state = np.zeros((filter_.shape[0], 2))
+        f_state = np.zeros((len(filter_), 2))
         # prime the state to avoid starting from 0
         if not is_time and ds_factor > 1:
             slice_ds = data_src[start_n : start_n + self.CHUNK_SAMPLES_N]
@@ -398,11 +398,11 @@ class Reader(CoreReader):
         if not isinstance(start_n, int):
             raise TypeError("start_n must be an integer")
         if isinstance(end_n, int):
-            end_n = min(data_src.shape[0], end_n)
+            end_n = min(len(data_src), end_n)
         elif isinstance(end_n, float):
             raise TypeError("end_n must be an integer")
         else:
-            end_n = data_src.shape[0]
+            end_n = len(data_src)
 
         start_n = min(end_n, start_n)
         data_len = end_n - start_n
@@ -441,7 +441,7 @@ class Reader(CoreReader):
                 slice_out_ds = np.arange(
                     tmin, tmax, 1e9 / samplerate_dst
                 )  # will be rounded in h5-dataset
-                slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
+                slice_out_nxt = slice_out_now + len(slice_out_ds)
                 data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
                 slice_out_now = slice_out_nxt
         else:
@@ -464,8 +464,8 @@ class Reader(CoreReader):
                 )
                 # slice_out_ds = resampy.resample(slice_inp_ds, self.samplerate_sps,
                 #                                 samplerate_dst, filter="kaiser_fast")
-                slice_out_nxt = slice_out_now + slice_out_ds.shape[0]
-                # print(f"@{i}: got {slice_out_ds.shape[0]}")  # noqa: E800
+                slice_out_nxt = slice_out_now + len(slice_out_ds)
+                # print(f"@{i}: got {len(slice_out_ds)}")  # noqa: E800
                 data_dst[slice_out_now:slice_out_nxt] = slice_out_ds
                 slice_out_now = slice_out_nxt
             resampler.reset()

@@ -153,7 +153,7 @@ class EEnvGenerator(ABC):
             for file_path in file_paths:
                 writer = ShepherdWriter(
                     file_path=file_path,
-                    compression=Compression.gzip1,
+                    compression=Compression.gzip6,
                     mode="harvester",
                     datatype=self.datatype,
                     window_samples=self.window_size,
@@ -163,6 +163,7 @@ class EEnvGenerator(ABC):
                         current=CalibrationPair(gain=1e-9, offset=0),
                     ),
                     verbose=False,
+                    big_chunks=True,
                 )
                 file_handles.append(stack.enter_context(writer))
                 writer.store_hostname(file_path.stem)

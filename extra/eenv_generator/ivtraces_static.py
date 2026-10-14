@@ -22,7 +22,7 @@ class Params(BaseModel):
 
     root_path: Path = root_storage_default
     dir_name: str = "synthetic_static"
-    duration: int = 1 * 60 * 60
+    duration: int = 4 * 60 * 60
     chunk_size: int = 10_000_000
     # custom config below
     voltages: set[float] = {3.0, 2.0, 1.0}
