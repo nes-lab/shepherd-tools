@@ -34,8 +34,7 @@ class Writer(Reader):
     """
 
     DATATYPE_DEFAULT: EnergyDType = EnergyDType.ivsample
-
-    _CHUNK_SHAPE: tuple = (Reader.CHUNK_SAMPLES_N, 2)
+    SAMPLE_SIZE_MAX: int = 2 * 4  # IV both u4
 
     @validate_call
     def __init__(
@@ -73,6 +72,10 @@ class Writer(Reader):
                 "File '%s' already exists! please select another or enable 'force_overwrite'",
                 file_path,
             )
+
+        if self.CHUNK_SAMPLES_N * self.SAMPLE_SIZE_MAX >= 2**20:
+            # TODO: cache-size can be derived from actual h5-lib
+            raise ValueError("Chunk-size %d should not be greater than hdf5-cache (1 MiB)")
 
         # open file
         if not file_path.parent.exists():
@@ -164,7 +167,7 @@ class Writer(Reader):
             (0, 2),
             dtype="u4",
             maxshape=(None, 2),
-            chunks=self._CHUNK_SHAPE,
+            chunks=(self.CHUNK_SAMPLES_N, 2),
             compression=self._compression,
             shuffle=True,
         )

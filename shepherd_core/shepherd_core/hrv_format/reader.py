@@ -41,7 +41,7 @@ class Reader:
 
     SUFFIX_VALID: ClassVar[set[str]] = {".hrv5", ".hrv"}
 
-    CHUNK_SAMPLES_N: int = 10_000
+    CHUNK_SAMPLES_N: int = 100_000
 
     HRV_DTYPES: Sequence[EnergyDType] = (
         EnergyDType.ivsample,
