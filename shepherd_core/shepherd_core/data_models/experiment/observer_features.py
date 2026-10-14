@@ -51,7 +51,7 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """ ⤷ reduce file-size by re-sampling (mean over x samples)
 
         Caution: this option is available for IV-Samples (not only .only_power)
-                 but results might be faulty for use-cases that are not const-voltage
+                 but results might be imperfect for use-cases that are not const-voltage
                  Sum(U * I) != Sum(U) * Sum(I)
         Timestamps will be taken from the start of that sample-window.
         example: 10 Hz samplerate will be binning 10k samples via mean() and
