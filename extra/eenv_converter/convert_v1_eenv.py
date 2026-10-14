@@ -43,7 +43,7 @@ def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int
 
     with h5py.File(in_file, "r") as input_h5:
         times = input_h5["data"]["time"]
-        count = times.shape[0]
+        count = len(times)
         in_chunk_count = math.ceil(count / PROCESS_CHUNK_SIZE)
 
         # Find index for tstart in the input file
@@ -79,12 +79,13 @@ def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int
 
         with ShepherdWriter(
             file_path=out_file,
-            compression=Compression.gzip1,
+            compression=Compression.gzip6,
             mode="harvester",
             datatype=EnergyDType.ivtrace,  # IV-trace
             window_samples=0,  # 0 since dt is IV-trace
             cal_data=CalibrationSeries(
                 # match voltage/current calibration from original file
+                # TODO: sheep can skip scaling if cal is ideal (apply here)
                 voltage=CalibrationPair(
                     gain=voltages.attrs["gain"], offset=voltages.attrs["offset"]
                 ),

@@ -153,7 +153,7 @@ class EEnvGenerator(ABC):
             for file_path in file_paths:
                 writer = ShepherdWriter(
                     file_path=file_path,
-                    compression=Compression.gzip5,
+                    compression=Compression.gzip6,
                     mode="harvester",
                     datatype=self.datatype,
                     window_samples=self.window_size,
