@@ -10,9 +10,9 @@ class Compression(StrEnum):
     """Options for choosing a dataset-compression."""
 
     lzf = "lzf"  # not native hdf5
-    gzip1 = gzip = default = 1  # higher compr & load
-    gzip6 = 6  # ONLY for harvesting-traces (smaller timeseries-compression)
-    null = None
+    gzip1 = gzip = default = "1"  # higher compr & load
+    gzip6 = "6"  # ONLY for harvesting-traces (smaller timeseries-compression)
+    null = "None"
     # NOTE: lzf & external file-compression (xz or zstd) work better than gzip
     #       -> even with additional compression
 
