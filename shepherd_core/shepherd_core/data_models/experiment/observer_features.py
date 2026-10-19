@@ -58,6 +58,10 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
                  the timestamp for that new sample will be value[0] of the 10k long vector
     """
 
+    @property
+    def samplerates_allowed(self) -> set[int]:
+        return {10, 100, 1_000, 10_000, 100_000}
+
     @model_validator(mode="after")
     def post_validation(self) -> Self:
         if self.delay and self.delay.total_seconds() < 0:
@@ -65,10 +69,10 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration can't be negative.")
 
-        rates_allowed = (10, 100, 1_000, 100_000)
-        if self.samplerate not in rates_allowed:
+        if self.samplerate not in self.samplerates_allowed:
             raise ValueError(
-                "Feature PowerTracing.samplerate only supports specific rates: %s", rates_allowed
+                "Feature PowerTracing.samplerate only supports specific rates: %s",
+                self.samplerates_allowed,
             )
         return self
 
