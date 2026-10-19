@@ -19,6 +19,8 @@ from shepherd_core.logger import log
 # defaults (pre-init complex types)
 zero_duration = timedelta(seconds=0)
 
+samplerates_supported: set[int] = {10, 100, 1_000, 10_000, 100_000}
+
 
 @final
 class PowerTracing(ShpModel, title="Config for Power-Tracing"):
@@ -59,8 +61,9 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """
 
     @property
-    def samplerates_allowed(self) -> set[int]:
-        return {10, 100, 1_000, 10_000, 100_000}
+    def samplerates_supported(self) -> set[int]:
+        # property & classmethod can't be mixed in newer py-versions
+        return samplerates_supported
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
@@ -69,10 +72,10 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration can't be negative.")
 
-        if self.samplerate not in self.samplerates_allowed:
+        if self.samplerate not in self.samplerates_supported:
             raise ValueError(
                 "Feature PowerTracing.samplerate only supports specific rates: %s",
-                self.samplerates_allowed,
+                self.samplerates_supported,
             )
         return self
 
