@@ -140,16 +140,15 @@ coverage html
 - monitors & recorder should move here
   - add fn for validation, export, visualization
   - also add basic IV-group as recorder
-
 - [click progressbar](https://click.palletsprojects.com/en/8.1.x/api/#click.progressbar) ⇾ could replace tqdm
 - implementations for this lib
   - generalize up- and down-sampling, use out_sample_rate instead of ds-factor
     - lib samplerate (tested) ⇾ promising, but designed for float32 and range of +-1.0
     - lib resampy (tested) ⇾ could be problematic with slice-iterator
-    - https://stackoverflow.com/questions/29085268/resample-a-numpy-array
-    - scipy.signal.resample, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample.html
-    - scipy.signal.decimate, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.decimate.html
-    - scipy.signal.resample_poly, https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample_poly.html#scipy.signal.resample_poly
+    - <https://stackoverflow.com/questions/29085268/resample-a-numpy-array>
+    - scipy.signal.resample, <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample.html>
+    - scipy.signal.decimate, <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.decimate.html>
+    - scipy.signal.resample_poly, <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample_poly.html#scipy.signal.resample_poly>
     - timestamps could be regenerated with np.arange( tmin, tmax, 1e9/samplerate)
   - generalize converters (currently in IVonne)
     - isc&voc <-> ivcurve
@@ -157,12 +156,12 @@ coverage html
   - plotting and downsampling for IVSurface
   - plotting more generalized (power, cpu-util, ..., if IV then offer power as well)
   - some metadata is calculated wrong (non-scalar datasets)
-  - unittests & codecoverage ⇾ 79% with v22.5.4, https://pytest-cov.readthedocs.io/en/latest/config.html
-    - test example: https://github.com/kvas-it/pytest-console-scripts
+  - unittests & codecoverage ⇾ 79% with v22.5.4, <https://pytest-cov.readthedocs.io/en/latest/config.html>
+    - test example: <https://github.com/kvas-it/pytest-console-scripts>
     - use coverage to test some edge-cases
   - sub-divide valid() into healthy()
   - add gain/factor to time, with repair-code
-  - add https://pypi.org/project/nessie-recorder/#files
+  - add <https://pypi.org/project/nessie-recorder/#files>
 - main shepherd-code
   - proper validation first
   - update commentary

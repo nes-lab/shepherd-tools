@@ -1,6 +1,6 @@
-## Datastructure
+# Datastructure
 
-### experiment-structure
+## experiment-structure
 
 - basics
 - scheduling
@@ -19,7 +19,6 @@
 
 - establish internal variables ``_var``
 - descriptions to parameters (docstring on sub-models)
-
 - Warn about tricky syntax
   - defining sub-data-models in an experiment in python:
     - experiments-default: don't mention argument in init
@@ -76,5 +75,5 @@ class Target(ShpModel, title="Target Node (DuT)"):
 
 what might work:
 
-- writing a custom __init__() and putting lookup() there
+- writing a custom `__init__()` and putting lookup() there
 - wait for V2
