@@ -6,6 +6,7 @@ from collections.abc import Generator
 from collections.abc import Mapping
 from collections.abc import Sequence
 from typing import Annotated
+from typing import Self
 from typing import TypeVar
 from typing import final
 
@@ -16,7 +17,6 @@ from pydantic import PositiveFloat
 from pydantic import StringConstraints
 from pydantic import conbytes
 from pydantic import validate_call
-from typing_extensions import Self
 
 from shepherd_core.calibration_hw_def import adc_current_to_raw
 from shepherd_core.calibration_hw_def import adc_voltage_to_raw

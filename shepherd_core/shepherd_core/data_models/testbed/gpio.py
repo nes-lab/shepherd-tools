@@ -1,14 +1,14 @@
 """meta-data representation of a testbed-component (physical object)."""
 
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated
 from typing import Any
+from typing import Self
 from typing import final
 
 from pydantic import Field
 from pydantic import StringConstraints
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.content import NameStr
@@ -17,7 +17,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.testbed_client import tb_client
 
 
-class Direction(str, Enum):
+class Direction(StrEnum):
     """Options for pin-direction."""
 
     Input = IN = "IN"

@@ -5,11 +5,11 @@ import math
 from pathlib import Path
 from types import TracebackType
 from typing import Any
+from typing import Self
 
 import h5py
 import numpy as np
 from pydantic import validate_call
-from typing_extensions import Self
 
 from shepherd_core.data_models.content.enum_datatypes import Compression
 from shepherd_core.data_models.content.enum_datatypes import EnergyDType

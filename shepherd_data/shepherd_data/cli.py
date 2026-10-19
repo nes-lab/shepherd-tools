@@ -381,7 +381,7 @@ def downsample(
                 for factor_ in ds_list:
                     path_file = shpr.cut_and_downsample_to_file(start, end, factor_)
                     logger.info("Created %s", path_file.name)
-        except (TypeError, ValueError):  # noqa: PERF203
+        except (TypeError, ValueError):
             logger.exception("ERROR: Will skip file. It caused an exception.")
 
 

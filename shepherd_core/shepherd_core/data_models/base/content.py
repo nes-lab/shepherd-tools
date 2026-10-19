@@ -2,12 +2,12 @@
 
 from datetime import datetime
 from typing import Annotated
+from typing import Self
 from uuid import uuid4
 
 from pydantic import Field
 from pydantic import StringConstraints
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.logger import log
 from shepherd_core.version import core_version

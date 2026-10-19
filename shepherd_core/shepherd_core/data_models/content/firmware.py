@@ -6,12 +6,12 @@ TODO: should be more generalized - currently only supports msp & nRF
 from pathlib import Path
 from typing import Annotated
 from typing import Any
+from typing import Self
 from typing import final
 
 from pydantic import StringConstraints
 from pydantic import model_validator
 from pydantic import validate_call
-from typing_extensions import Self
 from typing_extensions import Unpack
 
 from shepherd_core.data_models.base.content import ContentModel

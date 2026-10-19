@@ -3,9 +3,9 @@
 import platform
 from contextlib import suppress
 from importlib import metadata
+from typing import Self
 
 from pydantic import ConfigDict
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 

@@ -1,8 +1,9 @@
 """Configs for observer features like gpio- & power-tracing."""
 
 from datetime import timedelta
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated
+from typing import Self
 from typing import final
 
 import numpy as np
@@ -10,7 +11,6 @@ from annotated_types import Interval
 from pydantic import Field
 from pydantic import PositiveFloat
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.gpio import GPIO
@@ -205,7 +205,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
 
 @final
-class GpioLevel(str, Enum):
+class GpioLevel(StrEnum):
     """Options for setting the gpio-level or state."""
 
     low = "L"

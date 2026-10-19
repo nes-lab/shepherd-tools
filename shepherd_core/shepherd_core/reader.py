@@ -14,6 +14,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import Self
 from typing import final
 
 import h5py
@@ -21,7 +22,6 @@ import numpy as np
 import ryaml
 from pydantic import validate_call
 from tqdm import trange
-from typing_extensions import Self
 from typing_extensions import deprecated
 
 from .config import core_config
@@ -129,7 +129,7 @@ class Reader:
             for ds, param in product(["current", "voltage", "time"], ["gain", "offset"]):
                 try:
                     cal_dict[ds][param] = self.h5file["data"][ds].attrs[param]
-                except KeyError:  # noqa: PERF203
+                except KeyError:
                     self._logger.debug("Cal-Param '%s' for dataset '%s' not found!", param, ds)
             self._cal = CalibrationSeries(**cal_dict)
 

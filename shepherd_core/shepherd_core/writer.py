@@ -8,12 +8,12 @@ from pathlib import Path
 from types import TracebackType
 from typing import Any
 from typing import ClassVar
+from typing import Self
 
 import h5py
 import numpy as np
 import ryaml
 from pydantic import validate_call
-from typing_extensions import Self
 
 from .config import core_config
 from .data_models.base.calibration import CalibrationEmulator as CalEmu

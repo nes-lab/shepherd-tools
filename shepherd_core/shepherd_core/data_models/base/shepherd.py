@@ -5,13 +5,13 @@ import pickle
 from collections.abc import Generator
 from pathlib import Path
 from typing import Any
+from typing import Self
 from typing import final
 
 import ryaml
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.logger import log
 

@@ -8,10 +8,10 @@ from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
+from typing import Self
 
 import ryaml
 from pydantic import validate_call
-from typing_extensions import Self
 from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.timezone import local_now

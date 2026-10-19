@@ -4,12 +4,12 @@ from collections.abc import Iterable
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import Self
 from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
 from pydantic import validate_call
-from typing_extensions import Self
 from typing_extensions import Unpack
 
 from shepherd_core.data_models.base.content import IdInt64

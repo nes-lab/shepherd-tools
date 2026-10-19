@@ -3,10 +3,10 @@
 Done due to cyclic inheritance.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 
-class Compression(str, Enum):
+class Compression(StrEnum):
     """Options for choosing a dataset-compression."""
 
     lzf = "lzf"  # not native hdf5
@@ -21,7 +21,7 @@ compression_dict = {"lzf": "lzf", "1": 1, "6": 6, "None": None, None: None}
 compressions_allowed = set(compression_dict.values())
 
 
-class EnergyDType(str, Enum):
+class EnergyDType(StrEnum):
     """Data-Type-Options for energy environments."""
 
     ivtrace = ivsample = ivsamples = "ivsample"
@@ -29,7 +29,7 @@ class EnergyDType(str, Enum):
     isc_voc = "isc_voc"
 
 
-class FirmwareDType(str, Enum):
+class FirmwareDType(StrEnum):
     """Options for firmware-types."""
 
     base64_hex = "hex"
@@ -38,7 +38,7 @@ class FirmwareDType(str, Enum):
     path_elf = "path_elf"
 
 
-class HarvestAlgorithmDType(str, Enum):
+class HarvestAlgorithmDType(StrEnum):
     """Options for choosing a harvesting algorithm."""
 
     direct = disable = neutral = "neutral"

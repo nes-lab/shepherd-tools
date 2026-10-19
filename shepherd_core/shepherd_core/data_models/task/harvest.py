@@ -6,11 +6,11 @@ from datetime import timedelta
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Annotated
+from typing import Self
 from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.base.timezone import local_tz

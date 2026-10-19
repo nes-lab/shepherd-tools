@@ -9,8 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
-
-from typing_extensions import Self
+from typing import Self
 
 from shepherd_core.data_models.base.timezone import local_now
 from shepherd_core.logger import log

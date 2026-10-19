@@ -6,6 +6,7 @@ from multiprocessing import Pool
 from multiprocessing import cpu_count
 from pathlib import Path
 from typing import Any
+from typing import Self
 
 import numpy as np
 import ryaml
@@ -22,7 +23,6 @@ from shepherd_core.data_models.content import EnergyEnvironment
 from shepherd_core.data_models.content import EnergyProfile
 from shepherd_core.data_models.content.enum_datatypes import EnergyDType
 from shepherd_core.logger import log
-from typing_extensions import Self
 
 
 class Params(BaseModel):

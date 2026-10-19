@@ -5,11 +5,11 @@ from datetime import datetime
 from datetime import timedelta
 from typing import TYPE_CHECKING
 from typing import Annotated
+from typing import Self
 from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.config import core_config
 from shepherd_core.data_models.base.content import NameStr

@@ -1,9 +1,9 @@
 """Hardware related inventory model."""
 
 from collections.abc import Sequence
+from typing import Self
 
 from pydantic import ConfigDict
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 

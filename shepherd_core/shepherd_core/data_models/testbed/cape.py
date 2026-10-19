@@ -2,7 +2,7 @@
 
 from datetime import date
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 from typing import final
 
@@ -15,7 +15,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.testbed_client import tb_client
 
 
-class TargetPort(str, Enum):
+class TargetPort(StrEnum):
     """Options for choosing a target-port."""
 
     A = a = "A"

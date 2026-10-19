@@ -16,12 +16,12 @@ import os
 import pickle
 from pathlib import Path
 from types import TracebackType
+from typing import Self
 
 import numpy as np
 import pandas as pd
 from shepherd_core.writer import Writer as CoreWriter
 from tqdm import trange
-from typing_extensions import Self
 
 from .mppt import MPPTracker
 from .mppt import OptimalTracker

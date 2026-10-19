@@ -10,10 +10,10 @@ from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 from typing import Annotated
+from typing import Self
 from typing import final
 
 from pydantic import Field
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 
