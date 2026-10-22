@@ -1,8 +1,9 @@
 """Configs for observer features like gpio- & power-tracing."""
 
 from datetime import timedelta
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated
+from typing import Self
 from typing import final
 
 import numpy as np
@@ -10,7 +11,6 @@ from annotated_types import Interval
 from pydantic import Field
 from pydantic import PositiveFloat
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.data_models.testbed.gpio import GPIO
@@ -18,6 +18,8 @@ from shepherd_core.logger import log
 
 # defaults (pre-init complex types)
 zero_duration = timedelta(seconds=0)
+
+samplerates_supported: set[int] = {10, 100, 1_000, 10_000, 100_000}
 
 
 @final
@@ -51,12 +53,17 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """ ⤷ reduce file-size by re-sampling (mean over x samples)
 
         Caution: this option is available for IV-Samples (not only .only_power)
-                 but results might be faulty for use-cases that are not const-voltage
+                 but results might be imperfect for use-cases that are not const-voltage
                  Sum(U * I) != Sum(U) * Sum(I)
         Timestamps will be taken from the start of that sample-window.
         example: 10 Hz samplerate will be binning 10k samples via mean() and
                  the timestamp for that new sample will be value[0] of the 10k long vector
     """
+
+    @property
+    def samplerates_supported(self) -> set[int]:
+        # property & classmethod can't be mixed in newer py-versions
+        return samplerates_supported
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
@@ -65,10 +72,10 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
         if self.duration and self.duration.total_seconds() < 0:
             raise ValueError("Duration can't be negative.")
 
-        rates_allowed = (10, 100, 1_000, 100_000)
-        if self.samplerate not in rates_allowed:
+        if self.samplerate not in self.samplerates_supported:
             raise ValueError(
-                "Feature PowerTracing.samplerate only supports specific rates: %s", rates_allowed
+                "Feature PowerTracing.samplerate only supports specific rates: %s",
+                self.samplerates_supported,
             )
         return self
 
@@ -123,7 +130,12 @@ class UartLogging(ShpModel, title="Config for UART Logging"):
     """
 
     baudrate: Annotated[int, Field(ge=2_400, le=460_800)] = 115_200
-    # ⤷ TODO: find maximum that the system can handle
+    """
+     ⤷ The Observer (Beaglebone Green) can handle 460 kBaud over linux-serial, BUT
+       there is only a 64 byte hardware-buffer that has to be emptied in time
+       @ 460 kbaud that is ~ 1 ms of data -> most likely data will be lost, without any notice
+       -> use gpio-tracing & waveform decoding to capture higher baud-rates
+    """
     bytesize: Annotated[int, Field(ge=5, le=8)] = 8
     stopbits: Annotated[float, Field(ge=1, le=2)] = 1
     parity: str = PARITY_NONE
@@ -205,7 +217,7 @@ class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
 
 
 @final
-class GpioLevel(str, Enum):
+class GpioLevel(StrEnum):
     """Options for setting the gpio-level or state."""
 
     low = "L"

@@ -2,11 +2,11 @@
 
 from typing import Annotated
 from typing import Any
+from typing import Self
 from typing import final
 
 from pydantic import Field
 from pydantic import model_validator
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.content import ContentModel
 from shepherd_core.logger import log

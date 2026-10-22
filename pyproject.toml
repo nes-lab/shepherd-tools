@@ -3,7 +3,7 @@
 # uv pip install .
 [project]
 name = "shepherd-tools"
-version = "2026.10.1"
+version = "2026.10.2"
 description = "Programming- and CLI-Interface for the h5-dataformat of the Shepherd-Testbed"
 readme = "README.md"
 
@@ -16,7 +16,7 @@ dependencies = [
     "ruff",
     "ty",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 [tool.uv]
 package = false
@@ -58,3 +58,14 @@ builtin = "clear,rare,informal,usage,code,en-GB_to_en-US"
 ignore-words-list = "astroid,ws,arange,fram"
 check-filenames = true
 check-hidden = true
+
+[tool.rumdl]
+# Global options at root level
+line-length = 160
+respect-gitignore = true
+exclude = [".git"]
+disable = ["MD036"]
+
+[tool.rumdl.MD013] # line length
+code_blocks = false
+tables = false

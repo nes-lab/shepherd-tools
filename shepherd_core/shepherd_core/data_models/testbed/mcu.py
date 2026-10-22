@@ -1,6 +1,6 @@
 """meta-data representation of a testbed-component (physical object)."""
 
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated
 from typing import Any
 from typing import final
@@ -14,7 +14,7 @@ from shepherd_core.data_models.base.shepherd import ShpModel
 from shepherd_core.testbed_client import tb_client
 
 
-class ProgrammerProtocol(str, Enum):
+class ProgrammerProtocol(StrEnum):
     """Options regarding the programming-protocol."""
 
     SWD = swd = "SWD"

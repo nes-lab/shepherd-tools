@@ -5,11 +5,11 @@ import math
 from pathlib import Path
 from types import TracebackType
 from typing import Any
+from typing import Self
 
 import h5py
 import numpy as np
 from pydantic import validate_call
-from typing_extensions import Self
 
 from shepherd_core.data_models.content.enum_datatypes import Compression
 from shepherd_core.data_models.content.enum_datatypes import EnergyDType
@@ -162,7 +162,7 @@ class Writer(Reader):
         # -> emulator uses virtual-harvester, field will be adjusted by .embed_config()
         grp_data.attrs["window_samples"] = 0
 
-        grp_data.create_dataset(
+        self.ds = grp_data.create_dataset(
             "iv",
             (0, 2),
             dtype="u4",
@@ -171,8 +171,8 @@ class Writer(Reader):
             compression=self._compression,
             shuffle=True,
         )
-        grp_data["iv"].attrs["unit"] = "V;A"
-        grp_data["iv"].attrs["description"] = "value_SI = value_raw * gain + offset"
+        self.ds.attrs["unit"] = "V;A"
+        self.ds.attrs["description"] = "value_SI = value_raw * gain + offset"
 
     @staticmethod
     def _test_endianness() -> None:

@@ -31,7 +31,10 @@ For postprocessing shepherds .h5-files usage of [shepherd_data](https://pypi.org
 - decode waveforms (gpio-state & timestamp) to UART
 - create an inventory (for deployed versions of software, hardware)
 
-See [official documentation](https://nes-lab.github.io/shepherd) or [example scripts](https://github.com/nes-lab/shepherd-tools/tree/main/shepherd_core/examples) for more details and usage. Most functionality is showcased in both. The [extra](https://github.com/nes-lab/shepherd-tools/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed. Notably is a [trafficbench](https://github.com/nes-lab/TrafficBench)-experiment that's used to derive the link-matrix of the testbed-nodes.
+See [official documentation](https://nes-lab.github.io/shepherd) or [example scripts](https://github.com/nes-lab/shepherd-tools/tree/main/shepherd_core/examples) for more details and usage.
+Most functionality is showcased in both.
+The [extra](https://github.com/nes-lab/shepherd-tools/tree/main/shepherd_core/extra)-directory holds data-generators relevant for the testbed.
+Notably is a [trafficbench](https://github.com/nes-lab/TrafficBench)-experiment that's used to derive the link-matrix of the testbed-nodes.
 
 ## Config-Models in Detail
 
@@ -70,6 +73,7 @@ These pydantic data-models are used throughout all shepherd interfaces. Users ca
 | MacOS   | 3.8 - 3.13 | hex-conversion missing                     |
 
 Notes:
+
 - hex-conversion needs a working and accessible objcopy
 - elf-supports needs
   - ``shepherd-core[elf]`` installs ``pwntools-elf-only``
@@ -94,7 +98,8 @@ pip install git+https://github.com/nes-lab/shepherd-tools.git@dev#subdirectory=s
 sudo pip install git+https://github.com/nes-lab/shepherd-tools.git@dev#subdirectory=shepherd_core -U --break-system-packages
 ```
 
-If you are working with ``.elf``-files (embedding into experiments) you make "objcopy" accessible to python. In Ubuntu, you can either install ``build-essential`` or ``binutils-$ARCH`` with arch being ``msp430`` or ``arm-none-eabi`` for the nRF52.
+If you are working with ``.elf``-files (embedding into experiments) you make "objcopy" accessible to python.
+In Ubuntu, you can either install ``build-essential`` or ``binutils-$ARCH`` with arch being ``msp430`` or ``arm-none-eabi`` for the nRF52.
 
 ```shell
 sudo apt install build-essential

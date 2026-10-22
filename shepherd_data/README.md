@@ -13,7 +13,8 @@
 
 ---
 
-`shepherd-data` eases the handling of hdf5-recordings used by the [shepherd](https://github.com/nes-lab/shepherd)-testbed. Users can read, validate and create files and also extract, down-sample and plot information.
+`shepherd-data` eases the handling of hdf5-recordings used by the [shepherd](https://github.com/nes-lab/shepherd)-testbed.
+Users can read, validate and create files and also extract, down-sample and plot information.
 
 ## Installation
 

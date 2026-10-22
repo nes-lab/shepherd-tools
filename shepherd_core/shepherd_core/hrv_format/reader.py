@@ -9,11 +9,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import ClassVar
+from typing import Self
 
 import h5py
 import numpy as np
 from pydantic import validate_call
-from typing_extensions import Self
 
 from shepherd_core.config import core_config
 from shepherd_core.data_models.base.calibration import CalibrationPair

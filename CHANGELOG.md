@@ -1,6 +1,27 @@
 # History of Changes
 
-## v2026.10.1 unreleased
+## v2026.10.2 unreleased
+
+CoreLib
+
+- fix compression-enum (was mixed type)
+- allowed samplerates are now: 10, 100, 1000, 10000 (added), 100000 Hz
+- make writer more efficient with less group-lookups
+- add warning in UART-Logging for 460 kBaud
+
+Warning
+
+The Observer (Beaglebone Green) can handle 460 kBaud over linux-serial, BUT
+there is only a 64 byte hardware-buffer that has to be emptied in time
+@ 460 kbaud that is ~ 1 ms of data -> most likely data will be lost, without any notice
+-> use gpio-tracing & waveform decoding to capture higher baud-rates
+
+Other
+
+- deprecate py310 (it's EOL)
+- add rumdl to lint markdown files
+
+## v2026.10.1
 
 - improve conformity of csv-output
 - improve robustness and error-reporting of waveform decoder
@@ -41,7 +62,6 @@ Speed-Benchmark on a Beaglebone Green (compiled from [testbench_direct_rw](https
 | gzip1-shuffle     | 4.901 s  | 12.583 s | 5.932 s  | 22.650 s  |
 | gzip6-shuffle     | 4.947 s  | 14.875 s | 5.847 s  | 24.561 s  |
 
-
 ## v2026.8.1
 
 - bugfix for missing CLI command `extract-uart`
@@ -76,7 +96,7 @@ Speed-Benchmark on a Beaglebone Green (compiled from [testbench_direct_rw](https
   - add `cutout_cycles`-parameter
   - add `enable_automatic_cutout` parameter
   - improve documentation of some parameters
-  - documentation for cutout modes can be found here: https://github.com/nes-lab/shepherd/blob/main/docs/user/virtual_harvester.md#ivsurface---transition-cutout
+  - documentation for cutout modes can be found here: <https://github.com/nes-lab/shepherd/blob/main/docs/user/virtual_harvester.md#ivsurface---transition-cutout>
 
 ## v2026.4.2
 
@@ -86,7 +106,7 @@ This update brings performance improvements, fewer bugs and removes limitations 
 
 - major changes to internal imports of sub-modules, but API for the user should have stayed the same.
 - infrastructural validation of datamodels while creating experiments are now disabled by default -> this will be done by the client
-- modernize usage of `version` (now only hardcoded in pyproject.toml), `__version__` in ``__init__.py` was removed
+- modernize usage of `version` (now only hardcoded in pyproject.toml), `__version__` in `__init__.py` was removed
 - rename config-structure of shepherd-core to core_config
   - non-constant entries are now changed to lowercase (.testbed_name, .testbed_url, .validate_infrastructure)
 - WebClient is now named TestbedClient - it pulls status of testbed and get info about available resources:
@@ -95,7 +115,7 @@ This update brings performance improvements, fewer bugs and removes limitations 
 
 ### Performance Optimizations
 
-User-facing API should load ~ 5x faster, see https://github.com/nes-lab/shepherd/issues/150 for benchmarks.
+User-facing API should load ~ 5x faster, see <https://github.com/nes-lab/shepherd/issues/150> for benchmarks.
 
 - avoided importing several Models in higher level `__init__.py` (kept User-interface)
   - mostly targeting non-user-facing models previously imported in `core.__init__` and `core.data_models.__init__`
@@ -497,7 +517,7 @@ Compared to the current shepherd capacitor (charge-based), it:
 - `extra/gen_firmwares.py` shows size of different firmwares (elf, hex, embedded-yaml, embedded-json)
   - yaml / json does embed elf with zstd-compression level20 and base64-encoding
 
-```
+```text
 saved FW ./content/fw/nes_lab/nrf52_rf_test/build.elf
  -> size-stat: {'elf': 860904, 'hex': 4340, 'yaml': 232007, 'json': 231932}
 saved FW ./content/fw/nes_lab/nrf52_deep_sleep/build.elf
@@ -589,7 +609,6 @@ saved FW ./content/fw/nes_lab/nrf52_rf_survey/build.elf
 - validate data vs data_type on firmware
 - offer example for generic experiment definitions
 - shepherd_data: also export stdout-log
-
 
 ## v2023.9.8
 

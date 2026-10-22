@@ -16,6 +16,7 @@ from collections.abc import Sequence
 from datetime import timedelta
 from typing import Annotated
 from typing import Any
+from typing import Self
 from typing import final
 
 from annotated_types import Ge
@@ -26,7 +27,6 @@ from pydantic import NonNegativeFloat
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
-from typing_extensions import Self
 from typing_extensions import deprecated
 
 from shepherd_core.data_models.base.content import ContentModel

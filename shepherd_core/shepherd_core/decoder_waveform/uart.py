@@ -21,7 +21,7 @@ https://sigrok.org/wiki/Protocol_decoder:Uart
 
 """
 
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 import numpy as np
@@ -29,7 +29,7 @@ import numpy as np
 from shepherd_core.logger import log
 
 
-class Parity(str, Enum):
+class Parity(StrEnum):
     """Options for parity-property of UART data-frame."""
 
     no = "no"
@@ -37,7 +37,7 @@ class Parity(str, Enum):
     odd = "even"
 
 
-class BitOrder(str, Enum):
+class BitOrder(StrEnum):
     """Options for bit-order-property of UART data-frame."""
 
     msb = msb_first = "msb"

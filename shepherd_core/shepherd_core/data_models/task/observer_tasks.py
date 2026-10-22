@@ -4,10 +4,10 @@ from collections.abc import Iterable
 from datetime import datetime
 from pathlib import Path
 from pathlib import PurePosixPath
+from typing import Self
 from typing import final
 
 from pydantic import validate_call
-from typing_extensions import Self
 
 from shepherd_core.data_models.base.content import IdInt64
 from shepherd_core.data_models.base.content import NameStr
