@@ -1,6 +1,27 @@
 # History of Changes
 
-## v2026.10.1 unreleased
+## v2026.10.2 unreleased
+
+CoreLib
+
+- fix compression-enum (was mixed type)
+- allowed samplerates are now: 10, 100, 1000, 10000 (added), 100000 Hz
+- make writer more efficient with less group-lookups
+- add warning in UART-Logging for 460 kBaud
+
+Warning
+
+The Observer (Beaglebone Green) can handle 460 kBaud over linux-serial, BUT
+there is only a 64 byte hardware-buffer that has to be emptied in time
+@ 460 kbaud that is ~ 1 ms of data -> most likely data will be lost, without any notice
+-> use gpio-tracing & waveform decoding to capture higher baud-rates
+
+Other
+
+- deprecate py310 (it's EOL)
+- add rumdl to lint markdown files
+
+## v2026.10.1
 
 - improve conformity of csv-output
 - improve robustness and error-reporting of waveform decoder
