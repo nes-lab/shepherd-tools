@@ -130,7 +130,12 @@ class UartLogging(ShpModel, title="Config for UART Logging"):
     """
 
     baudrate: Annotated[int, Field(ge=2_400, le=460_800)] = 115_200
-    # ⤷ TODO: find maximum that the system can handle
+    """
+     ⤷ The Observer (Beaglebone Green) can handle 460 kBaud over linux-serial, BUT
+       there is only a 64 byte hardware-buffer that has to be emptied in time
+       @ 460 kbaud that is ~ 1 ms of data -> most likely data will be lost, without any notice
+       -> use gpio-tracing & waveform decoding to capture higher baud-rates
+    """
     bytesize: Annotated[int, Field(ge=5, le=8)] = 8
     stopbits: Annotated[float, Field(ge=1, le=2)] = 1
     parity: str = PARITY_NONE
