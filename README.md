@@ -96,7 +96,7 @@ coverage report
 - rebase dev-branch
 
 ```shell
-bump2version --allow-dirty --new-version 2026.10.1 patch
+bump2version --allow-dirty --new-version 2026.10.2 patch
 # ⤷ format: year.month.patch_release
 
 prek run --all-files
