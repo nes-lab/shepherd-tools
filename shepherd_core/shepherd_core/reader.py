@@ -172,6 +172,13 @@ class Reader:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
         self.samples_n = min(len(self.ds_time), len(self.ds_current), len(self.ds_voltage))
+        try:
+            _ = self.ds_time[self.samples_n - 1] if self.samples_n > 0 else 0
+        except OSError:
+            self._logger.warning(
+                "Accessing large dataset on a 32bit-Arch? There are dragons in h5py!"
+            )
+            self.samples_n = min(2 ** (32 - 3), self.samples_n)
         duration_raw = (
             (int(self.ds_time[self.samples_n - 1]) - int(self.ds_time[0]))
             if self.samples_n > 0
