@@ -28,6 +28,7 @@ def simulate_source(
     target: TargetABC,
     path_input: Path,
     path_output: Path | None = None,
+    eenv_rescale_factor: float = 1.0,
     *,
     monitor_internals: bool = False,
 ) -> float:
@@ -76,7 +77,7 @@ def simulate_source(
             file_inp.read(is_raw=True), total=file_inp.chunks_n, desc="Chunk", leave=False
         ):
             v_uV = 1e6 * cal_inp.voltage.raw_to_si(v_inp)
-            i_nA = 1e9 * cal_inp.current.raw_to_si(i_inp)
+            i_nA = 1e9 * cal_inp.current.raw_to_si(i_inp) * eenv_rescale_factor
 
             for n_ in range(len(t_)):
                 v_uV[n_] = src.iterate_sampling(
@@ -136,7 +137,8 @@ def simulate_source(
             ax.get_yaxis().get_major_formatter().set_useOffset(False)
             ax.get_xaxis().get_major_formatter().set_useOffset(False)
 
-        plt.savefig(path_output.with_suffix(".png"))
+        if path_output:
+            plt.savefig(path_output.with_suffix(".png"))
         plt.close(fig)
         plt.clf()
 
