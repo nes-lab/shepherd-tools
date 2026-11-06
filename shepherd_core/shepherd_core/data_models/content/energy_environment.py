@@ -171,6 +171,11 @@ class EnergyProfile(ShpModel):
                 repetitions_ok=repetition_ok,
             )
 
+    @property
+    def power_mean(self) -> float:
+        """Expected mean power [W] of this energy profile."""
+        return self.energy_Ws / self.duration
+
 
 @final
 class EnergyEnvironment(ContentModel):
@@ -227,6 +232,11 @@ class EnergyEnvironment(ContentModel):
     @property
     def valid(self) -> bool:
         return all(profile.valid for profile in self.energy_profiles)
+
+    @property
+    def power_mean(self) -> float:
+        """Expect mean power [W] of this energy environment."""
+        return sum(pf.power_mean for pf in self.energy_profiles) / len(self.energy_profiles)
 
     def enforce_validity(self) -> None:
         """Offer soft validation that can be used by upper classes."""
