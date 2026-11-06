@@ -279,6 +279,22 @@ class SystemLogging(ShpModel, title="Config for System-Logging"):
     sheep: bool = True
     sys_util: bool = True
 
+    sync_offset_threshold: PositiveFloat = 10e-6  # 10 us
+    """ ⤷ tolerated |delta|-sync-offset reported by PTP4L or phc2sys.
+
+        Experiments can keep failing because of too much traffic on the network.
+        You may raise this threshold if your setup does allow it.
+        The alternative is reducing the network-traffic by recording less data.
+    """
+
+    ignore_unrelated_errors: bool = True
+    """ ⤷ Runtime-Errors not related to Shepherd can cause failed experiments.
+
+    Every observed error counts during the runtime of shepherd experiments.
+    Linux, running on the observers, might throw errors like "spurious interrupts".
+    This setting helps filtering this out and thus reduce chance of failed experiments.
+    """
+
 
 # TODO: some more interaction would be good
 #     - execute limited python-scripts
