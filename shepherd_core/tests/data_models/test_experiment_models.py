@@ -264,6 +264,17 @@ def test_experiment_model_syslogging_min() -> None:
     SystemLogging()
 
 
+@pytest.mark.parametrize("value", [1e-6, 10e-6, 1, 500])
+def test_experiment_model_syslogging_okay(value: float) -> None:
+    SystemLogging(sync_offset_threshold=value)
+
+
+@pytest.mark.parametrize("value", [-1, 0, "fail"])
+def test_experiment_model_syslogging_fail(value: float) -> None:
+    with pytest.raises(ValidationError):
+        SystemLogging(sync_offset_threshold=value)
+
+
 def test_experiment_model_tgt_cfg_min1() -> None:
     cfg = TargetConfig(
         target_IDs=[1],
