@@ -193,11 +193,19 @@ class EnergyEnvironment(ContentModel):
     General: transducer / harvester used, date, time, experiment setup, location, route
     """
 
+    rescale_factor: PositiveFloat = 1
+    """ ⤷ scale up/down current and thus the available power
+
+    Rescaling allows experimenting with questions like
+        "what if I use a larger solar cell?"
+
+    This factor is applied to each embedded energy profile
+    before handing it to the virtual source / emulation.
+    """
+    # TODO: offset for start_time (time_start_offset?
+
     modifications: Sequence[str] = []
     """Changes recorded by manipulation-Ops (i.e. addition, slicing)."""
-
-    # TODO: scale up/down voltage/current
-    # TODO: mean power as energy/duration
 
     PROFILES_MAX: int = Field(default=128, exclude=True)
     """ ⤷ arbitrary maximum, internal state which controls behavior for repetitions_ok-cases
@@ -236,7 +244,11 @@ class EnergyEnvironment(ContentModel):
     @property
     def power_mean(self) -> float:
         """Expect mean power [W] of this energy environment."""
-        return sum(pf.power_mean for pf in self.energy_profiles) / len(self.energy_profiles)
+        return (
+            self.rescale_factor
+            * sum(pf.power_mean for pf in self.energy_profiles)
+            / len(self.energy_profiles)
+        )
 
     def enforce_validity(self) -> None:
         """Offer soft validation that can be used by upper classes."""

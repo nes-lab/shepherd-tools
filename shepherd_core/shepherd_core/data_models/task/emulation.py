@@ -11,6 +11,7 @@ from typing import Self
 from typing import final
 
 from pydantic import Field
+from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
 
@@ -88,7 +89,10 @@ class EmulationTask(ShpModel):
 
     provide parameters or name like BQ25570
     """
+    eenv_rescale_factor: PositiveFloat = 1
+    """ ⤷ scale up/down current and thus the available power"""
 
+    # TODO: these ##_default may improve performance, but they obscure the code -> replace
     power_tracing: PowerTracing | None = observer_features_defaults.power_tracer_default
     gpio_tracing: GpioTracing | None = observer_features_defaults.gpio_tracing_default
     uart_logging: UartLogging | None = observer_features_defaults.uart_logging_default
@@ -162,6 +166,7 @@ class EmulationTask(ShpModel):
             io_port=obs.get_target_port(tgt_id),
             pwr_port=obs.get_target_port(tgt_id),
             virtual_source=tgt_cfg.virtual_source,
+            eenv_rescale_factor=tgt_cfg.energy_env.rescale_factor,
             power_tracing=tgt_cfg.power_tracing,
             gpio_tracing=tgt_cfg.gpio_tracing,
             uart_logging=tgt_cfg.uart_logging,
