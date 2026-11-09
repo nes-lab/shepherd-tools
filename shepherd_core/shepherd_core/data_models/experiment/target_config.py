@@ -28,7 +28,10 @@ from .observer_features import UartLogging
 
 @final
 class TargetConfig(ShpModel):
-    """Configuration related to Target Nodes (DuT)."""
+    """Configuration related to Target Nodes (DuT).
+
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
+    """
 
     target_IDs: Annotated[list[IdInt64], Field(min_length=1, max_length=128)]
     custom_IDs: Annotated[list[IdInt16], Field(min_length=1, max_length=128)] | None = None

@@ -27,6 +27,8 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """Configuration for recording the Power-Consumption of the Target Nodes.
 
     With the default configuration voltage and current are sampled with 100 kHz.
+
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
     """
 
     intermediate_voltage: bool = False
@@ -127,6 +129,7 @@ class UartLogging(ShpModel, title="Config for UART Logging"):
 
     Note that the Communication has to be on a specific port that
     reaches the hardware-module of the SBC.
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
     """
 
     baudrate: Annotated[int, Field(ge=2_400, le=460_800)] = 115_200
@@ -163,6 +166,7 @@ all_gpio = list(range(18))
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """Configuration for recording the GPIO-Output of the Target Nodes.
 
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
     TODO: postprocessing not implemented ATM
     """
 
@@ -272,7 +276,10 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
 @final
 class SystemLogging(ShpModel, title="Config for System-Logging"):
-    """Configuration for recording Debug-Output of the Observers System-Services."""
+    """Configuration for recording Debug-Output of the Observers System-Services.
+
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
+    """
 
     kernel: bool = True
     time_sync: bool = True
