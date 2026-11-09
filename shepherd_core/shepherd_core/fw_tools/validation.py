@@ -109,6 +109,8 @@ def is_elf_msp430(file: Path) -> bool:
     """Check if file is an ELF for that MCU.
 
     TODO: allow detection without conversion
+    `file firmware_msp.elf' gives us
+    ELF 32-bit LSB executable, TI msp430, version 1 (embedded), ...
     """
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
@@ -124,6 +126,8 @@ def is_elf_nrf52(file: Path) -> bool:
     """Check if file is an ELF for that MCU.
 
     TODO: allow detection without conversion
+    `file firmware_nrf.elf' gives us
+    ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), ...
     """
     if is_elf(file):
         with tempfile.TemporaryDirectory() as path:
