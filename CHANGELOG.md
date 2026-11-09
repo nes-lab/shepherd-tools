@@ -1,6 +1,19 @@
 # History of Changes
 
-## v2026.10.2 unreleased
+## v2026.11.1 unreleased
+
+- reader: add access-check for large files that prints warnings if error is detected (observed on 32bit ArmV7)
+- `SystemLogging()`-Model
+  - add parameter for sync-threshold (`sync_offset_threshold`) - relax if experiments fail to sync due to high demands
+  - allow ignoring irrelevant errors that come from outside of shepherd (`ignore_unrelated_errors`)
+- `EnergyEnvironments()`-Model
+  - add `.power_mean()`-property for getting mean-power
+  - add `.rescale_factor`-parameter to scale up/down the available power
+  - add `.time_start_offset`-parameter to begin emulation at later point in EEnv
+- user-facing models - add disclaimer for missing SI Units on most model-parameters
+- update tooling
+
+## v2026.10.2
 
 CoreLib
 
