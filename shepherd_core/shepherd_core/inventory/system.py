@@ -74,7 +74,7 @@ class SystemInventory(ShpModel):
         fs_out = []
         if Path(fs_cmd[0]).is_file():
             reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
-                fs_cmd, timeout=30, capture_output=True, check=False, shell=False
+                fs_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
             fs_out = str(reply.stdout).split(r"\n")
 
@@ -82,7 +82,7 @@ class SystemInventory(ShpModel):
         beagle_out = []
         if Path(beagle_cmd[0]).is_file():
             reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
-                beagle_cmd, timeout=30, capture_output=True, check=False, shell=False
+                beagle_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
             beagle_out = str(reply.stdout).split(r"\n")
 
@@ -90,7 +90,7 @@ class SystemInventory(ShpModel):
         ptp_out = None
         if Path(ptp_cmd[0]).is_file():
             reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
-                ptp_cmd, timeout=30, capture_output=True, check=False, shell=False
+                ptp_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
             ptp_out = f"{reply.stdout}, {reply.stderr}"
             # alternative: check_output - seems to be lighter

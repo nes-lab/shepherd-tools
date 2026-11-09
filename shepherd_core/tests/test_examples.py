@@ -8,6 +8,13 @@ import pytest
 path_example = Path(__file__).resolve().parent.parent / "examples"
 path_simulation = Path(__file__).resolve().parent.parent / "examples/simulations"
 
+
+def test_running_scripts() -> None:
+    path_file = Path(__file__).parent / "example_failing.py"
+    os.chdir(path_file.parent)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)
+
+
 simulations: list[str] = [
     "vharvester.py",
     "vsource.py",
