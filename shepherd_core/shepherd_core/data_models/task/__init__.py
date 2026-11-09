@@ -4,7 +4,7 @@ These models import externally from all other model-modules!
 """
 
 import pathlib
-import pickle
+import pickle  # ruff: ignore[suspicious-pickle-import]
 import sys
 from pathlib import Path
 

@@ -1,7 +1,7 @@
 """System / OS related inventory model."""
 
 import platform
-import subprocess
+import subprocess  # ruff: ignore[suspicious-subprocess-import]
 import time
 from collections.abc import Mapping
 from collections.abc import Sequence

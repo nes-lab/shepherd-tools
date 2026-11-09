@@ -1,7 +1,7 @@
 """Current implementation of a file-based database."""
 
 import copy
-import pickle
+import pickle  # ruff: ignore[suspicious-pickle-import]
 from collections.abc import Iterable
 from collections.abc import Mapping
 from datetime import datetime

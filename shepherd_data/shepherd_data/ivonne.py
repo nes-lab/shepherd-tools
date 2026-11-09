@@ -13,7 +13,7 @@ import errno
 import logging
 import math
 import os
-import pickle
+import pickle  # ruff: ignore[suspicious-pickle-import]
 from pathlib import Path
 from types import TracebackType
 from typing import Self

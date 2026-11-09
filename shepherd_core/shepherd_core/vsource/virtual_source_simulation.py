@@ -23,7 +23,7 @@ from .target_model import TargetABC
 from .virtual_source_model import VirtualSourceModel
 
 
-def simulate_source(
+def simulate_source(  # ruff: ignore[too-many-locals]
     config: VirtualSourceConfig,
     target: TargetABC,
     path_input: Path,

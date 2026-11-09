@@ -184,7 +184,7 @@ def extract_meta(
     """Extract metadata and logs from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
-    for file in files:
+    for file in files:  # ruff: ignore[too-many-nested-blocks]
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
         # TODO: add default exports (user-centric) and allow specifying --all or specific ones
         # TODO: could also be combined with other extractors (just have one)

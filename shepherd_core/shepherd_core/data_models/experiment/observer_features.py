@@ -267,7 +267,7 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        msg = "not implemented ATM"
+        msg = f"{type(self).__name__} - not implemented ATM"
         raise ValueError(msg)
 
     def get_gpios(self) -> set:

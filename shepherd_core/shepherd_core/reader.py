@@ -770,10 +770,10 @@ class Reader:
         if idx_start is not None:
             if idx_stop is not None:
                 # as we start searching @ idx_start, we have to add it
-                idx_stop = idx_stop + idx_start
+                idx_stop += idx_start
             if idx_start > 0:
                 # add a single out-of-bound entry to get the state @ ts_start
-                idx_start = idx_start - 1
+                idx_start -= 1
         if idx_start is not None or idx_stop is not None:
             # cut once instead of every time in loop
             gpio_ts = gpio_ts[idx_start:idx_stop]
@@ -806,7 +806,7 @@ class Reader:
         from .decoder_waveform import Uart  # ruff: ignore[import-outside-top-level]
 
         gpio_wf = gpio_wf.astype(float)
-        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
+        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9  # ruff: ignore[non-augmented-assignment]
         content = None
         with suppress(TypeError), suppress(ValueError):
             content = Uart(gpio_wf).get_lines()
@@ -848,7 +848,7 @@ class Reader:
             self.waveform_to_csv(pin_name, pin_wf)
 
         gpio_wf = pin_wf.astype(float)
-        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
+        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9  # ruff: ignore[non-augmented-assignment]
 
         try:
             return Uart(gpio_wf).get_lines()

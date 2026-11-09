@@ -1,6 +1,6 @@
 """Converter for ELF-files."""
 
-import subprocess
+import subprocess  # ruff: ignore[suspicious-subprocess-import]
 from pathlib import Path
 
 from pydantic import validate_call

@@ -92,7 +92,7 @@ for file in files:
                     gpio_wf[-1, 0] = time_stop
                     # arrange waveforms on single plot
                     y_offset = 1.2 * (gpio_count - _i - 1)
-                    gpio_wf[:, 1] = gpio_wf[:, 1] + y_offset
+                    gpio_wf[:, 1] = gpio_wf[:, 1] + y_offset  # ruff: ignore[non-augmented-assignment]
                     ax.step(gpio_wf[:, 0], gpio_wf[:, 1], label=gpio_name2)
                     x_offset = time_start + 0.02 * (time_stop - time_start)
                     plt.text(x_offset, y_offset + 0.4, gpio_name2, size="medium", alpha=0.7)

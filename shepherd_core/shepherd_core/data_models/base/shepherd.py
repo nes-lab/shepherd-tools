@@ -1,7 +1,7 @@
 """Shepherds base-model that brings a lot of default functionality."""
 
 import hashlib
-import pickle
+import pickle  # ruff: ignore[suspicious-pickle-import]
 from collections.abc import Generator
 from pathlib import Path
 from typing import Any
@@ -112,11 +112,11 @@ class ShpModel(BaseModel):
     def items(self) -> Generator[tuple, None, None]:
         """Fn of dict."""
         for key in self.keys():
-            yield key, self.__getattribute__(key)
+            yield key, getattr(self, key)
 
     @model_validator(mode="before")
     @classmethod
-    def __alert_extra_field__(cls, values: dict[str, Any]) -> dict[str, Any]:
+    def _alert_extra_field(cls, values: dict[str, Any]) -> dict[str, Any]:
         if isinstance(values, dict) and (
             extra_fields := values.keys()
             - cls.model_fields.keys()
