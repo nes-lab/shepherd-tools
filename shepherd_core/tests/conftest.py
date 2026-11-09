@@ -49,7 +49,7 @@ def pytest_collection_modifyitems(
 
     # OBJCOPY
     try:
-        subprocess.run(["objcopy", "--version"], check=True)
+        subprocess.run(["objcopy", "--version"], check=True, shell=False)
         OBJCOPY = True
     except FileNotFoundError:
         OBJCOPY = None

@@ -19,7 +19,7 @@ def elf_to_hex(file_elf: Path, file_hex: Path | None = None) -> Path:
     # TODO: observe - maybe $ARCH-Versions of objcopy are needed
     #  (hex of nRF / msp identical between the 3 $arch-versions)
     try:
-        subprocess.run(cmd, check=True)  # ruff: ignore[subprocess-without-shell-equals-true]
+        subprocess.run(cmd, check=True, shell=False)  # ruff: ignore[subprocess-without-shell-equals-true]
     except FileNotFoundError as err:
         raise RuntimeError(
             "Objcopy not found -> are binutils or build-essential installed?"

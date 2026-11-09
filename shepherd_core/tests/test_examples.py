@@ -19,7 +19,7 @@ simulations: list[str] = [
 def test_simulation_scripts(file: str) -> None:
     path_file = path_simulation / file
     os.chdir(path_file.parent)
-    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)
 
 
 examples: list[str] = [
@@ -35,7 +35,7 @@ examples: list[str] = [
 def test_example_scripts(file: str) -> None:
     path_file = path_example / file
     os.chdir(path_file.parent)
-    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)
 
 
 examples_fw: list[str] = [
@@ -50,4 +50,4 @@ examples_fw: list[str] = [
 def test_example_scripts_fw(file: str) -> None:
     path_file = path_example / file
     os.chdir(path_file.parent)
-    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)
