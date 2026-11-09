@@ -23,4 +23,4 @@ sudo python3 -X importtime -c 'from shepherd_core.data_models.task import Emulat
 - 9.5 s on v2025.6.3, pydantic 2.11.7, core 2.33.2 - py 3.11 in venv via uv
 - 12.7 s on v2025.10.1 pydantic 2.12.4, core 2.41.5
 - 5.1 s on v2026.8.1 pydantic 2.13.5, core 2.46.5 - heavy lib-optimization
-- 5.1 s on v2026.8.1 pydantic 2.14.1, core 2.50.0
+- 4.8 s on v2026.11.1 pydantic 2.14.3, core 2.50.4
