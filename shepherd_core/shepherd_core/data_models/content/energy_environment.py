@@ -202,7 +202,12 @@ class EnergyEnvironment(ContentModel):
     This factor is applied to each embedded energy profile
     before handing it to the virtual source / emulation.
     """
-    # TODO: offset for start_time (time_start_offset?
+    time_start_offset: NonNegativeFloat = 0
+    """ ⤷ begin emulation at later point in EEnv
+
+    This allows to use different parts of the EEnv and not start at the beginning.
+    TODO: Reader, UnitTests
+    """
 
     modifications: Sequence[str] = []
     """Changes recorded by manipulation-Ops (i.e. addition, slicing)."""
@@ -222,6 +227,16 @@ class EnergyEnvironment(ContentModel):
         values, _ = tb_client.complete_resource_model(cls.__name__, values)
         return values
 
+    @model_validator(mode="after")
+    def post_validation(self) -> Self:
+        if self.duration <= 0:
+            msg = (
+                f"{self.name} - minimum duration of embedded EnergyProfiles "
+                f"is shorter than chosen time_start_offset"
+            )
+            raise ValueError(msg)
+        return self
+
     def __len__(self) -> int:
         if self.repetitions_ok:
             return self.PROFILES_MAX
@@ -230,7 +245,7 @@ class EnergyEnvironment(ContentModel):
     @property
     def duration(self) -> PositiveFloat:
         """Duration of the recorded environment (minimum of all profiles) in seconds."""
-        return min(profile.duration for profile in self.energy_profiles)
+        return min(profile.duration for profile in self.energy_profiles) - self.time_start_offset
 
     @property
     def repetitions_ok(self) -> bool:
@@ -239,7 +254,7 @@ class EnergyEnvironment(ContentModel):
 
     @property
     def valid(self) -> bool:
-        return all(profile.valid for profile in self.energy_profiles)
+        return all(profile.valid for profile in self.energy_profiles) and self.duration > 0
 
     @property
     def power_mean(self) -> float:

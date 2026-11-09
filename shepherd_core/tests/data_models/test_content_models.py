@@ -171,6 +171,39 @@ def test_content_model_energy_environment_rescale(energy_profiles: list[EnergyPr
     assert ee2.power_mean / ee1.power_mean == 11
 
 
+@pytest.mark.parametrize("start_offset", [0, 0.1, 1, 19])
+def test_content_model_energy_environment_start_offset_okay(
+    energy_profiles: list[EnergyProfile], start_offset: float
+) -> None:
+    ee = EnergyEnvironment(
+        id=98765,
+        name="some",
+        energy_profiles=energy_profiles,
+        owner="jane",
+        group="wayne",
+        time_start_offset=start_offset,
+    )
+    # validation is done during construction - below is just for show:
+    assert ee.duration > 0
+    assert ee.valid
+    ee.enforce_validity()
+
+
+@pytest.mark.parametrize("start_offset", [-1, 20, 100])
+def test_content_model_energy_environment_start_offset_fault(
+    energy_profiles: list[EnergyProfile], start_offset: float
+) -> None:
+    with pytest.raises(ValidationError):
+        EnergyEnvironment(
+            id=98765,
+            name="some",
+            energy_profiles=energy_profiles,
+            owner="jane",
+            group="wayne",
+            time_start_offset=start_offset,
+        )
+
+
 def test_content_model_energy_environment_add_profile(energy_profiles: list[EnergyProfile]) -> None:
     ee1 = EnergyEnvironment(
         id=9765,
