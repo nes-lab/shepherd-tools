@@ -11,7 +11,7 @@ from typing import Self
 from typing import final
 
 from pydantic import Field
-from pydantic import NonNegativeFloat
+from pydantic import NonNegativeInt
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
@@ -93,7 +93,7 @@ class EmulationTask(ShpModel):
 
     eenv_rescale_factor: PositiveFloat = 1
     """ ⤷ scale up/down current and thus the available power"""
-    eenv_time_start_offset: NonNegativeFloat = 0
+    eenv_time_start_offset: NonNegativeInt = 0
     """ ⤷ begin emulation at later point in EEnv"""
 
     # TODO: these ##_default may improve performance, but they obscure the code -> replace

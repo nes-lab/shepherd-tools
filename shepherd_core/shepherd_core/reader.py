@@ -344,6 +344,9 @@ class Reader:
             "voltage_step_V": self.get_voltage_step(),
         }
 
+    def calc_sample_offset(self, time_offset: float) -> int:
+        return max(0, math.floor(self.samplerate_sps * time_offset))
+
     def is_valid(self) -> bool:
         """Check file for plausibility, validity / correctness.
 

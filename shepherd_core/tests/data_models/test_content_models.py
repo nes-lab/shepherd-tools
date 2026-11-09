@@ -171,7 +171,7 @@ def test_content_model_energy_environment_rescale(energy_profiles: list[EnergyPr
     assert ee2.power_mean / ee1.power_mean == 11
 
 
-@pytest.mark.parametrize("start_offset", [0, 0.1, 1, 19])
+@pytest.mark.parametrize("start_offset", [0, 1, 19])
 def test_content_model_energy_environment_start_offset_okay(
     energy_profiles: list[EnergyProfile], start_offset: float
 ) -> None:
@@ -189,7 +189,7 @@ def test_content_model_energy_environment_start_offset_okay(
     ee.enforce_validity()
 
 
-@pytest.mark.parametrize("start_offset", [-1, 20, 100])
+@pytest.mark.parametrize("start_offset", [-1, 0.1, 20, 100])
 def test_content_model_energy_environment_start_offset_fault(
     energy_profiles: list[EnergyProfile], start_offset: float
 ) -> None:

@@ -51,6 +51,7 @@ from typing import overload
 import ryaml
 from pydantic import Field
 from pydantic import NonNegativeFloat
+from pydantic import NonNegativeInt
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
@@ -202,11 +203,10 @@ class EnergyEnvironment(ContentModel):
     This factor is applied to each embedded energy profile
     before handing it to the virtual source / emulation.
     """
-    time_start_offset: NonNegativeFloat = 0
+    time_start_offset: NonNegativeInt = 0
     """ ⤷ begin emulation at later point in EEnv
 
     This allows to use different parts of the EEnv and not start at the beginning.
-    TODO: Reader, UnitTests
     """
 
     modifications: Sequence[str] = []
