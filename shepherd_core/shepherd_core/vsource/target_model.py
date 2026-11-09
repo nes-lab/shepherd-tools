@@ -108,7 +108,7 @@ class ConstantCurrentTarget(TargetABC):
         self.I_active_nA = 1e9 * I_active_A
         self.I_sleep_nA = 1e9 * I_sleep_A
 
-    def step(self, voltage_uV: int, *, pwr_good: bool) -> float:  # noqa: ARG002
+    def step(self, voltage_uV: int, *, pwr_good: bool) -> float:  # ruff: ignore[unused-method-argument]
         return self.I_active_nA if pwr_good else self.I_sleep_nA
 
 

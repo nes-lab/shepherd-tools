@@ -37,7 +37,7 @@ def test_vsource_hrv_create_files(
 def test_vsource_hrv_fail_ivcurve(hrv_name: str) -> None:
     # the first algos are not usable for ivcurve
     hrv_config = VirtualHarvesterConfig(name=hrv_name)
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         _ = HarvesterPRUConfig.from_vhrv(
             hrv_config,
             for_emu=True,

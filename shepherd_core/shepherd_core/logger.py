@@ -30,7 +30,7 @@ def set_log_verbose_level(log_: logging.Logger | logging.Handler, verbose: int) 
 
     if verbose < 3:
         # reduce log-overhead when not debugging, also more user-friendly exceptions
-        logging._srcfile = None  # noqa: SLF001
+        logging._srcfile = None  # ruff: ignore[private-member-access]
         logging.logThreads = False
         logging.logProcesses = False
 
@@ -42,7 +42,7 @@ def set_log_verbose_level(log_: logging.Logger | logging.Handler, verbose: int) 
 
 def increase_verbose_level(verbose: int) -> None:
     """Increase log level of shepherd."""
-    global verbose_level  # noqa: PLW0603
+    global verbose_level  # ruff: ignore[global-statement]
     if verbose >= verbose_level:
         verbose_level = min(max(verbose, 0), 3)
         set_log_verbose_level(log, verbose_level)

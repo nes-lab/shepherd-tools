@@ -73,7 +73,7 @@ class SystemInventory(ShpModel):
         fs_cmd = ["/usr/bin/df", "-h", "/"]
         fs_out = []
         if Path(fs_cmd[0]).is_file():
-            reply = subprocess.run(  # noqa: S603
+            reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
                 fs_cmd, timeout=30, capture_output=True, check=False
             )
             fs_out = str(reply.stdout).split(r"\n")
@@ -81,7 +81,7 @@ class SystemInventory(ShpModel):
         beagle_cmd = ["/usr/bin/beagle-version"]
         beagle_out = []
         if Path(beagle_cmd[0]).is_file():
-            reply = subprocess.run(  # noqa: S603
+            reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
                 beagle_cmd, timeout=30, capture_output=True, check=False
             )
             beagle_out = str(reply.stdout).split(r"\n")
@@ -89,7 +89,7 @@ class SystemInventory(ShpModel):
         ptp_cmd = ["/usr/sbin/ptp4l", "-v"]
         ptp_out = None
         if Path(ptp_cmd[0]).is_file():
-            reply = subprocess.run(  # noqa: S603
+            reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
                 ptp_cmd, timeout=30, capture_output=True, check=False
             )
             ptp_out = f"{reply.stdout}, {reply.stderr}"

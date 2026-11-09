@@ -11,7 +11,7 @@ __all__ = [
 
 
 def set_client(client: AbcClient) -> None:
-    global tb_client  # noqa: PLW0603
+    global tb_client  # ruff: ignore[global-statement]
     tb_client = client
 
 

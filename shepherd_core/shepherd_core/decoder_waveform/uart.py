@@ -234,7 +234,7 @@ class Uart:
             if pos_df is None and value == 0:
                 # Start of frame (first low after pause / EOF)
                 pos_df = 0
-                steps -= 1  # noqa: PLW2901
+                steps -= 1  # ruff: ignore[redefined-loop-name]
                 t_start = time
             if pos_df is not None:
                 if round(steps) >= 1 and value:
@@ -254,7 +254,7 @@ class Uart:
                         log.debug("Error - Off-sized step - but SigLow (@%d)", time)
         self.events_symbols = np.concatenate(content).reshape((len(content), 2))
         # TODO: numpy is converting timestamp to string -> must be added as tuple (ts, symbol)
-        # symbol_events[:, 0] = symbol_events[:, 0].astype(float)  # noqa: ERA001
+        # symbol_events[:, 0] = symbol_events[:, 0].astype(float)  # ruff: ignore[commented-out-code]
         # ⤷ does not work
         return self.events_symbols
 

@@ -75,7 +75,7 @@ class Writer(Reader):
     _CHUNK_SHAPE: tuple = (Reader.CHUNK_SAMPLES_N,)
 
     @validate_call
-    def __init__(  # noqa: PLR0917
+    def __init__(  # ruff: ignore[too-many-positional-arguments]
         self,
         file_path: Path,
         mode: str | None = None,
@@ -282,7 +282,7 @@ class Writer(Reader):
 
     def append_iv_data_raw(
         self,
-        timestamp: np.ndarray | float | int,  # noqa: PYI041
+        timestamp: np.ndarray | float | int,  # ruff: ignore[redundant-numeric-union]
         voltage: np.ndarray,
         current: np.ndarray,
     ) -> None:

@@ -51,7 +51,7 @@ def cli(ctx: click.Context, *, verbose: bool) -> None:
 @cli.command(short_help="Print version-info (combine with -v for more)")
 def version() -> None:
     """Print version-info (combine with -v for more)."""
-    from importlib import metadata  # noqa: PLC0415
+    from importlib import metadata  # ruff: ignore[import-outside-top-level]
 
     logger.debug("Python v%s", sys.version)
     logger.info("shepherd-data v%s", metadata.version("shepherd-data"))

@@ -26,7 +26,7 @@ def raise_for_extra_fields() -> None:
 
     This is useful for the web-server
     """
-    global only_warn_extra_fields  # noqa: PLW0603
+    global only_warn_extra_fields  # ruff: ignore[global-statement]
     only_warn_extra_fields = False
 
 
@@ -102,10 +102,10 @@ class ShpModel(BaseModel):
 
     def __contains__(self, item: str) -> bool:
         """Allow checks like 'x in YClass'."""
-        return item in self.model_dump().keys()  # noqa: SIM118
+        return item in self.model_dump().keys()  # ruff: ignore[in-dict-keys]
         # more correct, but probably slower than hasattr
 
-    def keys(self):  # noqa: ANN201
+    def keys(self):  # ruff: ignore[missing-return-type-undocumented-public-function]
         """Fn of dict."""
         return self.model_dump().keys()  # TODO: there is an easier way
 
@@ -190,7 +190,7 @@ class ShpModel(BaseModel):
             raise FileNotFoundError
         if path.suffix.lower() == ".pickle":
             with Path(path).open("rb") as shp_file:
-                shp_dict = pickle.load(shp_file)  # noqa: S301
+                shp_dict = pickle.load(shp_file)  # ruff: ignore[suspicious-pickle-usage]
         else:
             with Path(path).open(encoding="utf-8") as shp_file:
                 shp_dict = ryaml.load(shp_file)

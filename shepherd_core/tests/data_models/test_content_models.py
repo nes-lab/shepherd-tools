@@ -320,7 +320,7 @@ def test_content_model_energy_environment_influence_validity(
     )
     ee2 = ee1 + ep2
     assert not ee2.valid
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         ee2.enforce_validity()
 
 
@@ -528,7 +528,7 @@ def test_content_model_fw_from_hex_failing(tmp_path: Path) -> None:
     path_hex = tmp_path / "some.hex"
     with path_hex.open("w", encoding="utf-8") as fd:
         fd.write("something")
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         Firmware.from_firmware(
             file=path_hex,
             name="dome",

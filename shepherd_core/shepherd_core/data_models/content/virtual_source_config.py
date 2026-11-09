@@ -149,7 +149,7 @@ class VirtualSourceConfig(ContentModel, title="Config for the virtual Source"):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        from .virtual_harvester_config_pru import HarvesterPRUConfig  # noqa: PLC0415
+        from .virtual_harvester_config_pru import HarvesterPRUConfig  # ruff: ignore[import-outside-top-level]
 
         # trigger stricter test of harv-parameters
         HarvesterPRUConfig.from_vhrv(self.harvester, for_emu=True)

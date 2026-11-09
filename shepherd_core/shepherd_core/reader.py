@@ -803,7 +803,7 @@ class Reader:
     def waveform_to_uart_log(
         self, gpio_name: str, gpio_wf: np.ndarray, *, add_timestamps: bool = True
     ) -> None:
-        from .decoder_waveform import Uart  # noqa: PLC0415
+        from .decoder_waveform import Uart  # ruff: ignore[import-outside-top-level]
 
         gpio_wf = gpio_wf.astype(float)
         gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
@@ -836,7 +836,7 @@ class Reader:
 
     @deprecated("use waveform_to_uart_log() instead")
     def gpio_to_uart(self) -> np.ndarray | None:
-        from .decoder_waveform import Uart  # noqa: PLC0415
+        from .decoder_waveform import Uart  # ruff: ignore[import-outside-top-level]
 
         wfs = self.get_gpio_waveforms("uart")
         if len(wfs) < 1:

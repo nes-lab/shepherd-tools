@@ -204,7 +204,7 @@ class Fixtures:
             # speedup by loading from cache
             # TODO: also add version as criterion
             with cache_file.open("rb", buffering=-1) as fd:
-                self.resources = pickle.load(fd)  # noqa: S301
+                self.resources = pickle.load(fd)  # ruff: ignore[suspicious-pickle-usage]
             log.debug(" -> found & used pickled fixtures")
         else:
             if not isinstance(file_path, Path):

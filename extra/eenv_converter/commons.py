@@ -44,7 +44,7 @@ def process_mp(worker_cfgs: list[tuple[Callable, dict[str, Any]]]) -> None:
     """Multiprocess each worker."""
     start_time = time.time()
     with Pool() as pool:
-        log.info(f"Multiprocessing {len(worker_cfgs)} jobs with {pool._processes} workers")  # noqa: SLF001
+        log.info(f"Multiprocessing {len(worker_cfgs)} jobs with {pool._processes} workers")  # ruff: ignore[private-member-access]
 
         def exit_pool(_signum: int, _frame: FrameType | None) -> None:
             """Provide custom exit handler that closes the pool."""

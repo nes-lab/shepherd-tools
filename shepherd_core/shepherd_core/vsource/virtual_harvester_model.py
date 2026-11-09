@@ -59,10 +59,10 @@ class VirtualHarvesterModel:
         self.volt_step_uV: int = self._cfg.voltage_step_uV
 
         # adc_ivcurve
-        # self.settle_steps: int = 0  # noqa: ERA001
+        # self.settle_steps: int = 0  # ruff: ignore[commented-out-code]
 
         # adc_mppt_po
-        # self.power_last_raw: int = 0 # noqa: ERA001
+        # self.power_last_raw: int = 0 # ruff: ignore[commented-out-code]
 
         # globals for iv_cv
         self.voltage_hold: int = 0

@@ -55,4 +55,4 @@ Constants_1_per_V = [dt_s / q_As / R_leak_Ohm for q_As, R_leak_Ohm in product(qs
 Constants_1u_per_uV_n40 = [u32l((2**40) * c_1_per_V) for c_1_per_V in Constants_1_per_V]
 Constants_1_per_uV_n60 = [u32l((2**60 / 1e6) * c_1_per_V) for c_1_per_V in Constants_1_per_V]
 
-print("done")  # noqa: T201
+print("done")  # ruff: ignore[print]

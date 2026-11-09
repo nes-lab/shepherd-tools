@@ -40,7 +40,7 @@ def instantiate_component(model_type: str, model_data: dict) -> ShpModel | None:
 
     This is a copy of content.instantiate_content()
     """
-    import sys  # noqa: PLC0415
+    import sys  # ruff: ignore[import-outside-top-level]
 
     model_type = model_type.lower()
     if model_type == Wrapper.__name__.lower():
