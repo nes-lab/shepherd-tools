@@ -13,6 +13,7 @@ repos:
       - id: forbid-new-submodules
       - id: name-tests-test
         args: ["--pytest-test-first"]
+        exclude: tests/example_failing.py
       - id: requirements-txt-fixer
 
   - repo: builtin # preks faster versions
