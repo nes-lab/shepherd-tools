@@ -726,7 +726,7 @@ class Reader:
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 
-    @deprecated("use get_gpio_waveforms() instead")
+    @deprecated("use .get_gpio_waveforms() instead")
     def gpio_to_waveforms(self, name: str | None = None) -> dict:
         return self.get_gpio_waveforms(name)
 
@@ -808,8 +808,12 @@ class Reader:
         gpio_wf = gpio_wf.astype(float)
         gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9  # ruff: ignore[non-augmented-assignment]
         content = None
-        with suppress(TypeError), suppress(ValueError):
+        try:
             content = Uart(gpio_wf).get_lines()
+        except (TypeError, ValueError) as xpt:
+            self._logger.warning("\t-> %s", xpt)
+        # with suppress(TypeError), suppress(ValueError):
+
         if content is None:
             return
 
@@ -834,7 +838,7 @@ class Reader:
                     with suppress(TypeError):
                         log_file.write(str.encode(line[1]))
 
-    @deprecated("use waveform_to_uart_log() instead")
+    @deprecated("use .waveform_to_uart_log() instead")
     def gpio_to_uart(self) -> np.ndarray | None:
         from .decoder_waveform import Uart  # ruff: ignore[import-outside-top-level]
 

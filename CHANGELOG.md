@@ -11,6 +11,9 @@
   - add `.rescale_factor`-parameter to scale up/down the available power
   - add `.time_start_offset`-parameter to begin emulation at later point in EEnv
 - user-facing models - add disclaimer for missing SI Units on most model-parameters
+- fix conversion of .elf to .hex on newer ubuntu-versions
+- uart-decoder is more verbose and helpful in case of errors
+- `subprocess.run()` - drop shell-requirement and be more explicit/clean about used outputs
 - update tooling
 
 ## v2026.10.2

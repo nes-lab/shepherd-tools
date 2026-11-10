@@ -78,15 +78,30 @@ class Uart:
 
         # verify table
         if self.events_sig.shape[1] != 2:
-            raise TypeError("Input file should have 2 rows -> (comma-separated) timestamp & value")
+            raise TypeError("Input should have 2 rows -> (comma-separated) timestamp & value")
         if len(self.events_sig) < 16:
-            raise TypeError("Input file is too short (< state-changes)")
-        # verify timestamps
-        time_steps = self.events_sig[1:, 0] - self.events_sig[:-1, 0]
-        if any(time_steps < 0):
-            steps_negative = np.where(time_steps < 0)
-            msg = f"Timestamps are not continuous (@pos: {steps_negative[:10]})"
-            raise TypeError(msg)
+            raise TypeError("Input is too short (under 16 state-changes)")
+        # verify timestamps, chunked to avoid trouble with large dsets
+        chunk_size = 10**7
+        event_size = len(self.events_sig)
+        for start2_offset in range(0, event_size, chunk_size):
+            # goal: [1:] - [:-1] but with the right boundary-value included
+            end1_offset = min(event_size, start2_offset + chunk_size + 1)
+            end2_offset = max(start2_offset, end1_offset - 1)
+            start1_offset = end1_offset - end2_offset + start2_offset
+            time_steps = (
+                self.events_sig[start1_offset:end1_offset, 0]
+                - self.events_sig[start2_offset:end2_offset, 0]
+            )
+            if any(time_steps < 0):
+                pos_negative = np.where(time_steps < 0)[0][:6]
+                msg = (
+                    f"Timestamps are not continuous. Examples:"
+                    f"\n\tindex  {pos_negative + start2_offset}"
+                    f"\n\tstep   {time_steps[pos_negative]}"
+                    f"\n\ttstamp {self.events_sig[pos_negative, 0] - self.events_sig[0, 0]}"
+                )
+                raise TypeError(msg)
 
         # prepare samples & process params (order is important)
         self._convert_analog2digital()
@@ -96,6 +111,9 @@ class Uart:
 
         self.baud_rate: int = baud_rate if baud_rate is not None else self.detect_baud_rate()
         self.dur_tick: float = 1.0 / self.baud_rate
+
+        if baud_rate is None:
+            log.debug("Baud rate was detected as: %d", self.baud_rate)
 
         self._add_duration()
 
