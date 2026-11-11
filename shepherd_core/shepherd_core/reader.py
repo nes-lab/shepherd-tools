@@ -345,7 +345,7 @@ class Reader:
         }
 
     def calc_sample_offset(self, time_offset: float) -> int:
-        return max(0, math.floor(self.samplerate_sps * time_offset))
+        return int(max(0, math.floor(self.samplerate_sps * time_offset)))
 
     def is_valid(self) -> bool:
         """Check file for plausibility, validity / correctness.
@@ -473,6 +473,7 @@ class Reader:
                 err_,
                 self.file_path.name,
             )
+        # TODO: run through all timestamps and check for jumps (code in UART.init() can be used)
         return True
 
     def __getitem__(self, key: str) -> Any:
