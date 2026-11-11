@@ -76,7 +76,7 @@ class SystemInventory(ShpModel):
             reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
                 fs_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
-            fs_out = str(reply.stdout).split(r"\n")
+            fs_out = reply.stdout.split("\n")
 
         beagle_cmd = ["/usr/bin/beagle-version"]
         beagle_out = []
@@ -84,7 +84,7 @@ class SystemInventory(ShpModel):
             reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
                 beagle_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
-            beagle_out = str(reply.stdout).split(r"\n")
+            beagle_out = reply.stdout.split("\n")
 
         ptp_cmd = ["/usr/sbin/ptp4l", "-v"]
         ptp_out = None
