@@ -40,7 +40,7 @@ class CoreConfig(BaseModel):
 
     PATHS_ALLOWED: AbstractSet[PurePosixPath] = {
         PurePosixPath("/var/shepherd/"),
-        PurePosixPath("/tmp/"),  # noqa: S108
+        PurePosixPath("/tmp/"),  # ruff: ignore[hardcoded-temp-file]
     }
 
 

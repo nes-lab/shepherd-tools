@@ -1,7 +1,7 @@
 """Shepherds base-model that brings a lot of default functionality."""
 
 import hashlib
-import pickle
+import pickle  # ruff: ignore[suspicious-pickle-import]
 from collections.abc import Generator
 from pathlib import Path
 from typing import Any
@@ -26,7 +26,7 @@ def raise_for_extra_fields() -> None:
 
     This is useful for the web-server
     """
-    global only_warn_extra_fields  # noqa: PLW0603
+    global only_warn_extra_fields  # ruff: ignore[global-statement]
     only_warn_extra_fields = False
 
 
@@ -102,21 +102,21 @@ class ShpModel(BaseModel):
 
     def __contains__(self, item: str) -> bool:
         """Allow checks like 'x in YClass'."""
-        return item in self.model_dump().keys()  # noqa: SIM118
+        return item in self.model_dump().keys()  # ruff: ignore[in-dict-keys]
         # more correct, but probably slower than hasattr
 
-    def keys(self):  # noqa: ANN201
+    def keys(self):  # ruff: ignore[missing-return-type-undocumented-public-function]
         """Fn of dict."""
         return self.model_dump().keys()  # TODO: there is an easier way
 
     def items(self) -> Generator[tuple, None, None]:
         """Fn of dict."""
         for key in self.keys():
-            yield key, self.__getattribute__(key)
+            yield key, getattr(self, key)
 
     @model_validator(mode="before")
     @classmethod
-    def __alert_extra_field__(cls, values: dict[str, Any]) -> dict[str, Any]:
+    def _alert_extra_field(cls, values: dict[str, Any]) -> dict[str, Any]:
         if isinstance(values, dict) and (
             extra_fields := values.keys()
             - cls.model_fields.keys()
@@ -190,7 +190,7 @@ class ShpModel(BaseModel):
             raise FileNotFoundError
         if path.suffix.lower() == ".pickle":
             with Path(path).open("rb") as shp_file:
-                shp_dict = pickle.load(shp_file)  # noqa: S301
+                shp_dict = pickle.load(shp_file)  # ruff: ignore[suspicious-pickle-usage]
         else:
             with Path(path).open(encoding="utf-8") as shp_file:
                 shp_dict = ryaml.load(shp_file)

@@ -13,7 +13,7 @@ import errno
 import logging
 import math
 import os
-import pickle
+import pickle  # ruff: ignore[suspicious-pickle-import]
 from pathlib import Path
 from types import TracebackType
 from typing import Self
@@ -28,12 +28,12 @@ from .mppt import OptimalTracker
 from .mppt import iv_model
 
 
-def get_voc(coeffs: pd.DataFrame):  # noqa: ANN201
+def get_voc(coeffs: pd.DataFrame):  # ruff: ignore[missing-return-type-undocumented-public-function]
     """Open-circuit voltage of IV curve with given coefficients."""
     return np.log(coeffs["a"] / coeffs["b"] + 1) / coeffs["c"]
 
 
-def get_isc(coeffs: pd.DataFrame):  # noqa: ANN201
+def get_isc(coeffs: pd.DataFrame):  # ruff: ignore[missing-return-type-undocumented-public-function]
     """Short-circuit current of IV curve with given coefficients."""
     return coeffs["a"]
 
@@ -70,7 +70,7 @@ class Reader:
         if not self.file_path.exists():
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_path.name)
         with self.file_path.open("rb") as ifr:
-            self._df = pickle.load(ifr)  # noqa: S301
+            self._df = pickle.load(ifr)  # ruff: ignore[suspicious-pickle-usage]
         self._refresh_file_stats()
         self._logger.debug(
             "Reading data from '%s'\n"

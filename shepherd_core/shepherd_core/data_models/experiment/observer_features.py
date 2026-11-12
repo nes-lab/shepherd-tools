@@ -27,6 +27,8 @@ class PowerTracing(ShpModel, title="Config for Power-Tracing"):
     """Configuration for recording the Power-Consumption of the Target Nodes.
 
     With the default configuration voltage and current are sampled with 100 kHz.
+
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
     """
 
     intermediate_voltage: bool = False
@@ -127,6 +129,7 @@ class UartLogging(ShpModel, title="Config for UART Logging"):
 
     Note that the Communication has to be on a specific port that
     reaches the hardware-module of the SBC.
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
     """
 
     baudrate: Annotated[int, Field(ge=2_400, le=460_800)] = 115_200
@@ -163,6 +166,7 @@ all_gpio = list(range(18))
 class GpioTracing(ShpModel, title="Config for GPIO-Tracing"):
     """Configuration for recording the GPIO-Output of the Target Nodes.
 
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
     TODO: postprocessing not implemented ATM
     """
 
@@ -263,7 +267,7 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
     @model_validator(mode="after")
     def post_validation(self) -> Self:
-        msg = "not implemented ATM"
+        msg = f"{type(self).__name__} - not implemented ATM"
         raise ValueError(msg)
 
     def get_gpios(self) -> set:
@@ -272,12 +276,31 @@ class GpioActuation(ShpModel, title="Config for GPIO-Actuation"):
 
 @final
 class SystemLogging(ShpModel, title="Config for System-Logging"):
-    """Configuration for recording Debug-Output of the Observers System-Services."""
+    """Configuration for recording Debug-Output of the Observers System-Services.
+
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
+    """
 
     kernel: bool = True
     time_sync: bool = True
     sheep: bool = True
     sys_util: bool = True
+
+    sync_offset_threshold: PositiveFloat = 10e-6  # 10 us
+    """ ⤷ tolerated |delta|-sync-offset reported by PTP4L or phc2sys.
+
+        Experiments can keep failing because of too much traffic on the network.
+        You may raise this threshold if your setup does allow it.
+        The alternative is reducing the network-traffic by recording less data.
+    """
+
+    ignore_unrelated_errors: bool = True
+    """ ⤷ Runtime-Errors not related to Shepherd can cause failed experiments.
+
+    Every observed error counts during the runtime of shepherd experiments.
+    Linux, running on the observers, might throw errors like "spurious interrupts".
+    This setting helps filtering this out and thus reduce chance of failed experiments.
+    """
 
 
 # TODO: some more interaction would be good

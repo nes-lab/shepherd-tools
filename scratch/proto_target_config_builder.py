@@ -116,13 +116,13 @@ if __name__ == "__main__":
     # Dummy eenv (this would correspond to an eenv from the server)
     dummy_profiles = [
         EnergyProfile(
-            data_path=Path(f"./file_{_i}.h5"),
+            data_path=Path(f"./file_{i_}.h5"),
             data_type=EnergyDType.ivcurve,
             duration=3600,
             energy_Ws=3.1,
             valid=True,
         )
-        for _i in range(10)
+        for i_ in range(10)
     ]
     dummy_eenv1 = EnergyEnvironment(
         id=9999,

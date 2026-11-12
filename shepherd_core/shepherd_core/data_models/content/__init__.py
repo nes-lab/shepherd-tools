@@ -36,7 +36,7 @@ def instantiate_content(model_type: str, model_data: dict) -> ContentModel | Non
 
     This is a copy of content.instantiate_component()
     """
-    import sys  # noqa: PLC0415
+    import sys  # ruff: ignore[import-outside-top-level]
 
     model_type = model_type.lower()
     if model_type == Wrapper.__name__.lower():

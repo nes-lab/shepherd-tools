@@ -1,7 +1,7 @@
 """Current implementation of a file-based database."""
 
 import copy
-import pickle
+import pickle  # ruff: ignore[suspicious-pickle-import]
 from collections.abc import Iterable
 from collections.abc import Mapping
 from datetime import datetime
@@ -204,7 +204,7 @@ class Fixtures:
             # speedup by loading from cache
             # TODO: also add version as criterion
             with cache_file.open("rb", buffering=-1) as fd:
-                self.resources = pickle.load(fd)  # noqa: S301
+                self.resources = pickle.load(fd)  # ruff: ignore[suspicious-pickle-usage]
             log.debug(" -> found & used pickled fixtures")
         else:
             if not isinstance(file_path, Path):

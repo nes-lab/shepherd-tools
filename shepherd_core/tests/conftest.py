@@ -40,7 +40,7 @@ def pytest_collection_modifyitems(
 ) -> None:
     # ELF
     try:
-        from pwnlib.elf import ELF  # noqa: PLC0415
+        from pwnlib.elf import ELF  # ruff: ignore[import-outside-top-level]
     except ImportError:
         ELF = None
     skip_elf = pytest.mark.skip(
@@ -49,7 +49,7 @@ def pytest_collection_modifyitems(
 
     # OBJCOPY
     try:
-        subprocess.run(["objcopy", "--version"], check=True)
+        subprocess.run(["objcopy", "--version"], check=True, shell=False)
         OBJCOPY = True
     except FileNotFoundError:
         OBJCOPY = None

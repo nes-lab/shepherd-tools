@@ -100,6 +100,17 @@ def test_content_model_energy_profile_export_error2(tmp_path: Path) -> None:
         ep.export(tmp_path)
 
 
+@pytest.mark.parametrize("energy", [0, 0.1, 1])
+def test_content_model_energy_profile_mean_power(energy: float) -> None:
+    ep = EnergyProfile(
+        data_path=Path("./file"),
+        data_type=EnergyDType.isc_voc,
+        duration=1,
+        energy_Ws=energy,
+    )
+    print(ep.power_mean)
+
+
 # ############################ Energy Environments
 
 
@@ -136,7 +147,61 @@ def test_content_model_energy_environment_properties(energy_profiles: list[Energ
     assert len(ee) == len(energy_profiles)
     assert not ee.repetitions_ok
     assert ee.valid
+    assert ee.power_mean >= 0
     ee.enforce_validity()
+
+
+def test_content_model_energy_environment_rescale(energy_profiles: list[EnergyProfile]) -> None:
+    ee1 = EnergyEnvironment(
+        id=98765,
+        name="some",
+        energy_profiles=energy_profiles,
+        owner="jane",
+        group="wayne",
+    )
+    ee2 = EnergyEnvironment(
+        id=98765,
+        name="some",
+        energy_profiles=energy_profiles,
+        owner="jane",
+        group="wayne",
+        rescale_factor=11,
+    )
+    assert ee1.power_mean > 0
+    assert ee2.power_mean / ee1.power_mean == 11
+
+
+@pytest.mark.parametrize("start_offset", [0, 1, 19])
+def test_content_model_energy_environment_start_offset_okay(
+    energy_profiles: list[EnergyProfile], start_offset: float
+) -> None:
+    ee = EnergyEnvironment(
+        id=98765,
+        name="some",
+        energy_profiles=energy_profiles,
+        owner="jane",
+        group="wayne",
+        time_start_offset=start_offset,
+    )
+    # validation is done during construction - below is just for show:
+    assert ee.duration > 0
+    assert ee.valid
+    ee.enforce_validity()
+
+
+@pytest.mark.parametrize("start_offset", [-1, 0.1, 20, 100])
+def test_content_model_energy_environment_start_offset_fault(
+    energy_profiles: list[EnergyProfile], start_offset: float
+) -> None:
+    with pytest.raises(ValidationError):
+        EnergyEnvironment(
+            id=98765,
+            name="some",
+            energy_profiles=energy_profiles,
+            owner="jane",
+            group="wayne",
+            time_start_offset=start_offset,
+        )
 
 
 def test_content_model_energy_environment_add_profile(energy_profiles: list[EnergyProfile]) -> None:
@@ -255,7 +320,7 @@ def test_content_model_energy_environment_influence_validity(
     )
     ee2 = ee1 + ep2
     assert not ee2.valid
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         ee2.enforce_validity()
 
 
@@ -463,7 +528,7 @@ def test_content_model_fw_from_hex_failing(tmp_path: Path) -> None:
     path_hex = tmp_path / "some.hex"
     with path_hex.open("w", encoding="utf-8") as fd:
         fd.write("something")
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         Firmware.from_firmware(
             file=path_hex,
             name="dome",

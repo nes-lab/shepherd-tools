@@ -62,7 +62,7 @@ class StorageSimulator:
     def plot(self, path: Path, title: str, *, plot_delta_v: bool = False) -> None:
         try:
             # keep dependencies low
-            from matplotlib import pyplot as plt  # noqa: PLC0415
+            from matplotlib import pyplot as plt  # ruff: ignore[import-outside-top-level]
         except ImportError:
             log.warning("Matplotlib not installed, plotting of results disabled")
             return

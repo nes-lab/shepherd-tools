@@ -172,6 +172,13 @@ class Reader:
         """Update internal states, helpful after resampling or other changes in data-group."""
         self.h5file.flush()
         self.samples_n = min(len(self.ds_time), len(self.ds_current), len(self.ds_voltage))
+        try:
+            _ = self.ds_time[self.samples_n - 1] if self.samples_n > 0 else 0
+        except OSError:
+            self._logger.warning(
+                "Accessing large dataset on a 32bit-Arch? There are dragons in h5py!"
+            )
+            self.samples_n = min(2 ** (32 - 3), self.samples_n)
         duration_raw = (
             (int(self.ds_time[self.samples_n - 1]) - int(self.ds_time[0]))
             if self.samples_n > 0
@@ -337,6 +344,9 @@ class Reader:
             "voltage_step_V": self.get_voltage_step(),
         }
 
+    def calc_sample_offset(self, time_offset: float) -> int:
+        return int(max(0, math.floor(self.samplerate_sps * time_offset)))
+
     def is_valid(self) -> bool:
         """Check file for plausibility, validity / correctness.
 
@@ -463,6 +473,7 @@ class Reader:
                 err_,
                 self.file_path.name,
             )
+        # TODO: run through all timestamps and check for jumps (code in UART.init() can be used)
         return True
 
     def __getitem__(self, key: str) -> Any:
@@ -716,7 +727,7 @@ class Reader:
         data_1 = np.concatenate(([not data[0]], data[:-1]))
         return data != data_1
 
-    @deprecated("use get_gpio_waveforms() instead")
+    @deprecated("use .get_gpio_waveforms() instead")
     def gpio_to_waveforms(self, name: str | None = None) -> dict:
         return self.get_gpio_waveforms(name)
 
@@ -760,10 +771,10 @@ class Reader:
         if idx_start is not None:
             if idx_stop is not None:
                 # as we start searching @ idx_start, we have to add it
-                idx_stop = idx_stop + idx_start
+                idx_stop += idx_start
             if idx_start > 0:
                 # add a single out-of-bound entry to get the state @ ts_start
-                idx_start = idx_start - 1
+                idx_start -= 1
         if idx_start is not None or idx_stop is not None:
             # cut once instead of every time in loop
             gpio_ts = gpio_ts[idx_start:idx_stop]
@@ -793,13 +804,17 @@ class Reader:
     def waveform_to_uart_log(
         self, gpio_name: str, gpio_wf: np.ndarray, *, add_timestamps: bool = True
     ) -> None:
-        from .decoder_waveform import Uart  # noqa: PLC0415
+        from .decoder_waveform import Uart  # ruff: ignore[import-outside-top-level]
 
         gpio_wf = gpio_wf.astype(float)
-        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
+        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9  # ruff: ignore[non-augmented-assignment]
         content = None
-        with suppress(TypeError), suppress(ValueError):
+        try:
             content = Uart(gpio_wf).get_lines()
+        except (TypeError, ValueError) as xpt:
+            self._logger.warning("\t-> %s", xpt)
+        # with suppress(TypeError), suppress(ValueError):
+
         if content is None:
             return
 
@@ -824,9 +839,9 @@ class Reader:
                     with suppress(TypeError):
                         log_file.write(str.encode(line[1]))
 
-    @deprecated("use waveform_to_uart_log() instead")
+    @deprecated("use .waveform_to_uart_log() instead")
     def gpio_to_uart(self) -> np.ndarray | None:
-        from .decoder_waveform import Uart  # noqa: PLC0415
+        from .decoder_waveform import Uart  # ruff: ignore[import-outside-top-level]
 
         wfs = self.get_gpio_waveforms("uart")
         if len(wfs) < 1:
@@ -838,7 +853,7 @@ class Reader:
             self.waveform_to_csv(pin_name, pin_wf)
 
         gpio_wf = pin_wf.astype(float)
-        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9
+        gpio_wf[:, 0] = gpio_wf[:, 0] / 1e9  # ruff: ignore[non-augmented-assignment]
 
         try:
             return Uart(gpio_wf).get_lines()

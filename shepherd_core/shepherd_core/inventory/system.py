@@ -1,7 +1,7 @@
 """System / OS related inventory model."""
 
 import platform
-import subprocess
+import subprocess  # ruff: ignore[suspicious-subprocess-import]
 import time
 from collections.abc import Mapping
 from collections.abc import Sequence
@@ -73,24 +73,24 @@ class SystemInventory(ShpModel):
         fs_cmd = ["/usr/bin/df", "-h", "/"]
         fs_out = []
         if Path(fs_cmd[0]).is_file():
-            reply = subprocess.run(  # noqa: S603
-                fs_cmd, timeout=30, capture_output=True, check=False
+            reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
+                fs_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
-            fs_out = str(reply.stdout).split(r"\n")
+            fs_out = reply.stdout.split("\n")
 
         beagle_cmd = ["/usr/bin/beagle-version"]
         beagle_out = []
         if Path(beagle_cmd[0]).is_file():
-            reply = subprocess.run(  # noqa: S603
-                beagle_cmd, timeout=30, capture_output=True, check=False
+            reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
+                beagle_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
-            beagle_out = str(reply.stdout).split(r"\n")
+            beagle_out = reply.stdout.split("\n")
 
         ptp_cmd = ["/usr/sbin/ptp4l", "-v"]
         ptp_out = None
         if Path(ptp_cmd[0]).is_file():
-            reply = subprocess.run(  # noqa: S603
-                ptp_cmd, timeout=30, capture_output=True, check=False
+            reply = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
+                ptp_cmd, timeout=30, capture_output=True, check=False, shell=False, text=True
             )
             ptp_out = f"{reply.stdout}, {reply.stderr}"
             # alternative: check_output - seems to be lighter

@@ -21,8 +21,10 @@ ignore = [
     # TODO: for releasing now - do add documentation later
     "D102",
     "DOC201", "DOC402", "DOC501",
+    "non-empty-init-module", "too-many-statements-in-try-clause"
 ]
 exclude = ["extra/link-visualizer/create_link_svg.py"]  # must be adapted to project first
+preview = true
 
 [lint.per-file-ignores]
 "*/tests/**" = ["ARG", "S", "D", "T201", "ERA001",]

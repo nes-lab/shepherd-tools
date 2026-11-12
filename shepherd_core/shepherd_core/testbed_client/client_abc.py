@@ -27,10 +27,11 @@ class AbcClient(ABC):
     """AbstractBase-Class to access a testbed instance."""
 
     def __init__(self) -> None:
-        global tb_client  # noqa: PLW0603
+        global tb_client  # ruff: ignore[global-statement]
         tb_client = self
 
-    def insert_resource(self, data: ShpModel) -> bool:  # noqa: ARG002
+    @abstractmethod
+    def insert_resource(self, data: ShpModel) -> bool:
         """Insert (and probably replace) entry."""
         log.warning("Missing account-details or capabilities for that storing content.")
         return False

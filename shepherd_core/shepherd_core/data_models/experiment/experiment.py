@@ -31,7 +31,10 @@ if TYPE_CHECKING:
 
 @final
 class Experiment(ShpModel, title="Config of an Experiment"):
-    """Config for experiments on the testbed emulating energy environments for target nodes."""
+    """Config for experiments on the testbed emulating energy environments for target nodes.
+
+    If a parameter is missing a unit it is ALWAYS the physical SI-unit.
+    """
 
     # General Properties
     name: NameStr

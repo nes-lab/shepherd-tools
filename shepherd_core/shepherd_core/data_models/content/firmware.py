@@ -73,7 +73,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
             FirmwareDType.base64_elf,
         }:
             try:
-                from shepherd_core import fw_tools  # noqa: PLC0415
+                from shepherd_core import fw_tools  # ruff: ignore[import-outside-top-level]
 
                 dhash = fw_tools.base64_to_hash(values.get("data"))
             except ValueError:
@@ -107,7 +107,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
         To avoid auto-deduction and the need for local tooling (elf-tools, binutils, objutils)
         the user can set the arch-argument to 'msp430' or 'nrf52'
         """
-        from shepherd_core import fw_tools  # noqa: PLC0415
+        from shepherd_core import fw_tools  # ruff: ignore[import-outside-top-level]
 
         # TODO: use new determine_type() & determine_arch() and also allow to not embed
         kwargs["data_hash"] = fw_tools.file_to_hash(file)
@@ -172,7 +172,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
         if self.data_hash is None:
             return True
 
-        from shepherd_core import fw_tools  # noqa: PLC0415
+        from shepherd_core import fw_tools  # ruff: ignore[import-outside-top-level]
 
         if data is None:
             # use included data if nothing is provided
@@ -199,7 +199,7 @@ class Firmware(ContentModel, title="Firmware of Target"):
         - file-suffix is derived from data-type and adapted
         - if provided path is a directory, the firmware-name is used
         """
-        from shepherd_core import fw_tools  # noqa: PLC0415
+        from shepherd_core import fw_tools  # ruff: ignore[import-outside-top-level]
 
         if file.is_dir():
             file /= self.name

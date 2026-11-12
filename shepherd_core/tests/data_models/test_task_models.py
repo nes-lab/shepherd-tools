@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 import pytest
@@ -143,7 +144,7 @@ def test_tasks_are_contained() -> None:
     firmware_path = Path(__file__).parent.parent / "fw_tools/build_nrf.elf"
     tgt_cfg = sdm.TargetConfig(
         target_IDs=[42],
-        energy_env=sdm.EnergyEnvironment(name="synthetic_static_3000mV_50mA"),
+        energy_env=sdm.EnergyEnvironment(name="synthetic_static_3000mV_50mA", rescale_factor=3.13),
         firmware1=sdm.Firmware(
             name="FW_TestXYZ",
             data=fw_tools.file_to_base64(firmware_path),
@@ -166,3 +167,6 @@ def test_tasks_are_contained() -> None:
     for obs_tasks in tb_tasks.observer_tasks:
         assert obs_tasks.is_contained(paths_allowed)
     assert tb_tasks.is_contained()
+    for obs_tasks in tb_tasks.observer_tasks:
+        if isinstance(obs_tasks, EmulationTask):
+            assert math.isclose(obs_tasks.eenv_rescale_factor, 3.13)

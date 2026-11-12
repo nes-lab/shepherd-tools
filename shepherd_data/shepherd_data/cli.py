@@ -51,7 +51,7 @@ def cli(ctx: click.Context, *, verbose: bool) -> None:
 @cli.command(short_help="Print version-info (combine with -v for more)")
 def version() -> None:
     """Print version-info (combine with -v for more)."""
-    from importlib import metadata  # noqa: PLC0415
+    from importlib import metadata  # ruff: ignore[import-outside-top-level]
 
     logger.debug("Python v%s", sys.version)
     logger.info("shepherd-data v%s", metadata.version("shepherd-data"))
@@ -184,7 +184,7 @@ def extract_meta(
     """Extract metadata and logs from file or directory containing shepherd-recordings."""
     files = path_to_flist(in_data, recurse=recurse)
     verbose_level = get_verbose_level()
-    for file in files:
+    for file in files:  # ruff: ignore[too-many-nested-blocks]
         logger.info("Extracting metadata & logs from '%s' ...", file.name)
         # TODO: add default exports (user-centric) and allow specifying --all or specific ones
         # TODO: could also be combined with other extractors (just have one)
@@ -272,7 +272,7 @@ def decode_uart(in_data: Path, *, recurse: bool = False, text_only: bool = False
                 if not isinstance(gpio_names, list):
                     continue
                 for gpio_name in gpio_names:
-                    logger.debug("\t .. processing '%s'", gpio_name)
+                    logger.debug(" .. processing '%s'", gpio_name)
                     gpio_wfs = shpr.get_gpio_waveforms(gpio_name)
                     for gpio_name2, gpio_wf in gpio_wfs.items():
                         shpr.waveform_to_uart_log(gpio_name2, gpio_wf, add_timestamps=not text_only)
@@ -309,7 +309,7 @@ def extract_gpio(in_data: Path, separator: str, *, recurse: bool = False) -> Non
                 if not isinstance(gpio_names, list):
                     continue
                 for gpio_name in gpio_names:
-                    logger.debug("\t .. processing '%s'", gpio_name)
+                    logger.debug(" .. processing '%s'", gpio_name)
                     wfs = shpr.get_gpio_waveforms(gpio_name)
                     for name, wf in wfs.items():
                         shpr.waveform_to_csv(name, wf, separator)

@@ -25,7 +25,7 @@ WRITE_CHUNK_WIDTH: int = 10_000 * SHP_V1_STEP_WIDTH  # 10_000 x 10 us -> 0.1 s
 PROCESS_CHUNK_SIZE: int = 1_000_000
 
 
-def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int) -> None:
+def convert_file(in_file: Path, out_file: Path, tstart_ns: int, duration_ns: int) -> None:  # ruff: ignore[too-many-locals]
     """
     Convert a Shepherd V1 input file to a Shepherd Nova output file.
 

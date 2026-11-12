@@ -13,7 +13,7 @@ from shepherd_core.reader import Reader
 from shepherd_core.writer import Writer
 
 
-def generate_shp_file(  # noqa: PLR0917
+def generate_shp_file(  # ruff: ignore[too-many-positional-arguments]
     store_path: Path,
     mode: str | None = None,
     datatype: str | None = None,
@@ -76,17 +76,17 @@ def test_writer_unique_path(h5_file: Path) -> None:
 
 
 def test_writer_faulty_mode(h5_path: Path) -> None:
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         generate_shp_file(h5_path, mode="excavator", datatype="ivcurve")
 
 
 def test_writer_faulty_datatype(h5_path: Path) -> None:
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         generate_shp_file(h5_path, mode="emulator", datatype="ivcurve")
 
 
 def test_writer_faulty_path_without_suffix(tmp_path: Path) -> None:
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         generate_shp_file(tmp_path / "hello")
 
 
@@ -129,9 +129,9 @@ def test_writer_init_cal_series(h5_path: Path) -> None:
 
 
 def test_writer_faulty_window(h5_path: Path) -> None:
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         generate_shp_file(h5_path, mode="harvester", datatype="ivcurve")
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         generate_shp_file(
             h5_path,
             mode="harvester",

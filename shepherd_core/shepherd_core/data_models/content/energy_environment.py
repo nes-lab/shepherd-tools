@@ -51,6 +51,7 @@ from typing import overload
 import ryaml
 from pydantic import Field
 from pydantic import NonNegativeFloat
+from pydantic import NonNegativeInt
 from pydantic import PositiveFloat
 from pydantic import model_validator
 from pydantic import validate_call
@@ -171,6 +172,11 @@ class EnergyProfile(ShpModel):
                 repetitions_ok=repetition_ok,
             )
 
+    @property
+    def power_mean(self) -> float:
+        """Expected mean power [W] of this energy profile."""
+        return self.energy_Ws / self.duration
+
 
 @final
 class EnergyEnvironment(ContentModel):
@@ -188,11 +194,23 @@ class EnergyEnvironment(ContentModel):
     General: transducer / harvester used, date, time, experiment setup, location, route
     """
 
+    rescale_factor: PositiveFloat = 1
+    """ ⤷ scale up/down current and thus the available power
+
+    Rescaling allows experimenting with questions like
+        "what if I use a larger solar cell?"
+
+    This factor is applied to each embedded energy profile
+    before handing it to the virtual source / emulation.
+    """
+    time_start_offset: NonNegativeInt = 0
+    """ ⤷ begin emulation at later point in EEnv
+
+    This allows to use different parts of the EEnv and not start at the beginning.
+    """
+
     modifications: Sequence[str] = []
     """Changes recorded by manipulation-Ops (i.e. addition, slicing)."""
-
-    # TODO: scale up/down voltage/current
-    # TODO: mean power as energy/duration
 
     PROFILES_MAX: int = Field(default=128, exclude=True)
     """ ⤷ arbitrary maximum, internal state which controls behavior for repetitions_ok-cases
@@ -209,6 +227,16 @@ class EnergyEnvironment(ContentModel):
         values, _ = tb_client.complete_resource_model(cls.__name__, values)
         return values
 
+    @model_validator(mode="after")
+    def post_validation(self) -> Self:
+        if self.duration <= 0:
+            msg = (
+                f"{self.name} - minimum duration of embedded EnergyProfiles "
+                f"is shorter than chosen time_start_offset"
+            )
+            raise ValueError(msg)
+        return self
+
     def __len__(self) -> int:
         if self.repetitions_ok:
             return self.PROFILES_MAX
@@ -217,7 +245,7 @@ class EnergyEnvironment(ContentModel):
     @property
     def duration(self) -> PositiveFloat:
         """Duration of the recorded environment (minimum of all profiles) in seconds."""
-        return min(profile.duration for profile in self.energy_profiles)
+        return min(profile.duration for profile in self.energy_profiles) - self.time_start_offset
 
     @property
     def repetitions_ok(self) -> bool:
@@ -226,7 +254,16 @@ class EnergyEnvironment(ContentModel):
 
     @property
     def valid(self) -> bool:
-        return all(profile.valid for profile in self.energy_profiles)
+        return all(profile.valid for profile in self.energy_profiles) and self.duration > 0
+
+    @property
+    def power_mean(self) -> float:
+        """Expect mean power [W] of this energy environment."""
+        return (
+            self.rescale_factor
+            * sum(pf.power_mean for pf in self.energy_profiles)
+            / len(self.energy_profiles)
+        )
 
     def enforce_validity(self) -> None:
         """Offer soft validation that can be used by upper classes."""

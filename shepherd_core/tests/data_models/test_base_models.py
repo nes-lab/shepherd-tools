@@ -92,14 +92,14 @@ def test_base_model_cal_cape_example(tmp_path: Path) -> None:
 def test_base_model_cal_hrv_fault() -> None:
     path = Path(__file__).resolve().with_name("example_cal_data_faulty.yaml")
     cal = CalibrationCape.from_file(path)
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         _ = cal.harvester.export_for_sysfs()
 
 
 def test_base_model_cal_emu_fault() -> None:
     path = Path(__file__).resolve().with_name("example_cal_data_faulty.yaml")
     cal = CalibrationCape.from_file(path)
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         _ = cal.emulator.export_for_sysfs()
 
 
@@ -175,7 +175,7 @@ def test_base_model_shepherd_fault_load_other(tmp_path: Path) -> None:
     path = tmp_path / "content.yaml"
     content = ContentModel(name="tricky", owner="peter", group="work")
     content.to_file(path)
-    with pytest.raises(ValueError):  # noqa: PT011
+    with pytest.raises(ValueError):  # ruff: ignore[pytest-raises-too-broad]
         CalibrationCape.from_file(path)
 
 

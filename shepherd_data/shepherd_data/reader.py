@@ -17,7 +17,7 @@ from shepherd_core.reader import Reader as CoreReader
 from shepherd_core.writer import Writer as CoreWriter
 from tqdm import trange
 
-# import samplerate  # noqa: ERA001, TODO: just a test-fn for now
+# import samplerate  # ruff: ignore[commented-out-code], TODO: just a test-fn for now
 
 
 class Reader(CoreReader):
@@ -196,7 +196,7 @@ class Reader(CoreReader):
         :return: resampled h5-dataset or numpy-array
         """
         # import only when needed, due to massive delay
-        from scipy import signal  # noqa: PLC0415
+        from scipy import signal  # ruff: ignore[import-outside-top-level]
 
         if self.get_datatype() == EnergyDType.ivsurface:
             self._logger.warning("Downsampling-Function was not written for IVSurfaces")

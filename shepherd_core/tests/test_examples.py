@@ -8,6 +8,14 @@ import pytest
 path_example = Path(__file__).resolve().parent.parent / "examples"
 path_simulation = Path(__file__).resolve().parent.parent / "examples/simulations"
 
+
+def test_running_scripts() -> None:
+    path_file = Path(__file__).parent / "example_failing.py"
+    os.chdir(path_file.parent)
+    with pytest.raises(subprocess.CalledProcessError):
+        subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)
+
+
 simulations: list[str] = [
     "vharvester.py",
     "vsource.py",
@@ -19,7 +27,7 @@ simulations: list[str] = [
 def test_simulation_scripts(file: str) -> None:
     path_file = path_simulation / file
     os.chdir(path_file.parent)
-    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)
 
 
 examples: list[str] = [
@@ -35,7 +43,7 @@ examples: list[str] = [
 def test_example_scripts(file: str) -> None:
     path_file = path_example / file
     os.chdir(path_file.parent)
-    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)
 
 
 examples_fw: list[str] = [
@@ -50,4 +58,4 @@ examples_fw: list[str] = [
 def test_example_scripts_fw(file: str) -> None:
     path_file = path_example / file
     os.chdir(path_file.parent)
-    subprocess.run([sys.executable, path_file.as_posix()], shell=True, check=True)
+    subprocess.run([sys.executable, path_file.as_posix()], shell=False, check=True)

@@ -174,7 +174,7 @@ class VirtualConverterModel:
 
         # TODO: remove P_leak in C-Code
         I_out_nA = self._cal.conv_adc_raw_to_nA(current_adc_raw)
-        if self.enable_buck:  # noqa: SIM108
+        if self.enable_buck:  # ruff: ignore[if-else-block-instead-of-if-exp]
             eta_inv_out = self.get_output_inv_efficiency(I_out_nA)
         else:
             eta_inv_out = 1.0
