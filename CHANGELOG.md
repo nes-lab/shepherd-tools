@@ -1,6 +1,10 @@
 # History of Changes
 
-## v2026.11.1 unreleased
+## v2026.11.2 unreleased
+
+- fix TestbedClient()
+
+## v2026.11.1
 
 - reader: add access-check for large files that prints warnings if error is detected (observed on 32bit ArmV7)
 - `SystemLogging()`-Model
