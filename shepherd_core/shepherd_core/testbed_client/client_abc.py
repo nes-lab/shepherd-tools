@@ -30,10 +30,12 @@ class AbcClient(ABC):
         global tb_client  # ruff: ignore[global-statement]
         tb_client = self
 
-    @abstractmethod
-    def insert_resource(self, data: ShpModel) -> bool:
+    def insert_resource(self, data: ShpModel) -> bool:  # ruff: ignore[no-self-use]
         """Insert (and probably replace) entry."""
-        log.warning("Missing account-details or capabilities for that storing content.")
+        log.warning(
+            "Missing account-details or capabilities for inserting content '%s'.",
+            type(data).__name__,
+        )
         return False
 
     @abstractmethod
