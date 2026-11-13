@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import errno
 import logging
+import math
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -255,6 +256,10 @@ class Reader:
                 return None  # or is 0 better? that may provoke div0
             return min(diffs_ls)
         return None
+
+    @staticmethod
+    def calc_sample_offset(time_offset: float) -> int:
+        return int(max(0, math.floor(core_config.SAMPLERATE_SPS * time_offset)))
 
     def is_valid(self) -> bool:
         """Check file for plausibility, validity / correctness.
